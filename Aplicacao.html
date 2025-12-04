@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Execução Fundo a Fundo - Leitor Excel</title>
+    
+    <!-- 
+        ========================================================================
+        IMPORTS DE BIBLIOTECAS (CDNs)
+        ========================================================================
+    -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap 5 CSS -->
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    
+    <!-- SheetJS (Biblioteca para ler Excel) -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50; 
+            --secondary-color: #34495e;
+            --accent-color: #1abc9c; 
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: #333;
+            padding-bottom: 50px;
+        }
+
+        /* Área de Upload */
+        .upload-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+            margin-bottom: 2rem;
+        }
+
+        .upload-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+        }
+
+        /* Painel (inicialmente oculto) */
+        #dashboard-content {
+            display: none; /* Só aparece após upload */
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+
+        /* Estilos do Dashboard */
+        .kpi-card {
+            background: #fff; border: none; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 1rem !important; 
+        }
+        .kpi-card:hover { transform: translateY(-3px); }
+        
+        .kpi-title { 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: #7f8c8d; 
+            margin-bottom: 5px; 
+        }
+        
+        .kpi-value { 
+            font-size: clamp(1.1rem, 1.8vw, 1.8rem); 
+            font-weight: bold; 
+            color: var(--primary-color);
+            white-space: nowrap;      
+            overflow: hidden;         
+            text-overflow: ellipsis;  
+            line-height: 1.2;
+        }
+        
+        .kpi-desc { font-size: 0.8rem; color: #95a5a6; margin-top: 5px; }
+
+        /* Estilo específico para os Cards Dinâmicos (Filtrados) */
+        .dynamic-card {
+            border-left: 4px solid var(--secondary-color);
+            background-color: #fff;
+        }
+
+        .chart-container {
+            background: #fff; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem;
+            position: relative; height: 500px;
+        }
+
+        .table-container {
+            background: #fff; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .filter-section {
+            background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 1.5rem;
+        }
+
+        .active-filter-badge {
+            background-color: var(--primary-color); color: white; padding: 5px 10px;
+            border-radius: 20px; font-size: 0.8rem; display: none; margin-left: 10px;
+        }
+
+        .truncate-text {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .text-money { font-family: 'Consolas', monospace; }
+        .cursor-pointer { cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- 
+       ========================================================================
+       1. ÁREA DE UPLOAD (Entrada de Dados)
+       ========================================================================
+    -->
+    <section class="upload-section">
+        <div class="container">
+            <h1 class="mb-3"><i class="fas fa-chart-line me-2"></i>Painel Fundo a Fundo - Leitor Inteligente</h1>
+            <p class="mb-4 text-light opacity-75">Carregue sua planilha (Excel/CSV) para gerar o dashboard automaticamente.</p>
+            
+            <div class="upload-box">
+                <i class="fas fa-file-excel fa-3x mb-3"></i>
+                <h4 class="mb-3">Selecione o arquivo de dados</h4>
+                <input type="file" id="inputFile" class="form-control" accept=".xlsx, .xls, .csv" />
+                <div id="uploadStatus" class="mt-2 small text-warning"></div>
+            </div>
+            <div class="mt-3 small text-white-50">
+                <i class="fas fa-info-circle me-1"></i> Estrutura esperada: UF | OBJETO | QUANTIDADE | VALOR UNITÁRIO | VALOR TOTAL | VALOR EXECUTADO
+            </div>
+        </div>
+    </section>
+
+    <!-- 
+       ========================================================================
+       2. CONTEÚDO DO DASHBOARD (Gerado via JS)
+       ========================================================================
+    -->
+    <div id="dashboard-content" class="container">
+
+        <!-- Header Interno -->
+        <div class="row mb-4">
+            <div class="col-12 d-flex justify-content-between align-items-center border-bottom pb-2">
+                <h3 class="text-secondary">Visão Geral da Execução</h3>
+                <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
+                    <i class="fas fa-sync-alt me-1"></i> Carregar outro arquivo
+                </button>
+            </div>
+        </div>
+        
+        <!-- KPI SECTION (GLOBAL) -->
+        <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card kpi-card">
+                    <div class="kpi-title"><i class="fas fa-file-invoice-dollar me-2"></i>Total Repassado</div>
+                    <div class="kpi-value text-money" id="kpi-total-contratado">R$ 0,00</div>
+                    <div class="kpi-desc">Global (Arquivo Completo)</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card kpi-card">
+                    <div class="kpi-title"><i class="fas fa-check-circle me-2"></i>Total Executado</div>
+                    <div class="kpi-value text-money text-success" id="kpi-total-executado">R$ 0,00</div>
+                    <div class="kpi-desc">Global (Arquivo Completo)</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card kpi-card">
+                    <div class="kpi-title"><i class="fas fa-chart-pie me-2"></i>Execução Global</div>
+                    <div class="kpi-value" id="kpi-percentual-global">0,0%</div>
+                    <div class="kpi-desc">Performance nacional</div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card kpi-card">
+                    <div class="kpi-title"><i class="fas fa-map-marker-alt me-2"></i>UFs Ativas</div>
+                    <div class="kpi-value" id="kpi-ufs-ativas">0</div>
+                    <div class="kpi-desc" id="kpi-ufs-total-desc">UFs com execução > R$ 0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHART SECTION -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="mb-1 text-secondary">Execução por UF (%)</h4>
+                <p class="text-muted small mb-3">
+                    Clique nas barras para filtrar os itens da tabela.
+                </p>
+                <div class="chart-container">
+                    <canvas id="chartExecucaoUF"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="row">
+            <div class="col-12">
+                <div class="filter-section d-flex flex-wrap align-items-center gap-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-filter text-secondary me-2"></i>
+                        <strong>Filtros:</strong>
+                    </div>
+                    <div style="min-width: 200px;">
+                        <select id="filtroUF" class="form-select">
+                            <option value="">Todas as UFs</option>
+                        </select>
+                    </div>
+                    <div class="flex-grow-1">
+                        <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por objeto...">
+                    </div>
+                    <button id="btnLimparFiltros" class="btn btn-outline-secondary">
+                        <i class="fas fa-undo me-1"></i> Limpar
+                    </button>
+                    <span id="filtroAtivoBadge" class="active-filter-badge">
+                        UF: <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1 cursor-pointer"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- [NOVO] CARDS DINÂMICOS (PÓS-FILTRO) -->
+        <div class="row mb-4" id="cards-dinamicos-section">
+            <div class="col-12 mb-2">
+                <span class="badge bg-secondary text-uppercase"><i class="fas fa-calculator me-1"></i> Resumo da Seleção Atual</span>
+            </div>
+            <!-- Dinâmico 1: Repassado -->
+            <div class="col-xl-3 col-md-6 mb-2">
+                <div class="card kpi-card dynamic-card py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="kpi-title mb-0" style="font-size: 0.75rem;">Repassado (Filtro)</div>
+                            <div class="kpi-value text-money" style="font-size: 1.2rem;" id="dyn-total-repassado">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-filter text-muted opacity-25 fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Dinâmico 2: Executado -->
+            <div class="col-xl-3 col-md-6 mb-2">
+                <div class="card kpi-card dynamic-card py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="kpi-title mb-0" style="font-size: 0.75rem;">Executado (Filtro)</div>
+                            <div class="kpi-value text-success text-money" style="font-size: 1.2rem;" id="dyn-total-executado">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-coins text-success opacity-25 fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Dinâmico 3: Percentual -->
+            <div class="col-xl-3 col-md-6 mb-2">
+                <div class="card kpi-card dynamic-card py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="kpi-title mb-0" style="font-size: 0.75rem;">% Execução (Filtro)</div>
+                            <div class="kpi-value" style="font-size: 1.2rem;" id="dyn-percentual">0,0%</div>
+                        </div>
+                        <i class="fas fa-percentage text-primary opacity-25 fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Dinâmico 4: Quantidade -->
+            <div class="col-xl-3 col-md-6 mb-2">
+                <div class="card kpi-card dynamic-card py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="kpi-title mb-0" style="font-size: 0.75rem;">Qtd. Itens</div>
+                            <div class="kpi-value" style="font-size: 1.2rem;" id="dyn-qtd-itens">0</div>
+                        </div>
+                        <i class="fas fa-list-ol text-warning opacity-25 fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLE SECTION -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="table-container">
+                    <table id="tabelaItens" class="table table-striped table-hover w-100">
+                        <thead>
+                            <tr>
+                                <th>UF</th>
+                                <th>Objeto</th>
+                                <th class="text-center">Qtd.</th>
+                                <th class="text-end">Valor Unit. (R$)</th>
+                                <th class="text-end">Valor Total (R$)</th>
+                                <th class="text-end">Executado (R$)</th>
+                                <th class="text-center">%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JS popula aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- INTERPRETATION -->
+        <div class="row">
+            <div class="col-12">
+                <div class="interpretation-section">
+                    <h4 class="mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Leitura Automática</h4>
+                    <p id="texto-analise">
+                        Carregue uma planilha para visualizar a análise automática dos dados.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        // ========================================================================
+        // 1. LÓGICA DE LEITURA DO ARQUIVO (EXCEL/CSV)
+        // ========================================================================
+        
+        let dadosFafGlobal = [];
+        let tabelaInstancia = null;
+        let chartInstancia = null;
+
+        document.getElementById('inputFile').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(evt) {
+            const file = evt.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            
+            // Feedback de carregamento
+            document.getElementById('uploadStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo arquivo...';
+
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                try {
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    
+                    // Pega a primeira aba da planilha
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Converte para JSON bruto
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
+                    
+                    if (jsonData.length === 0) {
+                        alert("A planilha parece estar vazia!");
+                        return;
+                    }
+
+                    // Processa e Normaliza os dados
+                    dadosFafGlobal = normalizarDados(jsonData);
+                    
+                    // Inicializa o Dashboard
+                    initDashboard(dadosFafGlobal);
+                    
+                    // Mostra o dashboard com animação
+                    const dash = document.getElementById('dashboard-content');
+                    dash.style.display = 'block';
+                    setTimeout(() => dash.style.opacity = 1, 100);
+                    
+                    document.getElementById('uploadStatus').innerHTML = ''; // Limpa status
+
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById('uploadStatus').textContent = 'Erro ao ler arquivo. Verifique se é um Excel válido.';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Função para garantir que lemos as colunas certas independente de maiúsculas/minúsculas/acentos
+        function normalizarDados(rawJson) {
+            return rawJson.map(row => {
+                const keys = Object.keys(row);
+                const getValue = (targetKey) => {
+                    const foundKey = keys.find(k => 
+                        k.toUpperCase().replace(/[^A-Z0-9]/g, '').includes(targetKey)
+                    );
+                    return foundKey ? row[foundKey] : null;
+                };
+
+                let valTotal = parseFloat(getValue("TOTAL") || 0);
+                let valExec = parseFloat(getValue("EXECUTADO") || 0);
+                let qtd = parseInt(getValue("QUANTIDADE") || 0);
+                
+                return {
+                    uf: getValue("UF") || "N/A",
+                    objeto: getValue("OBJETO") || "Item sem descrição",
+                    quantidade: qtd,
+                    valorUnitario: parseFloat(getValue("UNITARIO") || 0),
+                    valorTotal: valTotal,
+                    valorExecutado: valExec
+                };
+            }).filter(item => item.uf !== "N/A"); 
+        }
+
+        // ========================================================================
+        // 2. LÓGICA DO DASHBOARD (Visualização)
+        // ========================================================================
+
+        function initDashboard(data) {
+            if (chartInstancia) chartInstancia.destroy();
+            if (tabelaInstancia) {
+                tabelaInstancia.destroy();
+                $('#tabelaItens').empty(); 
+                $('#tabelaItens').html('<thead><tr><th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit. (R$)</th><th class="text-end">Valor Total (R$)</th><th class="text-end">Executado (R$)</th><th class="text-center">%</th></tr></thead><tbody></tbody>');
+            }
+
+            const analise = processarDadosAgregados(data);
+            
+            renderKPIs(analise.global, analise.ufsUnicas);
+            renderChart(analise.dadosPorUF);
+            initTable(data);
+            populateSelectUF(analise.ufsUnicas);
+            setupEventListeners();
+            atualizarTextoAnalise(analise);
+            
+            // Inicializa os cards dinâmicos com tudo (sem filtro)
+            atualizarCardsDinamicos();
+        }
+
+        function processarDadosAgregados(data) {
+            let totalContratado = 0;
+            let totalExecutado = 0;
+            const ufsSet = new Set();
+            const dadosPorUF = {};
+
+            data.forEach(item => {
+                totalContratado += item.valorTotal;
+                totalExecutado += item.valorExecutado;
+                if (item.uf) ufsSet.add(item.uf);
+
+                if (!dadosPorUF[item.uf]) dadosPorUF[item.uf] = { total: 0, exec: 0, uf: item.uf };
+                dadosPorUF[item.uf].total += item.valorTotal;
+                dadosPorUF[item.uf].exec += item.valorExecutado;
+            });
+
+            const arrayUF = Object.values(dadosPorUF).map(d => {
+                d.percentual = d.total > 0 ? (d.exec / d.total) * 100 : 0;
+                return d;
+            });
+            arrayUF.sort((a, b) => b.percentual - a.percentual || b.total - a.total);
+
+            return {
+                global: {
+                    totalContratado,
+                    totalExecutado,
+                    percentual: totalContratado > 0 ? (totalExecutado / totalContratado) * 100 : 0,
+                    ufsComExecucao: arrayUF.filter(u => u.exec > 0).length
+                },
+                ufsUnicas: Array.from(ufsSet).sort(),
+                dadosPorUF: arrayUF
+            };
+        }
+
+        // --- Renderizadores ---
+        const formatMoney = (val) => val ? val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00';
+        const formatPercent = (val) => val ? val.toFixed(1).replace('.', ',') + '%' : '0,0%';
+        
+        function gerarCoresVariadas(count) {
+            const cores = [
+                '#3498db', '#e74c3c', '#2ecc71', '#9b59b6', '#f1c40f', 
+                '#e67e22', '#1abc9c', '#34495e', '#d35400', '#c0392b',
+                '#8e44ad', '#2980b9', '#27ae60', '#f39c12', '#7f8c8d'
+            ];
+            return Array.from({ length: count }, (_, i) => cores[i % cores.length]);
+        }
+
+        function renderKPIs(global, ufsList) {
+            const elContratado = $('#kpi-total-contratado');
+            const txtContratado = formatMoney(global.totalContratado);
+            elContratado.text(txtContratado).attr('title', txtContratado);
+
+            const elExecutado = $('#kpi-total-executado');
+            const txtExecutado = formatMoney(global.totalExecutado);
+            elExecutado.text(txtExecutado).attr('title', txtExecutado);
+
+            $('#kpi-percentual-global').text(formatPercent(global.percentual));
+            $('#kpi-ufs-ativas').text(global.ufsComExecucao);
+            $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs no arquivo`);
+        }
+
+        function renderChart(dadosPorUF) {
+            const ctx = document.getElementById('chartExecucaoUF').getContext('2d');
+            const labels = dadosPorUF.map(d => d.uf);
+            const dataValues = dadosPorUF.map(d => d.percentual);
+            const bgColors = gerarCoresVariadas(dadosPorUF.length);
+
+            chartInstancia = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '% Execução',
+                        data: dataValues,
+                        backgroundColor: bgColors,
+                        borderRadius: 4,
+                        barPercentage: 0.8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    const item = dadosPorUF[ctx.dataIndex];
+                                    return `Exec: ${formatPercent(item.percentual)} (${formatMoney(item.exec)})`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } },
+                        y: { grid: { display: false } }
+                    },
+                    onClick: (e, els) => {
+                        if (els.length > 0) aplicarFiltroUF(labels[els[0].index]);
+                    },
+                    onHover: (e, els) => {
+                        e.native.target.style.cursor = els[0] ? 'pointer' : 'default';
+                    }
+                }
+            });
+        }
+
+        function initTable(data) {
+            const tbody = document.querySelector('#tabelaItens tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(row => {
+                const percent = row.valorTotal > 0 ? (row.valorExecutado / row.valorTotal) * 100 : 0;
+                
+                const progressColor = (p) => {
+                    if (p <= 0.1) return '#bdc3c7'; 
+                    if (p < 50) return '#f39c12'; 
+                    if (p < 100) return '#3498db'; 
+                    return '#1abc9c';
+                };
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge bg-secondary">${row.uf}</span></td>
+                    <td title="${row.objeto}"><span class="truncate-text">${row.objeto}</span></td>
+                    <td class="text-center">${row.quantidade}</td>
+                    <td class="text-end font-monospace small">${formatMoney(row.valorUnitario)}</td>
+                    <td class="text-end font-monospace">${formatMoney(row.valorTotal)}</td>
+                    <td class="text-end ${row.valorExecutado > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
+                        ${formatMoney(row.valorExecutado)}
+                    </td>
+                    <td class="text-center">
+                        <div class="progress" style="height: 20px; position: relative; background-color: #e9ecef;">
+                            <div class="progress-bar" style="width: ${percent}%; background-color: ${progressColor(percent)}"></div>
+                            <span style="position: absolute; width: 100%; text-align: center; font-size: 0.75rem; line-height: 20px; color: #333; font-weight: 700;">
+                                ${formatPercent(percent)}
+                            </span>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            tabelaInstancia = $('#tabelaItens').DataTable({
+                language: { url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json" },
+                destroy: true, 
+                paging: false, 
+                scrollY: '500px', 
+                scrollCollapse: true,
+                info: false, 
+                order: [[0, 'asc'], [5, 'desc']],
+                columnDefs: [
+                    { type: 'num-fmt', targets: [3, 4, 5] },
+                    { width: '5%', targets: 0 },
+                    { width: '35%', targets: 1 }
+                ]
+            });
+        }
+
+        // --- Filtros e Dinâmica ---
+        function populateSelectUF(ufs) {
+            const $select = $('#filtroUF');
+            $select.empty().append(new Option("Todas as UFs", ""));
+            ufs.forEach(uf => $select.append(new Option(uf, uf)));
+        }
+
+        function setupEventListeners() {
+            // Dropdown de UF
+            $('#filtroUF').off('change').on('change', function() { 
+                aplicarFiltroUF(this.value); 
+                atualizarCardsDinamicos(); // Atualiza cards ao mudar UF
+            });
+
+            // Campo de Texto
+            $('#filtroObjeto').off('keyup').on('keyup', function() { 
+                tabelaInstancia.column(1).search(this.value).draw(); 
+                atualizarCardsDinamicos(); // Atualiza cards ao digitar
+            });
+            
+            const reset = () => {
+                $('#filtroUF').val('');
+                $('#filtroObjeto').val('');
+                $('#filtroAtivoBadge').hide();
+                tabelaInstancia.search('').columns().search('').draw();
+                atualizarCardsDinamicos(); // Reseta cards
+            };
+
+            $('#btnLimparFiltros, #filtroAtivoBadge').off('click').on('click', reset);
+        }
+
+        // [NOVA FUNÇÃO] Atualiza os cards dinâmicos com base nos filtros ativos
+        function atualizarCardsDinamicos() {
+            const ufFiltro = $('#filtroUF').val();
+            const textoFiltro = $('#filtroObjeto').val().toLowerCase();
+
+            // Filtra os dados globais manualmente para garantir precisão
+            const dadosFiltrados = dadosFafGlobal.filter(item => {
+                const matchUF = ufFiltro ? item.uf === ufFiltro : true;
+                const matchTexto = textoFiltro ? item.objeto.toLowerCase().includes(textoFiltro) : true;
+                return matchUF && matchTexto;
+            });
+
+            // Calcula somatórios
+            let somaRepassado = 0;
+            let somaExecutado = 0;
+            let qtdItens = dadosFiltrados.length;
+
+            dadosFiltrados.forEach(item => {
+                somaRepassado += item.valorTotal;
+                somaExecutado += item.valorExecutado;
+            });
+
+            const percentual = somaRepassado > 0 ? (somaExecutado / somaRepassado) * 100 : 0;
+
+            // Atualiza o DOM
+            const elRep = $('#dyn-total-repassado');
+            const txtRep = formatMoney(somaRepassado);
+            elRep.text(txtRep).attr('title', txtRep);
+
+            const elExec = $('#dyn-total-executado');
+            const txtExec = formatMoney(somaExecutado);
+            elExec.text(txtExec).attr('title', txtExec);
+
+            $('#dyn-percentual').text(formatPercent(percentual));
+            $('#dyn-qtd-itens').text(qtdItens);
+        }
+
+        function aplicarFiltroUF(uf) {
+            $('#filtroUF').val(uf);
+            if (uf) {
+                tabelaInstancia.column(0).search(`^${uf}$`, true, false).draw();
+                $('#textoFiltroAtivo').text(uf);
+                $('#filtroAtivoBadge').css('display', 'inline-block');
+            } else {
+                tabelaInstancia.column(0).search('').draw();
+                $('#filtroAtivoBadge').hide();
+            }
+        }
+
+        function atualizarTextoAnalise(analise) {
+            const ufsLider = analise.dadosPorUF.slice(0, 3).filter(u => u.exec > 0).map(u => u.uf).join(", ");
+            const ufsZeradas = analise.dadosPorUF.filter(u => u.exec === 0).length;
+            
+            let texto = `Foram processados <strong>${analise.dadosPorUF.length} UFs</strong> a partir do arquivo enviado. `;
+            if (ufsLider) {
+                texto += `As UFs com melhor índice de execução financeira são: <strong>${ufsLider}</strong>. `;
+            }
+            if (ufsZeradas > 0) {
+                texto += `Identificamos que <strong>${ufsZeradas} UFs</strong> ainda não possuem execução registrada (0%) nos itens listados nesta planilha.`;
+            }
+            document.getElementById('texto-analise').innerHTML = texto;
+        }
+
+    </script>
+</body>
+</html>
