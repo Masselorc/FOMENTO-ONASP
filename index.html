@@ -3,22 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Execução Fundo a Fundo - Leitor Excel</title>
+    <title>Painel de Acompanhamento Fundo a Fundo</title>
     
-    <!-- 
-        ========================================================================
-        IMPORTS DE BIBLIOTECAS (CDNs)
-        ========================================================================
-    -->
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- DataTables Bootstrap 5 CSS -->
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    
-    <!-- SheetJS (Biblioteca para ler Excel) -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -35,39 +27,18 @@
             padding-bottom: 50px;
         }
 
-        /* Área de Upload */
-        .upload-section {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 3rem 1rem;
-            text-align: center;
-            border-bottom: 5px solid var(--accent-color);
+        /* Header */
+        .header-section {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 1.5rem 0;
             margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        
+        .header-title { color: var(--primary-color); font-weight: 700; }
 
-        .upload-box {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px dashed rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-            padding: 2rem;
-            max-width: 600px;
-            margin: 0 auto;
-            transition: all 0.3s ease;
-        }
-
-        .upload-box:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: #fff;
-        }
-
-        /* Painel (inicialmente oculto) */
-        #dashboard-content {
-            display: none; /* Só aparece após upload */
-            opacity: 0;
-            transition: opacity 0.5s ease-in;
-        }
-
-        /* Estilos do Dashboard */
+        /* KPI Cards */
         .kpi-card {
             background: #fff; border: none; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; 
@@ -87,6 +58,7 @@
             margin-bottom: 5px; 
         }
         
+        /* Tipografia responsiva para valores */
         .kpi-value { 
             font-size: clamp(1.1rem, 1.8vw, 1.8rem); 
             font-weight: bold; 
@@ -99,25 +71,27 @@
         
         .kpi-desc { font-size: 0.8rem; color: #95a5a6; margin-top: 5px; }
 
-        /* Estilo específico para os Cards Dinâmicos (Filtrados) */
+        /* Estilo para Cards Dinâmicos (abaixo dos filtros) */
         .dynamic-card {
             border-left: 4px solid var(--secondary-color);
-            background-color: #fff;
+            background-color: #fcfcfc;
         }
 
+        /* Gráfico */
         .chart-container {
             background: #fff; padding: 20px; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem;
             position: relative; height: 500px;
         }
 
+        /* Tabelas e Filtros */
         .table-container {
             background: #fff; padding: 20px; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .filter-section {
-            background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 1.5rem;
+            background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 1rem;
         }
 
         .active-filter-badge {
@@ -136,48 +110,30 @@
 
         .text-money { font-family: 'Consolas', monospace; }
         .cursor-pointer { cursor: pointer; }
+        
+        /* Badge UF */
+        .badge-uf {
+            min-width: 35px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- 
-       ========================================================================
-       1. ÁREA DE UPLOAD (Entrada de Dados)
-       ========================================================================
-    -->
-    <section class="upload-section">
+    <!-- CABEÇALHO ATUALIZADO -->
+    <header class="header-section">
         <div class="container">
-            <h1 class="mb-3"><i class="fas fa-chart-line me-2"></i>Painel Fundo a Fundo - Leitor Inteligente</h1>
-            <p class="mb-4 text-light opacity-75">Carregue sua planilha (Excel/CSV) para gerar o dashboard automaticamente.</p>
-            
-            <div class="upload-box">
-                <i class="fas fa-file-excel fa-3x mb-3"></i>
-                <h4 class="mb-3">Selecione o arquivo de dados</h4>
-                <input type="file" id="inputFile" class="form-control" accept=".xlsx, .xls, .csv" />
-                <div id="uploadStatus" class="mt-2 small text-warning"></div>
-            </div>
-            <div class="mt-3 small text-white-50">
-                <i class="fas fa-info-circle me-1"></i> Estrutura esperada: UF | OBJETO | QUANTIDADE | VALOR UNITÁRIO | VALOR TOTAL | VALOR EXECUTADO
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <h1 class="header-title mb-2">Painel de Acompanhamento Fundo a Fundo</h1>
+                    <p class="text-muted mb-0">
+                        Ouvidoria Nacional de Serviços Penais | Monitoramento de Recursos
+                    </p>
+                </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <!-- 
-       ========================================================================
-       2. CONTEÚDO DO DASHBOARD (Gerado via JS)
-       ========================================================================
-    -->
-    <div id="dashboard-content" class="container">
-
-        <!-- Header Interno -->
-        <div class="row mb-4">
-            <div class="col-12 d-flex justify-content-between align-items-center border-bottom pb-2">
-                <h3 class="text-secondary">Visão Geral da Execução</h3>
-                <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
-                    <i class="fas fa-sync-alt me-1"></i> Carregar outro arquivo
-                </button>
-            </div>
-        </div>
+    <div class="container">
         
         <!-- KPI SECTION (GLOBAL) -->
         <div class="row mb-4">
@@ -185,28 +141,28 @@
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-file-invoice-dollar me-2"></i>Total Repassado</div>
                     <div class="kpi-value text-money" id="kpi-total-contratado">R$ 0,00</div>
-                    <div class="kpi-desc">Global (Arquivo Completo)</div>
+                    <div class="kpi-desc">Global</div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-3">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-check-circle me-2"></i>Total Executado</div>
                     <div class="kpi-value text-money text-success" id="kpi-total-executado">R$ 0,00</div>
-                    <div class="kpi-desc">Global (Arquivo Completo)</div>
+                    <div class="kpi-desc">Global</div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-3">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-chart-pie me-2"></i>Execução Global</div>
                     <div class="kpi-value" id="kpi-percentual-global">0,0%</div>
-                    <div class="kpi-desc">Performance nacional</div>
+                    <div class="kpi-desc">Média Nacional</div>
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-3">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-map-marker-alt me-2"></i>UFs Ativas</div>
                     <div class="kpi-value" id="kpi-ufs-ativas">0</div>
-                    <div class="kpi-desc" id="kpi-ufs-total-desc">UFs com execução > R$ 0</div>
+                    <div class="kpi-desc" id="kpi-ufs-total-desc">UFs com execução > 0</div>
                 </div>
             </div>
         </div>
@@ -214,17 +170,17 @@
         <!-- CHART SECTION -->
         <div class="row mb-4">
             <div class="col-12">
-                <h4 class="mb-1 text-secondary">Execução por UF (%)</h4>
-                <p class="text-muted small mb-3">
-                    Clique nas barras para filtrar os itens da tabela.
-                </p>
+                <div class="d-flex justify-content-between align-items-end mb-2">
+                    <h4 class="mb-0 text-secondary">Execução por UF (%)</h4>
+                    <small class="text-muted"><i class="fas fa-mouse-pointer me-1"></i> Clique na barra para filtrar</small>
+                </div>
                 <div class="chart-container">
                     <canvas id="chartExecucaoUF"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- FILTERS -->
+        <!-- FILTROS -->
         <div class="row">
             <div class="col-12">
                 <div class="filter-section d-flex flex-wrap align-items-center gap-3">
@@ -238,7 +194,7 @@
                         </select>
                     </div>
                     <div class="flex-grow-1">
-                        <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por objeto...">
+                        <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por descrição do objeto...">
                     </div>
                     <button id="btnLimparFiltros" class="btn btn-outline-secondary">
                         <i class="fas fa-undo me-1"></i> Limpar
@@ -250,7 +206,7 @@
             </div>
         </div>
 
-        <!-- [NOVO] CARDS DINÂMICOS (PÓS-FILTRO) -->
+        <!-- CARDS DINÂMICOS (PÓS-FILTRO) -->
         <div class="row mb-4" id="cards-dinamicos-section">
             <div class="col-12 mb-2">
                 <span class="badge bg-secondary text-uppercase"><i class="fas fa-calculator me-1"></i> Resumo da Seleção Atual</span>
@@ -305,8 +261,8 @@
             </div>
         </div>
 
-        <!-- TABLE SECTION -->
-        <div class="row mb-4">
+        <!-- TABELA -->
+        <div class="row mb-5">
             <div class="col-12">
                 <div class="table-container">
                     <table id="tabelaItens" class="table table-striped table-hover w-100">
@@ -328,18 +284,11 @@
                 </div>
             </div>
         </div>
-
-        <!-- INTERPRETATION -->
-        <div class="row">
-            <div class="col-12">
-                <div class="interpretation-section">
-                    <h4 class="mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Leitura Automática</h4>
-                    <p id="texto-analise">
-                        Carregue uma planilha para visualizar a análise automática dos dados.
-                    </p>
-                </div>
-            </div>
-        </div>
+        
+        <!-- RODAPÉ ATUALIZADO -->
+        <footer class="text-center text-muted py-3 small border-top mt-4">
+            Painel de Dados - Atualizado em dezembro de 2025
+        </footer>
 
     </div>
 
@@ -352,90 +301,170 @@
 
     <script>
         // ========================================================================
-        // 1. LÓGICA DE LEITURA DO ARQUIVO (EXCEL/CSV)
+        // 1. BASE DE DADOS INTEGRADA (JSON COMPLETO)
         // ========================================================================
-        
-        let dadosFafGlobal = [];
+        const dadosFaf = [
+            { "uf": "AC", "objeto": "VEÍCULO DE PASSEIO TIPO SEDAN", "quantidade": 1, "valorUnitario": 125704.00, "valorTotal": 125704.00, "valorExecutado": 125704.00 },
+            { "uf": "AC", "objeto": "Contratação de equipe técnica para OUVIDORIA (psicólogo, jurídico e estagiários) (24 meses)", "quantidade": 1, "valorUnitario": 308425.53, "valorTotal": 308425.53, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Computador PC", "quantidade": 3, "valorUnitario": 16754.40, "valorTotal": 50263.20, "valorExecutado": 50263.20 },
+            { "uf": "AP", "objeto": "Notebook", "quantidade": 2, "valorUnitario": 12744.80, "valorTotal": 25489.60, "valorExecutado": 25489.60 },
+            { "uf": "AP", "objeto": "Mesas De Escritório Com Gavetas", "quantidade": 3, "valorUnitario": 2370.00, "valorTotal": 7110.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Mesa Redonda Para Reunião", "quantidade": 1, "valorUnitario": 690.00, "valorTotal": 690.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Mesa Auxiliar Para Impressora", "quantidade": 3, "valorUnitario": 894.00, "valorTotal": 2682.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Cadeira Tipo Palito", "quantidade": 6, "valorUnitario": 1794.00, "valorTotal": 10764.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Longarina Com 4 Cadeiras", "quantidade": 2, "valorUnitario": 1520.00, "valorTotal": 3040.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Cadeira Escritório", "quantidade": 3, "valorUnitario": 1617.00, "valorTotal": 4851.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Armário Pequeno", "quantidade": 2, "valorUnitario": 1479.80, "valorTotal": 2959.60, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Armários Grande", "quantidade": 1, "valorUnitario": 810.00, "valorTotal": 810.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Roteador", "quantidade": 1, "valorUnitario": 728.00, "valorTotal": 728.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Bebedouro Torre Para Garrafão", "quantidade": 2, "valorUnitario": 1598.00, "valorTotal": 3196.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Central De Ar 18.000 Btus", "quantidade": 1, "valorUnitario": 3579.90, "valorTotal": 3579.90, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Arquivo", "quantidade": 1, "valorUnitario": 1206.00, "valorTotal": 1206.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Caixa De Som Microfone", "quantidade": 1, "valorUnitario": 2873.30, "valorTotal": 2873.30, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "01 Televisor 42”", "quantidade": 4, "valorUnitario": 6756.00, "valorTotal": 27024.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Tela De Projeção", "quantidade": 1, "valorUnitario": 830.00, "valorTotal": 830.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Projeto/Datashow", "quantidade": 1, "valorUnitario": 2699.00, "valorTotal": 2699.00, "valorExecutado": 0.00 },
+            { "uf": "AP", "objeto": "Nobreak", "quantidade": 3, "valorUnitario": 2460.00, "valorTotal": 7380.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Nobreaks;", "quantidade": 2, "valorUnitario": 1036.00, "valorTotal": 2072.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Conjuntos de computadores de mesa (desktop);", "quantidade": 3, "valorUnitario": 4500.00, "valorTotal": 13500.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Scanners de mesa;", "quantidade": 2, "valorUnitario": 1700.00, "valorTotal": 3400.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "câmeras WEB;", "quantidade": 2, "valorUnitario": 650.00, "valorTotal": 1300.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Cadeiras estofadas em tecido (ou similar), com encosto e sem braço;", "quantidade": 6, "valorUnitario": 600.00, "valorTotal": 3600.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Armários baixo em MDF, com duas portas com prateleiras internas - com chave;", "quantidade": 2, "valorUnitario": 900.00, "valorTotal": 1800.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Gaveteiros arquivo quatro gavetas para pasta suspensa;", "quantidade": 2, "valorUnitario": 759.67, "valorTotal": 1519.34, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Câmeras fotográficas digitais;", "quantidade": 2, "valorUnitario": 3589.66, "valorTotal": 7179.32, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Aparelhos telefônicos celular (smartphone);", "quantidade": 2, "valorUnitario": 4071.67, "valorTotal": 8143.34, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Ar-condicionado de 12000 BTUs;", "quantidade": 1, "valorUnitario": 1780.97, "valorTotal": 1780.97, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Nobreaks 1200VA;", "quantidade": 2, "valorUnitario": 1036.00, "valorTotal": 2072.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Roteador wireless;", "quantidade": 1, "valorUnitario": 520.00, "valorTotal": 520.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Aparelhos telefônicos fixos com identificador de chamadas;", "quantidade": 2, "valorUnitario": 380.00, "valorTotal": 760.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Bebedouros para garrafão de água 20L;", "quantidade": 2, "valorUnitario": 734.33, "valorTotal": 1468.66, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Repetidor wireless de sinal de internet;", "quantidade": 1, "valorUnitario": 350.00, "valorTotal": 350.00, "valorExecutado": 0.00 },
+            { "uf": "AL", "objeto": "Automóvel 1.0 com ar-condicionado", "quantidade": 1, "valorUnitario": 77480.08, "valorTotal": 77480.08, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Televisão LED smart tv 32 polegadas;", "quantidade": 1, "valorUnitario": 1600.00, "valorTotal": 1600.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Microondas 20 litros;", "quantidade": 1, "valorUnitario": 600.00, "valorTotal": 600.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Gélagua de coluna para garrafão de 20 litros;", "quantidade": 1, "valorUnitario": 600.00, "valorTotal": 600.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Frigobar compacto 47 litros;", "quantidade": 1, "valorUnitario": 1300.00, "valorTotal": 1300.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Telefone celular smartphone;", "quantidade": 2, "valorUnitario": 1600.00, "valorTotal": 3200.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Telefone sem fio;", "quantidade": 1, "valorUnitario": 189.22, "valorTotal": 189.22, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Cortinas persianas;", "quantidade": 1, "valorUnitario": 1600.00, "valorTotal": 1600.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Aparelho de ar condicionado 22.000 BTUS com instalação;", "quantidade": 2, "valorUnitario": 3500.00, "valorTotal": 7000.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Gaveteiro volante MDP;", "quantidade": 3, "valorUnitario": 550.00, "valorTotal": 1650.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Mesa em L;", "quantidade": 3, "valorUnitario": 1700.00, "valorTotal": 5100.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Armários baixos com duas portas 800x500x740 mm MDP;", "quantidade": 2, "valorUnitario": 850.00, "valorTotal": 1700.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Mesa de Reunião redonda com tampo em MDP 04 lugares;", "quantidade": 1, "valorUnitario": 1250.00, "valorTotal": 1250.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Escaninho baixo 900x500x740 MDP;", "quantidade": 1, "valorUnitario": 810.00, "valorTotal": 810.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Armário alto 2 portas 1600 x 900 x 500 mm.;", "quantidade": 4, "valorUnitario": 1200.00, "valorTotal": 4800.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Sofá estofado 2 lugares;", "quantidade": 1, "valorUnitario": 3000.00, "valorTotal": 3000.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Cadeira presidente giratória;", "quantidade": 3, "valorUnitario": 2100.00, "valorTotal": 6300.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Cadeiras fixas executivas com braço;", "quantidade": 2, "valorUnitario": 1400.00, "valorTotal": 2800.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Apoio ergonômico para os pés em poliestireno. Medidas aprox.: 400 mm x 300 mm;", "quantidade": 3, "valorUnitario": 100.00, "valorTotal": 300.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Pedestal para banner em alumínio, altura máxima 300 cm;", "quantidade": 1, "valorUnitario": 200.00, "valorTotal": 200.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Computador - CPU de 4 núcleos;", "quantidade": 3, "valorUnitario": 6500.00, "valorTotal": 19500.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Multifuncional Laser Monocromática;", "quantidade": 2, "valorUnitario": 4834.14, "valorTotal": 9668.28, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Tablet com conectividade mínima 3G;", "quantidade": 2, "valorUnitario": 1700.00, "valorTotal": 3400.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Notebook com requisitos mínimos de processamento. CPU de 4 núcleos ou mais;", "quantidade": 2, "valorUnitario": 5750.00, "valorTotal": 11500.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Projetor Cor Branca Resolução XGA;", "quantidade": 1, "valorUnitario": 4464.00, "valorTotal": 4464.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Nobreak;", "quantidade": 3, "valorUnitario": 1070.00, "valorTotal": 3210.00, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "HD externo 1TB USB 3.0;", "quantidade": 2, "valorUnitario": 279.90, "valorTotal": 559.80, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Pendrive 32gb USB 3.0;", "quantidade": 3, "valorUnitario": 32.90, "valorTotal": 98.70, "valorExecutado": 0.00 },
+            { "uf": "CE", "objeto": "Monitor LED 24.", "quantidade": 3, "valorUnitario": 1200.00, "valorTotal": 3600.00, "valorExecutado": 0.00 },
+            { "uf": "DF", "objeto": "Unidade móvel de ouvidoria, por meio de veículo automotor aparelhado com infraestrutura", "quantidade": 1, "valorUnitario": 350000.00, "valorTotal": 350000.00, "valorExecutado": 0.00 },
+            { "uf": "GO", "objeto": "Microcomputadores do tipo Desktop;", "quantidade": 3, "valorUnitario": 6544.89, "valorTotal": 19634.67, "valorExecutado": 0.00 },
+            { "uf": "GO", "objeto": "Monitores", "quantidade": 3, "valorUnitario": 1301.94, "valorTotal": 3905.82, "valorExecutado": 0.00 },
+            { "uf": "MT", "objeto": "Apoio ergonômico para pés;", "quantidade": 2, "valorUnitario": 66.32, "valorTotal": 132.64, "valorExecutado": 132.64 },
+            { "uf": "MT", "objeto": "Fone de Ouvido Supra auricular;", "quantidade": 2, "valorUnitario": 200.00, "valorTotal": 400.00, "valorExecutado": 400.00 },
+            { "uf": "MT", "objeto": "Office.", "quantidade": 3, "valorUnitario": 2094.33, "valorTotal": 6282.99, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Ar condicionado split - 12.000 BTUs 220V;", "quantidade": 1, "valorUnitario": 2149.00, "valorTotal": 2149.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Notebook - processador Intel;", "quantidade": 4, "valorUnitario": 6349.00, "valorTotal": 25396.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Refrigerador degelo prático 240l;", "quantidade": 1, "valorUnitario": 1699.00, "valorTotal": 1699.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Frigobar, 45l, branco;", "quantidade": 1, "valorUnitario": 732.22, "valorTotal": 732.22, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "TV de 32\"", "quantidade": 1, "valorUnitario": 1599.00, "valorTotal": 1599.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "HD Externo;", "quantidade": 1, "valorUnitario": 450.00, "valorTotal": 450.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "TV de 50\";", "quantidade": 2, "valorUnitario": 2879.00, "valorTotal": 5758.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Microcomputador, inclusive monitor, processador 16M;", "quantidade": 2, "valorUnitario": 6409.99, "valorTotal": 12819.98, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Multifuncional -impressora;", "quantidade": 1, "valorUnitario": 1215.05, "valorTotal": 1215.05, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Triturador de documentos;", "quantidade": 1, "valorUnitario": 2699.00, "valorTotal": 2699.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Gelágua - bebedouro de coluna;", "quantidade": 1, "valorUnitario": 639.00, "valorTotal": 639.00, "valorExecutado": 0.00 },
+            { "uf": "PB", "objeto": "Fragmentadora de papel.", "quantidade": 1, "valorUnitario": 599.90, "valorTotal": 599.90, "valorExecutado": 0.00 },
+            { "uf": "PI", "objeto": "Computadores;", "quantidade": 3, "valorUnitario": 6500.00, "valorTotal": 19500.00, "valorExecutado": 0.00 },
+            { "uf": "PI", "objeto": "Nobreaks 1000 VAs;", "quantidade": 3, "valorUnitario": 900.00, "valorTotal": 2700.00, "valorExecutado": 0.00 },
+            { "uf": "PI", "objeto": "Impressora Multifuncional;", "quantidade": 1, "valorUnitario": 1300.00, "valorTotal": 1300.00, "valorExecutado": 0.00 },
+            { "uf": "PI", "objeto": "Ar condicionado Split 12.000 btus.", "quantidade": 1, "valorUnitario": 1800.00, "valorTotal": 1800.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Câmera fotográfica;", "quantidade": 1, "valorUnitario": 6202.00, "valorTotal": 6202.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Cartão de memória;", "quantidade": 2, "valorUnitario": 150.00, "valorTotal": 300.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Mochila;", "quantidade": 1, "valorUnitario": 160.00, "valorTotal": 160.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Tripé para câmera;", "quantidade": 1, "valorUnitario": 400.00, "valorTotal": 400.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Impressora multifuncional;", "quantidade": 1, "valorUnitario": 4390.00, "valorTotal": 4390.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Notebook;", "quantidade": 1, "valorUnitario": 5722.00, "valorTotal": 5722.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "HD externo;", "quantidade": 1, "valorUnitario": 357.00, "valorTotal": 357.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Webcam;", "quantidade": 2, "valorUnitario": 449.00, "valorTotal": 898.00, "valorExecutado": 0.00 },
+            { "uf": "PR", "objeto": "Microfone de mesa.", "quantidade": 2, "valorUnitario": 86.00, "valorTotal": 172.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Notebook;", "quantidade": 2, "valorUnitario": 5550.00, "valorTotal": 11100.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Computador de Mesa (Desktop);", "quantidade": 2, "valorUnitario": 5039.00, "valorTotal": 10078.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Monitor;", "quantidade": 2, "valorUnitario": 1499.00, "valorTotal": 2998.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Segundo Monitor;", "quantidade": 2, "valorUnitario": 1799.98, "valorTotal": 3599.96, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Nobreak;", "quantidade": 2, "valorUnitario": 2754.00, "valorTotal": 5508.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Pen Drive 32Gb;", "quantidade": 2, "valorUnitario": 49.90, "valorTotal": 99.80, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Headset;", "quantidade": 2, "valorUnitario": 235.00, "valorTotal": 470.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Gravador de voz digital - para atendimentos presenciais;", "quantidade": 2, "valorUnitario": 450.00, "valorTotal": 900.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Scanner de mesa;", "quantidade": 1, "valorUnitario": 1899.90, "valorTotal": 1899.90, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Web Cam;", "quantidade": 2, "valorUnitario": 539.90, "valorTotal": 1079.80, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Telefone com identificador de chamadas;", "quantidade": 1, "valorUnitario": 589.00, "valorTotal": 589.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Impressora Multifuncional;", "quantidade": 1, "valorUnitario": 3299.00, "valorTotal": 3299.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Teclado para computador;", "quantidade": 2, "valorUnitario": 180.00, "valorTotal": 360.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Mouse;", "quantidade": 2, "valorUnitario": 89.00, "valorTotal": 178.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Cadeiras para escritórios (presidente);", "quantidade": 2, "valorUnitario": 945.00, "valorTotal": 1890.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Cadeiras Executiva (com braço);", "quantidade": 4, "valorUnitario": 620.00, "valorTotal": 2480.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Armário de escritório 2 portas e com prateleiras - com chave;", "quantidade": 1, "valorUnitario": 730.00, "valorTotal": 730.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Gaveteiro 3 gavetas, com rodízio e chave;", "quantidade": 2, "valorUnitario": 520.00, "valorTotal": 1040.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Armário Baixo em MDF, com duas portas com prateleiras internas - com chave;", "quantidade": 2, "valorUnitario": 580.00, "valorTotal": 1160.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Câmera Fotográfica Digital de alta resolução;", "quantidade": 1, "valorUnitario": 5200.00, "valorTotal": 5200.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Mesa em L em em MDF 1,40 x 1,40 com 02 gavetas;", "quantidade": 2, "valorUnitario": 1100.00, "valorTotal": 2200.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Estofado de 02 lugares, de até 2m de comprimento;", "quantidade": 1, "valorUnitario": 2199.00, "valorTotal": 2199.00, "valorExecutado": 0.00 },
+            { "uf": "RO", "objeto": "Aquisição de Bebedouro para garrafão de 20 litros.", "quantidade": 1, "valorUnitario": 1151.00, "valorTotal": 1151.00, "valorExecutado": 0.00 },
+            { "uf": "RR", "objeto": "Notebook", "quantidade": 3, "valorUnitario": 6192.18, "valorTotal": 18576.54, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "Tablete; ", "quantidade": 2, "valorUnitario": 2456.33, "valorTotal": 4912.66, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "Web Câmeras; ", "quantidade": 8, "valorUnitario": 339.00, "valorTotal": 2712.00, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "HD’s externos; ", "quantidade": 1, "valorUnitario": 315.00, "valorTotal": 315.00, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "Notebook;", "quantidade": 3, "valorUnitario": 1530.00, "valorTotal": 4590.00, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "Programa Editor de PDF, licença mensal", "quantidade": 12, "valorUnitario": 55.00, "valorTotal": 660.00, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "Caixa de som para PC;", "quantidade": 8, "valorUnitario": 78.00, "valorTotal": 624.00, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "Fone/Microfone para PC;", "quantidade": 8, "valorUnitario": 39.00, "valorTotal": 312.00, "valorExecutado": 0.00 },
+            { "uf": "SC", "objeto": "Telefone com identificador.", "quantidade": 3, "valorUnitario": 938.00, "valorTotal": 2814.00, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Sofá recepção 03 lugares;", "quantidade": 1, "valorUnitario": 1298.00, "valorTotal": 1298.00, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Cadeira de escritório ergonômica com base giratória;", "quantidade": 9, "valorUnitario": 1099.91, "valorTotal": 9899.19, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Mesa para escritório em L;", "quantidade": 2, "valorUnitario": 1339.36, "valorTotal": 2678.72, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Geladeira frost free duplex 389l;", "quantidade": 1, "valorUnitario": 3289.00, "valorTotal": 3289.00, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Persiana vertical PVC (m²);", "quantidade": 1, "valorUnitario": 135.50, "valorTotal": 135.50, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Teclado USB com fio;", "quantidade": 13, "valorUnitario": 87.67, "valorTotal": 1139.71, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Mouse óptico USB preto;", "quantidade": 13, "valorUnitario": 23.36, "valorTotal": 303.68, "valorExecutado": 0.00 },
+            { "uf": "SP", "objeto": "Etiqueta inkjet+laser A5 9,0x32,0 multiusos.", "quantidade": 10, "valorUnitario": 8.20, "valorTotal": 82.00, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Mesa Reta;", "quantidade": 2, "valorUnitario": 1100.00, "valorTotal": 2200.00, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Cadeira presidente operativa;", "quantidade": 2, "valorUnitario": 2600.00, "valorTotal": 5200.00, "valorExecutado": 1861.34 },
+            { "uf": "TO", "objeto": "Cadeira executiva fixa sem braços;", "quantidade": 4, "valorUnitario": 820.00, "valorTotal": 3280.00, "valorExecutado": 1391.40 },
+            { "uf": "TO", "objeto": "Armário baixo com 2 portas;", "quantidade": 1, "valorUnitario": 1423.00, "valorTotal": 1423.00, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Armário alto com 2 portas, 4 prateleiras;", "quantidade": 1, "valorUnitario": 2443.00, "valorTotal": 2443.00, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Ar-condicionado 18.000 btus;", "quantidade": 1, "valorUnitario": 3200.00, "valorTotal": 3200.00, "valorExecutado": 3214.83 },
+            { "uf": "TO", "objeto": "CPU Desktop Dll opt 3000;", "quantidade": 1, "valorUnitario": 4838.00, "valorTotal": 4838.00, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Monitor Dell 21,5 pol full;", "quantidade": 1, "valorUnitario": 1380.00, "valorTotal": 1380.00, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Monitor Led com tela de 19,5\" mínimo;", "quantidade": 1, "valorUnitario": 951.90, "valorTotal": 951.90, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Nobreak;", "quantidade": 2, "valorUnitario": 1100.00, "valorTotal": 2200.00, "valorExecutado": 0.00 },
+            { "uf": "TO", "objeto": "Notebook;", "quantidade": 1, "valorUnitario": 8000.00, "valorTotal": 8000.00, "valorExecutado": 0.00 }
+        ];
+
         let tabelaInstancia = null;
         let chartInstancia = null;
 
-        document.getElementById('inputFile').addEventListener('change', handleFileSelect, false);
-
-        function handleFileSelect(evt) {
-            const file = evt.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            
-            // Feedback de carregamento
-            document.getElementById('uploadStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lendo arquivo...';
-
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                try {
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    
-                    // Pega a primeira aba da planilha
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    
-                    // Converte para JSON bruto
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
-                    
-                    if (jsonData.length === 0) {
-                        alert("A planilha parece estar vazia!");
-                        return;
-                    }
-
-                    // Processa e Normaliza os dados
-                    dadosFafGlobal = normalizarDados(jsonData);
-                    
-                    // Inicializa o Dashboard
-                    initDashboard(dadosFafGlobal);
-                    
-                    // Mostra o dashboard com animação
-                    const dash = document.getElementById('dashboard-content');
-                    dash.style.display = 'block';
-                    setTimeout(() => dash.style.opacity = 1, 100);
-                    
-                    document.getElementById('uploadStatus').innerHTML = ''; // Limpa status
-
-                } catch (error) {
-                    console.error(error);
-                    document.getElementById('uploadStatus').textContent = 'Erro ao ler arquivo. Verifique se é um Excel válido.';
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        // Função para garantir que lemos as colunas certas independente de maiúsculas/minúsculas/acentos
-        function normalizarDados(rawJson) {
-            return rawJson.map(row => {
-                const keys = Object.keys(row);
-                const getValue = (targetKey) => {
-                    const foundKey = keys.find(k => 
-                        k.toUpperCase().replace(/[^A-Z0-9]/g, '').includes(targetKey)
-                    );
-                    return foundKey ? row[foundKey] : null;
-                };
-
-                let valTotal = parseFloat(getValue("TOTAL") || 0);
-                let valExec = parseFloat(getValue("EXECUTADO") || 0);
-                let qtd = parseInt(getValue("QUANTIDADE") || 0);
-                
-                return {
-                    uf: getValue("UF") || "N/A",
-                    objeto: getValue("OBJETO") || "Item sem descrição",
-                    quantidade: qtd,
-                    valorUnitario: parseFloat(getValue("UNITARIO") || 0),
-                    valorTotal: valTotal,
-                    valorExecutado: valExec
-                };
-            }).filter(item => item.uf !== "N/A"); 
-        }
+        // ========================================================================
+        // 2. INICIALIZAÇÃO
+        // ========================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard(dadosFaf);
+        });
 
         // ========================================================================
-        // 2. LÓGICA DO DASHBOARD (Visualização)
+        // 3. LÓGICA DO DASHBOARD
         // ========================================================================
 
         function initDashboard(data) {
@@ -453,9 +482,8 @@
             initTable(data);
             populateSelectUF(analise.ufsUnicas);
             setupEventListeners();
-            atualizarTextoAnalise(analise);
             
-            // Inicializa os cards dinâmicos com tudo (sem filtro)
+            // Inicializa os cards dinâmicos (Resumo da Seleção)
             atualizarCardsDinamicos();
         }
 
@@ -466,13 +494,19 @@
             const dadosPorUF = {};
 
             data.forEach(item => {
-                totalContratado += item.valorTotal;
-                totalExecutado += item.valorExecutado;
+                const vTotal = parseFloat(item.valorTotal) || 0;
+                const vExec = parseFloat(item.valorExecutado) || 0;
+
+                totalContratado += vTotal;
+                totalExecutado += vExec;
+                
                 if (item.uf) ufsSet.add(item.uf);
 
-                if (!dadosPorUF[item.uf]) dadosPorUF[item.uf] = { total: 0, exec: 0, uf: item.uf };
-                dadosPorUF[item.uf].total += item.valorTotal;
-                dadosPorUF[item.uf].exec += item.valorExecutado;
+                if (!dadosPorUF[item.uf]) {
+                    dadosPorUF[item.uf] = { total: 0, exec: 0, uf: item.uf };
+                }
+                dadosPorUF[item.uf].total += vTotal;
+                dadosPorUF[item.uf].exec += vExec;
             });
 
             const arrayUF = Object.values(dadosPorUF).map(d => {
@@ -517,7 +551,7 @@
 
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
             $('#kpi-ufs-ativas').text(global.ufsComExecucao);
-            $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs no arquivo`);
+            $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs listadas`);
         }
 
         function renderChart(dadosPorUF) {
@@ -572,7 +606,9 @@
             tbody.innerHTML = '';
 
             data.forEach(row => {
-                const percent = row.valorTotal > 0 ? (row.valorExecutado / row.valorTotal) * 100 : 0;
+                const vTotal = parseFloat(row.valorTotal) || 0;
+                const vExec = parseFloat(row.valorExecutado) || 0;
+                const percent = vTotal > 0 ? (vExec / vTotal) * 100 : 0;
                 
                 const progressColor = (p) => {
                     if (p <= 0.1) return '#bdc3c7'; 
@@ -583,13 +619,13 @@
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><span class="badge bg-secondary">${row.uf}</span></td>
+                    <td><span class="badge bg-secondary badge-uf">${row.uf}</span></td>
                     <td title="${row.objeto}"><span class="truncate-text">${row.objeto}</span></td>
                     <td class="text-center">${row.quantidade}</td>
                     <td class="text-end font-monospace small">${formatMoney(row.valorUnitario)}</td>
-                    <td class="text-end font-monospace">${formatMoney(row.valorTotal)}</td>
-                    <td class="text-end ${row.valorExecutado > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
-                        ${formatMoney(row.valorExecutado)}
+                    <td class="text-end font-monospace">${formatMoney(vTotal)}</td>
+                    <td class="text-end ${vExec > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
+                        ${formatMoney(vExec)}
                     </td>
                     <td class="text-center">
                         <div class="progress" style="height: 20px; position: relative; background-color: #e9ecef;">
@@ -619,7 +655,6 @@
             });
         }
 
-        // --- Filtros e Dinâmica ---
         function populateSelectUF(ufs) {
             const $select = $('#filtroUF');
             $select.empty().append(new Option("Todas as UFs", ""));
@@ -627,16 +662,14 @@
         }
 
         function setupEventListeners() {
-            // Dropdown de UF
             $('#filtroUF').off('change').on('change', function() { 
                 aplicarFiltroUF(this.value); 
-                atualizarCardsDinamicos(); // Atualiza cards ao mudar UF
+                atualizarCardsDinamicos(); 
             });
 
-            // Campo de Texto
             $('#filtroObjeto').off('keyup').on('keyup', function() { 
                 tabelaInstancia.column(1).search(this.value).draw(); 
-                atualizarCardsDinamicos(); // Atualiza cards ao digitar
+                atualizarCardsDinamicos(); 
             });
             
             const reset = () => {
@@ -644,37 +677,33 @@
                 $('#filtroObjeto').val('');
                 $('#filtroAtivoBadge').hide();
                 tabelaInstancia.search('').columns().search('').draw();
-                atualizarCardsDinamicos(); // Reseta cards
+                atualizarCardsDinamicos();
             };
 
             $('#btnLimparFiltros, #filtroAtivoBadge').off('click').on('click', reset);
         }
 
-        // [NOVA FUNÇÃO] Atualiza os cards dinâmicos com base nos filtros ativos
         function atualizarCardsDinamicos() {
             const ufFiltro = $('#filtroUF').val();
             const textoFiltro = $('#filtroObjeto').val().toLowerCase();
 
-            // Filtra os dados globais manualmente para garantir precisão
-            const dadosFiltrados = dadosFafGlobal.filter(item => {
+            const dadosFiltrados = dadosFaf.filter(item => {
                 const matchUF = ufFiltro ? item.uf === ufFiltro : true;
-                const matchTexto = textoFiltro ? item.objeto.toLowerCase().includes(textoFiltro) : true;
+                const matchTexto = textoFiltro ? (item.objeto && item.objeto.toLowerCase().includes(textoFiltro)) : true;
                 return matchUF && matchTexto;
             });
 
-            // Calcula somatórios
             let somaRepassado = 0;
             let somaExecutado = 0;
             let qtdItens = dadosFiltrados.length;
 
             dadosFiltrados.forEach(item => {
-                somaRepassado += item.valorTotal;
-                somaExecutado += item.valorExecutado;
+                somaRepassado += (parseFloat(item.valorTotal) || 0);
+                somaExecutado += (parseFloat(item.valorExecutado) || 0);
             });
 
             const percentual = somaRepassado > 0 ? (somaExecutado / somaRepassado) * 100 : 0;
 
-            // Atualiza o DOM
             const elRep = $('#dyn-total-repassado');
             const txtRep = formatMoney(somaRepassado);
             elRep.text(txtRep).attr('title', txtRep);
@@ -697,20 +726,6 @@
                 tabelaInstancia.column(0).search('').draw();
                 $('#filtroAtivoBadge').hide();
             }
-        }
-
-        function atualizarTextoAnalise(analise) {
-            const ufsLider = analise.dadosPorUF.slice(0, 3).filter(u => u.exec > 0).map(u => u.uf).join(", ");
-            const ufsZeradas = analise.dadosPorUF.filter(u => u.exec === 0).length;
-            
-            let texto = `Foram processados <strong>${analise.dadosPorUF.length} UFs</strong> a partir do arquivo enviado. `;
-            if (ufsLider) {
-                texto += `As UFs com melhor índice de execução financeira são: <strong>${ufsLider}</strong>. `;
-            }
-            if (ufsZeradas > 0) {
-                texto += `Identificamos que <strong>${ufsZeradas} UFs</strong> ainda não possuem execução registrada (0%) nos itens listados nesta planilha.`;
-            }
-            document.getElementById('texto-analise').innerHTML = texto;
         }
 
     </script>
