@@ -93,6 +93,25 @@
             background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 1rem;
         }
 
+        /* [NOVO] Estilo Customizado para Dropdown Multi-Select */
+        .dropdown-menu-custom {
+            max-height: 300px;
+            overflow-y: auto;
+            min-width: 250px;
+            padding: 10px;
+        }
+        .form-check-label {
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        .dropdown-item {
+            padding: 0.25rem 1rem;
+        }
+
         .active-filter-badge {
             background-color: var(--primary-color); color: white; padding: 5px 10px;
             border-radius: 20px; font-size: 0.8rem; display: none; margin-left: 10px;
@@ -135,7 +154,6 @@
             overflow: hidden;
             transition: box-shadow 0.3s;
             height: 100%;
-            /* O background agora é definido pelas classes regionais */
         }
         
         .state-detail-card:hover {
@@ -143,7 +161,7 @@
         }
 
         .state-header {
-            background-color: rgba(255, 255, 255, 0.6); /* Semi-transparente para mesclar com a cor da região */
+            background-color: rgba(255, 255, 255, 0.6); 
             padding: 15px;
             border-bottom: 1px solid rgba(0,0,0,0.05);
             display: flex;
@@ -175,7 +193,7 @@
         }
 
         .mini-card {
-            background: #fff; /* Mantém fundo branco para contraste */
+            background: #fff; 
             border: 1px solid rgba(0,0,0,0.05);
             border-radius: 6px;
             padding: 10px;
@@ -197,11 +215,11 @@
         }
 
         /* --- CORES POR REGIÃO (Tons Pastéis) --- */
-        .bg-norte { background-color: #e8f5e9; border-color: #c8e6c9; }       /* Verde Claro */
-        .bg-nordeste { background-color: #ffebee; border-color: #ffcdd2; }    /* Vermelho Claro */
-        .bg-centro-oeste { background-color: #fffde7; border-color: #fff9c4; }/* Amarelo Claro */
-        .bg-sudeste { background-color: #e3f2fd; border-color: #bbdefb; }     /* Azul Claro */
-        .bg-sul { background-color: #f3e5f5; border-color: #e1bee7; }         /* Roxo Claro (Distinto) */
+        .bg-norte { background-color: #e8f5e9; border-color: #c8e6c9; }       
+        .bg-nordeste { background-color: #ffebee; border-color: #ffcdd2; }    
+        .bg-centro-oeste { background-color: #fffde7; border-color: #fff9c4; }
+        .bg-sudeste { background-color: #e3f2fd; border-color: #bbdefb; }     
+        .bg-sul { background-color: #f3e5f5; border-color: #e1bee7; }         
 
         /* Botão Destaque */
         .btn-destaque {
@@ -295,7 +313,7 @@
             </div>
         </div>
 
-        <!-- FILTROS -->
+        <!-- FILTROS MULTI-SELECT -->
         <div class="row">
             <div class="col-12">
                 <div class="filter-section d-flex flex-wrap align-items-center gap-3">
@@ -304,16 +322,24 @@
                         <strong>Filtros:</strong>
                     </div>
                     
-                    <div style="min-width: 200px;">
-                        <select id="filtroInstrumento" class="form-select">
-                            <option value="">Todos Instrumentos</option>
-                        </select>
+                    <!-- Filtro Instrumento (Multi-Select Dropdown) -->
+                    <div class="dropdown" id="dropdownInstrumentoContainer">
+                        <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start bg-white" type="button" id="btnInstrumento" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 220px;">
+                            Todos Instrumentos
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-custom shadow" aria-labelledby="btnInstrumento" id="dropdownInstrumentoMenu">
+                            <!-- Opções preenchidas via JS -->
+                        </ul>
                     </div>
 
-                    <div style="min-width: 150px;">
-                        <select id="filtroUF" class="form-select">
-                            <option value="">Todas as UFs</option>
-                        </select>
+                    <!-- Filtro UF (Multi-Select Dropdown) -->
+                    <div class="dropdown" id="dropdownUFContainer">
+                        <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start bg-white" type="button" id="btnUF" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 180px;">
+                            Todas as UFs
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-custom shadow" aria-labelledby="btnUF" id="dropdownUFMenu">
+                             <!-- Opções preenchidas via JS -->
+                        </ul>
                     </div>
                     
                     <div class="flex-grow-1">
@@ -336,7 +362,7 @@
             <div class="col-12 mb-2">
                 <span class="badge bg-secondary text-uppercase"><i class="fas fa-calculator me-1"></i> Resumo da Seleção Atual</span>
             </div>
-            <!-- Dinâmicos -->
+            <!-- Dinâmico 1: Repassado -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -348,6 +374,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Dinâmico 2: Executado -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -359,6 +386,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Dinâmico 3: Percentual -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -370,6 +398,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Dinâmico 4: Quantidade -->
             <div class="col-xl-3 col-md-6 mb-2">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
@@ -409,7 +438,7 @@
         </div>
     </div> <!-- FIM VIEW DASHBOARD -->
 
-    <!-- VIEW 2: DETALHAMENTO POR ESTADOS (Nova) -->
+    <!-- VIEW 2: DETALHAMENTO POR ESTADOS -->
     <div id="view-detalhamento" class="container">
         <div class="row mb-4">
             <div class="col-12">
@@ -419,11 +448,8 @@
                 <h2 class="text-primary border-bottom pb-2">Detalhamento dos Recursos por Estado</h2>
             </div>
         </div>
-        
-        <!-- O conteúdo dos estados será injetado aqui via JS -->
         <div id="container-estados"></div>
-        
-    </div> <!-- FIM VIEW DETALHAMENTO -->
+    </div> 
 
     <!-- RODAPÉ -->
     <div class="container">
@@ -443,8 +469,6 @@
         // ========================================================================
         // 1. CONFIGURAÇÕES E DADOS
         // ========================================================================
-        
-        // Mapeamento de Regiões e Nomes de Estados
         const regioes = {
             "NORTE": ["AC", "AP", "AM", "PA", "RO", "RR", "TO"],
             "NORDESTE": ["AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"],
@@ -452,16 +476,9 @@
             "SUDESTE": ["ES", "MG", "RJ", "SP"],
             "SUL": ["PR", "RS", "SC"]
         };
-
         const nomesEstados = {
-            "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará",
-            "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso",
-            "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará", "PB": "Paraíba", "PR": "Paraná",
-            "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul",
-            "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
+            "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará", "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará", "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
         };
-
-        // Mapeamento de Bandeiras (Wikimedia Commons - Links Estáveis)
         const imagensBandeiras = {
             "AC": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg",
             "AL": "https://upload.wikimedia.org/wikipedia/commons/8/88/Bandeira_de_Alagoas.svg",
@@ -491,9 +508,8 @@
             "SE": "https://upload.wikimedia.org/wikipedia/commons/b/be/Bandeira_de_Sergipe.svg",
             "TO": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Bandeira_do_Tocantins.svg"
         };
-
-        // Dados Completos Atualizados
         const dadosFaf = [
+            // ... (Seus dados completos aqui - mantive os mesmos do prompt anterior) ...
             { "uf": "AC", "objeto": "VEÍCULO DE PASSEIO TIPO SEDAN", "quantidade": 1, "valorUnitario": 125704.0, "valorTotal": 125704.0, "valorExecutado": 125704.0, "instrumento": "FAF 2021" },
             { "uf": "AC", "objeto": "Contratação de equipe técnica para OUVIDORIA (psicólogo, jurídico e estagiários) (24 meses)", "quantidade": 1, "valorUnitario": 308425.53, "valorTotal": 308425.53, "valorExecutado": 0, "instrumento": "FAF 2021" },
             { "uf": "AP", "objeto": "Computador PC", "quantidade": 3, "valorUnitario": 16754.4, "valorTotal": 50263.2, "valorExecutado": 50263.2, "instrumento": "FAF 2021" },
@@ -860,7 +876,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             initDashboard(dadosFaf);
-            renderDetailsView(); // Prepara a view de detalhes
+            renderDetailsView(); 
         });
 
         // --- CONTROLE DE VISUALIZAÇÃO (SPA) ---
@@ -881,6 +897,7 @@
             if (tabelaInstancia) {
                 tabelaInstancia.destroy();
                 $('#tabelaItens').empty(); 
+                // Cabeçalho da tabela
                 $('#tabelaItens').html('<thead><tr><th class="text-center">Inst.</th><th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit. (R$)</th><th class="text-end">Valor Total (R$)</th><th class="text-end">Executado (R$)</th><th class="text-center">%</th></tr></thead><tbody></tbody>');
             }
 
@@ -890,8 +907,8 @@
             renderChart(analise.dadosPorUF);
             initTable(data);
             
-            populateSelectUF(analise.ufsUnicas);
-            populateSelectInstrumento(data); 
+            populateMultiSelect('dropdownInstrumentoMenu', 'instrumento', data);
+            populateMultiSelect('dropdownUFMenu', 'uf', data);
             
             setupEventListeners();
             atualizarCardsDinamicos();
@@ -899,7 +916,6 @@
 
         // --- DETALHAMENTO POR ESTADO ---
         function calculateStateMetrics(uf, data) {
-            // Filtra dados apenas da UF
             const items = data.filter(d => d.uf === uf);
             
             let totalRepassado = 0;
@@ -942,12 +958,9 @@
 
         function renderDetailsView() {
             const container = document.getElementById('container-estados');
-            container.innerHTML = ''; // Limpa
+            container.innerHTML = ''; 
 
-            // Ordem das regiões
             const ordemRegioes = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
-
-            // Mapeamento de classe de cor para a região
             const corRegiao = {
                 "NORTE": "bg-norte",
                 "NORDESTE": "bg-nordeste",
@@ -957,15 +970,13 @@
             };
 
             ordemRegioes.forEach(regiao => {
-                // Título da Região
                 const regionHeader = document.createElement('div');
                 regionHeader.className = 'region-title';
                 regionHeader.textContent = regiao;
                 container.appendChild(regionHeader);
 
-                // Grid para os estados da região
                 const row = document.createElement('div');
-                row.className = 'row g-4'; // g-4 espaçamento
+                row.className = 'row g-4'; 
 
                 const estadosDaRegiao = regioes[regiao];
                 const bgClass = corRegiao[regiao] || "";
@@ -974,18 +985,15 @@
                     const metrics = calculateStateMetrics(uf, dadosFaf);
                     const nomeEstado = nomesEstados[uf] || uf;
                     
-                    // Lógica para Bandeira
                     const flagUrl = imagensBandeiras[uf] || "";
                     
-                    // Fallback visual para imagem quebrada
                     const imgElement = flagUrl 
                         ? `<img src="${flagUrl}" alt="Bandeira ${uf}" class="state-flag" onerror="this.onerror=null;this.src='';this.style.display='none';this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-flag text-secondary" style="font-size: 24px; display: none;"></i>`
                         : `<i class="fas fa-flag text-secondary" style="font-size: 24px;"></i>`;
 
                     const col = document.createElement('div');
-                    col.className = 'col-lg-6'; // 2 por linha em desktop (lg), 1 em mobile
+                    col.className = 'col-lg-6';
 
-                    // Adiciona a classe de cor da região ao card
                     col.innerHTML = `
                         <div class="state-detail-card ${bgClass}">
                             <div class="state-header">
@@ -1086,7 +1094,6 @@
         }
 
         function getInstrumentoBadge(inst) {
-            // Retorna HTML do badge com base no instrumento
             if (!inst) return '<span class="badge badge-inst-default">N/A</span>';
             
             const normalized = inst.toUpperCase();
@@ -1169,7 +1176,6 @@
                 };
 
                 const tr = document.createElement('tr');
-                // Use a hidden span with full text for search purposes
                 tr.innerHTML = `
                     <td class="text-center"><span class="d-none">${row.instrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
                     <td><span class="badge bg-secondary badge-uf">${row.uf}</span></td>
@@ -1199,35 +1205,83 @@
                 scrollY: '500px', 
                 scrollCollapse: true,
                 info: false, 
-                order: [[1, 'asc'], [7, 'desc']], // Ordernar por UF depois %
+                order: [[1, 'asc'], [7, 'desc']], 
                 columnDefs: [
-                    { width: '5%', targets: 0 }, // Instrumento
-                    { width: '5%', targets: 1 }, // UF
-                    { width: '30%', targets: 2 } // Objeto
+                    { width: '5%', targets: 0 }, 
+                    { width: '5%', targets: 1 }, 
+                    { width: '30%', targets: 2 } 
                 ]
             });
         }
 
-        function populateSelectUF(ufs) {
-            const $select = $('#filtroUF');
-            $select.empty().append(new Option("Todas as UFs", ""));
-            ufs.forEach(uf => $select.append(new Option(uf, uf)));
+        // --- LÓGICA MULTI-SELECT ---
+
+        function populateMultiSelect(containerId, key, data) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            const uniqueValues = new Set();
+            data.forEach(item => { if(item[key]) uniqueValues.add(item[key]); });
+            const sortedValues = Array.from(uniqueValues).sort();
+
+            const allLi = document.createElement('li');
+            allLi.innerHTML = `
+                <div class="dropdown-item">
+                    <div class="form-check">
+                        <input class="form-check-input check-all" type="checkbox" value="all" id="checkAll-${key}" checked>
+                        <label class="form-check-label fw-bold" for="checkAll-${key}">
+                            Selecionar Todos
+                        </label>
+                    </div>
+                </div>
+            `;
+            container.appendChild(allLi);
+            
+            const dividerLi = document.createElement('li');
+            dividerLi.innerHTML = '<hr class="dropdown-divider">';
+            container.appendChild(dividerLi);
+
+            sortedValues.forEach((val, idx) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="dropdown-item">
+                        <div class="form-check">
+                            <input class="form-check-input check-item-${key}" type="checkbox" value="${val}" id="chk-${key}-${idx}" checked>
+                            <label class="form-check-label" for="chk-${key}-${idx}">
+                                ${val}
+                            </label>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+
+            container.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
         }
 
-        function populateSelectInstrumento(data) {
-            const instSet = new Set();
-            data.forEach(item => { if(item.instrumento) instSet.add(item.instrumento); });
-            const instrumentos = Array.from(instSet).sort();
+        function getSelectedValues(key) {
+            const checkAll = document.getElementById(`checkAll-${key}`);
+            if (checkAll && checkAll.checked) return []; 
 
-            const $select = $('#filtroInstrumento');
-            $select.empty().append(new Option("Todos Instrumentos", ""));
-            instrumentos.forEach(inst => $select.append(new Option(inst, inst)));
+            const checkboxes = document.querySelectorAll(`.check-item-${key}:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
         }
 
         function setupEventListeners() {
-            // Listeners para os 3 filtros
-            $('#filtroUF, #filtroInstrumento').off('change').on('change', function() { 
-                aplicarFiltrosCombinados();
+            ['instrumento', 'uf'].forEach(key => {
+                $(document).on('change', `#checkAll-${key}`, function() {
+                    const isChecked = $(this).is(':checked');
+                    $(`.check-item-${key}`).prop('checked', isChecked);
+                    aplicarFiltrosCombinados();
+                });
+
+                $(document).on('change', `.check-item-${key}`, function() {
+                    const allChecked = $(`.check-item-${key}`).length === $(`.check-item-${key}:checked`).length;
+                    $(`#checkAll-${key}`).prop('checked', allChecked);
+                    aplicarFiltrosCombinados();
+                });
             });
 
             $('#filtroObjeto').off('keyup').on('keyup', function() { 
@@ -1235,8 +1289,8 @@
             });
             
             const reset = () => {
-                $('#filtroUF').val('');
-                $('#filtroInstrumento').val('');
+                $('.check-all').prop('checked', true);
+                $('.form-check-input').prop('checked', true); 
                 $('#filtroObjeto').val('');
                 $('#filtroAtivoBadge').hide();
                 tabelaInstancia.search('').columns().search('').draw();
@@ -1246,56 +1300,83 @@
             $('#btnLimparFiltros, #filtroAtivoBadge').off('click').on('click', reset);
         }
 
-        // Nova lógica centralizada de filtros
         function aplicarFiltrosCombinados() {
-            const uf = $('#filtroUF').val();
-            const inst = $('#filtroInstrumento').val();
+            const selectedInsts = getSelectedValues('instrumento'); 
+            const selectedUFs = getSelectedValues('uf'); 
             const texto = $('#filtroObjeto').val();
 
-            // 1. Filtra a Tabela (DataTables)
-            // Coluna 0 = Instrumento, Coluna 1 = UF, Coluna 2 = Objeto (Busca Global)
-            
-            // Filtro UF (Exato)
-            tabelaInstancia.column(1).search(uf ? `^${uf}$` : '', true, false);
-            
-            // Filtro Instrumento (Exato ou parcial dependendo da string)
-            tabelaInstancia.column(0).search(inst ? inst : '');
-            
-            // Filtro Texto (Objeto)
+            if (selectedInsts.length > 0) {
+                const searchString = selectedInsts.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+                tabelaInstancia.column(0).search(searchString, true, false);
+            } else {
+                const checkAllInst = document.getElementById(`checkAll-instrumento`).checked;
+                
+                if (!checkAllInst && document.querySelectorAll(`.check-item-instrumento:checked`).length === 0) {
+                    tabelaInstancia.column(0).search("#####_NO_MATCH_#####", true, false);
+                } else if (!checkAllInst) {
+                    const items = Array.from(document.querySelectorAll(`.check-item-instrumento:checked`)).map(cb => cb.value);
+                    const searchString = items.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+                    tabelaInstancia.column(0).search(searchString, true, false);
+                } else {
+                     tabelaInstancia.column(0).search("");
+                }
+            }
+
+            const checkAllUF = document.getElementById(`checkAll-uf`).checked;
+            if (!checkAllUF && document.querySelectorAll(`.check-item-uf:checked`).length === 0) {
+                 tabelaInstancia.column(1).search("#####_NO_MATCH_#####", true, false);
+            } else if (!checkAllUF) {
+                const items = Array.from(document.querySelectorAll(`.check-item-uf:checked`)).map(cb => cb.value);
+                const searchString = items.map(v => `^${v}$`).join('|'); 
+                tabelaInstancia.column(1).search(searchString, true, false);
+            } else {
+                tabelaInstancia.column(1).search("");
+            }
+
             tabelaInstancia.search(texto);
             
             tabelaInstancia.draw();
 
-            // 2. Atualiza Badge Visual
-            if (uf || inst) {
-                const label = [uf, inst].filter(Boolean).join(" + ");
-                $('#textoFiltroAtivo').text(label);
+            const anyFilterActive = !document.getElementById(`checkAll-instrumento`).checked || 
+                                    !document.getElementById(`checkAll-uf`).checked || 
+                                    texto.length > 0;
+            
+            if (anyFilterActive) {
+                $('#textoFiltroAtivo').text("Filtros Ativos");
                 $('#filtroAtivoBadge').css('display', 'inline-block');
             } else {
                 $('#filtroAtivoBadge').hide();
             }
 
-            // 3. Atualiza Cards
             atualizarCardsDinamicos();
         }
-
-        // Função de atalho para o clique no gráfico
+        
         function aplicarFiltroUF(uf) {
-            $('#filtroUF').val(uf);
+            $(`#checkAll-uf`).prop('checked', false);
+            $(`.check-item-uf`).prop('checked', false);
+            $(`.check-item-uf[value="${uf}"]`).prop('checked', true);
+            
             aplicarFiltrosCombinados();
         }
 
         function atualizarCardsDinamicos() {
-            const ufFiltro = $('#filtroUF').val();
-            const instFiltro = $('#filtroInstrumento').val();
-            const textoFiltro = $('#filtroObjeto').val().toLowerCase();
+             const textoFiltro = $('#filtroObjeto').val().toLowerCase();
 
-            const dadosFiltrados = dadosFaf.filter(item => {
-                const matchUF = ufFiltro ? item.uf === ufFiltro : true;
-                const matchInst = instFiltro ? item.instrumento === instFiltro : true;
-                const matchTexto = textoFiltro ? (item.objeto && item.objeto.toLowerCase().includes(textoFiltro)) : true;
-                return matchUF && matchInst && matchTexto;
-            });
+             const checkAllInst = document.getElementById(`checkAll-instrumento`).checked;
+             const checkedInsts = new Set(Array.from(document.querySelectorAll(`.check-item-instrumento:checked`)).map(cb => cb.value));
+
+             const checkAllUF = document.getElementById(`checkAll-uf`).checked;
+             const checkedUFs = new Set(Array.from(document.querySelectorAll(`.check-item-uf:checked`)).map(cb => cb.value));
+
+             const dadosFiltrados = dadosFaf.filter(item => {
+                 const matchUF = checkAllUF || checkedUFs.has(item.uf);
+                 
+                 const matchInst = checkAllInst || checkedInsts.has(item.instrumento);
+
+                 const matchTexto = textoFiltro ? (item.objeto && item.objeto.toLowerCase().includes(textoFiltro)) : true;
+                 
+                 return matchUF && matchInst && matchTexto;
+             });
 
             let somaRepassado = 0;
             let somaExecutado = 0;
