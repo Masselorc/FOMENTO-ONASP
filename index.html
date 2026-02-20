@@ -287,8 +287,8 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-7 d-flex align-items-center gap-4">
-                        <!-- Logo SENAPPEN inserido via URL oficial -->
-                        <img id="img-logo-senappen" src="https://www.gov.br/senappen/pt-br/centrais-de-conteudo/download-logos/senappen-marca-final_prancheta-1-copia-4-1.png/@@images/image" alt="Logo SENAPPEN Completo" style="height: 90px; object-fit: contain;" onerror="this.onerror=null; this.src='https://placehold.co/300x90/ffffff/2c3e50?text=SENAPPEN';">
+                        <!-- Logo SENAPPEN: O source real será injetado em Base64 via JavaScript para garantir a exportação em PDF sem bloqueios -->
+                        <img id="img-logo-senappen" src="https://placehold.co/300x90/f8f9fa/2c3e50?text=Carregando..." alt="Logo SENAPPEN Completo" style="height: 90px; object-fit: contain;">
                         
                         <div>
                             <h1 class="header-title mb-1" style="font-size: 1.6rem;">Painel de Acompanhamento</h1>
@@ -966,7 +966,32 @@
         let chartInstancia = null;
         let estadoAtualPDF = '';
 
+        // --- FUNÇÃO PARA GARANTIR A LOGO NO PDF (Conversão para Base64) ---
+        async function carregarLogoParaPDF() {
+            const logoImg = document.getElementById('img-logo-senappen');
+            const urlOficial = 'https://www.gov.br/senappen/pt-br/centrais-de-conteudo/download-logos/senappen-marca-final_prancheta-1-copia-4-1.png/@@images/image';
+            
+            // Utilizamos um proxy temporário apenas para permitir o fetch (download) via código
+            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(urlOficial);
+
+            try {
+                const response = await fetch(proxyUrl);
+                const blob = await response.blob();
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    // Substitui a imagem pelo código Base64 seguro para o PDF
+                    logoImg.src = reader.result; 
+                }
+                reader.readAsDataURL(blob);
+            } catch (error) {
+                console.warn("Aviso: Falha ao converter logo para Base64. A usar fallback do link direto.", error);
+                // Fallback: se falhar, tenta mostrar no ecrã (mesmo que o PDF possa bloquear)
+                logoImg.src = urlOficial; 
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            carregarLogoParaPDF(); // Converte a logo imediatamente ao carregar a página
             initDashboard(dadosFaf);
             renderDetailsView(); 
         });
@@ -1404,22 +1429,27 @@
                 
                 // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
                 
-                // Lógica de paginação automática
-                let heightLeft = pdfHeight;
-                let position = 0;
+                const margin = 10; // Margem superior, inferior e laterais de 10mm
+                const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                const usableWidth = pdfWidth - (margin * 2); // Subtrai margens laterais
+                const usablePageHeight = pageHeight - (margin * 2); // Subtrai margens superior/inferior
+                
+                const imgHeightOnPdf = (canvas.height * usableWidth) / canvas.width;
+                
+                let heightLeft = imgHeightOnPdf;
+                let position = margin; // Inicia na margem superior
 
-                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                heightLeft -= pageHeight;
+                pdf.addImage(imgData, 'PNG', margin, position, usableWidth, imgHeightOnPdf);
+                heightLeft -= usablePageHeight;
 
                 while (heightLeft > 0) {
-                    position = heightLeft - pdfHeight;
+                    position -= usablePageHeight; // Desloca a imagem para cima na nova página
                     pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                    heightLeft -= pageHeight;
+                    pdf.addImage(imgData, 'PNG', margin, position, usableWidth, imgHeightOnPdf);
+                    heightLeft -= usablePageHeight;
                 }
 
                 pdf.save(`Painel_Geral_Ouvidoria.pdf`);
@@ -1471,22 +1501,27 @@
                 
                 // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
                 
-                // Lógica de paginação automática: caso o conteúdo da tabela ultrapasse o tamanho de 1 página A4
-                let heightLeft = pdfHeight;
-                let position = 0;
+                const margin = 10; // Margem superior, inferior e laterais de 10mm
+                const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                const usableWidth = pdfWidth - (margin * 2); // Subtrai margens laterais
+                const usablePageHeight = pageHeight - (margin * 2); // Subtrai margens superior/inferior
+                
+                const imgHeightOnPdf = (canvas.height * usableWidth) / canvas.width;
+                
+                let heightLeft = imgHeightOnPdf;
+                let position = margin; // Inicia na margem superior
 
-                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                heightLeft -= pageHeight;
+                pdf.addImage(imgData, 'PNG', margin, position, usableWidth, imgHeightOnPdf);
+                heightLeft -= usablePageHeight;
 
                 while (heightLeft > 0) {
-                    position = heightLeft - pdfHeight;
+                    position -= usablePageHeight; // Desloca a imagem para cima na nova página
                     pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                    heightLeft -= pageHeight;
+                    pdf.addImage(imgData, 'PNG', margin, position, usableWidth, imgHeightOnPdf);
+                    heightLeft -= usablePageHeight;
                 }
 
                 // Baixa o arquivo já com o nome do Estado específico
