@@ -1408,21 +1408,35 @@
             const dtScrollBody = document.querySelector('.dataTables_scrollBody');
             let originalMaxHeight = '';
             let originalHeight = '';
+            let originalOverflow = '';
             if (dtScrollBody) {
                 originalMaxHeight = dtScrollBody.style.maxHeight;
                 originalHeight = dtScrollBody.style.height;
+                originalOverflow = dtScrollBody.style.overflow;
                 dtScrollBody.style.maxHeight = 'none';
                 dtScrollBody.style.height = 'auto';
                 dtScrollBody.style.overflow = 'visible';
             }
+
+            // 3. FIX DE MARGENS LATERAIS: Força a largura do wrapper para 1200px durante a captura. 
+            // Isso evita que o html2canvas tire print de telas muito largas, o que causava as margens enormes.
+            const originalWidth = elementoParaCapturar.style.width;
+            const originalMargin = elementoParaCapturar.style.margin;
+            elementoParaCapturar.style.width = '1200px';
+            elementoParaCapturar.style.margin = '0';
 
             try {
                 // Renderiza a Div exata como uma Imagem usando html2canvas
                 const canvas = await html2canvas(elementoParaCapturar, {
                     scale: 2, 
                     useCORS: true, 
-                    backgroundColor: '#f8f9fa' 
+                    backgroundColor: '#f8f9fa',
+                    windowWidth: 1200 // Instrui o canvas a renderizar com largura fixa
                 });
+
+                // Restaura imediatamente a largura do layout original após a captura
+                elementoParaCapturar.style.width = originalWidth;
+                elementoParaCapturar.style.margin = originalMargin;
 
                 const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
@@ -1430,7 +1444,7 @@
                 // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 
-                const margin = 10; // Margem superior, inferior e laterais de 10mm
+                const margin = 0; // Margens laterais zeradas - o PDF vai ocupar toda a largura da folha
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 
@@ -1456,8 +1470,11 @@
 
             } catch (erro) {
                 console.error('Erro na exportação do Dashboard para PDF:', erro);
+                // Em caso de erro, garante que o layout é restaurado
+                elementoParaCapturar.style.width = originalWidth;
+                elementoParaCapturar.style.margin = originalMargin;
             } finally {
-                // 3. Restaura o layout original (filtros e scroll da tabela)
+                // 4. Restaura o layout original (filtros e scroll da tabela)
                 if (headerActions) {
                     headerActions.classList.add('d-flex');
                     headerActions.style.display = '';
@@ -1466,7 +1483,7 @@
                 if (dtScrollBody) {
                     dtScrollBody.style.maxHeight = originalMaxHeight;
                     dtScrollBody.style.height = originalHeight;
-                    dtScrollBody.style.overflow = 'auto';
+                    dtScrollBody.style.overflow = originalOverflow;
                 }
                 
                 btnPdf.innerHTML = originalHtml;
@@ -1488,13 +1505,23 @@
 
             if (botoesAcaoRelatorio) botoesAcaoRelatorio.style.display = 'none';
 
+            // FIX DE MARGENS LATERAIS PARA RELATÓRIO
+            const originalWidth = elementoParaCapturar.style.width;
+            const originalMargin = elementoParaCapturar.style.margin;
+            elementoParaCapturar.style.width = '1200px';
+            elementoParaCapturar.style.margin = '0';
+
             try {
                 // Renderiza a Div exata como uma Imagem usando html2canvas
                 const canvas = await html2canvas(elementoParaCapturar, {
                     scale: 2, // Escala 2 garante alta definição no PDF
                     useCORS: true, // Permite que a bandeira (SVG externo) seja carregada na imagem
-                    backgroundColor: '#f8f9fa' // Garante que a cor de fundo seja preservada
+                    backgroundColor: '#f8f9fa', // Garante que a cor de fundo seja preservada
+                    windowWidth: 1200
                 });
+
+                elementoParaCapturar.style.width = originalWidth;
+                elementoParaCapturar.style.margin = originalMargin;
 
                 const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
@@ -1502,12 +1529,12 @@
                 // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 
-                const margin = 10; // Margem superior, inferior e laterais de 10mm
+                const margin = 0; // MARGENS ZERADAS
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 
-                const usableWidth = pdfWidth - (margin * 2); // Subtrai margens laterais
-                const usablePageHeight = pageHeight - (margin * 2); // Subtrai margens superior/inferior
+                const usableWidth = pdfWidth - (margin * 2); 
+                const usablePageHeight = pageHeight - (margin * 2); 
                 
                 const imgHeightOnPdf = (canvas.height * usableWidth) / canvas.width;
                 
@@ -1529,6 +1556,8 @@
 
             } catch (erro) {
                 console.error('Erro na exportação para PDF:', erro);
+                elementoParaCapturar.style.width = originalWidth;
+                elementoParaCapturar.style.margin = originalMargin;
             } finally {
                 // Restaura o botão à sua forma original
                 if (botoesAcaoRelatorio) botoesAcaoRelatorio.style.display = '';
