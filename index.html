@@ -11,6 +11,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- DataTables Bootstrap 5 CSS -->
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- html2canvas & jsPDF para Exportação em PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         :root {
@@ -46,25 +49,22 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 1rem !important; 
+            padding: 1rem 0.75rem !important; /* Reduzido o padding lateral para dar espaço aos números longos */
         }
         .kpi-card:hover { transform: translateY(-3px); }
         
         .kpi-title { 
-            font-size: 0.85rem; 
+            font-size: 0.75rem; /* Ajustado de 0.85rem para economizar espaço */
             text-transform: uppercase; 
-            letter-spacing: 1px; 
+            letter-spacing: 0.5px; 
             color: #7f8c8d; 
             margin-bottom: 5px; 
         }
         
         .kpi-value { 
-            font-size: clamp(1.1rem, 1.8vw, 1.8rem); 
+            font-size: clamp(0.9rem, 1.1vw, 1.35rem); /* Reduzido de 1.8rem para evitar os "pontinhos" em milhões */
             font-weight: bold; 
             color: var(--primary-color);
-            white-space: nowrap;      
-            overflow: hidden;         
-            text-overflow: ellipsis;  
             line-height: 1.2;
         }
         
@@ -126,7 +126,7 @@
             vertical-align: middle;
         }
 
-        .text-money { font-family: 'Consolas', monospace; }
+        .text-money { font-family: 'Consolas', monospace; letter-spacing: -0.5px; }
         .cursor-pointer { cursor: pointer; }
         
         /* Badges Específicos */
@@ -135,6 +135,12 @@
         .badge-inst-convenio { background-color: #27ae60; color: white; }
         .badge-inst-doacao { background-color: #e67e22; color: white; }
         .badge-inst-default { background-color: #95a5a6; color: white; }
+
+        /* [NOVO] Forçar cabeçalho da tabela em uma linha e alinhar verticalmente */
+        table.dataTable thead th, table.dataTable thead td {
+            white-space: nowrap !important;
+            vertical-align: middle !important;
+        }
 
         /* Progress Pill (Novo visual para barras de progresso) */
         .custom-progress-pill {
@@ -277,13 +283,16 @@
     <header class="header-section">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-8">
+                <div class="col-md-7">
                     <h1 class="header-title mb-2">Painel de Acompanhamento</h1>
                     <p class="text-muted mb-0">
                         Ouvidoria Nacional de Serviços Penais | Monitoramento de Recursos (FAF, Convênios e Doações)
                     </p>
                 </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="col-md-5 text-md-end mt-3 mt-md-0 d-flex flex-wrap justify-content-md-end gap-2">
+                    <button id="btn-export-dashboard" class="btn btn-danger shadow-sm fw-bold" onclick="exportarDashboardPDF()">
+                        <i class="fas fa-file-pdf me-2"></i> Exportar Painel
+                    </button>
                     <button class="btn btn-destaque" onclick="toggleView('detalhamento')">
                         <i class="fas fa-th-large me-2"></i> Detalhamento por Estado
                     </button>
@@ -348,7 +357,7 @@
         </div>
 
         <!-- FILTROS MULTI-SELECT -->
-        <div class="row">
+        <div class="row" id="filter-row-section">
             <div class="col-12">
                 <div class="filter-section d-flex flex-wrap align-items-center gap-3">
                     <div class="d-flex align-items-center">
@@ -402,7 +411,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <div class="kpi-title mb-0" style="font-size: 0.75rem;">Repassado (Filtro)</div>
-                            <div class="kpi-value text-money" style="font-size: 1.2rem;" id="dyn-total-repassado">R$ 0,00</div>
+                            <div class="kpi-value text-money" style="font-size: 1.1rem;" id="dyn-total-repassado">R$ 0,00</div>
                         </div>
                         <i class="fas fa-filter text-muted opacity-25 fa-2x"></i>
                     </div>
@@ -414,7 +423,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <div class="kpi-title mb-0" style="font-size: 0.75rem;">Executado (Filtro)</div>
-                            <div class="kpi-value text-success text-money" style="font-size: 1.2rem;" id="dyn-total-executado">R$ 0,00</div>
+                            <div class="kpi-value text-success text-money" style="font-size: 1.1rem;" id="dyn-total-executado">R$ 0,00</div>
                         </div>
                         <i class="fas fa-coins text-success opacity-25 fa-2x"></i>
                     </div>
@@ -426,7 +435,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <div class="kpi-title mb-0" style="font-size: 0.75rem;">% Exec. (Conv/FAF)</div>
-                            <div class="kpi-value" style="font-size: 1.2rem;" id="dyn-percentual">0,0%</div>
+                            <div class="kpi-value" style="font-size: 1.1rem;" id="dyn-percentual">0,0%</div>
                         </div>
                         <i class="fas fa-percentage text-primary opacity-25 fa-2x"></i>
                     </div>
@@ -438,7 +447,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <div class="kpi-title mb-0" style="font-size: 0.75rem;">Doado (Filtro)</div>
-                            <div class="kpi-value text-warning text-money" style="font-size: 1.2rem;" id="dyn-total-doado">R$ 0,00</div>
+                            <div class="kpi-value text-warning text-money" style="font-size: 1.1rem;" id="dyn-total-doado">R$ 0,00</div>
                         </div>
                         <i class="fas fa-gift text-warning opacity-25 fa-2x"></i>
                     </div>
@@ -450,7 +459,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <div class="kpi-title mb-0" style="font-size: 0.75rem;">Qtd. Itens</div>
-                            <div class="kpi-value" style="font-size: 1.2rem;" id="dyn-qtd-itens">0</div>
+                            <div class="kpi-value" style="font-size: 1.1rem;" id="dyn-qtd-itens">0</div>
                         </div>
                         <i class="fas fa-list-ol text-info opacity-25 fa-2x"></i>
                     </div>
@@ -499,18 +508,29 @@
 
     <!-- VIEW 3: RELATÓRIO DO ESTADO (NOVO) -->
     <div id="view-estado-detalhe" class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <button class="btn btn-outline-secondary mb-3" onclick="toggleView('detalhamento')">
+        <div class="row mb-3" id="botoes-acao-relatorio">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-secondary" onclick="toggleView('detalhamento')">
                     <i class="fas fa-arrow-left me-2"></i> Voltar para Visão por Região
                 </button>
-                <div id="estado-detalhe-header"></div>
+                <button id="btn-export-pdf" class="btn btn-danger shadow-sm fw-bold" onclick="exportarRelatorioPDF()">
+                    <i class="fas fa-file-pdf me-2"></i> Exportar PDF
+                </button>
             </div>
         </div>
         
-        <div id="estado-detalhe-kpis" class="row mb-4"></div>
-        
-        <div id="estado-detalhe-listas"></div>
+        <!-- Wrapper de Conteúdo para o PDF -->
+        <div id="conteudo-relatorio-pdf" style="background-color: var(--bg-light); padding: 20px; border-radius: 8px;">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div id="estado-detalhe-header"></div>
+                </div>
+            </div>
+            
+            <div id="estado-detalhe-kpis" class="row mb-4"></div>
+            
+            <div id="estado-detalhe-listas"></div>
+        </div>
     </div>
 
     <!-- RODAPÉ -->
@@ -935,6 +955,7 @@
 
         let tabelaInstancia = null;
         let chartInstancia = null;
+        let estadoAtualPDF = '';
 
         document.addEventListener('DOMContentLoaded', () => {
             initDashboard(dadosFaf);
@@ -1112,6 +1133,7 @@
 
         // --- RELATÓRIO DETALHADO POR ESTADO (NOVO) ---
         function abrirDetalheEstado(uf) {
+            estadoAtualPDF = uf;
             const itensUF = dadosFaf.filter(d => d.uf === uf);
             const nomeEstado = nomesEstados[uf] || uf;
             const flagUrl = imagensBandeiras[uf] || "";
@@ -1311,6 +1333,135 @@
 
             // 5. Exibir a View
             toggleView('estado-detalhe');
+        }
+
+        async function exportarDashboardPDF() {
+            const btnPdf = document.getElementById('btn-export-dashboard');
+            const originalHtml = btnPdf.innerHTML;
+            
+            // Estado de carregamento visual no botão
+            btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando PDF...';
+            btnPdf.disabled = true;
+
+            const elementoParaCapturar = document.getElementById('view-dashboard');
+            const filterRow = document.getElementById('filter-row-section');
+
+            // 1. Esconde a linha de botões de filtro temporariamente para um PDF mais limpo
+            if (filterRow) filterRow.style.display = 'none';
+
+            // 2. O DataTables usa scrollY, o que esconde as linhas num container pequeno.
+            // Para o PDF capturar tudo, removemos o limite de altura temporariamente.
+            const dtScrollBody = document.querySelector('.dataTables_scrollBody');
+            let originalMaxHeight = '';
+            let originalHeight = '';
+            if (dtScrollBody) {
+                originalMaxHeight = dtScrollBody.style.maxHeight;
+                originalHeight = dtScrollBody.style.height;
+                dtScrollBody.style.maxHeight = 'none';
+                dtScrollBody.style.height = 'auto';
+                dtScrollBody.style.overflow = 'visible';
+            }
+
+            try {
+                // Renderiza a Div exata como uma Imagem usando html2canvas
+                const canvas = await html2canvas(elementoParaCapturar, {
+                    scale: 2, 
+                    useCORS: true, 
+                    backgroundColor: '#f8f9fa' 
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                
+                // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                
+                // Lógica de paginação automática
+                let heightLeft = pdfHeight;
+                let position = 0;
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - pdfHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save(`Painel_Geral_Ouvidoria.pdf`);
+
+            } catch (erro) {
+                console.error('Erro na exportação do Dashboard para PDF:', erro);
+            } finally {
+                // 3. Restaura o layout original (filtros e scroll da tabela)
+                if (filterRow) filterRow.style.display = '';
+                if (dtScrollBody) {
+                    dtScrollBody.style.maxHeight = originalMaxHeight;
+                    dtScrollBody.style.height = originalHeight;
+                    dtScrollBody.style.overflow = 'auto';
+                }
+                
+                btnPdf.innerHTML = originalHtml;
+                btnPdf.disabled = false;
+            }
+        }
+
+        async function exportarRelatorioPDF() {
+            const btnPdf = document.getElementById('btn-export-pdf');
+            const originalHtml = btnPdf.innerHTML;
+            
+            // Estado de carregamento visual no botão
+            btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando PDF...';
+            btnPdf.disabled = true;
+
+            const elementoParaCapturar = document.getElementById('conteudo-relatorio-pdf');
+
+            try {
+                // Renderiza a Div exata como uma Imagem usando html2canvas
+                const canvas = await html2canvas(elementoParaCapturar, {
+                    scale: 2, // Escala 2 garante alta definição no PDF
+                    useCORS: true, // Permite que a bandeira (SVG externo) seja carregada na imagem
+                    backgroundColor: '#f8f9fa' // Garante que a cor de fundo seja preservada
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                
+                // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                
+                // Lógica de paginação automática: caso o conteúdo da tabela ultrapasse o tamanho de 1 página A4
+                let heightLeft = pdfHeight;
+                let position = 0;
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - pdfHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                // Baixa o arquivo já com o nome do Estado específico
+                pdf.save(`Relatorio_Ouvidoria_${estadoAtualPDF}.pdf`);
+
+            } catch (erro) {
+                console.error('Erro na exportação para PDF:', erro);
+            } finally {
+                // Restaura o botão à sua forma original
+                btnPdf.innerHTML = originalHtml;
+                btnPdf.disabled = false;
+            }
         }
 
         // --- FUNÇÕES UTILITÁRIAS (COMPARTILHADAS) ---
