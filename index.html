@@ -136,6 +136,32 @@
         .badge-inst-doacao { background-color: #e67e22; color: white; }
         .badge-inst-default { background-color: #95a5a6; color: white; }
 
+        /* Progress Pill (Novo visual para barras de progresso) */
+        .custom-progress-pill {
+            position: relative;
+            background-color: #f1f3f5;
+            border-radius: 12px;
+            height: 24px;
+            width: 100%;
+            min-width: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pill-fill {
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+        .pill-text {
+            position: relative;
+            z-index: 1;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
         /* --- ESTILOS DA PÁGINA DE DETALHES --- */
         .region-title {
             background-color: var(--primary-color);
@@ -241,6 +267,7 @@
         /* Controle de Views */
         #view-dashboard { display: block; }
         #view-detalhamento { display: none; }
+        #view-estado-detalhe { display: none; }
 
     </style>
 </head>
@@ -269,29 +296,36 @@
     <div id="view-dashboard" class="container fade-in">
         
         <!-- KPI SECTION (GLOBAL) -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-3">
+        <div class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
+            <div class="col">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-file-invoice-dollar me-2"></i>Total Repassado</div>
                     <div class="kpi-value text-money" id="kpi-total-contratado">R$ 0,00</div>
-                    <div class="kpi-desc">Global (Todos os Instrumentos)</div>
+                    <div class="kpi-desc">Convênios e FAF</div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-3">
+            <div class="col">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-check-circle me-2"></i>Total Executado</div>
                     <div class="kpi-value text-money text-success" id="kpi-total-executado">R$ 0,00</div>
-                    <div class="kpi-desc">Global (Todos os Instrumentos)</div>
+                    <div class="kpi-desc">Convênios e FAF</div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-3">
+            <div class="col">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-chart-pie me-2"></i>Execução Global</div>
                     <div class="kpi-value" id="kpi-percentual-global">0,0%</div>
-                    <div class="kpi-desc">Média Nacional</div>
+                    <div class="kpi-desc">Média Nacional (Conv/FAF)</div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-3">
+            <div class="col">
+                <div class="card kpi-card" style="border-left: 4px solid #e67e22;">
+                    <div class="kpi-title"><i class="fas fa-gift me-2"></i>Total em Doações</div>
+                    <div class="kpi-value text-money text-warning" id="kpi-total-doado">R$ 0,00</div>
+                    <div class="kpi-desc">Veículos e Equipamentos</div>
+                </div>
+            </div>
+            <div class="col">
                 <div class="card kpi-card">
                     <div class="kpi-title"><i class="fas fa-map-marker-alt me-2"></i>UFs Ativas</div>
                     <div class="kpi-value" id="kpi-ufs-ativas">0</div>
@@ -358,12 +392,12 @@
         </div>
 
         <!-- CARDS DINÂMICOS (PÓS-FILTRO) -->
-        <div class="row mb-4" id="cards-dinamicos-section">
-            <div class="col-12 mb-2">
+        <div class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-dinamicos-section">
+            <div class="col-12 w-100 mb-0">
                 <span class="badge bg-secondary text-uppercase"><i class="fas fa-calculator me-1"></i> Resumo da Seleção Atual</span>
             </div>
             <!-- Dinâmico 1: Repassado -->
-            <div class="col-xl-3 col-md-6 mb-2">
+            <div class="col">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -375,7 +409,7 @@
                 </div>
             </div>
             <!-- Dinâmico 2: Executado -->
-            <div class="col-xl-3 col-md-6 mb-2">
+            <div class="col">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -387,26 +421,38 @@
                 </div>
             </div>
             <!-- Dinâmico 3: Percentual -->
-            <div class="col-xl-3 col-md-6 mb-2">
+            <div class="col">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <div class="kpi-title mb-0" style="font-size: 0.75rem;">% Execução (Filtro)</div>
+                            <div class="kpi-title mb-0" style="font-size: 0.75rem;">% Exec. (Conv/FAF)</div>
                             <div class="kpi-value" style="font-size: 1.2rem;" id="dyn-percentual">0,0%</div>
                         </div>
                         <i class="fas fa-percentage text-primary opacity-25 fa-2x"></i>
                     </div>
                 </div>
             </div>
-            <!-- Dinâmico 4: Quantidade -->
-            <div class="col-xl-3 col-md-6 mb-2">
+            <!-- Dinâmico 4: Doado -->
+            <div class="col">
+                <div class="card kpi-card dynamic-card py-2" style="border-left-color: #e67e22;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="kpi-title mb-0" style="font-size: 0.75rem;">Doado (Filtro)</div>
+                            <div class="kpi-value text-warning text-money" style="font-size: 1.2rem;" id="dyn-total-doado">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-gift text-warning opacity-25 fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Dinâmico 5: Quantidade -->
+            <div class="col">
                 <div class="card kpi-card dynamic-card py-2">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <div class="kpi-title mb-0" style="font-size: 0.75rem;">Qtd. Itens</div>
                             <div class="kpi-value" style="font-size: 1.2rem;" id="dyn-qtd-itens">0</div>
                         </div>
-                        <i class="fas fa-list-ol text-warning opacity-25 fa-2x"></i>
+                        <i class="fas fa-list-ol text-info opacity-25 fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -450,6 +496,22 @@
         </div>
         <div id="container-estados"></div>
     </div> 
+
+    <!-- VIEW 3: RELATÓRIO DO ESTADO (NOVO) -->
+    <div id="view-estado-detalhe" class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <button class="btn btn-outline-secondary mb-3" onclick="toggleView('detalhamento')">
+                    <i class="fas fa-arrow-left me-2"></i> Voltar para Visão por Região
+                </button>
+                <div id="estado-detalhe-header"></div>
+            </div>
+        </div>
+        
+        <div id="estado-detalhe-kpis" class="row mb-4"></div>
+        
+        <div id="estado-detalhe-listas"></div>
+    </div>
 
     <!-- RODAPÉ -->
     <div class="container">
@@ -881,13 +943,19 @@
 
         // --- CONTROLE DE VISUALIZAÇÃO (SPA) ---
         function toggleView(viewName) {
+            document.getElementById('view-dashboard').style.display = 'none';
+            document.getElementById('view-detalhamento').style.display = 'none';
+            document.getElementById('view-estado-detalhe').style.display = 'none';
+            
             if (viewName === 'detalhamento') {
-                document.getElementById('view-dashboard').style.display = 'none';
                 document.getElementById('view-detalhamento').style.display = 'block';
+                window.scrollTo(0,0);
+            } else if (viewName === 'estado-detalhe') {
+                document.getElementById('view-estado-detalhe').style.display = 'block';
                 window.scrollTo(0,0);
             } else {
                 document.getElementById('view-dashboard').style.display = 'block';
-                document.getElementById('view-detalhamento').style.display = 'none';
+                window.scrollTo(0,0);
             }
         }
 
@@ -930,15 +998,16 @@
                 const exec = item.valorExecutado || 0;
                 const inst = (item.instrumento || "").toUpperCase();
 
-                totalRepassado += val;
-                totalExecutado += exec;
-
                 if (inst.includes("FAF")) {
                     fafVal += val;
                     fafExec += exec;
+                    totalRepassado += val;
+                    totalExecutado += exec;
                 } else if (inst.includes("CONV")) {
                     convVal += val;
                     convExec += exec;
+                    totalRepassado += val;
+                    totalExecutado += exec;
                 } else if (inst.includes("DOA")) {
                     doacVal += val;
                 }
@@ -949,8 +1018,10 @@
                 totalExecutado,
                 execGlobal: totalRepassado > 0 ? (totalExecutado / totalRepassado) * 100 : 0,
                 fafVal,
+                fafExec,
                 fafExecPct: fafVal > 0 ? (fafExec / fafVal) * 100 : 0,
                 convVal,
+                convExec,
                 convExecPct: convVal > 0 ? (convExec / convVal) * 100 : 0,
                 doacVal
             };
@@ -995,7 +1066,7 @@
                     col.className = 'col-lg-6';
 
                     col.innerHTML = `
-                        <div class="state-detail-card ${bgClass}">
+                        <div class="state-detail-card ${bgClass}" style="cursor: pointer;" onclick="abrirDetalheEstado('${uf}')">
                             <div class="state-header">
                                 ${imgElement}
                                 <h3 class="state-name">${nomeEstado} (${uf})</h3>
@@ -1039,28 +1110,238 @@
             });
         }
 
+        // --- RELATÓRIO DETALHADO POR ESTADO (NOVO) ---
+        function abrirDetalheEstado(uf) {
+            const itensUF = dadosFaf.filter(d => d.uf === uf);
+            const nomeEstado = nomesEstados[uf] || uf;
+            const flagUrl = imagensBandeiras[uf] || "";
+            
+            // 1. Montar Header
+            const imgElement = flagUrl 
+                ? `<img src="${flagUrl}" alt="Bandeira ${uf}" class="state-flag me-3" style="width: 80px; height: 55px;">`
+                : `<i class="fas fa-flag text-secondary me-3" style="font-size: 40px;"></i>`;
+            
+            document.getElementById('estado-detalhe-header').innerHTML = `
+                <div class="d-flex align-items-center border-bottom pb-3 mt-2">
+                    ${imgElement}
+                    <h2 class="text-primary mb-0 fw-bold">Relatório Estadual: ${nomeEstado} (${uf})</h2>
+                </div>
+            `;
+
+            // 2. Montar KPIs
+            const metrics = calculateStateMetrics(uf, dadosFaf);
+            document.getElementById('estado-detalhe-kpis').innerHTML = `
+                <div class="col-md-3 mb-3">
+                    <div class="card kpi-card bg-white border-primary border-start border-4">
+                        <div class="kpi-title">Total Repassado (UF)</div>
+                        <div class="kpi-value text-money">${formatMoney(metrics.totalRepassado)}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card kpi-card bg-white border-success border-start border-4">
+                        <div class="kpi-title">Total Executado (UF)</div>
+                        <div class="kpi-value text-money text-success">${formatMoney(metrics.totalExecutado)}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card kpi-card bg-white border-info border-start border-4">
+                        <div class="kpi-title">Exec. Global (Conv/FAF)</div>
+                        <div class="kpi-value">${formatPercent(metrics.execGlobal)}</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card kpi-card bg-white border-warning border-start border-4">
+                        <div class="kpi-title">Total Doado (UF)</div>
+                        <div class="kpi-value text-money text-warning">${formatMoney(metrics.doacVal)}</div>
+                    </div>
+                </div>
+            `;
+
+            // 3. Separar itens por instrumento
+            const itensFAF = itensUF.filter(i => (i.instrumento || "").toUpperCase().includes("FAF"));
+            const itensConv = itensUF.filter(i => (i.instrumento || "").toUpperCase().includes("CONV"));
+            const itensDoac = itensUF.filter(i => (i.instrumento || "").toUpperCase().includes("DOA"));
+
+            // 4. Função auxiliar para gerar tabelas agrupadas
+            const gerarTabela = (titulo, itens, corCard, valRepassado, valExecutado, pctExecutado) => {
+                if (itens.length === 0) return '';
+                
+                const isDoacao = titulo.includes('Doações');
+                let cardsHtml = '';
+                let theadHtml = '';
+                let linhas = '';
+
+                if (isDoacao) {
+                    // Cards Específicos para Doações
+                    cardsHtml = `
+                        <div class="row mb-3 g-2">
+                            <div class="col-md-6">
+                                <div class="border rounded p-2 text-center bg-white shadow-sm">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">Total de Itens Doados</div>
+                                    <div class="fs-5 fw-bold text-dark">${itens.length}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-2 text-center bg-white shadow-sm">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">Valor Estimado das Doações</div>
+                                    <div class="fs-5 fw-bold text-warning">${formatMoney(valRepassado)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    theadHtml = `
+                        <tr>
+                            <th>Objeto</th>
+                            <th class="text-center">Qtd</th>
+                            <th class="text-end">V. Unitário Estimado</th>
+                            <th class="text-end">V. Total Estimado</th>
+                        </tr>
+                    `;
+                    linhas = itens.map(item => {
+                        const valTotal = parseFloat(item.valorTotal) || 0;
+                        return `
+                            <tr>
+                                <td>${item.objeto}</td>
+                                <td class="text-center align-middle">${item.quantidade}</td>
+                                <td class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
+                                <td class="text-end font-monospace align-middle text-warning fw-bold">${formatMoney(valTotal)}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    // Cards para FAF e Convênios
+                    cardsHtml = `
+                        <div class="row mb-3 g-2">
+                            <div class="col-md-4">
+                                <div class="border rounded p-2 text-center bg-white shadow-sm">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">Valor Previsto</div>
+                                    <div class="fs-5 fw-bold text-primary">${formatMoney(valRepassado)}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-2 text-center bg-white shadow-sm">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">Valor Executado</div>
+                                    <div class="fs-5 fw-bold text-success">${formatMoney(valExecutado)}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-2 text-center bg-white shadow-sm">
+                                    <div class="text-muted small text-uppercase fw-bold mb-1">Avanço Financeiro</div>
+                                    <div class="fs-5 fw-bold" style="color: ${getProgressColor(pctExecutado)}">${formatPercent(pctExecutado)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    theadHtml = `
+                        <tr>
+                            <th>Objeto</th>
+                            <th class="text-center">Qtd</th>
+                            <th class="text-end">V. Unitário</th>
+                            <th class="text-end">V. Total Previsto</th>
+                            <th class="text-end">Executado</th>
+                            <th class="text-center" style="width: 100px;">%</th>
+                        </tr>
+                    `;
+                    linhas = itens.map(item => {
+                        const valTotal = parseFloat(item.valorTotal) || 0;
+                        const valExec = parseFloat(item.valorExecutado) || 0;
+                        const pct = valTotal > 0 ? (valExec / valTotal) * 100 : 0;
+                        
+                        return `
+                            <tr>
+                                <td>${item.objeto}</td>
+                                <td class="text-center align-middle">${item.quantidade}</td>
+                                <td class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
+                                <td class="text-end font-monospace align-middle">${formatMoney(valTotal)}</td>
+                                <td class="text-end font-monospace align-middle ${valExec > 0 ? 'text-success fw-bold' : ''}">${formatMoney(valExec)}</td>
+                                <td class="text-center align-middle" style="min-width: 90px;">
+                                    <div class="custom-progress-pill">
+                                        <div class="pill-fill" style="width: ${pct}%; background-color: ${getProgressColor(pct)}"></div>
+                                        <div class="pill-text">${formatPercent(pct)}</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                return `
+                    <div class="card mb-4 shadow-sm border-0">
+                        <div class="card-header text-white ${corCard} d-flex justify-content-between align-items-center py-3">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-list-ul me-2"></i> ${titulo}</h5>
+                            <span class="badge bg-light text-dark fs-6">${itens.length} iten(s)</span>
+                        </div>
+                        <div class="card-body bg-light">
+                            ${cardsHtml}
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered table-hover bg-white mb-0">
+                                    <thead class="table-light">
+                                        ${theadHtml}
+                                    </thead>
+                                    <tbody>${linhas}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            let htmlListas = '';
+            
+            let fafHtml = gerarTabela('Fundo a Fundo (FAF)', itensFAF, 'bg-primary', metrics.fafVal, metrics.fafExec, metrics.fafExecPct);
+            if (fafHtml) {
+                // Remove a margem inferior padrão do card para colar o texto da observação logo abaixo
+                fafHtml = fafHtml.replace('card mb-4', 'card mb-1');
+                fafHtml += `
+                    <div class="text-muted small mb-4 px-2" style="font-style: italic;">
+                        <i class="fas fa-asterisk me-1"></i> Os dados foram atualizados até dezembro de 2025 e podem não refletir a execução real, uma vez que ainda se está na janela de submissão dos relatórios de execução atualizados.
+                    </div>
+                `;
+            }
+            htmlListas += fafHtml;
+            
+            htmlListas += gerarTabela('Convênio', itensConv, 'bg-success', metrics.convVal, metrics.convExec, metrics.convExecPct);
+            htmlListas += gerarTabela('Doações', itensDoac, 'bg-warning text-dark', metrics.doacVal, 0, 0);
+
+            if (htmlListas === '') {
+                htmlListas = '<div class="alert alert-info">Nenhum item registrado para este estado.</div>';
+            }
+
+            document.getElementById('estado-detalhe-listas').innerHTML = htmlListas;
+
+            // 5. Exibir a View
+            toggleView('estado-detalhe');
+        }
+
         // --- FUNÇÕES UTILITÁRIAS (COMPARTILHADAS) ---
 
         function processarDadosAgregados(data) {
             let totalContratado = 0;
             let totalExecutado = 0;
+            let totalDoado = 0;
             const ufsSet = new Set();
             const dadosPorUF = {};
 
             data.forEach(item => {
                 const vTotal = parseFloat(item.valorTotal) || 0;
                 const vExec = parseFloat(item.valorExecutado) || 0;
+                const isDoacao = (item.instrumento || "").toUpperCase().includes("DOA");
 
-                totalContratado += vTotal;
-                totalExecutado += vExec;
-                
                 if (item.uf) ufsSet.add(item.uf);
 
                 if (!dadosPorUF[item.uf]) {
-                    dadosPorUF[item.uf] = { total: 0, exec: 0, uf: item.uf };
+                    dadosPorUF[item.uf] = { total: 0, exec: 0, doado: 0, uf: item.uf };
                 }
-                dadosPorUF[item.uf].total += vTotal;
-                dadosPorUF[item.uf].exec += vExec;
+
+                if (isDoacao) {
+                    totalDoado += vTotal;
+                    dadosPorUF[item.uf].doado += vTotal;
+                } else {
+                    totalContratado += vTotal;
+                    totalExecutado += vExec;
+                    dadosPorUF[item.uf].total += vTotal;
+                    dadosPorUF[item.uf].exec += vExec;
+                }
             });
 
             const arrayUF = Object.values(dadosPorUF).map(d => {
@@ -1073,6 +1354,7 @@
                 global: {
                     totalContratado,
                     totalExecutado,
+                    totalDoado,
                     percentual: totalContratado > 0 ? (totalExecutado / totalContratado) * 100 : 0,
                     ufsComExecucao: arrayUF.filter(u => u.exec > 0).length
                 },
@@ -1084,6 +1366,13 @@
         const formatMoney = (val) => val ? val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00';
         const formatPercent = (val) => val ? val.toFixed(1).replace('.', ',') + '%' : '0,0%';
         
+        const getProgressColor = (p) => {
+            if (p <= 0.1) return '#bdc3c7'; // Cinza para 0%
+            if (p < 50) return '#f39c12'; // Laranja/Amarelo para < 50%
+            if (p < 100) return '#3498db'; // Azul para < 100%
+            return '#1abc9c'; // Verde para 100%
+        };
+
         function gerarCoresVariadas(count) {
             const cores = [
                 '#3498db', '#e74c3c', '#2ecc71', '#9b59b6', '#f1c40f', 
@@ -1108,6 +1397,7 @@
             $('#kpi-total-contratado').text(formatMoney(global.totalContratado)).attr('title', formatMoney(global.totalContratado));
             $('#kpi-total-executado').text(formatMoney(global.totalExecutado)).attr('title', formatMoney(global.totalExecutado));
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
+            $('#kpi-total-doado').text(formatMoney(global.totalDoado)).attr('title', formatMoney(global.totalDoado));
             $('#kpi-ufs-ativas').text(global.ufsComExecucao);
             $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs listadas`);
         }
@@ -1167,31 +1457,22 @@
                 const vTotal = parseFloat(row.valorTotal) || 0;
                 const vExec = parseFloat(row.valorExecutado) || 0;
                 const percent = vTotal > 0 ? (vExec / vTotal) * 100 : 0;
-                
-                const progressColor = (p) => {
-                    if (p <= 0.1) return '#bdc3c7'; 
-                    if (p < 50) return '#f39c12'; 
-                    if (p < 100) return '#3498db'; 
-                    return '#1abc9c';
-                };
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="text-center"><span class="d-none">${row.instrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
-                    <td><span class="badge bg-secondary badge-uf">${row.uf}</span></td>
-                    <td title="${row.objeto}"><span class="truncate-text">${row.objeto}</span></td>
-                    <td class="text-center">${row.quantidade}</td>
-                    <td class="text-end font-monospace small">${formatMoney(row.valorUnitario)}</td>
-                    <td class="text-end font-monospace">${formatMoney(vTotal)}</td>
-                    <td class="text-end ${vExec > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
+                    <td class="text-center align-middle"><span class="d-none">${row.instrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
+                    <td class="align-middle"><span class="badge bg-secondary badge-uf">${row.uf}</span></td>
+                    <td title="${row.objeto}" class="align-middle"><span class="truncate-text">${row.objeto}</span></td>
+                    <td class="text-center align-middle">${row.quantidade}</td>
+                    <td class="text-end font-monospace small align-middle">${formatMoney(row.valorUnitario)}</td>
+                    <td class="text-end font-monospace align-middle">${formatMoney(vTotal)}</td>
+                    <td class="text-end align-middle ${vExec > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
                         ${formatMoney(vExec)}
                     </td>
-                    <td class="text-center">
-                        <div class="progress" style="height: 20px; position: relative; background-color: #e9ecef;">
-                            <div class="progress-bar" style="width: ${percent}%; background-color: ${progressColor(percent)}"></div>
-                            <span style="position: absolute; width: 100%; text-align: center; font-size: 0.75rem; line-height: 20px; color: #333; font-weight: 700;">
-                                ${formatPercent(percent)}
-                            </span>
+                    <td class="text-center align-middle">
+                        <div class="custom-progress-pill">
+                            <div class="pill-fill" style="width: ${percent}%; background-color: ${getProgressColor(percent)}"></div>
+                            <div class="pill-text">${formatPercent(percent)}</div>
                         </div>
                     </td>
                 `;
@@ -1380,11 +1661,20 @@
 
             let somaRepassado = 0;
             let somaExecutado = 0;
+            let somaDoado = 0;
             let qtdItens = dadosFiltrados.length;
 
             dadosFiltrados.forEach(item => {
-                somaRepassado += (parseFloat(item.valorTotal) || 0);
-                somaExecutado += (parseFloat(item.valorExecutado) || 0);
+                const vTotal = parseFloat(item.valorTotal) || 0;
+                const vExec = parseFloat(item.valorExecutado) || 0;
+                const isDoacao = (item.instrumento || "").toUpperCase().includes("DOA");
+
+                if (isDoacao) {
+                    somaDoado += vTotal;
+                } else {
+                    somaRepassado += vTotal;
+                    somaExecutado += vExec;
+                }
             });
 
             const percentual = somaRepassado > 0 ? (somaExecutado / somaRepassado) * 100 : 0;
@@ -1397,6 +1687,7 @@
             const txtExec = formatMoney(somaExecutado);
             elExec.text(txtExec).attr('title', txtExec);
 
+            $('#dyn-total-doado').text(formatMoney(somaDoado)).attr('title', formatMoney(somaDoado));
             $('#dyn-percentual').text(formatPercent(percentual));
             $('#dyn-qtd-itens').text(qtdItens);
         }
