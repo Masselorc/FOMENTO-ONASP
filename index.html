@@ -286,12 +286,14 @@
         <header class="header-section">
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-md-7 d-flex align-items-center gap-3">
-                        <img src="./logo-senappen.png" alt="SENAPPEN" style="height: 65px; object-fit: contain;" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/b/bf/Coat_of_arms_of_Brazil.svg'; this.style.height='50px';">
+                    <div class="col-md-7 d-flex align-items-center gap-4">
+                        <!-- Logo SENAPPEN inserido via URL oficial -->
+                        <img id="img-logo-senappen" src="https://www.gov.br/senappen/pt-br/centrais-de-conteudo/download-logos/senappen-marca-final_prancheta-1-copia-4-1.png/@@images/image" alt="Logo SENAPPEN Completo" style="height: 90px; object-fit: contain;" onerror="this.onerror=null; this.src='https://placehold.co/300x90/ffffff/2c3e50?text=SENAPPEN';">
+                        
                         <div>
                             <h1 class="header-title mb-1" style="font-size: 1.6rem;">Painel de Acompanhamento</h1>
                             <p class="text-muted mb-0" style="font-size: 0.85rem;">
-                                Ouvidoria Nacional de Serviços Penais | Monitoramento de Recursos (FAF, Convênios e Doações)
+                                Ouvidoria Nacional de Serviços Penais | Monitoramento de Recursos (FAF, Convênio e Doações)
                             </p>
                         </div>
                     </div>
@@ -1402,29 +1404,22 @@
                 
                 // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                
-                // Configuração de Margens
-                const margin = 10; // 10mm de margem
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                const pdfWidth = pageWidth - (margin * 2);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
                 
-                // Lógica de paginação automática com margens
+                // Lógica de paginação automática
                 let heightLeft = pdfHeight;
-                let printedAmount = 0;
+                let position = 0;
+                const pageHeight = pdf.internal.pageSize.getHeight();
 
-                pdf.addImage(imgData, 'PNG', margin, margin, pdfWidth, pdfHeight);
-                printedAmount += (pageHeight - margin * 2);
-                heightLeft -= printedAmount;
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
 
                 while (heightLeft > 0) {
+                    position = heightLeft - pdfHeight;
                     pdf.addPage();
-                    let position = margin - printedAmount;
-                    pdf.addImage(imgData, 'PNG', margin, position, pdfWidth, pdfHeight);
-                    printedAmount += (pageHeight - margin * 2);
-                    heightLeft -= (pageHeight - margin * 2);
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pageHeight;
                 }
 
                 pdf.save(`Painel_Geral_Ouvidoria.pdf`);
@@ -1476,29 +1471,22 @@
                 
                 // Criação do PDF em orientação Retrato (p), milímetros (mm), tamanho A4
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                
-                // Configuração de Margens
-                const margin = 10; // 10mm de margem
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                const pdfWidth = pageWidth - (margin * 2);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
                 
-                // Lógica de paginação automática com margens
+                // Lógica de paginação automática: caso o conteúdo da tabela ultrapasse o tamanho de 1 página A4
                 let heightLeft = pdfHeight;
-                let printedAmount = 0;
+                let position = 0;
+                const pageHeight = pdf.internal.pageSize.getHeight();
 
-                pdf.addImage(imgData, 'PNG', margin, margin, pdfWidth, pdfHeight);
-                printedAmount += (pageHeight - margin * 2);
-                heightLeft -= printedAmount;
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pageHeight;
 
                 while (heightLeft > 0) {
+                    position = heightLeft - pdfHeight;
                     pdf.addPage();
-                    let position = margin - printedAmount;
-                    pdf.addImage(imgData, 'PNG', margin, position, pdfWidth, pdfHeight);
-                    printedAmount += (pageHeight - margin * 2);
-                    heightLeft -= (pageHeight - margin * 2);
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pageHeight;
                 }
 
                 // Baixa o arquivo já com o nome do Estado específico
