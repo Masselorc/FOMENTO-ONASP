@@ -1,0 +1,258 @@
+:root {
+            --primary-color: #2c3e50; 
+            --secondary-color: #34495e;
+            --accent-color: #1abc9c; 
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: #333;
+            padding-bottom: 50px;
+        }
+
+        /* Header */
+        .header-section {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .header-title { color: var(--primary-color); font-weight: 700; }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: #fff; border: none; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 1rem 0.75rem !important; /* Reduzido o padding lateral para dar espaço aos números longos */
+        }
+        .kpi-card:hover { transform: translateY(-3px); }
+        
+        .kpi-title { 
+            font-size: 0.75rem; /* Ajustado de 0.85rem para economizar espaço */
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            color: #7f8c8d; 
+            margin-bottom: 5px; 
+        }
+        
+        .kpi-value { 
+            font-size: clamp(0.9rem, 1.1vw, 1.35rem); /* Reduzido de 1.8rem para evitar os "pontinhos" em milhões */
+            font-weight: bold; 
+            color: var(--primary-color);
+            line-height: 1.2;
+        }
+        
+        .kpi-desc { font-size: 0.8rem; color: #95a5a6; margin-top: 5px; }
+
+        /* Estilo para Cards Dinâmicos (abaixo dos filtros) */
+        .dynamic-card {
+            border-left: 4px solid var(--secondary-color);
+            background-color: #fcfcfc;
+        }
+
+        /* Gráfico */
+        .chart-container {
+            background: #fff; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem;
+            position: relative; height: 500px;
+        }
+
+        /* Tabelas e Filtros */
+        .table-container {
+            background: #fff; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .filter-section {
+            background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 1rem;
+        }
+
+        /* [NOVO] Estilo Customizado para Dropdown Multi-Select */
+        .dropdown-menu-custom {
+            max-height: 300px;
+            overflow-y: auto;
+            min-width: 250px;
+            padding: 10px;
+        }
+        .form-check-label {
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        .dropdown-item {
+            padding: 0.25rem 1rem;
+        }
+
+        .active-filter-badge {
+            background-color: var(--primary-color); color: white; padding: 5px 10px;
+            border-radius: 20px; font-size: 0.8rem; display: none; margin-left: 10px;
+        }
+
+        .truncate-text {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .text-money { font-family: 'Consolas', monospace; letter-spacing: -0.5px; }
+        .cursor-pointer { cursor: pointer; }
+        
+        /* Badges Específicos */
+        .badge-uf { min-width: 35px; }
+        .badge-inst-faf { background-color: #3498db; color: white; }
+        .badge-inst-convenio { background-color: #27ae60; color: white; }
+        .badge-inst-doacao { background-color: #e67e22; color: white; }
+        .badge-inst-default { background-color: #95a5a6; color: white; }
+
+        /* [NOVO] Forçar cabeçalho da tabela em uma linha e alinhar verticalmente */
+        table.dataTable thead th, table.dataTable thead td {
+            white-space: nowrap !important;
+            vertical-align: middle !important;
+        }
+
+        /* Progress Pill (Novo visual para barras de progresso) */
+        .custom-progress-pill {
+            position: relative;
+            background-color: #f1f3f5;
+            border-radius: 12px;
+            height: 24px;
+            width: 100%;
+            min-width: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pill-fill {
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+        .pill-text {
+            position: relative;
+            z-index: 1;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        /* --- ESTILOS DA PÁGINA DE DETALHES --- */
+        .region-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .state-detail-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+            height: 100%;
+        }
+        
+        .state-detail-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .state-header {
+            background-color: rgba(255, 255, 255, 0.6); 
+            padding: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .state-flag {
+            width: 50px;
+            height: 35px; 
+            object-fit: contain; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            background-color: #fff; 
+        }
+
+        .state-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .mini-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
+        }
+
+        .mini-card {
+            background: #fff; 
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .mini-card-label {
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .mini-card-value {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* --- CORES POR REGIÃO (Tons Pastéis) --- */
+        .bg-norte { background-color: #e8f5e9; border-color: #c8e6c9; }       
+        .bg-nordeste { background-color: #ffebee; border-color: #ffcdd2; }    
+        .bg-centro-oeste { background-color: #fffde7; border-color: #fff9c4; }
+        .bg-sudeste { background-color: #e3f2fd; border-color: #bbdefb; }     
+        .bg-sul { background-color: #f3e5f5; border-color: #e1bee7; }         
+
+        /* Botão Destaque */
+        .btn-destaque {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+        .btn-destaque:hover {
+            background-color: #16a085;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Controle de Views */
+        #view-dashboard { display: block; }
+        #view-detalhamento { display: none; }
+        #view-estado-detalhe { display: none; }

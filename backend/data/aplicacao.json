@@ -1,0 +1,1677 @@
+{
+  "configuracao": {
+    "arquivoPlanilhaConvenios": "Planilha de Gestão Financeira - Ouvidoria.xlsx",
+    "abasPlanilhaIgnoradas": [
+      "Geral",
+      "IND_PRORROG"
+    ],
+    "classificacaoPlanilhaConvenios": "OUVIDORIA"
+  },
+  "regioes": {
+    "NORTE": [
+      "AC",
+      "AP",
+      "AM",
+      "PA",
+      "RO",
+      "RR",
+      "TO"
+    ],
+    "NORDESTE": [
+      "AL",
+      "BA",
+      "CE",
+      "MA",
+      "PB",
+      "PE",
+      "PI",
+      "RN",
+      "SE"
+    ],
+    "CENTRO-OESTE": [
+      "DF",
+      "GO",
+      "MT",
+      "MS"
+    ],
+    "SUDESTE": [
+      "ES",
+      "MG",
+      "RJ",
+      "SP"
+    ],
+    "SUL": [
+      "PR",
+      "RS",
+      "SC"
+    ]
+  },
+  "nomesEstados": {
+    "AC": "Acre",
+    "AL": "Alagoas",
+    "AP": "Amapá",
+    "AM": "Amazonas",
+    "BA": "Bahia",
+    "CE": "Ceará",
+    "DF": "Distrito Federal",
+    "ES": "Espírito Santo",
+    "GO": "Goiás",
+    "MA": "Maranhão",
+    "MT": "Mato Grosso",
+    "MS": "Mato Grosso do Sul",
+    "MG": "Minas Gerais",
+    "PA": "Pará",
+    "PB": "Paraíba",
+    "PR": "Paraná",
+    "PE": "Pernambuco",
+    "PI": "Piauí",
+    "RJ": "Rio de Janeiro",
+    "RN": "Rio Grande do Norte",
+    "RS": "Rio Grande do Sul",
+    "RO": "Rondônia",
+    "RR": "Roraima",
+    "SC": "Santa Catarina",
+    "SP": "São Paulo",
+    "SE": "Sergipe",
+    "TO": "Tocantins"
+  },
+  "imagensBandeiras": {
+    "AC": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Bandeira_do_Acre.svg",
+    "AL": "https://upload.wikimedia.org/wikipedia/commons/8/88/Bandeira_de_Alagoas.svg",
+    "AP": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Bandeira_do_Amap%C3%A1.svg",
+    "AM": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Bandeira_do_Amazonas.svg",
+    "BA": "https://upload.wikimedia.org/wikipedia/commons/2/28/Bandeira_da_Bahia.svg",
+    "CE": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Bandeira_do_Cear%C3%A1.svg",
+    "DF": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Bandeira_do_Distrito_Federal_%28Brasil%29.svg",
+    "ES": "https://upload.wikimedia.org/wikipedia/commons/4/43/Bandeira_do_Esp%C3%ADrito_Santo.svg",
+    "GO": "https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_Goi%C3%A1s.svg",
+    "MA": "https://upload.wikimedia.org/wikipedia/commons/4/45/Bandeira_do_Maranh%C3%A3o.svg",
+    "MT": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Bandeira_de_Mato_Grosso.svg",
+    "MS": "https://upload.wikimedia.org/wikipedia/commons/6/64/Bandeira_de_Mato_Grosso_do_Sul.svg",
+    "MG": "https://upload.wikimedia.org/wikipedia/commons/f/f4/Bandeira_de_Minas_Gerais.svg",
+    "PA": "https://upload.wikimedia.org/wikipedia/commons/0/02/Bandeira_do_Par%C3%A1.svg",
+    "PB": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Bandeira_da_Para%C3%ADba.svg",
+    "PR": "https://upload.wikimedia.org/wikipedia/commons/9/93/Bandeira_do_Paran%C3%A1.svg",
+    "PE": "https://upload.wikimedia.org/wikipedia/commons/5/59/Bandeira_de_Pernambuco.svg",
+    "PI": "https://upload.wikimedia.org/wikipedia/commons/3/33/Bandeira_do_Piau%C3%AD.svg",
+    "RJ": "https://upload.wikimedia.org/wikipedia/commons/7/73/Bandeira_do_estado_do_Rio_de_Janeiro.svg",
+    "RN": "https://upload.wikimedia.org/wikipedia/commons/3/30/Bandeira_do_Rio_Grande_do_Norte.svg",
+    "RS": "https://upload.wikimedia.org/wikipedia/commons/6/63/Bandeira_do_Rio_Grande_do_Sul.svg",
+    "RO": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Bandeira_de_Rond%C3%B4nia.svg",
+    "RR": "https://upload.wikimedia.org/wikipedia/commons/9/98/Bandeira_de_Roraima.svg",
+    "SC": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Bandeira_de_Santa_Catarina.svg",
+    "SP": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Bandeira_do_estado_de_S%C3%A3o_Paulo.svg",
+    "SE": "https://upload.wikimedia.org/wikipedia/commons/b/be/Bandeira_de_Sergipe.svg",
+    "TO": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Bandeira_do_Tocantins.svg"
+  },
+  "infoConvenios": {
+    "MT": {
+      "numero": "937698",
+      "ano": "2022",
+      "sei": "08016024910202234",
+      "vencimento": "07/04/2027"
+    },
+    "GO": {
+      "numero": "937216",
+      "ano": "2022",
+      "sei": "08016024915202267",
+      "vencimento": "07/04/2027"
+    },
+    "PR": {
+      "numero": "937871",
+      "ano": "2022",
+      "sei": "08016025090202206",
+      "vencimento": "07/04/2027"
+    },
+    "AM": {
+      "numero": "937592",
+      "ano": "2022",
+      "sei": "08016024901202243",
+      "vencimento": "07/04/2027"
+    },
+    "AC": {
+      "numero": "937782",
+      "ano": "2022",
+      "sei": "08016024899202211",
+      "vencimento": "07/04/2027"
+    },
+    "MS": {
+      "numero": "937265",
+      "ano": "2022",
+      "sei": "08016025017202226",
+      "vencimento": "07/04/2027"
+    },
+    "SP": {
+      "numero": "938128",
+      "ano": "2022",
+      "sei": "08016025062202281",
+      "vencimento": "31/12/2027"
+    },
+    "MA": {
+      "numero": "938277",
+      "ano": "2022",
+      "sei": "08016024893202235",
+      "vencimento": "07/04/2027"
+    },
+    "PB": {
+      "numero": "937818",
+      "ano": "2022",
+      "sei": "08016024920202270",
+      "vencimento": "07/04/2027"
+    },
+    "PI": {
+      "numero": "937780",
+      "ano": "2022",
+      "sei": "08016024995202251",
+      "vencimento": "07/04/2027"
+    },
+    "RO": {
+      "numero": "937917",
+      "ano": "2022",
+      "sei": "08016024924202258",
+      "vencimento": "07/04/2027"
+    },
+    "TO": {
+      "numero": "937468",
+      "ano": "2022",
+      "sei": "08016024985202215",
+      "vencimento": "07/04/2027"
+    },
+    "RJ": {
+      "numero": "937817",
+      "ano": "2022",
+      "sei": "08016024874202217",
+      "vencimento": "07/04/2027"
+    },
+    "AL": {
+      "numero": "937221",
+      "ano": "2022",
+      "sei": "08016025053202290",
+      "vencimento": "07/04/2027"
+    },
+    "SC": {
+      "numero": "937783",
+      "ano": "2022",
+      "sei": "08016025010202212",
+      "vencimento": "07/04/2027"
+    }
+  },
+  "dadosBase": [
+    {
+      "uf": "AC",
+      "objeto": "VEÍCULO DE PASSEIO TIPO SEDAN",
+      "quantidade": 1,
+      "valorUnitario": 125704.0,
+      "valorTotal": 125704.0,
+      "valorExecutado": 125704.0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AC",
+      "objeto": "Contratação de equipe técnica para OUVIDORIA (psicólogo, jurídico e estagiários) (24 meses)",
+      "quantidade": 1,
+      "valorUnitario": 308425.53,
+      "valorTotal": 308425.53,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Computador PC",
+      "quantidade": 3,
+      "valorUnitario": 16754.4,
+      "valorTotal": 50263.2,
+      "valorExecutado": 50263.2,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Notebook",
+      "quantidade": 2,
+      "valorUnitario": 12744.8,
+      "valorTotal": 25489.6,
+      "valorExecutado": 25489.6,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Mesas De Escritório Com Gavetas",
+      "quantidade": 3,
+      "valorUnitario": 2370.0,
+      "valorTotal": 7110.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Mesa Redonda Para Reunião",
+      "quantidade": 1,
+      "valorUnitario": 690.0,
+      "valorTotal": 690.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Mesa Auxiliar Para Impressora",
+      "quantidade": 3,
+      "valorUnitario": 894.0,
+      "valorTotal": 2682.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Cadeira Tipo Palito",
+      "quantidade": 6,
+      "valorUnitario": 1794.0,
+      "valorTotal": 10764.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Longarina Com 4 Cadeiras",
+      "quantidade": 2,
+      "valorUnitario": 1520.0,
+      "valorTotal": 3040.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Cadeira Escritório",
+      "quantidade": 3,
+      "valorUnitario": 1617.0,
+      "valorTotal": 4851.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Armário Pequeno",
+      "quantidade": 2,
+      "valorUnitario": 1479.8,
+      "valorTotal": 2959.6,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Armários Grande",
+      "quantidade": 1,
+      "valorUnitario": 810.0,
+      "valorTotal": 810.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Roteador",
+      "quantidade": 1,
+      "valorUnitario": 728.0,
+      "valorTotal": 728.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Bebedouro Torre Para Garrafão",
+      "quantidade": 2,
+      "valorUnitario": 1598.0,
+      "valorTotal": 3196.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Central De Ar 18.000 Btus",
+      "quantidade": 1,
+      "valorUnitario": 3579.9,
+      "valorTotal": 3579.9,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Arquivo",
+      "quantidade": 1,
+      "valorUnitario": 1206.0,
+      "valorTotal": 1206.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Caixa De Som Microfone",
+      "quantidade": 1,
+      "valorUnitario": 2873.3,
+      "valorTotal": 2873.3,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "01 Televisor 42”",
+      "quantidade": 4,
+      "valorUnitario": 6756.0,
+      "valorTotal": 27024.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Tela De Projeção",
+      "quantidade": 1,
+      "valorUnitario": 830.0,
+      "valorTotal": 830.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Projeto/Datashow",
+      "quantidade": 1,
+      "valorUnitario": 2699.0,
+      "valorTotal": 2699.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Nobreak",
+      "quantidade": 3,
+      "valorUnitario": 2460.0,
+      "valorTotal": 7380.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Nobreaks;",
+      "quantidade": 2,
+      "valorUnitario": 1036.0,
+      "valorTotal": 2072.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Conjuntos de computadores de mesa (desktop);",
+      "quantidade": 3,
+      "valorUnitario": 4500.0,
+      "valorTotal": 13500.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Scanners de mesa;",
+      "quantidade": 2,
+      "valorUnitario": 1700.0,
+      "valorTotal": 3400.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "câmeras WEB;",
+      "quantidade": 2,
+      "valorUnitario": 650.0,
+      "valorTotal": 1300.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Cadeiras estofadas em tecido (ou similar), com encosto e sem braço; ",
+      "quantidade": 6,
+      "valorUnitario": 600.0,
+      "valorTotal": 3600.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Armários baixo em MDF, com duas portas com prateleiras internas - com chave; ",
+      "quantidade": 2,
+      "valorUnitario": 900.0,
+      "valorTotal": 1800.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Gaveteiros arquivo quatro gavetas para pasta suspensa;",
+      "quantidade": 2,
+      "valorUnitario": 759.67,
+      "valorTotal": 1519.34,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Câmeras fotográficas digitais; ",
+      "quantidade": 2,
+      "valorUnitario": 3589.66,
+      "valorTotal": 7179.32,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Aparelhos telefônicos celular (smartphone); ",
+      "quantidade": 2,
+      "valorUnitario": 4071.67,
+      "valorTotal": 8143.34,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Ar-condicionado de 12000 BTUs;",
+      "quantidade": 1,
+      "valorUnitario": 1780.97,
+      "valorTotal": 1780.97,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Nobreaks 1200VA;",
+      "quantidade": 2,
+      "valorUnitario": 1036.0,
+      "valorTotal": 2072.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Roteador wireless; ",
+      "quantidade": 1,
+      "valorUnitario": 520.0,
+      "valorTotal": 520.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Aparelhos telefônicos fixos com identificador de chamadas; ",
+      "quantidade": 2,
+      "valorUnitario": 380.0,
+      "valorTotal": 760.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Bebedouros para garrafão de água 20L;",
+      "quantidade": 2,
+      "valorUnitario": 734.33,
+      "valorTotal": 1468.66,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Repetidor wireless de sinal de internet;",
+      "quantidade": 1,
+      "valorUnitario": 350.0,
+      "valorTotal": 350.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Automóvel 1.0 com ar-condicionado",
+      "quantidade": 1,
+      "valorUnitario": 77480.08,
+      "valorTotal": 77480.08,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Televisão LED smart tv 32 polegadas;",
+      "quantidade": 1,
+      "valorUnitario": 1600.0,
+      "valorTotal": 1600.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Microondas 20 litros; ",
+      "quantidade": 1,
+      "valorUnitario": 600.0,
+      "valorTotal": 600.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Gélagua de coluna para garrafão de 20 litros; ",
+      "quantidade": 1,
+      "valorUnitario": 600.0,
+      "valorTotal": 600.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Frigobar compacto 47 litros; ",
+      "quantidade": 1,
+      "valorUnitario": 1300.0,
+      "valorTotal": 1300.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Telefone celular smartphone; ",
+      "quantidade": 2,
+      "valorUnitario": 1600.0,
+      "valorTotal": 3200.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Telefone sem fio; ",
+      "quantidade": 1,
+      "valorUnitario": 189.22,
+      "valorTotal": 189.22,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Cortinas persianas; ",
+      "quantidade": 1,
+      "valorUnitario": 1600.0,
+      "valorTotal": 1600.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Aparelho de ar condicionado 22.000 BTUS com instalação; ",
+      "quantidade": 2,
+      "valorUnitario": 3500.0,
+      "valorTotal": 7000.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Gaveteiro volante MDP; ",
+      "quantidade": 3,
+      "valorUnitario": 550.0,
+      "valorTotal": 1650.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Mesa em \"L\"; ",
+      "quantidade": 3,
+      "valorUnitario": 1700.0,
+      "valorTotal": 5100.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Armários baixos com duas portas 800x500x740 mm MDP; ",
+      "quantidade": 2,
+      "valorUnitario": 850.0,
+      "valorTotal": 1700.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Mesa de Reunião redonda com tampo em MDP 04 lugares; ",
+      "quantidade": 1,
+      "valorUnitario": 1250.0,
+      "valorTotal": 1250.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Escaninho baixo 900x500x740 MDP; ",
+      "quantidade": 1,
+      "valorUnitario": 810.0,
+      "valorTotal": 810.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Armário alto 2 portas 1600 x 900 x 500 mm.; ",
+      "quantidade": 4,
+      "valorUnitario": 1200.0,
+      "valorTotal": 4800.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Sofá estofado 2 lugares; ",
+      "quantidade": 1,
+      "valorUnitario": 3000.0,
+      "valorTotal": 3000.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Cadeira presidente giratória; ",
+      "quantidade": 3,
+      "valorUnitario": 2100.0,
+      "valorTotal": 6300.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Cadeiras fixas executivas com braço; ",
+      "quantidade": 2,
+      "valorUnitario": 1400.0,
+      "valorTotal": 2800.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Apoio ergonômico para os pés em poliestireno. Medidas aprox.: 400 mm x 300 mm; ",
+      "quantidade": 3,
+      "valorUnitario": 100.0,
+      "valorTotal": 300.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Pedestal para banner em alumínio, altura máxima 300 cm; ",
+      "quantidade": 1,
+      "valorUnitario": 200.0,
+      "valorTotal": 200.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Computador - CPU de 4 núcleos; ",
+      "quantidade": 3,
+      "valorUnitario": 6500.0,
+      "valorTotal": 19500.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Multifuncional Laser Monocromática; ",
+      "quantidade": 2,
+      "valorUnitario": 4834.14,
+      "valorTotal": 9668.28,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Tablet com conectividade mínima 3G; ",
+      "quantidade": 2,
+      "valorUnitario": 1700.0,
+      "valorTotal": 3400.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Notebook com requisitos mínimos de processamento. CPU de 4 núcleos ou mais; ",
+      "quantidade": 2,
+      "valorUnitario": 5750.0,
+      "valorTotal": 11500.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Projetor Cor Branca Resolução XGA; ",
+      "quantidade": 1,
+      "valorUnitario": 4464.0,
+      "valorTotal": 4464.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Nobreak; ",
+      "quantidade": 3,
+      "valorUnitario": 1070.0,
+      "valorTotal": 3210.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "HD externo 1TB USB 3.0;",
+      "quantidade": 2,
+      "valorUnitario": 279.9,
+      "valorTotal": 559.8,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Pendrive 32gb USB 3.0; ",
+      "quantidade": 3,
+      "valorUnitario": 32.9,
+      "valorTotal": 98.7,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Monitor LED 24.",
+      "quantidade": 3,
+      "valorUnitario": 1200.0,
+      "valorTotal": 3600.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "DF",
+      "objeto": "Unidade móvel de ouvidoria, por meio de veículo automotor aparelhado com infraestrutura",
+      "quantidade": 1,
+      "valorUnitario": 350000.0,
+      "valorTotal": 350000.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "GO",
+      "objeto": "Microcomputadores do tipo Desktop;",
+      "quantidade": 3,
+      "valorUnitario": 6544.89,
+      "valorTotal": 19634.67,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "GO",
+      "objeto": "Monitores",
+      "quantidade": 3,
+      "valorUnitario": 1301.94,
+      "valorTotal": 3905.82,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "MT",
+      "objeto": "Apoio ergonômico para pés; ",
+      "quantidade": 2,
+      "valorUnitario": 66.32,
+      "valorTotal": 132.64,
+      "valorExecutado": 132.64,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "MT",
+      "objeto": "Fone de Ouvido Supra auricular;",
+      "quantidade": 2,
+      "valorUnitario": 200.0,
+      "valorTotal": 400.0,
+      "valorExecutado": 400.0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "MT",
+      "objeto": "Office.",
+      "quantidade": 3,
+      "valorUnitario": 2094.33,
+      "valorTotal": 6282.99,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Ar condicionado split - 12.000 BTUs 220V;",
+      "quantidade": 1,
+      "valorUnitario": 2149.0,
+      "valorTotal": 2149.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Notebook - processador Intel;",
+      "quantidade": 4,
+      "valorUnitario": 6349.0,
+      "valorTotal": 25396.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Refrigerador degelo prático 240l;",
+      "quantidade": 1,
+      "valorUnitario": 1699.0,
+      "valorTotal": 1699.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Frigobar, 45l, branco;",
+      "quantidade": 1,
+      "valorUnitario": 732.22,
+      "valorTotal": 732.22,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "TV de 32\"",
+      "quantidade": 1,
+      "valorUnitario": 1599.0,
+      "valorTotal": 1599.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "HD Externo;",
+      "quantidade": 1,
+      "valorUnitario": 450.0,
+      "valorTotal": 450.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "TV de 50\";",
+      "quantidade": 2,
+      "valorUnitario": 2879.0,
+      "valorTotal": 5758.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Microcomputador, inclusive monitor, processador 16M;",
+      "quantidade": 2,
+      "valorUnitario": 6409.99,
+      "valorTotal": 12819.98,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Multifuncional -impressora;",
+      "quantidade": 1,
+      "valorUnitario": 1215.05,
+      "valorTotal": 1215.05,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Triturador de documentos;",
+      "quantidade": 1,
+      "valorUnitario": 2699.0,
+      "valorTotal": 2699.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Gelágua - bebedouro de coluna;",
+      "quantidade": 1,
+      "valorUnitario": 639.0,
+      "valorTotal": 639.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Fragmentadora de papel.",
+      "quantidade": 1,
+      "valorUnitario": 599.9,
+      "valorTotal": 599.9,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PI",
+      "objeto": "Computadores; ",
+      "quantidade": 3,
+      "valorUnitario": 6500.0,
+      "valorTotal": 19500.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PI",
+      "objeto": "Nobreaks 1000 VAs;",
+      "quantidade": 3,
+      "valorUnitario": 900.0,
+      "valorTotal": 2700.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PI",
+      "objeto": "Impressora Multifuncional; ",
+      "quantidade": 1,
+      "valorUnitario": 1300.0,
+      "valorTotal": 1300.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PI",
+      "objeto": "Ar condicionado Split 12.000 btus. ",
+      "quantidade": 1,
+      "valorUnitario": 1800.0,
+      "valorTotal": 1800.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Câmera fotográfica;",
+      "quantidade": 1,
+      "valorUnitario": 6202.0,
+      "valorTotal": 6202.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Cartão de memória;",
+      "quantidade": 2,
+      "valorUnitario": 150.0,
+      "valorTotal": 300.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Mochila;",
+      "quantidade": 1,
+      "valorUnitario": 160.0,
+      "valorTotal": 160.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Tripé para câmera;",
+      "quantidade": 1,
+      "valorUnitario": 400.0,
+      "valorTotal": 400.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Impressora multifuncional;",
+      "quantidade": 1,
+      "valorUnitario": 4390.0,
+      "valorTotal": 4390.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Notebook;",
+      "quantidade": 1,
+      "valorUnitario": 5722.0,
+      "valorTotal": 5722.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "HD externo;",
+      "quantidade": 1,
+      "valorUnitario": 357.0,
+      "valorTotal": 357.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Webcam;",
+      "quantidade": 2,
+      "valorUnitario": 449.0,
+      "valorTotal": 898.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Microfone de mesa.",
+      "quantidade": 2,
+      "valorUnitario": 86.0,
+      "valorTotal": 172.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Notebook;",
+      "quantidade": 2,
+      "valorUnitario": 5550.0,
+      "valorTotal": 11100.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Computador de Mesa (Desktop);",
+      "quantidade": 2,
+      "valorUnitario": 5039.0,
+      "valorTotal": 10078.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Monitor;",
+      "quantidade": 2,
+      "valorUnitario": 1499.0,
+      "valorTotal": 2998.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Segundo Monitor;",
+      "quantidade": 2,
+      "valorUnitario": 1799.98,
+      "valorTotal": 3599.96,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Nobreak;",
+      "quantidade": 2,
+      "valorUnitario": 2754.0,
+      "valorTotal": 5508.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Pen Drive 32Gb;",
+      "quantidade": 2,
+      "valorUnitario": 49.9,
+      "valorTotal": 99.8,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Headset;",
+      "quantidade": 2,
+      "valorUnitario": 235.0,
+      "valorTotal": 470.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Gravador de voz digital - para atendimentos presenciais;",
+      "quantidade": 2,
+      "valorUnitario": 450.0,
+      "valorTotal": 900.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Scanner de mesa;",
+      "quantidade": 1,
+      "valorUnitario": 1899.9,
+      "valorTotal": 1899.9,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Web Cam;",
+      "quantidade": 2,
+      "valorUnitario": 539.9,
+      "valorTotal": 1079.8,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Telefone com identificador de chamadas;",
+      "quantidade": 1,
+      "valorUnitario": 589.0,
+      "valorTotal": 589.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Impressora Multifuncional;",
+      "quantidade": 1,
+      "valorUnitario": 3299.0,
+      "valorTotal": 3299.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Teclado para computador;",
+      "quantidade": 2,
+      "valorUnitario": 180.0,
+      "valorTotal": 360.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Mouse;",
+      "quantidade": 2,
+      "valorUnitario": 89.0,
+      "valorTotal": 178.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Cadeiras para escritórios (presidente);",
+      "quantidade": 2,
+      "valorUnitario": 945.0,
+      "valorTotal": 1890.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Cadeiras Executiva (com braço);",
+      "quantidade": 4,
+      "valorUnitario": 620.0,
+      "valorTotal": 2480.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Armário de escritório 2 portas e com prateleiras - com chave;",
+      "quantidade": 1,
+      "valorUnitario": 730.0,
+      "valorTotal": 730.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Gaveteiro 3 gavetas, com rodízio e chave;",
+      "quantidade": 2,
+      "valorUnitario": 520.0,
+      "valorTotal": 1040.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Armário Baixo em MDF, com duas portas com prateleiras internas - com chave;",
+      "quantidade": 2,
+      "valorUnitario": 580.0,
+      "valorTotal": 1160.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Câmera Fotográfica Digital de alta resolução;",
+      "quantidade": 1,
+      "valorUnitario": 5200.0,
+      "valorTotal": 5200.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Mesa em L em em MDF 1,40 x 1,40 com 02 gavetas;",
+      "quantidade": 2,
+      "valorUnitario": 1100.0,
+      "valorTotal": 2200.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Estofado de 02 lugares, de até 2m de comprimento;",
+      "quantidade": 1,
+      "valorUnitario": 2199.0,
+      "valorTotal": 2199.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RO",
+      "objeto": "Aquisição de Bebedouro para garrafão de 20 litros.",
+      "quantidade": 1,
+      "valorUnitario": 1151.0,
+      "valorTotal": 1151.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "RR",
+      "objeto": "Notebook",
+      "quantidade": 3,
+      "valorUnitario": 6192.18,
+      "valorTotal": 18576.54,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "Tablete; ",
+      "quantidade": 2,
+      "valorUnitario": 2456.33,
+      "valorTotal": 4912.66,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "Web Câmeras; ",
+      "quantidade": 8,
+      "valorUnitario": 339.0,
+      "valorTotal": 2712.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "HD’s externos; ",
+      "quantidade": 1,
+      "valorUnitario": 315.0,
+      "valorTotal": 315.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "Notebook;",
+      "quantidade": 3,
+      "valorUnitario": 1530.0,
+      "valorTotal": 4590.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "Programa Editor de PDF, licença mensal",
+      "quantidade": 12,
+      "valorUnitario": 55.0,
+      "valorTotal": 660.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "Caixa de som para PC; ",
+      "quantidade": 8,
+      "valorUnitario": 78.0,
+      "valorTotal": 624.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "Fone/Microfone para PC; ",
+      "quantidade": 8,
+      "valorUnitario": 39.0,
+      "valorTotal": 312.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SC",
+      "objeto": "Telefone com identificador.",
+      "quantidade": 3,
+      "valorUnitario": 938.0,
+      "valorTotal": 2814.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Sofá recepção 03 lugares; ",
+      "quantidade": 1,
+      "valorUnitario": 1298.0,
+      "valorTotal": 1298.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Cadeira de escritório ergonômica com base giratória; ",
+      "quantidade": 9,
+      "valorUnitario": 1099.91,
+      "valorTotal": 9899.19,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Mesa para escritório em L; ",
+      "quantidade": 2,
+      "valorUnitario": 1339.36,
+      "valorTotal": 2678.72,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Geladeira frost free duplex 389l; ",
+      "quantidade": 1,
+      "valorUnitario": 3289.0,
+      "valorTotal": 3289.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Persiana vertical PVC (m²); ",
+      "quantidade": 1,
+      "valorUnitario": 135.5,
+      "valorTotal": 135.5,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Teclado USB com fio; ",
+      "quantidade": 13,
+      "valorUnitario": 87.67,
+      "valorTotal": 1139.71,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Mouse óptico USB preto; ",
+      "quantidade": 13,
+      "valorUnitario": 23.36,
+      "valorTotal": 303.68,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Etiqueta inkjet+laser A5 9,0x32,0 multiusos.",
+      "quantidade": 10,
+      "valorUnitario": 8.2,
+      "valorTotal": 82.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Mesa Reta; ",
+      "quantidade": 2,
+      "valorUnitario": 1100.0,
+      "valorTotal": 2200.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Cadeira presidente operativa; ",
+      "quantidade": 2,
+      "valorUnitario": 2600.0,
+      "valorTotal": 5200.0,
+      "valorExecutado": 1861.34,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Cadeira executiva fixa sem braços; ",
+      "quantidade": 4,
+      "valorUnitario": 820.0,
+      "valorTotal": 3280.0,
+      "valorExecutado": 1391.4,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Armário baixo com 2 portas; ",
+      "quantidade": 1,
+      "valorUnitario": 1423.0,
+      "valorTotal": 1423.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Armário alto com 2 portas, 4 prateleiras; ",
+      "quantidade": 1,
+      "valorUnitario": 2443.0,
+      "valorTotal": 2443.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Ar-condicionado 18.000 btus; ",
+      "quantidade": 1,
+      "valorUnitario": 3200.0,
+      "valorTotal": 3200.0,
+      "valorExecutado": 3214.83,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "CPU Desktop Dll opt 3000; ",
+      "quantidade": 1,
+      "valorUnitario": 4838.0,
+      "valorTotal": 4838.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Monitor Dell 21,5 pol full; ",
+      "quantidade": 1,
+      "valorUnitario": 1380.0,
+      "valorTotal": 1380.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Monitor Led com tela de 19,5\" mínimo; ",
+      "quantidade": 1,
+      "valorUnitario": 951.9,
+      "valorTotal": 951.9,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Nobreak; ",
+      "quantidade": 2,
+      "valorUnitario": 1100.0,
+      "valorTotal": 2200.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "TO",
+      "objeto": "Notebook; ",
+      "quantidade": 1,
+      "valorUnitario": 8000.0,
+      "valorTotal": 8000.0,
+      "valorExecutado": 0,
+      "instrumento": "FAF 2021"
+    },
+    {
+      "uf": "AL",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "AM",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "AP",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "BA",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "CE",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "ES",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "MA",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "MS",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "MT",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "PA",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "PB",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "PR",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "PE",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "PI",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "RJ",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "RN",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    },
+    {
+      "uf": "SP",
+      "objeto": "Veículo SUV 2008 PEUGEOT",
+      "quantidade": 1,
+      "valorUnitario": 153000.0,
+      "valorTotal": 153000.0,
+      "valorExecutado": 153000.0,
+      "instrumento": "Doação"
+    }
+  ]
+}
