@@ -306,6 +306,8 @@
                         </button>
                     </div>
                 </div>
+                <div id="alerta-carregamento-planilha" class="alert alert-warning d-none mt-3 mb-0" role="alert"></div>
+                <input id="input-planilha-convenios" type="file" accept=".xlsx,.xls" class="d-none">
             </div>
         </header>
 
@@ -556,6 +558,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script src="./dados-aplicacao.js"></script>
     <script>
@@ -564,6 +567,7 @@
         // ========================================================================
         // Dados carregados externamente de dados-aplicacao.js.
 
+        let dadosFaf = [];
         let tabelaInstancia = null;
         let chartInstancia = null;
         let estadoAtualPDF = '';
@@ -614,10 +618,197 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            carregarLogoParaPDF(); // Converte a logo imediatamente ao carregar a página
+        function abrirSeletorManualPlanilha() {
+            const input = document.getElementById('input-planilha-convenios');
+            if (input) input.click();
+        }
+
+        function mostrarAlertaCarregamentoPlanilha(mensagem, permitirSelecaoManual = false) {
+            const alerta = document.getElementById('alerta-carregamento-planilha');
+            if (!alerta) return;
+            alerta.innerHTML = '';
+
+            const texto = document.createElement('span');
+            texto.textContent = mensagem;
+            alerta.appendChild(texto);
+
+            if (permitirSelecaoManual) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'mt-2';
+
+                const botao = document.createElement('button');
+                botao.type = 'button';
+                botao.className = 'btn btn-sm btn-outline-dark';
+                botao.textContent = 'Selecionar planilha manualmente';
+                botao.addEventListener('click', abrirSeletorManualPlanilha);
+
+                wrapper.appendChild(botao);
+                alerta.appendChild(wrapper);
+            }
+
+            alerta.classList.remove('d-none');
+        }
+
+        function ocultarAlertaCarregamentoPlanilha() {
+            const alerta = document.getElementById('alerta-carregamento-planilha');
+            if (!alerta) return;
+            alerta.textContent = '';
+            alerta.classList.add('d-none');
+        }
+
+        function normalizarTexto(valor) {
+            return String(valor ?? '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .trim()
+                .toUpperCase();
+        }
+
+        function limparTexto(valor) {
+            return String(valor ?? '').replace(/\s+/g, ' ').trim();
+        }
+
+        function converterNumeroPlanilha(valor) {
+            if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
+            if (typeof valor !== 'string') return 0;
+
+            const texto = valor.trim();
+            if (!texto) return 0;
+
+            const numeroNormalizado = texto
+                .replace(/\s+/g, '')
+                .replace(/^R\$/, '')
+                .replace(/%$/, '');
+
+            if (numeroNormalizado.includes(',') && numeroNormalizado.includes('.')) {
+                return Number.parseFloat(numeroNormalizado.replace(/\./g, '').replace(',', '.')) || 0;
+            }
+
+            if (numeroNormalizado.includes(',')) {
+                return Number.parseFloat(numeroNormalizado.replace(',', '.')) || 0;
+            }
+
+            return Number.parseFloat(numeroNormalizado) || 0;
+        }
+
+        function extrairItensConvenioDaAba(sheet, uf) {
+            const linhas = XLSX.utils.sheet_to_json(sheet, {
+                header: 1,
+                raw: true,
+                defval: null,
+                blankrows: false
+            });
+
+            return linhas
+                .map((linha) => {
+                    const classificacao = normalizarTexto(linha[4]);
+                    const objeto = limparTexto(linha[6]);
+
+                    if (classificacao !== CLASSIFICACAO_PLANILHA_CONVENIOS || !objeto) {
+                        return null;
+                    }
+
+                    return {
+                        uf,
+                        objeto,
+                        quantidade: converterNumeroPlanilha(linha[7]),
+                        valorUnitario: converterNumeroPlanilha(linha[8]),
+                        valorTotal: converterNumeroPlanilha(linha[9]),
+                        valorExecutado: converterNumeroPlanilha(linha[10]),
+                        instrumento: 'Convênio'
+                    };
+                })
+                .filter(Boolean);
+        }
+
+        function extrairConveniosDoWorkbook(workbook) {
+            if (typeof XLSX === 'undefined') {
+                throw new Error('A biblioteca de leitura da planilha não foi carregada.');
+            }
+
+            const abasDeEstado = workbook.SheetNames.filter((sheetName) => (
+                nomesEstados[sheetName] && !ABAS_PLANILHA_IGNORADAS.includes(sheetName)
+            ));
+
+            const dadosConvenio = abasDeEstado.flatMap((sheetName) => (
+                extrairItensConvenioDaAba(workbook.Sheets[sheetName], sheetName)
+            ));
+
+            if (dadosConvenio.length === 0) {
+                throw new Error('Nenhum item classificado como OUVIDORIA foi encontrado na planilha.');
+            }
+
+            return dadosConvenio;
+        }
+
+        async function carregarConveniosDaPlanilha() {
+            if (window.location.protocol === 'file:') {
+                throw new Error('Abra a aplicação por um servidor local ou selecione a planilha manualmente.');
+            }
+
+            const resposta = await fetch(encodeURI(ARQUIVO_PLANILHA_CONVENIOS), { cache: 'no-store' });
+            if (!resposta.ok) {
+                throw new Error(`Nao foi possivel carregar a planilha de convenios (${resposta.status}).`);
+            }
+
+            const arquivo = await resposta.arrayBuffer();
+            const workbook = XLSX.read(arquivo, { type: 'array', raw: true });
+
+            return extrairConveniosDoWorkbook(workbook);
+        }
+
+        async function carregarDadosAplicacao() {
+            const dadosConvenio = await carregarConveniosDaPlanilha();
+            console.log(`Convênios carregados da planilha: ${dadosConvenio.length} itens.`);
+            return [...dadosBase, ...dadosConvenio];
+        }
+
+        async function processarSelecaoManualPlanilha(event) {
+            const arquivoSelecionado = event.target.files?.[0];
+            if (!arquivoSelecionado) return;
+
+            try {
+                const arquivo = await arquivoSelecionado.arrayBuffer();
+                const workbook = XLSX.read(arquivo, { type: 'array', raw: true });
+                const dadosConvenio = extrairConveniosDoWorkbook(workbook);
+
+                dadosFaf = [...dadosBase, ...dadosConvenio];
+                ocultarAlertaCarregamentoPlanilha();
+                initDashboard(dadosFaf);
+                renderDetailsView();
+            } catch (error) {
+                console.error('Falha ao processar a planilha selecionada manualmente:', error);
+                mostrarAlertaCarregamentoPlanilha(
+                    `A planilha selecionada nao pôde ser processada. ${error.message}`,
+                    true
+                );
+            } finally {
+                event.target.value = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            carregarLogoParaPDF();
+
+            const inputPlanilha = document.getElementById('input-planilha-convenios');
+            if (inputPlanilha) {
+                inputPlanilha.addEventListener('change', processarSelecaoManualPlanilha);
+            }
+
+            try {
+                dadosFaf = await carregarDadosAplicacao();
+                ocultarAlertaCarregamentoPlanilha();
+            } catch (error) {
+                console.error('Falha ao carregar convênios da planilha:', error);
+                dadosFaf = Array.isArray(dadosBase) ? [...dadosBase] : [];
+                mostrarAlertaCarregamentoPlanilha(
+                    `Os itens de convênio não puderam ser carregados da planilha. ${error.message}`,
+                    true
+                );
+            }
+
             initDashboard(dadosFaf);
-            renderDetailsView(); 
+            renderDetailsView();
         });
 
         // --- CONTROLE DE VISUALIZAÇÃO (SPA) ---
