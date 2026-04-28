@@ -837,12 +837,6 @@ async function carregarLogoParaPDF() {
         const formatPercent = (val) => val ? val.toFixed(1).replace('.', ',') + '%' : '0,0%';
         const getProgressWidth = (p) => Math.max(0, Math.min(100, Number.isFinite(p) ? p : 0));
         
-        // Função auxiliar para converter string de moeda em número
-        const moedaStringParaNumero = (moedaStr) => {
-            if (!moedaStr || typeof moedaStr !== 'string') return 0;
-            return Number(moedaStr.replace(/[^\d,-]/g, '').replace('.', '').replace(',', '.')) || 0;
-        };
-        
         const getProgressColor = (p) => {
             if (p <= 0.1) return '#bdc3c7'; // Cinza para 0%
             if (p < 50) return '#f39c12'; // Laranja/Amarelo para < 50%
@@ -897,15 +891,15 @@ async function carregarLogoParaPDF() {
             const faf = resumoInstrumentos.faf;
             const doacao = resumoInstrumentos.doacao;
 
-            $('#kpi-total-convenios').text(formatMoney(moedaStringParaNumero(convenios.total))).attr('title', convenios.total);
+            $('#kpi-total-convenios').text(formatMoney(convenios.total)).attr('title', formatMoney(convenios.total));
             $('#kpi-percentual-convenios').text(formatPercent(convenios.percentual));
-            $('#kpi-desc-convenios').text(`Executado: ${convenios.executado}`);
+            $('#kpi-desc-convenios').text(`Executado: ${formatMoney(convenios.executado)}`);
             $('#kpi-ufs-convenios-qtd').text(convenios.quantidadeUfs);
             renderUfChips('kpi-ufs-convenios-lista', convenios.ufs);
 
-            $('#kpi-total-faf').text(formatMoney(moedaStringParaNumero(faf.total))).attr('title', faf.total);
+            $('#kpi-total-faf').text(formatMoney(faf.total)).attr('title', formatMoney(faf.total));
             $('#kpi-percentual-faf').text(formatPercent(faf.percentual));
-            $('#kpi-desc-faf').text(`Executado: ${faf.executado}`);
+            $('#kpi-desc-faf').text(`Executado: ${formatMoney(faf.executado)}`);
             $('#kpi-ufs-faf-qtd').text(faf.quantidadeUfs);
             renderUfChips('kpi-ufs-faf-lista', faf.ufs);
 
