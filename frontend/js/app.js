@@ -278,8 +278,7 @@ async function carregarLogoParaPDF() {
             filtroTabelaAtual = null;
             initTable(data);
             
-            populateMultiSelect('filtroInstrumentoOpcoes', 'instrumento', data);
-            populateMultiSelect('filtroUFOpcoes', 'uf', data);
+            atualizarOpcoesFiltrosVisiveis(obterEstadoFiltroAtual());
             
             setupEventListeners();
             atualizarCardsDinamicos();
@@ -1004,37 +1003,97 @@ async function carregarLogoParaPDF() {
 
         // --- LÓGICA MULTI-SELECT ---
 
-        function populateMultiSelect(containerId, key, data) {
+        function populateMultiSelect(containerId, key, values, filtroAtual) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            const uniqueValues = new Set();
-            data.forEach(item => { if(item[key]) uniqueValues.add(item[key]); });
-            const sortedValues = Array.from(uniqueValues).sort();
+            const sortedValues = Array.from(new Set(values.filter(Boolean))).sort();
+            const checkAll = key === 'instrumento' ? filtroAtual.checkAllInst : filtroAtual.checkAllUF;
+            const checkedValues = key === 'instrumento' ? filtroAtual.checkedInsts : filtroAtual.checkedUFs;
+            const valoresSelecionadosValidos = sortedValues.filter((val) => checkAll || checkedValues.has(val));
+            const deveMarcarTodos = checkAll || valoresSelecionadosValidos.length === sortedValues.length;
 
             const allOption = document.createElement('div');
             allOption.className = 'visible-check-option check-all-option';
             allOption.innerHTML = `
-                <input class="form-check-input check-all" type="checkbox" value="all" id="checkAll-${key}" checked>
+                <input class="form-check-input check-all" type="checkbox" value="all" id="checkAll-${key}" ${deveMarcarTodos ? 'checked' : ''} ${sortedValues.length === 0 ? 'disabled' : ''}>
                 <label class="visible-check-label fw-bold" for="checkAll-${key}">
                     Todos
                 </label>
             `;
             container.appendChild(allOption);
 
+            if (sortedValues.length === 0) {
+                const emptyOption = document.createElement('div');
+                emptyOption.className = 'visible-check-empty';
+                emptyOption.textContent = 'Nenhuma opcao disponivel';
+                container.appendChild(emptyOption);
+                return;
+            }
+
             sortedValues.forEach((val, idx) => {
                 const option = document.createElement('div');
                 option.className = 'visible-check-option';
                 const safeVal = escapeHtml(val);
                 const safeId = escapeHtml(`chk-${key}-${idx}`);
+                const checked = deveMarcarTodos || checkedValues.has(val);
                 option.innerHTML = `
-                    <input class="form-check-input check-item-${key}" type="checkbox" value="${safeVal}" id="${safeId}" checked>
+                    <input class="form-check-input check-item-${key}" type="checkbox" value="${safeVal}" id="${safeId}" ${checked ? 'checked' : ''}>
                     <label class="visible-check-label" for="${safeId}">
                         ${safeVal}
                     </label>
                 `;
                 container.appendChild(option);
             });
+        }
+
+        function itemPassaFiltrosParciais(item, filtro, ignorarKey) {
+            const matchUF = ignorarKey === 'uf' || filtro.checkAllUF || filtro.checkedUFs.has(item.uf);
+            const matchInst = ignorarKey === 'instrumento' || filtro.checkAllInst || filtro.checkedInsts.has(item.instrumento);
+            const matchTexto = filtro.textoNormalizado
+                ? normalizarBusca(item.objeto).includes(filtro.textoNormalizado)
+                : true;
+
+            return matchUF && matchInst && matchTexto;
+        }
+
+        function obterValoresDisponiveisFiltro(key, filtro) {
+            return dadosFaf
+                .filter((item) => itemPassaFiltrosParciais(item, filtro, key))
+                .map((item) => item[key])
+                .filter(Boolean);
+        }
+
+        function filtrosIguais(a, b) {
+            const setsIguais = (setA, setB) => setA.size === setB.size && Array.from(setA).every((valor) => setB.has(valor));
+
+            return a.textoNormalizado === b.textoNormalizado
+                && a.checkAllInst === b.checkAllInst
+                && a.checkAllUF === b.checkAllUF
+                && setsIguais(a.checkedInsts, b.checkedInsts)
+                && setsIguais(a.checkedUFs, b.checkedUFs);
+        }
+
+        function atualizarOpcoesFiltrosVisiveis(filtroBase = obterEstadoFiltroAtual()) {
+            let filtroAtual = filtroBase;
+
+            for (let i = 0; i < 3; i++) {
+                const instrumentosDisponiveis = obterValoresDisponiveisFiltro('instrumento', filtroAtual);
+                populateMultiSelect('filtroInstrumentoOpcoes', 'instrumento', instrumentosDisponiveis, filtroAtual);
+
+                const filtroAposInstrumentos = obterEstadoFiltroAtual();
+                const ufsDisponiveis = obterValoresDisponiveisFiltro('uf', filtroAposInstrumentos);
+                populateMultiSelect('filtroUFOpcoes', 'uf', ufsDisponiveis, filtroAposInstrumentos);
+
+                const filtroAtualizado = obterEstadoFiltroAtual();
+                if (filtrosIguais(filtroAtualizado, filtroAtual)) {
+                    return filtroAtualizado;
+                }
+
+                filtroAtual = filtroAtualizado;
+            }
+
+            return obterEstadoFiltroAtual();
         }
 
         function obterEstadoFiltroAtual() {
@@ -1114,7 +1173,7 @@ async function carregarLogoParaPDF() {
         }
 
         function aplicarFiltrosCombinados() {
-            const filtro = obterEstadoFiltroAtual();
+            const filtro = atualizarOpcoesFiltrosVisiveis(obterEstadoFiltroAtual());
             filtroTabelaAtual = filtro;
             
             if (tabelaInstancia) {
