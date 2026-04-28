@@ -6,8 +6,10 @@
             --accent-color: #0066cc; /* Azul translúcido moderno */
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); /* Fundo 3D macio */
             --glass-bg: rgba(255, 255, 255, 0.65); /* Fundo vidro fosco */
-            --glass-border: rgba(255, 255, 255, 0.9); /* Reflexo de borda brilhante */
-            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.95); /* Reflexo de borda brilhante aumentado */
+            --glass-border-subtle: rgba(255, 255, 255, 0.4);
+            --glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8); /* Sombras base mais marcantes */
+            --glass-shadow-hover: 0 20px 45px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1); /* Sombra 3D flutuante */
         }
 
         body {
@@ -73,7 +75,7 @@
             background: var(--glass-bg); 
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4) !important; 
+            border: 1px solid var(--glass-border-subtle) !important; 
             border-top: 1px solid var(--glass-border) !important; /* Efeito de brilho "liquid" 3D no topo */
             border-radius: 20px; /* Canto mais arredondado Apple */
             box-shadow: var(--glass-shadow); 
@@ -85,8 +87,9 @@
             padding: 1.5rem 1.5rem !important; 
         }
         .kpi-card:hover { 
-            transform: translateY(-8px) scale(1.01); /* Pulo 3D e expansão suave */
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255, 255, 255, 1); 
+            transform: translateY(-8px) scale(1.02); /* Pulo 3D mais marcante */
+            box-shadow: var(--glass-shadow-hover); 
+            border-color: rgba(255, 255, 255, 0.9) !important; /* Borda acende no hover */
         }
         
         .kpi-title { 
@@ -158,12 +161,15 @@
             padding: 0.15rem 0.45rem;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
 
         .uf-chip:hover {
-            background: #fff;
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 6px 12px rgba(0, 102, 204, 0.3); /* Brilho colorido na UF */
         }
 
         /* Estilo para Cards Dinâmicos (abaixo dos filtros) */
@@ -178,7 +184,7 @@
         .chart-container {
             background: var(--glass-bg); padding: 20px; border-radius: 24px;
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4); border-top: 1px solid var(--glass-border);
+            border: 1px solid var(--glass-border-subtle); border-top: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow); margin-bottom: 2rem;
             position: relative; height: 500px;
         }
@@ -187,7 +193,7 @@
         .table-container {
             background: var(--glass-bg); padding: 20px; border-radius: 24px;
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4); border-top: 1px solid var(--glass-border);
+            border: 1px solid var(--glass-border-subtle); border-top: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
         }
 
@@ -245,12 +251,24 @@
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.5);
             padding: 0.25rem 0.55rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .visible-check-option:hover {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        /* Magia do CSS Moderno: Destaca a caixa inteira se o filtro interno estiver selecionado */
+        .visible-check-option:has(input:checked) {
+            background: rgba(0, 102, 204, 0.06); /* Fundo azulzinho bem suave */
+            border-color: rgba(0, 102, 204, 0.4); /* Borda azul evidenciando a seleção */
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15); /* Sombra flutuante azulada */
         }
 
         .visible-check-option.check-all-option {
-            border-color: var(--accent-color);
-            background: #eef2f7; /* Leve destaque visual para "Todos" */
         }
 
         .visible-check-label {
@@ -311,13 +329,13 @@
         table.dataTable thead th, table.dataTable thead td {
             white-space: nowrap !important;
             vertical-align: middle !important;
-            background: rgba(255, 255, 255, 0.6) !important;
+            background: rgba(255, 255, 255, 0.85) !important; /* Mais opaco para aumentar contraste com texto */
             backdrop-filter: blur(5px);
             color: var(--primary-color) !important;
             font-weight: 700 !important;
             text-transform: uppercase;
             font-size: 0.85rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important; 
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1) !important; /* Borda inferior reforçada */
         }
 
         /* Progress Pill (Novo visual para barras de progresso) */
@@ -364,7 +382,7 @@
         .state-detail-card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4); 
+            border: 1px solid var(--glass-border-subtle); 
             border-top: 1px solid var(--glass-border);
             border-radius: 24px;
             overflow: hidden;
@@ -374,8 +392,9 @@
         }
         
         .state-detail-card:hover {
-            transform: translateY(-5px) scale(1.01);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+            transform: translateY(-6px) scale(1.02); /* Escala suavemente o card da UF ao passar o mouse */
+            box-shadow: var(--glass-shadow-hover);
+            border-color: rgba(255, 255, 255, 0.9);
         }
 
         .state-header {
