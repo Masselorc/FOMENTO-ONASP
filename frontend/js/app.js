@@ -892,8 +892,6 @@ async function carregarLogoParaPDF() {
             $('#kpi-total-executado').text(formatMoney(moedaStringParaNumero(global.totalExecutado))).attr('title', global.totalExecutado);
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
             $('#kpi-total-doado').text(formatMoney(moedaStringParaNumero(global.totalDoado))).attr('title', global.totalDoado);
-            $('#kpi-ufs-ativas').text(global.ufsComExecucao);
-            $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs listadas`);
 
             const convenios = resumoInstrumentos.convenios;
             const faf = resumoInstrumentos.faf;
