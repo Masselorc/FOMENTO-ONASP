@@ -69,12 +69,23 @@ export function calcularResumoInstrumentos(data) {
             totalCentavos: 0,
             executadoCentavos: 0,
             ufs: new Set()
+        },
+        doacao: {
+            totalCentavos: 0,
+            executadoCentavos: 0,
+            ufs: new Set()
         }
     };
 
     data.forEach((item) => {
-        const grupo = isConvenio(item) ? resumo.convenios : isFaf(item) ? resumo.faf : null;
-        if (!grupo) {
+        let grupo;
+        if (isConvenio(item)) {
+            grupo = resumo.convenios;
+        } else if (isFaf(item)) {
+            grupo = resumo.faf;
+        } else if (isDoacao(item)) {
+            grupo = resumo.doacao;
+        } else {
             return;
         }
 
@@ -101,7 +112,8 @@ export function calcularResumoInstrumentos(data) {
 
     return {
         convenios: finalizarResumo(resumo.convenios),
-        faf: finalizarResumo(resumo.faf)
+        faf: finalizarResumo(resumo.faf),
+        doacao: finalizarResumo(resumo.doacao)
     };
 }
 

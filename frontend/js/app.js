@@ -885,6 +885,7 @@ async function carregarLogoParaPDF() {
 
             const convenios = resumoInstrumentos.convenios;
             const faf = resumoInstrumentos.faf;
+            const doacao = resumoInstrumentos.doacao;
 
             $('#kpi-total-convenios').text(formatMoney(convenios.total)).attr('title', formatMoney(convenios.total));
             $('#kpi-percentual-convenios').text(formatPercent(convenios.percentual));
@@ -897,6 +898,9 @@ async function carregarLogoParaPDF() {
             $('#kpi-desc-faf').text(`Executado: ${formatMoney(faf.executado)}`);
             $('#kpi-ufs-faf-qtd').text(faf.quantidadeUfs);
             renderUfChips('kpi-ufs-faf-lista', faf.ufs);
+
+            $('#kpi-ufs-doacao-qtd').text(doacao.quantidadeUfs);
+            renderUfChips('kpi-ufs-doacao-lista', doacao.ufs);
         }
 
         function renderChart(dadosPorUF) {

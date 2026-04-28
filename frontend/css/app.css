@@ -116,8 +116,8 @@
             flex-wrap: wrap;
             gap: 0.35rem;
             margin-top: 0.45rem;
-            max-height: 64px;
-            overflow-y: auto;
+            max-height: none;
+            overflow: hidden;
         }
 
         .uf-chip {
