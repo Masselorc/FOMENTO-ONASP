@@ -144,6 +144,14 @@
             font-weight: 700;
             font-size: 0.72rem;
             padding: 0.15rem 0.45rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .uf-chip:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
         }
 
         /* Estilo para Cards Dinâmicos (abaixo dos filtros) */

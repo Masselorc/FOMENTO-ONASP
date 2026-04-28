@@ -870,7 +870,7 @@ async function carregarLogoParaPDF() {
             if (!container) return;
 
             container.innerHTML = ufs.length
-                ? ufs.map((uf) => `<span class="uf-chip">${escapeHtml(uf)}</span>`).join('')
+                ? ufs.map((uf) => `<span class="uf-chip" onclick="abrirDetalheEstado('${escapeHtml(uf)}')">${escapeHtml(uf)}</span>`).join('')
                 : '<span class="kpi-desc">Nenhuma UF</span>';
             container.setAttribute('title', ufs.length ? ufs.join(', ') : 'Nenhuma UF');
         }
