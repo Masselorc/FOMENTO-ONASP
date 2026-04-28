@@ -144,43 +144,37 @@
             <!-- FILTROS MULTI-SELECT -->
             <div class="row" id="filter-row-section">
                 <div class="col-12">
-                    <div class="filter-section d-flex flex-wrap align-items-center gap-3">
-                        <div class="d-flex align-items-center">
+                    <div class="filter-section">
+                        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
                             <i class="fas fa-filter text-secondary me-2"></i>
                             <strong>Filtros:</strong>
-                        </div>
-                        
-                        <!-- Filtro Instrumento (Multi-Select Dropdown) -->
-                        <div class="dropdown" id="dropdownInstrumentoContainer">
-                            <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start bg-white" type="button" id="btnInstrumento" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 220px;">
-                                Todos Instrumentos
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-custom shadow" aria-labelledby="btnInstrumento" id="dropdownInstrumentoMenu">
-                                <!-- Opções preenchidas via JS -->
-                            </ul>
+
+                            <div class="filter-search-actions">
+                                <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por descrição do objeto...">
+                                <button id="btnLimparFiltros" class="btn btn-outline-secondary">
+                                    <i class="fas fa-undo me-1"></i> Limpar
+                                </button>
+                                <span id="filtroAtivoBadge" class="active-filter-badge">
+                                    <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1 cursor-pointer"></i>
+                                </span>
+                            </div>
                         </div>
 
-                        <!-- Filtro UF (Multi-Select Dropdown) -->
-                        <div class="dropdown" id="dropdownUFContainer">
-                            <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start bg-white" type="button" id="btnUF" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 180px;">
-                                Todas as UFs
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-custom shadow" aria-labelledby="btnUF" id="dropdownUFMenu">
-                                <!-- Opções preenchidas via JS -->
-                            </ul>
+                        <div class="visible-filter-grid">
+                            <div class="visible-filter-group">
+                                <div class="visible-filter-title">Instrumentos</div>
+                                <div class="visible-check-list" id="filtroInstrumentoOpcoes">
+                                    <!-- Opções preenchidas via JS -->
+                                </div>
+                            </div>
+
+                            <div class="visible-filter-group">
+                                <div class="visible-filter-title">UFs</div>
+                                <div class="visible-check-list uf-check-list" id="filtroUFOpcoes">
+                                    <!-- Opções preenchidas via JS -->
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="flex-grow-1">
-                            <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por descrição do objeto...">
-                        </div>
-                        
-                        <button id="btnLimparFiltros" class="btn btn-outline-secondary">
-                            <i class="fas fa-undo me-1"></i> Limpar
-                        </button>
-                        
-                        <span id="filtroAtivoBadge" class="active-filter-badge">
-                            <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1 cursor-pointer"></i>
-                        </span>
                     </div>
                 </div>
             </div>

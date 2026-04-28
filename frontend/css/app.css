@@ -132,23 +132,87 @@
             background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 1rem;
         }
 
-        /* [NOVO] Estilo Customizado para Dropdown Multi-Select */
-        .dropdown-menu-custom {
-            max-height: 300px;
-            overflow-y: auto;
-            min-width: 250px;
-            padding: 10px;
+        .filter-search-actions {
+            display: flex;
+            flex: 1 1 420px;
+            align-items: center;
+            gap: 0.75rem;
         }
-        .form-check-label {
-            width: 100%;
+
+        .visible-filter-grid {
+            display: grid;
+            grid-template-columns: minmax(240px, 0.8fr) minmax(320px, 1.4fr);
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .visible-filter-group {
+            background: #fff;
+            border: 1px solid #d8dee4;
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .visible-filter-title {
+            color: var(--secondary-color);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .visible-check-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            align-items: center;
+        }
+
+        .visible-check-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            min-height: 32px;
+            border: 1px solid #d8dee4;
+            border-radius: 6px;
+            background: #f8f9fa;
+            padding: 0.25rem 0.55rem;
+        }
+
+        .visible-check-option.check-all-option {
+            border-color: var(--secondary-color);
+            background: #eef2f7;
+        }
+
+        .visible-check-label {
+            color: #2c3e50;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            line-height: 1.1;
+            margin: 0;
+            white-space: nowrap;
         }
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
+
+        @media (max-width: 992px) {
+            .visible-filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-search-actions {
+                flex-basis: 100%;
+            }
         }
-        .dropdown-item {
-            padding: 0.25rem 1rem;
+
+        @media (max-width: 576px) {
+            .filter-search-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .visible-check-option {
+                flex: 1 0 auto;
+            }
         }
 
         .active-filter-badge {

@@ -280,8 +280,8 @@ async function carregarLogoParaPDF() {
             filtroTabelaAtual = null;
             initTable(data);
             
-            populateMultiSelect('dropdownInstrumentoMenu', 'instrumento', data);
-            populateMultiSelect('dropdownUFMenu', 'uf', data);
+            populateMultiSelect('filtroInstrumentoOpcoes', 'instrumento', data);
+            populateMultiSelect('filtroUFOpcoes', 'uf', data);
             
             setupEventListeners();
             atualizarCardsDinamicos();
@@ -1014,43 +1014,29 @@ async function carregarLogoParaPDF() {
             data.forEach(item => { if(item[key]) uniqueValues.add(item[key]); });
             const sortedValues = Array.from(uniqueValues).sort();
 
-            const allLi = document.createElement('li');
-            allLi.innerHTML = `
-                <div class="dropdown-item">
-                    <div class="form-check">
-                        <input class="form-check-input check-all" type="checkbox" value="all" id="checkAll-${key}" checked>
-                        <label class="form-check-label fw-bold" for="checkAll-${key}">
-                            Selecionar Todos
-                        </label>
-                    </div>
-                </div>
+            const allOption = document.createElement('div');
+            allOption.className = 'visible-check-option check-all-option';
+            allOption.innerHTML = `
+                <input class="form-check-input check-all" type="checkbox" value="all" id="checkAll-${key}" checked>
+                <label class="visible-check-label fw-bold" for="checkAll-${key}">
+                    Todos
+                </label>
             `;
-            container.appendChild(allLi);
-            
-            const dividerLi = document.createElement('li');
-            dividerLi.innerHTML = '<hr class="dropdown-divider">';
-            container.appendChild(dividerLi);
+            container.appendChild(allOption);
 
             sortedValues.forEach((val, idx) => {
-                const li = document.createElement('li');
+                const option = document.createElement('div');
+                option.className = 'visible-check-option';
                 const safeVal = escapeHtml(val);
                 const safeId = escapeHtml(`chk-${key}-${idx}`);
-                li.innerHTML = `
-                    <div class="dropdown-item">
-                        <div class="form-check">
-                            <input class="form-check-input check-item-${key}" type="checkbox" value="${safeVal}" id="${safeId}" checked>
-                            <label class="form-check-label" for="${safeId}">
-                                ${safeVal}
-                            </label>
-                        </div>
-                    </div>
+                option.innerHTML = `
+                    <input class="form-check-input check-item-${key}" type="checkbox" value="${safeVal}" id="${safeId}" checked>
+                    <label class="visible-check-label" for="${safeId}">
+                        ${safeVal}
+                    </label>
                 `;
-                container.appendChild(li);
+                container.appendChild(option);
             });
-
-            container.onclick = function(e) {
-                e.stopPropagation();
-            };
         }
 
         function obterEstadoFiltroAtual() {
