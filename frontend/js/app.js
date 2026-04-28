@@ -5,6 +5,7 @@ import {
 } from '../../backend/services/data-service.js';
 import {
     calcularResumoFinanceiro,
+    calcularResumoInstrumentos,
     calculateStateMetrics,
     processarDadosAgregados
 } from '../../backend/services/analytics.js';
@@ -30,6 +31,7 @@ let catalogoAplicacao = {
 };
 
 async function carregarLogoParaPDF() {
+            return carregarLogoLocalParaPDF();
             const logoImg = document.getElementById('img-logo-senappen');
             const urlOficial = 'https://www.gov.br/senappen/pt-br/centrais-de-conteudo/download-logos/senappen-marca-final_prancheta-1-copia-4-1.png/@@images/image';
             
@@ -71,6 +73,35 @@ async function carregarLogoParaPDF() {
             if (!sucesso) {
                 console.error("Todos os conversores falharam devido a bloqueios de rede. A logo pode não aparecer no PDF.");
                 logoImg.src = urlOficial; 
+            }
+        }
+
+        const LOGO_SENAPPEN_LOCAL = './frontend/assets/senappen-logo.png';
+
+        async function carregarLogoLocalParaPDF() {
+            const logoImg = document.getElementById('img-logo-senappen');
+            if (!logoImg) return;
+
+            logoImg.src = LOGO_SENAPPEN_LOCAL;
+
+            try {
+                const response = await fetch(LOGO_SENAPPEN_LOCAL, { cache: 'force-cache' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const base64data = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+
+                logoImg.src = base64data;
+            } catch (error) {
+                console.warn('Nao foi possivel converter o logo local para Base64. Usando arquivo local diretamente.', error);
+                logoImg.src = LOGO_SENAPPEN_LOCAL;
             }
         }
 
@@ -158,7 +189,7 @@ async function carregarLogoParaPDF() {
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            carregarLogoParaPDF();
+            carregarLogoLocalParaPDF();
 
             const inputPlanilha = document.getElementById('input-planilha-convenios');
             if (inputPlanilha) {
@@ -241,8 +272,9 @@ async function carregarLogoParaPDF() {
             }
 
             const analise = processarDadosAgregados(data);
+            const resumoInstrumentos = calcularResumoInstrumentos(data);
             
-            renderKPIs(analise.global, analise.ufsUnicas);
+            renderKPIs(analise.global, analise.ufsUnicas, resumoInstrumentos);
             renderChart(analise.dadosPorUF);
             registrarFiltroDataTable();
             filtroTabelaAtual = null;
@@ -836,13 +868,38 @@ async function carregarLogoParaPDF() {
             return `<span class="badge badge-inst-default">${escapeHtml(String(inst).substring(0,3))}</span>`;
         }
 
-        function renderKPIs(global, ufsList) {
+        function renderUfChips(containerId, ufs) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = ufs.length
+                ? ufs.map((uf) => `<span class="uf-chip">${escapeHtml(uf)}</span>`).join('')
+                : '<span class="kpi-desc">Nenhuma UF</span>';
+            container.setAttribute('title', ufs.length ? ufs.join(', ') : 'Nenhuma UF');
+        }
+
+        function renderKPIs(global, ufsList, resumoInstrumentos) {
             $('#kpi-total-contratado').text(formatMoney(global.totalContratado)).attr('title', formatMoney(global.totalContratado));
             $('#kpi-total-executado').text(formatMoney(global.totalExecutado)).attr('title', formatMoney(global.totalExecutado));
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
             $('#kpi-total-doado').text(formatMoney(global.totalDoado)).attr('title', formatMoney(global.totalDoado));
             $('#kpi-ufs-ativas').text(global.ufsComExecucao);
             $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs listadas`);
+
+            const convenios = resumoInstrumentos.convenios;
+            const faf = resumoInstrumentos.faf;
+
+            $('#kpi-total-convenios').text(formatMoney(convenios.total)).attr('title', formatMoney(convenios.total));
+            $('#kpi-percentual-convenios').text(formatPercent(convenios.percentual));
+            $('#kpi-desc-convenios').text(`Executado: ${formatMoney(convenios.executado)}`);
+            $('#kpi-ufs-convenios-qtd').text(convenios.quantidadeUfs);
+            renderUfChips('kpi-ufs-convenios-lista', convenios.ufs);
+
+            $('#kpi-total-faf').text(formatMoney(faf.total)).attr('title', formatMoney(faf.total));
+            $('#kpi-percentual-faf').text(formatPercent(faf.percentual));
+            $('#kpi-desc-faf').text(`Executado: ${formatMoney(faf.executado)}`);
+            $('#kpi-ufs-faf-qtd').text(faf.quantidadeUfs);
+            renderUfChips('kpi-ufs-faf-lista', faf.ufs);
         }
 
         function renderChart(dadosPorUF) {

@@ -22,6 +22,12 @@
         }
         
         .header-title { color: var(--primary-color); font-weight: 700; }
+        .senappen-logo {
+            width: min(300px, 42vw);
+            height: 90px;
+            object-fit: contain;
+            flex: 0 0 auto;
+        }
 
         /* KPI Cards */
         .kpi-card {
@@ -51,6 +57,57 @@
         }
         
         .kpi-desc { font-size: 0.8rem; color: #95a5a6; margin-top: 5px; }
+
+        .instrument-summary-card {
+            align-items: stretch;
+            justify-content: flex-start;
+            min-height: 132px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .instrument-summary-card.faf {
+            border-left-color: #3498db;
+        }
+
+        .instrument-metric-line {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .instrument-percent {
+            flex: 0 0 auto;
+            border-radius: 999px;
+            background: #eef2f7;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 0.2rem 0.55rem;
+            white-space: nowrap;
+        }
+
+        .uf-chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.45rem;
+            max-height: 64px;
+            overflow-y: auto;
+        }
+
+        .uf-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2.1rem;
+            border-radius: 999px;
+            background: #eef2f7;
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.72rem;
+            padding: 0.15rem 0.45rem;
+        }
 
         /* Estilo para Cards Dinâmicos (abaixo dos filtros) */
         .dynamic-card {

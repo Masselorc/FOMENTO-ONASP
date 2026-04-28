@@ -58,6 +58,53 @@ export function calcularResumoFinanceiro(data) {
     };
 }
 
+export function calcularResumoInstrumentos(data) {
+    const resumo = {
+        convenios: {
+            totalCentavos: 0,
+            executadoCentavos: 0,
+            ufs: new Set()
+        },
+        faf: {
+            totalCentavos: 0,
+            executadoCentavos: 0,
+            ufs: new Set()
+        }
+    };
+
+    data.forEach((item) => {
+        const grupo = isConvenio(item) ? resumo.convenios : isFaf(item) ? resumo.faf : null;
+        if (!grupo) {
+            return;
+        }
+
+        const totalCentavos = moedaParaCentavos(item.valorTotal);
+        const executadoCentavos = moedaParaCentavos(item.valorExecutado);
+
+        grupo.totalCentavos += totalCentavos;
+        grupo.executadoCentavos += executadoCentavos;
+
+        if (item.uf && (totalCentavos > 0 || executadoCentavos > 0)) {
+            grupo.ufs.add(item.uf);
+        }
+    });
+
+    const finalizarResumo = (grupo) => ({
+        total: centavosParaMoeda(grupo.totalCentavos),
+        executado: centavosParaMoeda(grupo.executadoCentavos),
+        percentual: grupo.totalCentavos > 0
+            ? (grupo.executadoCentavos / grupo.totalCentavos) * 100
+            : 0,
+        ufs: Array.from(grupo.ufs).sort(),
+        quantidadeUfs: grupo.ufs.size
+    });
+
+    return {
+        convenios: finalizarResumo(resumo.convenios),
+        faf: finalizarResumo(resumo.faf)
+    };
+}
+
 export function calculateStateMetrics(uf, data) {
     const items = data.filter((item) => item.uf === uf);
 
