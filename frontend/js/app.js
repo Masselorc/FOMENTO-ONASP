@@ -883,15 +883,15 @@ async function carregarLogoParaPDF() {
 
         function renderKPIs(global, ufsList, resumoInstrumentos) {
             // Calcular Total de Fomento = Total Repassado + Total em Doações
-            const totalRepassado = moedaStringParaNumero(global.totalContratado);
-            const totalDoado = moedaStringParaNumero(global.totalDoado);
+            const totalRepassado = global.totalContratado || 0;
+            const totalDoado = global.totalDoado || 0;
             const totalFomentoOuvidoria = totalRepassado + totalDoado;
             
             $('#kpi-total-fomento-ouvidoria').text(formatMoney(totalFomentoOuvidoria)).attr('title', formatMoney(totalFomentoOuvidoria));
-            $('#kpi-total-contratado').text(formatMoney(moedaStringParaNumero(global.totalContratado))).attr('title', global.totalContratado);
-            $('#kpi-total-executado').text(formatMoney(moedaStringParaNumero(global.totalExecutado))).attr('title', global.totalExecutado);
+            $('#kpi-total-contratado').text(formatMoney(global.totalContratado)).attr('title', formatMoney(global.totalContratado));
+            $('#kpi-total-executado').text(formatMoney(global.totalExecutado)).attr('title', formatMoney(global.totalExecutado));
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
-            $('#kpi-total-doado').text(formatMoney(moedaStringParaNumero(global.totalDoado))).attr('title', global.totalDoado);
+            $('#kpi-total-doado').text(formatMoney(global.totalDoado)).attr('title', formatMoney(global.totalDoado));
 
             const convenios = resumoInstrumentos.convenios;
             const faf = resumoInstrumentos.faf;
