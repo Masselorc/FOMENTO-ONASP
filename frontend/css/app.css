@@ -453,11 +453,11 @@
         }
 
         /* --- CORES POR REGIÃO (Tons Pastéis) --- */
-        .bg-norte { background-color: #e8f5e9; border-color: #c8e6c9; }       
-        .bg-nordeste { background-color: #ffebee; border-color: #ffcdd2; }    
-        .bg-centro-oeste { background-color: #fffde7; border-color: #fff9c4; }
-        .bg-sudeste { background-color: #e3f2fd; border-color: #bbdefb; }     
-        .bg-sul { background-color: #f3e5f5; border-color: #e1bee7; }         
+        .bg-norte { background-color: rgba(76, 175, 80, 0.05); border-color: rgba(76, 175, 80, 0.3); box-shadow: inset 4px 0 0 rgba(76, 175, 80, 0.4), var(--glass-shadow); }       
+        .bg-nordeste { background-color: rgba(244, 67, 54, 0.05); border-color: rgba(244, 67, 54, 0.2); box-shadow: inset 4px 0 0 rgba(244, 67, 54, 0.4), var(--glass-shadow); }    
+        .bg-centro-oeste { background-color: rgba(255, 193, 7, 0.08); border-color: rgba(255, 193, 7, 0.3); box-shadow: inset 4px 0 0 rgba(255, 193, 7, 0.5), var(--glass-shadow); }
+        .bg-sudeste { background-color: rgba(33, 150, 243, 0.05); border-color: rgba(33, 150, 243, 0.3); box-shadow: inset 4px 0 0 rgba(33, 150, 243, 0.4), var(--glass-shadow); }     
+        .bg-sul { background-color: rgba(156, 39, 176, 0.05); border-color: rgba(156, 39, 176, 0.3); box-shadow: inset 4px 0 0 rgba(156, 39, 176, 0.4), var(--glass-shadow); }         
 
         /* Botão Destaque */
         .btn-destaque {

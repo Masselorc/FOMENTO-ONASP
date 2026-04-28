@@ -845,12 +845,13 @@ async function carregarLogoParaPDF() {
         };
 
         function gerarCoresVariadas(count) {
-            const cores = [
-                '#3498db', '#e74c3c', '#2ecc71', '#9b59b6', '#f1c40f', 
-                '#e67e22', '#1abc9c', '#34495e', '#d35400', '#c0392b',
-                '#8e44ad', '#2980b9', '#27ae60', '#f39c12', '#7f8c8d'
+            // Base de cores convertidas para RGB para podermos usar transparência nas barras
+            const bases = [
+                '52, 152, 219', '231, 76, 60', '46, 204, 113', '155, 89, 182', '241, 196, 15', 
+                '230, 126, 34', '26, 188, 156', '52, 73, 94', '211, 84, 0', '192, 57, 43',
+                '142, 68, 173', '41, 128, 185', '39, 174, 96', '243, 156, 18', '127, 140, 141'
             ];
-            return Array.from({ length: count }, (_, i) => cores[i % cores.length]);
+            return Array.from({ length: count }, (_, i) => bases[i % bases.length]);
         }
 
         function getInstrumentoBadge(inst) {
@@ -911,7 +912,9 @@ async function carregarLogoParaPDF() {
             const ctx = document.getElementById('chartExecucaoUF').getContext('2d');
             const labels = dadosPorUF.map(d => d.uf);
             const dataValues = dadosPorUF.map(d => d.percentual);
-            const bgColors = gerarCoresVariadas(dadosPorUF.length);
+            const baseColors = gerarCoresVariadas(dadosPorUF.length);
+            const bgColors = baseColors.map(rgb => `rgba(${rgb}, 0.5)`);
+            const borderColors = baseColors.map(rgb => `rgba(${rgb}, 1)`);
             const maxPercentual = Math.max(100, ...dataValues);
             const maxEscala = Math.ceil(maxPercentual / 10) * 10;
 
@@ -923,6 +926,8 @@ async function carregarLogoParaPDF() {
                         label: '% Execução',
                         data: dataValues,
                         backgroundColor: bgColors,
+                        borderColor: borderColors,
+                        borderWidth: 1,
                         borderRadius: 4,
                         barPercentage: 0.8
                     }]
