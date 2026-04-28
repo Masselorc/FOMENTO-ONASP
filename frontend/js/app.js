@@ -2,7 +2,7 @@ import {
     carregarCatalogoAplicacao,
     carregarDadosAplicacao,
     processarArquivoPlanilhaSelecionado
-} from '../../backend/services/data-service.js';
+} from '../../backend/services/data-service.js?v=20260428-2';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -438,7 +438,7 @@ async function carregarLogoParaPDF() {
 
             // 3. Separar itens por instrumento
             const itensFAF = itensUF.filter(i => normalizarBusca(i.instrumento).includes("faf"));
-            const itensConv = itensUF.filter(i => normalizarBusca(i.instrumento).includes("convenio"));
+            const itensConv = itensUF.filter(i => normalizarBusca(i.instrumento).includes("conv"));
             const itensDoac = itensUF.filter(i => normalizarBusca(i.instrumento).includes("doa"));
 
             // 4. Função auxiliar para gerar tabelas agrupadas
@@ -860,7 +860,7 @@ async function carregarLogoParaPDF() {
             const normalized = normalizarBusca(inst).toUpperCase();
             const safeInst = escapeHtml(inst);
             if (normalized.includes("FAF")) return `<span class="badge badge-inst-faf" title="${safeInst}">FAF</span>`;
-            if (normalized.includes("CONVENIO")) return `<span class="badge badge-inst-convenio" title="${safeInst}">CVN</span>`;
+            if (normalized.includes("CONV")) return `<span class="badge badge-inst-convenio" title="${safeInst}">CVN</span>`;
             if (normalized.includes("DOA")) return `<span class="badge badge-inst-doacao" title="${safeInst}">DOA</span>`;
             
             return `<span class="badge badge-inst-default">${escapeHtml(String(inst).substring(0,3))}</span>`;
