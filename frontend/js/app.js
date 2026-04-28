@@ -17,6 +17,9 @@ let dadosFaf = [];
 let tabelaInstancia = null;
 let chartInstancia = null;
 let estadoAtualPDF = '';
+let dadosFinanceirosValidados = false;
+let filtroTabelaAtual = null;
+let filtroDataTableRegistrado = false;
 let catalogoAplicacao = {
     configuracao: {},
     regioes: {},
@@ -76,10 +79,12 @@ async function carregarLogoParaPDF() {
             if (input) input.click();
         }
 
-        function mostrarAlertaCarregamentoPlanilha(mensagem, permitirSelecaoManual = false) {
+        function mostrarAlertaCarregamentoPlanilha(mensagem, permitirSelecaoManual = false, tipo = 'warning') {
             const alerta = document.getElementById('alerta-carregamento-planilha');
             if (!alerta) return;
             alerta.innerHTML = '';
+            alerta.classList.remove('alert-warning', 'alert-danger', 'alert-success', 'alert-info');
+            alerta.classList.add(`alert-${tipo}`);
 
             const texto = document.createElement('span');
             texto.textContent = mensagem;
@@ -109,21 +114,44 @@ async function carregarLogoParaPDF() {
             alerta.classList.add('d-none');
         }
 
-                async function processarSelecaoManualPlanilha(event) {
+        function configurarEstadoDadosValidados(validado) {
+            dadosFinanceirosValidados = validado;
+            const btnExportDashboard = document.getElementById('btn-export-dashboard');
+            const btnDetalhamento = document.querySelector('button[onclick="toggleView(\'detalhamento\')"]');
+
+            [btnExportDashboard, btnDetalhamento].forEach((botao) => {
+                if (!botao) return;
+                botao.disabled = !validado;
+                botao.classList.toggle('disabled', !validado);
+                botao.setAttribute('aria-disabled', String(!validado));
+            });
+        }
+
+        function bloquearDadosFinanceiros(error) {
+            dadosFaf = [];
+            configurarEstadoDadosValidados(false);
+            initDashboard(dadosFaf);
+            renderDetailsView();
+            mostrarAlertaCarregamentoPlanilha(
+                `Dados financeiros indisponiveis: a planilha nao foi carregada ou validada. ${error.message}`,
+                true,
+                'danger'
+            );
+        }
+
+        async function processarSelecaoManualPlanilha(event) {
             const arquivoSelecionado = event.target.files?.[0];
             if (!arquivoSelecionado) return;
 
             try {
                 dadosFaf = await processarArquivoPlanilhaSelecionado(arquivoSelecionado, catalogoAplicacao);
+                configurarEstadoDadosValidados(true);
                 ocultarAlertaCarregamentoPlanilha();
                 initDashboard(dadosFaf);
                 renderDetailsView();
             } catch (error) {
                 console.error('Falha ao processar a planilha selecionada manualmente:', error);
-                mostrarAlertaCarregamentoPlanilha(
-                    `A planilha selecionada nao pode ser processada. ${error.message}`,
-                    true
-                );
+                bloquearDadosFinanceiros(error);
             } finally {
                 event.target.value = '';
             }
@@ -149,14 +177,12 @@ async function carregarLogoParaPDF() {
 
             try {
                 dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
+                configurarEstadoDadosValidados(true);
                 ocultarAlertaCarregamentoPlanilha();
             } catch (error) {
                 console.error('Falha ao carregar convenios da planilha:', error);
-                dadosFaf = Array.isArray(catalogoAplicacao.dadosBase) ? [...catalogoAplicacao.dadosBase] : [];
-                mostrarAlertaCarregamentoPlanilha(
-                    `Os itens de convenio nao puderam ser carregados da planilha. ${error.message}`,
-                    true
-                );
+                bloquearDadosFinanceiros(error);
+                return;
             }
 
             initDashboard(dadosFaf);
@@ -165,6 +191,15 @@ async function carregarLogoParaPDF() {
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
         function toggleView(viewName) {
+            if (!dadosFinanceirosValidados && viewName !== 'dashboard') {
+                mostrarAlertaCarregamentoPlanilha(
+                    'Dados financeiros indisponiveis: carregue uma planilha valida antes de acessar detalhes ou exportacoes.',
+                    true,
+                    'danger'
+                );
+                viewName = 'dashboard';
+            }
+
             document.getElementById('view-dashboard').style.display = 'none';
             document.getElementById('view-detalhamento').style.display = 'none';
             document.getElementById('view-estado-detalhe').style.display = 'none';
@@ -209,6 +244,8 @@ async function carregarLogoParaPDF() {
             
             renderKPIs(analise.global, analise.ufsUnicas);
             renderChart(analise.dadosPorUF);
+            registrarFiltroDataTable();
+            filtroTabelaAtual = null;
             initTable(data);
             
             populateMultiSelect('dropdownInstrumentoMenu', 'instrumento', data);
@@ -222,6 +259,11 @@ async function carregarLogoParaPDF() {
         function renderDetailsView() {
             const container = document.getElementById('container-estados');
             container.innerHTML = ''; 
+
+            if (!dadosFinanceirosValidados) {
+                container.innerHTML = '<div class="alert alert-danger">Dados financeiros indisponiveis. Carregue uma planilha valida para visualizar o detalhamento por estado.</div>';
+                return;
+            }
 
             const ordemRegioes = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
             const corRegiao = {
@@ -247,21 +289,24 @@ async function carregarLogoParaPDF() {
                 estadosDaRegiao.forEach(uf => {
                     const metrics = calculateStateMetrics(uf, dadosFaf);
                     const nomeEstado = catalogoAplicacao.nomesEstados[uf] || uf;
+                    const safeUf = escapeHtml(uf);
+                    const safeNomeEstado = escapeHtml(nomeEstado);
                     
                     const flagUrl = catalogoAplicacao.imagensBandeiras[uf] || "";
+                    const safeFlagUrl = escapeHtml(flagUrl);
                     
                     const imgElement = flagUrl 
-                        ? `<img src="${flagUrl}" alt="Bandeira ${uf}" class="state-flag" onerror="this.onerror=null;this.src='';this.style.display='none';this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-flag text-secondary" style="font-size: 24px; display: none;"></i>`
+                        ? `<img src="${safeFlagUrl}" alt="Bandeira ${safeUf}" class="state-flag" onerror="this.onerror=null;this.src='';this.style.display='none';this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-flag text-secondary" style="font-size: 24px; display: none;"></i>`
                         : `<i class="fas fa-flag text-secondary" style="font-size: 24px;"></i>`;
 
                     const col = document.createElement('div');
                     col.className = 'col-lg-6';
 
                     col.innerHTML = `
-                        <div class="state-detail-card ${bgClass}" style="cursor: pointer;" onclick="abrirDetalheEstado('${uf}')">
+                        <div class="state-detail-card ${bgClass}" style="cursor: pointer;" onclick="abrirDetalheEstado('${safeUf}')">
                             <div class="state-header">
                                 ${imgElement}
-                                <h3 class="state-name">${nomeEstado} (${uf})</h3>
+                                <h3 class="state-name">${safeNomeEstado} (${safeUf})</h3>
                             </div>
                             <div class="mini-card-grid">
                                 <div class="mini-card">
@@ -304,14 +349,22 @@ async function carregarLogoParaPDF() {
 
         // --- RELATÓRIO DETALHADO POR ESTADO (NOVO) ---
         function abrirDetalheEstado(uf) {
+            if (!dadosFinanceirosValidados) {
+                toggleView('dashboard');
+                return;
+            }
+
             estadoAtualPDF = uf;
             const itensUF = dadosFaf.filter(d => d.uf === uf);
             const nomeEstado = catalogoAplicacao.nomesEstados[uf] || uf;
             const flagUrl = catalogoAplicacao.imagensBandeiras[uf] || "";
+            const safeUf = escapeHtml(uf);
+            const safeNomeEstado = escapeHtml(nomeEstado);
+            const safeFlagUrl = escapeHtml(flagUrl);
             
             // 1. Montar Header
             const imgElement = flagUrl 
-                ? `<img src="${flagUrl}" alt="Bandeira ${uf}" class="state-flag me-3" style="width: 80px; height: 55px;">`
+                ? `<img src="${safeFlagUrl}" alt="Bandeira ${safeUf}" class="state-flag me-3" style="width: 80px; height: 55px;">`
                 : `<i class="fas fa-flag text-secondary me-3" style="font-size: 40px;"></i>`;
             
             // O infoConvenioHtml foi removido daqui e passado para a secção das listas (passo 4)
@@ -319,7 +372,7 @@ async function carregarLogoParaPDF() {
             document.getElementById('estado-detalhe-header').innerHTML = `
                 <div class="d-flex align-items-center pb-2 mt-2">
                     ${imgElement}
-                    <h2 class="text-primary mb-0 fw-bold">Relatório Estadual: ${nomeEstado} (${uf})</h2>
+                    <h2 class="text-primary mb-0 fw-bold">Relatório Estadual: ${safeNomeEstado} (${safeUf})</h2>
                 </div>
                 <hr class="mt-2 mb-3">
             `;
@@ -354,15 +407,15 @@ async function carregarLogoParaPDF() {
             `;
 
             // 3. Separar itens por instrumento
-            const itensFAF = itensUF.filter(i => (i.instrumento || "").toUpperCase().includes("FAF"));
-            const itensConv = itensUF.filter(i => (i.instrumento || "").toUpperCase().includes("CONV"));
-            const itensDoac = itensUF.filter(i => (i.instrumento || "").toUpperCase().includes("DOA"));
+            const itensFAF = itensUF.filter(i => normalizarBusca(i.instrumento).includes("faf"));
+            const itensConv = itensUF.filter(i => normalizarBusca(i.instrumento).includes("convenio"));
+            const itensDoac = itensUF.filter(i => normalizarBusca(i.instrumento).includes("doa"));
 
             // 4. Função auxiliar para gerar tabelas agrupadas
             const gerarTabela = (titulo, itens, corCard, valRepassado, valExecutado, pctExecutado) => {
                 if (itens.length === 0) return '';
                 
-                const isDoacao = titulo.includes('Doações');
+                const isDoacao = normalizarBusca(titulo).includes('doacoes');
                 let cardsHtml = '';
                 let theadHtml = '';
                 let linhas = '';
@@ -395,10 +448,11 @@ async function carregarLogoParaPDF() {
                     `;
                     linhas = itens.map(item => {
                         const valTotal = parseFloat(item.valorTotal) || 0;
+                        const safeObjeto = escapeHtml(item.objeto);
                         return `
                             <tr>
-                                <td>${item.objeto}</td>
-                                <td class="text-center align-middle">${item.quantidade}</td>
+                                <td>${safeObjeto}</td>
+                                <td class="text-center align-middle">${escapeHtml(item.quantidade)}</td>
                                 <td class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
                                 <td class="text-end font-monospace align-middle text-warning fw-bold">${formatMoney(valTotal)}</td>
                             </tr>
@@ -442,17 +496,19 @@ async function carregarLogoParaPDF() {
                         const valTotal = parseFloat(item.valorTotal) || 0;
                         const valExec = parseFloat(item.valorExecutado) || 0;
                         const pct = valTotal > 0 ? (valExec / valTotal) * 100 : 0;
+                        const execucaoAcimaPrevisto = valExec - valTotal > 0.01;
+                        const safeObjeto = escapeHtml(item.objeto);
                         
                         return `
-                            <tr>
-                                <td>${item.objeto}</td>
-                                <td class="text-center align-middle">${item.quantidade}</td>
+                            <tr class="${execucaoAcimaPrevisto ? 'table-warning' : ''}">
+                                <td>${safeObjeto}</td>
+                                <td class="text-center align-middle">${escapeHtml(item.quantidade)}</td>
                                 <td class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
                                 <td class="text-end font-monospace align-middle">${formatMoney(valTotal)}</td>
                                 <td class="text-end font-monospace align-middle ${valExec > 0 ? 'text-success fw-bold' : ''}">${formatMoney(valExec)}</td>
-                                <td class="text-center align-middle" style="min-width: 90px;">
+                                <td class="text-center align-middle" style="min-width: 90px;" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
                                     <div class="custom-progress-pill">
-                                        <div class="pill-fill" style="width: ${pct}%; background-color: ${getProgressColor(pct)}"></div>
+                                        <div class="pill-fill" style="width: ${getProgressWidth(pct)}%; background-color: ${getProgressColor(pct)}"></div>
                                         <div class="pill-text">${formatPercent(pct)}</div>
                                     </div>
                                 </td>
@@ -461,10 +517,12 @@ async function carregarLogoParaPDF() {
                     }).join('');
                 }
 
+                const safeTitulo = escapeHtml(titulo);
+
                 return `
                     <div class="card mb-4 shadow-sm border-0">
                         <div class="card-header text-white ${corCard} d-flex justify-content-between align-items-center py-3">
-                            <h5 class="mb-0 fw-bold"><i class="fas fa-list-ul me-2"></i> ${titulo}</h5>
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-list-ul me-2"></i> ${safeTitulo}</h5>
                             <span class="badge bg-light text-dark fs-6">${itens.length} iten(s)</span>
                         </div>
                         <div class="card-body bg-light">
@@ -506,10 +564,10 @@ async function carregarLogoParaPDF() {
                     <div class="alert bg-white border border-success border-start-0 border-end-0 border-bottom-0 border-start border-4 shadow-sm mb-2 d-flex align-items-center">
                         <i class="fas fa-file-contract fa-2x text-success me-3 opacity-75"></i>
                         <div>
-                            <h6 class="mb-1 fw-bold text-dark" style="font-size: 1.1rem; letter-spacing: -0.5px;">Convênio Nº ${info.numero}/${info.ano}</h6>
+                            <h6 class="mb-1 fw-bold text-dark" style="font-size: 1.1rem; letter-spacing: -0.5px;">Convênio Nº ${escapeHtml(info.numero)}/${escapeHtml(info.ano)}</h6>
                             <div class="text-muted small">
-                                <span class="me-3"><i class="fas fa-calendar-alt me-1 text-secondary"></i> <strong>Vencimento:</strong> <span class="badge bg-danger">${info.vencimento}</span></span>
-                                <span><i class="fas fa-folder-open me-1 text-secondary"></i> <strong>Processo SEI:</strong> <span class="font-monospace">${info.sei}</span></span>
+                                <span class="me-3"><i class="fas fa-calendar-alt me-1 text-secondary"></i> <strong>Vencimento:</strong> <span class="badge bg-danger">${escapeHtml(info.vencimento)}</span></span>
+                                <span><i class="fas fa-folder-open me-1 text-secondary"></i> <strong>Processo SEI:</strong> <span class="font-monospace">${escapeHtml(info.sei)}</span></span>
                             </div>
                         </div>
                     </div>
@@ -530,6 +588,15 @@ async function carregarLogoParaPDF() {
         }
 
         async function exportarDashboardPDF() {
+            if (!dadosFinanceirosValidados) {
+                mostrarAlertaCarregamentoPlanilha(
+                    'Nao e possivel exportar: a planilha ainda nao foi carregada ou validada.',
+                    true,
+                    'danger'
+                );
+                return;
+            }
+
             const btnPdf = document.getElementById('btn-export-dashboard');
             const originalHtml = btnPdf.innerHTML;
             
@@ -638,6 +705,15 @@ async function carregarLogoParaPDF() {
         }
 
         async function exportarRelatorioPDF() {
+            if (!dadosFinanceirosValidados) {
+                mostrarAlertaCarregamentoPlanilha(
+                    'Nao e possivel exportar: a planilha ainda nao foi carregada ou validada.',
+                    true,
+                    'danger'
+                );
+                return;
+            }
+
             const btnPdf = document.getElementById('btn-export-pdf');
             const originalHtml = btnPdf.innerHTML;
             
@@ -714,8 +790,23 @@ async function carregarLogoParaPDF() {
 
         // --- FUNÇÕES UTILITÁRIAS (COMPARTILHADAS) ---
 
+        const escapeHtml = (valor) => String(valor ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[char]);
+
+        const normalizarBusca = (valor) => String(valor ?? '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim();
+
         const formatMoney = (val) => val ? val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00';
         const formatPercent = (val) => val ? val.toFixed(1).replace('.', ',') + '%' : '0,0%';
+        const getProgressWidth = (p) => Math.max(0, Math.min(100, Number.isFinite(p) ? p : 0));
         
         const getProgressColor = (p) => {
             if (p <= 0.1) return '#bdc3c7'; // Cinza para 0%
@@ -736,12 +827,13 @@ async function carregarLogoParaPDF() {
         function getInstrumentoBadge(inst) {
             if (!inst) return '<span class="badge badge-inst-default">N/A</span>';
             
-            const normalized = inst.toUpperCase();
-            if (normalized.includes("FAF")) return `<span class="badge badge-inst-faf" title="${inst}">FAF</span>`;
-            if (normalized.includes("CONVÊNIO") || normalized.includes("CONVENIO")) return `<span class="badge badge-inst-convenio" title="${inst}">CVN</span>`;
-            if (normalized.includes("DOAÇ") || normalized.includes("DOAC")) return `<span class="badge badge-inst-doacao" title="${inst}">DOA</span>`;
+            const normalized = normalizarBusca(inst).toUpperCase();
+            const safeInst = escapeHtml(inst);
+            if (normalized.includes("FAF")) return `<span class="badge badge-inst-faf" title="${safeInst}">FAF</span>`;
+            if (normalized.includes("CONVENIO")) return `<span class="badge badge-inst-convenio" title="${safeInst}">CVN</span>`;
+            if (normalized.includes("DOA")) return `<span class="badge badge-inst-doacao" title="${safeInst}">DOA</span>`;
             
-            return `<span class="badge badge-inst-default">${inst.substring(0,3)}</span>`;
+            return `<span class="badge badge-inst-default">${escapeHtml(String(inst).substring(0,3))}</span>`;
         }
 
         function renderKPIs(global, ufsList) {
@@ -758,6 +850,8 @@ async function carregarLogoParaPDF() {
             const labels = dadosPorUF.map(d => d.uf);
             const dataValues = dadosPorUF.map(d => d.percentual);
             const bgColors = gerarCoresVariadas(dadosPorUF.length);
+            const maxPercentual = Math.max(100, ...dataValues);
+            const maxEscala = Math.ceil(maxPercentual / 10) * 10;
 
             chartInstancia = new Chart(ctx, {
                 type: 'bar',
@@ -787,7 +881,7 @@ async function carregarLogoParaPDF() {
                         }
                     },
                     scales: {
-                        x: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } },
+                        x: { beginAtZero: true, max: maxEscala, ticks: { callback: v => v + '%' } },
                         y: { grid: { display: false } }
                     },
                     onClick: (e, els) => {
@@ -804,25 +898,32 @@ async function carregarLogoParaPDF() {
             const tbody = document.querySelector('#tabelaItens tbody');
             tbody.innerHTML = '';
 
-            data.forEach(row => {
+            data.forEach((row, index) => {
                 const vTotal = parseFloat(row.valorTotal) || 0;
                 const vExec = parseFloat(row.valorExecutado) || 0;
                 const percent = vTotal > 0 ? (vExec / vTotal) * 100 : 0;
+                const execucaoAcimaPrevisto = vExec - vTotal > 0.01;
+                const safeInstrumento = escapeHtml(row.instrumento);
+                const safeUf = escapeHtml(row.uf);
+                const safeObjeto = escapeHtml(row.objeto);
+                const safeQuantidade = escapeHtml(row.quantidade);
 
                 const tr = document.createElement('tr');
+                tr.dataset.itemIndex = String(index);
+                if (execucaoAcimaPrevisto) tr.classList.add('table-warning');
                 tr.innerHTML = `
-                    <td class="text-center align-middle"><span class="d-none">${row.instrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
-                    <td class="align-middle"><span class="badge bg-secondary badge-uf">${row.uf}</span></td>
-                    <td title="${row.objeto}" class="align-middle"><span class="truncate-text">${row.objeto}</span></td>
-                    <td class="text-center align-middle">${row.quantidade}</td>
+                    <td class="text-center align-middle"><span class="d-none">${safeInstrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
+                    <td class="align-middle"><span class="badge bg-secondary badge-uf">${safeUf}</span></td>
+                    <td title="${safeObjeto}" class="align-middle"><span class="truncate-text">${safeObjeto}</span></td>
+                    <td class="text-center align-middle">${safeQuantidade}</td>
                     <td class="text-end font-monospace small align-middle">${formatMoney(row.valorUnitario)}</td>
                     <td class="text-end font-monospace align-middle">${formatMoney(vTotal)}</td>
                     <td class="text-end align-middle ${vExec > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
                         ${formatMoney(vExec)}
                     </td>
-                    <td class="text-center align-middle">
+                    <td class="text-center align-middle" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
                         <div class="custom-progress-pill">
-                            <div class="pill-fill" style="width: ${percent}%; background-color: ${getProgressColor(percent)}"></div>
+                            <div class="pill-fill" style="width: ${getProgressWidth(percent)}%; background-color: ${getProgressColor(percent)}"></div>
                             <div class="pill-text">${formatPercent(percent)}</div>
                         </div>
                     </td>
@@ -875,12 +976,14 @@ async function carregarLogoParaPDF() {
 
             sortedValues.forEach((val, idx) => {
                 const li = document.createElement('li');
+                const safeVal = escapeHtml(val);
+                const safeId = escapeHtml(`chk-${key}-${idx}`);
                 li.innerHTML = `
                     <div class="dropdown-item">
                         <div class="form-check">
-                            <input class="form-check-input check-item-${key}" type="checkbox" value="${val}" id="chk-${key}-${idx}" checked>
-                            <label class="form-check-label" for="chk-${key}-${idx}">
-                                ${val}
+                            <input class="form-check-input check-item-${key}" type="checkbox" value="${safeVal}" id="${safeId}" checked>
+                            <label class="form-check-label" for="${safeId}">
+                                ${safeVal}
                             </label>
                         </div>
                     </div>
@@ -888,35 +991,74 @@ async function carregarLogoParaPDF() {
                 container.appendChild(li);
             });
 
-            container.addEventListener('click', function(e) {
+            container.onclick = function(e) {
                 e.stopPropagation();
-            });
+            };
         }
 
-        function getSelectedValues(key) {
-            const checkAll = document.getElementById(`checkAll-${key}`);
-            if (checkAll && checkAll.checked) return []; 
+        function obterEstadoFiltroAtual() {
+            const checkAllInst = document.getElementById('checkAll-instrumento')?.checked ?? true;
+            const checkAllUF = document.getElementById('checkAll-uf')?.checked ?? true;
 
-            const checkboxes = document.querySelectorAll(`.check-item-${key}:checked`);
-            return Array.from(checkboxes).map(cb => cb.value);
+            return {
+                texto: $('#filtroObjeto').val() || '',
+                textoNormalizado: normalizarBusca($('#filtroObjeto').val()),
+                checkAllInst,
+                checkedInsts: new Set(Array.from(document.querySelectorAll('.check-item-instrumento:checked')).map(cb => cb.value)),
+                checkAllUF,
+                checkedUFs: new Set(Array.from(document.querySelectorAll('.check-item-uf:checked')).map(cb => cb.value))
+            };
+        }
+
+        function itemPassaFiltros(item, filtro) {
+            const matchUF = filtro.checkAllUF || filtro.checkedUFs.has(item.uf);
+            const matchInst = filtro.checkAllInst || filtro.checkedInsts.has(item.instrumento);
+            const matchTexto = filtro.textoNormalizado
+                ? normalizarBusca(item.objeto).includes(filtro.textoNormalizado)
+                : true;
+
+            return matchUF && matchInst && matchTexto;
+        }
+
+        function obterDadosFiltrados(filtro = obterEstadoFiltroAtual()) {
+            return dadosFaf.filter((item) => itemPassaFiltros(item, filtro));
+        }
+
+        function registrarFiltroDataTable() {
+            if (filtroDataTableRegistrado || !$.fn.dataTable?.ext?.search) return;
+
+            $.fn.dataTable.ext.search.push((settings, _searchData, dataIndex) => {
+                if (settings.nTable?.id !== 'tabelaItens' || !filtroTabelaAtual) {
+                    return true;
+                }
+
+                const rowNode = settings.aoData[dataIndex]?.nTr;
+                const itemIndex = Number(rowNode?.dataset?.itemIndex);
+                const item = dadosFaf[itemIndex];
+                return item ? itemPassaFiltros(item, filtroTabelaAtual) : false;
+            });
+
+            filtroDataTableRegistrado = true;
         }
 
         function setupEventListeners() {
+            $(document).off('change.filtrosAplicacao');
+
             ['instrumento', 'uf'].forEach(key => {
-                $(document).on('change', `#checkAll-${key}`, function() {
+                $(document).on('change.filtrosAplicacao', `#checkAll-${key}`, function() {
                     const isChecked = $(this).is(':checked');
                     $(`.check-item-${key}`).prop('checked', isChecked);
                     aplicarFiltrosCombinados();
                 });
 
-                $(document).on('change', `.check-item-${key}`, function() {
+                $(document).on('change.filtrosAplicacao', `.check-item-${key}`, function() {
                     const allChecked = $(`.check-item-${key}`).length === $(`.check-item-${key}:checked`).length;
                     $(`#checkAll-${key}`).prop('checked', allChecked);
                     aplicarFiltrosCombinados();
                 });
             });
 
-            $('#filtroObjeto').off('keyup').on('keyup', function() { 
+            $('#filtroObjeto').off('input.filtrosAplicacao').on('input.filtrosAplicacao', function() {
                 aplicarFiltrosCombinados();
             });
             
@@ -924,54 +1066,21 @@ async function carregarLogoParaPDF() {
                 $('.check-all').prop('checked', true);
                 $('.form-check-input').prop('checked', true); 
                 $('#filtroObjeto').val('');
-                $('#filtroAtivoBadge').hide();
-                tabelaInstancia.search('').columns().search('').draw();
-                atualizarCardsDinamicos();
+                aplicarFiltrosCombinados();
             };
 
-            $('#btnLimparFiltros, #filtroAtivoBadge').off('click').on('click', reset);
+            $('#btnLimparFiltros, #filtroAtivoBadge').off('click.filtrosAplicacao').on('click.filtrosAplicacao', reset);
         }
 
         function aplicarFiltrosCombinados() {
-            const selectedInsts = getSelectedValues('instrumento'); 
-            const selectedUFs = getSelectedValues('uf'); 
-            const texto = $('#filtroObjeto').val();
-
-            if (selectedInsts.length > 0) {
-                const searchString = selectedInsts.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-                tabelaInstancia.column(0).search(searchString, true, false);
-            } else {
-                const checkAllInst = document.getElementById(`checkAll-instrumento`).checked;
-                
-                if (!checkAllInst && document.querySelectorAll(`.check-item-instrumento:checked`).length === 0) {
-                    tabelaInstancia.column(0).search("#####_NO_MATCH_#####", true, false);
-                } else if (!checkAllInst) {
-                    const items = Array.from(document.querySelectorAll(`.check-item-instrumento:checked`)).map(cb => cb.value);
-                    const searchString = items.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-                    tabelaInstancia.column(0).search(searchString, true, false);
-                } else {
-                     tabelaInstancia.column(0).search("");
-                }
-            }
-
-            const checkAllUF = document.getElementById(`checkAll-uf`).checked;
-            if (!checkAllUF && document.querySelectorAll(`.check-item-uf:checked`).length === 0) {
-                 tabelaInstancia.column(1).search("#####_NO_MATCH_#####", true, false);
-            } else if (!checkAllUF) {
-                const items = Array.from(document.querySelectorAll(`.check-item-uf:checked`)).map(cb => cb.value);
-                const searchString = items.map(v => `^${v}$`).join('|'); 
-                tabelaInstancia.column(1).search(searchString, true, false);
-            } else {
-                tabelaInstancia.column(1).search("");
-            }
-
-            tabelaInstancia.search(texto);
+            const filtro = obterEstadoFiltroAtual();
+            filtroTabelaAtual = filtro;
             
-            tabelaInstancia.draw();
+            if (tabelaInstancia) {
+                tabelaInstancia.search('').columns().search('').draw();
+            }
 
-            const anyFilterActive = !document.getElementById(`checkAll-instrumento`).checked || 
-                                    !document.getElementById(`checkAll-uf`).checked || 
-                                    texto.length > 0;
+            const anyFilterActive = !filtro.checkAllInst || !filtro.checkAllUF || filtro.textoNormalizado.length > 0;
             
             if (anyFilterActive) {
                 $('#textoFiltroAtivo').text("Filtros Ativos");
@@ -980,7 +1089,7 @@ async function carregarLogoParaPDF() {
                 $('#filtroAtivoBadge').hide();
             }
 
-            atualizarCardsDinamicos();
+            atualizarCardsDinamicos(filtro);
         }
         
         function aplicarFiltroUF(uf) {
@@ -991,24 +1100,8 @@ async function carregarLogoParaPDF() {
             aplicarFiltrosCombinados();
         }
 
-        function atualizarCardsDinamicos() {
-             const textoFiltro = $('#filtroObjeto').val().toLowerCase();
-
-             const checkAllInst = document.getElementById(`checkAll-instrumento`).checked;
-             const checkedInsts = new Set(Array.from(document.querySelectorAll(`.check-item-instrumento:checked`)).map(cb => cb.value));
-
-             const checkAllUF = document.getElementById(`checkAll-uf`).checked;
-             const checkedUFs = new Set(Array.from(document.querySelectorAll(`.check-item-uf:checked`)).map(cb => cb.value));
-
-             const dadosFiltrados = dadosFaf.filter(item => {
-                 const matchUF = checkAllUF || checkedUFs.has(item.uf);
-                 
-                 const matchInst = checkAllInst || checkedInsts.has(item.instrumento);
-
-                 const matchTexto = textoFiltro ? (item.objeto && item.objeto.toLowerCase().includes(textoFiltro)) : true;
-                 
-                 return matchUF && matchInst && matchTexto;
-             });
+        function atualizarCardsDinamicos(filtro = obterEstadoFiltroAtual()) {
+            const dadosFiltrados = obterDadosFiltrados(filtro);
 
             const qtdItens = dadosFiltrados.length;
             const resumoFinanceiro = calcularResumoFinanceiro(dadosFiltrados);
