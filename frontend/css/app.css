@@ -1,24 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-            --primary-color: #2c3e50; 
-            --secondary-color: #34495e;
-            --accent-color: #1abc9c; 
-            --bg-light: #f8f9fa;
+            --primary-color: #1e293b; /* Tom mais escuro e sofisticado (Slate 800) */
+            --secondary-color: #475569; /* Slate 600 */
+            --accent-color: #3b82f6; /* Azul moderno (Blue 500) */
+            --bg-light: #f1f5f9; /* Slate 100 - Fundo mais agradável */
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-light);
-            color: #333;
+            color: #334155; /* Fonte levemente mais suave que o preto total */
             padding-bottom: 50px;
         }
 
         /* Header */
         .header-section {
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
+            background-color: rgba(255, 255, 255, 0.85); /* Efeito de transparência */
+            backdrop-filter: blur(10px); /* Efeito de vidro (Glassmorphism) */
+            -webkit-backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             padding: 1.5rem 0;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
         
         .header-title { color: var(--primary-color); font-weight: 700; }
@@ -55,15 +62,21 @@
 
         /* KPI Cards */
         .kpi-card {
-            background: #fff; border: none; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; 
+            background: #fff; 
+            border: 1px solid rgba(0,0,0,0.03) !important; 
+            border-radius: 16px; /* Mais arredondado */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05); 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 1rem 0.75rem !important; /* Reduzido o padding lateral para dar espaço aos números longos */
+            padding: 1.25rem 1rem !important; 
         }
-        .kpi-card:hover { transform: translateY(-3px); }
+        .kpi-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); 
+        }
         
         .kpi-title { 
             font-size: 0.75rem; /* Ajustado de 0.85rem para economizar espaço */
@@ -141,15 +154,15 @@
 
         /* Gráfico */
         .chart-container {
-            background: #fff; padding: 20px; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 2rem;
+            background: #fff; padding: 20px; border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 2rem;
             position: relative; height: 500px;
         }
 
         /* Tabelas e Filtros */
         .table-container {
-            background: #fff; padding: 20px; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            background: #fff; padding: 20px; border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
         .filter-section {
@@ -308,15 +321,16 @@
         }
 
         .state-detail-card {
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 16px;
             overflow: hidden;
-            transition: box-shadow 0.3s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
         }
         
         .state-detail-card:hover {
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
         }
 
         .state-header {
@@ -353,11 +367,11 @@
 
         .mini-card {
             background: #fff; 
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 6px;
+            border: none;
+            border-radius: 10px;
             padding: 10px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .mini-card-label {
@@ -384,10 +398,10 @@
         .btn-destaque {
             background-color: var(--accent-color);
             color: white;
-            font-weight: bold;
+            font-weight: 600;
             border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
+            padding: 12px 24px;
+            border-radius: 999px;
             transition: all 0.3s;
         }
         .btn-destaque:hover {
