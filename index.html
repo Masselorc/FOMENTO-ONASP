@@ -14,7 +14,7 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260428-2" rel="stylesheet">
 </head>
 <body>
 
@@ -26,7 +26,11 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-7 d-flex align-items-center gap-4">
-                        <img id="img-logo-senappen" class="senappen-logo" src="./frontend/assets/senappen-logo.png" alt="Logo SENAPPEN Completo">
+                        <img id="img-logo-senappen" class="senappen-logo" src="./frontend/assets/senappen-logo.png" alt="Logo SENAPPEN Completo" width="300" height="90" loading="eager" decoding="sync" style="width: min(300px, 42vw); height: 90px; object-fit: contain;">
+                        <div id="logo-senappen-fallback" class="senappen-logo-fallback d-none" aria-hidden="true">
+                            <strong>SENAPPEN</strong>
+                            <span>Secretaria Nacional de Políticas Penais</span>
+                        </div>
                         
                         <div>
                             <h1 class="header-title mb-1" style="font-size: 1.6rem;">Painel de Acompanhamento</h1>
@@ -328,7 +332,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script type="module" src="./frontend/js/app.js"></script>
+    <script type="module" src="./frontend/js/app.js?v=20260428-2"></script>
 </body>
 </html>
 

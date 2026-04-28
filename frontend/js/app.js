@@ -8,7 +8,7 @@ import {
     calcularResumoInstrumentos,
     calculateStateMetrics,
     processarDadosAgregados
-} from '../../backend/services/analytics.js';
+} from '../../backend/services/analytics.js?v=20260428-2';
 
 // ========================================================================
 // 1. CONFIGURACOES E ESTADO
@@ -82,25 +82,23 @@ async function carregarLogoParaPDF() {
             const logoImg = document.getElementById('img-logo-senappen');
             if (!logoImg) return;
 
-            logoImg.src = LOGO_SENAPPEN_LOCAL;
+            const fallback = document.getElementById('logo-senappen-fallback');
+            logoImg.width = 300;
+            logoImg.height = 90;
+            logoImg.style.width = 'min(300px, 42vw)';
+            logoImg.style.height = '90px';
+            logoImg.style.objectFit = 'contain';
 
-            try {
-                const response = await fetch(LOGO_SENAPPEN_LOCAL, { cache: 'force-cache' });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
+            logoImg.onload = () => {
+                logoImg.classList.remove('d-none');
+                fallback?.classList.add('d-none');
+            };
+            logoImg.onerror = () => {
+                logoImg.classList.add('d-none');
+                fallback?.classList.remove('d-none');
+            };
 
-                const blob = await response.blob();
-                const base64data = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-
-                logoImg.src = base64data;
-            } catch (error) {
-                console.warn('Nao foi possivel converter o logo local para Base64. Usando arquivo local diretamente.', error);
+            if (!logoImg.getAttribute('src')?.includes('senappen-logo.png')) {
                 logoImg.src = LOGO_SENAPPEN_LOCAL;
             }
         }
