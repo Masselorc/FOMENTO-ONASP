@@ -837,6 +837,12 @@ async function carregarLogoParaPDF() {
         const formatPercent = (val) => val ? val.toFixed(1).replace('.', ',') + '%' : '0,0%';
         const getProgressWidth = (p) => Math.max(0, Math.min(100, Number.isFinite(p) ? p : 0));
         
+        // Função auxiliar para converter string de moeda em número
+        const moedaStringParaNumero = (moedaStr) => {
+            if (!moedaStr || typeof moedaStr !== 'string') return 0;
+            return Number(moedaStr.replace(/[^\d,-]/g, '').replace('.', '').replace(',', '.')) || 0;
+        };
+        
         const getProgressColor = (p) => {
             if (p <= 0.1) return '#bdc3c7'; // Cinza para 0%
             if (p < 50) return '#f39c12'; // Laranja/Amarelo para < 50%
@@ -876,10 +882,16 @@ async function carregarLogoParaPDF() {
         }
 
         function renderKPIs(global, ufsList, resumoInstrumentos) {
-            $('#kpi-total-contratado').text(formatMoney(global.totalContratado)).attr('title', formatMoney(global.totalContratado));
-            $('#kpi-total-executado').text(formatMoney(global.totalExecutado)).attr('title', formatMoney(global.totalExecutado));
+            // Calcular Total de Fomento = Total Repassado + Total em Doações
+            const totalRepassado = moedaStringParaNumero(global.totalContratado);
+            const totalDoado = moedaStringParaNumero(global.totalDoado);
+            const totalFomentoOuvidoria = totalRepassado + totalDoado;
+            
+            $('#kpi-total-fomento-ouvidoria').text(formatMoney(totalFomentoOuvidoria)).attr('title', formatMoney(totalFomentoOuvidoria));
+            $('#kpi-total-contratado').text(formatMoney(moedaStringParaNumero(global.totalContratado))).attr('title', global.totalContratado);
+            $('#kpi-total-executado').text(formatMoney(moedaStringParaNumero(global.totalExecutado))).attr('title', global.totalExecutado);
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
-            $('#kpi-total-doado').text(formatMoney(global.totalDoado)).attr('title', formatMoney(global.totalDoado));
+            $('#kpi-total-doado').text(formatMoney(moedaStringParaNumero(global.totalDoado))).attr('title', global.totalDoado);
             $('#kpi-ufs-ativas').text(global.ufsComExecucao);
             $('#kpi-ufs-total-desc').text(`de ${ufsList.length} UFs listadas`);
 
@@ -887,15 +899,15 @@ async function carregarLogoParaPDF() {
             const faf = resumoInstrumentos.faf;
             const doacao = resumoInstrumentos.doacao;
 
-            $('#kpi-total-convenios').text(formatMoney(convenios.total)).attr('title', formatMoney(convenios.total));
+            $('#kpi-total-convenios').text(formatMoney(moedaStringParaNumero(convenios.total))).attr('title', convenios.total);
             $('#kpi-percentual-convenios').text(formatPercent(convenios.percentual));
-            $('#kpi-desc-convenios').text(`Executado: ${formatMoney(convenios.executado)}`);
+            $('#kpi-desc-convenios').text(`Executado: ${convenios.executado}`);
             $('#kpi-ufs-convenios-qtd').text(convenios.quantidadeUfs);
             renderUfChips('kpi-ufs-convenios-lista', convenios.ufs);
 
-            $('#kpi-total-faf').text(formatMoney(faf.total)).attr('title', formatMoney(faf.total));
+            $('#kpi-total-faf').text(formatMoney(moedaStringParaNumero(faf.total))).attr('title', faf.total);
             $('#kpi-percentual-faf').text(formatPercent(faf.percentual));
-            $('#kpi-desc-faf').text(`Executado: ${formatMoney(faf.executado)}`);
+            $('#kpi-desc-faf').text(`Executado: ${faf.executado}`);
             $('#kpi-ufs-faf-qtd').text(faf.quantidadeUfs);
             renderUfChips('kpi-ufs-faf-lista', faf.ufs);
 
