@@ -4,6 +4,7 @@ import {
     processarArquivoPlanilhaSelecionado
 } from '../../backend/services/data-service.js';
 import {
+    calcularResumoFinanceiro,
     calculateStateMetrics,
     processarDadosAgregados
 } from '../../backend/services/analytics.js';
@@ -1009,36 +1010,19 @@ async function carregarLogoParaPDF() {
                  return matchUF && matchInst && matchTexto;
              });
 
-            let somaRepassado = 0;
-            let somaExecutado = 0;
-            let somaDoado = 0;
-            let qtdItens = dadosFiltrados.length;
-
-            dadosFiltrados.forEach(item => {
-                const vTotal = parseFloat(item.valorTotal) || 0;
-                const vExec = parseFloat(item.valorExecutado) || 0;
-                const isDoacao = (item.instrumento || "").toUpperCase().includes("DOA");
-
-                if (isDoacao) {
-                    somaDoado += vTotal;
-                } else {
-                    somaRepassado += vTotal;
-                    somaExecutado += vExec;
-                }
-            });
-
-            const percentual = somaRepassado > 0 ? (somaExecutado / somaRepassado) * 100 : 0;
+            const qtdItens = dadosFiltrados.length;
+            const resumoFinanceiro = calcularResumoFinanceiro(dadosFiltrados);
 
             const elRep = $('#dyn-total-repassado');
-            const txtRep = formatMoney(somaRepassado);
+            const txtRep = formatMoney(resumoFinanceiro.totalRepassado);
             elRep.text(txtRep).attr('title', txtRep);
 
             const elExec = $('#dyn-total-executado');
-            const txtExec = formatMoney(somaExecutado);
+            const txtExec = formatMoney(resumoFinanceiro.totalExecutado);
             elExec.text(txtExec).attr('title', txtExec);
 
-            $('#dyn-total-doado').text(formatMoney(somaDoado)).attr('title', formatMoney(somaDoado));
-            $('#dyn-percentual').text(formatPercent(percentual));
+            $('#dyn-total-doado').text(formatMoney(resumoFinanceiro.totalDoado)).attr('title', formatMoney(resumoFinanceiro.totalDoado));
+            $('#dyn-percentual').text(formatPercent(resumoFinanceiro.percentual));
             $('#dyn-qtd-itens').text(qtdItens);
         }
 

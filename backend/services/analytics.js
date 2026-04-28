@@ -1,92 +1,164 @@
+function valorNumerico(valor) {
+    const numero = Number.parseFloat(valor);
+    return Number.isFinite(numero) ? numero : 0;
+}
+
+function moedaParaCentavos(valor) {
+    return Math.round((valorNumerico(valor) + Number.EPSILON) * 100);
+}
+
+function centavosParaMoeda(centavos) {
+    return centavos / 100;
+}
+
+function normalizarInstrumento(instrumento) {
+    return String(instrumento || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase();
+}
+
+function isFaf(item) {
+    return normalizarInstrumento(item.instrumento).includes('FAF');
+}
+
+function isConvenio(item) {
+    return normalizarInstrumento(item.instrumento).includes('CONV');
+}
+
+function isDoacao(item) {
+    return normalizarInstrumento(item.instrumento).includes('DOA');
+}
+
+export function calcularResumoFinanceiro(data) {
+    let totalRepassadoCentavos = 0;
+    let totalExecutadoCentavos = 0;
+    let totalDoadoCentavos = 0;
+
+    data.forEach((item) => {
+        const valorTotalCentavos = moedaParaCentavos(item.valorTotal);
+        const valorExecutadoCentavos = moedaParaCentavos(item.valorExecutado);
+
+        if (isDoacao(item)) {
+            totalDoadoCentavos += valorTotalCentavos;
+            return;
+        }
+
+        totalRepassadoCentavos += valorTotalCentavos;
+        totalExecutadoCentavos += valorExecutadoCentavos;
+    });
+
+    return {
+        totalRepassado: centavosParaMoeda(totalRepassadoCentavos),
+        totalExecutado: centavosParaMoeda(totalExecutadoCentavos),
+        totalDoado: centavosParaMoeda(totalDoadoCentavos),
+        percentual: totalRepassadoCentavos > 0
+            ? (totalExecutadoCentavos / totalRepassadoCentavos) * 100
+            : 0
+    };
+}
+
 export function calculateStateMetrics(uf, data) {
     const items = data.filter((item) => item.uf === uf);
 
-    let totalRepassado = 0;
-    let totalExecutado = 0;
-    let fafVal = 0;
-    let fafExec = 0;
-    let convVal = 0;
-    let convExec = 0;
-    let doacVal = 0;
+    let totalRepassadoCentavos = 0;
+    let totalExecutadoCentavos = 0;
+    let fafValCentavos = 0;
+    let fafExecCentavos = 0;
+    let convValCentavos = 0;
+    let convExecCentavos = 0;
+    let doacValCentavos = 0;
 
     items.forEach((item) => {
-        const val = item.valorTotal || 0;
-        const exec = item.valorExecutado || 0;
-        const inst = (item.instrumento || '').toUpperCase();
+        const val = moedaParaCentavos(item.valorTotal);
+        const exec = moedaParaCentavos(item.valorExecutado);
 
-        if (inst.includes('FAF')) {
-            fafVal += val;
-            fafExec += exec;
-            totalRepassado += val;
-            totalExecutado += exec;
-        } else if (inst.includes('CONV')) {
-            convVal += val;
-            convExec += exec;
-            totalRepassado += val;
-            totalExecutado += exec;
-        } else if (inst.includes('DOA')) {
-            doacVal += val;
+        if (isFaf(item)) {
+            fafValCentavos += val;
+            fafExecCentavos += exec;
+            totalRepassadoCentavos += val;
+            totalExecutadoCentavos += exec;
+        } else if (isConvenio(item)) {
+            convValCentavos += val;
+            convExecCentavos += exec;
+            totalRepassadoCentavos += val;
+            totalExecutadoCentavos += exec;
+        } else if (isDoacao(item)) {
+            doacValCentavos += val;
         }
     });
 
     return {
-        totalRepassado,
-        totalExecutado,
-        execGlobal: totalRepassado > 0 ? (totalExecutado / totalRepassado) * 100 : 0,
-        fafVal,
-        fafExec,
-        fafExecPct: fafVal > 0 ? (fafExec / fafVal) * 100 : 0,
-        convVal,
-        convExec,
-        convExecPct: convVal > 0 ? (convExec / convVal) * 100 : 0,
-        doacVal
+        totalRepassado: centavosParaMoeda(totalRepassadoCentavos),
+        totalExecutado: centavosParaMoeda(totalExecutadoCentavos),
+        execGlobal: totalRepassadoCentavos > 0
+            ? (totalExecutadoCentavos / totalRepassadoCentavos) * 100
+            : 0,
+        fafVal: centavosParaMoeda(fafValCentavos),
+        fafExec: centavosParaMoeda(fafExecCentavos),
+        fafExecPct: fafValCentavos > 0 ? (fafExecCentavos / fafValCentavos) * 100 : 0,
+        convVal: centavosParaMoeda(convValCentavos),
+        convExec: centavosParaMoeda(convExecCentavos),
+        convExecPct: convValCentavos > 0 ? (convExecCentavos / convValCentavos) * 100 : 0,
+        doacVal: centavosParaMoeda(doacValCentavos)
     };
 }
 
 export function processarDadosAgregados(data) {
-    let totalContratado = 0;
-    let totalExecutado = 0;
-    let totalDoado = 0;
+    let totalContratadoCentavos = 0;
+    let totalExecutadoCentavos = 0;
+    let totalDoadoCentavos = 0;
     const ufsSet = new Set();
     const dadosPorUF = {};
 
     data.forEach((item) => {
-        const vTotal = Number.parseFloat(item.valorTotal) || 0;
-        const vExec = Number.parseFloat(item.valorExecutado) || 0;
-        const isDoacao = (item.instrumento || '').toUpperCase().includes('DOA');
+        const vTotal = moedaParaCentavos(item.valorTotal);
+        const vExec = moedaParaCentavos(item.valorExecutado);
 
         if (item.uf) {
             ufsSet.add(item.uf);
         }
 
         if (!dadosPorUF[item.uf]) {
-            dadosPorUF[item.uf] = { total: 0, exec: 0, doado: 0, uf: item.uf };
+            dadosPorUF[item.uf] = {
+                totalCentavos: 0,
+                execCentavos: 0,
+                doadoCentavos: 0,
+                uf: item.uf
+            };
         }
 
-        if (isDoacao) {
-            totalDoado += vTotal;
-            dadosPorUF[item.uf].doado += vTotal;
+        if (isDoacao(item)) {
+            totalDoadoCentavos += vTotal;
+            dadosPorUF[item.uf].doadoCentavos += vTotal;
         } else {
-            totalContratado += vTotal;
-            totalExecutado += vExec;
-            dadosPorUF[item.uf].total += vTotal;
-            dadosPorUF[item.uf].exec += vExec;
+            totalContratadoCentavos += vTotal;
+            totalExecutadoCentavos += vExec;
+            dadosPorUF[item.uf].totalCentavos += vTotal;
+            dadosPorUF[item.uf].execCentavos += vExec;
         }
     });
 
     const arrayUF = Object.values(dadosPorUF).map((item) => ({
-        ...item,
-        percentual: item.total > 0 ? (item.exec / item.total) * 100 : 0
+        uf: item.uf,
+        total: centavosParaMoeda(item.totalCentavos),
+        exec: centavosParaMoeda(item.execCentavos),
+        doado: centavosParaMoeda(item.doadoCentavos),
+        percentual: item.totalCentavos > 0
+            ? (item.execCentavos / item.totalCentavos) * 100
+            : 0
     }));
 
     arrayUF.sort((a, b) => b.percentual - a.percentual || b.total - a.total);
 
     return {
         global: {
-            totalContratado,
-            totalExecutado,
-            totalDoado,
-            percentual: totalContratado > 0 ? (totalExecutado / totalContratado) * 100 : 0,
+            totalContratado: centavosParaMoeda(totalContratadoCentavos),
+            totalExecutado: centavosParaMoeda(totalExecutadoCentavos),
+            totalDoado: centavosParaMoeda(totalDoadoCentavos),
+            percentual: totalContratadoCentavos > 0
+                ? (totalExecutadoCentavos / totalContratadoCentavos) * 100
+                : 0,
             ufsComExecucao: arrayUF.filter((uf) => uf.exec > 0).length
         },
         ufsUnicas: Array.from(ufsSet).sort(),
