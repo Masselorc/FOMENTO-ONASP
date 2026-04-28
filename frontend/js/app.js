@@ -196,6 +196,7 @@ async function carregarLogoParaPDF() {
                 bloquearDadosFinanceiros(error);
             } finally {
                 event.target.value = '';
+            hideLoading();
             }
         }
 
@@ -1231,9 +1232,7 @@ async function carregarLogoParaPDF() {
             }
 
             atualizarCardsDinamicos(filtro);
-    } finally {
-        hideLoading();
-        }
+    }
         
         function aplicarFiltroUF(uf) {
             $(`#checkAll-uf`).prop('checked', false);
