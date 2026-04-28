@@ -883,8 +883,8 @@ async function carregarLogoParaPDF() {
 
         function renderKPIs(global, ufsList, resumoInstrumentos) {
             // Calcular Total de Fomento = Total Repassado + Total em Doações
-            const totalRepassado = global.totalContratado || 0;
-            const totalDoado = global.totalDoado || 0;
+            const totalRepassado = Number(global.totalContratado) || 0;
+            const totalDoado = Number(global.totalDoado) || 0;
             const totalFomentoOuvidoria = totalRepassado + totalDoado;
             
             $('#kpi-total-fomento-ouvidoria').text(formatMoney(totalFomentoOuvidoria)).attr('title', formatMoney(totalFomentoOuvidoria));
