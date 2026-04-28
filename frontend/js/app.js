@@ -30,6 +30,18 @@ let catalogoAplicacao = {
     dadosBase: []
 };
 
+function showLoading(mensagem = 'Processando...') {
+    const overlay = document.getElementById('loading-overlay');
+    const msgEl = document.getElementById('loading-message');
+    if (msgEl) msgEl.textContent = mensagem;
+    if (overlay) overlay.classList.remove('d-none');
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.classList.add('d-none');
+}
+
 async function carregarLogoParaPDF() {
             return carregarLogoLocalParaPDF();
             const logoImg = document.getElementById('img-logo-senappen');
@@ -173,6 +185,7 @@ async function carregarLogoParaPDF() {
             if (!arquivoSelecionado) return;
 
             try {
+        showLoading('Lendo e validando planilha...');
                 dadosFaf = await processarArquivoPlanilhaSelecionado(arquivoSelecionado, catalogoAplicacao);
                 configurarEstadoDadosValidados(true);
                 ocultarAlertaCarregamentoPlanilha();
@@ -633,6 +646,8 @@ async function carregarLogoParaPDF() {
             btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando PDF...';
             btnPdf.disabled = true;
 
+            showLoading('Gerando PDF do Painel... (Isso pode levar alguns segundos)');
+
             // Em vez de capturar apenas a div do dashboard, capturamos o wrapper principal inteiro
             const elementoParaCapturar = document.getElementById('main-wrapper');
             const headerActions = document.getElementById('header-actions');
@@ -730,6 +745,7 @@ async function carregarLogoParaPDF() {
                 
                 btnPdf.innerHTML = originalHtml;
                 btnPdf.disabled = false;
+            hideLoading();
             }
         }
 
@@ -749,6 +765,8 @@ async function carregarLogoParaPDF() {
             // Estado de carregamento visual no botão
             btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando PDF...';
             btnPdf.disabled = true;
+
+            showLoading(`Gerando PDF de ${estadoAtualPDF}...`);
 
             // Agora capturamos o wrapper inteiro (incluindo o header global do app)
             const elementoParaCapturar = document.getElementById('main-wrapper');
@@ -814,6 +832,7 @@ async function carregarLogoParaPDF() {
                 if (botoesAcaoRelatorio) botoesAcaoRelatorio.style.display = '';
                 btnPdf.innerHTML = originalHtml;
                 btnPdf.disabled = false;
+            hideLoading();
             }
         }
 
@@ -1001,10 +1020,19 @@ async function carregarLogoParaPDF() {
             tabelaInstancia = $('#tabelaItens').DataTable({
                 language: { url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json" },
                 destroy: true, 
-                paging: false, 
-                scrollY: '500px', 
-                scrollCollapse: true,
-                info: false, 
+            paging: true, 
+            pageLength: 15,
+            lengthMenu: [15, 50, 100, 500],
+            info: true, 
+            dom: '<"row align-items-center mb-3"<"col-md-6"l><"col-md-6 text-end"B>>rt<"row align-items-center mt-3"<"col-md-6"i><"col-md-6"p>>',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel me-1"></i> Exportar Excel',
+                    className: 'btn btn-success btn-sm shadow-sm',
+                    title: 'Relatorio_Fomento_Ouvidoria'
+                }
+            ],
                 order: [[1, 'asc'], [7, 'desc']], 
                 columnDefs: [
                     { width: '5%', targets: 0 }, 
@@ -1203,6 +1231,8 @@ async function carregarLogoParaPDF() {
             }
 
             atualizarCardsDinamicos(filtro);
+    } finally {
+        hideLoading();
         }
         
         function aplicarFiltroUF(uf) {
