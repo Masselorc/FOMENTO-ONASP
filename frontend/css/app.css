@@ -1,31 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-            --primary-color: #1e293b; /* Tom mais escuro e sofisticado (Slate 800) */
-            --secondary-color: #475569; /* Slate 600 */
-            --accent-color: #3b82f6; /* Azul moderno (Blue 500) */
-            --bg-light: #f1f5f9; /* Slate 100 - Fundo mais agradável */
+            --primary-color: #0f172a; /* Slate 900 - Quase preto para alto contraste */
+            --secondary-color: #334155; /* Slate 700 */
+            --accent-color: #2563eb; /* Azul Vibrante (Blue 600) */
+            --bg-light: #e2e8f0; /* Fundo visivelmente mais escuro para destacar as caixas brancas */
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
             background-color: var(--bg-light);
             color: #334155; /* Fonte levemente mais suave que o preto total */
             padding-bottom: 50px;
         }
 
+        /* Força a fonte globalmente para impedir o Bootstrap de sobrescrever */
+        h1, h2, h3, h4, h5, h6, p, span, div, table, th, td, button, input, label {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+        }
+
         /* Header */
         .header-section {
-            background-color: rgba(255, 255, 255, 0.85); /* Efeito de transparência */
-            backdrop-filter: blur(10px); /* Efeito de vidro (Glassmorphism) */
-            -webkit-backdrop-filter: blur(10px);
+            background-color: #ffffff; /* Branco puro e opaco para destacar logo e título */
             position: sticky;
             top: 0;
             z-index: 1000;
             padding: 1.5rem 0;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); /* Sombra bem mais marcante */
+            border-bottom: 4px solid var(--primary-color); /* Linha escura de acabamento */
         }
         
         .header-title { color: var(--primary-color); font-weight: 700; }
@@ -64,18 +67,19 @@
         .kpi-card {
             background: #fff; 
             border: 1px solid rgba(0,0,0,0.03) !important; 
-            border-radius: 16px; /* Mais arredondado */
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05); 
+            border-top: 4px solid var(--accent-color) !important; /* Destaque superior colorido marcante */
+            border-radius: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); 
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 1.25rem 1rem !important; 
+            padding: 1.5rem 1.25rem !important; /* Mais respiro interno */
         }
         .kpi-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); 
+            transform: translateY(-8px); /* Pulo muito mais evidente no hover */
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
         }
         
         .kpi-title { 
@@ -162,19 +166,22 @@
 
         /* Gráfico */
         .chart-container {
-            background: #fff; padding: 20px; border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 2rem;
+            background: #fff; padding: 20px; border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); margin-bottom: 2rem;
+            border-top: 4px solid var(--secondary-color);
             position: relative; height: 500px;
         }
 
         /* Tabelas e Filtros */
         .table-container {
-            background: #fff; padding: 20px; border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            background: #fff; padding: 20px; border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary-color);
         }
 
         .filter-section {
-            background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 1rem;
+            background-color: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 1.5rem;
+            border: 1px solid #cbd5e1; /* Borda bem definida para evidenciar filtros */
         }
 
         .filter-search-actions {
@@ -288,6 +295,12 @@
         table.dataTable thead th, table.dataTable thead td {
             white-space: nowrap !important;
             vertical-align: middle !important;
+            background-color: #f8fafc !important; /* Cabeçalho claro e moderno */
+            color: var(--primary-color) !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            border-bottom: 2px solid #cbd5e1 !important; /* Linha inferior mais forte */
         }
 
         /* Progress Pill (Novo visual para barras de progresso) */
