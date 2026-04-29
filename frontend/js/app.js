@@ -937,25 +937,12 @@ async function carregarLogoParaPDF() {
 
         function renderizarLinksOrcamento(item) {
             const links = [
-                { url: item.linkProcessoSei, rotulo: 'SEI', titulo: item.processoSei || 'Processo SEI', icone: 'fa-folder-open' },
-                ...(itemUsaRastreioProfor(item) ? [
-                    { url: item.linkProforAutuacao, rotulo: 'AUT', titulo: item.proforAutuacao || 'Autuação', icone: 'fa-folder-open' },
-                    { url: item.linkProforParecerTecnico, rotulo: 'TEC', titulo: item.proforParecerTecnico || 'Parecer técnico', icone: 'fa-file-circle-check' },
-                    { url: item.linkProforMinutaEdital, rotulo: 'EDIT', titulo: item.proforMinutaEdital || 'Minuta de edital', icone: 'fa-file-lines' },
-                    { url: item.linkProforDdoCgof, rotulo: 'DDO', titulo: item.proforDdoCgof || 'DDO (CGOF)', icone: 'fa-coins' },
-                    { url: item.linkProforAberturaPrograma, rotulo: 'PROG', titulo: item.proforAberturaPrograma || 'Abertura de programa (CGGIR)', icone: 'fa-bullhorn' },
-                    { url: item.linkProforParecerConjur, rotulo: 'CONJ', titulo: item.proforParecerConjur || 'Parecer jurídico (CONJUR)', icone: 'fa-gavel' },
-                    { url: item.linkProforPublicacaoGabsec, rotulo: 'PUB', titulo: item.proforPublicacaoGabsec || 'Publicação (GABSEC)', icone: 'fa-newspaper' }
-                ] : []),
-                { url: item.linkEstudoTecnico, rotulo: 'ETP', titulo: item.estudoTecnico || 'ETP/Especificação', icone: 'fa-magnifying-glass-chart' },
-                { url: item.linkTermoReferencia, rotulo: 'TR', titulo: item.termoReferencia || 'Termo de Referência', icone: 'fa-file-lines' },
-                { url: item.linkPesquisaPrecos, rotulo: 'PESQ', titulo: item.pesquisaPrecos || 'Pesquisa de preços', icone: 'fa-tags' },
-                { url: item.linkAutorizacaoAutoridade, rotulo: 'AUT', titulo: item.autorizacaoAutoridade || 'Autorização da autoridade competente', icone: 'fa-user-check' },
-                { url: item.linkParecerJuridico, rotulo: 'PAR', titulo: item.parecerJuridico || 'Parecer Jurídico', icone: 'fa-gavel' },
-                { url: item.linkEmpenho, rotulo: 'EMP', titulo: item.empenho || 'Empenho', icone: 'fa-file-invoice-dollar' },
-                { url: item.linkContrato, rotulo: 'CTR', titulo: item.contrato || 'Contrato', icone: 'fa-file-signature' },
-                { url: item.linkOrdemServico, rotulo: 'OS', titulo: item.ordemServico || 'Ordem de Serviço', icone: 'fa-clipboard-check' },
-                { url: item.linkOrdemBancaria, rotulo: 'OB', titulo: item.ordemBancaria || 'Ordem Bancária', icone: 'fa-money-check-alt' }
+                {
+                    url: item.linkProcessoSei,
+                    rotulo: 'SEI',
+                    titulo: item.processoSei || 'Processo SEI',
+                    icone: 'fa-folder-open'
+                }
             ].filter((link) => link.url && link.url !== '-');
 
             if (!links.length) {
@@ -965,7 +952,11 @@ async function carregarLogoParaPDF() {
             return `
                 <div class="budget-link-list">
                     ${links.map((link) => `
-                        <a class="budget-link-button" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(link.titulo)}">
+                        <a class="budget-link-button"
+                           href="${escapeHtml(link.url)}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           title="${escapeHtml(link.titulo)}">
                             <i class="fas ${link.icone}" aria-hidden="true"></i>
                             <span>${escapeHtml(link.rotulo)}</span>
                         </a>
