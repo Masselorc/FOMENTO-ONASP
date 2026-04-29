@@ -1,9 +1,10 @@
 import {
     carregarCatalogoAplicacao,
     carregarDadosAplicacao,
+    carregarDadosOrcamento,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260429-18';
+} from '../../backend/services/data-service.js?v=20260429-19';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -362,6 +363,8 @@ async function carregarLogoParaPDF() {
 
             let dadosAplicacaoCarregados = false;
 
+            await carregarDadosOrcamento();
+
             try {
                 dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
                 configurarEstadoDadosValidados(true);
@@ -379,7 +382,16 @@ async function carregarLogoParaPDF() {
         });
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
-        function toggleView(viewName) {
+        async function toggleView(viewName) {
+            if (viewName === 'orcamento' && !obterDadosOrcamento()) {
+                showLoading('Carregando orçamento 2026...');
+                try {
+                    await carregarDadosOrcamento();
+                } finally {
+                    hideLoading();
+                }
+            }
+
             const podeAbrirOrcamento = viewName === 'orcamento' && obterDadosOrcamento();
 
             if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento) {
@@ -769,10 +781,198 @@ async function carregarLogoParaPDF() {
         }
 
         // --- MÓDULO DE ORÇAMENTO 2026 ---
+        function obterTotalResumoOrcamento(resumos, nome) {
+            const chave = normalizarBusca(nome);
+            return resumos?.find((item) => normalizarBusca(item.nome) === chave)?.total || 0;
+        }
+
+        function renderizarOpcoesFiltroOrcamento(opcoes) {
+            return opcoes.map((valor) => (
+                `<option value="${escapeHtml(valor)}">${escapeHtml(valor)}</option>`
+            )).join('');
+        }
+
+        function calcularResumoItensOrcamento(itens) {
+            return itens.reduce((resumo, item) => {
+                const valorTotal = Number(item.valorTotal) || 0;
+                const statusNormalizado = normalizarBusca(item.status);
+                resumo.total += valorTotal;
+                resumo.quantidade += 1;
+                resumo.frentes.add(item.frente);
+                resumo.modalidades.add(item.modalidade);
+                resumo.status[item.status] = (resumo.status[item.status] || 0) + valorTotal;
+                if (statusNormalizado.includes('execucao')) {
+                    resumo.empenhado += valorTotal;
+                }
+                resumo.executado += Number(item.valorExecutado) || 0;
+                return resumo;
+            }, {
+                total: 0,
+                quantidade: 0,
+                empenhado: 0,
+                executado: 0,
+                frentes: new Set(),
+                modalidades: new Set(),
+                status: {}
+            });
+        }
+
+        function filtrarItensOrcamento(budgetData) {
+            const busca = normalizarBusca(document.getElementById('filtroOrcamentoBusca')?.value || '');
+            const status = document.getElementById('filtroOrcamentoStatus')?.value || '';
+            const natureza = document.getElementById('filtroOrcamentoNatureza')?.value || '';
+            const modalidade = document.getElementById('filtroOrcamentoModalidade')?.value || '';
+
+            return budgetData.itens.filter((item) => {
+                const textoBusca = normalizarBusca([
+                    item.id,
+                    item.frente,
+                    item.descricao,
+                    item.natureza,
+                    item.modalidade,
+                    item.abrangencia,
+                    item.status,
+                    item.processoSei,
+                    item.empenho,
+                    item.ordemBancaria
+                ].join(' '));
+
+                return (!busca || textoBusca.includes(busca))
+                    && (!status || item.status === status)
+                    && (!natureza || item.natureza === natureza)
+                    && (!modalidade || item.modalidade === modalidade);
+            });
+        }
+
+        function agruparItensOrcamentoPorFrente(itens) {
+            const grupos = itens.reduce((mapa, item) => {
+                const frente = item.frente || 'Não informado';
+                if (!mapa.has(frente)) {
+                    mapa.set(frente, []);
+                }
+                mapa.get(frente).push(item);
+                return mapa;
+            }, new Map());
+
+            return Array.from(grupos.entries())
+                .map(([frente, itensGrupo]) => ({
+                    frente,
+                    itens: itensGrupo,
+                    resumo: calcularResumoItensOrcamento(itensGrupo)
+                }))
+                .sort((a, b) => {
+                    const aPessoal = normalizarBusca(a.frente) === 'pessoal';
+                    const bPessoal = normalizarBusca(b.frente) === 'pessoal';
+                    if (aPessoal !== bPessoal) return aPessoal ? 1 : -1;
+                    return b.resumo.total - a.resumo.total || a.frente.localeCompare(b.frente, 'pt-BR');
+                });
+        }
+
+        function renderizarStatusOrcamento(status) {
+            const statusNormalizado = normalizarBusca(status);
+            const classe = statusNormalizado.includes('execucao')
+                ? 'budget-status-running'
+                : statusNormalizado.includes('planejado')
+                    ? 'budget-status-planned'
+                    : 'budget-status-default';
+            return `<span class="budget-status ${classe}">${escapeHtml(status || 'Não informado')}</span>`;
+        }
+
+        function renderizarLinksOrcamento(item) {
+            const links = [
+                { url: item.linkProcessoSei, rotulo: 'SEI', titulo: item.processoSei || 'Processo SEI', icone: 'fa-folder-open' },
+                { url: item.linkEmpenho, rotulo: 'EMP', titulo: item.empenho || 'Empenho', icone: 'fa-file-invoice-dollar' },
+                { url: item.linkOrdemBancaria, rotulo: 'OB', titulo: item.ordemBancaria || 'Ordem Bancária', icone: 'fa-money-check-alt' }
+            ].filter((link) => link.url && link.url !== '-');
+
+            if (!links.length) {
+                return '<span class="text-muted">-</span>';
+            }
+
+            return `
+                <div class="budget-link-list">
+                    ${links.map((link) => `
+                        <a class="budget-link-button" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(link.titulo)}">
+                            <i class="fas ${link.icone}" aria-hidden="true"></i>
+                            <span>${escapeHtml(link.rotulo)}</span>
+                        </a>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function atualizarTabelaOrcamento(budgetData) {
+            const tbody = document.getElementById('budget-table-body');
+            if (!tbody) return;
+
+            const itensFiltrados = filtrarItensOrcamento(budgetData);
+            const resumoSelecao = calcularResumoItensOrcamento(itensFiltrados);
+
+            document.getElementById('budget-selected-total').textContent = formatMoney(resumoSelecao.total);
+            document.getElementById('budget-selected-running').textContent = formatMoney(resumoSelecao.empenhado);
+            document.getElementById('budget-selected-executed').textContent = formatMoney(resumoSelecao.executado);
+
+            const grupos = agruparItensOrcamentoPorFrente(itensFiltrados);
+            if (!grupos.length) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="text-center text-muted py-4">
+                            Nenhum item orçamentário foi encontrado para os filtros selecionados.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = grupos.map((grupo) => {
+                const statusResumo = Object.entries(grupo.resumo.status)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([status, total]) => `<span>${escapeHtml(status)}: ${formatMoney(total)}</span>`)
+                    .join('');
+
+                const linhas = grupo.itens.map((item) => `
+                    <tr>
+                        <td data-label="Item" class="align-middle">
+                            <div class="budget-item-title">${escapeHtml(item.descricao)}</div>
+                            ${item.processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(item.processoSei)}</div>` : ''}
+                        </td>
+                        <td data-label="Modalidade" class="align-middle">${escapeHtml(item.modalidade)}</td>
+                        <td data-label="Natureza" class="align-middle">${escapeHtml(item.natureza)}</td>
+                        <td data-label="Abrangência" class="align-middle">${escapeHtml(item.abrangencia)}</td>
+                        <td data-label="Qtd." class="text-center align-middle">${escapeHtml(item.quantidade || '-')}</td>
+                        <td data-label="Unid." class="text-center align-middle">${escapeHtml(item.unidade || '-')}</td>
+                        <td data-label="Valor Unit." class="text-end font-monospace align-middle">${formatMoney(item.valorUnitario)}</td>
+                        <td data-label="Valor Total" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorTotal)}</td>
+                        <td data-label="Status" class="text-center align-middle">${renderizarStatusOrcamento(item.status)}</td>
+                        <td data-label="Links" class="text-center align-middle">${renderizarLinksOrcamento(item)}</td>
+                    </tr>
+                `).join('');
+
+                return `
+                    <tr class="budget-group-row">
+                        <td colspan="10">
+                            <div class="budget-group-heading">
+                                <div>
+                                    <span class="budget-group-label">Frente</span>
+                                    <strong>${escapeHtml(grupo.frente).toLocaleUpperCase('pt-BR')}</strong>
+                                </div>
+                                <div class="budget-group-metrics">
+                                    <span>${grupo.itens.length} item(ns)</span>
+                                    <span>${formatMoney(grupo.resumo.total)}</span>
+                                    <span class="budget-group-status-summary">${statusResumo}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    ${linhas}
+                `;
+            }).join('');
+        }
+
         function renderOrcamentoView() {
-            let container = document.getElementById('view-orcamento');
+            const container = document.getElementById('view-orcamento');
             if (!container) return;
-            
+
             container.style.display = 'block';
             container.innerHTML = '';
 
@@ -783,118 +983,287 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
-            // Lógica de agrupamento por ÁREA
-            const gruposArea = {};
-            budgetData.departments.forEach(dept => {
-                const area = dept.area && dept.area !== '-' ? dept.area : 'Outros / Não Especificado';
-                if (!gruposArea[area]) gruposArea[area] = [];
-                gruposArea[area].push(dept);
-            });
-
-            let tbodyHtml = '';
-            const areasOrdenadas = Object.keys(gruposArea).sort();
-
-            areasOrdenadas.forEach(area => {
-                // Cria a linha de cabeçalho do grupo (Área)
-                tbodyHtml += `
-                    <tr class="table-secondary">
-                        <td colspan="10" class="fw-bold text-dark text-uppercase border-bottom border-secondary">
-                            <i class="fas fa-layer-group me-2 text-primary"></i> ${escapeHtml(area)}
-                        </td>
-                    </tr>
-                `;
-
-                // Varre os itens correspondentes a essa área
-                gruposArea[area].forEach(dept => {
-                    const saldo = dept.allocated - dept.spent;
-                    const pct = dept.allocated > 0 ? (dept.spent / dept.allocated) * 100 : 0;
-                    
-                    tbodyHtml += `
-                        <tr>
-                            <td data-label="Item / Descrição" class="align-middle fw-bold text-dark border-end border-light" title="${escapeHtml(dept.descricao)}"><span class="truncate-text" style="max-width: 250px; display: inline-block;">${escapeHtml(dept.descricao)}</span></td>
-                            <td data-label="UF" class="align-middle text-center text-muted small">${escapeHtml(dept.uf)}</td>
-                            <td data-label="Instrumento" class="align-middle text-center text-muted small">${escapeHtml(dept.instrumento)}</td>
-                            <td data-label="Natureza" class="align-middle text-muted small border-end border-light">${escapeHtml(dept.natureza)}</td>
-                            <td data-label="Qtd." class="text-center align-middle">${escapeHtml(dept.quantidade)}</td>
-                            <td data-label="Valor Unit." class="text-end font-monospace align-middle text-muted small border-end border-light">${formatMoney(dept.valorUnitario)}</td>
-                            <td data-label="Alocado" class="text-end font-monospace text-primary align-middle">${formatMoney(dept.allocated)}</td>
-                            <td data-label="Executado" class="text-end font-monospace text-warning align-middle">${formatMoney(dept.spent)}</td>
-                            <td data-label="Saldo" class="text-end font-monospace text-success fw-bold align-middle">${formatMoney(saldo)}</td>
-                            <td data-label="%" class="text-center align-middle font-monospace small">${formatPercent(pct)}</td>
-                        </tr>
-                    `;
-                });
-            });
-
-            if (!tbodyHtml) {
-                tbodyHtml = `
-                    <tr>
-                        <td colspan="10" class="text-center text-muted py-4">
-                            Nenhum item orçamentário foi encontrado na planilha.
-                        </td>
-                    </tr>
-                `;
-            }
+            const resumo = budgetData.resumo || {};
+            const filtros = budgetData.filtros || { status: [], naturezas: [], modalidades: [] };
+            const totalEmExecucao = obterTotalResumoOrcamento(resumo.porStatus, 'Em execução');
+            const totalPlanejado = obterTotalResumoOrcamento(resumo.porStatus, 'Planejado');
+            const totalCapital = obterTotalResumoOrcamento(resumo.porNatureza, 'Capital');
+            const totalCusteio = obterTotalResumoOrcamento(resumo.porNatureza, 'Custeio');
 
             container.innerHTML = `
-                <div class="d-flex align-items-center pb-2 mt-2">
-                    <i class="fas fa-wallet text-primary fa-2x me-3"></i>
-                    <h2 class="text-primary mb-0 fw-bold">Planejamento Orçamentário 2026</h2>
-                </div>
-                <hr class="mt-2 mb-4">
+                <section class="dashboard-intro budget-intro">
+                    <div>
+                        <p class="section-eyebrow mb-1">Planejamento anual</p>
+                        <h2>Planejamento Orçamentário 2026</h2>
+                        <p>Base consolidada da aba ${escapeHtml(budgetData.aba || 'Base_Dados')}</p>
+                    </div>
+                    <div class="intro-badges" aria-label="Resumo da base de orçamento">
+                        <span><i class="fas fa-layer-group" aria-hidden="true"></i> ${resumo.porFrente?.length || 0} frentes</span>
+                        <span><i class="fas fa-list-ol" aria-hidden="true"></i> ${resumo.totalItens || 0} itens</span>
+                        <span><i class="fas fa-table" aria-hidden="true"></i> Orçamento 2026</span>
+                    </div>
+                </section>
 
-                <div class="row mb-4 g-3">
-                    <div class="col-md-4">
-                        <div class="card kpi-card bg-white border-primary border-start border-4 h-100 shadow-sm">
-                            <div class="kpi-title text-muted small text-uppercase fw-bold mb-1">Orçamento Total</div>
-                            <div class="kpi-value text-primary fs-3 fw-bold">${formatMoney(budgetData.total)}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card kpi-card bg-white border-warning border-start border-4 h-100 shadow-sm">
-                            <div class="kpi-title text-muted small text-uppercase fw-bold mb-1">Valor Empenhado / Utilizado</div>
-                            <div class="kpi-value text-warning fs-3 fw-bold">${formatMoney(budgetData.used)}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card kpi-card bg-white border-success border-start border-4 h-100 shadow-sm">
-                            <div class="kpi-title text-muted small text-uppercase fw-bold mb-1">Saldo Disponível</div>
-                            <div class="kpi-value text-success fs-3 fw-bold">${formatMoney(budgetData.available)}</div>
-                        </div>
-                    </div>
+                <div class="budget-report-actions pdf-hidden">
+                    <button id="btn-export-budget-pdf" type="button" class="btn btn-danger btn-icon-text" onclick="exportarOrcamentoPDF()">
+                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                        <span>Exportar Relatório PDF</span>
+                    </button>
                 </div>
 
-                <div class="card shadow-sm border-0 mb-4">
-                    <div class="card-header bg-primary text-white py-3">
-                        <h5 class="mb-0 fw-bold"><i class="fas fa-sitemap me-2"></i> Distribuição por Área de Destinação</h5>
-                    </div>
-                    <div class="card-body bg-light">
-                        <div class="table-responsive">
-                            <table class="table table-sm table-bordered table-hover bg-white mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="min-width: 250px;">Item / Descrição</th>
-                                        <th class="text-center">UF</th>
-                                        <th class="text-center">Instrumento</th>
-                                        <th>Natureza</th>
-                                        <th class="text-center">Qtd.</th>
-                                        <th class="text-end">Valor Unit.</th>
-                                        <th class="text-end">Alocado</th>
-                                        <th class="text-end">Executado</th>
-                                        <th class="text-end">Saldo</th>
-                                        <th class="text-center" style="width: 80px;">(%)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${tbodyHtml}
-                                </tbody>
-                            </table>
+                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores orçamentários">
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-success">
+                            <div class="kpi-title"><i class="fas fa-wallet" aria-hidden="true"></i>Orçamento Total</div>
+                            <div class="kpi-value text-money text-success">${formatMoney(resumo.totalGeral)}</div>
+                            <div class="kpi-desc">${resumo.totalItens || 0} item(ns) planejado(s)</div>
                         </div>
                     </div>
-                </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-warning">
+                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Valor Empenhado</div>
+                            <div class="kpi-value text-money text-warning">${formatMoney(totalEmExecucao)}</div>
+                            <div class="kpi-desc">Total em execução</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-clipboard-list" aria-hidden="true"></i>Planejado</div>
+                            <div class="kpi-value text-money">${formatMoney(totalPlanejado)}</div>
+                            <div class="kpi-desc">Ainda sem execução registrada</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-boxes-stacked" aria-hidden="true"></i>Capital</div>
+                            <div class="kpi-value text-money">${formatMoney(totalCapital)}</div>
+                            <div class="kpi-desc">Natureza do gasto</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-file-invoice" aria-hidden="true"></i>Custeio</div>
+                            <div class="kpi-value text-money">${formatMoney(totalCusteio)}</div>
+                            <div class="kpi-desc">Natureza do gasto</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="filter-section mb-4" aria-label="Filtros da tabela de orçamento">
+                    <div class="filter-toolbar">
+                        <div class="filter-title">
+                            <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
+                            <strong>Filtros</strong>
+                        </div>
+                        <div class="filter-search-actions">
+                            <input type="text" id="filtroOrcamentoBusca" class="form-control" placeholder="Buscar por item, modalidade, status ou SEI..." aria-label="Buscar orçamento">
+                            <button id="btnLimparFiltroOrcamento" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                <span>Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="budget-filter-grid">
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroOrcamentoStatus">Status</label>
+                            <select id="filtroOrcamentoStatus" class="form-select budget-filter-control">
+                                <option value="">Todos</option>
+                                ${renderizarOpcoesFiltroOrcamento(filtros.status)}
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroOrcamentoNatureza">Natureza</label>
+                            <select id="filtroOrcamentoNatureza" class="form-select budget-filter-control">
+                                <option value="">Todas</option>
+                                ${renderizarOpcoesFiltroOrcamento(filtros.naturezas)}
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroOrcamentoModalidade">Modalidade</label>
+                            <select id="filtroOrcamentoModalidade" class="form-select budget-filter-control">
+                                <option value="">Todas</option>
+                                ${renderizarOpcoesFiltroOrcamento(filtros.modalidades)}
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="budget-insight-grid mb-4" aria-label="Resumo da seleção orçamentária">
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Valor Filtrado</div>
+                            <div class="kpi-value text-money" id="budget-selected-total">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-calculator card-watermark" aria-hidden="true"></i>
+                    </div>
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Atualmente em execução</div>
+                            <div class="kpi-value text-money text-warning" id="budget-selected-running">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-file-invoice-dollar card-watermark text-warning" aria-hidden="true"></i>
+                    </div>
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Valor Executado</div>
+                            <div class="kpi-value text-money text-success" id="budget-selected-executed">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-check-circle card-watermark text-success" aria-hidden="true"></i>
+                    </div>
+                </section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Itens orçamentários</p>
+                            <h2>Base agrupada por frente</h2>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table budget-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Modalidade</th>
+                                    <th>Natureza</th>
+                                    <th>Abrangência</th>
+                                    <th class="text-center">Qtd.</th>
+                                    <th class="text-center">Unid.</th>
+                                    <th class="text-end">Valor Unit.</th>
+                                    <th class="text-end">Valor Total</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Links</th>
+                                </tr>
+                            </thead>
+                            <tbody id="budget-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
             `;
-            
+
+            const atualizar = () => atualizarTabelaOrcamento(budgetData);
+            document.getElementById('filtroOrcamentoBusca')?.addEventListener('input', atualizar);
+            document.querySelectorAll('.budget-filter-control').forEach((controle) => {
+                controle.addEventListener('change', atualizar);
+            });
+            document.getElementById('btnLimparFiltroOrcamento')?.addEventListener('click', () => {
+                document.getElementById('filtroOrcamentoBusca').value = '';
+                document.querySelectorAll('.budget-filter-control').forEach((controle) => {
+                    controle.value = '';
+                });
+                atualizar();
+            });
+
+            atualizar();
             container.style.display = 'block';
+        }
+
+        async function exportarOrcamentoPDF() {
+            let budgetData = obterDadosOrcamento();
+            if (!budgetData) {
+                showLoading('Carregando orçamento 2026...');
+                try {
+                    budgetData = await carregarDadosOrcamento();
+                } finally {
+                    hideLoading();
+                }
+            }
+
+            if (!budgetData) {
+                mostrarAlertaCarregamentoPlanilha(
+                    'Dados orçamentários indisponíveis: não foi possível carregar a planilha de orçamento.',
+                    false,
+                    'warning'
+                );
+                return;
+            }
+
+            const btnPdf = document.getElementById('btn-export-budget-pdf');
+            const originalHtml = btnPdf?.innerHTML || '';
+            const originalDisabled = btnPdf?.disabled || false;
+
+            if (btnPdf) {
+                btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando PDF...';
+                btnPdf.disabled = true;
+            }
+
+            fecharMenuLateral();
+            showLoading('Gerando PDF do orçamento 2026...');
+
+            const viewOriginal = document.body.dataset.currentView || 'dashboard';
+            if (viewOriginal !== 'orcamento') {
+                await toggleView('orcamento');
+                await new Promise(resolve => setTimeout(resolve, 120));
+            }
+
+            const elementoParaCapturar = document.getElementById('main-wrapper');
+            const viewOrcamento = document.getElementById('view-orcamento');
+            const headerActions = document.getElementById('header-actions');
+            const originalHeaderActionsDisplay = headerActions?.style.display || '';
+            const originalWidth = elementoParaCapturar.style.width;
+            const originalMargin = elementoParaCapturar.style.margin;
+            const originalOrcamentoWidth = viewOrcamento?.style.width || '';
+
+            document.body.classList.add('is-exporting');
+            document.body.classList.add('is-exporting-budget');
+            if (headerActions) headerActions.style.display = 'none';
+            elementoParaCapturar.style.width = '1200px';
+            elementoParaCapturar.style.margin = '0';
+            if (viewOrcamento) viewOrcamento.style.width = '1200px';
+
+            try {
+                const canvas = await html2canvas(elementoParaCapturar, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#f3f6fa',
+                    windowWidth: 1200
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgHeightOnPdf = (canvas.height * pdfWidth) / canvas.width;
+
+                let heightLeft = imgHeightOnPdf;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeightOnPdf);
+                heightLeft -= pageHeight;
+
+                while (heightLeft > 0) {
+                    position -= pageHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeightOnPdf);
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save('Relatorio_Orcamento_2026_ONASP.pdf');
+            } catch (erro) {
+                console.error('Erro na exportação do orçamento para PDF:', erro);
+                mostrarAlertaCarregamentoPlanilha(
+                    'Não foi possível gerar o PDF do orçamento. Tente novamente.',
+                    false,
+                    'danger'
+                );
+            } finally {
+                document.body.classList.remove('is-exporting');
+                document.body.classList.remove('is-exporting-budget');
+                if (headerActions) headerActions.style.display = originalHeaderActionsDisplay;
+                elementoParaCapturar.style.width = originalWidth;
+                elementoParaCapturar.style.margin = originalMargin;
+                if (viewOrcamento) viewOrcamento.style.width = originalOrcamentoWidth;
+                if (btnPdf) {
+                    btnPdf.innerHTML = originalHtml;
+                    btnPdf.disabled = originalDisabled;
+                }
+                if (viewOriginal !== 'orcamento') {
+                    await toggleView(viewOriginal);
+                }
+                hideLoading();
+            }
         }
 
         async function exportarDashboardPDF() {
@@ -1690,5 +2059,6 @@ window.abrirSelecaoUfExportacao = abrirSelecaoUfExportacao;
 window.exportarRelatorioEstadoSelecionado = exportarRelatorioEstadoSelecionado;
 window.exportarDashboardPDF = exportarDashboardPDF;
 window.exportarRelatorioPDF = exportarRelatorioPDF;
+window.exportarOrcamentoPDF = exportarOrcamentoPDF;
 window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;
 window.abrirOrcamento = () => toggleView('orcamento');

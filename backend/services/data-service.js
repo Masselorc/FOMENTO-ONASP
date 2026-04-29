@@ -1,6 +1,7 @@
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'banco_dados_orcamentario_onasp.xlsx';
+const ABA_ORCAMENTO_DADOS = 'Base_Dados';
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
@@ -117,6 +118,51 @@ function obterTextoCelula(linha, indice, fallback = '-') {
 
     const texto = limparTexto(linha[indice]);
     return texto || fallback;
+}
+
+function incrementarResumoOrcamento(resumo, chave, item) {
+    const nome = item[chave] && item[chave] !== '-' ? item[chave] : 'Não informado';
+    const resumoItem = resumo[nome] || { nome, itens: 0, total: 0 };
+    resumoItem.itens += 1;
+    resumoItem.total = arredondarMoeda(resumoItem.total + item.valorTotal);
+    resumo[nome] = resumoItem;
+}
+
+function ordenarResumoOrcamento(resumo) {
+    return Object.values(resumo).sort((a, b) => (
+        b.total - a.total || a.nome.localeCompare(b.nome, 'pt-BR')
+    ));
+}
+
+function montarResumoOrcamento(itens) {
+    const porStatus = {};
+    const porNatureza = {};
+    const porModalidade = {};
+    const porFrente = {};
+
+    itens.forEach((item) => {
+        incrementarResumoOrcamento(porStatus, 'status', item);
+        incrementarResumoOrcamento(porNatureza, 'natureza', item);
+        incrementarResumoOrcamento(porModalidade, 'modalidade', item);
+        incrementarResumoOrcamento(porFrente, 'frente', item);
+    });
+
+    return {
+        totalGeral: arredondarMoeda(itens.reduce((total, item) => total + item.valorTotal, 0)),
+        totalItens: itens.length,
+        porStatus: ordenarResumoOrcamento(porStatus),
+        porNatureza: ordenarResumoOrcamento(porNatureza),
+        porModalidade: ordenarResumoOrcamento(porModalidade),
+        porFrente: ordenarResumoOrcamento(porFrente)
+    };
+}
+
+function obterValoresUnicosOrcamento(itens, chave) {
+    return Array.from(new Set(
+        itens
+            .map((item) => item[chave])
+            .filter((valor) => valor && valor !== '-')
+    )).sort((a, b) => a.localeCompare(b, 'pt-BR'));
 }
 
 function extrairItensConvenioDaAba(sheet, uf, configuracao) {
@@ -253,160 +299,138 @@ async function carregarConveniosDaPlanilha(catalogoAplicacao) {
 
 async function carregarPlanilhaOrcamento() {
     try {
+        if (dadosOrcamentoCache) {
+            return dadosOrcamentoCache;
+        }
+
         const planilhaUrl = new URL(`../../${ARQUIVO_PLANILHA_ORCAMENTO}`, import.meta.url);
         const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
         
         if (!resposta.ok) {
             console.warn(`Planilha orçamentária não encontrada (${resposta.status}).`);
             dadosOrcamentoCache = null;
-            return;
+            return null;
         }
         
         const arrayBuffer = await resposta.arrayBuffer();
         const workbook = await lerWorkbookDeArrayBuffer(arrayBuffer);
-        
-        let totalAllocated = 0;
-        let totalSpent = 0;
-        const departments = [];
 
-        const sheetNames = workbook.SheetNames.filter((name) => {
-            const nomeNormalizado = normalizarTexto(name);
-            return !nomeNormalizado.includes('IND_') && !ABAS_ORCAMENTO_IGNORADAS.has(nomeNormalizado);
-        });
+        const nomeAbaOrcamento = workbook.SheetNames.find((sheetName) => (
+            normalizarTexto(sheetName) === normalizarTexto(ABA_ORCAMENTO_DADOS)
+        )) || workbook.SheetNames.find((sheetName) => (
+            !ABAS_ORCAMENTO_IGNORADAS.has(normalizarTexto(sheetName))
+        ));
 
-        for (const sheetName of sheetNames) {
-            const sheet = workbook.Sheets[sheetName];
-            const linhas = obterLinhasPlanilha(sheet);
-            if (linhas.length < 2) continue;
-
-            // Busca a linha de cabeçalho dinamicamente
-            let headerRowIndex = -1;
-            let headers = [];
-            
-            for (let r = 0; r < Math.min(linhas.length, 10); r++) {
-                const rowText = (linhas[r] || []).map(c => String(c || '').toUpperCase()).join(' ');
-                if (
-                    rowText.includes('DESCRI')
-                    || rowText.includes('ITENS')
-                    || rowText.includes('PREVISTO')
-                    || rowText.includes('ALOCADO')
-                    || rowText.includes('VALOR TOTAL')
-                ) {
-                    headerRowIndex = r;
-                    headers = (linhas[r] || []).map(h => normalizarTexto(String(h)));
-                    break;
-                }
-            }
-
-            if (headerRowIndex === -1) {
-                headers = (linhas[0] || []).map(h => normalizarTexto(String(h)));
-                headerRowIndex = 0;
-            }
-            
-            const colUf = obterIndiceColuna(headers, [
-                { tipo: 'igual', valor: 'UF' },
-                { tipo: 'igual', valor: 'ESTADO' },
-                { tipo: 'inclui', valor: 'UF' },
-                { tipo: 'inclui', valor: 'ABRANGENCIA' }
-            ]);
-            const colInstrumento = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'INSTRUMENTO' },
-                { tipo: 'inclui', valor: 'MODALIDADE' }
-            ]);
-            const colArea = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'AREA' },
-                { tipo: 'inclui', valor: 'FRENTE' },
-                { tipo: 'inclui', valor: 'DEPARTAMENTO' },
-                { tipo: 'inclui', valor: 'SETOR' },
-                { tipo: 'inclui', valor: 'DESTINA' }
-            ]);
-            const colNatureza = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'NATUREZA' },
-                { tipo: 'inclui', valor: 'CATEGORIA' }
-            ]);
-            const colDescricao = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'DESCRI' },
-                { tipo: 'inclui', valor: 'OBJETO' },
-                { tipo: 'inclui', valor: 'ITENS' },
-                { tipo: 'inclui', valor: 'ITEM' },
-                { tipo: 'inclui', valor: 'SERVICO' },
-                { tipo: 'igual', valor: 'NOME' }
-            ]);
-            const colQtd = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'QUANT' },
-                { tipo: 'inclui', valor: 'QTD' }
-            ]);
-            const colVlrUnit = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'VALOR UNIT' },
-                { tipo: 'inclui', valor: 'UNITARIO' },
-                { tipo: 'inclui', valor: 'UNIT' }
-            ]);
-            const colAlocado = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'VALOR TOTAL' },
-                { tipo: 'inclui', valor: 'PREVISTO' },
-                { tipo: 'inclui', valor: 'ALOCADO' },
-                { tipo: 'inclui', valor: 'ORCAMENTO' }
-            ]);
-            let colExecutado = obterIndiceColuna(headers, [
-                { tipo: 'inclui', valor: 'EXECUTADO' },
-                { tipo: 'inclui', valor: 'GASTO' },
-                { tipo: 'inclui', valor: 'UTILIZADO' },
-                { tipo: 'inclui', valor: 'EMPENHADO' }
-            ]);
-            
-            if (colExecutado === colAlocado) {
-                colExecutado = headers.findIndex((h, idx) => idx !== colAlocado && (h.includes('EXECUTADO') || h.includes('GASTO') || h.includes('UTILIZADO')));
-            }
-
-            const idxAloc = colAlocado >= 0 ? colAlocado : -1;
-            const idxDesc = colDescricao >= 0 ? colDescricao : -1;
-            if (idxAloc === -1 || idxDesc === -1) continue; // Pula a aba se faltarem colunas chave
-
-            for (let i = headerRowIndex + 1; i < linhas.length; i++) {
-                const linha = linhas[i];
-                if (!linha || linha[idxDesc] === null || linha[idxDesc] === undefined) continue;
-
-                const descricao = String(linha[idxDesc]).trim();
-                if (!descricao || descricao === '-' || normalizarTexto(descricao).includes('TOTAL')) continue;
-
-                const allocated = converterNumeroPlanilha(linha[idxAloc]);
-                const spent = colExecutado >= 0 ? converterNumeroPlanilha(linha[colExecutado]) : 0;
-                const uf = obterTextoCelula(linha, colUf, sheetName);
-                const instrumento = obterTextoCelula(linha, colInstrumento);
-                const area = obterTextoCelula(linha, colArea);
-                const natureza = obterTextoCelula(linha, colNatureza);
-                const quantidade = obterTextoCelula(linha, colQtd);
-                const valorUnitario = colVlrUnit >= 0 && linha[colVlrUnit] !== undefined ? converterNumeroPlanilha(linha[colVlrUnit]) : 0;
-
-                if (allocated > 0 || spent > 0) {
-                    departments.push({
-                        id: `${sheetName}-${i}`,
-                        uf,
-                        instrumento,
-                        area,
-                        natureza,
-                        descricao,
-                        quantidade,
-                        valorUnitario,
-                        allocated,
-                        spent
-                    });
-                    totalAllocated += allocated;
-                    totalSpent += spent;
-                }
-            }
+        if (!nomeAbaOrcamento) {
+            throw new Error(`A aba ${ABA_ORCAMENTO_DADOS} nao foi encontrada na planilha de orcamento.`);
         }
 
+        const linhas = obterLinhasPlanilha(workbook.Sheets[nomeAbaOrcamento]);
+        if (linhas.length < 2) {
+            throw new Error(`A aba ${nomeAbaOrcamento} nao contem linhas de dados.`);
+        }
+
+        const headerRowIndex = linhas.findIndex((linha) => {
+            const rowText = (linha || []).map((celula) => normalizarTexto(celula)).join(' ');
+            return rowText.includes('FRENTE') && rowText.includes('VALOR TOTAL');
+        });
+
+        if (headerRowIndex === -1) {
+            throw new Error(`Nao foi possivel identificar o cabecalho da aba ${nomeAbaOrcamento}.`);
+        }
+
+        const headers = (linhas[headerRowIndex] || []).map((header) => normalizarTexto(header));
+        const colId = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'ID' }]);
+        const colFrente = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'FRENTE' }]);
+        const colDescricao = obterIndiceColuna(headers, [
+            { tipo: 'igual', valor: 'ITENS' },
+            { tipo: 'igual', valor: 'ITEM' },
+            { tipo: 'inclui', valor: 'DESCRI' },
+            { tipo: 'inclui', valor: 'OBJETO' }
+        ]);
+        const colNatureza = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'NATUREZA' }]);
+        const colModalidade = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'MODALIDADE' }]);
+        const colAbrangencia = obterIndiceColuna(headers, [
+            { tipo: 'inclui', valor: 'ABRANGENCIA' },
+            { tipo: 'igual', valor: 'UF' }
+        ]);
+        const colQuantidade = obterIndiceColuna(headers, [{ tipo: 'inclui', valor: 'QUANTIDADE' }]);
+        const colUnidade = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'UNIDADE' }]);
+        const colValorTotal = obterIndiceColuna(headers, [{ tipo: 'inclui', valor: 'VALOR TOTAL' }]);
+        const colValorUnitario = obterIndiceColuna(headers, [{ tipo: 'inclui', valor: 'VALOR UNITARIO' }]);
+        const colValorExecutado = obterIndiceColuna(headers, [
+            { tipo: 'inclui', valor: 'VALOR EXECUTADO' },
+            { tipo: 'inclui', valor: 'EXECUTADO' },
+            { tipo: 'inclui', valor: 'PAGO' }
+        ]);
+        const colStatus = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'STATUS' }]);
+        const colProcessoSei = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'PROCESSO SEI' }]);
+        const colLinkProcessoSei = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'LINK DO PROCESSO SEI' }]);
+        const colEmpenho = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'EMPENHO' }]);
+        const colLinkEmpenho = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'LINK DO EMPENHO' }]);
+        const colOrdemBancaria = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'ORDEM BANCARIA' }]);
+        const colLinkOrdemBancaria = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'LINK ORDEM BANCARIA' }]);
+
+        if (colFrente < 0 || colDescricao < 0 || colValorTotal < 0) {
+            throw new Error('A planilha de orcamento precisa conter as colunas Frente, Itens e Valor Total (R$).');
+        }
+
+        const itens = linhas.slice(headerRowIndex + 1).map((linha, index) => {
+            const descricao = obterTextoCelula(linha, colDescricao, '');
+            const valorTotal = arredondarMoeda(converterNumeroPlanilha(linha[colValorTotal]));
+
+            if (!descricao || normalizarTexto(descricao).includes('TOTAL') || valorTotal <= 0) {
+                return null;
+            }
+
+            const quantidade = obterTextoCelula(linha, colQuantidade, '');
+            const valorUnitarioInformado = converterNumeroPlanilha(linha[colValorUnitario]);
+
+            return {
+                id: obterTextoCelula(linha, colId, `${nomeAbaOrcamento}-${index + 1}`),
+                frente: obterTextoCelula(linha, colFrente, 'Não informado'),
+                descricao,
+                natureza: obterTextoCelula(linha, colNatureza),
+                modalidade: obterTextoCelula(linha, colModalidade),
+                abrangencia: obterTextoCelula(linha, colAbrangencia),
+                quantidade,
+                unidade: obterTextoCelula(linha, colUnidade),
+                valorTotal,
+                valorUnitario: arredondarMoeda(valorUnitarioInformado),
+                valorExecutado: arredondarMoeda(converterNumeroPlanilha(linha[colValorExecutado])),
+                status: obterTextoCelula(linha, colStatus, 'Não informado'),
+                processoSei: obterTextoCelula(linha, colProcessoSei, ''),
+                linkProcessoSei: obterTextoCelula(linha, colLinkProcessoSei, ''),
+                empenho: obterTextoCelula(linha, colEmpenho, ''),
+                linkEmpenho: obterTextoCelula(linha, colLinkEmpenho, ''),
+                ordemBancaria: obterTextoCelula(linha, colOrdemBancaria, ''),
+                linkOrdemBancaria: obterTextoCelula(linha, colLinkOrdemBancaria, '')
+            };
+        }).filter(Boolean);
+
         dadosOrcamentoCache = {
-            total: totalAllocated,
-            used: totalSpent,
-            available: totalAllocated - totalSpent,
-            departments: departments
+            arquivo: ARQUIVO_PLANILHA_ORCAMENTO,
+            aba: nomeAbaOrcamento,
+            itens,
+            resumo: montarResumoOrcamento(itens),
+            filtros: {
+                frentes: obterValoresUnicosOrcamento(itens, 'frente'),
+                status: obterValoresUnicosOrcamento(itens, 'status'),
+                naturezas: obterValoresUnicosOrcamento(itens, 'natureza'),
+                modalidades: obterValoresUnicosOrcamento(itens, 'modalidade')
+            }
         };
+
+        return dadosOrcamentoCache;
     } catch (error) {
         dadosOrcamentoCache = null;
         console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_ORCAMENTO}:`, error);
+        return null;
     }
+}
+
+export async function carregarDadosOrcamento() {
+    return carregarPlanilhaOrcamento();
 }
 
 export async function carregarCatalogoAplicacao() {
