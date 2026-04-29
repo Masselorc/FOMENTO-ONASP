@@ -1474,8 +1474,17 @@ async function carregarLogoParaPDF() {
             aplicarFiltrosCombinados();
         }
 
+        function atualizarContadoresUfsPorInstrumento(dadosFiltrados) {
+            const resumoInstrumentos = calcularResumoInstrumentos(dadosFiltrados);
+
+            $('#count-convenios').text(resumoInstrumentos.convenios.quantidadeUfs);
+            $('#count-faf').text(resumoInstrumentos.faf.quantidadeUfs);
+            $('#count-doacoes').text(resumoInstrumentos.doacao.quantidadeUfs);
+        }
+
         function atualizarCardsDinamicos(filtro = obterEstadoFiltroAtual()) {
             const dadosFiltrados = obterDadosFiltrados(filtro);
+            atualizarContadoresUfsPorInstrumento(dadosFiltrados);
 
             const qtdItens = dadosFiltrados.length;
             const resumoFinanceiro = calcularResumoFinanceiro(dadosFiltrados);
