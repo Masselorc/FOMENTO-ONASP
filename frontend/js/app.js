@@ -30,6 +30,44 @@ let catalogoAplicacao = {
     dadosBase: []
 };
 
+function fecharMenuLateral() {
+    const sidebar = document.getElementById('app-sidebar');
+    const offcanvas = sidebar && window.bootstrap?.Offcanvas?.getInstance(sidebar);
+    if (offcanvas) offcanvas.hide();
+}
+
+function atualizarNavegacao(viewName = 'dashboard') {
+    const viewAtiva = viewName === 'estado-detalhe' ? 'detalhamento' : viewName;
+    document.body.dataset.currentView = viewName;
+
+    document.querySelectorAll('.app-menu-link').forEach((botao) => {
+        const ativo = botao.dataset.view === viewAtiva;
+        botao.classList.toggle('active', ativo);
+        if (ativo) {
+            botao.setAttribute('aria-current', 'page');
+        } else {
+            botao.removeAttribute('aria-current');
+        }
+    });
+
+    const btnExportarRelatorioMenu = document.getElementById('btn-menu-export-state-pdf');
+    if (btnExportarRelatorioMenu) {
+        const podeExportarRelatorio = dadosFinanceirosValidados && viewName === 'estado-detalhe';
+        btnExportarRelatorioMenu.disabled = !podeExportarRelatorio;
+        btnExportarRelatorioMenu.setAttribute('aria-disabled', String(!podeExportarRelatorio));
+    }
+
+    const btnExportDashboard = document.getElementById('btn-export-dashboard');
+    if (btnExportDashboard) {
+        btnExportDashboard.classList.toggle('d-none', viewName !== 'dashboard');
+    }
+
+    const btnDetalhamentoHeader = document.querySelector('#header-actions button[onclick="toggleView(\'detalhamento\')"]');
+    if (btnDetalhamentoHeader) {
+        btnDetalhamentoHeader.classList.toggle('d-none', viewName !== 'dashboard');
+    }
+}
+
 function showLoading(mensagem = 'Processando...') {
     const overlay = document.getElementById('loading-overlay');
     const msgEl = document.getElementById('loading-message');
@@ -95,10 +133,10 @@ async function carregarLogoParaPDF() {
             if (!logoImg) return;
 
             const fallback = document.getElementById('logo-senappen-fallback');
-            logoImg.width = 300;
-            logoImg.height = 90;
-            logoImg.style.width = 'min(300px, 42vw)';
-            logoImg.style.height = '90px';
+            logoImg.width = 210;
+            logoImg.height = 64;
+            logoImg.style.width = '';
+            logoImg.style.height = '';
             logoImg.style.objectFit = 'contain';
 
             logoImg.onload = () => {
@@ -137,8 +175,8 @@ async function carregarLogoParaPDF() {
 
                 const botao = document.createElement('button');
                 botao.type = 'button';
-                botao.className = 'btn btn-sm btn-outline-dark';
-                botao.textContent = 'Selecionar planilha manualmente';
+                botao.className = 'btn btn-sm btn-outline-primary btn-icon-text';
+                botao.innerHTML = '<i class="fas fa-file-excel" aria-hidden="true"></i><span>Selecionar planilha manualmente</span>';
                 botao.addEventListener('click', abrirSeletorManualPlanilha);
 
                 wrapper.appendChild(botao);
@@ -158,14 +196,16 @@ async function carregarLogoParaPDF() {
         function configurarEstadoDadosValidados(validado) {
             dadosFinanceirosValidados = validado;
             const btnExportDashboard = document.getElementById('btn-export-dashboard');
-            const btnDetalhamento = document.querySelector('button[onclick="toggleView(\'detalhamento\')"]');
+            const botoesDetalhamento = document.querySelectorAll('button[onclick="toggleView(\'detalhamento\')"], .app-menu-link[data-view="detalhamento"]');
 
-            [btnExportDashboard, btnDetalhamento].forEach((botao) => {
+            [btnExportDashboard, ...botoesDetalhamento].forEach((botao) => {
                 if (!botao) return;
                 botao.disabled = !validado;
                 botao.classList.toggle('disabled', !validado);
                 botao.setAttribute('aria-disabled', String(!validado));
             });
+
+            atualizarNavegacao(document.body.dataset.currentView || 'dashboard');
         }
 
         function bloquearDadosFinanceiros(error) {
@@ -208,6 +248,26 @@ async function carregarLogoParaPDF() {
                 inputPlanilha.addEventListener('change', processarSelecaoManualPlanilha);
             }
 
+            const btnSelecionarPlanilha = document.getElementById('btn-selecionar-planilha');
+            if (btnSelecionarPlanilha) {
+                btnSelecionarPlanilha.addEventListener('click', () => {
+                    fecharMenuLateral();
+                    abrirSeletorManualPlanilha();
+                });
+            }
+
+            const filtroAtivoBadge = document.getElementById('filtroAtivoBadge');
+            if (filtroAtivoBadge) {
+                filtroAtivoBadge.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        filtroAtivoBadge.click();
+                    }
+                });
+            }
+
+            atualizarNavegacao('dashboard');
+
             try {
                 catalogoAplicacao = await carregarCatalogoAplicacao();
             } catch (error) {
@@ -246,31 +306,18 @@ async function carregarLogoParaPDF() {
             document.getElementById('view-dashboard').style.display = 'none';
             document.getElementById('view-detalhamento').style.display = 'none';
             document.getElementById('view-estado-detalhe').style.display = 'none';
-            
-            const headerActions = document.getElementById('header-actions');
-            
+
             if (viewName === 'detalhamento') {
                 document.getElementById('view-detalhamento').style.display = 'block';
-                if(headerActions) {
-                    headerActions.classList.remove('d-flex');
-                    headerActions.style.display = 'none';
-                }
-                window.scrollTo(0,0);
             } else if (viewName === 'estado-detalhe') {
                 document.getElementById('view-estado-detalhe').style.display = 'block';
-                if(headerActions) {
-                    headerActions.classList.remove('d-flex');
-                    headerActions.style.display = 'none';
-                }
-                window.scrollTo(0,0);
             } else {
                 document.getElementById('view-dashboard').style.display = 'block';
-                if(headerActions) {
-                    headerActions.classList.add('d-flex');
-                    headerActions.style.display = '';
-                }
-                window.scrollTo(0,0);
             }
+
+            atualizarNavegacao(viewName);
+            fecharMenuLateral();
+            window.scrollTo(0, 0);
         }
 
         // --- DASHBOARD PRINCIPAL ---
@@ -339,14 +386,14 @@ async function carregarLogoParaPDF() {
                     const safeFlagUrl = escapeHtml(flagUrl);
                     
                     const imgElement = flagUrl 
-                        ? `<img src="${safeFlagUrl}" alt="Bandeira ${safeUf}" class="state-flag" onerror="this.onerror=null;this.src='';this.style.display='none';this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-flag text-secondary" style="font-size: 24px; display: none;"></i>`
-                        : `<i class="fas fa-flag text-secondary" style="font-size: 24px;"></i>`;
+                        ? `<img src="${safeFlagUrl}" alt="Bandeira ${safeUf}" class="state-flag" onerror="this.onerror=null;this.src='';this.style.display='none';this.nextElementSibling.style.display='inline-block';"> <i class="fas fa-flag text-secondary flag-placeholder flag-placeholder-hidden"></i>`
+                        : `<i class="fas fa-flag text-secondary flag-placeholder"></i>`;
 
                     const col = document.createElement('div');
-                    col.className = 'col-lg-6';
+                    col.className = 'col-md-6 col-lg-4';
 
                     col.innerHTML = `
-                        <div class="state-detail-card ${bgClass}" style="cursor: pointer;" onclick="abrirDetalheEstado('${safeUf}')">
+                        <div class="state-detail-card ${bgClass}" onclick="abrirDetalheEstado('${safeUf}')">
                             <div class="state-header">
                                 ${imgElement}
                                 <h3 class="state-name">${safeNomeEstado} (${safeUf})</h3>
@@ -376,7 +423,7 @@ async function carregarLogoParaPDF() {
                                     <div class="mini-card-label">% Exec. FAF</div>
                                     <div class="mini-card-value">${formatPercent(metrics.fafExecPct)}</div>
                                 </div>
-                                <div class="mini-card" style="grid-column: span 2;">
+                                <div class="mini-card mini-card-full">
                                     <div class="mini-card-label">Valor Doado</div>
                                     <div class="mini-card-value text-warning">${formatMoney(metrics.doacVal)}</div>
                                 </div>
@@ -407,8 +454,8 @@ async function carregarLogoParaPDF() {
             
             // 1. Montar Header
             const imgElement = flagUrl 
-                ? `<img src="${safeFlagUrl}" alt="Bandeira ${safeUf}" class="state-flag me-3" style="width: 80px; height: 55px;">`
-                : `<i class="fas fa-flag text-secondary me-3" style="font-size: 40px;"></i>`;
+                ? `<img src="${safeFlagUrl}" alt="Bandeira ${safeUf}" class="state-flag report-state-flag me-3">`
+                : `<i class="fas fa-flag text-secondary report-state-icon me-3"></i>`;
             
             // O infoConvenioHtml foi removido daqui e passado para a secção das listas (passo 4)
             
@@ -494,10 +541,10 @@ async function carregarLogoParaPDF() {
                         const safeObjeto = escapeHtml(item.objeto);
                         return `
                             <tr>
-                                <td>${safeObjeto}</td>
-                                <td class="text-center align-middle">${escapeHtml(item.quantidade)}</td>
-                                <td class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
-                                <td class="text-end font-monospace align-middle text-warning fw-bold">${formatMoney(valTotal)}</td>
+                                <td data-label="Objeto">${safeObjeto}</td>
+                                <td data-label="Qtd" class="text-center align-middle">${escapeHtml(item.quantidade)}</td>
+                                <td data-label="V. Unitário Estimado" class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
+                                <td data-label="V. Total Estimado" class="text-end font-monospace align-middle text-warning fw-bold">${formatMoney(valTotal)}</td>
                             </tr>
                         `;
                     }).join('');
@@ -532,7 +579,7 @@ async function carregarLogoParaPDF() {
                             <th class="text-end">V. Unitário</th>
                             <th class="text-end">V. Total Previsto</th>
                             <th class="text-end">Executado</th>
-                            <th class="text-center" style="width: 100px;">%</th>
+                            <th class="text-center progress-column">%</th>
                         </tr>
                     `;
                     linhas = itens.map(item => {
@@ -544,12 +591,12 @@ async function carregarLogoParaPDF() {
                         
                         return `
                             <tr class="${execucaoAcimaPrevisto ? 'table-warning' : ''}">
-                                <td>${safeObjeto}</td>
-                                <td class="text-center align-middle">${escapeHtml(item.quantidade)}</td>
-                                <td class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
-                                <td class="text-end font-monospace align-middle">${formatMoney(valTotal)}</td>
-                                <td class="text-end font-monospace align-middle ${valExec > 0 ? 'text-success fw-bold' : ''}">${formatMoney(valExec)}</td>
-                                <td class="text-center align-middle" style="min-width: 90px;" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
+                                <td data-label="Objeto">${safeObjeto}</td>
+                                <td data-label="Qtd" class="text-center align-middle">${escapeHtml(item.quantidade)}</td>
+                                <td data-label="V. Unitário" class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
+                                <td data-label="V. Total Previsto" class="text-end font-monospace align-middle">${formatMoney(valTotal)}</td>
+                                <td data-label="Executado" class="text-end font-monospace align-middle ${valExec > 0 ? 'text-success fw-bold' : ''}">${formatMoney(valExec)}</td>
+                                <td data-label="%" class="text-center align-middle progress-cell" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
                                     <div class="custom-progress-pill">
                                         <div class="pill-fill" style="width: ${getProgressWidth(pct)}%; background-color: ${getProgressColor(pct)}"></div>
                                         <div class="pill-text">${formatPercent(pct)}</div>
@@ -590,8 +637,8 @@ async function carregarLogoParaPDF() {
                 // Remove a margem inferior padrão do card para colar o texto da observação logo abaixo
                 fafHtml = fafHtml.replace('card mb-4', 'card mb-1');
                 fafHtml += `
-                    <div class="text-muted small mb-4 px-2" style="font-style: italic;">
-                        <i class="fas fa-asterisk me-1"></i> Os dados foram atualizados até dezembro de 2025 e podem não refletir a execução real, uma vez que ainda se está na janela de submissão dos relatórios de execução atualizados.
+                    <div class="text-muted small mb-4 px-2 report-note">
+                        <i class="fas fa-asterisk me-1"></i> Os dados foram atualizados até abril de 2026 e podem não refletir a execução real, uma vez que ainda se está na janela de submissão dos relatórios de execução atualizados.
                     </div>
                 `;
             }
@@ -607,7 +654,7 @@ async function carregarLogoParaPDF() {
                     <div class="alert bg-white border border-success border-start-0 border-end-0 border-bottom-0 border-start border-4 shadow-sm mb-2 d-flex align-items-center">
                         <i class="fas fa-file-contract fa-2x text-success me-3 opacity-75"></i>
                         <div>
-                            <h6 class="mb-1 fw-bold text-dark" style="font-size: 1.1rem; letter-spacing: -0.5px;">Convênio Nº ${escapeHtml(info.numero)}/${escapeHtml(info.ano)}</h6>
+                            <h6 class="mb-1 fw-bold text-dark convenio-title">Convênio Nº ${escapeHtml(info.numero)}/${escapeHtml(info.ano)}</h6>
                             <div class="text-muted small">
                                 <span class="me-3"><i class="fas fa-calendar-alt me-1 text-secondary"></i> <strong>Vencimento:</strong> <span class="badge bg-danger">${escapeHtml(info.vencimento)}</span></span>
                                 <span><i class="fas fa-folder-open me-1 text-secondary"></i> <strong>Processo SEI:</strong> <span class="font-monospace">${escapeHtml(info.sei)}</span></span>
@@ -642,21 +689,31 @@ async function carregarLogoParaPDF() {
 
             const btnPdf = document.getElementById('btn-export-dashboard');
             const originalHtml = btnPdf.innerHTML;
+            const originalDisabled = btnPdf.disabled;
             
             // Estado de carregamento visual no botão
             btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando PDF...';
             btnPdf.disabled = true;
 
+            fecharMenuLateral();
             showLoading('Gerando PDF do Painel... (Isso pode levar alguns segundos)');
+
+            const viewOriginal = document.body.dataset.currentView || 'dashboard';
+            if (viewOriginal !== 'dashboard') {
+                toggleView('dashboard');
+                await new Promise(resolve => setTimeout(resolve, 80));
+            }
 
             // Em vez de capturar apenas a div do dashboard, capturamos o wrapper principal inteiro
             const elementoParaCapturar = document.getElementById('main-wrapper');
             const headerActions = document.getElementById('header-actions');
             const filterRow = document.getElementById('filter-row-section');
+            const originalHeaderActionsDisplay = headerActions?.style.display || '';
+            const originalFilterRowDisplay = filterRow?.style.display || '';
 
             // 1. Esconde a linha de botões de filtro e do cabeçalho temporariamente para um PDF mais limpo
+            document.body.classList.add('is-exporting');
             if (headerActions) {
-                headerActions.classList.remove('d-flex');
                 headerActions.style.display = 'none';
             }
             if (filterRow) filterRow.style.display = 'none';
@@ -733,11 +790,11 @@ async function carregarLogoParaPDF() {
                 elementoParaCapturar.style.margin = originalMargin;
             } finally {
                 // 4. Restaura o layout original (filtros e scroll da tabela)
+                document.body.classList.remove('is-exporting');
                 if (headerActions) {
-                    headerActions.classList.add('d-flex');
-                    headerActions.style.display = '';
+                    headerActions.style.display = originalHeaderActionsDisplay;
                 }
-                if (filterRow) filterRow.style.display = '';
+                if (filterRow) filterRow.style.display = originalFilterRowDisplay;
                 if (dtScrollBody) {
                     dtScrollBody.style.maxHeight = originalMaxHeight;
                     dtScrollBody.style.height = originalHeight;
@@ -745,7 +802,10 @@ async function carregarLogoParaPDF() {
                 }
                 
                 btnPdf.innerHTML = originalHtml;
-                btnPdf.disabled = false;
+                btnPdf.disabled = originalDisabled;
+                if (viewOriginal !== 'dashboard') {
+                    toggleView(viewOriginal);
+                }
             hideLoading();
             }
         }
@@ -760,19 +820,32 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
+            if ((document.body.dataset.currentView || '') !== 'estado-detalhe' || !estadoAtualPDF) {
+                mostrarAlertaCarregamentoPlanilha(
+                    'Abra um relatório estadual antes de exportar o PDF do estado.',
+                    false,
+                    'info'
+                );
+                return;
+            }
+
             const btnPdf = document.getElementById('btn-export-pdf');
             const originalHtml = btnPdf.innerHTML;
+            const originalDisabled = btnPdf.disabled;
             
             // Estado de carregamento visual no botão
             btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando PDF...';
             btnPdf.disabled = true;
 
+            fecharMenuLateral();
             showLoading(`Gerando PDF de ${estadoAtualPDF}...`);
 
             // Agora capturamos o wrapper inteiro (incluindo o header global do app)
             const elementoParaCapturar = document.getElementById('main-wrapper');
             const botoesAcaoRelatorio = document.getElementById('botoes-acao-relatorio');
+            const originalBotoesAcaoDisplay = botoesAcaoRelatorio?.style.display || '';
 
+            document.body.classList.add('is-exporting');
             if (botoesAcaoRelatorio) botoesAcaoRelatorio.style.display = 'none';
 
             // FIX DE MARGENS LATERAIS PARA RELATÓRIO
@@ -830,9 +903,10 @@ async function carregarLogoParaPDF() {
                 elementoParaCapturar.style.margin = originalMargin;
             } finally {
                 // Restaura o botão à sua forma original
-                if (botoesAcaoRelatorio) botoesAcaoRelatorio.style.display = '';
+                document.body.classList.remove('is-exporting');
+                if (botoesAcaoRelatorio) botoesAcaoRelatorio.style.display = originalBotoesAcaoDisplay;
                 btnPdf.innerHTML = originalHtml;
-                btnPdf.disabled = false;
+                btnPdf.disabled = originalDisabled;
             hideLoading();
             }
         }
@@ -896,6 +970,20 @@ async function carregarLogoParaPDF() {
             container.setAttribute('title', ufs.length ? ufs.join(', ') : 'Nenhuma UF');
         }
 
+        function atualizarMiniPizzaInstrumento(pieId, labelId, percentual) {
+            const pie = document.getElementById(pieId);
+            const label = document.getElementById(labelId);
+            const valor = Number.isFinite(Number(percentual)) ? Math.max(0, Math.min(100, Number(percentual))) : 0;
+            const texto = formatPercent(valor);
+
+            if (pie) {
+                pie.style.setProperty('--pie-angle', `${valor * 3.6}deg`);
+                pie.setAttribute('title', `${texto} executado`);
+            }
+
+            if (label) label.textContent = texto;
+        }
+
         function renderKPIs(global, ufsList, resumoInstrumentos) {
             // Calcular Total de Fomento = Total Repassado + Total em Doações
             const totalRepassado = Number(global.totalContratado) || 0;
@@ -915,12 +1003,14 @@ async function carregarLogoParaPDF() {
             $('#kpi-total-convenios').text(formatMoney(convenios.total)).attr('title', formatMoney(convenios.total));
             $('#kpi-percentual-convenios').text(formatPercent(convenios.percentual));
             $('#kpi-desc-convenios').text(`Executado: ${formatMoney(convenios.executado)}`);
+            atualizarMiniPizzaInstrumento('mini-pie-convenios', 'mini-pie-convenios-label', convenios.percentual);
             $('#kpi-ufs-convenios-qtd').text(convenios.quantidadeUfs);
             renderUfChips('kpi-ufs-convenios-lista', convenios.ufs);
 
             $('#kpi-total-faf').text(formatMoney(faf.total)).attr('title', formatMoney(faf.total));
             $('#kpi-percentual-faf').text(formatPercent(faf.percentual));
             $('#kpi-desc-faf').text(`Executado: ${formatMoney(faf.executado)}`);
+            atualizarMiniPizzaInstrumento('mini-pie-faf', 'mini-pie-faf-label', faf.percentual);
             $('#kpi-ufs-faf-qtd').text(faf.quantidadeUfs);
             renderUfChips('kpi-ufs-faf-lista', faf.ufs);
 
@@ -999,16 +1089,16 @@ async function carregarLogoParaPDF() {
                 tr.dataset.itemIndex = String(index);
                 if (execucaoAcimaPrevisto) tr.classList.add('table-warning');
                 tr.innerHTML = `
-                    <td class="text-center align-middle"><span class="d-none">${safeInstrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
-                    <td class="align-middle"><span class="badge bg-secondary badge-uf">${safeUf}</span></td>
-                    <td title="${safeObjeto}" class="align-middle"><span class="truncate-text">${safeObjeto}</span></td>
-                    <td class="text-center align-middle">${safeQuantidade}</td>
-                    <td class="text-end font-monospace small align-middle">${formatMoney(row.valorUnitario)}</td>
-                    <td class="text-end font-monospace align-middle">${formatMoney(vTotal)}</td>
-                    <td class="text-end align-middle ${vExec > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
+                    <td data-label="Instrumento" class="text-center align-middle"><span class="d-none">${safeInstrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
+                    <td data-label="UF" class="align-middle"><span class="badge bg-secondary badge-uf">${safeUf}</span></td>
+                    <td data-label="Objeto" title="${safeObjeto}" class="align-middle"><span class="truncate-text">${safeObjeto}</span></td>
+                    <td data-label="Qtd." class="text-center align-middle">${safeQuantidade}</td>
+                    <td data-label="Valor Unit. (R$)" class="text-end font-monospace small align-middle">${formatMoney(row.valorUnitario)}</td>
+                    <td data-label="Valor Total (R$)" class="text-end font-monospace align-middle">${formatMoney(vTotal)}</td>
+                    <td data-label="Executado (R$)" class="text-end align-middle ${vExec > 0 ? 'text-success fw-bold' : 'text-muted'} font-monospace">
                         ${formatMoney(vExec)}
                     </td>
-                    <td class="text-center align-middle" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
+                    <td data-label="%" class="text-center align-middle" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
                         <div class="custom-progress-pill">
                             <div class="pill-fill" style="width: ${getProgressWidth(percent)}%; background-color: ${getProgressColor(percent)}"></div>
                             <div class="pill-text">${formatPercent(percent)}</div>
@@ -1021,6 +1111,7 @@ async function carregarLogoParaPDF() {
             tabelaInstancia = $('#tabelaItens').DataTable({
                 language: { url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json" },
                 destroy: true, 
+            autoWidth: false,
             paging: true, 
             pageLength: 15,
             lengthMenu: [15, 50, 100, 500],
@@ -1265,3 +1356,4 @@ window.toggleView = toggleView;
 window.abrirDetalheEstado = abrirDetalheEstado;
 window.exportarDashboardPDF = exportarDashboardPDF;
 window.exportarRelatorioPDF = exportarRelatorioPDF;
+window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;

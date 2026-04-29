@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Acompanhamento Fundo a Fundo</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -15,167 +15,244 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css?v=20260428-2" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260429-1" rel="stylesheet">
 </head>
 <body>
 
     <!-- LOADING OVERLAY -->
     <div id="loading-overlay" class="d-none">
-        <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+        <div class="spinner-border text-light" role="status">
             <span class="visually-hidden">Carregando...</span>
         </div>
         <h4 class="text-light mt-3" id="loading-message">Processando...</h4>
     </div>
 
+    <!-- MENU LATERAL -->
+    <aside class="offcanvas offcanvas-start app-offcanvas pdf-hidden" tabindex="-1" id="app-sidebar" aria-labelledby="app-sidebar-title">
+        <div class="offcanvas-header">
+            <div>
+                <p class="section-eyebrow mb-1">Navegação</p>
+                <h2 class="offcanvas-title" id="app-sidebar-title">Painel ONASP</h2>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
+        </div>
+        <div class="offcanvas-body">
+            <nav class="sidebar-nav" aria-label="Navegação principal">
+                <button type="button" class="sidebar-link app-menu-link active" data-view="dashboard" onclick="toggleView('dashboard')" aria-current="page">
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                    <span>Home / Painel Geral</span>
+                </button>
+                <button type="button" class="sidebar-link app-menu-link" data-view="detalhamento" onclick="toggleView('detalhamento')">
+                    <i class="fas fa-map" aria-hidden="true"></i>
+                    <span>Detalhamento por Estado</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-section">
+                <p class="section-eyebrow">Ações</p>
+                <button type="button" class="sidebar-action" onclick="exportarDashboardPDF()">
+                    <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+                    <span>Exportar Painel PDF</span>
+                </button>
+                <button type="button" class="sidebar-action" id="btn-menu-export-state-pdf" onclick="exportarRelatorioPDF()" disabled aria-disabled="true">
+                    <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
+                    <span>Exportar Relatório Estadual</span>
+                </button>
+                <button type="button" class="sidebar-action" id="btn-selecionar-planilha">
+                    <i class="fas fa-file-excel text-success" aria-hidden="true"></i>
+                    <span>Selecionar planilha manualmente</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
     <!-- WRAPPER PRINCIPAL PARA O PDF CAPTURAR TUDO INCLUINDO O HEADER -->
     <div id="main-wrapper">
-        
+
         <!-- CABEÇALHO -->
-        <header class="header-section">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-7 d-flex align-items-center gap-4">
-                        <img id="img-logo-senappen" class="senappen-logo" src="./frontend/assets/senappen-logo.png" alt="Logo SENAPPEN Completo" width="300" height="90" loading="eager" decoding="sync" style="width: min(300px, 42vw); height: 90px; object-fit: contain;">
-                        <div id="logo-senappen-fallback" class="senappen-logo-fallback d-none" aria-hidden="true">
-                            <strong>SENAPPEN</strong>
-                            <span>Secretaria Nacional de Políticas Penais</span>
-                        </div>
-                        
-                        <div>
-                            <h1 class="header-title mb-1" style="font-size: 1.6rem;">Painel de Acompanhamento</h1>
-                            <p class="text-muted mb-0" style="font-size: 0.85rem;">
-                                Ouvidoria Nacional de Serviços Penais | Monitoramento de Recursos (FAF, Convênio e Doações)
-                            </p>
-                        </div>
+        <header class="app-header">
+            <div class="container app-header-inner">
+                <div class="brand-block">
+                    <img id="img-logo-senappen" class="senappen-logo" src="./frontend/assets/senappen-logo.png" alt="Logo SENAPPEN" width="210" height="64" loading="eager" decoding="sync">
+                    <div id="logo-senappen-fallback" class="senappen-logo-fallback d-none" aria-hidden="true">
+                        <strong>SENAPPEN</strong>
+                        <span>Secretaria Nacional de Políticas Penais</span>
                     </div>
-                    <div class="col-md-5 text-md-end mt-3 mt-md-0 d-flex flex-wrap justify-content-md-end gap-2" id="header-actions">
-                        <button id="btn-export-dashboard" class="btn btn-danger shadow-sm fw-bold" onclick="exportarDashboardPDF()">
-                            <i class="fas fa-file-pdf me-2"></i> Exportar Painel
-                        </button>
-                        <button class="btn btn-destaque" onclick="toggleView('detalhamento')">
-                            <i class="fas fa-th-large me-2"></i> Detalhamento por Estado
-                        </button>
+                    <div class="brand-copy">
+                        <p class="section-eyebrow mb-1">Ouvidoria Nacional de Serviços Penais</p>
+                        <h1 class="header-title">Painel de Acompanhamento</h1>
+                        <p class="header-subtitle">Monitoramento de recursos FAF, convênios e doações</p>
                     </div>
                 </div>
+
+                <div class="header-actions pdf-hidden" id="header-actions">
+                    <button type="button" class="btn btn-outline-primary btn-icon-text" onclick="toggleView('dashboard')" aria-label="Ir para Home">
+                        <i class="fas fa-home" aria-hidden="true"></i>
+                        <span>Home</span>
+                    </button>
+                    <button id="btn-export-dashboard" type="button" class="btn btn-danger btn-icon-text" onclick="exportarDashboardPDF()">
+                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                        <span>Exportar Painel</span>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-icon-text" onclick="toggleView('detalhamento')">
+                        <i class="fas fa-th-large" aria-hidden="true"></i>
+                        <span>Detalhamento</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-square" data-bs-toggle="offcanvas" data-bs-target="#app-sidebar" aria-controls="app-sidebar" aria-label="Abrir menu lateral">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="container">
                 <div id="alerta-carregamento-planilha" class="alert alert-warning d-none mt-3 mb-0" role="alert"></div>
                 <input id="input-planilha-convenios" type="file" accept=".xlsx,.xls" class="d-none">
             </div>
         </header>
 
         <!-- VIEW 1: DASHBOARD GERAL -->
-        <div id="view-dashboard" class="container fade-in">
-            
+        <main id="view-dashboard" class="container app-view fade-in">
+            <section class="dashboard-intro">
+                <div>
+                    <p class="section-eyebrow mb-1">Visão geral</p>
+                    <h2>Fomento para Ouvidoria</h2>
+                    <p>Atualizado em abril de 2026</p>
+                </div>
+                <div class="intro-badges" aria-label="Tipos de instrumentos monitorados">
+                    <span><i class="fas fa-landmark" aria-hidden="true"></i> FAF</span>
+                    <span><i class="fas fa-file-contract" aria-hidden="true"></i> Convênios</span>
+                    <span><i class="fas fa-gift" aria-hidden="true"></i> Doações</span>
+                </div>
+            </section>
+
             <!-- KPI SECTION (GLOBAL) -->
-            <div class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
+            <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores gerais">
                 <div class="col">
-                    <div class="card kpi-card" style="border-left: 4px solid #16a34a;">
-                        <div class="kpi-title"><i class="fas fa-briefcase me-2"></i>Total de Fomento para Ouvidoria</div>
+                    <div class="card kpi-card kpi-card-success">
+                        <div class="kpi-title"><i class="fas fa-briefcase" aria-hidden="true"></i>Total de Fomento para Ouvidoria</div>
                         <div class="kpi-value text-money text-success" id="kpi-total-fomento-ouvidoria">R$ 0,00</div>
                         <div class="kpi-desc">Repassado + Doações</div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-file-invoice-dollar me-2"></i>Total Repassado</div>
+                        <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Total Repassado</div>
                         <div class="kpi-value text-money" id="kpi-total-contratado">R$ 0,00</div>
                         <div class="kpi-desc">Convênios e FAF</div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-check-circle me-2"></i>Total Executado</div>
+                        <div class="kpi-title"><i class="fas fa-check-circle" aria-hidden="true"></i>Total Executado</div>
                         <div class="kpi-value text-money text-success" id="kpi-total-executado">R$ 0,00</div>
                         <div class="kpi-desc">Convênios e FAF</div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-chart-pie me-2"></i>Execução Global</div>
+                        <div class="kpi-title"><i class="fas fa-chart-pie" aria-hidden="true"></i>Execução Global</div>
                         <div class="kpi-value" id="kpi-percentual-global">0,0%</div>
                         <div class="kpi-desc">Média Nacional (Conv/FAF)</div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card kpi-card" style="border-left: 4px solid #e67e22;">
-                        <div class="kpi-title"><i class="fas fa-gift me-2"></i>Total em Doações</div>
+                    <div class="card kpi-card kpi-card-warning">
+                        <div class="kpi-title"><i class="fas fa-gift" aria-hidden="true"></i>Total em Doações</div>
                         <div class="kpi-value text-money text-warning" id="kpi-total-doado">R$ 0,00</div>
                         <div class="kpi-desc">Veículos e Equipamentos</div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" id="cards-instrumentos-section">
+            <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-instrumentos-section" aria-label="Indicadores por instrumento">
                 <div class="col">
                     <div class="card kpi-card instrument-summary-card convenio">
-                        <div class="kpi-title"><i class="fas fa-file-contract me-2"></i>Total em Convênios (Ouvidoria)</div>
+                        <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Total em Convênios (Ouvidoria)</div>
                         <div class="instrument-metric-line">
                             <div class="kpi-value text-money" id="kpi-total-convenios">R$ 0,00</div>
                             <span class="instrument-percent" id="kpi-percentual-convenios">0,0%</span>
                         </div>
                         <div class="kpi-desc" id="kpi-desc-convenios">Executado: R$ 0,00</div>
+                        <div class="instrument-mini-chart" aria-label="Percentual executado em convênios">
+                            <div class="mini-pie mini-pie-convenio" id="mini-pie-convenios" aria-hidden="true"></div>
+                            <div class="mini-pie-caption">
+                                <span>Executado</span>
+                                <strong id="mini-pie-convenios-label">0,0%</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card kpi-card instrument-summary-card faf">
-                        <div class="kpi-title"><i class="fas fa-landmark me-2"></i>Total em FaF</div>
+                        <div class="kpi-title"><i class="fas fa-landmark" aria-hidden="true"></i>Total em FaF</div>
                         <div class="instrument-metric-line">
                             <div class="kpi-value text-money" id="kpi-total-faf">R$ 0,00</div>
                             <span class="instrument-percent" id="kpi-percentual-faf">0,0%</span>
                         </div>
                         <div class="kpi-desc" id="kpi-desc-faf">Executado: R$ 0,00</div>
+                        <div class="instrument-mini-chart" aria-label="Percentual executado em FaF">
+                            <div class="mini-pie mini-pie-faf" id="mini-pie-faf" aria-hidden="true"></div>
+                            <div class="mini-pie-caption">
+                                <span>Executado</span>
+                                <strong id="mini-pie-faf-label">0,0%</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card kpi-card instrument-summary-card convenio">
-                        <div class="kpi-title"><i class="fas fa-map-marked-alt me-2"></i>UFs com Convênios ativos</div>
+                        <div class="kpi-title"><i class="fas fa-map-marked-alt" aria-hidden="true"></i>UFs com Convênios ativos</div>
                         <div class="kpi-value" id="kpi-ufs-convenios-qtd">0</div>
                         <div class="uf-chip-list" id="kpi-ufs-convenios-lista"></div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card kpi-card instrument-summary-card faf">
-                        <div class="kpi-title"><i class="fas fa-map-marker-alt me-2"></i>UFs com FaF ativo</div>
+                        <div class="kpi-title"><i class="fas fa-map-marker-alt" aria-hidden="true"></i>UFs com FaF ativo</div>
                         <div class="kpi-value" id="kpi-ufs-faf-qtd">0</div>
                         <div class="uf-chip-list" id="kpi-ufs-faf-lista"></div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card kpi-card instrument-summary-card" style="border-left-color: #e67e22;">
-                        <div class="kpi-title"><i class="fas fa-gift me-2"></i>UFs com Doações</div>
+                    <div class="card kpi-card instrument-summary-card doacao">
+                        <div class="kpi-title"><i class="fas fa-gift" aria-hidden="true"></i>UFs com Doações</div>
                         <div class="kpi-value" id="kpi-ufs-doacao-qtd">0</div>
                         <div class="uf-chip-list" id="kpi-ufs-doacao-lista"></div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- CHART SECTION -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="d-flex justify-content-between align-items-end mb-2">
-                        <h4 class="mb-0 text-secondary">Execução por UF (%)</h4>
-                        <small class="text-muted"><i class="fas fa-mouse-pointer me-1"></i> Clique na barra para filtrar</small>
+            <section class="panel-section mb-4">
+                <div class="section-header">
+                    <div>
+                        <p class="section-eyebrow mb-1">Execução financeira</p>
+                        <h2>Execução por UF (%)</h2>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="chartExecucaoUF"></canvas>
-                    </div>
+                    <small class="text-muted"><i class="fas fa-mouse-pointer me-1" aria-hidden="true"></i> Clique na barra para filtrar</small>
                 </div>
-            </div>
+                <div class="chart-container">
+                    <canvas id="chartExecucaoUF"></canvas>
+                </div>
+            </section>
 
             <!-- FILTROS MULTI-SELECT -->
-            <div class="row" id="filter-row-section">
+            <section class="row" id="filter-row-section" aria-label="Filtros da tabela">
                 <div class="col-12">
                     <div class="filter-section">
-                        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
-                            <i class="fas fa-filter text-secondary me-2"></i>
-                            <strong>Filtros:</strong>
+                        <div class="filter-toolbar">
+                            <div class="filter-title">
+                                <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
+                                <strong>Filtros</strong>
+                            </div>
 
                             <div class="filter-search-actions">
-                                <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por descrição do objeto...">
-                                <button id="btnLimparFiltros" class="btn btn-outline-secondary">
-                                    <i class="fas fa-undo me-1"></i> Limpar
+                                <input type="text" id="filtroObjeto" class="form-control" placeholder="Buscar por descrição do objeto..." aria-label="Buscar por descrição do objeto">
+                                <button id="btnLimparFiltros" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                    <i class="fas fa-undo" aria-hidden="true"></i>
+                                    <span>Limpar</span>
                                 </button>
-                                <span id="filtroAtivoBadge" class="active-filter-badge">
-                                    <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1 cursor-pointer"></i>
+                                <span id="filtroAtivoBadge" class="active-filter-badge" role="button" tabindex="0">
+                                    <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1" aria-hidden="true"></i>
                                 </span>
                             </div>
                         </div>
@@ -197,80 +274,71 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- CARDS DINÂMICOS (PÓS-FILTRO) -->
-            <div class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-dinamicos-section">
+            <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-dinamicos-section" aria-label="Resumo da seleção atual">
                 <div class="col-12 w-100 mb-0">
-                    <span class="badge bg-secondary text-uppercase"><i class="fas fa-calculator me-1"></i> Resumo da Seleção Atual</span>
+                    <span class="section-pill"><i class="fas fa-calculator" aria-hidden="true"></i> Resumo da Seleção Atual</span>
                 </div>
-                <!-- Dinâmico 1: Repassado -->
                 <div class="col">
                     <div class="card kpi-card dynamic-card py-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="kpi-title mb-0" style="font-size: 0.75rem;">Repassado (Filtro)</div>
-                                <div class="kpi-value text-money" style="font-size: 1.1rem;" id="dyn-total-repassado">R$ 0,00</div>
-                            </div>
-                            <i class="fas fa-filter text-muted opacity-25 fa-2x"></i>
+                        <div>
+                            <div class="kpi-title mb-0">Repassado (Filtro)</div>
+                            <div class="kpi-value text-money" id="dyn-total-repassado">R$ 0,00</div>
                         </div>
+                        <i class="fas fa-filter card-watermark" aria-hidden="true"></i>
                     </div>
                 </div>
-                <!-- Dinâmico 2: Executado -->
                 <div class="col">
                     <div class="card kpi-card dynamic-card py-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="kpi-title mb-0" style="font-size: 0.75rem;">Executado (Filtro)</div>
-                                <div class="kpi-value text-success text-money" style="font-size: 1.1rem;" id="dyn-total-executado">R$ 0,00</div>
-                            </div>
-                            <i class="fas fa-coins text-success opacity-25 fa-2x"></i>
+                        <div>
+                            <div class="kpi-title mb-0">Executado (Filtro)</div>
+                            <div class="kpi-value text-success text-money" id="dyn-total-executado">R$ 0,00</div>
                         </div>
+                        <i class="fas fa-coins card-watermark text-success" aria-hidden="true"></i>
                     </div>
                 </div>
-                <!-- Dinâmico 3: Percentual -->
                 <div class="col">
                     <div class="card kpi-card dynamic-card py-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="kpi-title mb-0" style="font-size: 0.75rem;">% Exec. (Conv/FAF)</div>
-                                <div class="kpi-value" style="font-size: 1.1rem;" id="dyn-percentual">0,0%</div>
-                            </div>
-                            <i class="fas fa-percentage text-primary opacity-25 fa-2x"></i>
+                        <div>
+                            <div class="kpi-title mb-0">% Exec. (Conv/FAF)</div>
+                            <div class="kpi-value" id="dyn-percentual">0,0%</div>
                         </div>
+                        <i class="fas fa-percentage card-watermark text-primary" aria-hidden="true"></i>
                     </div>
                 </div>
-                <!-- Dinâmico 4: Doado -->
                 <div class="col">
-                    <div class="card kpi-card dynamic-card py-2" style="border-left-color: #e67e22;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="kpi-title mb-0" style="font-size: 0.75rem;">Doado (Filtro)</div>
-                                <div class="kpi-value text-warning text-money" style="font-size: 1.1rem;" id="dyn-total-doado">R$ 0,00</div>
-                            </div>
-                            <i class="fas fa-gift text-warning opacity-25 fa-2x"></i>
+                    <div class="card kpi-card dynamic-card py-2 kpi-card-warning">
+                        <div>
+                            <div class="kpi-title mb-0">Doado (Filtro)</div>
+                            <div class="kpi-value text-warning text-money" id="dyn-total-doado">R$ 0,00</div>
                         </div>
+                        <i class="fas fa-gift card-watermark text-warning" aria-hidden="true"></i>
                     </div>
                 </div>
-                <!-- Dinâmico 5: Quantidade -->
                 <div class="col">
                     <div class="card kpi-card dynamic-card py-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="kpi-title mb-0" style="font-size: 0.75rem;">Qtd. Itens</div>
-                                <div class="kpi-value" style="font-size: 1.1rem;" id="dyn-qtd-itens">0</div>
-                            </div>
-                            <i class="fas fa-list-ol text-info opacity-25 fa-2x"></i>
+                        <div>
+                            <div class="kpi-title mb-0">Qtd. Itens</div>
+                            <div class="kpi-value" id="dyn-qtd-itens">0</div>
                         </div>
+                        <i class="fas fa-list-ol card-watermark text-info" aria-hidden="true"></i>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- TABELA -->
-            <div class="row mb-5">
+            <section class="row mb-5">
                 <div class="col-12">
                     <div class="table-container">
-                        <table id="tabelaItens" class="table table-striped table-hover w-100">
+                        <div class="section-header compact">
+                            <div>
+                                <p class="section-eyebrow mb-1">Itens financeiros</p>
+                                <h2>Base consolidada</h2>
+                            </div>
+                        </div>
+                        <table id="tabelaItens" class="table table-striped table-hover w-100 app-data-table">
                             <thead>
                                 <tr>
                                     <th class="text-center">Inst.</th>
@@ -289,57 +357,58 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </div> <!-- FIM VIEW DASHBOARD -->
+            </section>
+        </main>
 
         <!-- VIEW 2: DETALHAMENTO POR ESTADOS -->
-        <div id="view-detalhamento" class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <button class="btn btn-outline-secondary mb-3" onclick="toggleView('dashboard')">
-                        <i class="fas fa-arrow-left me-2"></i> Voltar ao Painel Geral
-                    </button>
-                    <h2 class="text-primary border-bottom pb-2">Detalhamento dos Recursos por Estado</h2>
+        <main id="view-detalhamento" class="container app-view">
+            <section class="view-heading">
+                <button type="button" class="btn btn-outline-secondary btn-icon-text pdf-hidden" onclick="toggleView('dashboard')">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    <span>Voltar ao Painel Geral</span>
+                </button>
+                <div>
+                    <p class="section-eyebrow mb-1">Estados e regiões</p>
+                    <h2>Detalhamento dos Recursos por Estado</h2>
                 </div>
-            </div>
+            </section>
             <div id="container-estados"></div>
-        </div> 
+        </main>
 
-        <!-- VIEW 3: RELATÓRIO DO ESTADO (NOVO) -->
-        <div id="view-estado-detalhe" class="container">
-            <div class="row mb-3" id="botoes-acao-relatorio">
-                <div class="col-12 d-flex justify-content-between align-items-center">
-                    <button class="btn btn-outline-secondary" onclick="toggleView('detalhamento')">
-                        <i class="fas fa-arrow-left me-2"></i> Voltar para Visão por Região
-                    </button>
-                    <button id="btn-export-pdf" class="btn btn-danger shadow-sm fw-bold" onclick="exportarRelatorioPDF()">
-                        <i class="fas fa-file-pdf me-2"></i> Exportar PDF
-                    </button>
-                </div>
+        <!-- VIEW 3: RELATÓRIO DO ESTADO -->
+        <main id="view-estado-detalhe" class="container app-view">
+            <div class="report-actions pdf-hidden" id="botoes-acao-relatorio">
+                <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('detalhamento')">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    <span>Voltar para Visão por Região</span>
+                </button>
+                <button id="btn-export-pdf" type="button" class="btn btn-danger btn-icon-text" onclick="exportarRelatorioPDF()">
+                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                    <span>Exportar PDF</span>
+                </button>
             </div>
-            
-            <!-- Wrapper de Conteúdo Interno -->
-            <div id="conteudo-relatorio-pdf" style="background-color: var(--bg-light); padding: 0px; border-radius: 8px;">
+
+            <div id="conteudo-relatorio-pdf" class="report-content">
                 <div class="row mb-4">
                     <div class="col-12">
                         <div id="estado-detalhe-header"></div>
                     </div>
                 </div>
-                
+
                 <div id="estado-detalhe-kpis" class="row mb-4"></div>
-                
+
                 <div id="estado-detalhe-listas"></div>
             </div>
-        </div>
+        </main>
 
         <!-- RODAPÉ -->
         <div class="container">
-            <footer class="text-center text-muted py-3 small border-top mt-4">
-                Painel de Dados - Atualizado em dezembro de 2025
+            <footer class="app-footer">
+                Painel de Dados - Atualizado em abril de 2026
             </footer>
         </div>
-        
-    </div> <!-- FIM WRAPPER PRINCIPAL -->
+
+    </div>
 
     <!-- SCRIPTS -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -353,6 +422,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script type="module" src="./frontend/js/app.js?v=20260428-2"></script>
+    <script type="module" src="./frontend/js/app.js?v=20260429-1"></script>
 </body>
 </html>
