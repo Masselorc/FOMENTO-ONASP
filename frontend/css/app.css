@@ -135,6 +135,21 @@ input:focus-visible,
     border-color: var(--color-primary);
 }
 
+.btn-budget-gold {
+    background: linear-gradient(180deg, #fff5d6 0%, #f2c15c 100%);
+    border-color: #c88a16;
+    box-shadow: 0 4px 12px rgba(176, 116, 8, 0.18);
+    color: #4f3300;
+}
+
+.btn-budget-gold:hover,
+.btn-budget-gold:focus {
+    background: linear-gradient(180deg, #f8d986 0%, #c98b18 100%);
+    border-color: #9a6508;
+    box-shadow: 0 6px 16px rgba(176, 116, 8, 0.25);
+    color: #2d1d00;
+}
+
 .btn-danger {
     background-color: var(--color-danger);
     border-color: var(--color-danger);
