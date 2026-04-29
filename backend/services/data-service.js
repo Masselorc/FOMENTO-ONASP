@@ -355,12 +355,14 @@ async function carregarPlanilhaOrcamento() {
         }
 
         const planilhaUrl = new URL(`../../${ARQUIVO_PLANILHA_ORCAMENTO}`, import.meta.url);
+        console.log('[Orçamento] URL da planilha:', planilhaUrl.href);
+        
         const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
         
         if (!resposta.ok) {
-            console.warn(`Planilha orçamentária não encontrada (${resposta.status}).`);
-            dadosOrcamentoCache = null;
-            return null;
+            throw new Error(
+                `Planilha orçamentária não encontrada. URL tentada: ${planilhaUrl.href}. Status HTTP: ${resposta.status}.`
+            );
         }
         
         const arrayBuffer = await resposta.arrayBuffer();
