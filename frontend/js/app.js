@@ -21,6 +21,7 @@ let estadoAtualPDF = '';
 let dadosFinanceirosValidados = false;
 let filtroTabelaAtual = null;
 let filtroDataTableRegistrado = false;
+const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
 let catalogoAplicacao = {
     configuracao: {},
     regioes: {},
@@ -34,6 +35,72 @@ function fecharMenuLateral() {
     const sidebar = document.getElementById('app-sidebar');
     const offcanvas = sidebar && window.bootstrap?.Offcanvas?.getInstance(sidebar);
     if (offcanvas) offcanvas.hide();
+}
+
+function obterUfsOrdenadasParaExportacao() {
+    const ufsPorRegiao = ORDEM_REGIOES.flatMap((regiao) => catalogoAplicacao.regioes?.[regiao] || []);
+    const ufsComDados = Array.from(new Set(dadosFaf.map((item) => item.uf).filter(Boolean))).sort();
+    const ufsOrdenadas = ufsPorRegiao.length ? ufsPorRegiao : ufsComDados;
+
+    return Array.from(new Set(ufsOrdenadas)).filter((uf) => (
+        catalogoAplicacao.nomesEstados?.[uf] || ufsComDados.includes(uf)
+    ));
+}
+
+function renderizarOpcoesExportacaoUf() {
+    const lista = document.getElementById('sidebar-uf-export-list');
+    if (!lista) return;
+
+    lista.innerHTML = '';
+
+    if (!dadosFinanceirosValidados) {
+        const aviso = document.createElement('span');
+        aviso.className = 'sidebar-helper-text';
+        aviso.textContent = 'Carregue uma planilha válida para exportar relatórios estaduais.';
+        lista.appendChild(aviso);
+        return;
+    }
+
+    obterUfsOrdenadasParaExportacao().forEach((uf) => {
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'sidebar-uf-option';
+        botao.textContent = uf;
+        botao.title = catalogoAplicacao.nomesEstados?.[uf] || uf;
+        botao.addEventListener('click', () => exportarRelatorioEstadoSelecionado(uf));
+        lista.appendChild(botao);
+    });
+}
+
+function abrirSelecaoUfExportacao() {
+    const painel = document.getElementById('sidebar-uf-export-panel');
+    const botao = document.getElementById('btn-menu-export-state-pdf');
+    if (!painel || !botao) return;
+
+    if (!dadosFinanceirosValidados) {
+        mostrarAlertaCarregamentoPlanilha(
+            'Dados financeiros indisponiveis: carregue uma planilha valida antes de exportar relatórios estaduais.',
+            true,
+            'danger'
+        );
+        return;
+    }
+
+    renderizarOpcoesExportacaoUf();
+    const vaiAbrir = painel.classList.contains('d-none');
+    painel.classList.toggle('d-none', !vaiAbrir);
+    botao.setAttribute('aria-expanded', String(vaiAbrir));
+
+    if (vaiAbrir) {
+        painel.querySelector('button')?.focus();
+    }
+}
+
+async function exportarRelatorioEstadoSelecionado(uf) {
+    if (!dadosFinanceirosValidados) return;
+    abrirDetalheEstado(uf);
+    await new Promise(resolve => setTimeout(resolve, 180));
+    await exportarRelatorioPDF();
 }
 
 function atualizarNavegacao(viewName = 'dashboard') {
@@ -52,7 +119,7 @@ function atualizarNavegacao(viewName = 'dashboard') {
 
     const btnExportarRelatorioMenu = document.getElementById('btn-menu-export-state-pdf');
     if (btnExportarRelatorioMenu) {
-        const podeExportarRelatorio = dadosFinanceirosValidados && viewName === 'estado-detalhe';
+        const podeExportarRelatorio = dadosFinanceirosValidados;
         btnExportarRelatorioMenu.disabled = !podeExportarRelatorio;
         btnExportarRelatorioMenu.setAttribute('aria-disabled', String(!podeExportarRelatorio));
     }
@@ -206,6 +273,14 @@ async function carregarLogoParaPDF() {
             });
 
             atualizarNavegacao(document.body.dataset.currentView || 'dashboard');
+            renderizarOpcoesExportacaoUf();
+
+            if (!validado) {
+                const painelExportacaoUf = document.getElementById('sidebar-uf-export-panel');
+                const btnExportarRelatorioMenu = document.getElementById('btn-menu-export-state-pdf');
+                painelExportacaoUf?.classList.add('d-none');
+                btnExportarRelatorioMenu?.setAttribute('aria-expanded', 'false');
+            }
         }
 
         function bloquearDadosFinanceiros(error) {
@@ -355,7 +430,6 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
-            const ordemRegioes = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
             const corRegiao = {
                 "NORTE": "bg-norte",
                 "NORDESTE": "bg-nordeste",
@@ -364,7 +438,7 @@ async function carregarLogoParaPDF() {
                 "SUL": "bg-sul"
             };
 
-            ordemRegioes.forEach(regiao => {
+            ORDEM_REGIOES.forEach(regiao => {
                 const regionHeader = document.createElement('div');
                 regionHeader.className = 'region-title';
                 regionHeader.textContent = regiao;
@@ -1028,6 +1102,17 @@ async function carregarLogoParaPDF() {
             const maxPercentual = Math.max(100, ...dataValues);
             const maxEscala = Math.ceil(maxPercentual / 10) * 10;
 
+            if (chartInstancia) {
+                chartInstancia.$dadosPorUF = dadosPorUF;
+                chartInstancia.data.labels = labels;
+                chartInstancia.data.datasets[0].data = dataValues;
+                chartInstancia.data.datasets[0].backgroundColor = bgColors;
+                chartInstancia.data.datasets[0].borderColor = borderColors;
+                chartInstancia.options.scales.x.max = maxEscala;
+                chartInstancia.update();
+                return;
+            }
+
             chartInstancia = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -1051,7 +1136,8 @@ async function carregarLogoParaPDF() {
                         tooltip: {
                             callbacks: {
                                 label: (ctx) => {
-                                    const item = dadosPorUF[ctx.dataIndex];
+                                    const item = ctx.chart.$dadosPorUF?.[ctx.dataIndex];
+                                    if (!item) return '';
                                     return `Exec: ${formatPercent(item.percentual)} (${formatMoney(item.exec)})`;
                                 }
                             }
@@ -1061,14 +1147,16 @@ async function carregarLogoParaPDF() {
                         x: { beginAtZero: true, max: maxEscala, ticks: { callback: v => v + '%' } },
                         y: { grid: { display: false } }
                     },
-                    onClick: (e, els) => {
-                        if (els.length > 0) aplicarFiltroUF(labels[els[0].index]);
+                    onClick: (_e, els, chart) => {
+                        const uf = chart.data.labels?.[els[0]?.index];
+                        if (uf) aplicarFiltroUF(uf);
                     },
                     onHover: (e, els) => {
                         e.native.target.style.cursor = els[0] ? 'pointer' : 'default';
                     }
                 }
             });
+            chartInstancia.$dadosPorUF = dadosPorUF;
         }
 
         function initTable(data) {
@@ -1136,15 +1224,52 @@ async function carregarLogoParaPDF() {
 
         // --- LÓGICA MULTI-SELECT ---
 
+        function obterRegiaoPorUf(uf) {
+            return ORDEM_REGIOES.find((regiao) => (catalogoAplicacao.regioes[regiao] || []).includes(uf)) || '';
+        }
+
+        function obterConfigFiltro(key, filtroAtual) {
+            const config = {
+                regiao: {
+                    checkAll: filtroAtual.checkAllRegiao,
+                    checkedValues: filtroAtual.checkedRegioes,
+                    itemClass: 'check-item-regiao'
+                },
+                instrumento: {
+                    checkAll: filtroAtual.checkAllInst,
+                    checkedValues: filtroAtual.checkedInsts,
+                    itemClass: 'check-item-instrumento'
+                },
+                uf: {
+                    checkAll: filtroAtual.checkAllUF,
+                    checkedValues: filtroAtual.checkedUFs,
+                    itemClass: 'check-item-uf'
+                }
+            };
+
+            return config[key];
+        }
+
+        function ordenarValoresFiltro(key, values) {
+            const valores = Array.from(new Set(values.filter(Boolean)));
+            if (key === 'regiao') {
+                return ORDEM_REGIOES.filter((regiao) => valores.includes(regiao));
+            }
+
+            return valores.sort();
+        }
+
         function populateMultiSelect(containerId, key, values, filtroAtual) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            const sortedValues = Array.from(new Set(values.filter(Boolean))).sort();
-            const checkAll = key === 'instrumento' ? filtroAtual.checkAllInst : filtroAtual.checkAllUF;
-            const checkedValues = key === 'instrumento' ? filtroAtual.checkedInsts : filtroAtual.checkedUFs;
+            const sortedValues = ordenarValoresFiltro(key, values);
+            const config = obterConfigFiltro(key, filtroAtual);
+            const checkAll = config.checkAll;
+            const checkedValues = config.checkedValues;
             const valoresSelecionadosValidos = sortedValues.filter((val) => checkAll || checkedValues.has(val));
-            const deveMarcarTodos = checkAll || valoresSelecionadosValidos.length === sortedValues.length;
+            const selecaoAnteriorFicouIndisponivel = checkedValues.size > 0 && valoresSelecionadosValidos.length === 0;
+            const deveMarcarTodos = checkAll || selecaoAnteriorFicouIndisponivel || valoresSelecionadosValidos.length === sortedValues.length;
 
             const allOption = document.createElement('div');
             allOption.className = 'visible-check-option check-all-option';
@@ -1171,7 +1296,7 @@ async function carregarLogoParaPDF() {
                 const safeId = escapeHtml(`chk-${key}-${idx}`);
                 const checked = deveMarcarTodos || checkedValues.has(val);
                 option.innerHTML = `
-                    <input class="form-check-input check-item-${key}" type="checkbox" value="${safeVal}" id="${safeId}" ${checked ? 'checked' : ''}>
+                    <input class="form-check-input ${config.itemClass}" type="checkbox" value="${safeVal}" id="${safeId}" ${checked ? 'checked' : ''}>
                     <label class="visible-check-label" for="${safeId}">
                         ${safeVal}
                     </label>
@@ -1181,19 +1306,21 @@ async function carregarLogoParaPDF() {
         }
 
         function itemPassaFiltrosParciais(item, filtro, ignorarKey) {
+            const regiaoItem = obterRegiaoPorUf(item.uf);
+            const matchRegiao = ignorarKey === 'regiao' || filtro.checkAllRegiao || filtro.checkedRegioes.has(regiaoItem);
             const matchUF = ignorarKey === 'uf' || filtro.checkAllUF || filtro.checkedUFs.has(item.uf);
             const matchInst = ignorarKey === 'instrumento' || filtro.checkAllInst || filtro.checkedInsts.has(item.instrumento);
             const matchTexto = filtro.textoNormalizado
                 ? normalizarBusca(item.objeto).includes(filtro.textoNormalizado)
                 : true;
 
-            return matchUF && matchInst && matchTexto;
+            return matchRegiao && matchUF && matchInst && matchTexto;
         }
 
         function obterValoresDisponiveisFiltro(key, filtro) {
             return dadosFaf
                 .filter((item) => itemPassaFiltrosParciais(item, filtro, key))
-                .map((item) => item[key])
+                .map((item) => key === 'regiao' ? obterRegiaoPorUf(item.uf) : item[key])
                 .filter(Boolean);
         }
 
@@ -1201,8 +1328,10 @@ async function carregarLogoParaPDF() {
             const setsIguais = (setA, setB) => setA.size === setB.size && Array.from(setA).every((valor) => setB.has(valor));
 
             return a.textoNormalizado === b.textoNormalizado
+                && a.checkAllRegiao === b.checkAllRegiao
                 && a.checkAllInst === b.checkAllInst
                 && a.checkAllUF === b.checkAllUF
+                && setsIguais(a.checkedRegioes, b.checkedRegioes)
                 && setsIguais(a.checkedInsts, b.checkedInsts)
                 && setsIguais(a.checkedUFs, b.checkedUFs);
         }
@@ -1210,9 +1339,13 @@ async function carregarLogoParaPDF() {
         function atualizarOpcoesFiltrosVisiveis(filtroBase = obterEstadoFiltroAtual()) {
             let filtroAtual = filtroBase;
 
-            for (let i = 0; i < 3; i++) {
-                const instrumentosDisponiveis = obterValoresDisponiveisFiltro('instrumento', filtroAtual);
-                populateMultiSelect('filtroInstrumentoOpcoes', 'instrumento', instrumentosDisponiveis, filtroAtual);
+            for (let i = 0; i < 4; i++) {
+                const regioesDisponiveis = obterValoresDisponiveisFiltro('regiao', filtroAtual);
+                populateMultiSelect('filtroRegiaoOpcoes', 'regiao', regioesDisponiveis, filtroAtual);
+
+                const filtroAposRegioes = obterEstadoFiltroAtual();
+                const instrumentosDisponiveis = obterValoresDisponiveisFiltro('instrumento', filtroAposRegioes);
+                populateMultiSelect('filtroInstrumentoOpcoes', 'instrumento', instrumentosDisponiveis, filtroAposRegioes);
 
                 const filtroAposInstrumentos = obterEstadoFiltroAtual();
                 const ufsDisponiveis = obterValoresDisponiveisFiltro('uf', filtroAposInstrumentos);
@@ -1230,12 +1363,15 @@ async function carregarLogoParaPDF() {
         }
 
         function obterEstadoFiltroAtual() {
+            const checkAllRegiao = document.getElementById('checkAll-regiao')?.checked ?? true;
             const checkAllInst = document.getElementById('checkAll-instrumento')?.checked ?? true;
             const checkAllUF = document.getElementById('checkAll-uf')?.checked ?? true;
 
             return {
                 texto: $('#filtroObjeto').val() || '',
                 textoNormalizado: normalizarBusca($('#filtroObjeto').val()),
+                checkAllRegiao,
+                checkedRegioes: new Set(Array.from(document.querySelectorAll('.check-item-regiao:checked')).map(cb => cb.value)),
                 checkAllInst,
                 checkedInsts: new Set(Array.from(document.querySelectorAll('.check-item-instrumento:checked')).map(cb => cb.value)),
                 checkAllUF,
@@ -1244,13 +1380,15 @@ async function carregarLogoParaPDF() {
         }
 
         function itemPassaFiltros(item, filtro) {
+            const regiaoItem = obterRegiaoPorUf(item.uf);
+            const matchRegiao = filtro.checkAllRegiao || filtro.checkedRegioes.has(regiaoItem);
             const matchUF = filtro.checkAllUF || filtro.checkedUFs.has(item.uf);
             const matchInst = filtro.checkAllInst || filtro.checkedInsts.has(item.instrumento);
             const matchTexto = filtro.textoNormalizado
                 ? normalizarBusca(item.objeto).includes(filtro.textoNormalizado)
                 : true;
 
-            return matchUF && matchInst && matchTexto;
+            return matchRegiao && matchUF && matchInst && matchTexto;
         }
 
         function obterDadosFiltrados(filtro = obterEstadoFiltroAtual()) {
@@ -1277,7 +1415,7 @@ async function carregarLogoParaPDF() {
         function setupEventListeners() {
             $(document).off('change.filtrosAplicacao');
 
-            ['instrumento', 'uf'].forEach(key => {
+            ['regiao', 'instrumento', 'uf'].forEach(key => {
                 $(document).on('change.filtrosAplicacao', `#checkAll-${key}`, function() {
                     const isChecked = $(this).is(':checked');
                     $(`.check-item-${key}`).prop('checked', isChecked);
@@ -1313,7 +1451,7 @@ async function carregarLogoParaPDF() {
                 tabelaInstancia.search('').columns().search('').draw();
             }
 
-            const anyFilterActive = !filtro.checkAllInst || !filtro.checkAllUF || filtro.textoNormalizado.length > 0;
+            const anyFilterActive = !filtro.checkAllRegiao || !filtro.checkAllInst || !filtro.checkAllUF || filtro.textoNormalizado.length > 0;
             
             if (anyFilterActive) {
                 $('#textoFiltroAtivo').text("Filtros Ativos");
@@ -1323,9 +1461,12 @@ async function carregarLogoParaPDF() {
             }
 
             atualizarCardsDinamicos(filtro);
+            renderChart(processarDadosAgregados(obterDadosFiltrados(filtro)).dadosPorUF);
     }
         
         function aplicarFiltroUF(uf) {
+            $(`#checkAll-regiao`).prop('checked', true);
+            $(`.check-item-regiao`).prop('checked', true);
             $(`#checkAll-uf`).prop('checked', false);
             $(`.check-item-uf`).prop('checked', false);
             $(`.check-item-uf[value="${uf}"]`).prop('checked', true);
@@ -1354,6 +1495,8 @@ async function carregarLogoParaPDF() {
 
 window.toggleView = toggleView;
 window.abrirDetalheEstado = abrirDetalheEstado;
+window.abrirSelecaoUfExportacao = abrirSelecaoUfExportacao;
+window.exportarRelatorioEstadoSelecionado = exportarRelatorioEstadoSelecionado;
 window.exportarDashboardPDF = exportarDashboardPDF;
 window.exportarRelatorioPDF = exportarRelatorioPDF;
 window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;

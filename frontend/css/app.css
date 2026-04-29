@@ -320,6 +320,51 @@ input:focus-visible,
     cursor: not-allowed;
 }
 
+.sidebar-uf-export-panel {
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+}
+
+.sidebar-helper-text {
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    margin: 0 0 0.65rem;
+}
+
+.sidebar-uf-grid {
+    display: grid;
+    gap: 0.45rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.sidebar-uf-grid .sidebar-helper-text {
+    grid-column: 1 / -1;
+}
+
+.sidebar-uf-option {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    color: var(--color-primary-strong);
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 700;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0.35rem;
+}
+
+.sidebar-uf-option:hover,
+.sidebar-uf-option:focus {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
+}
+
 .section-eyebrow {
     color: var(--color-muted);
     font-size: 0.72rem;
@@ -642,7 +687,7 @@ input:focus-visible,
     align-items: start;
     display: grid;
     gap: 1rem;
-    grid-template-columns: minmax(220px, 0.78fr) minmax(320px, 1.42fr);
+    grid-template-columns: minmax(210px, 0.72fr) minmax(220px, 0.78fr) minmax(320px, 1.4fr);
 }
 
 .visible-filter-group {
