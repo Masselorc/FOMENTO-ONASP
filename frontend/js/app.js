@@ -1,8 +1,9 @@
 import {
     carregarCatalogoAplicacao,
     carregarDadosAplicacao,
-    processarArquivoPlanilhaSelecionado
-} from '../../backend/services/data-service.js?v=20260428-2';
+    processarArquivoPlanilhaSelecionado,
+    obterDadosOrcamento
+} from '../../backend/services/data-service.js?v=20260429-14';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -387,11 +388,15 @@ async function carregarLogoParaPDF() {
             document.getElementById('view-dashboard').style.display = 'none';
             document.getElementById('view-detalhamento').style.display = 'none';
             document.getElementById('view-estado-detalhe').style.display = 'none';
+            const viewOrcamento = document.getElementById('view-orcamento');
+            if (viewOrcamento) viewOrcamento.style.display = 'none';
 
             if (viewName === 'detalhamento') {
                 document.getElementById('view-detalhamento').style.display = 'block';
             } else if (viewName === 'estado-detalhe') {
                 document.getElementById('view-estado-detalhe').style.display = 'block';
+            } else if (viewName === 'orcamento') {
+                renderOrcamentoView();
             } else {
                 document.getElementById('view-dashboard').style.display = 'block';
             }
@@ -755,6 +760,132 @@ async function carregarLogoParaPDF() {
 
             // 5. Exibir a View
             toggleView('estado-detalhe');
+        }
+
+        // --- MÓDULO DE ORÇAMENTO 2026 ---
+        function renderOrcamentoView() {
+            let container = document.getElementById('view-orcamento');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'view-orcamento';
+                container.style.display = 'none';
+                
+                // Anexa o container na área principal de conteúdo
+                const mainWrapper = document.getElementById('main-wrapper') || document.body;
+                mainWrapper.appendChild(container);
+            }
+            
+            container.innerHTML = '';
+
+            const budgetData = obterDadosOrcamento();
+            if (!budgetData) {
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados orçamentários não estão disponíveis. Por favor, certifique-se de que o arquivo <strong>banco_dados_orcamentario_onasp.xlsx</strong> encontra-se armazenado na pasta base da aplicação.</div>';
+                container.style.display = 'block';
+                return;
+            }
+
+            // Lógica de agrupamento por ÁREA
+            const gruposArea = {};
+            budgetData.departments.forEach(dept => {
+                const area = dept.area && dept.area !== '-' ? dept.area : 'Outros / Não Especificado';
+                if (!gruposArea[area]) gruposArea[area] = [];
+                gruposArea[area].push(dept);
+            });
+
+            let tbodyHtml = '';
+            const areasOrdenadas = Object.keys(gruposArea).sort();
+
+            areasOrdenadas.forEach(area => {
+                // Cria a linha de cabeçalho do grupo (Área)
+                tbodyHtml += `
+                    <tr class="table-secondary">
+                        <td colspan="10" class="fw-bold text-dark text-uppercase border-bottom border-secondary">
+                            <i class="fas fa-layer-group me-2 text-primary"></i> ${escapeHtml(area)}
+                        </td>
+                    </tr>
+                `;
+
+                // Varre os itens correspondentes a essa área
+                gruposArea[area].forEach(dept => {
+                    const saldo = dept.allocated - dept.spent;
+                    const pct = dept.allocated > 0 ? (dept.spent / dept.allocated) * 100 : 0;
+                    
+                    tbodyHtml += `
+                        <tr>
+                            <td data-label="Item / Descrição" class="align-middle fw-bold text-dark border-end border-light" title="${escapeHtml(dept.descricao)}"><span class="truncate-text" style="max-width: 250px; display: inline-block;">${escapeHtml(dept.descricao)}</span></td>
+                            <td data-label="UF" class="align-middle text-center text-muted small">${escapeHtml(dept.uf)}</td>
+                            <td data-label="Instrumento" class="align-middle text-center text-muted small">${escapeHtml(dept.instrumento)}</td>
+                            <td data-label="Natureza" class="align-middle text-muted small border-end border-light">${escapeHtml(dept.natureza)}</td>
+                            <td data-label="Qtd." class="text-center align-middle">${escapeHtml(dept.quantidade)}</td>
+                            <td data-label="Valor Unit." class="text-end font-monospace align-middle text-muted small border-end border-light">${formatMoney(dept.valorUnitario)}</td>
+                            <td data-label="Alocado" class="text-end font-monospace text-primary align-middle">${formatMoney(dept.allocated)}</td>
+                            <td data-label="Executado" class="text-end font-monospace text-warning align-middle">${formatMoney(dept.spent)}</td>
+                            <td data-label="Saldo" class="text-end font-monospace text-success fw-bold align-middle">${formatMoney(saldo)}</td>
+                            <td data-label="%" class="text-center align-middle font-monospace small">${formatPercent(pct)}</td>
+                        </tr>
+                    `;
+                });
+            });
+
+            container.innerHTML = `
+                <div class="d-flex align-items-center pb-2 mt-2">
+                    <i class="fas fa-wallet text-primary fa-2x me-3"></i>
+                    <h2 class="text-primary mb-0 fw-bold">Planejamento Orçamentário 2026</h2>
+                </div>
+                <hr class="mt-2 mb-4">
+
+                <div class="row mb-4 g-3">
+                    <div class="col-md-4">
+                        <div class="card kpi-card bg-white border-primary border-start border-4 h-100 shadow-sm">
+                            <div class="kpi-title text-muted small text-uppercase fw-bold mb-1">Orçamento Total</div>
+                            <div class="kpi-value text-primary fs-3 fw-bold">${formatMoney(budgetData.total)}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card bg-white border-warning border-start border-4 h-100 shadow-sm">
+                            <div class="kpi-title text-muted small text-uppercase fw-bold mb-1">Valor Empenhado / Utilizado</div>
+                            <div class="kpi-value text-warning fs-3 fw-bold">${formatMoney(budgetData.used)}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card kpi-card bg-white border-success border-start border-4 h-100 shadow-sm">
+                            <div class="kpi-title text-muted small text-uppercase fw-bold mb-1">Saldo Disponível</div>
+                            <div class="kpi-value text-success fs-3 fw-bold">${formatMoney(budgetData.available)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-sitemap me-2"></i> Distribuição por Área de Destinação</h5>
+                    </div>
+                    <div class="card-body bg-light">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered table-hover bg-white mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="min-width: 250px;">Item / Descrição</th>
+                                        <th class="text-center">UF</th>
+                                        <th class="text-center">Instrumento</th>
+                                        <th>Natureza</th>
+                                        <th class="text-center">Qtd.</th>
+                                        <th class="text-end">Valor Unit.</th>
+                                        <th class="text-end">Alocado</th>
+                                        <th class="text-end">Executado</th>
+                                        <th class="text-end">Saldo</th>
+                                        <th class="text-center" style="width: 80px;">(%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tbodyHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.style.display = 'block';
         }
 
         async function exportarDashboardPDF() {
@@ -1551,3 +1682,4 @@ window.exportarRelatorioEstadoSelecionado = exportarRelatorioEstadoSelecionado;
 window.exportarDashboardPDF = exportarDashboardPDF;
 window.exportarRelatorioPDF = exportarRelatorioPDF;
 window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;
+window.abrirOrcamento = () => toggleView('orcamento');

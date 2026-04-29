@@ -13,6 +13,11 @@ const COLUNAS_CONVENIO = {
 };
 
 let catalogoAplicacaoCache = null;
+let dadosOrcamentoCache = null;
+
+export function obterDadosOrcamento() {
+    return dadosOrcamentoCache;
+}
 
 function obterXlsxGlobal() {
     if (typeof window.XLSX === 'undefined') {
@@ -225,6 +230,88 @@ async function carregarConveniosDaPlanilha(catalogoAplicacao) {
     return extrairConveniosDoWorkbook(workbook, catalogoAplicacao);
 }
 
+async function carregarPlanilhaOrcamento() {
+    try {
+        // Caminho relativo para encontrar a planilha na raiz da aplicação
+        const planilhaUrl = new URL(`../../banco_dados_orcamentario_onasp.xlsx`, import.meta.url);
+        const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
+        
+        if (!resposta.ok) {
+            console.warn(`Planilha orçamentária não encontrada (${resposta.status}).`);
+            return;
+        }
+        
+        const arrayBuffer = await resposta.arrayBuffer();
+        const workbook = await lerWorkbookDeArrayBuffer(arrayBuffer);
+        
+        let totalAllocated = 0;
+        let totalSpent = 0;
+        const departments = [];
+
+        // Varre todas as abas, ignorando as de totalizadores/metadados
+        const sheetNames = workbook.SheetNames.filter(name => name !== 'Geral' && name !== 'IND_PRORROG');
+
+        for (const sheetName of sheetNames) {
+            const sheet = workbook.Sheets[sheetName];
+            const linhas = obterLinhasPlanilha(sheet);
+            if (linhas.length < 2) continue;
+
+            // Identificação dinâmica das colunas para a aba atual
+            const headers = (linhas[0] || []).map(h => normalizarTexto(String(h)));
+            
+            const colUf = headers.findIndex(h => h === 'UF' || h === 'ESTADO');
+            const colInstrumento = headers.findIndex(h => h.includes('INSTRUMENTO'));
+            const colArea = headers.findIndex(h => h.includes('AREA') || h.includes('DEPARTAMENTO') || h.includes('SETOR') || h.includes('DESTINA'));
+            const colNatureza = headers.findIndex(h => h.includes('NATUREZA') || h.includes('CATEGORIA'));
+            const colDescricao = headers.findIndex(h => h.includes('DESCRI') || h.includes('OBJETO') || h.includes('ITEM') || h.includes('SERVICO'));
+            const colQtd = headers.findIndex(h => h.includes('QUANT') || h.includes('QTD'));
+            const colVlrUnit = headers.findIndex(h => h.includes('UNIT'));
+            const colAlocado = headers.findIndex(h => h.includes('PREVISTO') || h.includes('ALOCADO') || h.includes('ORCAMENTO'));
+            let colExecutado = headers.findIndex(h => h.includes('EXECUTADO') || h.includes('GASTO') || h.includes('UTILIZADO') || h.includes('EMPENHADO'));
+            
+            if (colExecutado === colAlocado) {
+                colExecutado = headers.findIndex((h, idx) => idx !== colAlocado && (h.includes('EXECUTADO') || h.includes('GASTO') || h.includes('UTILIZADO')));
+            }
+
+            const idxAloc = colAlocado >= 0 ? colAlocado : -1;
+            const idxDesc = colDescricao >= 0 ? colDescricao : -1;
+            if (idxAloc === -1 || idxDesc === -1) continue; // Pula a aba se faltarem colunas chave
+
+            for (let i = 1; i < linhas.length; i++) {
+                const linha = linhas[i];
+                if (!linha || !linha[idxDesc]) continue;
+
+                const descricao = String(linha[idxDesc]).trim();
+                if (normalizarTexto(descricao).includes('TOTAL') || !descricao || descricao === '-') continue;
+
+                const allocated = converterNumeroPlanilha(linha[idxAloc]);
+                const spent = colExecutado >= 0 ? converterNumeroPlanilha(linha[colExecutado]) : 0;
+                const uf = colUf >= 0 && linha[colUf] !== undefined ? String(linha[colUf]).trim() : sheetName;
+                const instrumento = colInstrumento >= 0 && linha[colInstrumento] !== undefined ? String(linha[colInstrumento]).trim() : '-';
+                const area = colArea >= 0 && linha[colArea] !== undefined ? String(linha[colArea]).trim() : '-';
+                const natureza = colNatureza >= 0 && linha[colNatureza] !== undefined ? String(linha[colNatureza]).trim() : '-';
+                const quantidade = colQtd >= 0 && linha[colQtd] !== undefined ? String(linha[colQtd]).trim() : '-';
+                const valorUnitario = colVlrUnit >= 0 && linha[colVlrUnit] !== undefined ? converterNumeroPlanilha(linha[colVlrUnit]) : 0;
+
+                if (allocated > 0 || spent > 0) {
+                    departments.push({ id: `${sheetName}-${i}`, uf, instrumento, area, natureza, descricao, quantidade, valorUnitario, allocated, spent });
+                    totalAllocated += allocated;
+                    totalSpent += spent;
+                }
+            }
+        }
+
+        dadosOrcamentoCache = {
+            total: totalAllocated,
+            used: totalSpent,
+            available: totalAllocated - totalSpent,
+            departments: departments
+        };
+    } catch (error) {
+        console.error('Erro ao ler e processar banco_dados_orcamentario_onasp.xlsx:', error);
+    }
+}
+
 export async function carregarCatalogoAplicacao() {
     if (catalogoAplicacaoCache) {
         return catalogoAplicacaoCache;
@@ -241,6 +328,7 @@ export async function carregarCatalogoAplicacao() {
 
 export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
+    await carregarPlanilhaOrcamento();
     const dadosConvenio = await carregarConveniosDaPlanilha(catalogo);
     console.log(`Convenios carregados da planilha: ${dadosConvenio.length} itens.`);
     return montarDadosComConvenios(catalogo, dadosConvenio);
@@ -248,6 +336,7 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
 
 export async function processarArquivoPlanilhaSelecionado(arquivoSelecionado, catalogoAplicacao = null) {
     const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
+    await carregarPlanilhaOrcamento();
     const workbook = await lerWorkbookDeArrayBuffer(await arquivoSelecionado.arrayBuffer());
     const dadosConvenio = extrairConveniosDoWorkbook(workbook, catalogo);
     return montarDadosComConvenios(catalogo, dadosConvenio);
