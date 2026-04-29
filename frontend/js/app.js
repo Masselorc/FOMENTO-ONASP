@@ -22,6 +22,12 @@ let dadosFinanceirosValidados = false;
 let filtroTabelaAtual = null;
 let filtroDataTableRegistrado = false;
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
+const TODAS_UFS_BRASIL = [
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+    "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+    "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+];
+const UFS_SEM_OUVIDORIA_ESPECIFICA = ["PA", "RO", "RR", "RS", "SC", "SE", "TO"];
 let catalogoAplicacao = {
     configuracao: {},
     regioes: {},
@@ -1251,7 +1257,9 @@ async function carregarLogoParaPDF() {
         }
 
         function ordenarValoresFiltro(key, values) {
-            const valores = Array.from(new Set(values.filter(Boolean)));
+            const valores = key === 'uf'
+                ? TODAS_UFS_BRASIL
+                : Array.from(new Set(values.filter(Boolean)));
             if (key === 'regiao') {
                 return ORDEM_REGIOES.filter((regiao) => valores.includes(regiao));
             }
@@ -1289,9 +1297,9 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
-            sortedValues.forEach((val, idx) => {
+            const criarOpcaoFiltro = (val, idx, extraClass = '') => {
                 const option = document.createElement('div');
-                option.className = 'visible-check-option';
+                option.className = `visible-check-option ${extraClass}`.trim();
                 const safeVal = escapeHtml(val);
                 const safeId = escapeHtml(`chk-${key}-${idx}`);
                 const checked = deveMarcarTodos || checkedValues.has(val);
@@ -1301,8 +1309,36 @@ async function carregarLogoParaPDF() {
                         ${safeVal}
                     </label>
                 `;
+                return option;
+            };
+
+            const ufsSemOuvidoriaDisponiveis = key === 'uf'
+                ? sortedValues.filter((uf) => UFS_SEM_OUVIDORIA_ESPECIFICA.includes(uf))
+                : [];
+            const valoresPrincipais = key === 'uf'
+                ? sortedValues.filter((uf) => !UFS_SEM_OUVIDORIA_ESPECIFICA.includes(uf))
+                : sortedValues;
+
+            valoresPrincipais.forEach((val, idx) => {
+                const option = criarOpcaoFiltro(val, idx);
                 container.appendChild(option);
             });
+
+            if (ufsSemOuvidoriaDisponiveis.length > 0) {
+                const grupoEspecial = document.createElement('div');
+                grupoEspecial.className = 'uf-special-group';
+                grupoEspecial.innerHTML = '<div class="uf-special-title">UFs sem Ouvidoria Específica</div>';
+
+                const opcoesGrupo = document.createElement('div');
+                opcoesGrupo.className = 'uf-special-options';
+
+                ufsSemOuvidoriaDisponiveis.forEach((val, idx) => {
+                    opcoesGrupo.appendChild(criarOpcaoFiltro(val, `sem-ouvidoria-${idx}`, 'uf-special-option'));
+                });
+
+                grupoEspecial.appendChild(opcoesGrupo);
+                container.appendChild(grupoEspecial);
+            }
         }
 
         function itemPassaFiltrosParciais(item, filtro, ignorarKey) {

@@ -732,6 +732,42 @@ input:focus-visible,
     border-color: rgba(23, 74, 124, 0.34);
 }
 
+.uf-special-group {
+    background: var(--color-warning-soft);
+    border: 1px solid rgba(179, 90, 0, 0.28);
+    border-radius: var(--radius);
+    display: flex;
+    flex: 1 1 100%;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.1rem;
+    padding: 0.65rem;
+}
+
+.uf-special-title {
+    color: var(--color-warning);
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.15;
+    text-transform: uppercase;
+}
+
+.uf-special-options {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.visible-check-option.uf-special-option {
+    border-color: rgba(179, 90, 0, 0.32);
+}
+
+.visible-check-option.uf-special-option:has(input:checked) {
+    background: #ffe2bd;
+    border-color: rgba(179, 90, 0, 0.56);
+}
+
 .visible-check-label {
     color: var(--color-text);
     cursor: pointer;
