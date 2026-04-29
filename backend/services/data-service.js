@@ -1,5 +1,7 @@
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 const ABA_RESUMO_CONVENIOS = 'Geral';
+const ARQUIVO_PLANILHA_ORCAMENTO = 'banco_dados_orcamentario_onasp.xlsx';
+const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
 const COLUNAS_CONVENIO = {
@@ -96,6 +98,25 @@ function obterLinhasPlanilha(sheet) {
         defval: null,
         blankrows: false
     });
+}
+
+function obterIndiceColuna(headers, regras) {
+    return headers.findIndex((header) => (
+        regras.some((regra) => (
+            regra.tipo === 'igual'
+                ? header === regra.valor
+                : header.includes(regra.valor)
+        ))
+    ));
+}
+
+function obterTextoCelula(linha, indice, fallback = '-') {
+    if (indice < 0 || linha[indice] === undefined || linha[indice] === null) {
+        return fallback;
+    }
+
+    const texto = limparTexto(linha[indice]);
+    return texto || fallback;
 }
 
 function extrairItensConvenioDaAba(sheet, uf, configuracao) {
@@ -232,12 +253,12 @@ async function carregarConveniosDaPlanilha(catalogoAplicacao) {
 
 async function carregarPlanilhaOrcamento() {
     try {
-        // Caminho relativo para encontrar a planilha na raiz da aplicação
-        const planilhaUrl = new URL(`../../banco_dados_orcamentario_onasp.xlsx`, import.meta.url);
+        const planilhaUrl = new URL(`../../${ARQUIVO_PLANILHA_ORCAMENTO}`, import.meta.url);
         const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
         
         if (!resposta.ok) {
             console.warn(`Planilha orçamentária não encontrada (${resposta.status}).`);
+            dadosOrcamentoCache = null;
             return;
         }
         
@@ -248,8 +269,10 @@ async function carregarPlanilhaOrcamento() {
         let totalSpent = 0;
         const departments = [];
 
-        // Varre todas as abas, ignorando as de totalizadores/metadados
-        const sheetNames = workbook.SheetNames.filter(name => !name.includes('IND_') && name !== 'Resumo');
+        const sheetNames = workbook.SheetNames.filter((name) => {
+            const nomeNormalizado = normalizarTexto(name);
+            return !nomeNormalizado.includes('IND_') && !ABAS_ORCAMENTO_IGNORADAS.has(nomeNormalizado);
+        });
 
         for (const sheetName of sheetNames) {
             const sheet = workbook.Sheets[sheetName];
@@ -262,7 +285,13 @@ async function carregarPlanilhaOrcamento() {
             
             for (let r = 0; r < Math.min(linhas.length, 10); r++) {
                 const rowText = (linhas[r] || []).map(c => String(c || '').toUpperCase()).join(' ');
-                if (rowText.includes('DESCRI') || rowText.includes('PREVISTO') || rowText.includes('ALOCADO')) {
+                if (
+                    rowText.includes('DESCRI')
+                    || rowText.includes('ITENS')
+                    || rowText.includes('PREVISTO')
+                    || rowText.includes('ALOCADO')
+                    || rowText.includes('VALOR TOTAL')
+                ) {
                     headerRowIndex = r;
                     headers = (linhas[r] || []).map(h => normalizarTexto(String(h)));
                     break;
@@ -274,15 +303,56 @@ async function carregarPlanilhaOrcamento() {
                 headerRowIndex = 0;
             }
             
-            const colUf = headers.findIndex(h => h === 'UF' || h === 'ESTADO');
-            const colInstrumento = headers.findIndex(h => h.includes('INSTRUMENTO'));
-            const colArea = headers.findIndex(h => h.includes('AREA') || h.includes('DEPARTAMENTO') || h.includes('SETOR') || h.includes('DESTINA'));
-            const colNatureza = headers.findIndex(h => h.includes('NATUREZA') || h.includes('CATEGORIA'));
-            const colDescricao = headers.findIndex(h => h.includes('DESCRI') || h.includes('OBJETO') || h.includes('ITEM') || h.includes('SERVICO') || h === 'NOME');
-            const colQtd = headers.findIndex(h => h.includes('QUANT') || h.includes('QTD'));
-            const colVlrUnit = headers.findIndex(h => h.includes('UNIT'));
-            const colAlocado = headers.findIndex(h => h.includes('PREVISTO') || h.includes('ALOCADO') || h.includes('ORCAMENTO'));
-            let colExecutado = headers.findIndex(h => h.includes('EXECUTADO') || h.includes('GASTO') || h.includes('UTILIZADO') || h.includes('EMPENHADO'));
+            const colUf = obterIndiceColuna(headers, [
+                { tipo: 'igual', valor: 'UF' },
+                { tipo: 'igual', valor: 'ESTADO' },
+                { tipo: 'inclui', valor: 'UF' },
+                { tipo: 'inclui', valor: 'ABRANGENCIA' }
+            ]);
+            const colInstrumento = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'INSTRUMENTO' },
+                { tipo: 'inclui', valor: 'MODALIDADE' }
+            ]);
+            const colArea = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'AREA' },
+                { tipo: 'inclui', valor: 'FRENTE' },
+                { tipo: 'inclui', valor: 'DEPARTAMENTO' },
+                { tipo: 'inclui', valor: 'SETOR' },
+                { tipo: 'inclui', valor: 'DESTINA' }
+            ]);
+            const colNatureza = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'NATUREZA' },
+                { tipo: 'inclui', valor: 'CATEGORIA' }
+            ]);
+            const colDescricao = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'DESCRI' },
+                { tipo: 'inclui', valor: 'OBJETO' },
+                { tipo: 'inclui', valor: 'ITENS' },
+                { tipo: 'inclui', valor: 'ITEM' },
+                { tipo: 'inclui', valor: 'SERVICO' },
+                { tipo: 'igual', valor: 'NOME' }
+            ]);
+            const colQtd = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'QUANT' },
+                { tipo: 'inclui', valor: 'QTD' }
+            ]);
+            const colVlrUnit = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'VALOR UNIT' },
+                { tipo: 'inclui', valor: 'UNITARIO' },
+                { tipo: 'inclui', valor: 'UNIT' }
+            ]);
+            const colAlocado = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'VALOR TOTAL' },
+                { tipo: 'inclui', valor: 'PREVISTO' },
+                { tipo: 'inclui', valor: 'ALOCADO' },
+                { tipo: 'inclui', valor: 'ORCAMENTO' }
+            ]);
+            let colExecutado = obterIndiceColuna(headers, [
+                { tipo: 'inclui', valor: 'EXECUTADO' },
+                { tipo: 'inclui', valor: 'GASTO' },
+                { tipo: 'inclui', valor: 'UTILIZADO' },
+                { tipo: 'inclui', valor: 'EMPENHADO' }
+            ]);
             
             if (colExecutado === colAlocado) {
                 colExecutado = headers.findIndex((h, idx) => idx !== colAlocado && (h.includes('EXECUTADO') || h.includes('GASTO') || h.includes('UTILIZADO')));
@@ -301,15 +371,26 @@ async function carregarPlanilhaOrcamento() {
 
                 const allocated = converterNumeroPlanilha(linha[idxAloc]);
                 const spent = colExecutado >= 0 ? converterNumeroPlanilha(linha[colExecutado]) : 0;
-                const uf = colUf >= 0 && linha[colUf] !== undefined ? String(linha[colUf]).trim() : sheetName;
-                const instrumento = colInstrumento >= 0 && linha[colInstrumento] !== undefined ? String(linha[colInstrumento]).trim() : '-';
-                const area = colArea >= 0 && linha[colArea] !== undefined ? String(linha[colArea]).trim() : '-';
-                const natureza = colNatureza >= 0 && linha[colNatureza] !== undefined ? String(linha[colNatureza]).trim() : '-';
-                const quantidade = colQtd >= 0 && linha[colQtd] !== undefined ? String(linha[colQtd]).trim() : '-';
+                const uf = obterTextoCelula(linha, colUf, sheetName);
+                const instrumento = obterTextoCelula(linha, colInstrumento);
+                const area = obterTextoCelula(linha, colArea);
+                const natureza = obterTextoCelula(linha, colNatureza);
+                const quantidade = obterTextoCelula(linha, colQtd);
                 const valorUnitario = colVlrUnit >= 0 && linha[colVlrUnit] !== undefined ? converterNumeroPlanilha(linha[colVlrUnit]) : 0;
 
                 if (allocated > 0 || spent > 0) {
-                    departments.push({ id: `${sheetName}-${i}`, uf, instrumento, area, natureza, descricao, quantidade, valorUnitario, allocated, spent });
+                    departments.push({
+                        id: `${sheetName}-${i}`,
+                        uf,
+                        instrumento,
+                        area,
+                        natureza,
+                        descricao,
+                        quantidade,
+                        valorUnitario,
+                        allocated,
+                        spent
+                    });
                     totalAllocated += allocated;
                     totalSpent += spent;
                 }
@@ -323,7 +404,8 @@ async function carregarPlanilhaOrcamento() {
             departments: departments
         };
     } catch (error) {
-        console.error('Erro ao ler e processar banco_dados_orcamentario_onasp.xlsx:', error);
+        dadosOrcamentoCache = null;
+        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_ORCAMENTO}:`, error);
     }
 }
 

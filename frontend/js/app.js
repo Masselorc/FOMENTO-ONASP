@@ -3,7 +3,7 @@ import {
     carregarDadosAplicacao,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260429-16';
+} from '../../backend/services/data-service.js?v=20260429-18';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -360,23 +360,29 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
+            let dadosAplicacaoCarregados = false;
+
             try {
                 dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
                 configurarEstadoDadosValidados(true);
                 ocultarAlertaCarregamentoPlanilha();
+                dadosAplicacaoCarregados = true;
             } catch (error) {
                 console.error('Falha ao carregar convenios da planilha:', error);
                 bloquearDadosFinanceiros(error);
-                return;
             }
 
-            initDashboard(dadosFaf);
-            renderDetailsView();
+            if (dadosAplicacaoCarregados) {
+                initDashboard(dadosFaf);
+                renderDetailsView();
+            }
         });
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
         function toggleView(viewName) {
-            if (!dadosFinanceirosValidados && viewName !== 'dashboard') {
+            const podeAbrirOrcamento = viewName === 'orcamento' && obterDadosOrcamento();
+
+            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento) {
                 mostrarAlertaCarregamentoPlanilha(
                     'Dados financeiros indisponiveis: carregue uma planilha valida antes de acessar detalhes ou exportacoes.',
                     true,
@@ -819,6 +825,16 @@ async function carregarLogoParaPDF() {
                     `;
                 });
             });
+
+            if (!tbodyHtml) {
+                tbodyHtml = `
+                    <tr>
+                        <td colspan="10" class="text-center text-muted py-4">
+                            Nenhum item orçamentário foi encontrado na planilha.
+                        </td>
+                    </tr>
+                `;
+            }
 
             container.innerHTML = `
                 <div class="d-flex align-items-center pb-2 mt-2">
