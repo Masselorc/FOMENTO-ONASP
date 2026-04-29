@@ -3,7 +3,7 @@ import {
     carregarDadosAplicacao,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260429-14';
+} from '../../backend/services/data-service.js?v=20260429-15';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
