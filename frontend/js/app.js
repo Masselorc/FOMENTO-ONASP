@@ -1239,11 +1239,6 @@ async function carregarLogoParaPDF() {
             }
 
             tbody.innerHTML = grupos.map((grupo) => {
-                const statusResumo = Object.entries(grupo.resumo.status)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([status, total]) => `<span>${escapeHtml(status)}: ${formatMoney(total)}</span>`)
-                    .join('');
-
                 const linhas = grupo.itens.map((item) => {
                     const itemId = String(item.id);
                     const podeExibirRastreio = itemPodeExibirRastreioOrcamento(item);
@@ -1286,7 +1281,6 @@ async function carregarLogoParaPDF() {
                                 <div class="budget-group-metrics">
                                     <span>${grupo.itens.length} item(ns)</span>
                                     <span>${formatMoney(grupo.resumo.total)}</span>
-                                    <span class="budget-group-status-summary">${statusResumo}</span>
                                 </div>
                             </div>
                         </td>
