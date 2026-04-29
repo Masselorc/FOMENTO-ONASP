@@ -190,17 +190,30 @@ function montarResumoOrcamento(itens) {
     const porNatureza = {};
     const porModalidade = {};
     const porFrente = {};
+    
+    let totalEmpenhado = 0;
+    let totalExecutado = 0;
 
     itens.forEach((item) => {
         incrementarResumoOrcamento(porStatus, 'status', item);
         incrementarResumoOrcamento(porNatureza, 'natureza', item);
         incrementarResumoOrcamento(porModalidade, 'modalidade', item);
         incrementarResumoOrcamento(porFrente, 'frente', item);
+        
+        // Soma itens que possuem empenho
+        if (item.empenho) {
+            totalEmpenhado += item.valorTotal;
+        }
+        
+        // Soma valores já executados
+        totalExecutado += item.valorExecutado || 0;
     });
 
     return {
         totalGeral: arredondarMoeda(itens.reduce((total, item) => total + item.valorTotal, 0)),
         totalItens: itens.length,
+        totalEmpenhado: arredondarMoeda(totalEmpenhado),
+        totalExecutado: arredondarMoeda(totalExecutado),
         porStatus: ordenarResumoOrcamento(porStatus),
         porNatureza: ordenarResumoOrcamento(porNatureza),
         porModalidade: ordenarResumoOrcamento(porModalidade),

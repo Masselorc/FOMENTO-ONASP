@@ -785,7 +785,6 @@ async function carregarLogoParaPDF() {
         const ETAPAS_RASTREIO_ORCAMENTO = [
             { chave: 'planejamento', rotulo: 'Planejamento', icone: 'fa-clipboard-list' },
             { chave: 'processo-sei', rotulo: 'Processo SEI autuado', icone: 'fa-folder-open', valorCampo: 'processoSei', linkCampo: 'linkProcessoSei', dataCampo: 'dataProcessoSei' },
-            { chave: 'demanda-formalizada', rotulo: 'Demanda formalizada', icone: 'fa-file-circle-check', valorCampo: 'demandaFormalizada', linkCampo: 'linkDemandaFormalizada', dataCampo: 'dataDemandaFormalizada' },
             { chave: 'estudo-tecnico', rotulo: 'ETP/Especificação concluída', icone: 'fa-magnifying-glass-chart', valorCampo: 'estudoTecnico', linkCampo: 'linkEstudoTecnico', dataCampo: 'dataEstudoTecnico' },
             { chave: 'termo-referencia', rotulo: 'Termo de Referência elaborado', icone: 'fa-file-lines', valorCampo: 'termoReferencia', linkCampo: 'linkTermoReferencia', dataCampo: 'dataTermoReferencia' },
             { chave: 'pesquisa-precos', rotulo: 'Pesquisa de preços concluída', icone: 'fa-tags', valorCampo: 'pesquisaPrecos', linkCampo: 'linkPesquisaPrecos', dataCampo: 'dataPesquisaPrecos' },
@@ -948,7 +947,6 @@ async function carregarLogoParaPDF() {
                     { url: item.linkProforParecerConjur, rotulo: 'CONJ', titulo: item.proforParecerConjur || 'Parecer jurídico (CONJUR)', icone: 'fa-gavel' },
                     { url: item.linkProforPublicacaoGabsec, rotulo: 'PUB', titulo: item.proforPublicacaoGabsec || 'Publicação (GABSEC)', icone: 'fa-newspaper' }
                 ] : []),
-                { url: item.linkDemandaFormalizada, rotulo: 'DFD', titulo: item.demandaFormalizada || 'Demanda formalizada', icone: 'fa-file-circle-check' },
                 { url: item.linkEstudoTecnico, rotulo: 'ETP', titulo: item.estudoTecnico || 'ETP/Especificação', icone: 'fa-magnifying-glass-chart' },
                 { url: item.linkTermoReferencia, rotulo: 'TR', titulo: item.termoReferencia || 'Termo de Referência', icone: 'fa-file-lines' },
                 { url: item.linkPesquisaPrecos, rotulo: 'PESQ', titulo: item.pesquisaPrecos || 'Pesquisa de preços', icone: 'fa-tags' },
@@ -1112,13 +1110,6 @@ async function carregarLogoParaPDF() {
                 || statusOrcamentoContem(item, ['estudo tecnico', 'especificacao'])
                 || statusOrcamentoTemToken(item, 'etp')
             ) return obterIndiceEtapaRastreioPorChave('estudo-tecnico');
-
-            if (
-                possuiValorOrcamento(item.demandaFormalizada)
-                || possuiValorOrcamento(item.linkDemandaFormalizada)
-                || statusOrcamentoContem(item, ['demanda formalizada', 'formalizacao da demanda'])
-                || statusOrcamentoTemToken(item, 'dfd')
-            ) return obterIndiceEtapaRastreioPorChave('demanda-formalizada');
 
             if (
                 possuiValorOrcamento(item.processoSei)
@@ -1333,8 +1324,9 @@ async function carregarLogoParaPDF() {
 
             const resumo = budgetData.resumo || {};
             const filtros = budgetData.filtros || { status: [], naturezas: [], modalidades: [] };
+            const totalEmpenhado = resumo.totalEmpenhado || 0;
+            const totalExecutado = resumo.totalExecutado || 0;
             const totalEmExecucao = obterTotalResumoOrcamento(resumo.porStatus, 'Em execução');
-            const totalPlanejado = obterTotalResumoOrcamento(resumo.porStatus, 'Planejado');
             const totalCapital = obterTotalResumoOrcamento(resumo.porNatureza, 'Capital');
             const totalCusteio = obterTotalResumoOrcamento(resumo.porNatureza, 'Custeio');
 
@@ -1343,7 +1335,6 @@ async function carregarLogoParaPDF() {
                     <div>
                         <p class="section-eyebrow mb-1">Planejamento anual</p>
                         <h2>Planejamento Orçamentário 2026</h2>
-                        <p>Base consolidada da aba ${escapeHtml(budgetData.aba || 'Base_Dados')}</p>
                     </div>
                     <div class="intro-badges" aria-label="Resumo da base de orçamento">
                         <span><i class="fas fa-layer-group" aria-hidden="true"></i> ${resumo.porFrente?.length || 0} frentes</span>
@@ -1369,16 +1360,23 @@ async function carregarLogoParaPDF() {
                     </div>
                     <div class="col">
                         <div class="card kpi-card kpi-card-warning">
-                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Valor Empenhado</div>
+                            <div class="kpi-title"><i class="fas fa-hourglass-half" aria-hidden="true"></i>Valor em Execução</div>
                             <div class="kpi-value text-money text-warning">${formatMoney(totalEmExecucao)}</div>
-                            <div class="kpi-desc">Total em execução</div>
+                            <div class="kpi-desc">Em processamento</div>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="card kpi-card">
-                            <div class="kpi-title"><i class="fas fa-clipboard-list" aria-hidden="true"></i>Planejado</div>
-                            <div class="kpi-value text-money">${formatMoney(totalPlanejado)}</div>
-                            <div class="kpi-desc">Ainda sem execução registrada</div>
+                        <div class="card kpi-card kpi-card-info">
+                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Valor Empenhado</div>
+                            <div class="kpi-value text-money text-info">${formatMoney(totalEmpenhado)}</div>
+                            <div class="kpi-desc">Itens com empenho registrado</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-success">
+                            <div class="kpi-title"><i class="fas fa-check-circle" aria-hidden="true"></i>Valor Executado</div>
+                            <div class="kpi-value text-money text-success">${formatMoney(totalExecutado)}</div>
+                            <div class="kpi-desc">Já liquidado/pago</div>
                         </div>
                     </div>
                     <div class="col">
