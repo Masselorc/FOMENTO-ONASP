@@ -1476,10 +1476,16 @@ async function carregarLogoParaPDF() {
 
         function atualizarContadoresUfsPorInstrumento(dadosFiltrados) {
             const resumoInstrumentos = calcularResumoInstrumentos(dadosFiltrados);
+            const ufsComAlgumInstrumento = new Set([
+                ...resumoInstrumentos.convenios.ufs,
+                ...resumoInstrumentos.faf.ufs,
+                ...resumoInstrumentos.doacao.ufs
+            ]);
 
             $('#count-convenios').text(resumoInstrumentos.convenios.quantidadeUfs);
             $('#count-faf').text(resumoInstrumentos.faf.quantidadeUfs);
             $('#count-doacoes').text(resumoInstrumentos.doacao.quantidadeUfs);
+            $('#count-ufs-instrumentos').text(ufsComAlgumInstrumento.size);
         }
 
         function atualizarCardsDinamicos(filtro = obterEstadoFiltroAtual()) {
