@@ -765,16 +765,9 @@ async function carregarLogoParaPDF() {
         // --- MÓDULO DE ORÇAMENTO 2026 ---
         function renderOrcamentoView() {
             let container = document.getElementById('view-orcamento');
-            if (!container) {
-                container = document.createElement('div');
-                container.id = 'view-orcamento';
-                container.style.display = 'none';
-                
-                // Anexa o container na área principal de conteúdo
-                const mainWrapper = document.getElementById('main-wrapper') || document.body;
-                mainWrapper.appendChild(container);
-            }
+            if (!container) return;
             
+            container.style.display = 'block';
             container.innerHTML = '';
 
             const budgetData = obterDadosOrcamento();

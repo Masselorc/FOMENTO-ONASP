@@ -46,7 +46,7 @@
                     <i class="fas fa-map" aria-hidden="true"></i>
                     <span>Detalhamento por Estado</span>
                 </button>
-                <button type="button" class="sidebar-link app-menu-link" data-view="orcamento" onclick="abrirOrcamento()">
+                <button type="button" class="sidebar-link app-menu-link" data-view="orcamento" onclick="toggleView('orcamento')">
                     <i class="fas fa-wallet" aria-hidden="true"></i>
                     <span>Orçamento 2026</span>
                 </button>
@@ -433,6 +433,10 @@
 
                 <div id="estado-detalhe-listas"></div>
             </div>
+        </main>
+
+        <!-- VIEW 4: ORÇAMENTO 2026 -->
+        <main id="view-orcamento" class="container app-view" style="display:none;">
         </main>
 
         <!-- RODAPÉ -->

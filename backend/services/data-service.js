@@ -249,21 +249,36 @@ async function carregarPlanilhaOrcamento() {
         const departments = [];
 
         // Varre todas as abas, ignorando as de totalizadores/metadados
-        const sheetNames = workbook.SheetNames.filter(name => name !== 'Geral' && name !== 'IND_PRORROG');
+        const sheetNames = workbook.SheetNames.filter(name => !name.includes('IND_') && name !== 'Resumo');
 
         for (const sheetName of sheetNames) {
             const sheet = workbook.Sheets[sheetName];
             const linhas = obterLinhasPlanilha(sheet);
             if (linhas.length < 2) continue;
 
-            // Identificação dinâmica das colunas para a aba atual
-            const headers = (linhas[0] || []).map(h => normalizarTexto(String(h)));
+            // Busca a linha de cabeçalho dinamicamente
+            let headerRowIndex = -1;
+            let headers = [];
+            
+            for (let r = 0; r < Math.min(linhas.length, 10); r++) {
+                const rowText = (linhas[r] || []).map(c => String(c || '').toUpperCase()).join(' ');
+                if (rowText.includes('DESCRI') || rowText.includes('PREVISTO') || rowText.includes('ALOCADO')) {
+                    headerRowIndex = r;
+                    headers = (linhas[r] || []).map(h => normalizarTexto(String(h)));
+                    break;
+                }
+            }
+
+            if (headerRowIndex === -1) {
+                headers = (linhas[0] || []).map(h => normalizarTexto(String(h)));
+                headerRowIndex = 0;
+            }
             
             const colUf = headers.findIndex(h => h === 'UF' || h === 'ESTADO');
             const colInstrumento = headers.findIndex(h => h.includes('INSTRUMENTO'));
             const colArea = headers.findIndex(h => h.includes('AREA') || h.includes('DEPARTAMENTO') || h.includes('SETOR') || h.includes('DESTINA'));
             const colNatureza = headers.findIndex(h => h.includes('NATUREZA') || h.includes('CATEGORIA'));
-            const colDescricao = headers.findIndex(h => h.includes('DESCRI') || h.includes('OBJETO') || h.includes('ITEM') || h.includes('SERVICO'));
+            const colDescricao = headers.findIndex(h => h.includes('DESCRI') || h.includes('OBJETO') || h.includes('ITEM') || h.includes('SERVICO') || h === 'NOME');
             const colQtd = headers.findIndex(h => h.includes('QUANT') || h.includes('QTD'));
             const colVlrUnit = headers.findIndex(h => h.includes('UNIT'));
             const colAlocado = headers.findIndex(h => h.includes('PREVISTO') || h.includes('ALOCADO') || h.includes('ORCAMENTO'));
@@ -277,12 +292,12 @@ async function carregarPlanilhaOrcamento() {
             const idxDesc = colDescricao >= 0 ? colDescricao : -1;
             if (idxAloc === -1 || idxDesc === -1) continue; // Pula a aba se faltarem colunas chave
 
-            for (let i = 1; i < linhas.length; i++) {
+            for (let i = headerRowIndex + 1; i < linhas.length; i++) {
                 const linha = linhas[i];
-                if (!linha || !linha[idxDesc]) continue;
+                if (!linha || linha[idxDesc] === null || linha[idxDesc] === undefined) continue;
 
                 const descricao = String(linha[idxDesc]).trim();
-                if (normalizarTexto(descricao).includes('TOTAL') || !descricao || descricao === '-') continue;
+                if (!descricao || descricao === '-' || normalizarTexto(descricao).includes('TOTAL')) continue;
 
                 const allocated = converterNumeroPlanilha(linha[idxAloc]);
                 const spent = colExecutado >= 0 ? converterNumeroPlanilha(linha[colExecutado]) : 0;
