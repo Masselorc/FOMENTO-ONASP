@@ -111,6 +111,14 @@ function obterIndiceColuna(headers, regras) {
     ));
 }
 
+function obterIndiceColunaComTodos(headers, conjuntosTermos, termosIgnorados = []) {
+    const conjuntos = Array.isArray(conjuntosTermos[0]) ? conjuntosTermos : [conjuntosTermos];
+    return headers.findIndex((header) => (
+        !termosIgnorados.some((termo) => header.includes(termo))
+            && conjuntos.some((termos) => termos.every((termo) => header.includes(termo)))
+    ));
+}
+
 function obterTextoCelula(linha, indice, fallback = '-') {
     if (indice < 0 || linha[indice] === undefined || linha[indice] === null) {
         return fallback;
@@ -118,6 +126,49 @@ function obterTextoCelula(linha, indice, fallback = '-') {
 
     const texto = limparTexto(linha[indice]);
     return texto || fallback;
+}
+
+function formatarDataPtBr(data, usarUtc = false) {
+    const dia = usarUtc ? data.getUTCDate() : data.getDate();
+    const mes = usarUtc ? data.getUTCMonth() + 1 : data.getMonth() + 1;
+    const ano = usarUtc ? data.getUTCFullYear() : data.getFullYear();
+    return `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${ano}`;
+}
+
+function formatarDataPlanilha(valor) {
+    if (valor === undefined || valor === null || valor === '') {
+        return '';
+    }
+
+    if (valor instanceof Date && !Number.isNaN(valor.getTime())) {
+        return formatarDataPtBr(valor);
+    }
+
+    if (typeof valor === 'number' && Number.isFinite(valor)) {
+        if (valor <= 0) return '';
+        const xlsx = typeof window !== 'undefined' ? window.XLSX : null;
+        const dataFormatada = xlsx?.SSF?.format?.('dd/mm/yyyy', valor);
+        if (dataFormatada) return limparTexto(dataFormatada);
+
+        const data = new Date(Date.UTC(1899, 11, 30) + Math.round(valor * 86400000));
+        return formatarDataPtBr(data, true);
+    }
+
+    const texto = limparTexto(valor);
+    const textoNumerico = texto.replace(',', '.');
+    if (/^\d+([.,]\d+)?$/.test(texto) && Number(textoNumerico) > 20000 && Number(textoNumerico) < 80000) {
+        return formatarDataPlanilha(Number(textoNumerico));
+    }
+
+    return texto;
+}
+
+function obterDataCelula(linha, indice) {
+    if (indice < 0 || linha[indice] === undefined || linha[indice] === null) {
+        return '';
+    }
+
+    return formatarDataPlanilha(linha[indice]);
 }
 
 function incrementarResumoOrcamento(resumo, chave, item) {
@@ -366,10 +417,87 @@ async function carregarPlanilhaOrcamento() {
         const colStatus = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'STATUS' }]);
         const colProcessoSei = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'PROCESSO SEI' }]);
         const colLinkProcessoSei = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'LINK DO PROCESSO SEI' }]);
+        const colDataProcessoSei = obterIndiceColunaComTodos(headers, ['DATA', 'PROCESSO', 'SEI']);
+        const colDemandaFormalizada = obterIndiceColunaComTodos(headers, [
+            ['DEMANDA'],
+            ['DFD'],
+            ['FORMALIZACAO', 'DEMANDA']
+        ], ['DATA', 'LINK']);
+        const colLinkDemandaFormalizada = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'DEMANDA'],
+            ['LINK', 'DFD']
+        ]);
+        const colDataDemandaFormalizada = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'DEMANDA'],
+            ['DATA', 'DFD']
+        ]);
+        const colEstudoTecnico = obterIndiceColunaComTodos(headers, [
+            ['ETP'],
+            ['ESTUDO', 'TECNICO'],
+            ['ESPECIFICACAO']
+        ], ['DATA', 'LINK']);
+        const colLinkEstudoTecnico = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'ETP'],
+            ['LINK', 'ESTUDO', 'TECNICO'],
+            ['LINK', 'ESPECIFICACAO']
+        ]);
+        const colDataEstudoTecnico = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'ETP'],
+            ['DATA', 'ESTUDO', 'TECNICO'],
+            ['DATA', 'ESPECIFICACAO']
+        ]);
+        const colTermoReferencia = obterIndiceColunaComTodos(headers, ['TERMO', 'REFERENCIA'], ['DATA', 'LINK']);
+        const colLinkTermoReferencia = obterIndiceColunaComTodos(headers, ['LINK', 'TERMO', 'REFERENCIA']);
+        const colDataTermoReferencia = obterIndiceColunaComTodos(headers, ['DATA', 'TERMO', 'REFERENCIA']);
+        const colPesquisaPrecos = obterIndiceColunaComTodos(headers, [
+            ['PESQUISA', 'PRECO'],
+            ['MAPA', 'PRECO'],
+            ['ORCAMENTO', 'ESTIMADO']
+        ], ['DATA', 'LINK']);
+        const colLinkPesquisaPrecos = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'PESQUISA', 'PRECO'],
+            ['LINK', 'MAPA', 'PRECO'],
+            ['LINK', 'ORCAMENTO', 'ESTIMADO']
+        ]);
+        const colDataPesquisaPrecos = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'PESQUISA', 'PRECO'],
+            ['DATA', 'MAPA', 'PRECO'],
+            ['DATA', 'ORCAMENTO', 'ESTIMADO']
+        ]);
+        const colAutorizacaoAutoridade = obterIndiceColunaComTodos(headers, [
+            ['AUTORIZ'],
+            ['APROVACAO'],
+            ['APROVADO']
+        ], ['DATA', 'LINK']);
+        const colLinkAutorizacaoAutoridade = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'AUTORIZ'],
+            ['LINK', 'APROVACAO'],
+            ['LINK', 'APROVADO']
+        ]);
+        const colDataAutorizacaoAutoridade = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'AUTORIZ'],
+            ['DATA', 'APROVACAO'],
+            ['DATA', 'APROVADO']
+        ]);
+        const colParecerJuridico = obterIndiceColunaComTodos(headers, ['PARECER'], ['DATA', 'LINK']);
+        const colLinkParecerJuridico = obterIndiceColunaComTodos(headers, ['LINK', 'PARECER']);
+        const colDataParecerJuridico = obterIndiceColunaComTodos(headers, ['DATA', 'PARECER']);
         const colEmpenho = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'EMPENHO' }]);
         const colLinkEmpenho = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'LINK DO EMPENHO' }]);
+        const colDataEmpenho = obterIndiceColunaComTodos(headers, ['DATA', 'EMPENHO']);
+        const colContrato = obterIndiceColunaComTodos(headers, ['CONTRAT'], ['DATA', 'LINK']);
+        const colLinkContrato = obterIndiceColunaComTodos(headers, ['LINK', 'CONTRAT']);
+        const colDataContratacao = obterIndiceColunaComTodos(headers, ['DATA', 'CONTRAT']);
+        const colOrdemServico = obterIndiceColunaComTodos(headers, ['ORDEM', 'SERVICO'], ['DATA', 'LINK']);
+        const colLinkOrdemServico = obterIndiceColunaComTodos(headers, ['LINK', 'ORDEM', 'SERVICO']);
+        const colDataOrdemServico = obterIndiceColunaComTodos(headers, ['DATA', 'ORDEM', 'SERVICO']);
+        const colDataEntrega = obterIndiceColunaComTodos(headers, ['DATA', 'ENTREG']);
         const colOrdemBancaria = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'ORDEM BANCARIA' }]);
         const colLinkOrdemBancaria = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'LINK ORDEM BANCARIA' }]);
+        const colDataOrdemBancaria = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'ORDEM', 'BANCARIA'],
+            ['DATA', 'OB']
+        ]);
 
         if (colFrente < 0 || colDescricao < 0 || colValorTotal < 0) {
             throw new Error('A planilha de orcamento precisa conter as colunas Frente, Itens e Valor Total (R$).');
@@ -401,10 +529,38 @@ async function carregarPlanilhaOrcamento() {
                 status: obterTextoCelula(linha, colStatus, 'Não informado'),
                 processoSei: obterTextoCelula(linha, colProcessoSei, ''),
                 linkProcessoSei: obterTextoCelula(linha, colLinkProcessoSei, ''),
+                dataProcessoSei: obterDataCelula(linha, colDataProcessoSei),
+                demandaFormalizada: obterTextoCelula(linha, colDemandaFormalizada, ''),
+                linkDemandaFormalizada: obterTextoCelula(linha, colLinkDemandaFormalizada, ''),
+                dataDemandaFormalizada: obterDataCelula(linha, colDataDemandaFormalizada),
+                estudoTecnico: obterTextoCelula(linha, colEstudoTecnico, ''),
+                linkEstudoTecnico: obterTextoCelula(linha, colLinkEstudoTecnico, ''),
+                dataEstudoTecnico: obterDataCelula(linha, colDataEstudoTecnico),
+                termoReferencia: obterTextoCelula(linha, colTermoReferencia, ''),
+                linkTermoReferencia: obterTextoCelula(linha, colLinkTermoReferencia, ''),
+                dataTermoReferencia: obterDataCelula(linha, colDataTermoReferencia),
+                pesquisaPrecos: obterTextoCelula(linha, colPesquisaPrecos, ''),
+                linkPesquisaPrecos: obterTextoCelula(linha, colLinkPesquisaPrecos, ''),
+                dataPesquisaPrecos: obterDataCelula(linha, colDataPesquisaPrecos),
+                autorizacaoAutoridade: obterTextoCelula(linha, colAutorizacaoAutoridade, ''),
+                linkAutorizacaoAutoridade: obterTextoCelula(linha, colLinkAutorizacaoAutoridade, ''),
+                dataAutorizacaoAutoridade: obterDataCelula(linha, colDataAutorizacaoAutoridade),
+                parecerJuridico: obterTextoCelula(linha, colParecerJuridico, ''),
+                linkParecerJuridico: obterTextoCelula(linha, colLinkParecerJuridico, ''),
+                dataParecerJuridico: obterDataCelula(linha, colDataParecerJuridico),
                 empenho: obterTextoCelula(linha, colEmpenho, ''),
                 linkEmpenho: obterTextoCelula(linha, colLinkEmpenho, ''),
+                dataEmpenho: obterDataCelula(linha, colDataEmpenho),
+                contrato: obterTextoCelula(linha, colContrato, ''),
+                linkContrato: obterTextoCelula(linha, colLinkContrato, ''),
+                dataContratacao: obterDataCelula(linha, colDataContratacao),
+                ordemServico: obterTextoCelula(linha, colOrdemServico, ''),
+                linkOrdemServico: obterTextoCelula(linha, colLinkOrdemServico, ''),
+                dataOrdemServico: obterDataCelula(linha, colDataOrdemServico),
+                dataEntrega: obterDataCelula(linha, colDataEntrega),
                 ordemBancaria: obterTextoCelula(linha, colOrdemBancaria, ''),
-                linkOrdemBancaria: obterTextoCelula(linha, colLinkOrdemBancaria, '')
+                linkOrdemBancaria: obterTextoCelula(linha, colLinkOrdemBancaria, ''),
+                dataOrdemBancaria: obterDataCelula(linha, colDataOrdemBancaria)
             };
         }).filter(Boolean);
 

@@ -4,7 +4,7 @@ import {
     carregarDadosOrcamento,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260429-19';
+} from '../../backend/services/data-service.js?v=20260429-21';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -23,6 +23,7 @@ let estadoAtualPDF = '';
 let dadosFinanceirosValidados = false;
 let filtroTabelaAtual = null;
 let filtroDataTableRegistrado = false;
+let orcamentoItemRastreioAberto = null;
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
 const TODAS_UFS_BRASIL = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
@@ -781,6 +782,22 @@ async function carregarLogoParaPDF() {
         }
 
         // --- MÓDULO DE ORÇAMENTO 2026 ---
+        const ETAPAS_RASTREIO_ORCAMENTO = [
+            { chave: 'planejamento', rotulo: 'Planejamento', icone: 'fa-clipboard-list' },
+            { chave: 'processo-sei', rotulo: 'Processo SEI autuado', icone: 'fa-folder-open', valorCampo: 'processoSei', linkCampo: 'linkProcessoSei', dataCampo: 'dataProcessoSei' },
+            { chave: 'demanda-formalizada', rotulo: 'Demanda formalizada', icone: 'fa-file-circle-check', valorCampo: 'demandaFormalizada', linkCampo: 'linkDemandaFormalizada', dataCampo: 'dataDemandaFormalizada' },
+            { chave: 'estudo-tecnico', rotulo: 'ETP/Especificação concluída', icone: 'fa-magnifying-glass-chart', valorCampo: 'estudoTecnico', linkCampo: 'linkEstudoTecnico', dataCampo: 'dataEstudoTecnico' },
+            { chave: 'termo-referencia', rotulo: 'Termo de Referência elaborado', icone: 'fa-file-lines', valorCampo: 'termoReferencia', linkCampo: 'linkTermoReferencia', dataCampo: 'dataTermoReferencia' },
+            { chave: 'pesquisa-precos', rotulo: 'Pesquisa de preços concluída', icone: 'fa-tags', valorCampo: 'pesquisaPrecos', linkCampo: 'linkPesquisaPrecos', dataCampo: 'dataPesquisaPrecos' },
+            { chave: 'autorizacao-autoridade', rotulo: 'Autorização da autoridade competente', icone: 'fa-user-check', valorCampo: 'autorizacaoAutoridade', linkCampo: 'linkAutorizacaoAutoridade', dataCampo: 'dataAutorizacaoAutoridade' },
+            { chave: 'parecer-juridico', rotulo: 'Parecer jurídico', icone: 'fa-gavel', valorCampo: 'parecerJuridico', linkCampo: 'linkParecerJuridico', dataCampo: 'dataParecerJuridico' },
+            { chave: 'empenhado', rotulo: 'Empenhado', icone: 'fa-file-invoice-dollar', valorCampo: 'empenho', linkCampo: 'linkEmpenho', dataCampo: 'dataEmpenho' },
+            { chave: 'contratado', rotulo: 'Contratado', icone: 'fa-file-signature', valorCampo: 'contrato', linkCampo: 'linkContrato', dataCampo: 'dataContratacao' },
+            { chave: 'ordem-servico', rotulo: 'Ordem de Serviço Emitida', icone: 'fa-clipboard-check', valorCampo: 'ordemServico', linkCampo: 'linkOrdemServico', dataCampo: 'dataOrdemServico' },
+            { chave: 'entregue', rotulo: 'Entregue', icone: 'fa-box-open', dataCampo: 'dataEntrega' },
+            { chave: 'ordem-bancaria', rotulo: 'Ordem Bancária realizada', icone: 'fa-money-check-alt', valorCampo: 'ordemBancaria', linkCampo: 'linkOrdemBancaria', dataCampo: 'dataOrdemBancaria' }
+        ];
+
         function obterTotalResumoOrcamento(resumos, nome) {
             const chave = normalizarBusca(nome);
             return resumos?.find((item) => normalizarBusca(item.nome) === chave)?.total || 0;
@@ -833,7 +850,15 @@ async function carregarLogoParaPDF() {
                     item.abrangencia,
                     item.status,
                     item.processoSei,
+                    item.demandaFormalizada,
+                    item.estudoTecnico,
+                    item.termoReferencia,
+                    item.pesquisaPrecos,
+                    item.autorizacaoAutoridade,
+                    item.parecerJuridico,
                     item.empenho,
+                    item.contrato,
+                    item.ordemServico,
                     item.ordemBancaria
                 ].join(' '));
 
@@ -881,7 +906,15 @@ async function carregarLogoParaPDF() {
         function renderizarLinksOrcamento(item) {
             const links = [
                 { url: item.linkProcessoSei, rotulo: 'SEI', titulo: item.processoSei || 'Processo SEI', icone: 'fa-folder-open' },
+                { url: item.linkDemandaFormalizada, rotulo: 'DFD', titulo: item.demandaFormalizada || 'Demanda formalizada', icone: 'fa-file-circle-check' },
+                { url: item.linkEstudoTecnico, rotulo: 'ETP', titulo: item.estudoTecnico || 'ETP/Especificação', icone: 'fa-magnifying-glass-chart' },
+                { url: item.linkTermoReferencia, rotulo: 'TR', titulo: item.termoReferencia || 'Termo de Referência', icone: 'fa-file-lines' },
+                { url: item.linkPesquisaPrecos, rotulo: 'PESQ', titulo: item.pesquisaPrecos || 'Pesquisa de preços', icone: 'fa-tags' },
+                { url: item.linkAutorizacaoAutoridade, rotulo: 'AUT', titulo: item.autorizacaoAutoridade || 'Autorização da autoridade competente', icone: 'fa-user-check' },
+                { url: item.linkParecerJuridico, rotulo: 'PAR', titulo: item.parecerJuridico || 'Parecer Jurídico', icone: 'fa-gavel' },
                 { url: item.linkEmpenho, rotulo: 'EMP', titulo: item.empenho || 'Empenho', icone: 'fa-file-invoice-dollar' },
+                { url: item.linkContrato, rotulo: 'CTR', titulo: item.contrato || 'Contrato', icone: 'fa-file-signature' },
+                { url: item.linkOrdemServico, rotulo: 'OS', titulo: item.ordemServico || 'Ordem de Serviço', icone: 'fa-clipboard-check' },
                 { url: item.linkOrdemBancaria, rotulo: 'OB', titulo: item.ordemBancaria || 'Ordem Bancária', icone: 'fa-money-check-alt' }
             ].filter((link) => link.url && link.url !== '-');
 
@@ -901,12 +934,208 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        function possuiValorOrcamento(valor) {
+            const texto = normalizarBusca(valor);
+            return Boolean(texto && texto !== '-' && texto !== 'nao informado' && texto !== 'n/a');
+        }
+
+        function statusOrcamentoContem(item, termos) {
+            const status = normalizarBusca(item.status);
+            return termos.some((termo) => status.includes(normalizarBusca(termo)));
+        }
+
+        function statusOrcamentoTemToken(item, token) {
+            return normalizarBusca(item.status).split(/[^a-z0-9]+/).includes(normalizarBusca(token));
+        }
+
+        function obterIndiceEtapaRastreioPorChave(chave) {
+            const indice = ETAPAS_RASTREIO_ORCAMENTO.findIndex((etapa) => etapa.chave === chave);
+            return indice >= 0 ? indice : 0;
+        }
+
+        function obterIndiceEtapaAtualOrcamento(item) {
+            if (
+                possuiValorOrcamento(item.ordemBancaria)
+                || possuiValorOrcamento(item.linkOrdemBancaria)
+                || statusOrcamentoContem(item, ['ordem bancaria', 'pago', 'pagamento'])
+                || statusOrcamentoTemToken(item, 'ob')
+            ) return obterIndiceEtapaRastreioPorChave('ordem-bancaria');
+
+            if (
+                possuiValorOrcamento(item.dataEntrega)
+                || statusOrcamentoContem(item, ['entregue', 'entrega'])
+            ) return obterIndiceEtapaRastreioPorChave('entregue');
+
+            if (
+                possuiValorOrcamento(item.ordemServico)
+                || possuiValorOrcamento(item.linkOrdemServico)
+                || statusOrcamentoContem(item, ['ordem de servico', 'ordem servico', 'os emitida'])
+                || statusOrcamentoTemToken(item, 'os')
+            ) return obterIndiceEtapaRastreioPorChave('ordem-servico');
+
+            if (
+                possuiValorOrcamento(item.contrato)
+                || possuiValorOrcamento(item.linkContrato)
+                || statusOrcamentoContem(item, ['contratado', 'contratacao', 'contrato'])
+            ) return obterIndiceEtapaRastreioPorChave('contratado');
+
+            if (
+                possuiValorOrcamento(item.empenho)
+                || possuiValorOrcamento(item.linkEmpenho)
+                || statusOrcamentoContem(item, ['empenhado', 'empenho'])
+            ) return obterIndiceEtapaRastreioPorChave('empenhado');
+
+            if (
+                possuiValorOrcamento(item.parecerJuridico)
+                || possuiValorOrcamento(item.linkParecerJuridico)
+                || statusOrcamentoContem(item, ['parecer'])
+            ) return obterIndiceEtapaRastreioPorChave('parecer-juridico');
+
+            if (
+                possuiValorOrcamento(item.autorizacaoAutoridade)
+                || possuiValorOrcamento(item.linkAutorizacaoAutoridade)
+                || statusOrcamentoContem(item, ['autorizado', 'autorizacao', 'aprovado', 'aprovacao', 'autoridade competente', 'gestor'])
+            ) return obterIndiceEtapaRastreioPorChave('autorizacao-autoridade');
+
+            if (
+                possuiValorOrcamento(item.pesquisaPrecos)
+                || possuiValorOrcamento(item.linkPesquisaPrecos)
+                || statusOrcamentoContem(item, ['pesquisa de preco', 'pesquisa preco', 'mapa de preco', 'orcamento estimado', 'cotacao'])
+            ) return obterIndiceEtapaRastreioPorChave('pesquisa-precos');
+
+            if (
+                possuiValorOrcamento(item.termoReferencia)
+                || possuiValorOrcamento(item.linkTermoReferencia)
+                || statusOrcamentoContem(item, ['termo de referencia'])
+                || statusOrcamentoTemToken(item, 'tr')
+            ) return obterIndiceEtapaRastreioPorChave('termo-referencia');
+
+            if (
+                possuiValorOrcamento(item.estudoTecnico)
+                || possuiValorOrcamento(item.linkEstudoTecnico)
+                || statusOrcamentoContem(item, ['estudo tecnico', 'especificacao'])
+                || statusOrcamentoTemToken(item, 'etp')
+            ) return obterIndiceEtapaRastreioPorChave('estudo-tecnico');
+
+            if (
+                possuiValorOrcamento(item.demandaFormalizada)
+                || possuiValorOrcamento(item.linkDemandaFormalizada)
+                || statusOrcamentoContem(item, ['demanda formalizada', 'formalizacao da demanda'])
+                || statusOrcamentoTemToken(item, 'dfd')
+            ) return obterIndiceEtapaRastreioPorChave('demanda-formalizada');
+
+            if (
+                possuiValorOrcamento(item.processoSei)
+                || possuiValorOrcamento(item.linkProcessoSei)
+                || statusOrcamentoContem(item, ['processo sei', 'sei autuado'])
+            ) return obterIndiceEtapaRastreioPorChave('processo-sei');
+
+            return 0;
+        }
+
+        function obterEtapasRastreioOrcamento(item) {
+            const etapaAtual = obterIndiceEtapaAtualOrcamento(item);
+            return ETAPAS_RASTREIO_ORCAMENTO.map((etapa, indice) => ({
+                ...etapa,
+                estado: indice < etapaAtual ? 'concluida' : indice === etapaAtual ? 'atual' : 'pendente',
+                data: etapa.dataCampo ? item[etapa.dataCampo] : '',
+                valor: etapa.valorCampo ? item[etapa.valorCampo] : '',
+                link: etapa.linkCampo ? item[etapa.linkCampo] : ''
+            }));
+        }
+
+        function obterIdRastreioOrcamento(item) {
+            const idSeguro = String(item.id || item.descricao || 'item')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-zA-Z0-9_-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '') || 'item';
+            return `budget-tracking-${idSeguro}`;
+        }
+
+        function renderizarMetaEtapaRastreio(etapa) {
+            const meta = [];
+
+            if (possuiValorOrcamento(etapa.data)) {
+                meta.push(`<span class="budget-tracking-date">${escapeHtml(etapa.data)}</span>`);
+            }
+
+            if (possuiValorOrcamento(etapa.link)) {
+                const textoLink = possuiValorOrcamento(etapa.valor) ? etapa.valor : 'Abrir registro';
+                meta.push(`
+                    <a class="budget-tracking-link" href="${escapeHtml(etapa.link)}" target="_blank" rel="noopener noreferrer">
+                        ${escapeHtml(textoLink)}
+                    </a>
+                `);
+            } else if (possuiValorOrcamento(etapa.valor)) {
+                meta.push(`<span class="budget-tracking-ref">${escapeHtml(etapa.valor)}</span>`);
+            }
+
+            return meta.join('');
+        }
+
+        function renderizarRastreioOrcamento(item) {
+            const etapas = obterEtapasRastreioOrcamento(item);
+            const etapaAtual = etapas.find((etapa) => etapa.estado === 'atual') || etapas[0];
+            const idRastreio = obterIdRastreioOrcamento(item);
+
+            return `
+                <tr class="budget-tracking-row pdf-hidden" id="${escapeHtml(idRastreio)}">
+                    <td colspan="10" class="budget-tracking-cell">
+                        <div class="budget-tracking-panel" aria-label="Rastreio processual de ${escapeHtml(item.descricao)}">
+                            <div class="budget-tracking-header">
+                                <div>
+                                    <span class="budget-tracking-eyebrow">Andamento processual</span>
+                                    <strong>${escapeHtml(etapaAtual.rotulo)}</strong>
+                                </div>
+                                <div class="budget-tracking-status">
+                                    <span>Status informado</span>
+                                    <strong>${escapeHtml(item.status || 'Não informado')}</strong>
+                                </div>
+                            </div>
+                            <ol class="budget-tracking-timeline" style="--budget-tracking-steps: ${etapas.length};">
+                                ${etapas.map((etapa) => `
+                                    <li class="budget-tracking-step budget-tracking-step-${etapa.estado}" ${etapa.estado === 'atual' ? 'aria-current="step"' : ''}>
+                                        <span class="budget-tracking-marker" aria-hidden="true">
+                                            <i class="fas ${etapa.icone}"></i>
+                                        </span>
+                                        <span class="budget-tracking-copy">
+                                            <span class="budget-tracking-label">${escapeHtml(etapa.rotulo)}</span>
+                                            ${renderizarMetaEtapaRastreio(etapa)}
+                                        </span>
+                                    </li>
+                                `).join('')}
+                            </ol>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function registrarEventosRastreioOrcamento(tbody, budgetData) {
+            tbody.querySelectorAll('.budget-tracking-toggle').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    const itemId = botao.dataset.budgetItemId;
+                    orcamentoItemRastreioAberto = orcamentoItemRastreioAberto === itemId ? null : itemId;
+                    atualizarTabelaOrcamento(budgetData);
+                });
+            });
+        }
+
         function atualizarTabelaOrcamento(budgetData) {
             const tbody = document.getElementById('budget-table-body');
             if (!tbody) return;
 
             const itensFiltrados = filtrarItensOrcamento(budgetData);
             const resumoSelecao = calcularResumoItensOrcamento(itensFiltrados);
+
+            if (
+                orcamentoItemRastreioAberto
+                && !itensFiltrados.some((item) => String(item.id) === orcamentoItemRastreioAberto)
+            ) {
+                orcamentoItemRastreioAberto = null;
+            }
 
             document.getElementById('budget-selected-total').textContent = formatMoney(resumoSelecao.total);
             document.getElementById('budget-selected-running').textContent = formatMoney(resumoSelecao.empenhado);
@@ -930,10 +1159,18 @@ async function carregarLogoParaPDF() {
                     .map(([status, total]) => `<span>${escapeHtml(status)}: ${formatMoney(total)}</span>`)
                     .join('');
 
-                const linhas = grupo.itens.map((item) => `
-                    <tr>
+                const linhas = grupo.itens.map((item) => {
+                    const itemId = String(item.id);
+                    const rastreioAberto = orcamentoItemRastreioAberto === itemId;
+                    const idRastreio = obterIdRastreioOrcamento(item);
+
+                    return `
+                    <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
                         <td data-label="Item" class="align-middle">
-                            <div class="budget-item-title">${escapeHtml(item.descricao)}</div>
+                            <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
+                                <span>${escapeHtml(item.descricao)}</span>
+                                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                            </button>
                             ${item.processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(item.processoSei)}</div>` : ''}
                         </td>
                         <td data-label="Modalidade" class="align-middle">${escapeHtml(item.modalidade)}</td>
@@ -946,7 +1183,9 @@ async function carregarLogoParaPDF() {
                         <td data-label="Status" class="text-center align-middle">${renderizarStatusOrcamento(item.status)}</td>
                         <td data-label="Links" class="text-center align-middle">${renderizarLinksOrcamento(item)}</td>
                     </tr>
-                `).join('');
+                    ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
+                `;
+                }).join('');
 
                 return `
                     <tr class="budget-group-row">
@@ -967,6 +1206,8 @@ async function carregarLogoParaPDF() {
                     ${linhas}
                 `;
             }).join('');
+
+            registrarEventosRastreioOrcamento(tbody, budgetData);
         }
 
         function renderOrcamentoView() {
@@ -975,6 +1216,7 @@ async function carregarLogoParaPDF() {
 
             container.style.display = 'block';
             container.innerHTML = '';
+            orcamentoItemRastreioAberto = null;
 
             const budgetData = obterDadosOrcamento();
             if (!budgetData) {
