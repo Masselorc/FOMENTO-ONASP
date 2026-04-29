@@ -129,10 +129,15 @@ input:focus-visible,
     color: var(--color-primary);
 }
 
-.btn-outline-primary:hover,
-.btn-outline-primary:focus {
+.btn-outline-primary:hover {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
+}
+
+.btn-outline-primary:focus:not(:hover) {
+    background-color: transparent;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .btn-budget-gold {
