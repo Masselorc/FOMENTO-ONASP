@@ -418,6 +418,63 @@ async function carregarPlanilhaOrcamento() {
         const colProcessoSei = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'PROCESSO SEI' }]);
         const colLinkProcessoSei = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'LINK DO PROCESSO SEI' }]);
         const colDataProcessoSei = obterIndiceColunaComTodos(headers, ['DATA', 'PROCESSO', 'SEI']);
+        const colProforAutuacao = obterIndiceColunaComTodos(headers, ['AUTUACAO'], ['DATA', 'LINK']);
+        const colLinkProforAutuacao = obterIndiceColunaComTodos(headers, ['LINK', 'AUTUACAO']);
+        const colDataProforAutuacao = obterIndiceColunaComTodos(headers, ['DATA', 'AUTUACAO']);
+        const colProforParecerTecnico = obterIndiceColunaComTodos(headers, ['PARECER', 'TECNICO'], ['DATA', 'LINK']);
+        const colLinkProforParecerTecnico = obterIndiceColunaComTodos(headers, ['LINK', 'PARECER', 'TECNICO']);
+        const colDataProforParecerTecnico = obterIndiceColunaComTodos(headers, ['DATA', 'PARECER', 'TECNICO']);
+        const colProforMinutaEdital = obterIndiceColunaComTodos(headers, ['MINUTA', 'EDITAL'], ['DATA', 'LINK']);
+        const colLinkProforMinutaEdital = obterIndiceColunaComTodos(headers, ['LINK', 'MINUTA', 'EDITAL']);
+        const colDataProforMinutaEdital = obterIndiceColunaComTodos(headers, ['DATA', 'MINUTA', 'EDITAL']);
+        const colProforDdoCgof = obterIndiceColunaComTodos(headers, [
+            ['DDO'],
+            ['CGOF']
+        ], ['DATA', 'LINK']);
+        const colLinkProforDdoCgof = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'DDO'],
+            ['LINK', 'CGOF']
+        ]);
+        const colDataProforDdoCgof = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'DDO'],
+            ['DATA', 'CGOF']
+        ]);
+        const colProforAberturaPrograma = obterIndiceColunaComTodos(headers, [
+            ['ABERTURA', 'PROGRAMA'],
+            ['CGGIR']
+        ], ['DATA', 'LINK']);
+        const colLinkProforAberturaPrograma = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'ABERTURA', 'PROGRAMA'],
+            ['LINK', 'CGGIR']
+        ]);
+        const colDataProforAberturaPrograma = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'ABERTURA', 'PROGRAMA'],
+            ['DATA', 'CGGIR']
+        ]);
+        const colProforParecerConjur = obterIndiceColunaComTodos(headers, [
+            ['PARECER', 'CONJUR'],
+            ['CONJUR']
+        ], ['DATA', 'LINK']);
+        const colLinkProforParecerConjur = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'PARECER', 'CONJUR'],
+            ['LINK', 'CONJUR']
+        ]);
+        const colDataProforParecerConjur = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'PARECER', 'CONJUR'],
+            ['DATA', 'CONJUR']
+        ]);
+        const colProforPublicacaoGabsec = obterIndiceColunaComTodos(headers, [
+            ['PUBLICACAO'],
+            ['GABSEC']
+        ], ['DATA', 'LINK']);
+        const colLinkProforPublicacaoGabsec = obterIndiceColunaComTodos(headers, [
+            ['LINK', 'PUBLICACAO'],
+            ['LINK', 'GABSEC']
+        ]);
+        const colDataProforPublicacaoGabsec = obterIndiceColunaComTodos(headers, [
+            ['DATA', 'PUBLICACAO'],
+            ['DATA', 'GABSEC']
+        ]);
         const colDemandaFormalizada = obterIndiceColunaComTodos(headers, [
             ['DEMANDA'],
             ['DFD'],
@@ -479,7 +536,11 @@ async function carregarPlanilhaOrcamento() {
             ['DATA', 'APROVACAO'],
             ['DATA', 'APROVADO']
         ]);
-        const colParecerJuridico = obterIndiceColunaComTodos(headers, ['PARECER'], ['DATA', 'LINK']);
+        const colParecerJuridico = obterIndiceColunaComTodos(headers, [
+            ['PARECER', 'JURIDICO'],
+            ['PARECER', 'CONJUR'],
+            ['PARECER']
+        ], ['DATA', 'LINK', 'TECNICO']);
         const colLinkParecerJuridico = obterIndiceColunaComTodos(headers, ['LINK', 'PARECER']);
         const colDataParecerJuridico = obterIndiceColunaComTodos(headers, ['DATA', 'PARECER']);
         const colEmpenho = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'EMPENHO' }]);
@@ -530,6 +591,27 @@ async function carregarPlanilhaOrcamento() {
                 processoSei: obterTextoCelula(linha, colProcessoSei, ''),
                 linkProcessoSei: obterTextoCelula(linha, colLinkProcessoSei, ''),
                 dataProcessoSei: obterDataCelula(linha, colDataProcessoSei),
+                proforAutuacao: obterTextoCelula(linha, colProforAutuacao, ''),
+                linkProforAutuacao: obterTextoCelula(linha, colLinkProforAutuacao, ''),
+                dataProforAutuacao: obterDataCelula(linha, colDataProforAutuacao),
+                proforParecerTecnico: obterTextoCelula(linha, colProforParecerTecnico, ''),
+                linkProforParecerTecnico: obterTextoCelula(linha, colLinkProforParecerTecnico, ''),
+                dataProforParecerTecnico: obterDataCelula(linha, colDataProforParecerTecnico),
+                proforMinutaEdital: obterTextoCelula(linha, colProforMinutaEdital, ''),
+                linkProforMinutaEdital: obterTextoCelula(linha, colLinkProforMinutaEdital, ''),
+                dataProforMinutaEdital: obterDataCelula(linha, colDataProforMinutaEdital),
+                proforDdoCgof: obterTextoCelula(linha, colProforDdoCgof, ''),
+                linkProforDdoCgof: obterTextoCelula(linha, colLinkProforDdoCgof, ''),
+                dataProforDdoCgof: obterDataCelula(linha, colDataProforDdoCgof),
+                proforAberturaPrograma: obterTextoCelula(linha, colProforAberturaPrograma, ''),
+                linkProforAberturaPrograma: obterTextoCelula(linha, colLinkProforAberturaPrograma, ''),
+                dataProforAberturaPrograma: obterDataCelula(linha, colDataProforAberturaPrograma),
+                proforParecerConjur: obterTextoCelula(linha, colProforParecerConjur, ''),
+                linkProforParecerConjur: obterTextoCelula(linha, colLinkProforParecerConjur, ''),
+                dataProforParecerConjur: obterDataCelula(linha, colDataProforParecerConjur),
+                proforPublicacaoGabsec: obterTextoCelula(linha, colProforPublicacaoGabsec, ''),
+                linkProforPublicacaoGabsec: obterTextoCelula(linha, colLinkProforPublicacaoGabsec, ''),
+                dataProforPublicacaoGabsec: obterDataCelula(linha, colDataProforPublicacaoGabsec),
                 demandaFormalizada: obterTextoCelula(linha, colDemandaFormalizada, ''),
                 linkDemandaFormalizada: obterTextoCelula(linha, colLinkDemandaFormalizada, ''),
                 dataDemandaFormalizada: obterDataCelula(linha, colDataDemandaFormalizada),

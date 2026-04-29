@@ -4,7 +4,7 @@ import {
     carregarDadosOrcamento,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260429-21';
+} from '../../backend/services/data-service.js?v=20260429-22';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -798,6 +798,16 @@ async function carregarLogoParaPDF() {
             { chave: 'ordem-bancaria', rotulo: 'Ordem Bancária realizada', icone: 'fa-money-check-alt', valorCampo: 'ordemBancaria', linkCampo: 'linkOrdemBancaria', dataCampo: 'dataOrdemBancaria' }
         ];
 
+        const ETAPAS_RASTREIO_PROFOR = [
+            { chave: 'autuacao', rotulo: 'Autuação', icone: 'fa-folder-open', valorCampos: ['proforAutuacao', 'processoSei'], linkCampos: ['linkProforAutuacao', 'linkProcessoSei'], dataCampos: ['dataProforAutuacao', 'dataProcessoSei'] },
+            { chave: 'parecer-tecnico', rotulo: 'Parecer técnico', icone: 'fa-file-circle-check', valorCampo: 'proforParecerTecnico', linkCampo: 'linkProforParecerTecnico', dataCampo: 'dataProforParecerTecnico' },
+            { chave: 'minuta-edital', rotulo: 'Minuta de edital', icone: 'fa-file-lines', valorCampo: 'proforMinutaEdital', linkCampo: 'linkProforMinutaEdital', dataCampo: 'dataProforMinutaEdital' },
+            { chave: 'ddo-cgof', rotulo: 'DDO (CGOF)', icone: 'fa-coins', valorCampo: 'proforDdoCgof', linkCampo: 'linkProforDdoCgof', dataCampo: 'dataProforDdoCgof' },
+            { chave: 'abertura-programa', rotulo: 'Abertura de programa (CGGIR)', icone: 'fa-bullhorn', valorCampo: 'proforAberturaPrograma', linkCampo: 'linkProforAberturaPrograma', dataCampo: 'dataProforAberturaPrograma' },
+            { chave: 'parecer-conjur', rotulo: 'Parecer jurídico (CONJUR)', icone: 'fa-gavel', valorCampo: 'proforParecerConjur', linkCampo: 'linkProforParecerConjur', dataCampo: 'dataProforParecerConjur' },
+            { chave: 'publicacao-gabsec', rotulo: 'Publicação (GABSEC)', icone: 'fa-newspaper', valorCampo: 'proforPublicacaoGabsec', linkCampo: 'linkProforPublicacaoGabsec', dataCampo: 'dataProforPublicacaoGabsec' }
+        ];
+
         function obterTotalResumoOrcamento(resumos, nome) {
             const chave = normalizarBusca(nome);
             return resumos?.find((item) => normalizarBusca(item.nome) === chave)?.total || 0;
@@ -834,6 +844,22 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        function itemUsaRastreioProfor(item) {
+            return normalizarBusca(item.id) === 'conv-001'
+                || normalizarBusca(item.descricao).includes('profor')
+                || normalizarBusca(item.descricao).includes('programa de aparelhamento');
+        }
+
+        function itemSemRastreioOrcamento(item) {
+            const descricao = normalizarBusca(item.descricao);
+            return descricao === 'diarias'
+                || descricao.includes('inscricoes em cursos para servidores');
+        }
+
+        function itemPodeExibirRastreioOrcamento(item) {
+            return !itemSemRastreioOrcamento(item);
+        }
+
         function filtrarItensOrcamento(budgetData) {
             const busca = normalizarBusca(document.getElementById('filtroOrcamentoBusca')?.value || '');
             const status = document.getElementById('filtroOrcamentoStatus')?.value || '';
@@ -850,6 +876,13 @@ async function carregarLogoParaPDF() {
                     item.abrangencia,
                     item.status,
                     item.processoSei,
+                    item.proforAutuacao,
+                    item.proforParecerTecnico,
+                    item.proforMinutaEdital,
+                    item.proforDdoCgof,
+                    item.proforAberturaPrograma,
+                    item.proforParecerConjur,
+                    item.proforPublicacaoGabsec,
                     item.demandaFormalizada,
                     item.estudoTecnico,
                     item.termoReferencia,
@@ -906,6 +939,15 @@ async function carregarLogoParaPDF() {
         function renderizarLinksOrcamento(item) {
             const links = [
                 { url: item.linkProcessoSei, rotulo: 'SEI', titulo: item.processoSei || 'Processo SEI', icone: 'fa-folder-open' },
+                ...(itemUsaRastreioProfor(item) ? [
+                    { url: item.linkProforAutuacao, rotulo: 'AUT', titulo: item.proforAutuacao || 'Autuação', icone: 'fa-folder-open' },
+                    { url: item.linkProforParecerTecnico, rotulo: 'TEC', titulo: item.proforParecerTecnico || 'Parecer técnico', icone: 'fa-file-circle-check' },
+                    { url: item.linkProforMinutaEdital, rotulo: 'EDIT', titulo: item.proforMinutaEdital || 'Minuta de edital', icone: 'fa-file-lines' },
+                    { url: item.linkProforDdoCgof, rotulo: 'DDO', titulo: item.proforDdoCgof || 'DDO (CGOF)', icone: 'fa-coins' },
+                    { url: item.linkProforAberturaPrograma, rotulo: 'PROG', titulo: item.proforAberturaPrograma || 'Abertura de programa (CGGIR)', icone: 'fa-bullhorn' },
+                    { url: item.linkProforParecerConjur, rotulo: 'CONJ', titulo: item.proforParecerConjur || 'Parecer jurídico (CONJUR)', icone: 'fa-gavel' },
+                    { url: item.linkProforPublicacaoGabsec, rotulo: 'PUB', titulo: item.proforPublicacaoGabsec || 'Publicação (GABSEC)', icone: 'fa-newspaper' }
+                ] : []),
                 { url: item.linkDemandaFormalizada, rotulo: 'DFD', titulo: item.demandaFormalizada || 'Demanda formalizada', icone: 'fa-file-circle-check' },
                 { url: item.linkEstudoTecnico, rotulo: 'ETP', titulo: item.estudoTecnico || 'ETP/Especificação', icone: 'fa-magnifying-glass-chart' },
                 { url: item.linkTermoReferencia, rotulo: 'TR', titulo: item.termoReferencia || 'Termo de Referência', icone: 'fa-file-lines' },
@@ -948,9 +990,63 @@ async function carregarLogoParaPDF() {
             return normalizarBusca(item.status).split(/[^a-z0-9]+/).includes(normalizarBusca(token));
         }
 
-        function obterIndiceEtapaRastreioPorChave(chave) {
-            const indice = ETAPAS_RASTREIO_ORCAMENTO.findIndex((etapa) => etapa.chave === chave);
+        function obterIndiceEtapaRastreioPorChave(chave, etapas = ETAPAS_RASTREIO_ORCAMENTO) {
+            const indice = etapas.findIndex((etapa) => etapa.chave === chave);
             return indice >= 0 ? indice : 0;
+        }
+
+        function obterPrimeiroValorRastreio(item, campo, campos = []) {
+            const camposParaTestar = [...(campo ? [campo] : []), ...campos];
+            const campoEncontrado = camposParaTestar.find((nomeCampo) => possuiValorOrcamento(item[nomeCampo]));
+            return campoEncontrado ? item[campoEncontrado] : '';
+        }
+
+        function obterIndiceEtapaAtualProfor(item) {
+            if (
+                possuiValorOrcamento(item.proforPublicacaoGabsec)
+                || possuiValorOrcamento(item.linkProforPublicacaoGabsec)
+                || statusOrcamentoContem(item, ['publicacao', 'publicado', 'gabsec'])
+            ) return obterIndiceEtapaRastreioPorChave('publicacao-gabsec', ETAPAS_RASTREIO_PROFOR);
+
+            if (
+                possuiValorOrcamento(item.proforParecerConjur)
+                || possuiValorOrcamento(item.linkProforParecerConjur)
+                || statusOrcamentoContem(item, ['parecer juridico', 'conjur'])
+            ) return obterIndiceEtapaRastreioPorChave('parecer-conjur', ETAPAS_RASTREIO_PROFOR);
+
+            if (
+                possuiValorOrcamento(item.proforAberturaPrograma)
+                || possuiValorOrcamento(item.linkProforAberturaPrograma)
+                || statusOrcamentoContem(item, ['abertura de programa', 'abertura programa', 'cggir'])
+            ) return obterIndiceEtapaRastreioPorChave('abertura-programa', ETAPAS_RASTREIO_PROFOR);
+
+            if (
+                possuiValorOrcamento(item.proforDdoCgof)
+                || possuiValorOrcamento(item.linkProforDdoCgof)
+                || statusOrcamentoContem(item, ['ddo', 'cgof'])
+            ) return obterIndiceEtapaRastreioPorChave('ddo-cgof', ETAPAS_RASTREIO_PROFOR);
+
+            if (
+                possuiValorOrcamento(item.proforMinutaEdital)
+                || possuiValorOrcamento(item.linkProforMinutaEdital)
+                || statusOrcamentoContem(item, ['minuta de edital', 'minuta edital', 'edital'])
+            ) return obterIndiceEtapaRastreioPorChave('minuta-edital', ETAPAS_RASTREIO_PROFOR);
+
+            if (
+                possuiValorOrcamento(item.proforParecerTecnico)
+                || possuiValorOrcamento(item.linkProforParecerTecnico)
+                || statusOrcamentoContem(item, ['parecer tecnico'])
+            ) return obterIndiceEtapaRastreioPorChave('parecer-tecnico', ETAPAS_RASTREIO_PROFOR);
+
+            if (
+                possuiValorOrcamento(item.proforAutuacao)
+                || possuiValorOrcamento(item.linkProforAutuacao)
+                || possuiValorOrcamento(item.processoSei)
+                || possuiValorOrcamento(item.linkProcessoSei)
+                || statusOrcamentoContem(item, ['autuacao', 'autuado', 'processo sei', 'sei autuado'])
+            ) return obterIndiceEtapaRastreioPorChave('autuacao', ETAPAS_RASTREIO_PROFOR);
+
+            return 0;
         }
 
         function obterIndiceEtapaAtualOrcamento(item) {
@@ -1033,14 +1129,21 @@ async function carregarLogoParaPDF() {
             return 0;
         }
 
+        function obterIndiceEtapaAtualDoItemOrcamento(item) {
+            return itemUsaRastreioProfor(item)
+                ? obterIndiceEtapaAtualProfor(item)
+                : obterIndiceEtapaAtualOrcamento(item);
+        }
+
         function obterEtapasRastreioOrcamento(item) {
-            const etapaAtual = obterIndiceEtapaAtualOrcamento(item);
-            return ETAPAS_RASTREIO_ORCAMENTO.map((etapa, indice) => ({
+            const etapasBase = itemUsaRastreioProfor(item) ? ETAPAS_RASTREIO_PROFOR : ETAPAS_RASTREIO_ORCAMENTO;
+            const etapaAtual = obterIndiceEtapaAtualDoItemOrcamento(item);
+            return etapasBase.map((etapa, indice) => ({
                 ...etapa,
                 estado: indice < etapaAtual ? 'concluida' : indice === etapaAtual ? 'atual' : 'pendente',
-                data: etapa.dataCampo ? item[etapa.dataCampo] : '',
-                valor: etapa.valorCampo ? item[etapa.valorCampo] : '',
-                link: etapa.linkCampo ? item[etapa.linkCampo] : ''
+                data: obterPrimeiroValorRastreio(item, etapa.dataCampo, etapa.dataCampos),
+                valor: obterPrimeiroValorRastreio(item, etapa.valorCampo, etapa.valorCampos),
+                link: obterPrimeiroValorRastreio(item, etapa.linkCampo, etapa.linkCampos)
             }));
         }
 
@@ -1161,16 +1264,19 @@ async function carregarLogoParaPDF() {
 
                 const linhas = grupo.itens.map((item) => {
                     const itemId = String(item.id);
-                    const rastreioAberto = orcamentoItemRastreioAberto === itemId;
+                    const podeExibirRastreio = itemPodeExibirRastreioOrcamento(item);
+                    const rastreioAberto = podeExibirRastreio && orcamentoItemRastreioAberto === itemId;
                     const idRastreio = obterIdRastreioOrcamento(item);
 
                     return `
                     <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
                         <td data-label="Item" class="align-middle">
-                            <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
-                                <span>${escapeHtml(item.descricao)}</span>
-                                <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                            </button>
+                            ${podeExibirRastreio ? `
+                                <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
+                                    <span>${escapeHtml(item.descricao)}</span>
+                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                </button>
+                            ` : `<div class="budget-item-title budget-item-title-static">${escapeHtml(item.descricao)}</div>`}
                             ${item.processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(item.processoSei)}</div>` : ''}
                         </td>
                         <td data-label="Modalidade" class="align-middle">${escapeHtml(item.modalidade)}</td>
