@@ -4,7 +4,7 @@ import {
     carregarDadosOrcamento,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260429-22';
+} from '../../backend/services/data-service.js?v=20260429-23';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -23,7 +23,7 @@ let estadoAtualPDF = '';
 let dadosFinanceirosValidados = false;
 let filtroTabelaAtual = null;
 let filtroDataTableRegistrado = false;
-let orcamentoItemRastreioAberto = null;
+let orcamentoItensRastreioAbertos = new Set();
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
 const TODAS_UFS_BRASIL = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
@@ -844,14 +844,20 @@ async function carregarLogoParaPDF() {
         }
 
         function itemUsaRastreioProfor(item) {
-            return normalizarBusca(item.id) === 'conv-001'
+            const tipoRastreio = normalizarBusca(item.tipoRastreio);
+            return tipoRastreio.includes('profor')
+                || tipoRastreio.includes('convenio')
+                || normalizarBusca(item.id) === 'conv-001'
                 || normalizarBusca(item.descricao).includes('profor')
                 || normalizarBusca(item.descricao).includes('programa de aparelhamento');
         }
 
         function itemSemRastreioOrcamento(item) {
             const descricao = normalizarBusca(item.descricao);
-            return descricao === 'diarias'
+            const id = normalizarBusca(item.id);
+            return id === 'pess-001'
+                || id === 'curs-001'
+                || descricao === 'diarias'
                 || descricao.includes('inscricoes em cursos para servidores');
         }
 
@@ -1202,7 +1208,11 @@ async function carregarLogoParaPDF() {
             tbody.querySelectorAll('.budget-tracking-toggle').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     const itemId = botao.dataset.budgetItemId;
-                    orcamentoItemRastreioAberto = orcamentoItemRastreioAberto === itemId ? null : itemId;
+                    if (orcamentoItensRastreioAbertos.has(itemId)) {
+                        orcamentoItensRastreioAbertos.delete(itemId);
+                    } else {
+                        orcamentoItensRastreioAbertos.add(itemId);
+                    }
                     atualizarTabelaOrcamento(budgetData);
                 });
             });
@@ -1215,12 +1225,10 @@ async function carregarLogoParaPDF() {
             const itensFiltrados = filtrarItensOrcamento(budgetData);
             const resumoSelecao = calcularResumoItensOrcamento(itensFiltrados);
 
-            if (
-                orcamentoItemRastreioAberto
-                && !itensFiltrados.some((item) => String(item.id) === orcamentoItemRastreioAberto)
-            ) {
-                orcamentoItemRastreioAberto = null;
-            }
+            const idsFiltrados = new Set(itensFiltrados.map((item) => String(item.id)));
+            orcamentoItensRastreioAbertos = new Set(
+                Array.from(orcamentoItensRastreioAbertos).filter((itemId) => idsFiltrados.has(itemId))
+            );
 
             document.getElementById('budget-selected-total').textContent = formatMoney(resumoSelecao.total);
             document.getElementById('budget-selected-running').textContent = formatMoney(resumoSelecao.empenhado);
@@ -1242,7 +1250,7 @@ async function carregarLogoParaPDF() {
                 const linhas = grupo.itens.map((item) => {
                     const itemId = String(item.id);
                     const podeExibirRastreio = itemPodeExibirRastreioOrcamento(item);
-                    const rastreioAberto = podeExibirRastreio && orcamentoItemRastreioAberto === itemId;
+                    const rastreioAberto = podeExibirRastreio && orcamentoItensRastreioAbertos.has(itemId);
                     const idRastreio = obterIdRastreioOrcamento(item);
 
                     return `
@@ -1298,7 +1306,7 @@ async function carregarLogoParaPDF() {
 
             container.style.display = 'block';
             container.innerHTML = '';
-            orcamentoItemRastreioAberto = null;
+            orcamentoItensRastreioAbertos = new Set();
 
             const budgetData = obterDadosOrcamento();
             if (!budgetData) {
@@ -1448,7 +1456,6 @@ async function carregarLogoParaPDF() {
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">Itens orçamentários</p>
-                            <h2>Base agrupada por frente</h2>
                         </div>
                     </div>
                     <div class="table-responsive">

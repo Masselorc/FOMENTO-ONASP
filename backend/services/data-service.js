@@ -2,6 +2,8 @@ const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'banco_dados_orcamentario_onasp.xlsx';
 const ABA_ORCAMENTO_DADOS = 'Base_Dados';
+const ABA_ORCAMENTO_PROCESSOS_NORMAIS = 'Processos_Normais';
+const ABA_ORCAMENTO_PROFOR = 'Andamento_CONV_PROFOR';
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
@@ -169,6 +171,128 @@ function obterDataCelula(linha, indice) {
     }
 
     return formatarDataPlanilha(linha[indice]);
+}
+
+function obterNomeAbaWorkbook(workbook, nomes) {
+    const nomesNormalizados = nomes.map((nome) => normalizarTexto(nome));
+    return workbook.SheetNames.find((sheetName) => nomesNormalizados.includes(normalizarTexto(sheetName)));
+}
+
+function montarMapaCamposPorId(workbook, nomesAba, campos) {
+    const nomeAba = obterNomeAbaWorkbook(workbook, nomesAba);
+    const mapa = new Map();
+
+    if (!nomeAba) {
+        return mapa;
+    }
+
+    const linhas = obterLinhasPlanilha(workbook.Sheets[nomeAba]);
+    const headerRowIndex = linhas.findIndex((linha) => (
+        (linha || []).some((celula) => normalizarTexto(celula) === 'ID')
+    ));
+
+    if (headerRowIndex === -1) {
+        console.warn(`A aba ${nomeAba} nao possui coluna ID e foi ignorada no rastreio orcamentario.`);
+        return mapa;
+    }
+
+    const headers = (linhas[headerRowIndex] || []).map((header) => normalizarTexto(header));
+    const colId = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'ID' }]);
+    const indices = Object.entries(campos).map(([propriedade, config]) => ({
+        propriedade,
+        data: Boolean(config.data),
+        indice: obterIndiceColunaComTodos(headers, config.regras, config.ignorar || [])
+    }));
+
+    linhas.slice(headerRowIndex + 1).forEach((linha) => {
+        const id = obterTextoCelula(linha, colId, '');
+        if (!id) return;
+
+        const dados = {};
+        indices.forEach(({ propriedade, data, indice }) => {
+            const valor = data ? obterDataCelula(linha, indice) : obterTextoCelula(linha, indice, '');
+            if (valor && valor !== '-') {
+                dados[propriedade] = valor;
+            }
+        });
+
+        mapa.set(id, {
+            ...(mapa.get(id) || {}),
+            ...dados
+        });
+    });
+
+    return mapa;
+}
+
+function montarMapaRastreioProcessosNormais(workbook) {
+    return montarMapaCamposPorId(workbook, [ABA_ORCAMENTO_PROCESSOS_NORMAIS], {
+        status: { regras: ['STATUS'] },
+        processoSei: { regras: ['PROCESSO', 'SEI'], ignorar: ['DATA', 'LINK'] },
+        linkProcessoSei: { regras: ['LINK', 'PROCESSO', 'SEI'] },
+        dataProcessoSei: { regras: ['DATA', 'PROCESSO', 'SEI'], data: true },
+        demandaFormalizada: { regras: [['DEMANDA'], ['DFD'], ['FORMALIZACAO', 'DEMANDA']], ignorar: ['DATA', 'LINK'] },
+        linkDemandaFormalizada: { regras: [['LINK', 'DEMANDA'], ['LINK', 'DFD']] },
+        dataDemandaFormalizada: { regras: [['DATA', 'DEMANDA'], ['DATA', 'DFD']], data: true },
+        estudoTecnico: { regras: [['ETP'], ['ESTUDO', 'TECNICO'], ['ESPECIFICACAO']], ignorar: ['DATA', 'LINK'] },
+        linkEstudoTecnico: { regras: [['LINK', 'ETP'], ['LINK', 'ESTUDO', 'TECNICO'], ['LINK', 'ESPECIFICACAO']] },
+        dataEstudoTecnico: { regras: [['DATA', 'ETP'], ['DATA', 'ESTUDO', 'TECNICO'], ['DATA', 'ESPECIFICACAO']], data: true },
+        termoReferencia: { regras: ['TERMO', 'REFERENCIA'], ignorar: ['DATA', 'LINK'] },
+        linkTermoReferencia: { regras: ['LINK', 'TERMO', 'REFERENCIA'] },
+        dataTermoReferencia: { regras: ['DATA', 'TERMO', 'REFERENCIA'], data: true },
+        pesquisaPrecos: { regras: [['PESQUISA', 'PRECO'], ['MAPA', 'PRECO'], ['ORCAMENTO', 'ESTIMADO']], ignorar: ['DATA', 'LINK'] },
+        linkPesquisaPrecos: { regras: [['LINK', 'PESQUISA', 'PRECO'], ['LINK', 'MAPA', 'PRECO'], ['LINK', 'ORCAMENTO', 'ESTIMADO']] },
+        dataPesquisaPrecos: { regras: [['DATA', 'PESQUISA', 'PRECO'], ['DATA', 'MAPA', 'PRECO'], ['DATA', 'ORCAMENTO', 'ESTIMADO']], data: true },
+        autorizacaoAutoridade: { regras: [['AUTORIZ'], ['APROVACAO'], ['APROVADO']], ignorar: ['DATA', 'LINK'] },
+        linkAutorizacaoAutoridade: { regras: [['LINK', 'AUTORIZ'], ['LINK', 'APROVACAO'], ['LINK', 'APROVADO']] },
+        dataAutorizacaoAutoridade: { regras: [['DATA', 'AUTORIZ'], ['DATA', 'APROVACAO'], ['DATA', 'APROVADO']], data: true },
+        parecerJuridico: { regras: [['PARECER', 'JURIDICO'], ['PARECER']], ignorar: ['DATA', 'LINK', 'TECNICO'] },
+        linkParecerJuridico: { regras: ['LINK', 'PARECER'] },
+        dataParecerJuridico: { regras: ['DATA', 'PARECER'], data: true },
+        empenho: { regras: ['EMPENHO'], ignorar: ['DATA', 'LINK'] },
+        linkEmpenho: { regras: ['LINK', 'EMPENHO'] },
+        dataEmpenho: { regras: ['DATA', 'EMPENHO'], data: true },
+        contrato: { regras: ['CONTRAT'], ignorar: ['DATA', 'LINK'] },
+        linkContrato: { regras: ['LINK', 'CONTRAT'] },
+        dataContratacao: { regras: ['DATA', 'CONTRAT'], data: true },
+        ordemServico: { regras: ['ORDEM', 'SERVICO'], ignorar: ['DATA', 'LINK'] },
+        linkOrdemServico: { regras: ['LINK', 'ORDEM', 'SERVICO'] },
+        dataOrdemServico: { regras: ['DATA', 'ORDEM', 'SERVICO'], data: true },
+        dataEntrega: { regras: ['DATA', 'ENTREG'], data: true },
+        ordemBancaria: { regras: ['ORDEM', 'BANCARIA'], ignorar: ['DATA', 'LINK'] },
+        linkOrdemBancaria: { regras: ['LINK', 'ORDEM', 'BANCARIA'] },
+        dataOrdemBancaria: { regras: [['DATA', 'ORDEM', 'BANCARIA'], ['DATA', 'OB']], data: true }
+    });
+}
+
+function montarMapaRastreioProfor(workbook) {
+    return montarMapaCamposPorId(workbook, [ABA_ORCAMENTO_PROFOR], {
+        status: { regras: ['STATUS'] },
+        processoSei: { regras: ['PROCESSO', 'SEI'], ignorar: ['DATA', 'LINK'] },
+        linkProcessoSei: { regras: ['LINK', 'PROCESSO', 'SEI'] },
+        dataProcessoSei: { regras: ['DATA', 'PROCESSO', 'SEI'], data: true },
+        proforAutuacao: { regras: ['AUTUACAO'], ignorar: ['DATA', 'LINK'] },
+        linkProforAutuacao: { regras: ['LINK', 'AUTUACAO'] },
+        dataProforAutuacao: { regras: ['DATA', 'AUTUACAO'], data: true },
+        proforParecerTecnico: { regras: ['PARECER', 'TECNICO'], ignorar: ['DATA', 'LINK'] },
+        linkProforParecerTecnico: { regras: ['LINK', 'PARECER', 'TECNICO'] },
+        dataProforParecerTecnico: { regras: ['DATA', 'PARECER', 'TECNICO'], data: true },
+        proforMinutaEdital: { regras: ['MINUTA', 'EDITAL'], ignorar: ['DATA', 'LINK'] },
+        linkProforMinutaEdital: { regras: ['LINK', 'MINUTA', 'EDITAL'] },
+        dataProforMinutaEdital: { regras: ['DATA', 'MINUTA', 'EDITAL'], data: true },
+        proforDdoCgof: { regras: [['DDO'], ['CGOF']], ignorar: ['DATA', 'LINK'] },
+        linkProforDdoCgof: { regras: [['LINK', 'DDO'], ['LINK', 'CGOF']] },
+        dataProforDdoCgof: { regras: [['DATA', 'DDO'], ['DATA', 'CGOF']], data: true },
+        proforAberturaPrograma: { regras: [['ABERTURA', 'PROGRAMA'], ['CGGIR']], ignorar: ['DATA', 'LINK'] },
+        linkProforAberturaPrograma: { regras: [['LINK', 'ABERTURA', 'PROGRAMA'], ['LINK', 'CGGIR']] },
+        dataProforAberturaPrograma: { regras: [['DATA', 'ABERTURA', 'PROGRAMA'], ['DATA', 'CGGIR']], data: true },
+        proforParecerConjur: { regras: [['PARECER', 'CONJUR'], ['CONJUR']], ignorar: ['DATA', 'LINK'] },
+        linkProforParecerConjur: { regras: [['LINK', 'PARECER', 'CONJUR'], ['LINK', 'CONJUR']] },
+        dataProforParecerConjur: { regras: [['DATA', 'PARECER', 'CONJUR'], ['DATA', 'CONJUR']], data: true },
+        proforPublicacaoGabsec: { regras: [['PUBLICACAO'], ['GABSEC']], ignorar: ['DATA', 'LINK'] },
+        linkProforPublicacaoGabsec: { regras: [['LINK', 'PUBLICACAO'], ['LINK', 'GABSEC']] },
+        dataProforPublicacaoGabsec: { regras: [['DATA', 'PUBLICACAO'], ['DATA', 'GABSEC']], data: true }
+    });
 }
 
 function incrementarResumoOrcamento(resumo, chave, item) {
@@ -368,8 +492,6 @@ async function carregarPlanilhaOrcamento() {
         }
 
         const planilhaUrl = new URL(`../../${ARQUIVO_PLANILHA_ORCAMENTO}`, import.meta.url);
-        console.log('[Orçamento] URL da planilha:', planilhaUrl.href);
-        
         const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
         
         if (!resposta.ok) {
@@ -380,6 +502,8 @@ async function carregarPlanilhaOrcamento() {
         
         const arrayBuffer = await resposta.arrayBuffer();
         const workbook = await lerWorkbookDeArrayBuffer(arrayBuffer);
+        const rastreiosProcessosNormais = montarMapaRastreioProcessosNormais(workbook);
+        const rastreiosProfor = montarMapaRastreioProfor(workbook);
 
         const nomeAbaOrcamento = workbook.SheetNames.find((sheetName) => (
             normalizarTexto(sheetName) === normalizarTexto(ABA_ORCAMENTO_DADOS)
@@ -407,6 +531,7 @@ async function carregarPlanilhaOrcamento() {
 
         const headers = (linhas[headerRowIndex] || []).map((header) => normalizarTexto(header));
         const colId = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'ID' }]);
+        const colTipoRastreio = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'TIPO DE RASTREIO' }]);
         const colFrente = obterIndiceColuna(headers, [{ tipo: 'igual', valor: 'FRENTE' }]);
         const colDescricao = obterIndiceColuna(headers, [
             { tipo: 'igual', valor: 'ITENS' },
@@ -589,9 +714,18 @@ async function carregarPlanilhaOrcamento() {
 
             const quantidade = obterTextoCelula(linha, colQuantidade, '');
             const valorUnitarioInformado = converterNumeroPlanilha(linha[colValorUnitario]);
+            const id = obterTextoCelula(linha, colId, `${nomeAbaOrcamento}-${index + 1}`);
+            const tipoRastreio = obterTextoCelula(linha, colTipoRastreio, '');
+            const ehProfor = normalizarTexto(tipoRastreio).includes('PROFOR')
+                || normalizarTexto(tipoRastreio).includes('CONVENIO')
+                || normalizarTexto(descricao).includes('PROFOR');
+            const dadosRastreio = ehProfor
+                ? rastreiosProfor.get(id)
+                : rastreiosProcessosNormais.get(id);
 
-            return {
-                id: obterTextoCelula(linha, colId, `${nomeAbaOrcamento}-${index + 1}`),
+            const itemBase = {
+                id,
+                tipoRastreio,
                 frente: obterTextoCelula(linha, colFrente, 'Não informado'),
                 descricao,
                 natureza: obterTextoCelula(linha, colNatureza),
@@ -658,6 +792,12 @@ async function carregarPlanilhaOrcamento() {
                 ordemBancaria: obterTextoCelula(linha, colOrdemBancaria, ''),
                 linkOrdemBancaria: obterTextoCelula(linha, colLinkOrdemBancaria, ''),
                 dataOrdemBancaria: obterDataCelula(linha, colDataOrdemBancaria)
+            };
+
+            return {
+                ...itemBase,
+                ...(dadosRastreio || {}),
+                status: dadosRastreio?.status || itemBase.status
             };
         }).filter(Boolean);
 
