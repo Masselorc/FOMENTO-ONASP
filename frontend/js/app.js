@@ -2132,9 +2132,14 @@ async function carregarLogoParaPDF() {
         }
 
         function ordenarValoresFiltro(key, values) {
-            const valores = key === 'uf'
-                ? TODAS_UFS_BRASIL
-                : Array.from(new Set(values.filter(Boolean)));
+            const valores = Array.from(new Set(values.filter(Boolean)));
+
+            if (key === 'uf') {
+                const ufsOrdenadas = TODAS_UFS_BRASIL.filter((uf) => valores.includes(uf));
+                const ufsExtras = valores.filter((uf) => !TODAS_UFS_BRASIL.includes(uf)).sort();
+                return [...ufsOrdenadas, ...ufsExtras];
+            }
+
             if (key === 'regiao') {
                 return ORDEM_REGIOES.filter((regiao) => valores.includes(regiao));
             }
@@ -2152,7 +2157,7 @@ async function carregarLogoParaPDF() {
             const checkedValues = config.checkedValues;
             const valoresSelecionadosValidos = sortedValues.filter((val) => checkAll || checkedValues.has(val));
             const selecaoAnteriorFicouIndisponivel = checkedValues.size > 0 && valoresSelecionadosValidos.length === 0;
-            const deveMarcarTodos = checkAll || selecaoAnteriorFicouIndisponivel || valoresSelecionadosValidos.length === sortedValues.length;
+            const deveMarcarTodos = checkAll || selecaoAnteriorFicouIndisponivel;
 
             const allOption = document.createElement('div');
             allOption.className = 'visible-check-option check-all-option';
@@ -2385,18 +2390,33 @@ async function carregarLogoParaPDF() {
             aplicarFiltrosCombinados();
         }
 
+        function renderUfChipsFiltro(containerId, ufs) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            container.innerHTML = ufs.length
+                ? ufs.map((uf) => `<button type="button" class="uf-chip" onclick="aplicarFiltroUF('${escapeHtml(uf)}')" title="${escapeHtml(catalogoAplicacao.nomesEstados?.[uf] || uf)}">${escapeHtml(uf)}</button>`).join('')
+                : '<span class="filter-count-empty">Nenhuma UF</span>';
+            container.setAttribute('title', ufs.length ? ufs.join(', ') : 'Nenhuma UF');
+        }
+
         function atualizarContadoresUfsPorInstrumento(dadosFiltrados) {
             const resumoInstrumentos = calcularResumoInstrumentos(dadosFiltrados);
-            const ufsComAlgumInstrumento = new Set([
+            const ufsComAlgumInstrumento = Array.from(new Set([
                 ...resumoInstrumentos.convenios.ufs,
                 ...resumoInstrumentos.faf.ufs,
                 ...resumoInstrumentos.doacao.ufs
-            ]);
+            ])).sort();
 
             $('#count-convenios').text(resumoInstrumentos.convenios.quantidadeUfs);
             $('#count-faf').text(resumoInstrumentos.faf.quantidadeUfs);
             $('#count-doacoes').text(resumoInstrumentos.doacao.quantidadeUfs);
-            $('#count-ufs-instrumentos').text(ufsComAlgumInstrumento.size);
+            $('#count-ufs-instrumentos').text(ufsComAlgumInstrumento.length);
+
+            renderUfChipsFiltro('count-convenios-ufs', resumoInstrumentos.convenios.ufs);
+            renderUfChipsFiltro('count-faf-ufs', resumoInstrumentos.faf.ufs);
+            renderUfChipsFiltro('count-doacoes-ufs', resumoInstrumentos.doacao.ufs);
+            renderUfChipsFiltro('count-ufs-instrumentos-lista', ufsComAlgumInstrumento);
         }
 
         function atualizarCardsDinamicos(filtro = obterEstadoFiltroAtual()) {
@@ -2428,3 +2448,4 @@ window.exportarRelatorioPDF = exportarRelatorioPDF;
 window.exportarOrcamentoPDF = exportarOrcamentoPDF;
 window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;
 window.abrirOrcamento = () => toggleView('orcamento');
+window.aplicarFiltroUF = aplicarFiltroUF;
