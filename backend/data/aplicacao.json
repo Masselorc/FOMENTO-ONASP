@@ -1,6 +1,6 @@
 {
   "configuracao": {
-    "arquivoPlanilhaConvenios": "Planilha de Gestão Financeira - Ouvidoria.xlsx",
+    "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx",
     "abasPlanilhaIgnoradas": [
       "Geral",
       "IND_PRORROG"

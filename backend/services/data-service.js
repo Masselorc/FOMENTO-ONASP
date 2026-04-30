@@ -9,7 +9,7 @@
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 const ABA_RESUMO_CONVENIOS = 'Geral';
-const ARQUIVO_PLANILHA_ORCAMENTO = 'banco_dados_orcamentario_onasp.xlsx';
+const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ABA_ORCAMENTO_DADOS = 'Base_Dados';
 const ABA_ORCAMENTO_PROCESSOS_NORMAIS = 'Processos_Normais';
 const ABA_ORCAMENTO_PROFOR = 'Andamento_CONV_PROFOR';

@@ -12,7 +12,7 @@ import {
     carregarDadosOrcamento,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260429-23';
+} from '../../backend/services/data-service.js?v=20260430-1';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -1336,7 +1336,7 @@ async function carregarLogoParaPDF() {
 
             const budgetData = obterDadosOrcamento();
             if (!budgetData) {
-                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados orçamentários não estão disponíveis. Por favor, certifique-se de que o arquivo <strong>banco_dados_orcamentario_onasp.xlsx</strong> encontra-se armazenado na pasta base da aplicação.</div>';
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados orçamentários não estão disponíveis. Por favor, certifique-se de que o arquivo <strong>Planilhas/orcamento_onasp.xlsx</strong> encontra-se armazenado na aplicação.</div>';
                 container.style.display = 'block';
                 return;
             }

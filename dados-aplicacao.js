@@ -1,7 +1,7 @@
 ﻿// Dados estaticos da aplicacao.
 // Convenios agora sao carregados da planilha .xlsx ao abrir a pagina.
 
-        const ARQUIVO_PLANILHA_CONVENIOS = "Planilha de Gestão Financeira - Ouvidoria.xlsx";
+        const ARQUIVO_PLANILHA_CONVENIOS = "Planilhas/gestao_financeira_ouvidoria.xlsx";
         const ABAS_PLANILHA_IGNORADAS = ["Geral", "IND_PRORROG"];
         const CLASSIFICACAO_PLANILHA_CONVENIOS = "OUVIDORIA";
         const regioes = {
