@@ -1,3 +1,12 @@
+// ============================================================================
+// Serviço de dados
+// ----------------------------------------------------------------------------
+// Este módulo é a fronteira entre os arquivos de dados (JSON e planilhas XLSX)
+// e o restante da aplicação. A UI não deve conhecer detalhes como nomes de abas,
+// posições de colunas ou regras de validação; ela consome os objetos já
+// normalizados exportados daqui.
+// ============================================================================
+
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'banco_dados_orcamentario_onasp.xlsx';
@@ -24,6 +33,8 @@ export function obterDadosOrcamento() {
     return dadosOrcamentoCache;
 }
 
+// A biblioteca XLSX é carregada pelo index.html. Mantemos esta guarda para
+// falhar cedo caso alguém remova o script CDN ou tente abrir a página sem ele.
 function obterXlsxGlobal() {
     if (typeof window.XLSX === 'undefined') {
         throw new Error('A biblioteca de leitura da planilha nao foi carregada.');
@@ -113,6 +124,8 @@ function obterIndiceColuna(headers, regras) {
     ));
 }
 
+// Localiza colunas por termos normalizados, aceitando pequenas variações de
+// cabeçalho. Ex.: "Link DDO (CGOF)" e "Link CGOF" podem alimentar o mesmo campo.
 function obterIndiceColunaComTodos(headers, conjuntosTermos, termosIgnorados = []) {
     const conjuntos = Array.isArray(conjuntosTermos[0]) ? conjuntosTermos : [conjuntosTermos];
     return headers.findIndex((header) => (
@@ -152,6 +165,8 @@ function formatarDataPlanilha(valor) {
         const dataFormatada = xlsx?.SSF?.format?.('dd/mm/yyyy', valor);
         if (dataFormatada) return limparTexto(dataFormatada);
 
+        // Datas do Excel podem chegar como número serial quando a planilha é
+        // lida com raw:true. A origem 1899-12-30 é o padrão de compatibilidade.
         const data = new Date(Date.UTC(1899, 11, 30) + Math.round(valor * 86400000));
         return formatarDataPtBr(data, true);
     }
@@ -178,6 +193,9 @@ function obterNomeAbaWorkbook(workbook, nomes) {
     return workbook.SheetNames.find((sheetName) => nomesNormalizados.includes(normalizarTexto(sheetName)));
 }
 
+// Monta um mapa { ID -> campos normalizados } a partir de uma aba de andamento.
+// A Base_Dados guarda valores financeiros; as abas auxiliares guardam etapas,
+// datas e links. O ID é o vínculo entre esses dois mundos.
 function montarMapaCamposPorId(workbook, nomesAba, campos) {
     const nomeAba = obterNomeAbaWorkbook(workbook, nomesAba);
     const mapa = new Map();
@@ -225,6 +243,8 @@ function montarMapaCamposPorId(workbook, nomesAba, campos) {
     return mapa;
 }
 
+// Fluxo padrão de contratação/aquisição. Cada propriedade retornada aqui é
+// consumida pelo rastreio visual em frontend/js/app.js.
 function montarMapaRastreioProcessosNormais(workbook) {
     return montarMapaCamposPorId(workbook, [ABA_ORCAMENTO_PROCESSOS_NORMAIS], {
         status: { regras: ['STATUS'] },
@@ -265,6 +285,8 @@ function montarMapaRastreioProcessosNormais(workbook) {
     });
 }
 
+// Fluxo exclusivo do item CONV-001 / PROFOR. Ele não segue o fluxo normal de
+// contratação, por isso fica isolado em uma aba e em campos próprios.
 function montarMapaRastreioProfor(workbook) {
     return montarMapaCamposPorId(workbook, [ABA_ORCAMENTO_PROFOR], {
         status: { regras: ['STATUS'] },
@@ -353,6 +375,9 @@ function obterValoresUnicosOrcamento(itens, chave) {
     )).sort((a, b) => a.localeCompare(b, 'pt-BR'));
 }
 
+// Extrai somente itens de convênio classificados como OUVIDORIA nas abas de UF.
+// A planilha de gestão financeira é ampla; esta aplicação mostra o recorte da
+// Ouvidoria, por isso a classificação é uma regra de negócio importante.
 function extrairItensConvenioDaAba(sheet, uf, configuracao) {
     const linhas = obterLinhasPlanilha(sheet);
     const ufEsperada = normalizarTexto(uf);
@@ -441,6 +466,8 @@ function validarConveniosContraAbaGeral(workbook, dadosConvenio, catalogoAplicac
     }
 }
 
+// Lê todas as abas estaduais válidas e valida os totais contra a aba "Geral".
+// Isso evita exibir um painel aparentemente correto com dados parciais.
 function extrairConveniosDoWorkbook(workbook, catalogoAplicacao) {
     const { configuracao, nomesEstados } = catalogoAplicacao;
     const abasDeEstado = workbook.SheetNames.filter((sheetName) => (
@@ -485,6 +512,11 @@ async function carregarConveniosDaPlanilha(catalogoAplicacao) {
     return extrairConveniosDoWorkbook(workbook, catalogoAplicacao);
 }
 
+// Carrega o banco orçamentário 2026. A estrutura esperada é:
+// - Base_Dados: cadastro financeiro dos itens;
+// - Processos_Normais: andamento dos itens comuns;
+// - Andamento_CONV_PROFOR: andamento especial do PROFOR.
+// As abas de andamento são mescladas à base pelo campo ID.
 async function carregarPlanilhaOrcamento() {
     try {
         if (dadosOrcamentoCache) {
@@ -716,6 +748,8 @@ async function carregarPlanilhaOrcamento() {
             const valorUnitarioInformado = converterNumeroPlanilha(linha[colValorUnitario]);
             const id = obterTextoCelula(linha, colId, `${nomeAbaOrcamento}-${index + 1}`);
             const tipoRastreio = obterTextoCelula(linha, colTipoRastreio, '');
+            // A coluna "Tipo de Rastreio" é a forma preferencial de decidir o
+            // fluxo. Os testes por descrição ficam como compatibilidade.
             const ehProfor = normalizarTexto(tipoRastreio).includes('PROFOR')
                 || normalizarTexto(tipoRastreio).includes('CONVENIO')
                 || normalizarTexto(descricao).includes('PROFOR');
@@ -797,6 +831,7 @@ async function carregarPlanilhaOrcamento() {
             return {
                 ...itemBase,
                 ...(dadosRastreio || {}),
+                // A aba de andamento pode ter status mais atualizado que a base.
                 status: dadosRastreio?.status || itemBase.status
             };
         }).filter(Boolean);
@@ -848,6 +883,8 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     return montarDadosComConvenios(catalogo, dadosConvenio);
 }
 
+// Usado quando o usuário escolhe manualmente a planilha de convênios no browser.
+// O arquivo selecionado não é persistido; ele só substitui os dados em memória.
 export async function processarArquivoPlanilhaSelecionado(arquivoSelecionado, catalogoAplicacao = null) {
     const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
     await carregarPlanilhaOrcamento();

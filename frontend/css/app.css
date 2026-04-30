@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* ==========================================================================
+   Design tokens
+   --------------------------------------------------------------------------
+   Variáveis globais de cor, sombra e raio. Alterações de identidade visual
+   devem começar aqui para evitar mudanças repetidas ao longo do arquivo.
+   ========================================================================== */
 :root {
     --color-bg: #f3f6fa;
     --color-surface: #ffffff;
@@ -23,6 +29,7 @@
     --header-height: 86px;
 }
 
+/* Base tipográfica e resets leves da aplicação. */
 * {
     box-sizing: border-box;
 }
@@ -108,6 +115,7 @@ input:focus-visible,
     background-color: #f6b23c !important;
 }
 
+/* Botões compartilhados no cabeçalho, filtros, ações de PDF e links rápidos. */
 .btn {
     border-radius: 8px;
     font-weight: 600;
@@ -140,6 +148,7 @@ input:focus-visible,
     color: var(--color-primary);
 }
 
+/* Destaque do acesso direto ao Planejamento Orçamentário 2026 no cabeçalho. */
 .btn-budget-gold {
     background: linear-gradient(180deg, #fff5d6 0%, #f2c15c 100%);
     border-color: #c88a16;
@@ -199,6 +208,7 @@ input:focus-visible,
     width: 3rem;
 }
 
+/* Cabeçalho fixo: concentra marca, atalhos principais e ações globais. */
 .app-header {
     background: rgba(255, 255, 255, 0.96);
     border-bottom: 1px solid var(--color-border);
@@ -305,6 +315,7 @@ input:focus-visible,
     padding-top: 1.25rem;
 }
 
+/* Menu lateral usado como navegação complementar à barra superior. */
 .sidebar-link,
 .sidebar-action {
     align-items: center;
@@ -1020,6 +1031,12 @@ table.dataTable thead td,
     z-index: 1;
 }
 
+/* ==========================================================================
+   Orçamento 2026
+   --------------------------------------------------------------------------
+   Estilos da view orçamentária: filtros, KPIs, tabela por frente e rastreio
+   processual inline. O HTML é gerado em frontend/js/app.js.
+   ========================================================================== */
 .budget-filter-grid {
     align-items: start;
     display: grid;
@@ -1167,6 +1184,8 @@ table.dataTable thead td,
     border-bottom-color: transparent !important;
 }
 
+/* Linha expandida do rastreio. Ela é inserida entre linhas da tabela e fica
+   oculta em exportação PDF via classe pdf-hidden. */
 .budget-tracking-row > td {
     background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%) !important;
     border-bottom: 1px solid rgba(23, 74, 124, 0.16) !important;
@@ -1217,6 +1236,8 @@ table.dataTable thead td,
     font-size: 0.78rem;
 }
 
+/* A quantidade de etapas vem da variável CSS --budget-tracking-steps, definida
+   inline pelo JS para suportar fluxo normal e fluxo PROFOR. */
 .budget-tracking-timeline {
     display: grid;
     gap: 0.5rem;

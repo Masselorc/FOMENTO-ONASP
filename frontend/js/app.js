@@ -1,3 +1,11 @@
+// ============================================================================
+// Aplicação de interface
+// ----------------------------------------------------------------------------
+// Controla a experiência SPA: navegação entre views, carregamento das planilhas,
+// renderização de tabelas/KPIs, rastreio orçamentário e exportação em PDF.
+// A leitura e normalização dos dados ficam nos serviços em backend/.
+// ============================================================================
+
 import {
     carregarCatalogoAplicacao,
     carregarDadosAplicacao,
@@ -24,6 +32,8 @@ let dadosFinanceirosValidados = false;
 let filtroTabelaAtual = null;
 let filtroDataTableRegistrado = false;
 let orcamentoItensRastreioAbertos = new Set();
+
+// Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
 const TODAS_UFS_BRASIL = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
@@ -383,6 +393,8 @@ async function carregarLogoParaPDF() {
         });
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
+        // Alterna entre as views principais sem recarregar a página. A view de
+        // orçamento é carregada sob demanda porque depende de uma planilha extra.
         async function toggleView(viewName) {
             if (viewName === 'orcamento' && !obterDadosOrcamento()) {
                 showLoading('Carregando orçamento 2026...');
@@ -782,6 +794,8 @@ async function carregarLogoParaPDF() {
         }
 
         // --- MÓDULO DE ORÇAMENTO 2026 ---
+        // Contrato visual do fluxo padrão. Cada etapa aponta para propriedades
+        // preenchidas pelo data-service a partir das abas de andamento.
         const ETAPAS_RASTREIO_ORCAMENTO = [
             { chave: 'planejamento', rotulo: 'Planejamento', icone: 'fa-clipboard-list' },
             { chave: 'processo-sei', rotulo: 'Processo SEI autuado', icone: 'fa-folder-open', valorCampo: 'processoSei', linkCampo: 'linkProcessoSei', dataCampo: 'dataProcessoSei' },
@@ -797,6 +811,8 @@ async function carregarLogoParaPDF() {
             { chave: 'ordem-bancaria', rotulo: 'Ordem Bancária realizada', icone: 'fa-money-check-alt', valorCampo: 'ordemBancaria', linkCampo: 'linkOrdemBancaria', dataCampo: 'dataOrdemBancaria' }
         ];
 
+        // Fluxo especial do PROFOR/convênios. Ele tem etapas próprias e não deve
+        // ser misturado ao fluxo normal de contratação.
         const ETAPAS_RASTREIO_PROFOR = [
             { chave: 'autuacao', rotulo: 'Autuação', icone: 'fa-folder-open', valorCampos: ['proforAutuacao', 'processoSei'], linkCampos: ['linkProforAutuacao', 'linkProcessoSei'], dataCampos: ['dataProforAutuacao', 'dataProcessoSei'] },
             { chave: 'parecer-tecnico', rotulo: 'Parecer técnico', icone: 'fa-file-circle-check', valorCampo: 'proforParecerTecnico', linkCampo: 'linkProforParecerTecnico', dataCampo: 'dataProforParecerTecnico' },
@@ -852,6 +868,8 @@ async function carregarLogoParaPDF() {
                 || normalizarBusca(item.descricao).includes('programa de aparelhamento');
         }
 
+        // Alguns itens são acompanhados só como planejamento financeiro, sem
+        // trilha processual individual na interface.
         function itemSemRastreioOrcamento(item) {
             const descricao = normalizarBusca(item.descricao);
             const id = normalizarBusca(item.id);
@@ -907,6 +925,8 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        // Mantém a tabela organizada por frente. "Pessoal" vai ao final para
+        // separar despesas administrativas das entregas finalísticas.
         function agruparItensOrcamentoPorFrente(itens) {
             const grupos = itens.reduce((mapa, item) => {
                 const frente = item.frente || 'Não informado';
@@ -996,6 +1016,8 @@ async function carregarLogoParaPDF() {
             return campoEncontrado ? item[campoEncontrado] : '';
         }
 
+        // A etapa atual é a etapa mais avançada com alguma evidência preenchida:
+        // documento, link, data ou status compatível.
         function obterIndiceEtapaAtualProfor(item) {
             if (
                 possuiValorOrcamento(item.proforPublicacaoGabsec)
@@ -1166,6 +1188,8 @@ async function carregarLogoParaPDF() {
             return meta.join('');
         }
 
+        // Renderiza uma linha extra abaixo do item da tabela. Essa linha só entra
+        // no DOM quando o item está expandido, permitindo múltiplas trilhas.
         function renderizarRastreioOrcamento(item) {
             const etapas = obterEtapasRastreioOrcamento(item);
             const etapaAtual = etapas.find((etapa) => etapa.estado === 'atual') || etapas[0];
@@ -1218,6 +1242,8 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        // Recria o corpo da tabela a cada filtro ou expansão. Como o volume é
+        // pequeno, isso reduz estado manual e evita inconsistência visual.
         function atualizarTabelaOrcamento(budgetData) {
             const tbody = document.getElementById('budget-table-body');
             if (!tbody) return;
@@ -1497,6 +1523,8 @@ async function carregarLogoParaPDF() {
             container.style.display = 'block';
         }
 
+        // Exporta o relatório a partir do HTML renderizado. Elementos marcados
+        // como pdf-hidden são ocultados por CSS durante a captura.
         async function exportarOrcamentoPDF() {
             let budgetData = obterDadosOrcamento();
             if (!budgetData) {

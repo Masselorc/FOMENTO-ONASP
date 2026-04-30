@@ -1,8 +1,18 @@
+// ============================================================================
+// Serviço de métricas
+// ----------------------------------------------------------------------------
+// Recebe dados já normalizados pelo data-service e calcula totais, percentuais e
+// agrupamentos usados nos KPIs, gráficos e tabelas. Mantemos os cálculos aqui
+// para que a interface apenas renderize resultados, sem duplicar regra contábil.
+// ============================================================================
+
 function valorNumerico(valor) {
     const numero = Number.parseFloat(valor);
     return Number.isFinite(numero) ? numero : 0;
 }
 
+// Valores monetários são acumulados em centavos para reduzir erro de ponto
+// flutuante em somas sucessivas.
 function moedaParaCentavos(valor) {
     return Math.round((valorNumerico(valor) + Number.EPSILON) * 100);
 }
@@ -58,6 +68,8 @@ export function calcularResumoFinanceiro(data) {
     };
 }
 
+// Agrupa os recursos por tipo de instrumento. Os Sets de UF são convertidos só
+// no retorno para evitar duplicidade durante a iteração.
 export function calcularResumoInstrumentos(data) {
     const resumo = {
         convenios: {
@@ -117,6 +129,7 @@ export function calcularResumoInstrumentos(data) {
     };
 }
 
+// Calcula os indicadores de uma UF para a tela de detalhamento estadual.
 export function calculateStateMetrics(uf, data) {
     const items = data.filter((item) => item.uf === uf);
 
@@ -163,6 +176,7 @@ export function calculateStateMetrics(uf, data) {
     };
 }
 
+// Consolida a visão nacional e a lista ordenada por UF usada no dashboard.
 export function processarDadosAgregados(data) {
     let totalContratadoCentavos = 0;
     let totalExecutadoCentavos = 0;
