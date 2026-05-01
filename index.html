@@ -17,7 +17,7 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css?v=20260430-2" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260501-1" rel="stylesheet">
 </head>
 <body>
 
@@ -34,7 +34,7 @@
     <!-- MENU LATERAL
          Navegação secundária e ações menos frequentes. A barra superior mantém
          os atalhos de uso mais comum. -->
-    <aside class="offcanvas offcanvas-start app-offcanvas pdf-hidden" tabindex="-1" id="app-sidebar" aria-labelledby="app-sidebar-title">
+    <aside class="offcanvas offcanvas-end app-offcanvas pdf-hidden" tabindex="-1" id="app-sidebar" aria-labelledby="app-sidebar-title">
         <div class="offcanvas-header">
             <div>
                 <p class="section-eyebrow mb-1">Navegação</p>
@@ -48,35 +48,35 @@
                     <i class="fas fa-home" aria-hidden="true"></i>
                     <span>Home / Painel Geral</span>
                 </button>
-                <button type="button" class="sidebar-link app-menu-link" data-view="detalhamento" onclick="toggleView('detalhamento')">
-                    <i class="fas fa-map" aria-hidden="true"></i>
-                    <span>Detalhamento por Estado</span>
+                <button type="button" class="sidebar-link sidebar-folder-toggle" id="btn-repasses-funpen" aria-expanded="false" aria-controls="submenu-repasses-funpen">
+                    <i class="fas fa-folder" aria-hidden="true"></i>
+                    <span>Repasses FUNPEN</span>
+                    <i class="fas fa-chevron-down sidebar-folder-chevron" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="sidebar-link app-menu-link" data-view="orcamento" onclick="toggleView('orcamento')">
+                <div class="sidebar-submenu d-none" id="submenu-repasses-funpen">
+                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="detalhamento" onclick="toggleView('detalhamento')">
+                        <i class="fas fa-map" aria-hidden="true"></i>
+                        <span>Detalhamento por Estado</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="profor2022" onclick="toggleView('profor2022')">
+                        <i class="fas fa-file-contract" aria-hidden="true"></i>
+                        <span>PROFOR 2022</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="faf2021" onclick="toggleView('faf2021')">
+                        <i class="fas fa-landmark" aria-hidden="true"></i>
+                        <span>FAF 2021</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="doacoes2023" onclick="toggleView('doacoes2023')">
+                        <i class="fas fa-gift" aria-hidden="true"></i>
+                        <span>DOAÇÕES 2023</span>
+                    </button>
+                </div>
+                <button type="button" class="sidebar-link sidebar-link-budget app-menu-link" data-view="orcamento" onclick="toggleView('orcamento')">
                     <i class="fas fa-wallet" aria-hidden="true"></i>
                     <span>Orçamento 2026</span>
                 </button>
             </nav>
 
-            <div class="sidebar-section">
-                <p class="section-eyebrow">Ações</p>
-                <button type="button" class="sidebar-action" onclick="exportarDashboardPDF()">
-                    <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
-                    <span>Exportar Painel PDF</span>
-                </button>
-                <button type="button" class="sidebar-action" id="btn-menu-export-state-pdf" onclick="abrirSelecaoUfExportacao()" aria-expanded="false" aria-controls="sidebar-uf-export-panel">
-                    <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
-                    <span>Exportar Relatório Estadual</span>
-                </button>
-                <div class="sidebar-uf-export-panel d-none" id="sidebar-uf-export-panel">
-                    <p class="sidebar-helper-text">Escolha a UF para gerar o relatório detalhado.</p>
-                    <div class="sidebar-uf-grid" id="sidebar-uf-export-list"></div>
-                </div>
-                <button type="button" class="sidebar-action" id="btn-selecionar-planilha">
-                    <i class="fas fa-file-excel text-success" aria-hidden="true"></i>
-                    <span>Selecionar planilha manualmente</span>
-                </button>
-            </div>
         </div>
     </aside>
 
@@ -427,6 +427,17 @@
                     <p class="section-eyebrow mb-1">Estados e regiões</p>
                     <h2>Detalhamento dos Recursos por Estado</h2>
                 </div>
+                <button type="button" class="btn btn-danger btn-icon-text pdf-hidden" id="btn-detail-export-state-pdf" onclick="abrirSelecaoUfExportacao()" aria-expanded="false" aria-controls="detail-uf-export-panel">
+                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                    <span>Exportar Relatório Estadual</span>
+                </button>
+            </section>
+            <section class="detail-uf-export-panel d-none pdf-hidden" id="detail-uf-export-panel" aria-label="Exportação de relatório estadual">
+                <div>
+                    <p class="section-eyebrow mb-1">Exportação</p>
+                    <h3>Escolha a UF para gerar o relatório detalhado</h3>
+                </div>
+                <div class="detail-uf-grid" id="detail-uf-export-list"></div>
             </section>
             <div id="container-estados"></div>
         </main>
@@ -457,7 +468,33 @@
             </div>
         </main>
 
-        <!-- VIEW 4: ORÇAMENTO 2026
+        <!-- VIEW 4: PROFOR 2022
+             Conteúdo renderizado a partir da aba Geral e das abas de UF da
+             planilha de gestão financeira. -->
+        <main id="view-profor-2022" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 5: DETALHE DE CONVÊNIO PROFOR 2022 -->
+        <main id="view-profor-convenio-detalhe" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 6: FAF 2021 -->
+        <main id="view-faf-2021" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 7: DETALHE FAF 2021 -->
+        <main id="view-faf-2021-detalhe" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 8: DOAÇÕES 2023 -->
+        <main id="view-doacoes-2023" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 9: DETALHE DOAÇÕES 2023 -->
+        <main id="view-doacoes-2023-detalhe" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 10: ORÇAMENTO 2026
              O conteúdo é renderizado dinamicamente a partir de
              Planilhas/orcamento_onasp.xlsx. -->
         <main id="view-orcamento" class="container app-view" style="display:none;">
@@ -486,6 +523,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script type="module" src="./frontend/js/app.js?v=20260430-4"></script>
+    <script type="module" src="./frontend/js/app.js?v=20260501-1"></script>
 </body>
 </html>

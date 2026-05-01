@@ -16,6 +16,49 @@ const ABA_ORCAMENTO_PROFOR = 'Andamento_CONV_PROFOR';
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
+const COLUNAS_GERAL_PROFOR = {
+    uf: 0,
+    instrumento: 1,
+    numero: 2,
+    ano: 3,
+    processoSei: 4,
+    vencimento: 5,
+    quantidadeTa: 6,
+    solicitouProrrogacao: 7,
+    valorGlobal: 8,
+    valorRepasse: 9,
+    valorContrapartida: 10,
+    repasseDesembolsado: 11,
+    rendimentoAprovado: 12,
+    saldoRendimentosAtual: 13,
+    saldoResidualCapital: 14,
+    saldoResidualCusteio: 15,
+    contrapartidaIntegralizada: 16,
+    valorExecutadoGeral: 17,
+    previstoOuvidoria: 18,
+    previstoCorregedoria: 19,
+    previstoEscolaPenal: 20,
+    valorRelativoOuvidoria: 21,
+    execucaoOuvidoriaPercentual: 22,
+    execucaoCorregedoriaPercentual: 23,
+    execucaoEscolaPenalPercentual: 24,
+    saldoDisponivelOuvidoria: 25
+};
+const COLUNAS_PLANO_PROFOR = {
+    uf: 0,
+    instrumento: 1,
+    numero: 2,
+    ano: 3,
+    area: 4,
+    natureza: 5,
+    descricao: 6,
+    quantidade: 7,
+    valorUnitario: 8,
+    valorPrevisto: 9,
+    valorExecutado: 10,
+    saldo: 11,
+    saldoEconomicidade: 12
+};
 const COLUNAS_CONVENIO = {
     uf: 0,
     classificacao: 4,
@@ -28,9 +71,24 @@ const COLUNAS_CONVENIO = {
 
 let catalogoAplicacaoCache = null;
 let dadosOrcamentoCache = null;
+let dadosProfor2022Cache = null;
+let dadosFaf2021Cache = null;
+let dadosDoacoes2023Cache = null;
 
 export function obterDadosOrcamento() {
     return dadosOrcamentoCache;
+}
+
+export function obterDadosProfor2022() {
+    return dadosProfor2022Cache;
+}
+
+export function obterDadosFaf2021() {
+    return dadosFaf2021Cache;
+}
+
+export function obterDadosDoacoes2023() {
+    return dadosDoacoes2023Cache;
 }
 
 // A biblioteca XLSX é carregada pelo index.html. Mantemos esta guarda para
@@ -95,6 +153,87 @@ function moedaParaCentavos(valor) {
 
 function centavosParaMoeda(centavos) {
     return centavos / 100;
+}
+
+function obterNomeEstadoCatalogo(catalogoAplicacao, uf) {
+    return catalogoAplicacao?.nomesEstados?.[uf] || uf || '';
+}
+
+function normalizarItemBaseFomento(item, catalogoAplicacao) {
+    const valorTotal = arredondarMoeda(converterNumeroPlanilha(item.valorTotal));
+    const valorExecutado = arredondarMoeda(converterNumeroPlanilha(item.valorExecutado));
+    const uf = normalizarTexto(item.uf);
+
+    return {
+        uf,
+        nomeEstado: obterNomeEstadoCatalogo(catalogoAplicacao, uf),
+        instrumento: limparTexto(item.instrumento),
+        objeto: limparTexto(item.objeto),
+        quantidade: converterNumeroPlanilha(item.quantidade),
+        valorUnitario: arredondarMoeda(converterNumeroPlanilha(item.valorUnitario)),
+        valorTotal,
+        valorExecutado,
+        saldo: arredondarMoeda(valorTotal - valorExecutado),
+        percentualExecucao: valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0
+    };
+}
+
+function montarResumoItensFomento(itens) {
+    const totalCentavos = itens.reduce((total, item) => total + moedaParaCentavos(item.valorTotal), 0);
+    const executadoCentavos = itens.reduce((total, item) => total + moedaParaCentavos(item.valorExecutado), 0);
+    const ufs = Array.from(new Set(itens.map((item) => item.uf).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+    return {
+        totalItens: itens.length,
+        totalUfs: ufs.length,
+        ufs,
+        valorTotal: centavosParaMoeda(totalCentavos),
+        valorExecutado: centavosParaMoeda(executadoCentavos),
+        saldo: centavosParaMoeda(totalCentavos - executadoCentavos),
+        percentualExecucao: totalCentavos > 0 ? (executadoCentavos / totalCentavos) * 100 : 0
+    };
+}
+
+function montarDadosFaf2021(catalogoAplicacao) {
+    const itens = (catalogoAplicacao?.dadosBase || [])
+        .filter((item) => normalizarTexto(item.instrumento) === 'FAF 2021')
+        .map((item) => normalizarItemBaseFomento(item, catalogoAplicacao));
+
+    return {
+        resumo: montarResumoItensFomento(itens),
+        itens,
+        filtros: {
+            ufs: Array.from(new Set(itens.map((item) => item.uf).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+        }
+    };
+}
+
+function montarDadosDoacoes2023(catalogoAplicacao) {
+    const itens = (catalogoAplicacao?.dadosBase || [])
+        .filter((item) => normalizarTexto(item.instrumento).includes('DOA'))
+        .map((item) => normalizarItemBaseFomento(item, catalogoAplicacao));
+    const resumoBase = montarResumoItensFomento(itens);
+    const valorMedioPorUf = resumoBase.totalUfs > 0 ? resumoBase.valorTotal / resumoBase.totalUfs : 0;
+    const totaisPorUf = itens.reduce((acc, item) => {
+        acc[item.uf] = (acc[item.uf] || 0) + (Number(item.valorTotal) || 0);
+        return acc;
+    }, {});
+    const [ufMaiorConcentracao = '', valorMaiorConcentracao = 0] = Object.entries(totaisPorUf)
+        .sort((a, b) => b[1] - a[1])[0] || [];
+
+    return {
+        resumo: {
+            ...resumoBase,
+            valorMedioPorUf: arredondarMoeda(valorMedioPorUf),
+            ufMaiorConcentracao,
+            nomeUfMaiorConcentracao: obterNomeEstadoCatalogo(catalogoAplicacao, ufMaiorConcentracao),
+            valorMaiorConcentracao: arredondarMoeda(valorMaiorConcentracao)
+        },
+        itens,
+        filtros: {
+            ufs: Array.from(new Set(itens.map((item) => item.uf).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+        }
+    };
 }
 
 function formatarMoedaMensagem(centavos) {
@@ -375,6 +514,187 @@ function obterValoresUnicosOrcamento(itens, chave) {
     )).sort((a, b) => a.localeCompare(b, 'pt-BR'));
 }
 
+function converterPercentualPlanilha(valor) {
+    const numero = converterNumeroPlanilha(valor);
+    return Math.abs(numero) <= 1.5 ? numero * 100 : numero;
+}
+
+function somarCampoMoeda(itens, campo) {
+    const totalCentavos = itens.reduce((total, item) => (
+        total + moedaParaCentavos(item[campo])
+    ), 0);
+
+    return centavosParaMoeda(totalCentavos);
+}
+
+function extrairPlanoAplicacaoProforDaAba(sheet, uf) {
+    if (!sheet) {
+        return [];
+    }
+
+    const linhas = obterLinhasPlanilha(sheet);
+    const ufEsperada = normalizarTexto(uf);
+
+    return linhas.slice(1).map((linha) => {
+        const ufLinha = normalizarTexto(linha[COLUNAS_PLANO_PROFOR.uf]);
+        const descricao = limparTexto(linha[COLUNAS_PLANO_PROFOR.descricao]);
+
+        if (ufLinha !== ufEsperada || !descricao) {
+            return null;
+        }
+
+        const valorPrevisto = arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_PLANO_PROFOR.valorPrevisto]));
+        const valorExecutado = arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_PLANO_PROFOR.valorExecutado]));
+
+        return {
+            uf: ufEsperada,
+            instrumento: obterTextoCelula(linha, COLUNAS_PLANO_PROFOR.instrumento, ''),
+            numero: obterTextoCelula(linha, COLUNAS_PLANO_PROFOR.numero, ''),
+            ano: obterTextoCelula(linha, COLUNAS_PLANO_PROFOR.ano, ''),
+            area: obterTextoCelula(linha, COLUNAS_PLANO_PROFOR.area, 'Não informado'),
+            natureza: obterTextoCelula(linha, COLUNAS_PLANO_PROFOR.natureza, 'Não informado'),
+            descricao,
+            quantidade: converterNumeroPlanilha(linha[COLUNAS_PLANO_PROFOR.quantidade]),
+            valorUnitario: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_PLANO_PROFOR.valorUnitario])),
+            valorPrevisto,
+            valorExecutado,
+            saldo: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_PLANO_PROFOR.saldo])),
+            saldoEconomicidade: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_PLANO_PROFOR.saldoEconomicidade])),
+            percentualExecucao: valorPrevisto > 0 ? (valorExecutado / valorPrevisto) * 100 : 0
+        };
+    }).filter(Boolean);
+}
+
+function resumirPlanoAplicacaoProfor(planoAplicacao) {
+    const itensOuvidoria = planoAplicacao.filter((item) => (
+        normalizarTexto(item.area) === 'OUVIDORIA'
+    ));
+
+    return {
+        totalItens: planoAplicacao.length,
+        totalItensOuvidoria: itensOuvidoria.length,
+        valorPrevistoOuvidoriaPlano: somarCampoMoeda(itensOuvidoria, 'valorPrevisto'),
+        valorExecutadoOuvidoria: somarCampoMoeda(itensOuvidoria, 'valorExecutado'),
+        previstoCapitalOuvidoria: somarCampoMoeda(
+            itensOuvidoria.filter((item) => normalizarTexto(item.natureza) === 'CAPITAL'),
+            'valorPrevisto'
+        ),
+        previstoCusteioOuvidoria: somarCampoMoeda(
+            itensOuvidoria.filter((item) => normalizarTexto(item.natureza) === 'CUSTEIO'),
+            'valorPrevisto'
+        )
+    };
+}
+
+function montarResumoProfor2022(convenios) {
+    const totalPrevistoOuvidoriaCentavos = convenios.reduce((total, convenio) => (
+        total + moedaParaCentavos(convenio.previstoOuvidoria)
+    ), 0);
+    const totalExecutadoOuvidoriaCentavos = convenios.reduce((total, convenio) => (
+        total + moedaParaCentavos(convenio.valorExecutadoOuvidoria)
+    ), 0);
+
+    return {
+        totalConvenios: convenios.length,
+        valorGlobal: somarCampoMoeda(convenios, 'valorGlobal'),
+        valorRepasse: somarCampoMoeda(convenios, 'valorRepasse'),
+        valorContrapartida: somarCampoMoeda(convenios, 'valorContrapartida'),
+        repasseDesembolsado: somarCampoMoeda(convenios, 'repasseDesembolsado'),
+        rendimentoAprovado: somarCampoMoeda(convenios, 'rendimentoAprovado'),
+        saldoRendimentosAtual: somarCampoMoeda(convenios, 'saldoRendimentosAtual'),
+        saldoResidualCapital: somarCampoMoeda(convenios, 'saldoResidualCapital'),
+        saldoResidualCusteio: somarCampoMoeda(convenios, 'saldoResidualCusteio'),
+        contrapartidaIntegralizada: somarCampoMoeda(convenios, 'contrapartidaIntegralizada'),
+        valorExecutadoGeral: somarCampoMoeda(convenios, 'valorExecutadoGeral'),
+        previstoOuvidoria: centavosParaMoeda(totalPrevistoOuvidoriaCentavos),
+        previstoCorregedoria: somarCampoMoeda(convenios, 'previstoCorregedoria'),
+        previstoEscolaPenal: somarCampoMoeda(convenios, 'previstoEscolaPenal'),
+        valorExecutadoOuvidoria: centavosParaMoeda(totalExecutadoOuvidoriaCentavos),
+        execucaoGeralPercentual: somarCampoMoeda(convenios, 'valorGlobal') > 0
+            ? (somarCampoMoeda(convenios, 'valorExecutadoGeral') / somarCampoMoeda(convenios, 'valorGlobal')) * 100
+            : 0,
+        execucaoOuvidoriaPercentual: totalPrevistoOuvidoriaCentavos > 0
+            ? (totalExecutadoOuvidoriaCentavos / totalPrevistoOuvidoriaCentavos) * 100
+            : 0,
+        saldoDisponivelOuvidoria: somarCampoMoeda(convenios, 'saldoDisponivelOuvidoria')
+    };
+}
+
+function extrairProfor2022DoWorkbook(workbook, catalogoAplicacao) {
+    const sheetGeral = workbook.Sheets[ABA_RESUMO_CONVENIOS];
+    if (!sheetGeral) {
+        throw new Error(`A aba ${ABA_RESUMO_CONVENIOS} nao foi encontrada na planilha.`);
+    }
+
+    const linhas = obterLinhasPlanilha(sheetGeral);
+    const convenios = linhas.slice(1).map((linha) => {
+        const uf = normalizarTexto(linha[COLUNAS_GERAL_PROFOR.uf]);
+        const instrumento = obterTextoCelula(linha, COLUNAS_GERAL_PROFOR.instrumento, '');
+        const ano = obterTextoCelula(linha, COLUNAS_GERAL_PROFOR.ano, '');
+
+        if (!uf || !catalogoAplicacao.nomesEstados[uf] || !normalizarTexto(instrumento).includes('CONV') || ano !== '2022') {
+            return null;
+        }
+
+        const planoAplicacao = extrairPlanoAplicacaoProforDaAba(workbook.Sheets[uf], uf);
+        const resumoPlano = resumirPlanoAplicacaoProfor(planoAplicacao);
+
+        return {
+            uf,
+            instrumento,
+            numero: obterTextoCelula(linha, COLUNAS_GERAL_PROFOR.numero, ''),
+            ano,
+            processoSei: obterTextoCelula(linha, COLUNAS_GERAL_PROFOR.processoSei, ''),
+            vencimento: obterDataCelula(linha, COLUNAS_GERAL_PROFOR.vencimento),
+            quantidadeTa: converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.quantidadeTa]),
+            solicitouProrrogacao: obterTextoCelula(linha, COLUNAS_GERAL_PROFOR.solicitouProrrogacao, ''),
+            valorGlobal: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.valorGlobal])),
+            valorRepasse: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.valorRepasse])),
+            valorContrapartida: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.valorContrapartida])),
+            repasseDesembolsado: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.repasseDesembolsado])),
+            rendimentoAprovado: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.rendimentoAprovado])),
+            saldoRendimentosAtual: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.saldoRendimentosAtual])),
+            saldoResidualCapital: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.saldoResidualCapital])),
+            saldoResidualCusteio: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.saldoResidualCusteio])),
+            contrapartidaIntegralizada: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.contrapartidaIntegralizada])),
+            valorExecutadoGeral: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.valorExecutadoGeral])),
+            previstoOuvidoria: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.previstoOuvidoria])),
+            previstoCorregedoria: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.previstoCorregedoria])),
+            previstoEscolaPenal: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.previstoEscolaPenal])),
+            valorRelativoOuvidoria: converterPercentualPlanilha(linha[COLUNAS_GERAL_PROFOR.valorRelativoOuvidoria]),
+            execucaoOuvidoriaPercentual: converterPercentualPlanilha(linha[COLUNAS_GERAL_PROFOR.execucaoOuvidoriaPercentual]),
+            execucaoCorregedoriaPercentual: converterPercentualPlanilha(linha[COLUNAS_GERAL_PROFOR.execucaoCorregedoriaPercentual]),
+            execucaoEscolaPenalPercentual: converterPercentualPlanilha(linha[COLUNAS_GERAL_PROFOR.execucaoEscolaPenalPercentual]),
+            saldoDisponivelOuvidoria: arredondarMoeda(converterNumeroPlanilha(linha[COLUNAS_GERAL_PROFOR.saldoDisponivelOuvidoria])),
+            valorExecutadoOuvidoria: resumoPlano.valorExecutadoOuvidoria,
+            valorPrevistoOuvidoriaPlano: resumoPlano.valorPrevistoOuvidoriaPlano,
+            previstoCapitalOuvidoria: resumoPlano.previstoCapitalOuvidoria,
+            previstoCusteioOuvidoria: resumoPlano.previstoCusteioOuvidoria,
+            totalItensPlano: resumoPlano.totalItens,
+            totalItensOuvidoria: resumoPlano.totalItensOuvidoria,
+            planoAplicacao
+        };
+    }).filter(Boolean);
+
+    if (convenios.length === 0) {
+        throw new Error('Nenhum convenio PROFOR 2022 foi encontrado na aba Geral.');
+    }
+
+    return {
+        resumo: montarResumoProfor2022(convenios),
+        convenios,
+        filtros: {
+            ufs: convenios.map((convenio) => convenio.uf).sort(),
+            areas: Array.from(new Set(
+                convenios.flatMap((convenio) => convenio.planoAplicacao.map((item) => item.area))
+            )).filter(Boolean).sort((a, b) => a.localeCompare(b, 'pt-BR')),
+            naturezas: Array.from(new Set(
+                convenios.flatMap((convenio) => convenio.planoAplicacao.map((item) => item.natureza))
+            )).filter(Boolean).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+        }
+    };
+}
+
 // Extrai somente itens de convênio classificados como OUVIDORIA nas abas de UF.
 // A planilha de gestão financeira é ampla; esta aplicação mostra o recorte da
 // Ouvidoria, por isso a classificação é uma regra de negócio importante.
@@ -470,8 +790,13 @@ function validarConveniosContraAbaGeral(workbook, dadosConvenio, catalogoAplicac
 // Isso evita exibir um painel aparentemente correto com dados parciais.
 function extrairConveniosDoWorkbook(workbook, catalogoAplicacao) {
     const { configuracao, nomesEstados } = catalogoAplicacao;
+    const abasIgnoradas = new Set([
+        ABA_RESUMO_CONVENIOS,
+        'IND_PRORROG',
+        ...(configuracao.abasPlanilhaIgnoradas || [])
+    ].map((nomeAba) => normalizarTexto(nomeAba)));
     const abasDeEstado = workbook.SheetNames.filter((sheetName) => (
-        nomesEstados[sheetName] && !configuracao.abasPlanilhaIgnoradas.includes(sheetName)
+        nomesEstados[normalizarTexto(sheetName)] && !abasIgnoradas.has(normalizarTexto(sheetName))
     ));
 
     const dadosConvenio = abasDeEstado.flatMap((sheetName) => (
@@ -489,6 +814,13 @@ function extrairConveniosDoWorkbook(workbook, catalogoAplicacao) {
 
 function montarDadosComConvenios(catalogoAplicacao, dadosConvenio) {
     return [...catalogoAplicacao.dadosBase, ...dadosConvenio];
+}
+
+function extrairDadosFinanceirosDoWorkbook(workbook, catalogoAplicacao) {
+    dadosProfor2022Cache = null;
+    const dadosConvenio = extrairConveniosDoWorkbook(workbook, catalogoAplicacao);
+    dadosProfor2022Cache = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);
+    return dadosConvenio;
 }
 
 async function lerWorkbookDeArrayBuffer(arrayBuffer) {
@@ -509,7 +841,7 @@ async function carregarConveniosDaPlanilha(catalogoAplicacao) {
     }
 
     const workbook = await lerWorkbookDeArrayBuffer(await resposta.arrayBuffer());
-    return extrairConveniosDoWorkbook(workbook, catalogoAplicacao);
+    return extrairDadosFinanceirosDoWorkbook(workbook, catalogoAplicacao);
 }
 
 // Carrega o banco orçamentário 2026. A estrutura esperada é:
@@ -872,6 +1204,8 @@ export async function carregarCatalogoAplicacao() {
     }
 
     catalogoAplicacaoCache = await resposta.json();
+    dadosFaf2021Cache = montarDadosFaf2021(catalogoAplicacaoCache);
+    dadosDoacoes2023Cache = montarDadosDoacoes2023(catalogoAplicacaoCache);
     return catalogoAplicacaoCache;
 }
 
@@ -889,6 +1223,6 @@ export async function processarArquivoPlanilhaSelecionado(arquivoSelecionado, ca
     const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
     await carregarPlanilhaOrcamento();
     const workbook = await lerWorkbookDeArrayBuffer(await arquivoSelecionado.arrayBuffer());
-    const dadosConvenio = extrairConveniosDoWorkbook(workbook, catalogo);
+    const dadosConvenio = extrairDadosFinanceirosDoWorkbook(workbook, catalogo);
     return montarDadosComConvenios(catalogo, dadosConvenio);
 }

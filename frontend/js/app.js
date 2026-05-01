@@ -10,9 +10,12 @@ import {
     carregarCatalogoAplicacao,
     carregarDadosAplicacao,
     carregarDadosOrcamento,
+    obterDadosDoacoes2023,
+    obterDadosFaf2021,
+    obterDadosProfor2022,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260430-1';
+} from '../../backend/services/data-service.js?v=20260501-2';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -32,9 +35,21 @@ let dadosFinanceirosValidados = false;
 let filtroTabelaAtual = null;
 let filtroDataTableRegistrado = false;
 let orcamentoItensRastreioAbertos = new Set();
+let proforConvenioAtual = null;
+let proforFiltroAreaAtual = 'OUVIDORIA';
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
+const VIEWS_REPASSES_FUNPEN = new Set([
+    'detalhamento',
+    'estado-detalhe',
+    'profor2022',
+    'profor-convenio-detalhe',
+    'faf2021',
+    'faf2021-detalhe',
+    'doacoes2023',
+    'doacoes2023-detalhe'
+]);
 const TODAS_UFS_BRASIL = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
     "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
@@ -56,6 +71,19 @@ function fecharMenuLateral() {
     if (offcanvas) offcanvas.hide();
 }
 
+function alternarPastaRepassesFunpen(forceOpen = null) {
+    const botao = document.getElementById('btn-repasses-funpen');
+    const submenu = document.getElementById('submenu-repasses-funpen');
+    if (!botao || !submenu) return;
+
+    const deveAbrir = forceOpen === null
+        ? submenu.classList.contains('d-none')
+        : Boolean(forceOpen);
+    submenu.classList.toggle('d-none', !deveAbrir);
+    botao.setAttribute('aria-expanded', String(deveAbrir));
+    botao.classList.toggle('active', deveAbrir);
+}
+
 function obterUfsOrdenadasParaExportacao() {
     const ufsPorRegiao = ORDEM_REGIOES.flatMap((regiao) => catalogoAplicacao.regioes?.[regiao] || []);
     const ufsComDados = Array.from(new Set(dadosFaf.map((item) => item.uf).filter(Boolean))).sort();
@@ -67,33 +95,35 @@ function obterUfsOrdenadasParaExportacao() {
 }
 
 function renderizarOpcoesExportacaoUf() {
-    const lista = document.getElementById('sidebar-uf-export-list');
-    if (!lista) return;
+    const listas = Array.from(document.querySelectorAll('#detail-uf-export-list'));
+    if (listas.length === 0) return;
 
-    lista.innerHTML = '';
+    listas.forEach((lista) => {
+        lista.innerHTML = '';
 
-    if (!dadosFinanceirosValidados) {
-        const aviso = document.createElement('span');
-        aviso.className = 'sidebar-helper-text';
-        aviso.textContent = 'Carregue uma planilha válida para exportar relatórios estaduais.';
-        lista.appendChild(aviso);
-        return;
-    }
+        if (!dadosFinanceirosValidados) {
+            const aviso = document.createElement('span');
+            aviso.className = 'sidebar-helper-text';
+            aviso.textContent = 'Carregue uma planilha válida para exportar relatórios estaduais.';
+            lista.appendChild(aviso);
+            return;
+        }
 
-    obterUfsOrdenadasParaExportacao().forEach((uf) => {
-        const botao = document.createElement('button');
-        botao.type = 'button';
-        botao.className = 'sidebar-uf-option';
-        botao.textContent = uf;
-        botao.title = catalogoAplicacao.nomesEstados?.[uf] || uf;
-        botao.addEventListener('click', () => exportarRelatorioEstadoSelecionado(uf));
-        lista.appendChild(botao);
+        obterUfsOrdenadasParaExportacao().forEach((uf) => {
+            const botao = document.createElement('button');
+            botao.type = 'button';
+            botao.className = 'sidebar-uf-option';
+            botao.textContent = uf;
+            botao.title = catalogoAplicacao.nomesEstados?.[uf] || uf;
+            botao.addEventListener('click', () => exportarRelatorioEstadoSelecionado(uf));
+            lista.appendChild(botao);
+        });
     });
 }
 
 function abrirSelecaoUfExportacao() {
-    const painel = document.getElementById('sidebar-uf-export-panel');
-    const botao = document.getElementById('btn-menu-export-state-pdf');
+    const painel = document.getElementById('detail-uf-export-panel');
+    const botao = document.getElementById('btn-detail-export-state-pdf');
     if (!painel || !botao) return;
 
     if (!dadosFinanceirosValidados) {
@@ -123,7 +153,15 @@ async function exportarRelatorioEstadoSelecionado(uf) {
 }
 
 function atualizarNavegacao(viewName = 'dashboard') {
-    const viewAtiva = viewName === 'estado-detalhe' ? 'detalhamento' : viewName;
+    const viewAtiva = viewName === 'estado-detalhe'
+        ? 'detalhamento'
+        : viewName === 'profor-convenio-detalhe'
+            ? 'profor2022'
+            : viewName === 'faf2021-detalhe'
+                ? 'faf2021'
+                : viewName === 'doacoes2023-detalhe'
+                    ? 'doacoes2023'
+                    : viewName;
     document.body.dataset.currentView = viewName;
 
     document.querySelectorAll('.app-menu-link').forEach((botao) => {
@@ -136,11 +174,11 @@ function atualizarNavegacao(viewName = 'dashboard') {
         }
     });
 
-    const btnExportarRelatorioMenu = document.getElementById('btn-menu-export-state-pdf');
-    if (btnExportarRelatorioMenu) {
+    const btnExportarRelatorioDetalhe = document.getElementById('btn-detail-export-state-pdf');
+    if (btnExportarRelatorioDetalhe) {
         const podeExportarRelatorio = dadosFinanceirosValidados;
-        btnExportarRelatorioMenu.disabled = !podeExportarRelatorio;
-        btnExportarRelatorioMenu.setAttribute('aria-disabled', String(!podeExportarRelatorio));
+        btnExportarRelatorioDetalhe.disabled = !podeExportarRelatorio;
+        btnExportarRelatorioDetalhe.setAttribute('aria-disabled', String(!podeExportarRelatorio));
     }
 
     const btnExportDashboard = document.getElementById('btn-export-dashboard');
@@ -152,6 +190,8 @@ function atualizarNavegacao(viewName = 'dashboard') {
     if (btnDetalhamentoHeader) {
         btnDetalhamentoHeader.classList.toggle('d-none', viewName !== 'dashboard');
     }
+
+    alternarPastaRepassesFunpen(VIEWS_REPASSES_FUNPEN.has(viewName));
 }
 
 function showLoading(mensagem = 'Processando...') {
@@ -282,7 +322,12 @@ async function carregarLogoParaPDF() {
         function configurarEstadoDadosValidados(validado) {
             dadosFinanceirosValidados = validado;
             const btnExportDashboard = document.getElementById('btn-export-dashboard');
-            const botoesDetalhamento = document.querySelectorAll('button[onclick="toggleView(\'detalhamento\')"], .app-menu-link[data-view="detalhamento"]');
+            const botoesDetalhamento = document.querySelectorAll(`
+                button[onclick="toggleView('detalhamento')"],
+                button[onclick="toggleView('profor2022')"],
+                .app-menu-link[data-view="detalhamento"],
+                .app-menu-link[data-view="profor2022"]
+            `);
 
             [btnExportDashboard, ...botoesDetalhamento].forEach((botao) => {
                 if (!botao) return;
@@ -295,8 +340,8 @@ async function carregarLogoParaPDF() {
             renderizarOpcoesExportacaoUf();
 
             if (!validado) {
-                const painelExportacaoUf = document.getElementById('sidebar-uf-export-panel');
-                const btnExportarRelatorioMenu = document.getElementById('btn-menu-export-state-pdf');
+                const painelExportacaoUf = document.getElementById('detail-uf-export-panel');
+                const btnExportarRelatorioMenu = document.getElementById('btn-detail-export-state-pdf');
                 painelExportacaoUf?.classList.add('d-none');
                 btnExportarRelatorioMenu?.setAttribute('aria-expanded', 'false');
             }
@@ -307,6 +352,9 @@ async function carregarLogoParaPDF() {
             configurarEstadoDadosValidados(false);
             initDashboard(dadosFaf);
             renderDetailsView();
+            if (document.body.dataset.currentView === 'profor2022') {
+                renderProfor2022View();
+            }
             mostrarAlertaCarregamentoPlanilha(
                 `Dados financeiros indisponiveis: a planilha nao foi carregada ou validada. ${error.message}`,
                 true,
@@ -325,6 +373,11 @@ async function carregarLogoParaPDF() {
                 ocultarAlertaCarregamentoPlanilha();
                 initDashboard(dadosFaf);
                 renderDetailsView();
+                if (document.body.dataset.currentView === 'profor2022') {
+                    renderProfor2022View();
+                } else if (document.body.dataset.currentView === 'profor-convenio-detalhe' && proforConvenioAtual) {
+                    abrirDetalheConvenioProfor(proforConvenioAtual, proforFiltroAreaAtual);
+                }
             } catch (error) {
                 console.error('Falha ao processar a planilha selecionada manualmente:', error);
                 bloquearDadosFinanceiros(error);
@@ -341,6 +394,8 @@ async function carregarLogoParaPDF() {
             if (inputPlanilha) {
                 inputPlanilha.addEventListener('change', processarSelecaoManualPlanilha);
             }
+
+            document.getElementById('btn-repasses-funpen')?.addEventListener('click', () => alternarPastaRepassesFunpen());
 
             const btnSelecionarPlanilha = document.getElementById('btn-selecionar-planilha');
             if (btnSelecionarPlanilha) {
@@ -406,8 +461,9 @@ async function carregarLogoParaPDF() {
             }
 
             const podeAbrirOrcamento = viewName === 'orcamento' && obterDadosOrcamento();
+            const podeAbrirComDadosEstaticos = ['faf2021', 'faf2021-detalhe', 'doacoes2023', 'doacoes2023-detalhe'].includes(viewName);
 
-            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento) {
+            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirComDadosEstaticos) {
                 mostrarAlertaCarregamentoPlanilha(
                     'Dados financeiros indisponiveis: carregue uma planilha valida antes de acessar detalhes ou exportacoes.',
                     true,
@@ -419,13 +475,37 @@ async function carregarLogoParaPDF() {
             document.getElementById('view-dashboard').style.display = 'none';
             document.getElementById('view-detalhamento').style.display = 'none';
             document.getElementById('view-estado-detalhe').style.display = 'none';
+            const viewProfor = document.getElementById('view-profor-2022');
+            const viewProforDetalhe = document.getElementById('view-profor-convenio-detalhe');
+            const viewFaf = document.getElementById('view-faf-2021');
+            const viewFafDetalhe = document.getElementById('view-faf-2021-detalhe');
+            const viewDoacoes = document.getElementById('view-doacoes-2023');
+            const viewDoacoesDetalhe = document.getElementById('view-doacoes-2023-detalhe');
             const viewOrcamento = document.getElementById('view-orcamento');
+            if (viewProfor) viewProfor.style.display = 'none';
+            if (viewProforDetalhe) viewProforDetalhe.style.display = 'none';
+            if (viewFaf) viewFaf.style.display = 'none';
+            if (viewFafDetalhe) viewFafDetalhe.style.display = 'none';
+            if (viewDoacoes) viewDoacoes.style.display = 'none';
+            if (viewDoacoesDetalhe) viewDoacoesDetalhe.style.display = 'none';
             if (viewOrcamento) viewOrcamento.style.display = 'none';
 
             if (viewName === 'detalhamento') {
                 document.getElementById('view-detalhamento').style.display = 'block';
             } else if (viewName === 'estado-detalhe') {
                 document.getElementById('view-estado-detalhe').style.display = 'block';
+            } else if (viewName === 'profor2022') {
+                renderProfor2022View();
+            } else if (viewName === 'profor-convenio-detalhe') {
+                if (viewProforDetalhe) viewProforDetalhe.style.display = 'block';
+            } else if (viewName === 'faf2021') {
+                renderFaf2021View();
+            } else if (viewName === 'faf2021-detalhe') {
+                if (viewFafDetalhe) viewFafDetalhe.style.display = 'block';
+            } else if (viewName === 'doacoes2023') {
+                renderDoacoes2023View();
+            } else if (viewName === 'doacoes2023-detalhe') {
+                if (viewDoacoesDetalhe) viewDoacoesDetalhe.style.display = 'block';
             } else if (viewName === 'orcamento') {
                 renderOrcamentoView();
             } else {
@@ -791,6 +871,1446 @@ async function carregarLogoParaPDF() {
 
             // 5. Exibir a View
             toggleView('estado-detalhe');
+        }
+
+        // --- MÓDULO PROFOR 2022 ---
+        function formatarQuantidadeProfor(valor) {
+            const numero = Number(valor);
+            if (!Number.isFinite(numero)) return escapeHtml(valor);
+
+            return numero.toLocaleString('pt-BR', {
+                maximumFractionDigits: Number.isInteger(numero) ? 0 : 2
+            });
+        }
+
+        function calcularResumoConveniosProfor(convenios) {
+            const resumo = convenios.reduce((acc, convenio) => {
+                acc.valorGlobal += Number(convenio.valorGlobal) || 0;
+                acc.valorRepasse += Number(convenio.valorRepasse) || 0;
+                acc.valorContrapartida += Number(convenio.valorContrapartida) || 0;
+                acc.valorExecutadoGeral += Number(convenio.valorExecutadoGeral) || 0;
+                acc.previstoOuvidoria += Number(convenio.previstoOuvidoria) || 0;
+                acc.valorExecutadoOuvidoria += Number(convenio.valorExecutadoOuvidoria) || 0;
+                acc.saldoDisponivelOuvidoria += Number(convenio.saldoDisponivelOuvidoria) || 0;
+                return acc;
+            }, {
+                totalConvenios: convenios.length,
+                valorGlobal: 0,
+                valorRepasse: 0,
+                valorContrapartida: 0,
+                valorExecutadoGeral: 0,
+                previstoOuvidoria: 0,
+                valorExecutadoOuvidoria: 0,
+                saldoDisponivelOuvidoria: 0
+            });
+
+            resumo.execucaoGeralPercentual = resumo.valorGlobal > 0
+                ? (resumo.valorExecutadoGeral / resumo.valorGlobal) * 100
+                : 0;
+            resumo.execucaoOuvidoriaPercentual = resumo.previstoOuvidoria > 0
+                ? (resumo.valorExecutadoOuvidoria / resumo.previstoOuvidoria) * 100
+                : 0;
+
+            return resumo;
+        }
+
+        function obterDiasAteDataPtBr(dataPtBr) {
+            const match = String(dataPtBr || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            if (!match) return null;
+
+            const [, dia, mes, ano] = match;
+            const data = new Date(Number(ano), Number(mes) - 1, Number(dia));
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            data.setHours(0, 0, 0, 0);
+
+            return Math.ceil((data.getTime() - hoje.getTime()) / 86400000);
+        }
+
+        function renderizarCountdownVigenciaProfor(convenio) {
+            const dias = obterDiasAteDataPtBr(convenio.vencimento);
+            if (dias === null) {
+                return '<span class="profor-countdown profor-countdown-neutral">Prazo não informado</span>';
+            }
+
+            let classe = 'profor-countdown-ok';
+            let texto = `${dias.toLocaleString('pt-BR')} dias`;
+            let titulo = `Faltam ${dias.toLocaleString('pt-BR')} dias para o fim da vigência`;
+
+            if (dias < 0) {
+                classe = 'profor-countdown-danger';
+                texto = `${Math.abs(dias).toLocaleString('pt-BR')} dias vencido`;
+                titulo = `Vigência encerrada há ${Math.abs(dias).toLocaleString('pt-BR')} dias`;
+            } else if (dias === 0) {
+                classe = 'profor-countdown-danger';
+                texto = 'vence hoje';
+                titulo = 'A vigência se encerra hoje';
+            } else if (dias <= 180) {
+                classe = 'profor-countdown-danger';
+            } else if (dias <= 365) {
+                classe = 'profor-countdown-warning';
+            }
+
+            return `<span class="profor-countdown ${classe}" title="${escapeHtml(titulo)}">${escapeHtml(texto)}</span>`;
+        }
+
+        function isSaldoDisponivelAltoProfor(convenio) {
+            const saldo = Number(convenio.saldoDisponivelOuvidoria) || 0;
+            const previsto = Number(convenio.previstoOuvidoria) || 0;
+            return saldo > 100000 || (previsto > 0 && saldo > previsto * 0.5);
+        }
+
+        function obterAlertasProfor(convenio) {
+            const alertas = [];
+            const execucaoOuvidoria = Number(convenio.execucaoOuvidoriaPercentual) || 0;
+            const saldoDisponivel = Number(convenio.saldoDisponivelOuvidoria) || 0;
+            const diasVencimento = obterDiasAteDataPtBr(convenio.vencimento);
+            const temExecucaoAcimaPrevisto = (convenio.planoAplicacao || []).some((item) => (
+                (Number(item.valorExecutado) || 0) - (Number(item.valorPrevisto) || 0) > 0.01
+            ));
+
+            if (execucaoOuvidoria <= 0) {
+                alertas.push({ tipo: 'danger', texto: 'Sem execução da Ouvidoria' });
+            } else if (execucaoOuvidoria < 50) {
+                alertas.push({ tipo: 'warning', texto: 'Execução baixa' });
+            } else if (execucaoOuvidoria >= 100) {
+                alertas.push({ tipo: 'success', texto: 'Ouvidoria executada' });
+            }
+
+            if (saldoDisponivel < 0) {
+                alertas.push({ tipo: 'danger', texto: 'Saldo disponível negativo' });
+            } else if (isSaldoDisponivelAltoProfor(convenio)) {
+                alertas.push({ tipo: 'info', texto: 'Saldo disponível alto' });
+            }
+
+            if (diasVencimento !== null && diasVencimento < 0) {
+                alertas.push({ tipo: 'danger', texto: 'Vencimento expirado' });
+            } else if (diasVencimento !== null && diasVencimento <= 365) {
+                alertas.push({ tipo: 'warning', texto: `Vence em ${diasVencimento} dias` });
+            }
+
+            if (temExecucaoAcimaPrevisto) {
+                alertas.push({ tipo: 'warning', texto: 'Item acima do previsto' });
+            }
+
+            return alertas;
+        }
+
+        function renderizarBadgesAlertaProfor(convenio, limite = 4) {
+            const alertas = obterAlertasProfor(convenio).slice(0, limite);
+            if (alertas.length === 0) {
+                return '<span class="profor-alert-badge profor-alert-neutral">Sem alerta crítico</span>';
+            }
+
+            return alertas.map((alerta) => (
+                `<span class="profor-alert-badge profor-alert-${escapeHtml(alerta.tipo)}">${escapeHtml(alerta.texto)}</span>`
+            )).join('');
+        }
+
+        function convenioAtendeSituacaoProfor(convenio, situacao) {
+            const execucao = Number(convenio.execucaoOuvidoriaPercentual) || 0;
+            const saldo = Number(convenio.saldoDisponivelOuvidoria) || 0;
+            const diasVencimento = obterDiasAteDataPtBr(convenio.vencimento);
+
+            if (!situacao) return true;
+            if (situacao === 'sem-execucao') return execucao <= 0;
+            if (situacao === 'baixa-execucao') return execucao > 0 && execucao < 50;
+            if (situacao === 'execucao-integral') return execucao >= 100;
+            if (situacao === 'saldo-negativo') return saldo < 0;
+            if (situacao === 'vencimento-proximo') return diasVencimento !== null && diasVencimento >= 0 && diasVencimento <= 365;
+            if (situacao === 'saldo-alto') return isSaldoDisponivelAltoProfor(convenio);
+            return true;
+        }
+
+        function convenioPassaFiltrosProfor(convenio) {
+            const busca = normalizarBusca(document.getElementById('filtroProforBusca')?.value || '');
+            const uf = document.getElementById('filtroProforUf')?.value || '';
+            const situacao = document.getElementById('filtroProforSituacao')?.value || '';
+            const textoConvenio = normalizarBusca([
+                convenio.uf,
+                convenio.numero,
+                convenio.ano,
+                convenio.vencimento
+            ].join(' '));
+
+            return (!uf || convenio.uf === uf)
+                && convenioAtendeSituacaoProfor(convenio, situacao)
+                && (!busca || textoConvenio.includes(busca));
+        }
+
+        function obterIndiceRegiaoProfor(uf) {
+            const regiao = ORDEM_REGIOES.find((nomeRegiao) => (
+                (catalogoAplicacao.regioes?.[nomeRegiao] || []).includes(uf)
+            ));
+            const indice = ORDEM_REGIOES.indexOf(regiao);
+            return indice >= 0 ? indice : ORDEM_REGIOES.length;
+        }
+
+        function obterNomeEstadoOrdenacaoProfor(uf) {
+            return catalogoAplicacao.nomesEstados?.[uf] || uf;
+        }
+
+        function ordenarConveniosProfor(convenios) {
+            const ordenacao = document.getElementById('ordenacaoProfor')?.value || 'alfabetica';
+            const compararAlfabetico = (a, b) => (
+                obterNomeEstadoOrdenacaoProfor(a.uf).localeCompare(obterNomeEstadoOrdenacaoProfor(b.uf), 'pt-BR')
+                || a.uf.localeCompare(b.uf, 'pt-BR')
+            );
+            const compararExecucao = (a, b, direcao = 'desc') => {
+                const diferenca = (Number(a.execucaoOuvidoriaPercentual) || 0) - (Number(b.execucaoOuvidoriaPercentual) || 0);
+                return direcao === 'asc'
+                    ? diferenca || compararAlfabetico(a, b)
+                    : -diferenca || compararAlfabetico(a, b);
+            };
+
+            return [...convenios].sort((a, b) => {
+                if (ordenacao === 'regiao') {
+                    return obterIndiceRegiaoProfor(a.uf) - obterIndiceRegiaoProfor(b.uf)
+                        || compararAlfabetico(a, b);
+                }
+
+                if (ordenacao === 'execucao-desc') {
+                    return compararExecucao(a, b, 'desc');
+                }
+
+                if (ordenacao === 'execucao-asc') {
+                    return compararExecucao(a, b, 'asc');
+                }
+
+                return compararAlfabetico(a, b);
+            });
+        }
+
+        function atualizarTabelaProfor2022(dadosProfor) {
+            const tbody = document.getElementById('profor-table-body');
+            const resumoContainer = document.getElementById('profor-selected-summary');
+            if (!tbody || !resumoContainer) return;
+
+            const conveniosFiltrados = dadosProfor.convenios.filter(convenioPassaFiltrosProfor);
+            const conveniosOrdenados = ordenarConveniosProfor(conveniosFiltrados);
+            const resumo = calcularResumoConveniosProfor(conveniosFiltrados);
+
+            resumoContainer.innerHTML = `
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div>
+                        <div class="kpi-title mb-0">Convênios filtrados</div>
+                        <div class="kpi-value">${resumo.totalConvenios}</div>
+                    </div>
+                    <i class="fas fa-filter card-watermark" aria-hidden="true"></i>
+                </div>
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div>
+                        <div class="kpi-title mb-0">Valor global filtrado</div>
+                        <div class="kpi-value text-money">${formatMoney(resumo.valorGlobal)}</div>
+                    </div>
+                    <i class="fas fa-file-invoice-dollar card-watermark" aria-hidden="true"></i>
+                </div>
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div>
+                        <div class="kpi-title mb-0">Previsto Ouvidoria</div>
+                        <div class="kpi-value text-money">${formatMoney(resumo.previstoOuvidoria)}</div>
+                    </div>
+                    <i class="fas fa-headset card-watermark text-info" aria-hidden="true"></i>
+                </div>
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div>
+                        <div class="kpi-title mb-0">Execução Ouvidoria</div>
+                        <div class="kpi-value">${formatPercent(resumo.execucaoOuvidoriaPercentual)}</div>
+                    </div>
+                    <i class="fas fa-chart-line card-watermark text-success" aria-hidden="true"></i>
+                </div>
+            `;
+
+            if (conveniosFiltrados.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">Nenhum convênio encontrado para os filtros selecionados.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = conveniosOrdenados.map((convenio) => {
+                const execucao = Number(convenio.execucaoOuvidoriaPercentual) || 0;
+                const saldoDisponivel = Number(convenio.saldoDisponivelOuvidoria) || 0;
+                const safeUf = escapeHtml(convenio.uf);
+                const safeNumero = escapeHtml(convenio.numero);
+                const safeAno = escapeHtml(convenio.ano);
+                const rowClass = saldoDisponivel < 0 ? 'profor-row profor-row-risk' : 'profor-row';
+
+                return `
+                    <tr class="${rowClass}" data-profor-uf="${safeUf}" role="button" tabindex="0">
+                        <td data-label="Convênio" class="align-middle">
+                            <div class="profor-convenio-cell">
+                                <span class="badge bg-secondary badge-uf">${safeUf}</span>
+                                <div>
+                                    <strong>Convênio Nº ${safeNumero}/${safeAno}</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="Vencimento" class="align-middle text-center">${escapeHtml(convenio.vencimento || '-')}</td>
+                        <td data-label="Countdown" class="align-middle text-center">${renderizarCountdownVigenciaProfor(convenio)}</td>
+                        <td data-label="Valor Global" class="align-middle text-end font-monospace">${formatMoney(convenio.valorGlobal)}</td>
+                        <td data-label="Previsto Ouvidoria" class="align-middle text-end font-monospace">${formatMoney(convenio.previstoOuvidoria)}</td>
+                        <td data-label="Execução Ouvidoria" class="align-middle progress-cell">
+                            <div class="custom-progress-pill">
+                                <div class="pill-fill" style="width: ${getProgressWidth(execucao)}%; background-color: ${getProgressColor(execucao)}"></div>
+                                <div class="pill-text">${formatPercent(execucao)}</div>
+                            </div>
+                        </td>
+                        <td data-label="Saldo p/ Ouvidoria" class="align-middle text-end font-monospace ${saldoDisponivel < 0 ? 'text-danger fw-bold' : ''}">${formatMoney(saldoDisponivel)}</td>
+                        <td data-label="Sinais de gestão" class="align-middle">
+                            <div class="profor-alert-list">${renderizarBadgesAlertaProfor(convenio)}</div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function registrarEventosProfor2022(dadosProfor) {
+            const atualizar = () => atualizarTabelaProfor2022(dadosProfor);
+
+            document.getElementById('filtroProforBusca')?.addEventListener('input', atualizar);
+            document.getElementById('filtroProforUf')?.addEventListener('change', atualizar);
+            document.getElementById('filtroProforSituacao')?.addEventListener('change', atualizar);
+            document.getElementById('ordenacaoProfor')?.addEventListener('change', atualizar);
+            document.getElementById('btnLimparFiltroProfor')?.addEventListener('click', () => {
+                const busca = document.getElementById('filtroProforBusca');
+                const uf = document.getElementById('filtroProforUf');
+                const situacao = document.getElementById('filtroProforSituacao');
+                const ordenacao = document.getElementById('ordenacaoProfor');
+                if (busca) busca.value = '';
+                if (uf) uf.value = '';
+                if (situacao) situacao.value = '';
+                if (ordenacao) ordenacao.value = 'alfabetica';
+                atualizar();
+            });
+
+            const tbody = document.getElementById('profor-table-body');
+            tbody?.addEventListener('click', (event) => {
+                const row = event.target.closest('[data-profor-uf]');
+                if (row) abrirDetalheConvenioProfor(row.dataset.proforUf);
+            });
+            tbody?.addEventListener('keydown', (event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                const row = event.target.closest('[data-profor-uf]');
+                if (!row) return;
+                event.preventDefault();
+                abrirDetalheConvenioProfor(row.dataset.proforUf);
+            });
+        }
+
+        function renderProfor2022View() {
+            const container = document.getElementById('view-profor-2022');
+            if (!container) return;
+
+            container.style.display = 'block';
+            const dadosProfor = obterDadosProfor2022();
+            if (!dadosFinanceirosValidados || !dadosProfor) {
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados do PROFOR 2022 indisponíveis. Carregue uma planilha financeira válida para visualizar os convênios.</div>';
+                return;
+            }
+
+            const resumo = dadosProfor.resumo;
+            const opcoesUf = dadosProfor.convenios
+                .map((convenio) => `<option value="${escapeHtml(convenio.uf)}">${escapeHtml(convenio.uf)} - ${escapeHtml(catalogoAplicacao.nomesEstados?.[convenio.uf] || convenio.uf)}</option>`)
+                .join('');
+
+            container.innerHTML = `
+                <section class="dashboard-intro profor-intro">
+                    <div>
+                        <p class="section-eyebrow mb-1">Transferências da União</p>
+                        <h2>PROFOR 2022</h2>
+                        <p>Convênios vigentes e plano de aplicação por UF</p>
+                    </div>
+                    <div class="intro-badges" aria-label="Resumo PROFOR 2022">
+                        <span><i class="fas fa-file-contract" aria-hidden="true"></i> ${resumo.totalConvenios} convênios</span>
+                        <span><i class="fas fa-calendar-check" aria-hidden="true"></i> 2022</span>
+                        <span><i class="fas fa-headset" aria-hidden="true"></i> Ouvidoria</span>
+                    </div>
+                </section>
+
+                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3 profor-kpi-grid" aria-label="Indicadores PROFOR 2022">
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-success">
+                            <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Convênios vigentes</div>
+                            <div class="kpi-value">${resumo.totalConvenios}</div>
+                            <div class="kpi-desc">Instrumentos da aba Geral</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-scale-balanced" aria-hidden="true"></i>Valor Global</div>
+                            <div class="kpi-value text-money">${formatMoney(resumo.valorGlobal)}</div>
+                            <div class="kpi-desc">Repasse + contrapartida</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-building-columns" aria-hidden="true"></i>Valor de Repasse</div>
+                            <div class="kpi-value text-money">${formatMoney(resumo.valorRepasse)}</div>
+                            <div class="kpi-desc">União pactuada</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-handshake" aria-hidden="true"></i>Contrapartida</div>
+                            <div class="kpi-value text-money">${formatMoney(resumo.valorContrapartida)}</div>
+                            <div class="kpi-desc">Valor pactuado pelos convenentes</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-info">
+                            <div class="kpi-title"><i class="fas fa-chart-pie" aria-hidden="true"></i>Execução Geral</div>
+                            <div class="kpi-value">${formatPercent(resumo.execucaoGeralPercentual)}</div>
+                            <div class="kpi-desc">${formatMoney(resumo.valorExecutadoGeral)} executados</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-headset" aria-hidden="true"></i>Previsto Ouvidoria</div>
+                            <div class="kpi-value text-money">${formatMoney(resumo.previstoOuvidoria)}</div>
+                            <div class="kpi-desc">Plano de aplicação ONASP</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-success">
+                            <div class="kpi-title"><i class="fas fa-check-circle" aria-hidden="true"></i>Execução Ouvidoria</div>
+                            <div class="kpi-value">${formatPercent(resumo.execucaoOuvidoriaPercentual)}</div>
+                            <div class="kpi-desc">${formatMoney(resumo.valorExecutadoOuvidoria)} executados</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-warning">
+                            <div class="kpi-title"><i class="fas fa-coins" aria-hidden="true"></i>Rendimentos atuais</div>
+                            <div class="kpi-value text-money text-warning">${formatMoney(resumo.saldoRendimentosAtual)}</div>
+                            <div class="kpi-desc">Saldo de rendimentos registrado</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card ${resumo.saldoDisponivelOuvidoria < 0 ? 'kpi-card-warning' : ''}">
+                            <div class="kpi-title"><i class="fas fa-vault" aria-hidden="true"></i>Saldo p/ Ouvidoria</div>
+                            <div class="kpi-value text-money ${resumo.saldoDisponivelOuvidoria < 0 ? 'text-danger' : ''}">${formatMoney(resumo.saldoDisponivelOuvidoria)}</div>
+                            <div class="kpi-desc">Disponível para destinação</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="filter-section mb-4" aria-label="Filtros PROFOR 2022">
+                    <div class="filter-toolbar">
+                        <div class="filter-title">
+                            <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
+                            <strong>Filtros</strong>
+                        </div>
+                        <div class="filter-search-actions">
+                            <input type="text" id="filtroProforBusca" class="form-control" placeholder="Buscar por UF, convênio ou vencimento..." aria-label="Buscar convênios PROFOR 2022">
+                            <button id="btnLimparFiltroProfor" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                <span>Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="budget-filter-grid profor-filter-grid">
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroProforUf">UF</label>
+                            <select id="filtroProforUf" class="form-select">
+                                <option value="">Todas</option>
+                                ${opcoesUf}
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroProforSituacao">Sinal de gestão</label>
+                            <select id="filtroProforSituacao" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="sem-execucao">Sem execução da Ouvidoria</option>
+                                <option value="baixa-execucao">Execução baixa</option>
+                                <option value="execucao-integral">Execução integral</option>
+                                <option value="saldo-negativo">Saldo negativo</option>
+                                <option value="vencimento-proximo">Vencimento em até 12 meses</option>
+                                <option value="saldo-alto">Saldo disponível alto</option>
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="ordenacaoProfor">Ordenar por</label>
+                            <select id="ordenacaoProfor" class="form-select">
+                                <option value="alfabetica">Ordem alfabética</option>
+                                <option value="regiao">Regiões</option>
+                                <option value="execucao-desc">Execução: maior para menor</option>
+                                <option value="execucao-asc">Execução: menor para maior</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="budget-insight-grid profor-insight-grid mb-4" id="profor-selected-summary" aria-label="Resumo da seleção PROFOR 2022"></section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Convênios</p>
+                            <h2>Carteira PROFOR 2022</h2>
+                        </div>
+                        <small class="text-muted"><i class="fas fa-mouse-pointer me-1" aria-hidden="true"></i> Clique em uma linha para abrir o detalhe</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table profor-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Convênio</th>
+                                    <th class="text-center">Vencimento</th>
+                                    <th class="text-center">Countdown</th>
+                                    <th class="text-end">Valor Global</th>
+                                    <th class="text-end">Previsto Ouvidoria</th>
+                                    <th class="text-center">Execução Ouvidoria</th>
+                                    <th class="text-end">Saldo p/ Ouvidoria</th>
+                                    <th>Sinais de gestão</th>
+                                </tr>
+                            </thead>
+                            <tbody id="profor-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+
+            registrarEventosProfor2022(dadosProfor);
+            atualizarTabelaProfor2022(dadosProfor);
+        }
+
+        function obterAreasPlanoProfor(convenio) {
+            const areasBase = ['OUVIDORIA', 'CORREGEDORIA', 'ESCOLA PENAL', 'N/A'];
+            const areasExistentes = Array.from(new Set(
+                (convenio.planoAplicacao || []).map((item) => item.area).filter(Boolean)
+            ));
+            return [
+                '',
+                ...areasBase.filter((area) => areasExistentes.includes(area)),
+                ...areasExistentes.filter((area) => !areasBase.includes(area)).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+            ];
+        }
+
+        function renderizarKpiDetalheProfor(rotulo, valor, descricao = '', extraClass = '', icone = 'fa-circle-info') {
+            return `
+                <div class="col">
+                    <div class="card kpi-card ${extraClass}">
+                        <div class="kpi-title"><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(rotulo)}</div>
+                        <div class="kpi-value text-money">${valor}</div>
+                        ${descricao ? `<div class="kpi-desc">${escapeHtml(descricao)}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderizarResumoAreasProfor(convenio) {
+            const resumoPorArea = (convenio.planoAplicacao || []).reduce((acc, item) => {
+                const area = item.area || 'Não informado';
+                acc[area] = acc[area] || { itens: 0, previsto: 0, executado: 0 };
+                acc[area].itens += 1;
+                acc[area].previsto += Number(item.valorPrevisto) || 0;
+                acc[area].executado += Number(item.valorExecutado) || 0;
+                return acc;
+            }, {});
+
+            return Object.entries(resumoPorArea).map(([area, resumo]) => {
+                const percentual = resumo.previsto > 0 ? (resumo.executado / resumo.previsto) * 100 : 0;
+                return `
+                    <div class="profor-area-summary">
+                        <div class="profor-area-summary-title">${escapeHtml(area)}</div>
+                        <strong>${formatMoney(resumo.previsto)}</strong>
+                        <span>${resumo.itens} item(ns) | ${formatPercent(percentual)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderizarPlanoAplicacaoProfor(convenio, areaSelecionada = proforFiltroAreaAtual) {
+            const tableBody = document.getElementById('profor-detail-plan-body');
+            const resumo = document.getElementById('profor-detail-plan-summary');
+            const areaLabel = document.getElementById('profor-detail-plan-area-label');
+            if (!tableBody || !resumo || !areaLabel) return;
+
+            proforFiltroAreaAtual = areaSelecionada;
+            document.querySelectorAll('.profor-area-filter').forEach((botao) => {
+                const ativo = botao.dataset.area === areaSelecionada;
+                botao.classList.toggle('active', ativo);
+                botao.setAttribute('aria-pressed', String(ativo));
+            });
+
+            const itens = (convenio.planoAplicacao || []).filter((item) => (
+                !areaSelecionada || normalizarBusca(item.area) === normalizarBusca(areaSelecionada)
+            ));
+            const totalPrevisto = itens.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0);
+            const totalExecutado = itens.reduce((total, item) => total + (Number(item.valorExecutado) || 0), 0);
+            const totalSaldo = itens.reduce((total, item) => total + (Number(item.saldo) || 0), 0);
+            const percentual = totalPrevisto > 0 ? (totalExecutado / totalPrevisto) * 100 : 0;
+
+            areaLabel.textContent = areaSelecionada || 'Todas as áreas';
+            resumo.innerHTML = `
+                <div class="profor-plan-summary-item">
+                    <span>Itens</span>
+                    <strong>${itens.length}</strong>
+                </div>
+                <div class="profor-plan-summary-item">
+                    <span>Previsto</span>
+                    <strong>${formatMoney(totalPrevisto)}</strong>
+                </div>
+                <div class="profor-plan-summary-item">
+                    <span>Executado</span>
+                    <strong>${formatMoney(totalExecutado)}</strong>
+                </div>
+                <div class="profor-plan-summary-item">
+                    <span>Saldo</span>
+                    <strong class="${totalSaldo < 0 ? 'text-danger' : ''}">${formatMoney(totalSaldo)}</strong>
+                </div>
+                <div class="profor-plan-summary-item">
+                    <span>Execução</span>
+                    <strong>${formatPercent(percentual)}</strong>
+                </div>
+            `;
+
+            if (itens.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="text-center text-muted py-4">Nenhum item localizado para a área selecionada.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = itens.map((item) => {
+                const percentualItem = Number(item.percentualExecucao) || 0;
+                const execucaoAcimaPrevisto = (Number(item.valorExecutado) || 0) - (Number(item.valorPrevisto) || 0) > 0.01;
+                const saldo = Number(item.saldo) || 0;
+
+                return `
+                    <tr class="${execucaoAcimaPrevisto || saldo < 0 ? 'table-warning' : ''}">
+                        <td data-label="Área" class="align-middle"><span class="profor-area-pill">${escapeHtml(item.area)}</span></td>
+                        <td data-label="Natureza" class="align-middle">${escapeHtml(item.natureza)}</td>
+                        <td data-label="Descrição" class="align-middle"><span class="truncate-text">${escapeHtml(item.descricao)}</span></td>
+                        <td data-label="Qtd." class="text-center align-middle">${formatarQuantidadeProfor(item.quantidade)}</td>
+                        <td data-label="Valor Unit." class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
+                        <td data-label="Previsto" class="text-end font-monospace align-middle">${formatMoney(item.valorPrevisto)}</td>
+                        <td data-label="Executado" class="text-end font-monospace align-middle ${item.valorExecutado > 0 ? 'text-success fw-bold' : 'text-muted'}">${formatMoney(item.valorExecutado)}</td>
+                        <td data-label="Saldo" class="text-end font-monospace align-middle ${saldo < 0 ? 'text-danger fw-bold' : ''}">${formatMoney(saldo)}</td>
+                        <td data-label="Economicidade" class="text-end font-monospace align-middle">${formatMoney(item.saldoEconomicidade)}</td>
+                        <td data-label="%" class="text-center align-middle progress-cell" title="${execucaoAcimaPrevisto ? 'Execução acima do valor previsto' : ''}">
+                            <div class="custom-progress-pill">
+                                <div class="pill-fill" style="width: ${getProgressWidth(percentualItem)}%; background-color: ${getProgressColor(percentualItem)}"></div>
+                                <div class="pill-text">${formatPercent(percentualItem)}</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function abrirDetalheConvenioProfor(uf, areaInicial = 'OUVIDORIA') {
+            const dadosProfor = obterDadosProfor2022();
+            const container = document.getElementById('view-profor-convenio-detalhe');
+            if (!dadosProfor || !container) {
+                toggleView('profor2022');
+                return;
+            }
+
+            const convenio = dadosProfor.convenios.find((item) => item.uf === uf);
+            if (!convenio) {
+                toggleView('profor2022');
+                return;
+            }
+
+            proforConvenioAtual = uf;
+            proforFiltroAreaAtual = areaInicial;
+
+            const nomeEstado = catalogoAplicacao.nomesEstados?.[uf] || uf;
+            const flagUrl = catalogoAplicacao.imagensBandeiras?.[uf] || '';
+            const imgElement = flagUrl
+                ? `<img src="${escapeHtml(flagUrl)}" alt="Bandeira ${escapeHtml(uf)}" class="state-flag report-state-flag me-3">`
+                : '<i class="fas fa-flag text-secondary report-state-icon me-3"></i>';
+            const areas = obterAreasPlanoProfor(convenio);
+            const areaButtons = areas.map((area) => {
+                const label = area || 'Todas';
+                return `
+                    <button type="button" class="profor-area-filter ${area === areaInicial ? 'active' : ''}" data-area="${escapeHtml(area)}" aria-pressed="${area === areaInicial}">
+                        ${escapeHtml(label)}
+                    </button>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="report-actions pdf-hidden">
+                    <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('profor2022')">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        <span>Voltar para PROFOR 2022</span>
+                    </button>
+                </div>
+
+                <div class="report-content profor-detail-content">
+                    <section class="profor-detail-header">
+                        <div class="d-flex align-items-center">
+                            ${imgElement}
+                            <div>
+                                <p class="section-eyebrow mb-1">Convênio PROFOR 2022</p>
+                                <h2>Convênio Nº ${escapeHtml(convenio.numero)}/${escapeHtml(convenio.ano)} - ${escapeHtml(nomeEstado)} (${escapeHtml(uf)})</h2>
+                                <div class="profor-detail-meta">
+                                    <span><i class="fas fa-folder-open" aria-hidden="true"></i> SEI ${escapeHtml(convenio.processoSei)}</span>
+                                    <span><i class="fas fa-calendar-alt" aria-hidden="true"></i> Vencimento ${escapeHtml(convenio.vencimento || '-')}</span>
+                                    <span><i class="fas fa-hourglass-half" aria-hidden="true"></i> ${renderizarCountdownVigenciaProfor(convenio)}</span>
+                                    <span><i class="fas fa-file-signature" aria-hidden="true"></i> ${escapeHtml(convenio.quantidadeTa)} TA</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profor-alert-list">${renderizarBadgesAlertaProfor(convenio, 8)}</div>
+                    </section>
+
+                    <section class="row my-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Detalhes financeiros do convênio">
+                        ${renderizarKpiDetalheProfor('Valor Global', formatMoney(convenio.valorGlobal), 'Total pactuado', '', 'fa-scale-balanced')}
+                        ${renderizarKpiDetalheProfor('Valor de Repasse', formatMoney(convenio.valorRepasse), 'União', '', 'fa-building-columns')}
+                        ${renderizarKpiDetalheProfor('Contrapartida', formatMoney(convenio.valorContrapartida), 'Pactuada', '', 'fa-handshake')}
+                        ${renderizarKpiDetalheProfor('Repasse Desembolsado', formatMoney(convenio.repasseDesembolsado), 'Liberado ao convenente', 'kpi-card-info', 'fa-money-bill-transfer')}
+                        ${renderizarKpiDetalheProfor('Countdown da Vigência', renderizarCountdownVigenciaProfor(convenio), `Vencimento em ${convenio.vencimento || '-'}`, 'kpi-card-warning', 'fa-hourglass-half')}
+                        ${renderizarKpiDetalheProfor('Execução Geral', formatPercent((convenio.valorGlobal > 0 ? convenio.valorExecutadoGeral / convenio.valorGlobal * 100 : 0)), formatMoney(convenio.valorExecutadoGeral), 'kpi-card-success', 'fa-chart-line')}
+                        ${renderizarKpiDetalheProfor('Previsto Ouvidoria', formatMoney(convenio.previstoOuvidoria), `${convenio.totalItensOuvidoria} item(ns)`, '', 'fa-headset')}
+                        ${renderizarKpiDetalheProfor('Execução Ouvidoria', formatPercent(convenio.execucaoOuvidoriaPercentual), formatMoney(convenio.valorExecutadoOuvidoria), 'kpi-card-success', 'fa-check-circle')}
+                        ${renderizarKpiDetalheProfor('Saldo p/ Ouvidoria', formatMoney(convenio.saldoDisponivelOuvidoria), 'Disponível para destinação', convenio.saldoDisponivelOuvidoria < 0 ? 'kpi-card-warning' : '', 'fa-vault')}
+                    </section>
+
+                    <section class="profor-finance-grid mb-4" aria-label="Saldos e rendimentos">
+                        <div class="profor-finance-item">
+                            <span>Rendimento aprovado</span>
+                            <strong>${formatMoney(convenio.rendimentoAprovado)}</strong>
+                        </div>
+                        <div class="profor-finance-item">
+                            <span>Saldo de rendimentos atual</span>
+                            <strong>${formatMoney(convenio.saldoRendimentosAtual)}</strong>
+                        </div>
+                        <div class="profor-finance-item">
+                            <span>Saldo residual capital</span>
+                            <strong class="${convenio.saldoResidualCapital < 0 ? 'text-danger' : ''}">${formatMoney(convenio.saldoResidualCapital)}</strong>
+                        </div>
+                        <div class="profor-finance-item">
+                            <span>Saldo residual custeio</span>
+                            <strong class="${convenio.saldoResidualCusteio < 0 ? 'text-danger' : ''}">${formatMoney(convenio.saldoResidualCusteio)}</strong>
+                        </div>
+                        <div class="profor-finance-item">
+                            <span>Contrapartida integralizada</span>
+                            <strong>${formatMoney(convenio.contrapartidaIntegralizada)}</strong>
+                        </div>
+                    </section>
+
+                    <section class="profor-area-section mb-4" aria-label="Resumo por área">
+                        <div class="section-header compact">
+                            <div>
+                                <p class="section-eyebrow mb-1">Distribuição do plano</p>
+                                <h2>Valores por área</h2>
+                            </div>
+                        </div>
+                        <div class="profor-area-summary-grid">
+                            ${renderizarResumoAreasProfor(convenio)}
+                        </div>
+                    </section>
+
+                    <section class="table-container profor-plan-section mb-0">
+                        <div class="section-header compact">
+                            <div>
+                                <p class="section-eyebrow mb-1">Plano de aplicação</p>
+                                <h2 id="profor-detail-plan-area-label">Ouvidoria</h2>
+                            </div>
+                        </div>
+                        <div class="profor-area-filter-bar" aria-label="Filtrar plano por área">
+                            ${areaButtons}
+                        </div>
+                        <div class="profor-plan-summary" id="profor-detail-plan-summary"></div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover w-100 app-data-table profor-plan-table">
+                                <thead>
+                                    <tr>
+                                        <th>Área</th>
+                                        <th>Natureza</th>
+                                        <th>Descrição</th>
+                                        <th class="text-center">Qtd.</th>
+                                        <th class="text-end">Valor Unit.</th>
+                                        <th class="text-end">Previsto</th>
+                                        <th class="text-end">Executado</th>
+                                        <th class="text-end">Saldo</th>
+                                        <th class="text-end">Economicidade</th>
+                                        <th class="text-center">%</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="profor-detail-plan-body"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            `;
+
+            document.querySelectorAll('.profor-area-filter').forEach((botao) => {
+                botao.addEventListener('click', () => renderizarPlanoAplicacaoProfor(convenio, botao.dataset.area || ''));
+            });
+            renderizarPlanoAplicacaoProfor(convenio, areaInicial);
+            toggleView('profor-convenio-detalhe');
+        }
+
+        // --- MÓDULO FUNPEN: FAF 2021 E DOAÇÕES 2023 ---
+        function calcularResumoItensFunpen(itens) {
+            const resumo = itens.reduce((acc, item) => {
+                acc.valorTotal += Number(item.valorTotal) || 0;
+                acc.valorExecutado += Number(item.valorExecutado) || 0;
+                acc.quantidade += Number(item.quantidade) || 0;
+                if (item.uf) acc.ufs.add(item.uf);
+                return acc;
+            }, {
+                valorTotal: 0,
+                valorExecutado: 0,
+                quantidade: 0,
+                ufs: new Set()
+            });
+
+            const saldo = resumo.valorTotal - resumo.valorExecutado;
+            return {
+                totalItens: itens.length,
+                totalUfs: resumo.ufs.size,
+                quantidade: resumo.quantidade,
+                valorTotal: resumo.valorTotal,
+                valorExecutado: resumo.valorExecutado,
+                saldo,
+                percentualExecucao: resumo.valorTotal > 0 ? (resumo.valorExecutado / resumo.valorTotal) * 100 : 0,
+                valorMedioPorUf: resumo.ufs.size > 0 ? resumo.valorTotal / resumo.ufs.size : 0
+            };
+        }
+
+        function obterUfsOrdenadasFunpen(itens) {
+            return Array.from(new Set(itens.map((item) => item.uf).filter(Boolean)))
+                .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        }
+
+        function obterItensPorUfFunpen(itens) {
+            return itens.reduce((acc, item) => {
+                acc[item.uf] = acc[item.uf] || [];
+                acc[item.uf].push(item);
+                return acc;
+            }, {});
+        }
+
+        function obterNomeEstadoFunpen(uf) {
+            return catalogoAplicacao.nomesEstados?.[uf] || uf;
+        }
+
+        function obterIndiceRegiaoFunpen(uf) {
+            const regiao = ORDEM_REGIOES.find((nomeRegiao) => (
+                (catalogoAplicacao.regioes?.[nomeRegiao] || []).includes(uf)
+            ));
+            const indice = ORDEM_REGIOES.indexOf(regiao);
+            return indice >= 0 ? indice : ORDEM_REGIOES.length;
+        }
+
+        function compararAlfabeticoFunpen(a, b) {
+            return obterNomeEstadoFunpen(a.uf).localeCompare(obterNomeEstadoFunpen(b.uf), 'pt-BR')
+                || String(a.objeto || '').localeCompare(String(b.objeto || ''), 'pt-BR');
+        }
+
+        function ordenarItensFunpen(itens, ordenacao, tipo) {
+            return [...itens].sort((a, b) => {
+                if (ordenacao === 'regiao') {
+                    return obterIndiceRegiaoFunpen(a.uf) - obterIndiceRegiaoFunpen(b.uf)
+                        || compararAlfabeticoFunpen(a, b);
+                }
+
+                if (tipo === 'faf') {
+                    if (ordenacao === 'execucao-desc') {
+                        return ((Number(b.percentualExecucao) || 0) - (Number(a.percentualExecucao) || 0))
+                            || compararAlfabeticoFunpen(a, b);
+                    }
+                    if (ordenacao === 'execucao-asc') {
+                        return ((Number(a.percentualExecucao) || 0) - (Number(b.percentualExecucao) || 0))
+                            || compararAlfabeticoFunpen(a, b);
+                    }
+                    if (ordenacao === 'valor-desc') {
+                        return ((Number(b.valorTotal) || 0) - (Number(a.valorTotal) || 0))
+                            || compararAlfabeticoFunpen(a, b);
+                    }
+                }
+
+                if (tipo === 'doacoes') {
+                    if (ordenacao === 'valor-desc') {
+                        return ((Number(b.valorTotal) || 0) - (Number(a.valorTotal) || 0))
+                            || compararAlfabeticoFunpen(a, b);
+                    }
+                    if (ordenacao === 'quantidade-desc') {
+                        return ((Number(b.quantidade) || 0) - (Number(a.quantidade) || 0))
+                            || compararAlfabeticoFunpen(a, b);
+                    }
+                }
+
+                return compararAlfabeticoFunpen(a, b);
+            });
+        }
+
+        function itemFafAtendeSituacao(item, situacao) {
+            const percentual = Number(item.percentualExecucao) || 0;
+            const saldo = Number(item.saldo) || 0;
+            const valorTotal = Number(item.valorTotal) || 0;
+            const valorExecutado = Number(item.valorExecutado) || 0;
+
+            if (!situacao) return true;
+            if (situacao === 'sem-execucao') return valorExecutado <= 0;
+            if (situacao === 'baixa-execucao') return percentual > 0 && percentual < 50;
+            if (situacao === 'execucao-integral') return percentual >= 100 && valorExecutado <= valorTotal + 0.01;
+            if (situacao === 'saldo-alto') return saldo > 100000 || (valorTotal > 0 && saldo > valorTotal * 0.5);
+            if (situacao === 'acima-previsto') return valorExecutado - valorTotal > 0.01;
+            return true;
+        }
+
+        function obterItensFiltradosFunpen(itens, tipo) {
+            const prefixo = tipo === 'faf' ? 'Faf' : 'Doacoes';
+            const busca = normalizarBusca(document.getElementById(`filtro${prefixo}Busca`)?.value || '');
+            const uf = document.getElementById(`filtro${prefixo}Uf`)?.value || '';
+            const situacao = document.getElementById(`filtro${prefixo}Situacao`)?.value || '';
+
+            return itens.filter((item) => {
+                const textoBusca = normalizarBusca([
+                    item.uf,
+                    obterNomeEstadoFunpen(item.uf),
+                    item.objeto
+                ].join(' '));
+                return (!uf || item.uf === uf)
+                    && (tipo !== 'faf' || itemFafAtendeSituacao(item, situacao))
+                    && (!busca || textoBusca.includes(busca));
+            });
+        }
+
+        function renderizarKpiFunpen(rotulo, valor, descricao = '', icone = 'fa-circle-info', extraClass = '') {
+            return `
+                <div class="col">
+                    <div class="card kpi-card ${extraClass}">
+                        <div class="kpi-title"><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(rotulo)}</div>
+                        <div class="kpi-value">${valor}</div>
+                        ${descricao ? `<div class="kpi-desc">${escapeHtml(descricao)}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderizarBadgesFaf(item) {
+            const badges = [];
+            const percentual = Number(item.percentualExecucao) || 0;
+            const valorTotal = Number(item.valorTotal) || 0;
+            const valorExecutado = Number(item.valorExecutado) || 0;
+            const saldo = Number(item.saldo) || 0;
+
+            if (valorExecutado <= 0) {
+                badges.push({ tipo: 'danger', texto: 'Sem execução' });
+            } else if (percentual < 50) {
+                badges.push({ tipo: 'warning', texto: 'Execução baixa' });
+            } else if (percentual >= 100 && valorExecutado <= valorTotal + 0.01) {
+                badges.push({ tipo: 'success', texto: 'Execução integral' });
+            }
+            if (saldo > 100000 || (valorTotal > 0 && saldo > valorTotal * 0.5)) {
+                badges.push({ tipo: 'info', texto: 'Saldo alto' });
+            }
+            if (valorExecutado - valorTotal > 0.01) {
+                badges.push({ tipo: 'warning', texto: 'Acima do previsto' });
+            }
+
+            if (badges.length === 0) {
+                return '<span class="profor-alert-badge profor-alert-neutral">Sem alerta crítico</span>';
+            }
+
+            return badges.slice(0, 3).map((badge) => (
+                `<span class="profor-alert-badge profor-alert-${escapeHtml(badge.tipo)}">${escapeHtml(badge.texto)}</span>`
+            )).join('');
+        }
+
+        function renderizarResumoFiltroFunpen(containerId, resumo, tipo) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (tipo === 'doacoes') {
+                container.innerHTML = `
+                    <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                        <div><div class="kpi-title mb-0">Itens filtrados</div><div class="kpi-value">${resumo.totalItens}</div></div>
+                        <i class="fas fa-filter card-watermark" aria-hidden="true"></i>
+                    </div>
+                    <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                        <div><div class="kpi-title mb-0">UFs filtradas</div><div class="kpi-value">${resumo.totalUfs}</div></div>
+                        <i class="fas fa-map-marker-alt card-watermark" aria-hidden="true"></i>
+                    </div>
+                    <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                        <div><div class="kpi-title mb-0">Valor estimado</div><div class="kpi-value text-money">${formatMoney(resumo.valorTotal)}</div></div>
+                        <i class="fas fa-gift card-watermark" aria-hidden="true"></i>
+                    </div>
+                    <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                        <div><div class="kpi-title mb-0">Valor médio/UF</div><div class="kpi-value text-money">${formatMoney(resumo.valorMedioPorUf)}</div></div>
+                        <i class="fas fa-chart-column card-watermark" aria-hidden="true"></i>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div><div class="kpi-title mb-0">Itens filtrados</div><div class="kpi-value">${resumo.totalItens}</div></div>
+                    <i class="fas fa-filter card-watermark" aria-hidden="true"></i>
+                </div>
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div><div class="kpi-title mb-0">Valor previsto</div><div class="kpi-value text-money">${formatMoney(resumo.valorTotal)}</div></div>
+                    <i class="fas fa-landmark card-watermark" aria-hidden="true"></i>
+                </div>
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div><div class="kpi-title mb-0">Valor executado</div><div class="kpi-value text-money">${formatMoney(resumo.valorExecutado)}</div></div>
+                    <i class="fas fa-check-circle card-watermark" aria-hidden="true"></i>
+                </div>
+                <div class="card kpi-card dynamic-card profor-insight-card py-2">
+                    <div><div class="kpi-title mb-0">Execução</div><div class="kpi-value">${formatPercent(resumo.percentualExecucao)}</div></div>
+                    <i class="fas fa-chart-line card-watermark" aria-hidden="true"></i>
+                </div>
+            `;
+        }
+
+        function atualizarTabelaFaf2021(dados) {
+            const tbody = document.getElementById('faf-table-body');
+            if (!tbody) return;
+            const itensFiltrados = obterItensFiltradosFunpen(dados.itens, 'faf');
+            const itensOrdenados = ordenarItensFunpen(itensFiltrados, document.getElementById('filtroFafOrdenacao')?.value || 'alfabetica', 'faf');
+            const resumo = calcularResumoItensFunpen(itensFiltrados);
+            renderizarResumoFiltroFunpen('faf-selected-summary', resumo, 'faf');
+
+            if (itensOrdenados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Nenhum item FAF 2021 localizado para os filtros selecionados.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = itensOrdenados.map((item) => {
+                const saldo = Number(item.saldo) || 0;
+                const percentual = Number(item.percentualExecucao) || 0;
+                return `
+                    <tr class="profor-row" tabindex="0" data-faf-uf="${escapeHtml(item.uf)}">
+                        <td data-label="UF" class="align-middle"><span class="badge badge-uf">${escapeHtml(item.uf)}</span></td>
+                        <td data-label="Objeto" class="align-middle"><span class="truncate-text">${escapeHtml(item.objeto)}</span></td>
+                        <td data-label="Qtd." class="text-center align-middle">${formatarQuantidadeProfor(item.quantidade)}</td>
+                        <td data-label="Valor unit." class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
+                        <td data-label="Previsto" class="text-end font-monospace align-middle">${formatMoney(item.valorTotal)}</td>
+                        <td data-label="Executado" class="text-end font-monospace align-middle ${item.valorExecutado > 0 ? 'text-success fw-bold' : 'text-muted'}">${formatMoney(item.valorExecutado)}</td>
+                        <td data-label="Saldo" class="text-end font-monospace align-middle ${saldo < 0 ? 'text-danger fw-bold' : ''}">${formatMoney(saldo)}</td>
+                        <td data-label="%" class="text-center align-middle progress-cell">
+                            <div class="custom-progress-pill">
+                                <div class="pill-fill" style="width: ${getProgressWidth(percentual)}%; background-color: ${getProgressColor(percentual)}"></div>
+                                <div class="pill-text">${formatPercent(percentual)}</div>
+                            </div>
+                        </td>
+                        <td data-label="Sinais" class="align-middle"><div class="profor-alert-list">${renderizarBadgesFaf(item)}</div></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function registrarEventosFaf2021(dados) {
+            const atualizar = () => atualizarTabelaFaf2021(dados);
+            ['filtroFafBusca', 'filtroFafUf', 'filtroFafSituacao', 'filtroFafOrdenacao'].forEach((id) => {
+                const evento = id === 'filtroFafBusca' ? 'input' : 'change';
+                document.getElementById(id)?.addEventListener(evento, atualizar);
+            });
+            document.getElementById('btnLimparFiltroFaf')?.addEventListener('click', () => {
+                ['filtroFafBusca', 'filtroFafUf', 'filtroFafSituacao'].forEach((id) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                const ordenacao = document.getElementById('filtroFafOrdenacao');
+                if (ordenacao) ordenacao.value = 'alfabetica';
+                atualizar();
+            });
+            const tbody = document.getElementById('faf-table-body');
+            tbody?.addEventListener('click', (event) => {
+                const row = event.target.closest('[data-faf-uf]');
+                if (row) abrirDetalheFaf2021(row.dataset.fafUf);
+            });
+            tbody?.addEventListener('keydown', (event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                const row = event.target.closest('[data-faf-uf]');
+                if (!row) return;
+                event.preventDefault();
+                abrirDetalheFaf2021(row.dataset.fafUf);
+            });
+        }
+
+        function renderFaf2021View() {
+            const container = document.getElementById('view-faf-2021');
+            if (!container) return;
+            container.style.display = 'block';
+            const dados = obterDadosFaf2021();
+            if (!dados || !dados.itens?.length) {
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados do FAF 2021 indisponíveis.</div>';
+                return;
+            }
+
+            const resumo = dados.resumo;
+            const optionsUf = dados.filtros.ufs.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(uf)} - ${escapeHtml(obterNomeEstadoFunpen(uf))}</option>`).join('');
+            container.innerHTML = `
+                <section class="dashboard-intro profor-intro">
+                    <div>
+                        <p class="section-eyebrow mb-1">Repasses FUNPEN</p>
+                        <h2>FAF 2021</h2>
+                        <p>Fundo a Fundo por UF e item pactuado</p>
+                    </div>
+                    <div class="intro-badges" aria-label="Resumo FAF 2021">
+                        <span><i class="fas fa-landmark" aria-hidden="true"></i> ${resumo.totalUfs} UFs</span>
+                        <span><i class="fas fa-list-check" aria-hidden="true"></i> ${resumo.totalItens} itens</span>
+                    </div>
+                </section>
+
+                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 profor-kpi-grid" aria-label="Indicadores FAF 2021">
+                    ${renderizarKpiFunpen('UFs atendidas', resumo.totalUfs, 'Unidades federativas com FAF', 'fa-map-marker-alt', 'kpi-card-success')}
+                    ${renderizarKpiFunpen('Itens', resumo.totalItens, 'Itens cadastrados na base', 'fa-list-check')}
+                    ${renderizarKpiFunpen('Valor previsto', `<span class="text-money">${formatMoney(resumo.valorTotal)}</span>`, 'Total pactuado', 'fa-landmark')}
+                    ${renderizarKpiFunpen('Valor executado', `<span class="text-money">${formatMoney(resumo.valorExecutado)}</span>`, 'Execução registrada', 'fa-check-circle', 'kpi-card-success')}
+                    ${renderizarKpiFunpen('Execução', formatPercent(resumo.percentualExecucao), 'Executado / previsto', 'fa-chart-line', 'kpi-card-info')}
+                    ${renderizarKpiFunpen('Saldo a executar', `<span class="text-money">${formatMoney(resumo.saldo)}</span>`, 'Valor ainda não executado', 'fa-vault', 'kpi-card-warning')}
+                </section>
+
+                <section class="filter-section mb-4" aria-label="Filtros FAF 2021">
+                    <div class="filter-toolbar">
+                        <div class="filter-title"><i class="fas fa-filter text-secondary" aria-hidden="true"></i><strong>Filtros</strong></div>
+                        <div class="filter-search-actions">
+                            <input type="text" id="filtroFafBusca" class="form-control" placeholder="Buscar por UF ou objeto..." aria-label="Buscar itens FAF 2021">
+                            <button id="btnLimparFiltroFaf" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                <i class="fas fa-undo" aria-hidden="true"></i><span>Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="budget-filter-grid profor-filter-grid">
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFafUf">UF</label>
+                            <select id="filtroFafUf" class="form-select"><option value="">Todas</option>${optionsUf}</select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFafSituacao">Sinal de gestão</label>
+                            <select id="filtroFafSituacao" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="sem-execucao">Sem execução</option>
+                                <option value="baixa-execucao">Execução baixa</option>
+                                <option value="execucao-integral">Execução integral</option>
+                                <option value="saldo-alto">Saldo a executar alto</option>
+                                <option value="acima-previsto">Execução acima do previsto</option>
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFafOrdenacao">Ordenar por</label>
+                            <select id="filtroFafOrdenacao" class="form-select">
+                                <option value="alfabetica">Ordem alfabética</option>
+                                <option value="regiao">Regiões</option>
+                                <option value="execucao-desc">Execução: maior para menor</option>
+                                <option value="execucao-asc">Execução: menor para maior</option>
+                                <option value="valor-desc">Valor previsto: maior para menor</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="budget-insight-grid profor-insight-grid mb-4" id="faf-selected-summary" aria-label="Resumo da seleção FAF 2021"></section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div><p class="section-eyebrow mb-1">Itens</p><h2>Carteira FAF 2021</h2></div>
+                        <small class="text-muted"><i class="fas fa-mouse-pointer me-1" aria-hidden="true"></i> Clique em uma linha para abrir o detalhe da UF</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table profor-plan-table">
+                            <thead>
+                                <tr>
+                                    <th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit.</th>
+                                    <th class="text-end">Previsto</th><th class="text-end">Executado</th><th class="text-end">Saldo</th>
+                                    <th class="text-center">%</th><th>Sinais de gestão</th>
+                                </tr>
+                            </thead>
+                            <tbody id="faf-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+            registrarEventosFaf2021(dados);
+            atualizarTabelaFaf2021(dados);
+        }
+
+        function abrirDetalheFaf2021(uf) {
+            const dados = obterDadosFaf2021();
+            const container = document.getElementById('view-faf-2021-detalhe');
+            if (!dados || !container) {
+                toggleView('faf2021');
+                return;
+            }
+            const itens = dados.itens.filter((item) => item.uf === uf);
+            if (!itens.length) {
+                toggleView('faf2021');
+                return;
+            }
+            const resumo = calcularResumoItensFunpen(itens);
+            const nomeEstado = obterNomeEstadoFunpen(uf);
+            container.innerHTML = `
+                <div class="report-actions pdf-hidden">
+                    <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('faf2021')">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i><span>Voltar para FAF 2021</span>
+                    </button>
+                </div>
+                <div class="report-content profor-detail-content">
+                    <section class="profor-detail-header">
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-uf me-3">${escapeHtml(uf)}</span>
+                            <div>
+                                <p class="section-eyebrow mb-1">Fundo a Fundo 2021</p>
+                                <h2>${escapeHtml(nomeEstado)} (${escapeHtml(uf)})</h2>
+                                <div class="profor-detail-meta">
+                                    <span><i class="fas fa-list-check" aria-hidden="true"></i> ${resumo.totalItens} item(ns)</span>
+                                    <span><i class="fas fa-chart-line" aria-hidden="true"></i> ${formatPercent(resumo.percentualExecucao)} executado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="row my-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Resumo FAF por UF">
+                        ${renderizarKpiDetalheProfor('Valor previsto', formatMoney(resumo.valorTotal), 'Total FAF da UF', '', 'fa-landmark')}
+                        ${renderizarKpiDetalheProfor('Valor executado', formatMoney(resumo.valorExecutado), 'Execução registrada', 'kpi-card-success', 'fa-check-circle')}
+                        ${renderizarKpiDetalheProfor('Saldo a executar', formatMoney(resumo.saldo), 'Previsto menos executado', 'kpi-card-warning', 'fa-vault')}
+                        ${renderizarKpiDetalheProfor('Execução', formatPercent(resumo.percentualExecucao), `${resumo.totalItens} item(ns)`, 'kpi-card-info', 'fa-chart-line')}
+                    </section>
+                    <section class="table-container mb-0">
+                        <div class="section-header compact"><div><p class="section-eyebrow mb-1">Itens</p><h2>Plano FAF 2021 da UF</h2></div></div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover w-100 app-data-table profor-plan-table">
+                                <thead>
+                                    <tr>
+                                        <th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit.</th>
+                                        <th class="text-end">Previsto</th><th class="text-end">Executado</th><th class="text-end">Saldo</th>
+                                        <th class="text-center">%</th><th>Sinais</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${itens.map((item) => {
+                                        const percentual = Number(item.percentualExecucao) || 0;
+                                        return `
+                                            <tr>
+                                                <td data-label="Objeto">${escapeHtml(item.objeto)}</td>
+                                                <td data-label="Qtd." class="text-center">${formatarQuantidadeProfor(item.quantidade)}</td>
+                                                <td data-label="Valor Unit." class="text-end font-monospace small">${formatMoney(item.valorUnitario)}</td>
+                                                <td data-label="Previsto" class="text-end font-monospace">${formatMoney(item.valorTotal)}</td>
+                                                <td data-label="Executado" class="text-end font-monospace ${item.valorExecutado > 0 ? 'text-success fw-bold' : 'text-muted'}">${formatMoney(item.valorExecutado)}</td>
+                                                <td data-label="Saldo" class="text-end font-monospace">${formatMoney(item.saldo)}</td>
+                                                <td data-label="%" class="text-center progress-cell">
+                                                    <div class="custom-progress-pill">
+                                                        <div class="pill-fill" style="width: ${getProgressWidth(percentual)}%; background-color: ${getProgressColor(percentual)}"></div>
+                                                        <div class="pill-text">${formatPercent(percentual)}</div>
+                                                    </div>
+                                                </td>
+                                                <td data-label="Sinais"><div class="profor-alert-list">${renderizarBadgesFaf(item)}</div></td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            `;
+            toggleView('faf2021-detalhe');
+        }
+
+        function atualizarTabelaDoacoes2023(dados) {
+            const tbody = document.getElementById('doacoes-table-body');
+            if (!tbody) return;
+            const itensFiltrados = obterItensFiltradosFunpen(dados.itens, 'doacoes');
+            const itensOrdenados = ordenarItensFunpen(itensFiltrados, document.getElementById('filtroDoacoesOrdenacao')?.value || 'alfabetica', 'doacoes');
+            renderizarResumoFiltroFunpen('doacoes-selected-summary', calcularResumoItensFunpen(itensFiltrados), 'doacoes');
+
+            if (itensOrdenados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Nenhuma doação localizada para os filtros selecionados.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = itensOrdenados.map((item) => `
+                <tr class="profor-row" tabindex="0" data-doacoes-uf="${escapeHtml(item.uf)}">
+                    <td data-label="UF" class="align-middle"><span class="badge badge-uf">${escapeHtml(item.uf)}</span></td>
+                    <td data-label="Objeto" class="align-middle"><span class="truncate-text">${escapeHtml(item.objeto)}</span></td>
+                    <td data-label="Qtd." class="text-center align-middle">${formatarQuantidadeProfor(item.quantidade)}</td>
+                    <td data-label="Valor unit." class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
+                    <td data-label="Valor total" class="text-end font-monospace align-middle text-warning fw-bold">${formatMoney(item.valorTotal)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function registrarEventosDoacoes2023(dados) {
+            const atualizar = () => atualizarTabelaDoacoes2023(dados);
+            ['filtroDoacoesBusca', 'filtroDoacoesUf', 'filtroDoacoesOrdenacao'].forEach((id) => {
+                const evento = id === 'filtroDoacoesBusca' ? 'input' : 'change';
+                document.getElementById(id)?.addEventListener(evento, atualizar);
+            });
+            document.getElementById('btnLimparFiltroDoacoes')?.addEventListener('click', () => {
+                ['filtroDoacoesBusca', 'filtroDoacoesUf'].forEach((id) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                const ordenacao = document.getElementById('filtroDoacoesOrdenacao');
+                if (ordenacao) ordenacao.value = 'alfabetica';
+                atualizar();
+            });
+            const tbody = document.getElementById('doacoes-table-body');
+            tbody?.addEventListener('click', (event) => {
+                const row = event.target.closest('[data-doacoes-uf]');
+                if (row) abrirDetalheDoacoes2023(row.dataset.doacoesUf);
+            });
+            tbody?.addEventListener('keydown', (event) => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                const row = event.target.closest('[data-doacoes-uf]');
+                if (!row) return;
+                event.preventDefault();
+                abrirDetalheDoacoes2023(row.dataset.doacoesUf);
+            });
+        }
+
+        function renderDoacoes2023View() {
+            const container = document.getElementById('view-doacoes-2023');
+            if (!container) return;
+            container.style.display = 'block';
+            const dados = obterDadosDoacoes2023();
+            if (!dados || !dados.itens?.length) {
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados de Doações 2023 indisponíveis.</div>';
+                return;
+            }
+
+            const resumo = dados.resumo;
+            const optionsUf = dados.filtros.ufs.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(uf)} - ${escapeHtml(obterNomeEstadoFunpen(uf))}</option>`).join('');
+            container.innerHTML = `
+                <section class="dashboard-intro profor-intro">
+                    <div>
+                        <p class="section-eyebrow mb-1">Repasses FUNPEN</p>
+                        <h2>DOAÇÕES 2023</h2>
+                        <p>Bens doados por UF e valor estimado</p>
+                    </div>
+                    <div class="intro-badges" aria-label="Resumo Doações 2023">
+                        <span><i class="fas fa-gift" aria-hidden="true"></i> ${resumo.totalItens} itens</span>
+                        <span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${resumo.totalUfs} UFs</span>
+                    </div>
+                </section>
+
+                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3 profor-kpi-grid" aria-label="Indicadores Doações 2023">
+                    ${renderizarKpiFunpen('UFs contempladas', resumo.totalUfs, 'Unidades federativas com doações', 'fa-map-marker-alt', 'kpi-card-success')}
+                    ${renderizarKpiFunpen('Itens doados', resumo.totalItens, 'Registros de doação', 'fa-gift')}
+                    ${renderizarKpiFunpen('Valor estimado total', `<span class="text-money">${formatMoney(resumo.valorTotal)}</span>`, 'Valor total dos bens', 'fa-coins', 'kpi-card-warning')}
+                    ${renderizarKpiFunpen('Valor médio por UF', `<span class="text-money">${formatMoney(resumo.valorMedioPorUf)}</span>`, 'Valor estimado / UF', 'fa-chart-column')}
+                    ${renderizarKpiFunpen('Maior concentração', escapeHtml(resumo.ufMaiorConcentracao || '-'), resumo.valorMaiorConcentracao ? formatMoney(resumo.valorMaiorConcentracao) : '', 'fa-location-dot', 'kpi-card-info')}
+                </section>
+
+                <section class="filter-section mb-4" aria-label="Filtros Doações 2023">
+                    <div class="filter-toolbar">
+                        <div class="filter-title"><i class="fas fa-filter text-secondary" aria-hidden="true"></i><strong>Filtros</strong></div>
+                        <div class="filter-search-actions">
+                            <input type="text" id="filtroDoacoesBusca" class="form-control" placeholder="Buscar por UF ou objeto..." aria-label="Buscar doações 2023">
+                            <button id="btnLimparFiltroDoacoes" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                <i class="fas fa-undo" aria-hidden="true"></i><span>Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="budget-filter-grid profor-filter-grid">
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroDoacoesUf">UF</label>
+                            <select id="filtroDoacoesUf" class="form-select"><option value="">Todas</option>${optionsUf}</select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroDoacoesOrdenacao">Ordenar por</label>
+                            <select id="filtroDoacoesOrdenacao" class="form-select">
+                                <option value="alfabetica">Ordem alfabética</option>
+                                <option value="regiao">Regiões</option>
+                                <option value="valor-desc">Valor estimado: maior para menor</option>
+                                <option value="quantidade-desc">Quantidade: maior para menor</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="budget-insight-grid profor-insight-grid mb-4" id="doacoes-selected-summary" aria-label="Resumo da seleção Doações 2023"></section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div><p class="section-eyebrow mb-1">Bens doados</p><h2>Carteira DOAÇÕES 2023</h2></div>
+                        <small class="text-muted"><i class="fas fa-mouse-pointer me-1" aria-hidden="true"></i> Clique em uma linha para abrir o detalhe da UF</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table funpen-donation-table">
+                            <thead>
+                                <tr>
+                                    <th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th>
+                                    <th class="text-end">Valor Unit. Estimado</th><th class="text-end">Valor Total Estimado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doacoes-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+            registrarEventosDoacoes2023(dados);
+            atualizarTabelaDoacoes2023(dados);
+        }
+
+        function abrirDetalheDoacoes2023(uf) {
+            const dados = obterDadosDoacoes2023();
+            const container = document.getElementById('view-doacoes-2023-detalhe');
+            if (!dados || !container) {
+                toggleView('doacoes2023');
+                return;
+            }
+            const itens = dados.itens.filter((item) => item.uf === uf);
+            if (!itens.length) {
+                toggleView('doacoes2023');
+                return;
+            }
+            const resumo = calcularResumoItensFunpen(itens);
+            const nomeEstado = obterNomeEstadoFunpen(uf);
+            container.innerHTML = `
+                <div class="report-actions pdf-hidden">
+                    <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('doacoes2023')">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i><span>Voltar para DOAÇÕES 2023</span>
+                    </button>
+                </div>
+                <div class="report-content profor-detail-content">
+                    <section class="profor-detail-header">
+                        <div class="d-flex align-items-center">
+                            <span class="badge badge-uf me-3">${escapeHtml(uf)}</span>
+                            <div>
+                                <p class="section-eyebrow mb-1">Doações 2023</p>
+                                <h2>${escapeHtml(nomeEstado)} (${escapeHtml(uf)})</h2>
+                                <div class="profor-detail-meta">
+                                    <span><i class="fas fa-gift" aria-hidden="true"></i> ${resumo.totalItens} item(ns) doado(s)</span>
+                                    <span><i class="fas fa-coins" aria-hidden="true"></i> ${formatMoney(resumo.valorTotal)} estimados</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="row my-4 row-cols-1 row-cols-md-3 g-3" aria-label="Resumo de doações por UF">
+                        ${renderizarKpiDetalheProfor('Itens doados', String(resumo.totalItens), 'Registros da UF', '', 'fa-gift')}
+                        ${renderizarKpiDetalheProfor('Quantidade', formatarQuantidadeProfor(resumo.quantidade), 'Total físico', 'kpi-card-info', 'fa-boxes-stacked')}
+                        ${renderizarKpiDetalheProfor('Valor estimado', formatMoney(resumo.valorTotal), 'Valor total dos bens', 'kpi-card-warning', 'fa-coins')}
+                    </section>
+                    <section class="table-container mb-0">
+                        <div class="section-header compact"><div><p class="section-eyebrow mb-1">Bens</p><h2>Doações da UF</h2></div></div>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover w-100 app-data-table funpen-donation-table">
+                                <thead>
+                                    <tr>
+                                        <th>Objeto</th><th class="text-center">Qtd.</th>
+                                        <th class="text-end">Valor Unit. Estimado</th><th class="text-end">Valor Total Estimado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${itens.map((item) => `
+                                        <tr>
+                                            <td data-label="Objeto">${escapeHtml(item.objeto)}</td>
+                                            <td data-label="Qtd." class="text-center">${formatarQuantidadeProfor(item.quantidade)}</td>
+                                            <td data-label="Valor Unit. Estimado" class="text-end font-monospace small">${formatMoney(item.valorUnitario)}</td>
+                                            <td data-label="Valor Total Estimado" class="text-end font-monospace text-warning fw-bold">${formatMoney(item.valorTotal)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            `;
+            toggleView('doacoes2023-detalhe');
         }
 
         // --- MÓDULO DE ORÇAMENTO 2026 ---
@@ -2441,6 +3961,9 @@ async function carregarLogoParaPDF() {
 
 window.toggleView = toggleView;
 window.abrirDetalheEstado = abrirDetalheEstado;
+window.abrirDetalheConvenioProfor = abrirDetalheConvenioProfor;
+window.abrirDetalheFaf2021 = abrirDetalheFaf2021;
+window.abrirDetalheDoacoes2023 = abrirDetalheDoacoes2023;
 window.abrirSelecaoUfExportacao = abrirSelecaoUfExportacao;
 window.exportarRelatorioEstadoSelecionado = exportarRelatorioEstadoSelecionado;
 window.exportarDashboardPDF = exportarDashboardPDF;
