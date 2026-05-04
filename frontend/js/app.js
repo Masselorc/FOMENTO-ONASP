@@ -482,6 +482,8 @@ async function carregarLogoParaPDF() {
                 showLoading('Carregando contatos...');
                 try {
                     await carregarDadosContatos();
+                } catch (error) {
+                    console.error('Falha ao carregar contatos:', error);
                 } finally {
                     hideLoading();
                 }
