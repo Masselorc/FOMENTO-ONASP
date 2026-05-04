@@ -14,6 +14,7 @@ const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
 const ARQUIVO_PLANILHA_CONTATOS = 'Planilhas/Contatos.xlsx';
+const ARQUIVO_PLANILHA_DIAGNOSTICO = 'Planilhas/Diagnostico.xlsx';
 const ABA_ORCAMENTO_DADOS = 'Base_Dados';
 const ABA_ORCAMENTO_PROCESSOS_NORMAIS = 'Processos_Normais';
 const ABA_ORCAMENTO_PROFOR = 'Andamento_CONV_PROFOR';
@@ -22,16 +23,74 @@ const ABA_FORMALIZACAO_CHECKLIST = 'Checklist_Documentos';
 const ABA_FORMALIZACAO_DICIONARIO = 'Dicionario_Documentos';
 const ABA_CONTATOS_UF = 'Contatos_UF';
 const ABA_CONTATOS_PESSOAS = 'Contatos_Pessoas';
+const ABAS_DIAGNOSTICO_OUVIDORIAS = ['Diagnostico', 'Diagnóstico', 'Respostas', 'Sheet1'];
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
 const UFS_FORMALIZACAO_PROFOR = ['AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MG', 'PA', 'PE', 'RN', 'RR', 'RS', 'SE'];
 const UFS_CONDICAO_SUSPENSIVA_PROFOR = new Set(['PA', 'RR', 'RS', 'SE']);
 const VALOR_REPASSE_PROFOR = 200000;
+const STATUS_CHECKLIST_DIAGNOSTICO = {
+    CONFORME: 'Conforme',
+    PARCIAL: 'Parcialmente conforme',
+    NAO_CONFORME: 'Não conforme',
+    NAO_INFORMADO: 'Não informado',
+    PENDENTE_VALIDACAO: 'Pendente de validação ONASP'
+};
+const VALIDACOES_ONASP_DIAGNOSTICO = ['Validado', 'Pendente', 'Inconsistente', 'Não se aplica'];
 const TODAS_UFS_BRASIL = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
     'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
     'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+];
+
+// O checklist abaixo é propositalmente fechado: só contém parâmetros previstos
+// no manual normativo informado e ainda será filtrado pelas colunas realmente
+// existentes em Diagnostico.xlsx. Assim evitamos extrapolação normativa.
+const PARAMETROS_DIAGNOSTICO_ONASP = [
+    { id: 'FORM_001', eixo: 'Formalização', nome: 'Existência de ato normativo específico da Ouvidoria de Serviços Penais ou núcleo especializado', fundamentoIn: 'Art. 5º, caput', perguntas: ['M1-11', 'M1-14', 'M1-15'], essencial: true, requerValidacao: true, providencia: 'Apresentar ato normativo específico publicado', prioridade: 'Alta' },
+    { id: 'FORM_002', eixo: 'Formalização', nome: 'Conteúdo mínimo do ato de criação', fundamentoIn: 'Art. 5º, §1º, I a IV', perguntas: ['M1-12'], requerValidacao: true, providencia: 'Comprovar que o ato de criação contempla o conteúdo mínimo previsto na IN', prioridade: 'Alta' },
+    { id: 'FORM_003', eixo: 'Formalização', nome: 'Públicos atendidos pela Ouvidoria de Serviços Penais', fundamentoIn: 'Art. 4º, III; art. 10, I', perguntas: ['M1-13'], providencia: 'Detalhar os públicos atendidos pela Ouvidoria de Serviços Penais', prioridade: 'Média' },
+    { id: 'FORM_004', eixo: 'Formalização', nome: 'Vinculação institucional da Ouvidoria', fundamentoIn: 'Art. 5º, §1º, I; art. 5º, §3º', perguntas: ['M3-56'], essencial: true, requerValidacao: true, providencia: 'Comprovar a vinculação institucional da Ouvidoria', prioridade: 'Alta' },
+    { id: 'FORM_005', eixo: 'Formalização', nome: 'Autonomia técnica e funcional', fundamentoIn: 'Art. 4º, I; art. 5º, §3º', perguntas: ['M1-12', 'M3-56'], essencial: true, requerValidacao: true, providencia: 'Comprovar autonomia técnica e funcional da Ouvidoria', prioridade: 'Alta' },
+    { id: 'EQUIPE_006', eixo: 'Ouvidor e equipe', nome: 'Existência/designação formal do ouvidor ou responsável', fundamentoIn: 'Art. 8º, caput', perguntas: ['M0-06', 'M0-07', 'M3-57'], essencial: true, requerValidacao: true, providencia: 'Comprovar designação formal do ouvidor ou responsável', prioridade: 'Alta' },
+    { id: 'EQUIPE_007', eixo: 'Ouvidor e equipe', nome: 'Mandato do ouvidor, quando houver', fundamentoIn: 'Art. 5º, §2º; art. 8º, §2º', perguntas: ['M0-08'], requerValidacao: true, providencia: 'Informar ou comprovar o mandato do ouvidor, quando aplicável', prioridade: 'Média' },
+    { id: 'EQUIPE_008', eixo: 'Ouvidor e equipe', nome: 'Requisitos de perfil do ouvidor', fundamentoIn: 'Art. 8º, §1º', perguntas: ['M3-58'], providencia: 'Comprovar atendimento aos requisitos de perfil do ouvidor', prioridade: 'Média' },
+    { id: 'EQUIPE_009', eixo: 'Ouvidor e equipe', nome: 'Existência de equipe própria', fundamentoIn: 'Art. 9º, caput', perguntas: ['M3-59'], essencial: true, providencia: 'Instituir ou comprovar equipe própria da Ouvidoria', prioridade: 'Alta' },
+    { id: 'EQUIPE_010', eixo: 'Ouvidor e equipe', nome: 'Dedicação da equipe à Ouvidoria', fundamentoIn: 'Art. 9º, caput', perguntas: ['M3-60'], providencia: 'Comprovar dedicação da equipe às atividades da Ouvidoria', prioridade: 'Média' },
+    { id: 'EQUIPE_011', eixo: 'Ouvidor e equipe', nome: 'Perfil técnico da equipe', fundamentoIn: 'Art. 9º, caput', perguntas: ['M3-61'], providencia: 'Comprovar perfil técnico adequado da equipe', prioridade: 'Média' },
+    { id: 'EQUIPE_012', eixo: 'Ouvidor e equipe', nome: 'Capacitação específica da equipe', fundamentoIn: 'Art. 7º, X; art. 9º, §1º', perguntas: ['M3-62'], providencia: 'Promover ou comprovar capacitação específica da equipe', prioridade: 'Média' },
+    { id: 'EQUIPE_013', eixo: 'Ouvidor e equipe', nome: 'Compromisso de sigilo da equipe', fundamentoIn: 'Art. 4º, II; art. 9º, §2º; art. 10, III', perguntas: ['M3-63'], essencial: true, requerValidacao: true, providencia: 'Comprovar compromisso de sigilo da equipe', prioridade: 'Alta' },
+    { id: 'ESTRUTURA_014', eixo: 'Estrutura física e tecnológica', nome: 'Espaço físico adequado/reservado', fundamentoIn: 'Art. 6º, §1º, I; art. 7º, VII', perguntas: ['M2-16'], essencial: true, providencia: 'Adequar ou comprovar espaço físico reservado para atendimento', prioridade: 'Alta' },
+    { id: 'ESTRUTURA_015', eixo: 'Estrutura física e tecnológica', nome: 'Computadores com acesso à internet', fundamentoIn: 'Art. 7º, I', perguntas: ['M2-17', 'M2-18'], providencia: 'Comprovar disponibilidade de computadores com acesso à internet', prioridade: 'Alta' },
+    { id: 'ESTRUTURA_016', eixo: 'Estrutura física e tecnológica', nome: 'Impressora multifuncional', fundamentoIn: 'Art. 7º, II', perguntas: ['M2-19', 'M2-20'], providencia: 'Comprovar disponibilidade de impressora multifuncional', prioridade: 'Média' },
+    { id: 'ESTRUTURA_017', eixo: 'Estrutura física e tecnológica', nome: 'Mobiliário/estações de trabalho', fundamentoIn: 'Art. 7º, III', perguntas: ['M2-29', 'M2-30'], providencia: 'Comprovar mobiliário e estações de trabalho suficientes', prioridade: 'Média' },
+    { id: 'ESTRUTURA_018', eixo: 'Estrutura física e tecnológica', nome: 'Armários/arquivos para guarda de documentos sigilosos', fundamentoIn: 'Art. 7º, III; art. 4º, II', perguntas: ['M2-31', 'M2-32'], providencia: 'Comprovar guarda adequada de documentos sigilosos', prioridade: 'Alta' },
+    { id: 'ESTRUTURA_019', eixo: 'Estrutura física e tecnológica', nome: 'Licenças de suíte de edição de texto, planilhas e apresentações', fundamentoIn: 'Art. 7º, VIII', perguntas: ['M2-33', 'M2-34'], providencia: 'Comprovar licenças de software necessárias à rotina da Ouvidoria', prioridade: 'Média' },
+    { id: 'ESTRUTURA_020', eixo: 'Estrutura física e tecnológica', nome: 'Recursos de segurança da informação', fundamentoIn: 'Art. 7º, V; art. 13, parágrafo único', perguntas: ['M2-37'], requerValidacao: true, providencia: 'Comprovar recursos de segurança da informação', prioridade: 'Alta' },
+    { id: 'ESTRUTURA_021', eixo: 'Estrutura física e tecnológica', nome: 'Placas/cartazes de divulgação dos canais', fundamentoIn: 'Art. 4º, IV; art. 7º, VI', perguntas: ['M2-35'], providencia: 'Comprovar divulgação visual dos canais de Ouvidoria', prioridade: 'Média' },
+    { id: 'ESTRUTURA_022', eixo: 'Estrutura física e tecnológica', nome: 'Materiais adicionais de divulgação e educação em direitos', fundamentoIn: 'Art. 4º, IV; art. 7º, VI', perguntas: ['M2-36'], providencia: 'Comprovar materiais de divulgação e educação em direitos', prioridade: 'Média' },
+    { id: 'CANAIS_023', eixo: 'Canais institucionais', nome: 'E-mail institucional exclusivo', fundamentoIn: 'Art. 6º, §2º, I', perguntas: ['M2-41', 'M2-42'], providencia: 'Instituir ou comprovar e-mail institucional exclusivo', prioridade: 'Alta' },
+    { id: 'CANAIS_024', eixo: 'Canais institucionais', nome: 'Linha telefônica funcional', fundamentoIn: 'Art. 6º, §2º, II; art. 7º, IV', perguntas: ['M2-43', 'M2-44'], providencia: 'Instituir ou comprovar linha telefônica funcional', prioridade: 'Média' },
+    { id: 'CANAIS_025', eixo: 'Canais institucionais', nome: 'Formulário eletrônico, sistema ou canal eletrônico de registro', fundamentoIn: 'Art. 6º, §2º, III; art. 6º, §3º', perguntas: ['M2-45', 'M2-49', 'M2-52'], essencial: true, requerValidacao: true, providencia: 'Inserir ou comprovar canal eletrônico de registro', prioridade: 'Alta' },
+    { id: 'CANAIS_026', eixo: 'Canais institucionais', nome: 'Uso da Plataforma Fala.BR', fundamentoIn: 'Art. 4º, V; art. 6º, §2º, III; art. 6º, §3º', perguntas: ['M2-46'], requerValidacao: true, providencia: 'Comprovar uso da Plataforma Fala.BR ou saneamento do canal institucional', prioridade: 'Alta' },
+    { id: 'CANAIS_027', eixo: 'Canais institucionais', nome: 'Endereço postal para recebimento de correspondência', fundamentoIn: 'Art. 6º, §2º, IV', perguntas: ['M2-47', 'M2-48'], providencia: 'Comprovar endereço postal para recebimento de correspondência', prioridade: 'Média' },
+    { id: 'FLUXO_028', eixo: 'Fluxo de manifestações', nome: 'Tipos de manifestações tratados', fundamentoIn: 'Art. 10, I', perguntas: ['M4-65'], providencia: 'Detalhar os tipos de manifestações tratados pela Ouvidoria', prioridade: 'Média' },
+    { id: 'FLUXO_029', eixo: 'Fluxo de manifestações', nome: 'Registro, protocolo e classificação das manifestações', fundamentoIn: 'Art. 11; art. 6º, §3º', perguntas: ['M4-66'], essencial: true, requerValidacao: true, providencia: 'Comprovar rotina de registro, protocolo e classificação das manifestações', prioridade: 'Alta' },
+    { id: 'FLUXO_030', eixo: 'Fluxo de manifestações', nome: 'Fluxo interno de trabalho', fundamentoIn: 'Art. 13, I a V', perguntas: ['M4-67'], essencial: true, requerValidacao: true, providencia: 'Comprovar fluxo interno de trabalho', prioridade: 'Alta' },
+    { id: 'FLUXO_031', eixo: 'Fluxo de manifestações', nome: 'Prazos e qualidade das respostas', fundamentoIn: 'Art. 5º, §1º, IV; art. 10, II e IV', perguntas: ['M4-68'], providencia: 'Comprovar rotina de acompanhamento de prazos e qualidade das respostas', prioridade: 'Média' },
+    { id: 'FLUXO_032', eixo: 'Fluxo de manifestações', nome: 'Tratamento sigiloso de denúncias ou manifestações sensíveis', fundamentoIn: 'Art. 4º, II; art. 10, III; art. 12, §2º; art. 13, parágrafo único', perguntas: ['M4-69'], essencial: true, requerValidacao: true, providencia: 'Comprovar rotina de sigilo e proteção das manifestações sensíveis', prioridade: 'Alta' },
+    { id: 'FLUXO_033', eixo: 'Fluxo de manifestações', nome: 'Monitoramento, relatórios e melhoria da gestão', fundamentoIn: 'Art. 10, V e VI; art. 12, §3º', perguntas: ['M4-71'], providencia: 'Comprovar rotina de monitoramento, relatórios e melhoria da gestão', prioridade: 'Média' }
+];
+
+// Pares quantitativos usados apenas para déficit declarado. Eles não geram,
+// por si só, descumprimento da IN; servem como insumo de planejamento.
+const ITENS_DEFICIT_DIAGNOSTICO = [
+    { item: 'Computadores', atual: ['M2-17'], ideal: ['M2-18'], prioridade: 'Alta' },
+    { item: 'Impressoras multifuncionais', atual: ['M2-19'], ideal: ['M2-20'], prioridade: 'Média' },
+    { item: 'Mobiliário/estações de trabalho', atual: ['M2-29'], ideal: ['M2-30'], prioridade: 'Média' },
+    { item: 'Armários/arquivos', atual: ['M2-31'], ideal: ['M2-32'], prioridade: 'Alta' },
+    { item: 'Licenças de software', atual: ['M2-33'], ideal: ['M2-34'], prioridade: 'Média' }
 ];
 const COLUNAS_GERAL_PROFOR = {
     uf: 0,
@@ -93,6 +152,7 @@ let dadosFaf2021Cache = null;
 let dadosDoacoes2023Cache = null;
 let dadosFormalizacaoProforCache = null;
 let dadosContatosCache = null;
+let dadosDiagnosticoOuvidoriasCache = null;
 
 export function obterDadosOrcamento() {
     return dadosOrcamentoCache;
@@ -116,6 +176,10 @@ export function obterDadosFormalizacaoProfor() {
 
 export function obterDadosContatos() {
     return dadosContatosCache;
+}
+
+export function obterDadosDiagnosticoOuvidorias() {
+    return dadosDiagnosticoOuvidoriasCache;
 }
 
 // A biblioteca XLSX é carregada pelo index.html. Mantemos esta guarda para
@@ -2045,6 +2109,519 @@ function extrairFormalizacaoProforDoWorkbook(workbook, contatosFormalizacao = cr
     };
 }
 
+function obterTabelaDiagnosticoOuvidorias(workbook) {
+    const nomesPreferenciais = ABAS_DIAGNOSTICO_OUVIDORIAS
+        .map((nome) => obterNomeAbaWorkbook(workbook, [nome]))
+        .filter(Boolean);
+    const nomesParaBuscar = [...new Set([...nomesPreferenciais, ...workbook.SheetNames])];
+    const perguntasConhecidas = new Set(PARAMETROS_DIAGNOSTICO_ONASP.flatMap((parametro) => (
+        parametro.perguntas.map(normalizarCabecalhoPlanilha)
+    )));
+
+    for (const nomeAba of nomesParaBuscar) {
+        const linhas = obterLinhasPlanilha(workbook.Sheets[nomeAba]);
+        const headerRowIndex = linhas.findIndex((linha) => {
+            const cabecalhos = (linha || []).map(normalizarCabecalhoPlanilha);
+            const possuiUf = cabecalhos.some((cabecalho) => ['UF', 'UNIDADE FEDERATIVA', 'ESTADO'].includes(cabecalho));
+            const possuiPergunta = cabecalhos.some((cabecalho) => perguntasConhecidas.has(cabecalho));
+            const possuiIdentificador = cabecalhos.includes('ID') || cabecalhos.includes('IDENTIFICADOR DA RESPOSTA');
+            return possuiUf || possuiPergunta || possuiIdentificador;
+        });
+
+        if (headerRowIndex < 0) continue;
+
+        const headersOriginais = linhas[headerRowIndex] || [];
+        const headers = headersOriginais.map(normalizarCabecalhoPlanilha);
+        const cacheIndices = new Map();
+        const indice = (aliases) => {
+            const listaAliases = Array.isArray(aliases) ? aliases : [aliases];
+            const chave = listaAliases.join('|');
+            if (cacheIndices.has(chave)) return cacheIndices.get(chave);
+
+            const aliasesNormalizados = listaAliases.map(normalizarCabecalhoPlanilha);
+            let encontrado = headers.findIndex((header) => aliasesNormalizados.includes(header));
+            if (encontrado < 0) {
+                encontrado = headers.findIndex((header) => aliasesNormalizados.some((alias) => header.includes(alias)));
+            }
+
+            cacheIndices.set(chave, encontrado);
+            return encontrado;
+        };
+
+        return {
+            nomeAba,
+            headers,
+            headersOriginais,
+            linhas: linhas.slice(headerRowIndex + 1),
+            indice
+        };
+    }
+
+    return null;
+}
+
+function obterValorBrutoDiagnostico(linha, tabela, aliases) {
+    const indice = tabela?.indice?.(aliases) ?? -1;
+    return indice >= 0 ? linha[indice] : undefined;
+}
+
+function obterTextoDiagnostico(linha, tabela, aliases, fallback = '') {
+    const valor = obterValorBrutoDiagnostico(linha, tabela, aliases);
+    if (valor === undefined || valor === null) return fallback;
+    if (valor instanceof Date) return formatarDataPlanilha(valor);
+
+    const texto = limparTexto(valor);
+    return texto || fallback;
+}
+
+function obterNumeroOpcionalDiagnostico(linha, tabela, aliases) {
+    const valor = obterValorBrutoDiagnostico(linha, tabela, aliases);
+    if (valor === undefined || valor === null || limparTexto(valor) === '') return null;
+    const numero = converterNumeroPlanilha(valor);
+    return Number.isFinite(numero) ? numero : null;
+}
+
+function normalizarUfDiagnostico(valor) {
+    const texto = normalizarTexto(valor);
+    if (!texto) return '';
+
+    const match = texto.match(/\b(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\b/);
+    return match ? match[1] : '';
+}
+
+function converterDataDiagnosticoParaTimestamp(valor) {
+    if (valor instanceof Date && !Number.isNaN(valor.getTime())) {
+        return valor.getTime();
+    }
+
+    if (typeof valor === 'number' && Number.isFinite(valor) && valor > 0) {
+        return new Date(Date.UTC(1899, 11, 30) + Math.round(valor * 86400000)).getTime();
+    }
+
+    const texto = limparTexto(valor);
+    if (!texto) return 0;
+
+    const partesPtBr = texto.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+    if (partesPtBr) {
+        const [, dia, mes, ano, hora = '0', minuto = '0', segundo = '0'] = partesPtBr;
+        const data = new Date(Number(ano), Number(mes) - 1, Number(dia), Number(hora), Number(minuto), Number(segundo));
+        return Number.isNaN(data.getTime()) ? 0 : data.getTime();
+    }
+
+    const data = new Date(texto);
+    return Number.isNaN(data.getTime()) ? 0 : data.getTime();
+}
+
+function normalizarValidacaoOnaspDiagnostico(valor, fallback = 'Pendente') {
+    const texto = normalizarTexto(valor);
+    if (texto.includes('VALIDADO')) return 'Validado';
+    if (texto.includes('INCONSISTENTE')) return 'Inconsistente';
+    if (texto.includes('NAO SE APLICA') || texto === 'NA') return 'Não se aplica';
+    if (texto.includes('PENDENTE')) return 'Pendente';
+    return fallback;
+}
+
+function normalizarRespostaBrutaDiagnostico(linha, tabela, index) {
+    const uf = normalizarUfDiagnostico(obterTextoDiagnostico(linha, tabela, [
+        'UF',
+        'Unidade Federativa',
+        'Estado',
+        'Sigla UF'
+    ]));
+
+    if (!uf) return null;
+
+    const valorData = obterValorBrutoDiagnostico(linha, tabela, [
+        'Data/Hora de Conclusão',
+        'Data de Conclusão',
+        'Data/Hora da resposta',
+        'Data da resposta',
+        'Carimbo de data/hora',
+        'Timestamp',
+        'Hora de conclusão',
+        'Hora de conclusao',
+        'Hora de término',
+        'Hora de termino',
+        'Concluído em',
+        'Data de envio'
+    ]);
+    const dataTimestamp = converterDataDiagnosticoParaTimestamp(valorData);
+    const dataResposta = formatarDataPlanilha(valorData);
+    const unidadeDiagnosticada = obterTextoDiagnostico(linha, tabela, [
+        'Unidade diagnosticada',
+        'Unidade',
+        'Ouvidoria',
+        'Nome da unidade',
+        'Estrutura respondente',
+        'M0-02',
+        'Órgão gestor do sistema penal na UF',
+        'Orgao gestor do sistema penal na UF'
+    ], `Ouvidoria de Serviços Penais - ${uf}`);
+    const idResposta = obterTextoDiagnostico(linha, tabela, [
+        'ID',
+        'ID Resposta',
+        'Identificador da resposta',
+        'ID da resposta',
+        'Response ID'
+    ], `${uf}-${index + 1}`);
+    const responsavelPreenchimento = obterTextoDiagnostico(linha, tabela, [
+        'Responsável pelo preenchimento',
+        'Responsavel pelo preenchimento',
+        'Respondente',
+        'Nome do responsável',
+        'Nome do responsavel',
+        'M0-03'
+    ]);
+    const validacaoOnasp = normalizarValidacaoOnaspDiagnostico(obterTextoDiagnostico(linha, tabela, [
+        'Validação ONASP',
+        'Validacao ONASP',
+        'Status de validação ONASP',
+        'Status de validacao ONASP'
+    ]));
+
+    const respostas = {};
+    PARAMETROS_DIAGNOSTICO_ONASP
+        .flatMap((parametro) => parametro.perguntas)
+        .forEach((pergunta) => {
+            if (tabela.indice(pergunta) < 0) return;
+            respostas[pergunta] = obterTextoDiagnostico(linha, tabela, pergunta);
+        });
+
+    return {
+        arquivoOrigem: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        idResposta,
+        uf,
+        unidadeDiagnosticada,
+        dataResposta,
+        dataTimestamp,
+        responsavelPreenchimento,
+        validacaoOnasp,
+        respostas,
+        linhaOrigem: index + 1,
+        linha
+    };
+}
+
+function selecionarRespostasValidasDiagnostico(respostas) {
+    const porUf = new Map();
+    const selecionadas = [];
+
+    respostas.forEach((resposta) => {
+        if (resposta.uf === 'ES') {
+            selecionadas.push(resposta);
+            return;
+        }
+
+        const atual = porUf.get(resposta.uf);
+        if (!atual || resposta.dataTimestamp > atual.dataTimestamp || (
+            resposta.dataTimestamp === atual.dataTimestamp && resposta.linhaOrigem > atual.linhaOrigem
+        )) {
+            porUf.set(resposta.uf, resposta);
+        }
+    });
+
+    return [...selecionadas, ...Array.from(porUf.values())].sort((a, b) => (
+        a.uf.localeCompare(b.uf) || a.unidadeDiagnosticada.localeCompare(b.unidadeDiagnosticada)
+    ));
+}
+
+function obterParametrosDisponiveisDiagnostico(tabela) {
+    if (!tabela) return [];
+
+    return PARAMETROS_DIAGNOSTICO_ONASP
+        .map((parametro) => ({
+            ...parametro,
+            perguntasDisponiveis: parametro.perguntas.filter((pergunta) => tabela.indice(pergunta) >= 0)
+        }))
+        .filter((parametro) => parametro.perguntasDisponiveis.length > 0);
+}
+
+function respostaDiagnosticoEhNegativa(texto) {
+    const valor = normalizarTexto(texto);
+    return valor === 'NAO'
+        || valor === 'N'
+        || valor.includes('NAO POSSUI')
+        || valor.includes('NAO UTILIZA')
+        || valor.includes('INEXIST')
+        || valor.startsWith('SEM ');
+}
+
+function respostaDiagnosticoNaoInforma(texto) {
+    const valor = normalizarTexto(texto);
+    return valor === 'NAO INFORMADO'
+        || valor === 'NAO SEI'
+        || valor.includes('SEM INFORMACAO')
+        || valor.includes('NAO SABE')
+        || valor.includes('DESCONHEC');
+}
+
+function respostaDiagnosticoEhPositiva(texto) {
+    const valor = normalizarTexto(texto);
+    return valor === 'SIM'
+        || valor === 'S'
+        || valor.includes('POSSUI')
+        || valor.includes('EXISTE')
+        || valor.includes('UTILIZA')
+        || valor.includes('DISPOE')
+        || valor.includes('ADEQUAD')
+        || valor.includes('EXCLUSIV')
+        || valor.includes('FORMALIZAD');
+}
+
+function respostaDiagnosticoEhParcial(texto) {
+    const valor = normalizarTexto(texto);
+    return valor.includes('PARCIAL')
+        || valor.includes('EM PARTE')
+        || valor.includes('COMPARTILHAD')
+        || valor.includes('EM IMPLANTACAO')
+        || valor.includes('INFORMAL')
+        || valor.includes('ALGUNS')
+        || valor.includes('CONDICIONAD');
+}
+
+function classificarRespostasDiagnostico(respostas) {
+    const respostasValidas = respostas.map(limparTexto).filter(Boolean);
+    if (!respostasValidas.length) return STATUS_CHECKLIST_DIAGNOSTICO.NAO_INFORMADO;
+
+    if (respostasValidas.every(respostaDiagnosticoNaoInforma)) {
+        return STATUS_CHECKLIST_DIAGNOSTICO.NAO_INFORMADO;
+    }
+
+    const negativas = respostasValidas.filter(respostaDiagnosticoEhNegativa).length;
+    const positivas = respostasValidas.filter(respostaDiagnosticoEhPositiva).length;
+    const parciais = respostasValidas.filter(respostaDiagnosticoEhParcial).length;
+
+    if (parciais > 0 || (positivas > 0 && negativas > 0)) {
+        return STATUS_CHECKLIST_DIAGNOSTICO.PARCIAL;
+    }
+
+    if (negativas === respostasValidas.length) {
+        return STATUS_CHECKLIST_DIAGNOSTICO.NAO_CONFORME;
+    }
+
+    if (positivas > 0) {
+        return STATUS_CHECKLIST_DIAGNOSTICO.CONFORME;
+    }
+
+    // Respostas descritivas substanciais, como listas de públicos atendidos ou
+    // conteúdo do ato normativo, indicam atendimento declaratório do parâmetro.
+    return STATUS_CHECKLIST_DIAGNOSTICO.CONFORME;
+}
+
+function avaliarParametroDiagnostico(resposta, parametro) {
+    const respostasPerguntas = parametro.perguntasDisponiveis.map((pergunta) => ({
+        pergunta,
+        resposta: limparTexto(resposta.respostas[pergunta])
+    })).filter((item) => item.resposta);
+    const respostaUf = respostasPerguntas.length
+        ? respostasPerguntas.map((item) => `${item.pergunta}: ${item.resposta}`).join(' | ')
+        : 'Não informado';
+    let statusAutomatico = classificarRespostasDiagnostico(respostasPerguntas.map((item) => item.resposta));
+    const validacaoOnasp = parametro.requerValidacao
+        ? normalizarValidacaoOnaspDiagnostico(resposta.validacaoOnasp, 'Pendente')
+        : 'Não se aplica';
+
+    // Quando o parâmetro depende de comprovação documental, a resposta positiva
+    // fica pendente até a validação técnica da ONASP.
+    if (
+        parametro.requerValidacao
+        && statusAutomatico === STATUS_CHECKLIST_DIAGNOSTICO.CONFORME
+        && validacaoOnasp !== 'Validado'
+    ) {
+        statusAutomatico = STATUS_CHECKLIST_DIAGNOSTICO.PENDENTE_VALIDACAO;
+    }
+
+    return {
+        arquivoOrigem: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        uf: resposta.uf,
+        idResposta: resposta.idResposta,
+        idParametro: parametro.id,
+        eixo: parametro.eixo,
+        parametro: parametro.nome,
+        fundamentoIn: parametro.fundamentoIn,
+        perguntasDiagnostico: parametro.perguntasDisponiveis,
+        respostaUf,
+        statusAutomatico,
+        validacaoOnasp,
+        providencia: parametro.providencia,
+        prioridade: parametro.prioridade,
+        essencial: Boolean(parametro.essencial)
+    };
+}
+
+function montarDeficitsDiagnostico(resposta, tabela) {
+    return ITENS_DEFICIT_DIAGNOSTICO
+        .filter((config) => tabela.indice(config.atual) >= 0 || tabela.indice(config.ideal) >= 0)
+        .map((config) => {
+            const atualDeclarado = obterNumeroOpcionalDiagnostico(resposta.linha, tabela, config.atual);
+            const idealDeclarado = obterNumeroOpcionalDiagnostico(resposta.linha, tabela, config.ideal);
+            const deficit = atualDeclarado === null || idealDeclarado === null
+                ? null
+                : Math.max(0, idealDeclarado - atualDeclarado);
+
+            return {
+                arquivoOrigem: ARQUIVO_PLANILHA_DIAGNOSTICO,
+                uf: resposta.uf,
+                idResposta: resposta.idResposta,
+                item: config.item,
+                atualDeclarado,
+                idealDeclarado,
+                deficit,
+                podeComporPlanoAplicacao: true,
+                observacao: 'Déficit declarado no diagnóstico',
+                prioridade: config.prioridade
+            };
+        });
+}
+
+function calcularStatusGeralDiagnostico(checklist) {
+    if (!checklist.length) return STATUS_CHECKLIST_DIAGNOSTICO.NAO_INFORMADO;
+
+    const possuiEssencialNaoConforme = checklist.some((item) => (
+        item.essencial && item.statusAutomatico === STATUS_CHECKLIST_DIAGNOSTICO.NAO_CONFORME
+    ));
+    if (possuiEssencialNaoConforme) return STATUS_CHECKLIST_DIAGNOSTICO.NAO_CONFORME;
+
+    const possuiPendencia = checklist.some((item) => item.statusAutomatico !== STATUS_CHECKLIST_DIAGNOSTICO.CONFORME);
+    return possuiPendencia ? STATUS_CHECKLIST_DIAGNOSTICO.PARCIAL : STATUS_CHECKLIST_DIAGNOSTICO.CONFORME;
+}
+
+function montarResumoConformidadeDiagnostico(checklist, deficits, validacaoOnasp) {
+    const contadores = {
+        conformes: checklist.filter((item) => item.statusAutomatico === STATUS_CHECKLIST_DIAGNOSTICO.CONFORME).length,
+        parcialmenteConformes: checklist.filter((item) => item.statusAutomatico === STATUS_CHECKLIST_DIAGNOSTICO.PARCIAL).length,
+        naoConformes: checklist.filter((item) => item.statusAutomatico === STATUS_CHECKLIST_DIAGNOSTICO.NAO_CONFORME).length,
+        naoInformados: checklist.filter((item) => item.statusAutomatico === STATUS_CHECKLIST_DIAGNOSTICO.NAO_INFORMADO).length,
+        pendentesValidacao: checklist.filter((item) => item.statusAutomatico === STATUS_CHECKLIST_DIAGNOSTICO.PENDENTE_VALIDACAO).length
+    };
+    const totalAvaliavel = Object.values(contadores).reduce((total, valor) => total + valor, 0);
+    const deficitAparelhamento = deficits.reduce((total, item) => total + (Number(item.deficit) > 0 ? Number(item.deficit) : 0), 0);
+
+    return {
+        ...contadores,
+        totalAvaliavel,
+        conformidadePercentual: totalAvaliavel ? Math.round((contadores.conformes / totalAvaliavel) * 100) : 0,
+        deficitAparelhamento,
+        validacaoOnasp
+    };
+}
+
+function montarProvidenciasDiagnostico(checklist, deficits) {
+    const providenciasChecklist = checklist
+        .filter((item) => item.statusAutomatico !== STATUS_CHECKLIST_DIAGNOSTICO.CONFORME)
+        .map((item) => ({
+            origem: 'Checklist IN',
+            providenciaNecessaria: item.providencia,
+            prioridade: item.prioridade,
+            statusProvidencia: 'Pendente',
+            referencia: item.parametro
+        }));
+    const providenciasDeficit = deficits
+        .filter((item) => Number(item.deficit) > 0)
+        .map((item) => ({
+            origem: 'Aparelhamento',
+            providenciaNecessaria: `Prever aquisição ou adequação de ${item.item.toLowerCase()} conforme déficit declarado`,
+            prioridade: item.prioridade,
+            statusProvidencia: 'Pendente',
+            referencia: item.item
+        }));
+
+    return [...providenciasChecklist, ...providenciasDeficit];
+}
+
+function montarAnaliseRespostaDiagnostico(resposta, parametrosDisponiveis, tabela) {
+    const checklist = parametrosDisponiveis.map((parametro) => avaliarParametroDiagnostico(resposta, parametro));
+    const deficits = montarDeficitsDiagnostico(resposta, tabela);
+    const statusGeral = calcularStatusGeralDiagnostico(checklist);
+    const validacaoOnasp = normalizarValidacaoOnaspDiagnostico(resposta.validacaoOnasp, checklist.some((item) => item.validacaoOnasp === 'Pendente') ? 'Pendente' : 'Não se aplica');
+
+    return {
+        ...resposta,
+        statusGeral,
+        resumo: montarResumoConformidadeDiagnostico(checklist, deficits, validacaoOnasp),
+        checklist,
+        deficitAparelhamento: deficits,
+        providencias: montarProvidenciasDiagnostico(checklist, deficits)
+    };
+}
+
+function montarResumoGeralDiagnosticoOuvidorias(respostas) {
+    const ufs = [...new Set(respostas.map((resposta) => resposta.uf))].sort();
+    const unidades = respostas.map((resposta) => resposta.unidadeDiagnosticada).filter(Boolean).sort();
+
+    return {
+        totalRespostas: respostas.length,
+        ufsDiagnosticadas: ufs.length,
+        unidadesDiagnosticadas: unidades.length,
+        conformes: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.CONFORME).length,
+        parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.PARCIAL).length,
+        naoConformes: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.NAO_CONFORME).length,
+        naoInformadas: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.NAO_INFORMADO).length,
+        deficitTotalDeclarado: respostas.reduce((total, resposta) => total + resposta.resumo.deficitAparelhamento, 0),
+        filtros: {
+            ufs,
+            unidades,
+            statusGerais: [...new Set(respostas.map((resposta) => resposta.statusGeral))].sort(),
+            eixos: [...new Set(respostas.flatMap((resposta) => resposta.checklist.map((item) => item.eixo)))].sort(),
+            statusParametros: Object.values(STATUS_CHECKLIST_DIAGNOSTICO),
+            validacoesOnasp: VALIDACOES_ONASP_DIAGNOSTICO
+        }
+    };
+}
+
+function criarDiagnosticoOuvidoriasVazio(erro = '') {
+    return {
+        arquivo: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        disponivel: false,
+        erro,
+        aba: '',
+        parametrosDisponiveis: [],
+        respostasBrutas: [],
+        respostas: [],
+        resumo: montarResumoGeralDiagnosticoOuvidorias([]),
+        diagnostico: {
+            colunasDisponiveis: [],
+            perguntasDisponiveis: [],
+            respostasDescartadasPorDuplicidade: 0,
+            aviso: erro || 'Planilha de diagnóstico indisponível.'
+        }
+    };
+}
+
+function extrairDiagnosticoOuvidoriasDoWorkbook(workbook) {
+    const tabela = obterTabelaDiagnosticoOuvidorias(workbook);
+    if (!tabela) {
+        return criarDiagnosticoOuvidoriasVazio('Nenhuma aba com cabeçalho reconhecível foi localizada em Diagnostico.xlsx.');
+    }
+
+    const parametrosDisponiveis = obterParametrosDisponiveisDiagnostico(tabela);
+    const respostasBrutas = tabela.linhas
+        .map((linha, index) => normalizarRespostaBrutaDiagnostico(linha, tabela, index))
+        .filter(Boolean);
+    const respostasValidas = selecionarRespostasValidasDiagnostico(respostasBrutas);
+    const respostas = respostasValidas.map((resposta) => montarAnaliseRespostaDiagnostico(resposta, parametrosDisponiveis, tabela));
+    const perguntasDisponiveis = [...new Set(parametrosDisponiveis.flatMap((parametro) => parametro.perguntasDisponiveis))].sort();
+
+    return {
+        arquivo: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        disponivel: true,
+        erro: '',
+        aba: tabela.nomeAba,
+        parametrosDisponiveis,
+        respostasBrutas,
+        respostas,
+        resumo: montarResumoGeralDiagnosticoOuvidorias(respostas),
+        diagnostico: {
+            colunasDisponiveis: tabela.headersOriginais.map(limparTexto).filter(Boolean),
+            perguntasDisponiveis,
+            respostasDescartadasPorDuplicidade: Math.max(0, respostasBrutas.length - respostasValidas.length),
+            aviso: perguntasDisponiveis.length
+                ? ''
+                : 'A planilha foi carregada, mas nenhuma pergunta M0/M1/M2/M3/M4 compatível com o checklist foi localizada.'
+        }
+    };
+}
+
 async function lerWorkbookDeArrayBuffer(arrayBuffer) {
     const xlsx = obterXlsxGlobal();
     return xlsx.read(arrayBuffer, { type: 'array', raw: true });
@@ -2448,6 +3025,26 @@ export async function carregarDadosContatos() {
         dadosContatosCache = criarContatosFormalizacaoVazios(error.message);
         console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_CONTATOS}:`, error);
         return dadosContatosCache;
+    }
+}
+
+export async function carregarDadosDiagnosticoOuvidorias() {
+    if (dadosDiagnosticoOuvidoriasCache) {
+        return dadosDiagnosticoOuvidoriasCache;
+    }
+
+    try {
+        if (window.location.protocol === 'file:') {
+            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de diagnostico.');
+        }
+
+        const workbook = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_DIAGNOSTICO, 'Planilha de diagnostico');
+        dadosDiagnosticoOuvidoriasCache = extrairDiagnosticoOuvidoriasDoWorkbook(workbook);
+        return dadosDiagnosticoOuvidoriasCache;
+    } catch (error) {
+        dadosDiagnosticoOuvidoriasCache = criarDiagnosticoOuvidoriasVazio(error.message);
+        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_DIAGNOSTICO}:`, error);
+        return dadosDiagnosticoOuvidoriasCache;
     }
 }
 

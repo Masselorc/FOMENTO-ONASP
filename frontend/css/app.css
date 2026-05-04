@@ -4021,3 +4021,188 @@ table.dataTable thead td,
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================================================
+   Parâmetros Mínimos
+   ========================================================================== */
+
+.diagnostico-intro {
+    border-left: 5px solid #0f766e;
+}
+
+.diagnostico-filter-section {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.diagnostico-filter-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.diagnostico-current-selector {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-panel);
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.diagnostico-block {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-panel);
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.diagnostico-header-block {
+    border-left: 5px solid #0f766e;
+}
+
+.diagnostico-header-block h2 {
+    color: var(--color-primary-strong);
+    font-size: 1.35rem;
+    font-weight: 900;
+    margin: 0;
+}
+
+.diagnostico-header-grid,
+.diagnostico-summary-grid {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.diagnostico-header-grid > div,
+.diagnostico-summary-card {
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    display: grid;
+    gap: 0.3rem;
+    min-height: 72px;
+    padding: 0.75rem;
+}
+
+.diagnostico-header-grid span,
+.diagnostico-summary-card span {
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.diagnostico-header-grid strong,
+.diagnostico-summary-card strong {
+    color: var(--color-primary-strong);
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.diagnostico-summary-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.diagnostico-status-badge {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.72rem;
+    font-weight: 900;
+    justify-content: center;
+    line-height: 1.1;
+    min-height: 1.65rem;
+    padding: 0.35rem 0.6rem;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+.diagnostico-status-success {
+    background: var(--color-success-soft);
+    color: #047857;
+}
+
+.diagnostico-status-warning {
+    background: var(--color-warning-soft);
+    color: #92400e;
+}
+
+.diagnostico-status-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.diagnostico-status-info {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.diagnostico-status-muted {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.diagnostico-table {
+    font-size: 0.82rem;
+}
+
+.diagnostico-table th {
+    color: var(--color-primary-strong);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+}
+
+.diagnostico-table td {
+    vertical-align: top;
+}
+
+.diagnostico-safety-text {
+    background: #f8fafc;
+    border-left: 4px solid #0f766e;
+    border-radius: 8px;
+    color: var(--color-muted);
+    font-size: 0.86rem;
+    margin: 0;
+    padding: 0.85rem;
+}
+
+.diagnostico-empty-state {
+    align-items: center;
+    background: var(--color-surface-muted);
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
+    color: var(--color-muted);
+    display: flex;
+    font-size: 0.9rem;
+    justify-content: center;
+    min-height: 88px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.diagnostico-empty-large {
+    min-height: 180px;
+}
+
+@media (max-width: 1200px) {
+    .diagnostico-filter-grid,
+    .diagnostico-header-grid,
+    .diagnostico-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .diagnostico-filter-grid,
+    .diagnostico-header-grid,
+    .diagnostico-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
