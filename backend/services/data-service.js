@@ -85,6 +85,7 @@ let dadosProfor2022Cache = null;
 let dadosFaf2021Cache = null;
 let dadosDoacoes2023Cache = null;
 let dadosFormalizacaoProforCache = null;
+let dadosContatosCache = null;
 
 export function obterDadosOrcamento() {
     return dadosOrcamentoCache;
@@ -104,6 +105,10 @@ export function obterDadosDoacoes2023() {
 
 export function obterDadosFormalizacaoProfor() {
     return dadosFormalizacaoProforCache;
+}
+
+export function obterDadosContatos() {
+    return dadosContatosCache;
 }
 
 // A biblioteca XLSX é carregada pelo index.html. Mantemos esta guarda para
@@ -2024,6 +2029,25 @@ export async function carregarDadosOrcamento() {
     return carregarPlanilhaOrcamento();
 }
 
+export async function carregarDadosContatos() {
+    if (dadosContatosCache && dadosContatosCache.disponivel) {
+        return dadosContatosCache;
+    }
+
+    try {
+        if (window.location.protocol === 'file:') {
+            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de contatos.');
+        }
+        const workbookContatos = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_CONTATOS, 'Planilha de contatos');
+        dadosContatosCache = extrairDadosContatosFormalizacao(workbookContatos);
+        return dadosContatosCache;
+    } catch (error) {
+        dadosContatosCache = criarContatosFormalizacaoVazios(error.message);
+        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_CONTATOS}:`, error);
+        return dadosContatosCache;
+    }
+}
+
 export async function carregarDadosFormalizacaoProfor() {
     if (dadosFormalizacaoProforCache) {
         return dadosFormalizacaoProforCache;
@@ -2035,14 +2059,9 @@ export async function carregarDadosFormalizacaoProfor() {
         }
 
         const workbook = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR, 'Planilha de formalizacao');
-        let contatosFormalizacao = criarContatosFormalizacaoVazios('Planilha de contatos não carregada.');
-
-        try {
-            const workbookContatos = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_CONTATOS, 'Planilha de contatos');
-            contatosFormalizacao = extrairDadosContatosFormalizacao(workbookContatos);
-        } catch (error) {
-            contatosFormalizacao = criarContatosFormalizacaoVazios(error.message);
-            console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_CONTATOS}:`, error);
+        let contatosFormalizacao = await carregarDadosContatos();
+        if (!contatosFormalizacao) {
+            contatosFormalizacao = criarContatosFormalizacaoVazios('Planilha de contatos não carregada.');
         }
 
         dadosFormalizacaoProforCache = extrairFormalizacaoProforDoWorkbook(workbook, contatosFormalizacao);

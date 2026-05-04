@@ -170,6 +170,8 @@ function atualizarNavegacao(viewName = 'dashboard') {
                 ? 'faf2021'
                 : viewName === 'doacoes2023-detalhe'
                     ? 'doacoes2023'
+                : viewName === 'contatos'
+                    ? 'contatos'
                     : viewName;
     document.body.dataset.currentView = viewName;
 
@@ -4982,7 +4984,6 @@ window.exportarRelatorioEstadoSelecionado = exportarRelatorioEstadoSelecionado;
 window.exportarDashboardPDF = exportarDashboardPDF;
 window.exportarRelatorioPDF = exportarRelatorioPDF;
 window.exportarOrcamentoPDF = exportarOrcamentoPDF;
-window.exportarContatos = exportarContatos;
 window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;
 window.abrirOrcamento = () => toggleView('orcamento');
 window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
