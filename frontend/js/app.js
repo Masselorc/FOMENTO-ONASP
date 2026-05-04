@@ -19,7 +19,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260504-1';
+} from '../../backend/services/data-service.js?v=20260504-2';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4398,6 +4398,248 @@ async function carregarLogoParaPDF() {
                 btnPdf.disabled = originalDisabled;
             hideLoading();
             }
+        }
+
+        // --- MÓDULO DE CONTATOS UFS ---
+        function atualizarListaContatos(dadosContatos) {
+            const busca = normalizarBusca(document.getElementById('filtroContatosBusca')?.value || '');
+            const ufFiltro = document.getElementById('filtroContatosUf')?.value || '';
+            const containerLista = document.getElementById('contatos-lista-ufs');
+
+            if (!containerLista) return;
+
+            const ufsSet = new Set([...dadosContatos.cadastroPorUf.keys(), ...dadosContatos.pessoasPorUf.keys()]);
+            const ufs = Array.from(ufsSet).sort();
+
+            const ufsFiltradas = ufs.filter(uf => {
+                if (ufFiltro && uf !== ufFiltro) return false;
+
+                const cadastro = dadosContatos.cadastroPorUf.get(uf) || {};
+                const pessoas = dadosContatos.pessoasPorUf.get(uf) || [];
+
+                const textoBusca = normalizarBusca([
+                    uf,
+                    cadastro.estado,
+                    cadastro.orgao,
+                    cadastro.nomeTitular,
+                    cadastro.emailInstitucional,
+                    ...pessoas.map(p => [p.nome, p.cargo, p.email, p.telefone, p.papel].join(' '))
+                ].join(' '));
+
+                return !busca || textoBusca.includes(busca);
+            });
+
+            if (ufsFiltradas.length === 0) {
+                containerLista.innerHTML = '<div class="formalizacao-empty-state"><i class="fas fa-search" aria-hidden="true"></i><span>Nenhum contato encontrado para os filtros selecionados.</span></div>';
+                return;
+            }
+
+            containerLista.innerHTML = ufsFiltradas.map(uf => {
+                const cadastro = dadosContatos.cadastroPorUf.get(uf) || { uf };
+                const pessoas = dadosContatos.pessoasPorUf.get(uf) || [];
+
+                const flagUrl = catalogoAplicacao.imagensBandeiras?.[uf] || '';
+                const imgElement = flagUrl
+                    ? `<img src="${escapeHtml(flagUrl)}" alt="Bandeira ${escapeHtml(uf)}" class="state-flag report-state-flag me-3" style="width: 50px; height: 34px;">`
+                    : '<i class="fas fa-flag text-secondary report-state-icon me-3"></i>';
+
+                return `
+                    <div class="card mb-4 shadow-sm border-0">
+                        <div class="card-header text-white bg-primary d-flex align-items-center py-2">
+                            ${imgElement}
+                            <h4 class="mb-0 fw-bold">${escapeHtml(catalogoAplicacao.nomesEstados?.[uf] || uf)} (${escapeHtml(uf)})</h4>
+                        </div>
+                        <div class="card-body bg-light">
+                            <div class="formalizacao-info-grid mb-4">
+                                ${renderizarCampoFormalizacao('Órgão', cadastro.orgao, 'fa-building')}
+                                ${renderizarCampoFormalizacao('Sigla', cadastro.sigla, 'fa-signature')}
+                                ${renderizarCampoFormalizacao('Endereço', cadastro.endereco, 'fa-location-dot')}
+                                ${renderizarCampoFormalizacao('Titular', cadastro.nomeTitular, 'fa-user-tie')}
+                                ${renderizarCampoFormalizacao('Cargo Titular', cadastro.cargoTitular, 'fa-id-badge')}
+                                ${renderizarCampoFormalizacao('E-mail Institucional', cadastro.emailInstitucional, 'fa-envelope')}
+                                ${renderizarCampoFormalizacao('Telefone', cadastro.telefoneInstitucional, 'fa-phone')}
+                            </div>
+
+                            ${pessoas.length > 0 ? `
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered table-hover bg-white mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Papel</th>
+                                                <th>Nome</th>
+                                                <th>Cargo/Função</th>
+                                                <th>Telefone/Contato</th>
+                                                <th>E-mail</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${pessoas.map(p => `
+                                                <tr>
+                                                    <td><strong>${escapeHtml(p.papel || '-')}</strong></td>
+                                                    <td>${escapeHtml(p.nome || '-')}</td>
+                                                    <td>${escapeHtml(p.cargo || '-')}</td>
+                                                    <td>${escapeHtml(p.telefone || '-')}</td>
+                                                    <td>${escapeHtml(p.email || '-')}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ` : `<div class="text-muted small"><i class="fas fa-info-circle me-1"></i>Nenhuma pessoa específica cadastrada para esta UF.</div>`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function registrarEventosContatos(dadosContatos) {
+            const atualizar = () => atualizarListaContatos(dadosContatos);
+            document.getElementById('filtroContatosBusca')?.addEventListener('input', atualizar);
+            document.getElementById('filtroContatosUf')?.addEventListener('change', atualizar);
+
+            document.getElementById('btnLimparFiltroContatos')?.addEventListener('click', () => {
+                const busca = document.getElementById('filtroContatosBusca');
+                const uf = document.getElementById('filtroContatosUf');
+                if (busca) busca.value = '';
+                if (uf) uf.value = '';
+                atualizar();
+            });
+        }
+
+        function exportarContatos() {
+            const dadosContatos = obterDadosContatos();
+            if (!dadosContatos || (!dadosContatos.cadastroPorUf.size && !dadosContatos.pessoasPorUf.size)) {
+                return;
+            }
+
+            const ufsSet = new Set([...dadosContatos.cadastroPorUf.keys(), ...dadosContatos.pessoasPorUf.keys()]);
+            const ufs = Array.from(ufsSet).sort();
+
+            let csvContent = "UF;Estado;Órgão;Sigla;Endereço;Titular;Cargo Titular;E-mail Institucional;Telefone Institucional;Papel Contato;Nome Contato;Cargo Contato;Telefone Contato;E-mail Contato\n";
+
+            ufs.forEach(uf => {
+                const cadastro = dadosContatos.cadastroPorUf.get(uf) || {};
+                const pessoas = dadosContatos.pessoasPorUf.get(uf) || [];
+
+                const baseRow = [
+                    uf,
+                    cadastro.estado || '',
+                    cadastro.orgao || '',
+                    cadastro.sigla || '',
+                    cadastro.endereco || '',
+                    cadastro.nomeTitular || '',
+                    cadastro.cargoTitular || '',
+                    cadastro.emailInstitucional || '',
+                    cadastro.telefoneInstitucional || ''
+                ].map(val => `"${String(val).replace(/"/g, '""')}"`);
+
+                if (pessoas.length === 0) {
+                    csvContent += [...baseRow, '""', '""', '""', '""', '""'].join(';') + '\n';
+                } else {
+                    pessoas.forEach(p => {
+                        const pessoaRow = [
+                            p.papel || '',
+                            p.nome || '',
+                            p.cargo || '',
+                            p.telefone || '',
+                            p.email || ''
+                        ].map(val => `"${String(val).replace(/"/g, '""')}"`);
+
+                        csvContent += [...baseRow, ...pessoaRow].join(';') + '\n';
+                    });
+                }
+            });
+
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', 'Contatos_UFs.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+        }
+
+        function renderContatosView() {
+            const container = document.getElementById('view-contatos');
+            const dadosContatos = obterDadosContatos();
+
+            if (!container) return;
+
+            container.style.display = 'block';
+
+            if (!dadosContatos || !dadosContatos.disponivel || (!dadosContatos.cadastroPorUf.size && !dadosContatos.pessoasPorUf.size)) {
+                container.innerHTML = `
+                    <section class="dashboard-intro formalizacao-intro">
+                        <div>
+                            <p class="section-eyebrow mb-1">Contatos</p>
+                            <h2>Contatos das UFs</h2>
+                        </div>
+                    </section>
+                    <div class="alert alert-warning m-4">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Os dados de contatos não foram carregados. Verifique a planilha
+                        <strong>Planilhas/Contatos.xlsx</strong> e as abas
+                        <strong>Contatos_UF</strong> e <strong>Contatos_Pessoas</strong>.
+                    </div>
+                `;
+                return;
+            }
+
+            const ufsSet = new Set([...dadosContatos.cadastroPorUf.keys(), ...dadosContatos.pessoasPorUf.keys()]);
+            const ufs = Array.from(ufsSet).sort();
+            const opcoesUf = ufs.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(catalogoAplicacao.nomesEstados?.[uf] || uf)}</option>`).join('');
+
+            container.innerHTML = `
+                <section class="dashboard-intro formalizacao-intro">
+                    <div>
+                        <p class="section-eyebrow mb-1">Cadastros</p>
+                        <h2>Contatos Institucionais</h2>
+                        <p>Catálogo de contatos das Unidades Federativas</p>
+                    </div>
+                    <div class="intro-badges" aria-label="Resumo Contatos">
+                        <span><i class="fas fa-address-book" aria-hidden="true"></i> ${ufs.length} UFs Cadastradas</span>
+                    </div>
+                </section>
+
+                <div class="budget-report-actions pdf-hidden mb-4">
+                    <button id="btn-export-contatos" type="button" class="btn btn-success btn-icon-text" onclick="exportarContatos()">
+                        <i class="fas fa-file-csv" aria-hidden="true"></i>
+                        <span>Exportar para CSV</span>
+                    </button>
+                </div>
+
+                <section class="filter-section mb-4" aria-label="Filtros de contatos">
+                    <div class="filter-toolbar">
+                        <div class="filter-title">
+                            <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
+                            <strong>Filtros</strong>
+                        </div>
+                        <div class="filter-search-actions">
+                            <input type="text" id="filtroContatosBusca" class="form-control" placeholder="Buscar por nome, órgão, cargo ou UF..." aria-label="Buscar contatos">
+                            <button id="btnLimparFiltroContatos" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                <span>Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="budget-filter-grid formalizacao-filter-grid">
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroContatosUf">UF</label>
+                            <select id="filtroContatosUf" class="form-select">
+                                <option value="">Todas</option>
+                                ${opcoesUf}
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="contatos-lista-ufs"></div>
+            `;
+
+            registrarEventosContatos(dadosContatos);
+            atualizarListaContatos(dadosContatos);
         }
 
         // --- FUNÇÕES UTILITÁRIAS (COMPARTILHADAS) ---
