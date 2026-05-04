@@ -19,7 +19,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260504-3';
+} from '../../backend/services/data-service.js?v=20260504-5';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4586,6 +4586,32 @@ async function carregarLogoParaPDF() {
             return TODAS_UFS_BRASIL.includes(uf) ? uf : '';
         }
 
+        function renderBandeiraContatoUf(uf) {
+            const flagUrl = catalogoAplicacao.imagensBandeiras?.[uf] || '';
+            const safeUf = escapeHtml(uf);
+            const safeFlagUrl = escapeHtml(flagUrl);
+
+            if (!flagUrl) {
+                return `
+                    <span class="contact-uf-flag-placeholder" aria-hidden="true">
+                        <i class="fas fa-flag"></i>
+                    </span>
+                `;
+            }
+
+            return `
+                <img
+                    src="${safeFlagUrl}"
+                    alt="Bandeira ${safeUf}"
+                    class="contact-uf-flag"
+                    onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.classList.remove('d-none');"
+                >
+                <span class="contact-uf-flag-placeholder d-none" aria-hidden="true">
+                    <i class="fas fa-flag"></i>
+                </span>
+            `;
+        }
+
         function renderGrupoContatoUf(grupo, index) {
             const collapseId = `contatos-uf-${grupo.uf}`;
             const pessoas = grupo.pessoas || [];
@@ -4598,11 +4624,14 @@ async function carregarLogoParaPDF() {
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#${collapseId}"
-                        aria-expanded="${index === 0 ? 'true' : 'false'}"
+                        aria-expanded="false"
                         aria-controls="${collapseId}"
                     >
                         <span class="contact-uf-main">
-                            <span class="contact-uf-sigla">${escapeHtml(grupo.uf)}</span>
+                            <span class="contact-uf-identity">
+                                ${renderBandeiraContatoUf(grupo.uf)}
+                                <span class="contact-uf-sigla">${escapeHtml(grupo.uf)}</span>
+                            </span>
                             <span class="contact-uf-name">${escapeHtml(grupo.nomeEstado || grupo.uf)}</span>
                         </span>
 
@@ -4612,7 +4641,7 @@ async function carregarLogoParaPDF() {
                         </span>
                     </button>
 
-                    <div id="${collapseId}" class="collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#contacts-accordion">
+                    <div id="${collapseId}" class="collapse" data-bs-parent="#contacts-accordion">
                         <div class="contact-uf-body">
                             ${renderDadosInstitucionaisUf(grupo.dadosUf)}
                             ${renderPessoasContato(grupo.pessoas)}

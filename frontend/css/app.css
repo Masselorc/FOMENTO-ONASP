@@ -3554,17 +3554,49 @@ table.dataTable thead td,
     min-width: 0;
 }
 
+.contact-uf-identity {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5rem;
+    min-width: 92px;
+}
+
+.contact-uf-flag {
+    background: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+    display: block;
+    height: 30px;
+    object-fit: cover;
+    width: 42px;
+}
+
+.contact-uf-flag-placeholder {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    color: #ffffff;
+    display: inline-flex;
+    height: 30px;
+    justify-content: center;
+    width: 42px;
+}
+
 .contact-uf-sigla {
     align-items: center;
     background: rgba(255, 255, 255, 0.16);
     border: 1px solid rgba(255, 255, 255, 0.26);
     border-radius: 8px;
+    color: #ffffff;
     display: inline-flex;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 900;
     justify-content: center;
-    min-height: 34px;
-    min-width: 44px;
+    min-height: 30px;
+    min-width: 40px;
+    padding: 0 0.4rem;
 }
 
 .contact-uf-name {
