@@ -19,7 +19,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260504-2';
+} from '../../backend/services/data-service.js?v=20260504-3';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4401,111 +4401,6 @@ async function carregarLogoParaPDF() {
         }
 
         // --- MÓDULO DE CONTATOS UFS ---
-        function atualizarListaContatos(dadosContatos) {
-            const busca = normalizarBusca(document.getElementById('filtroContatosBusca')?.value || '');
-            const ufFiltro = document.getElementById('filtroContatosUf')?.value || '';
-            const containerLista = document.getElementById('contatos-lista-ufs');
-
-            if (!containerLista) return;
-
-            const ufsSet = new Set([...dadosContatos.cadastroPorUf.keys(), ...dadosContatos.pessoasPorUf.keys()]);
-            const ufs = Array.from(ufsSet).sort();
-
-            const ufsFiltradas = ufs.filter(uf => {
-                if (ufFiltro && uf !== ufFiltro) return false;
-
-                const cadastro = dadosContatos.cadastroPorUf.get(uf) || {};
-                const pessoas = dadosContatos.pessoasPorUf.get(uf) || [];
-
-                const textoBusca = normalizarBusca([
-                    uf,
-                    cadastro.estado,
-                    cadastro.orgao,
-                    cadastro.nomeTitular,
-                    cadastro.emailInstitucional,
-                    ...pessoas.map(p => [p.nome, p.cargo, p.email, p.telefone, p.papel].join(' '))
-                ].join(' '));
-
-                return !busca || textoBusca.includes(busca);
-            });
-
-            if (ufsFiltradas.length === 0) {
-                containerLista.innerHTML = '<div class="formalizacao-empty-state"><i class="fas fa-search" aria-hidden="true"></i><span>Nenhum contato encontrado para os filtros selecionados.</span></div>';
-                return;
-            }
-
-            containerLista.innerHTML = ufsFiltradas.map(uf => {
-                const cadastro = dadosContatos.cadastroPorUf.get(uf) || { uf };
-                const pessoas = dadosContatos.pessoasPorUf.get(uf) || [];
-
-                const flagUrl = catalogoAplicacao.imagensBandeiras?.[uf] || '';
-                const imgElement = flagUrl
-                    ? `<img src="${escapeHtml(flagUrl)}" alt="Bandeira ${escapeHtml(uf)}" class="state-flag report-state-flag me-3" style="width: 50px; height: 34px;">`
-                    : '<i class="fas fa-flag text-secondary report-state-icon me-3"></i>';
-
-                return `
-                    <div class="card mb-4 shadow-sm border-0">
-                        <div class="card-header text-white bg-primary d-flex align-items-center py-2">
-                            ${imgElement}
-                            <h4 class="mb-0 fw-bold">${escapeHtml(catalogoAplicacao.nomesEstados?.[uf] || uf)} (${escapeHtml(uf)})</h4>
-                        </div>
-                        <div class="card-body bg-light">
-                            <div class="formalizacao-info-grid mb-4">
-                                ${renderizarCampoFormalizacao('Órgão', cadastro.orgao, 'fa-building')}
-                                ${renderizarCampoFormalizacao('Sigla', cadastro.sigla, 'fa-signature')}
-                                ${renderizarCampoFormalizacao('Endereço', cadastro.endereco, 'fa-location-dot')}
-                                ${renderizarCampoFormalizacao('Titular', cadastro.nomeTitular, 'fa-user-tie')}
-                                ${renderizarCampoFormalizacao('Cargo Titular', cadastro.cargoTitular, 'fa-id-badge')}
-                                ${renderizarCampoFormalizacao('E-mail Institucional', cadastro.emailInstitucional, 'fa-envelope')}
-                                ${renderizarCampoFormalizacao('Telefone', cadastro.telefoneInstitucional, 'fa-phone')}
-                            </div>
-
-                            ${pessoas.length > 0 ? `
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-bordered table-hover bg-white mb-0">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Papel</th>
-                                                <th>Nome</th>
-                                                <th>Cargo/Função</th>
-                                                <th>Telefone/Contato</th>
-                                                <th>E-mail</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${pessoas.map(p => `
-                                                <tr>
-                                                    <td><strong>${escapeHtml(p.papel || '-')}</strong></td>
-                                                    <td>${escapeHtml(p.nome || '-')}</td>
-                                                    <td>${escapeHtml(p.cargo || '-')}</td>
-                                                    <td>${escapeHtml(p.telefone || '-')}</td>
-                                                    <td>${escapeHtml(p.email || '-')}</td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ` : `<div class="text-muted small"><i class="fas fa-info-circle me-1"></i>Nenhuma pessoa específica cadastrada para esta UF.</div>`}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function registrarEventosContatos(dadosContatos) {
-            const atualizar = () => atualizarListaContatos(dadosContatos);
-            document.getElementById('filtroContatosBusca')?.addEventListener('input', atualizar);
-            document.getElementById('filtroContatosUf')?.addEventListener('change', atualizar);
-
-            document.getElementById('btnLimparFiltroContatos')?.addEventListener('click', () => {
-                const busca = document.getElementById('filtroContatosBusca');
-                const uf = document.getElementById('filtroContatosUf');
-                if (busca) busca.value = '';
-                if (uf) uf.value = '';
-                atualizar();
-            });
-        }
-
         function exportarContatos() {
             const dadosContatos = obterDadosContatos();
             if (!dadosContatos || (!dadosContatos.cadastroPorUf.size && !dadosContatos.pessoasPorUf.size)) {
@@ -4571,14 +4466,17 @@ async function carregarLogoParaPDF() {
 
             if (!dadosContatos || !dadosContatos.disponivel || (!dadosContatos.cadastroPorUf.size && !dadosContatos.pessoasPorUf.size)) {
                 container.innerHTML = `
-                    <section class="dashboard-intro formalizacao-intro">
+                    <section class="view-heading">
+                        <button type="button" class="btn btn-outline-secondary btn-icon-text pdf-hidden" onclick="toggleView('dashboard')">
+                            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                            <span>Voltar ao Painel Geral</span>
+                        </button>
                         <div>
-                            <p class="section-eyebrow mb-1">Contatos</p>
-                            <h2>Contatos das UFs</h2>
+                            <p class="section-eyebrow mb-1">Contatos institucionais</p>
+                            <h2>Contatos das Unidades Federativas</h2>
                         </div>
                     </section>
-                    <div class="alert alert-warning m-4">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
+                    <div class="alert alert-warning">
                         Os dados de contatos não foram carregados. Verifique a planilha
                         <strong>Planilhas/Contatos.xlsx</strong> e as abas
                         <strong>Contatos_UF</strong> e <strong>Contatos_Pessoas</strong>.
@@ -4587,59 +4485,275 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
-            const ufsSet = new Set([...dadosContatos.cadastroPorUf.keys(), ...dadosContatos.pessoasPorUf.keys()]);
-            const ufs = Array.from(ufsSet).sort();
-            const opcoesUf = ufs.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(catalogoAplicacao.nomesEstados?.[uf] || uf)}</option>`).join('');
+            const contatosUf = dadosContatos.cadastroPorUf ? Array.from(dadosContatos.cadastroPorUf.values()) : [];
+            const contatosPessoas = dadosContatos.pessoasPorUf ? Array.from(dadosContatos.pessoasPorUf.values()).flat() : [];
+
+            const grupos = montarGruposContatosPorUf(contatosUf, contatosPessoas);
 
             container.innerHTML = `
-                <section class="dashboard-intro formalizacao-intro">
-                    <div>
-                        <p class="section-eyebrow mb-1">Cadastros</p>
-                        <h2>Contatos Institucionais</h2>
-                        <p>Catálogo de contatos das Unidades Federativas</p>
-                    </div>
-                    <div class="intro-badges" aria-label="Resumo Contatos">
-                        <span><i class="fas fa-address-book" aria-hidden="true"></i> ${ufs.length} UFs Cadastradas</span>
-                    </div>
-                </section>
-
-                <div class="budget-report-actions pdf-hidden mb-4">
-                    <button id="btn-export-contatos" type="button" class="btn btn-success btn-icon-text" onclick="exportarContatos()">
-                        <i class="fas fa-file-csv" aria-hidden="true"></i>
-                        <span>Exportar para CSV</span>
+                <section class="view-heading">
+                    <button type="button" class="btn btn-outline-secondary btn-icon-text pdf-hidden" onclick="toggleView('dashboard')">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        <span>Voltar ao Painel Geral</span>
                     </button>
-                </div>
-
-                <section class="filter-section mb-4" aria-label="Filtros de contatos">
-                    <div class="filter-toolbar">
-                        <div class="filter-title">
-                            <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
-                            <strong>Filtros</strong>
-                        </div>
-                        <div class="filter-search-actions">
-                            <input type="text" id="filtroContatosBusca" class="form-control" placeholder="Buscar por nome, órgão, cargo ou UF..." aria-label="Buscar contatos">
-                            <button id="btnLimparFiltroContatos" type="button" class="btn btn-outline-secondary btn-icon-text">
-                                <i class="fas fa-undo" aria-hidden="true"></i>
-                                <span>Limpar</span>
-                            </button>
-                        </div>
+                    <div>
+                        <p class="section-eyebrow mb-1">Contatos institucionais</p>
+                        <h2>Contatos das Unidades Federativas</h2>
                     </div>
-                    <div class="budget-filter-grid formalizacao-filter-grid">
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroContatosUf">UF</label>
-                            <select id="filtroContatosUf" class="form-select">
-                                <option value="">Todas</option>
-                                ${opcoesUf}
-                            </select>
-                        </div>
-                    </div>
+                    <button type="button" class="btn btn-success btn-icon-text pdf-hidden" onclick="exportarContatos()">
+                        <i class="fas fa-file-csv" aria-hidden="true"></i>
+                        <span>Exportar CSV</span>
+                    </button>
                 </section>
 
-                <div id="contatos-lista-ufs"></div>
+                <section class="contacts-toolbar panel-section mb-3">
+                    <div>
+                        <p class="section-eyebrow mb-1">Consulta rápida</p>
+                        <h3>Localize contatos por UF, órgão, nome, cargo, e-mail ou telefone</h3>
+                    </div>
+                    <input
+                        type="text"
+                        id="filtro-contatos"
+                        class="form-control"
+                        placeholder="Buscar contatos..."
+                        aria-label="Buscar contatos"
+                    >
+                </section>
+
+                <section class="contacts-accordion" id="contacts-accordion">
+                    ${grupos.length
+                        ? grupos.map((grupo, index) => renderGrupoContatoUf(grupo, index)).join('')
+                        : '<div class="alert alert-info">Nenhum contato encontrado na planilha.</div>'
+                    }
+                </section>
             `;
 
-            registrarEventosContatos(dadosContatos);
-            atualizarListaContatos(dadosContatos);
+            configurarFiltroContatos();
+        }
+
+        function montarGruposContatosPorUf(contatosUf, contatosPessoas) {
+            const mapa = new Map();
+
+            contatosUf.forEach((item) => {
+                const uf = normalizarUfContato(item.uf || item.UF || item.estado || item.Estado);
+                if (!uf) return;
+
+                const nomeEstado = item.nomeEstado || item.estado || item.Estado || catalogoAplicacao.nomesEstados?.[uf] || uf;
+
+                if (!mapa.has(uf)) {
+                    mapa.set(uf, {
+                        uf,
+                        nomeEstado,
+                        dadosUf: item,
+                        pessoas: []
+                    });
+                } else {
+                    mapa.get(uf).dadosUf = {
+                        ...mapa.get(uf).dadosUf,
+                        ...item
+                    };
+                }
+            });
+
+            contatosPessoas.forEach((pessoa) => {
+                const uf = normalizarUfContato(pessoa.uf || pessoa.UF || pessoa.estado || pessoa.Estado);
+                if (!uf) return;
+
+                if (!mapa.has(uf)) {
+                    mapa.set(uf, {
+                        uf,
+                        nomeEstado: catalogoAplicacao.nomesEstados?.[uf] || uf,
+                        dadosUf: {},
+                        pessoas: []
+                    });
+                }
+
+                mapa.get(uf).pessoas.push(pessoa);
+            });
+
+            return Array.from(mapa.values()).sort((a, b) => {
+                const ordemA = TODAS_UFS_BRASIL.indexOf(a.uf);
+                const ordemB = TODAS_UFS_BRASIL.indexOf(b.uf);
+
+                if (ordemA !== -1 && ordemB !== -1) return ordemA - ordemB;
+                return a.uf.localeCompare(b.uf, 'pt-BR');
+            });
+        }
+
+        function normalizarUfContato(valor) {
+            const texto = String(valor || '').trim().toUpperCase();
+            const uf = texto.match(/\b[A-Z]{2}\b/)?.[0] || texto;
+            return TODAS_UFS_BRASIL.includes(uf) ? uf : '';
+        }
+
+        function renderGrupoContatoUf(grupo, index) {
+            const collapseId = `contatos-uf-${grupo.uf}`;
+            const pessoas = grupo.pessoas || [];
+            const textoBusca = montarTextoBuscaGrupoContato(grupo);
+
+            return `
+                <article class="contact-uf-card" data-contact-search="${escapeHtml(textoBusca)}">
+                    <button
+                        class="contact-uf-bar"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#${collapseId}"
+                        aria-expanded="${index === 0 ? 'true' : 'false'}"
+                        aria-controls="${collapseId}"
+                    >
+                        <span class="contact-uf-main">
+                            <span class="contact-uf-sigla">${escapeHtml(grupo.uf)}</span>
+                            <span class="contact-uf-name">${escapeHtml(grupo.nomeEstado || grupo.uf)}</span>
+                        </span>
+
+                        <span class="contact-uf-meta">
+                            <span>${pessoas.length} contato${pessoas.length === 1 ? '' : 's'}</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </span>
+                    </button>
+
+                    <div id="${collapseId}" class="collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#contacts-accordion">
+                        <div class="contact-uf-body">
+                            ${renderDadosInstitucionaisUf(grupo.dadosUf)}
+                            ${renderPessoasContato(grupo.pessoas)}
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderDadosInstitucionaisUf(dadosUf = {}) {
+            const camposOcultos = new Set(['uf', 'UF', 'estado', 'Estado', 'nomeEstado']);
+            const entradas = Object.entries(dadosUf)
+                .filter(([chave, valor]) => !camposOcultos.has(chave) && valor !== null && valor !== undefined && String(valor).trim() !== '');
+
+            if (!entradas.length) {
+                return `
+                    <div class="contact-empty">
+                        Nenhum dado institucional específico informado para esta UF.
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="contact-section">
+                    <h4>Dados institucionais</h4>
+                    <div class="contact-info-grid">
+                        ${entradas.map(([chave, valor]) => `
+                            <div class="contact-info-item">
+                                <span>${escapeHtml(formatarRotuloContato(chave))}</span>
+                                <strong>${formatarValorContato(valor)}</strong>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPessoasContato(pessoas = []) {
+            if (!Array.isArray(pessoas) || pessoas.length === 0) {
+                return `
+                    <div class="contact-section">
+                        <h4>Contatos nominais</h4>
+                        <div class="contact-empty">
+                            Nenhum contato nominal informado.
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="contact-section">
+                    <h4>Contatos nominais</h4>
+                    <div class="contact-person-grid">
+                        ${pessoas.map((pessoa) => renderCardPessoaContato(pessoa)).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCardPessoaContato(pessoa = {}) {
+            const nome = pessoa.nome || pessoa.Nome || pessoa.contato || pessoa.Contato || 'Contato não identificado';
+            const cargo = pessoa.cargo || pessoa.Cargo || pessoa.funcao || pessoa.Função || pessoa.funcaoContato || '';
+            const orgao = pessoa.orgao || pessoa.órgão || pessoa.Orgao || pessoa['Órgão'] || '';
+            const email = pessoa.email || pessoa.Email || pessoa.eMail || '';
+            const telefone = pessoa.telefone || pessoa.Telefone || pessoa.celular || pessoa.Celular || '';
+
+            return `
+                <div class="contact-person-card">
+                    <div class="contact-person-name">${escapeHtml(nome)}</div>
+                    ${cargo ? `<div class="contact-person-role">${escapeHtml(cargo)}</div>` : ''}
+                    ${orgao ? `<div class="contact-person-org">${escapeHtml(orgao)}</div>` : ''}
+
+                    <div class="contact-person-links">
+                        ${email ? `
+                            <a href="mailto:${escapeHtml(email)}">
+                                <i class="fas fa-envelope" aria-hidden="true"></i>
+                                ${escapeHtml(email)}
+                            </a>
+                        ` : ''}
+                        ${telefone ? `
+                            <a href="tel:${escapeHtml(String(telefone).replace(/\D/g, ''))}">
+                                <i class="fas fa-phone" aria-hidden="true"></i>
+                                ${escapeHtml(telefone)}
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function montarTextoBuscaGrupoContato(grupo) {
+            return [
+                grupo.uf,
+                grupo.nomeEstado,
+                ...Object.values(grupo.dadosUf || {}),
+                ...(grupo.pessoas || []).flatMap((pessoa) => Object.values(pessoa || {}))
+            ]
+                .join(' ')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        }
+
+        function configurarFiltroContatos() {
+            const input = document.getElementById('filtro-contatos');
+            const cards = Array.from(document.querySelectorAll('.contact-uf-card'));
+
+            if (!input || cards.length === 0) return;
+
+            input.addEventListener('input', () => {
+                const termo = input.value
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase()
+                    .trim();
+
+                cards.forEach((card) => {
+                    const textoBusca = card.dataset.contactSearch || '';
+                    const visivel = !termo || textoBusca.includes(termo);
+                    card.classList.toggle('d-none', !visivel);
+                });
+            });
+        }
+
+        function formatarRotuloContato(chave) {
+            return String(chave || '')
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/_/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .replace(/^./, (letra) => letra.toUpperCase());
+        }
+
+        function formatarValorContato(valor) {
+            const texto = escapeHtml(String(valor || '-'));
+
+            if (texto.includes('@')) {
+                return `<a href="mailto:${texto}">${texto}</a>`;
+            }
+
+            return texto;
         }
 
         // --- FUNÇÕES UTILITÁRIAS (COMPARTILHADAS) ---
