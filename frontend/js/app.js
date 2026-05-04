@@ -2351,6 +2351,14 @@ async function carregarLogoParaPDF() {
             return `<span class="profor-alert-badge profor-alert-${classe}" title="${escapeHtml(alerta.mensagem)}">${escapeHtml(alerta.tipo)}</span>`;
         }
 
+        function renderizarAtalhosUfFormalizacao(ufs = []) {
+            return ufs.map((uf) => `
+                <button type="button" class="formalizacao-uf-shortcut" data-formalizacao-uf="${escapeHtml(uf)}" title="Abrir detalhamento de ${escapeHtml(uf)}">
+                    ${escapeHtml(uf)}
+                </button>
+            `).join('');
+        }
+
         function renderizarStatusFormalizacao(proposta) {
             const temCritico = proposta.alertas.some((alerta) => alerta.severidade === 'critico');
             const classe = proposta.aptaCelebracao
@@ -2376,8 +2384,9 @@ async function carregarLogoParaPDF() {
         function filtrarPropostasFormalizacao(dados) {
             const busca = normalizarBusca(document.getElementById('filtroFormalizacaoBusca')?.value || '');
             const uf = document.getElementById('filtroFormalizacaoUf')?.value || '';
-            const grupo = document.getElementById('filtroFormalizacaoGrupo')?.value || '';
+            const regiao = document.getElementById('filtroFormalizacaoRegiao')?.value || '';
             const status = document.getElementById('filtroFormalizacaoStatus')?.value || '';
+            const ouvidoria = document.getElementById('filtroFormalizacaoOuvidoria')?.value || '';
             const pendencia = document.getElementById('filtroFormalizacaoPendencia')?.value || '';
 
             return dados.propostas.filter((proposta) => {
@@ -2399,13 +2408,106 @@ async function carregarLogoParaPDF() {
                     || (pendencia === 'documentos' && (!proposta.progressoDocumentosProjeto.completo || !proposta.progressoDocumentosFormalizacao.completo))
                     || (pendencia === 'plano' && !proposta.plano.fechaComValorGlobal)
                     || (pendencia === 'aptas' && proposta.aptaCelebracao);
+                const passaOuvidoria = !ouvidoria
+                    || (ouvidoria === 'institucionalizada' && proposta.condicaoSuspensiva.exige && proposta.condicaoSuspensiva.resolvida)
+                    || (ouvidoria === 'sem-institucionalizacao' && proposta.condicaoSuspensiva.exige && !proposta.condicaoSuspensiva.resolvida)
+                    || (ouvidoria === 'nao-se-aplica' && !proposta.condicaoSuspensiva.exige);
 
                 return (!busca || textoBusca.includes(busca))
                     && (!uf || proposta.uf === uf)
-                    && (!grupo || proposta.grupo === grupo)
+                    && (!regiao || obterRegiaoPorUf(proposta.uf) === regiao)
                     && (!status || proposta.situacaoGeral === status)
+                    && passaOuvidoria
                     && passaPendencia;
             });
+        }
+
+        function renderizarBandeiraCardFormalizacao(proposta) {
+            const flagUrl = catalogoAplicacao.imagensBandeiras?.[proposta.uf] || '';
+            const safeUf = escapeHtml(proposta.uf);
+
+            if (!flagUrl) {
+                return `<span class="formalizacao-card-flag-placeholder" aria-label="Bandeira ${safeUf}"><i class="fas fa-flag" aria-hidden="true"></i></span>`;
+            }
+
+            return `
+                <span class="formalizacao-card-flag-wrap">
+                    <img
+                        src="${escapeHtml(flagUrl)}"
+                        alt="Bandeira ${safeUf}"
+                        class="formalizacao-card-flag"
+                        onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.classList.remove('d-none');"
+                    >
+                    <span class="formalizacao-card-flag-placeholder d-none" aria-label="Bandeira ${safeUf}">
+                        <i class="fas fa-flag" aria-hidden="true"></i>
+                    </span>
+                </span>
+            `;
+        }
+
+        function renderizarBadgeOuvidoriaFormalizacao(proposta) {
+            if (!proposta.condicaoSuspensiva.exige) return '';
+
+            return proposta.condicaoSuspensiva.resolvida
+                ? '<span class="profor-alert-badge profor-alert-success">Ouvidoria institucionalizada</span>'
+                : '<span class="profor-alert-badge profor-alert-danger">Sem ouvidoria institucionalizada</span>';
+        }
+
+        function obterEstadoChecklistDocumentoFormalizacao(documento, indice, indiceAtual) {
+            const status = normalizarBusca(documento.statusAnalise || '');
+
+            if (status.includes('reprovado') || status.includes('correcao') || status.includes('pendente')) {
+                return 'risco';
+            }
+
+            if (documento.enviado) {
+                return 'concluida';
+            }
+
+            return indice === indiceAtual ? 'atual' : 'pendente';
+        }
+
+        function renderizarChecklistCardFormalizacao(proposta, tipo, titulo, documentos, progresso) {
+            const id = `formalizacao-check-${tipo}-${proposta.uf}`;
+            const exigidos = documentos.filter((documento) => documento.obrigatorio && !normalizarBusca(documento.statusAnalise || '').includes('nao se aplica'));
+            const lista = exigidos.length ? exigidos : documentos;
+            const primeiroPendente = lista.findIndex((documento) => !documento.enviado);
+            const indiceAtual = primeiroPendente >= 0 ? primeiroPendente : lista.length - 1;
+
+            return `
+                <div class="formalizacao-card-checklist">
+                    <button
+                        type="button"
+                        class="formalizacao-card-check-toggle"
+                        data-formalizacao-check-toggle="${escapeHtml(id)}"
+                        aria-expanded="false"
+                        aria-controls="${escapeHtml(id)}"
+                    >
+                        <span>${escapeHtml(titulo)}</span>
+                        <strong>${progresso.enviados}/${progresso.total}</strong>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div id="${escapeHtml(id)}" class="formalizacao-card-check-panel d-none">
+                        <ol class="formalizacao-card-doc-timeline">
+                            ${lista.map((documento, indice) => {
+                                const estado = obterEstadoChecklistDocumentoFormalizacao(documento, indice, indiceAtual);
+                                const status = documento.enviado ? (documento.statusAnalise || 'Enviado') : 'Não enviado';
+                                return `
+                                    <li class="formalizacao-card-doc-step formalizacao-card-doc-step-${estado}">
+                                        <span class="formalizacao-card-doc-marker" aria-hidden="true">
+                                            <i class="fas ${estado === 'concluida' ? 'fa-check' : estado === 'risco' ? 'fa-triangle-exclamation' : 'fa-circle'}"></i>
+                                        </span>
+                                        <div>
+                                            <strong>${escapeHtml(documento.nome || 'Documento')}</strong>
+                                            ${renderizarStatusDocumentoFormalizacao(status)}
+                                        </div>
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ol>
+                    </div>
+                </div>
+            `;
         }
 
         function renderizarCartaoFormalizacao(proposta) {
@@ -2416,12 +2518,14 @@ async function carregarLogoParaPDF() {
                 : 'Não se aplica';
 
             return `
-                <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''}" data-formalizacao-uf="${escapeHtml(proposta.uf)}">
+                <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''}">
                     <div class="formalizacao-card-header">
-                        <div>
-                            <span class="badge badge-uf">${escapeHtml(proposta.uf)}</span>
-                            <h3>${escapeHtml(proposta.estado)}</h3>
-                            <p>${escapeHtml(proposta.numeroProposta || proposta.idProposta)}</p>
+                        <div class="formalizacao-card-title-row">
+                            ${renderizarBandeiraCardFormalizacao(proposta)}
+                            <div>
+                                <h3>${escapeHtml(proposta.estado)}</h3>
+                                <p>${escapeHtml(proposta.numeroProposta || proposta.idProposta)}</p>
+                            </div>
                         </div>
                         ${renderizarStatusFormalizacao(proposta)}
                     </div>
@@ -2444,8 +2548,13 @@ async function carregarLogoParaPDF() {
                         <span class="profor-alert-badge profor-alert-${planoClasse}">${escapeHtml(proposta.situacaoPlano)}</span>
                         ${proposta.condicaoSuspensiva.exige ? `<span class="profor-alert-badge profor-alert-${proposta.condicaoSuspensiva.resolvida ? 'success' : 'danger'}">${escapeHtml(condicao)}</span>` : ''}
                         ${proposta.falaBr.previsto ? '<span class="profor-alert-badge profor-alert-success">Fala.BR previsto</span>' : '<span class="profor-alert-badge profor-alert-danger">Fala.BR pendente</span>'}
+                        ${renderizarBadgeOuvidoriaFormalizacao(proposta)}
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-icon-text formalizacao-open-button">
+                    <div class="formalizacao-card-checklists">
+                        ${renderizarChecklistCardFormalizacao(proposta, 'projeto', 'Docs do projeto', proposta.documentosProjeto, proposta.progressoDocumentosProjeto)}
+                        ${renderizarChecklistCardFormalizacao(proposta, 'formalizacao', 'Docs da formalização', proposta.documentosFormalizacao, proposta.progressoDocumentosFormalizacao)}
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-icon-text formalizacao-open-button" data-formalizacao-uf="${escapeHtml(proposta.uf)}">
                         <i class="fas fa-arrow-right" aria-hidden="true"></i>
                         <span>Abrir UF</span>
                     </button>
@@ -2578,10 +2687,21 @@ async function carregarLogoParaPDF() {
                     });
                 }
             });
+
+            document.querySelectorAll('[data-formalizacao-check-toggle]').forEach((botao) => {
+                botao.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const painel = document.getElementById(botao.dataset.formalizacaoCheckToggle);
+                    if (!painel) return;
+                    const deveAbrir = painel.classList.contains('d-none');
+                    painel.classList.toggle('d-none', !deveAbrir);
+                    botao.setAttribute('aria-expanded', String(deveAbrir));
+                });
+            });
         }
 
         function registrarEventosFormalizacao(dados) {
-            ['filtroFormalizacaoBusca', 'filtroFormalizacaoUf', 'filtroFormalizacaoGrupo', 'filtroFormalizacaoStatus', 'filtroFormalizacaoPendencia']
+            ['filtroFormalizacaoBusca', 'filtroFormalizacaoUf', 'filtroFormalizacaoRegiao', 'filtroFormalizacaoStatus', 'filtroFormalizacaoOuvidoria', 'filtroFormalizacaoPendencia']
                 .forEach((id) => {
                     const elemento = document.getElementById(id);
                     if (!elemento) return;
@@ -2590,7 +2710,7 @@ async function carregarLogoParaPDF() {
                 });
 
             document.getElementById('btnLimparFiltroFormalizacao')?.addEventListener('click', () => {
-                ['filtroFormalizacaoBusca', 'filtroFormalizacaoUf', 'filtroFormalizacaoGrupo', 'filtroFormalizacaoStatus', 'filtroFormalizacaoPendencia']
+                ['filtroFormalizacaoBusca', 'filtroFormalizacaoUf', 'filtroFormalizacaoRegiao', 'filtroFormalizacaoStatus', 'filtroFormalizacaoOuvidoria', 'filtroFormalizacaoPendencia']
                     .forEach((id) => {
                         const elemento = document.getElementById(id);
                         if (elemento) elemento.value = '';
@@ -2612,8 +2732,12 @@ async function carregarLogoParaPDF() {
 
             const resumo = dados.resumo;
             const opcoesUf = resumo.filtros.ufs.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(uf)}</option>`).join('');
-            const opcoesGrupo = resumo.filtros.grupos.map((grupo) => `<option value="${escapeHtml(grupo)}">${escapeHtml(grupo)}</option>`).join('');
+            const opcoesRegiao = ORDEM_REGIOES
+                .filter((regiao) => (catalogoAplicacao.regioes?.[regiao] || []).some((uf) => resumo.filtros.ufs.includes(uf)))
+                .map((regiao) => `<option value="${escapeHtml(regiao)}">${escapeHtml(regiao)}</option>`)
+                .join('');
             const opcoesStatus = resumo.filtros.status.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join('');
+            const atalhosUf = renderizarAtalhosUfFormalizacao(dados.ufsAutorizadas || resumo.filtros.ufs);
 
             container.innerHTML = `
                 <section class="dashboard-intro formalizacao-intro">
@@ -2690,10 +2814,10 @@ async function carregarLogoParaPDF() {
                             </select>
                         </div>
                         <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFormalizacaoGrupo">Grupo</label>
-                            <select id="filtroFormalizacaoGrupo" class="form-select">
+                            <label class="visible-filter-title" for="filtroFormalizacaoRegiao">Região</label>
+                            <select id="filtroFormalizacaoRegiao" class="form-select">
                                 <option value="">Todos</option>
-                                ${opcoesGrupo}
+                                ${opcoesRegiao}
                             </select>
                         </div>
                         <div class="visible-filter-group">
@@ -2701,6 +2825,15 @@ async function carregarLogoParaPDF() {
                             <select id="filtroFormalizacaoStatus" class="form-select">
                                 <option value="">Todos</option>
                                 ${opcoesStatus}
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFormalizacaoOuvidoria">Ouvidoria</label>
+                            <select id="filtroFormalizacaoOuvidoria" class="form-select">
+                                <option value="">Todas</option>
+                                <option value="institucionalizada">Institucionalizada</option>
+                                <option value="sem-institucionalizacao">Sem institucionalização</option>
+                                <option value="nao-se-aplica">Não se aplica</option>
                             </select>
                         </div>
                         <div class="visible-filter-group">
@@ -2716,6 +2849,19 @@ async function carregarLogoParaPDF() {
                                 <option value="aptas">Aptas à celebração</option>
                             </select>
                         </div>
+                    </div>
+                </section>
+
+                <section class="formalizacao-shortcut-panel mb-4" aria-label="Acesso rápido por UF">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Acesso rápido</p>
+                            <h2>Detalhamento por UF</h2>
+                        </div>
+                        <small class="text-muted">Abra a tramitação de qualquer uma das 14 propostas com um clique</small>
+                    </div>
+                    <div class="formalizacao-shortcut-grid">
+                        ${atalhosUf}
                     </div>
                 </section>
 
@@ -2854,7 +3000,6 @@ async function carregarLogoParaPDF() {
                         <table class="table table-sm table-hover w-100 app-data-table formalizacao-doc-table">
                             <thead>
                                 <tr>
-                                    <th>Código</th>
                                     <th>Documento</th>
                                     <th class="text-center">Enviado?</th>
                                     <th>Status</th>
@@ -2867,7 +3012,6 @@ async function carregarLogoParaPDF() {
                             <tbody>
                                 ${documentos.map((documento) => `
                                     <tr>
-                                        <td data-label="Código" class="font-monospace">${escapeHtml(documento.codigo)}</td>
                                         <td data-label="Documento"><strong>${escapeHtml(documento.nome)}</strong></td>
                                         <td data-label="Enviado?" class="text-center">
                                             <span class="profor-alert-badge profor-alert-${documento.enviado ? 'success' : 'danger'}">${documento.enviado ? 'Sim' : 'Não'}</span>

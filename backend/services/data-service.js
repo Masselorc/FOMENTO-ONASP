@@ -21,7 +21,7 @@ const ABA_FORMALIZACAO_GESTORES = 'Gestores_Responsaveis';
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
-const UFS_FORMALIZACAO_PROFOR = ['AP', 'BA', 'CE', 'DF', 'ES', 'MG', 'PA', 'PE', 'RN', 'RS', 'SE', 'RR', 'GO', 'AM'];
+const UFS_FORMALIZACAO_PROFOR = ['AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MG', 'PA', 'PE', 'RN', 'RR', 'RS', 'SE'];
 const UFS_CONDICAO_SUSPENSIVA_PROFOR = new Set(['PA', 'RR', 'RS', 'SE']);
 const VALOR_REPASSE_PROFOR = 200000;
 const COLUNAS_GERAL_PROFOR = {
@@ -1482,7 +1482,7 @@ function montarPropostasFormalizacao(workbook) {
 
         return proposta;
     }).filter((proposta) => proposta && UFS_FORMALIZACAO_PROFOR.includes(proposta.uf))
-        .sort((a, b) => UFS_FORMALIZACAO_PROFOR.indexOf(a.uf) - UFS_FORMALIZACAO_PROFOR.indexOf(b.uf));
+        .sort((a, b) => a.uf.localeCompare(b.uf, 'pt-BR'));
 }
 
 function montarResumoFormalizacao(propostas) {
@@ -1514,7 +1514,7 @@ function montarResumoFormalizacao(propostas) {
         documentosFormalizacaoCompletos: propostas.filter((proposta) => proposta.progressoDocumentosFormalizacao.completo).length,
         alertas,
         filtros: {
-            ufs: UFS_FORMALIZACAO_PROFOR,
+            ufs: [...UFS_FORMALIZACAO_PROFOR],
             grupos: Array.from(new Set(propostas.map((proposta) => proposta.grupo).filter(Boolean))).sort(),
             status: Array.from(new Set(propostas.map((proposta) => proposta.situacaoGeral).filter(Boolean))).sort()
         }
