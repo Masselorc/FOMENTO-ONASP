@@ -17,7 +17,7 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css?v=20260501-1" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260504-1" rel="stylesheet">
 </head>
 <body>
 
@@ -54,19 +54,23 @@
                     <i class="fas fa-chevron-down sidebar-folder-chevron" aria-hidden="true"></i>
                 </button>
                 <div class="sidebar-submenu d-none" id="submenu-repasses-funpen">
-                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="detalhamento" onclick="toggleView('detalhamento')">
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-detail app-menu-link" data-view="detalhamento" onclick="toggleView('detalhamento')">
                         <i class="fas fa-map" aria-hidden="true"></i>
                         <span>Detalhamento por Estado</span>
                     </button>
-                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="profor2022" onclick="toggleView('profor2022')">
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-profor app-menu-link" data-view="profor2022" onclick="toggleView('profor2022')">
                         <i class="fas fa-file-contract" aria-hidden="true"></i>
                         <span>PROFOR 2022</span>
                     </button>
-                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="faf2021" onclick="toggleView('faf2021')">
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-formalizacao app-menu-link" data-view="formalizacao" onclick="toggleView('formalizacao')">
+                        <i class="fas fa-file-signature" aria-hidden="true"></i>
+                        <span>Formalização PROFOR 2026</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-faf app-menu-link" data-view="faf2021" onclick="toggleView('faf2021')">
                         <i class="fas fa-landmark" aria-hidden="true"></i>
                         <span>FAF 2021</span>
                     </button>
-                    <button type="button" class="sidebar-link sidebar-submenu-link app-menu-link" data-view="doacoes2023" onclick="toggleView('doacoes2023')">
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-doacoes app-menu-link" data-view="doacoes2023" onclick="toggleView('doacoes2023')">
                         <i class="fas fa-gift" aria-hidden="true"></i>
                         <span>DOAÇÕES 2023</span>
                     </button>
@@ -500,6 +504,16 @@
         <main id="view-orcamento" class="container app-view" style="display:none;">
         </main>
 
+        <!-- VIEW 11: FORMALIZAÇÃO PROFOR/ONASP 2026
+             O conteúdo é renderizado dinamicamente a partir de
+             Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx. -->
+        <main id="view-formalizacao-profor" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 12: DETALHE DA FORMALIZAÇÃO POR UF -->
+        <main id="view-formalizacao-profor-detalhe" class="container app-view" style="display:none;">
+        </main>
+
         <!-- RODAPÉ -->
         <div class="container">
             <footer class="app-footer">
@@ -523,6 +537,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script type="module" src="./frontend/js/app.js?v=20260501-1"></script>
+    <script type="module" src="./frontend/js/app.js?v=20260504-1"></script>
 </body>
 </html>

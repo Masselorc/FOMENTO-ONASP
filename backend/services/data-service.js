@@ -10,12 +10,20 @@
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
+const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
 const ABA_ORCAMENTO_DADOS = 'Base_Dados';
 const ABA_ORCAMENTO_PROCESSOS_NORMAIS = 'Processos_Normais';
 const ABA_ORCAMENTO_PROFOR = 'Andamento_CONV_PROFOR';
+const ABA_FORMALIZACAO_PAINEL = 'Painel_Propostas';
+const ABA_FORMALIZACAO_CHECKLIST = 'Checklist_Documentos';
+const ABA_FORMALIZACAO_DICIONARIO = 'Dicionario_Documentos';
+const ABA_FORMALIZACAO_GESTORES = 'Gestores_Responsaveis';
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
+const UFS_FORMALIZACAO_PROFOR = ['AP', 'BA', 'CE', 'DF', 'ES', 'MG', 'PA', 'PE', 'RN', 'RS', 'SE', 'RR', 'GO', 'AM'];
+const UFS_CONDICAO_SUSPENSIVA_PROFOR = new Set(['PA', 'RR', 'RS', 'SE']);
+const VALOR_REPASSE_PROFOR = 200000;
 const COLUNAS_GERAL_PROFOR = {
     uf: 0,
     instrumento: 1,
@@ -74,6 +82,7 @@ let dadosOrcamentoCache = null;
 let dadosProfor2022Cache = null;
 let dadosFaf2021Cache = null;
 let dadosDoacoes2023Cache = null;
+let dadosFormalizacaoProforCache = null;
 
 export function obterDadosOrcamento() {
     return dadosOrcamentoCache;
@@ -89,6 +98,10 @@ export function obterDadosFaf2021() {
 
 export function obterDadosDoacoes2023() {
     return dadosDoacoes2023Cache;
+}
+
+export function obterDadosFormalizacaoProfor() {
+    return dadosFormalizacaoProforCache;
 }
 
 // A biblioteca XLSX é carregada pelo index.html. Mantemos esta guarda para
@@ -823,6 +836,703 @@ function extrairDadosFinanceirosDoWorkbook(workbook, catalogoAplicacao) {
     return dadosConvenio;
 }
 
+function normalizarCabecalhoPlanilha(valor) {
+    return String(valor ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[ºª]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, ' ')
+        .trim()
+        .toUpperCase();
+}
+
+function obterTabelaFormalizacao(workbook, nomesAba, termosCabecalho = []) {
+    const nomeAba = obterNomeAbaWorkbook(workbook, Array.isArray(nomesAba) ? nomesAba : [nomesAba]);
+    if (!nomeAba) return null;
+
+    const linhas = obterLinhasPlanilha(workbook.Sheets[nomeAba]);
+    const termosNormalizados = termosCabecalho.map((termo) => normalizarCabecalhoPlanilha(termo));
+    const headerRowIndex = linhas.findIndex((linha) => {
+        const linhaNormalizada = (linha || []).map((celula) => normalizarCabecalhoPlanilha(celula));
+        return termosNormalizados.every((termo) => linhaNormalizada.includes(termo));
+    });
+
+    if (headerRowIndex === -1) {
+        return null;
+    }
+
+    const headers = (linhas[headerRowIndex] || []).map((header) => normalizarCabecalhoPlanilha(header));
+    const cacheIndices = new Map();
+    const indice = (aliases) => {
+        const listaAliases = Array.isArray(aliases) ? aliases : [aliases];
+        const chave = listaAliases.join('|');
+        if (cacheIndices.has(chave)) return cacheIndices.get(chave);
+
+        const aliasesNormalizados = listaAliases.map((alias) => normalizarCabecalhoPlanilha(alias));
+        let encontrado = headers.findIndex((header) => aliasesNormalizados.includes(header));
+        if (encontrado < 0) {
+            encontrado = headers.findIndex((header) => aliasesNormalizados.some((alias) => header.includes(alias)));
+        }
+        cacheIndices.set(chave, encontrado);
+        return encontrado;
+    };
+
+    return {
+        nomeAba,
+        headers,
+        linhas: linhas.slice(headerRowIndex + 1),
+        indice
+    };
+}
+
+function obterCelulaFormalizacao(linha, tabela, aliases, fallback = '') {
+    const indice = tabela?.indice?.(aliases) ?? -1;
+    if (indice < 0 || linha[indice] === undefined || linha[indice] === null) {
+        return fallback;
+    }
+    const valor = linha[indice];
+    if (valor instanceof Date) {
+        return formatarDataPlanilha(valor);
+    }
+    const texto = limparTexto(valor);
+    return texto || fallback;
+}
+
+function obterNumeroFormalizacao(linha, tabela, aliases) {
+    const indice = tabela?.indice?.(aliases) ?? -1;
+    return indice >= 0 ? arredondarMoeda(converterNumeroPlanilha(linha[indice])) : 0;
+}
+
+function obterDataFormalizacao(linha, tabela, aliases) {
+    const indice = tabela?.indice?.(aliases) ?? -1;
+    return indice >= 0 ? obterDataCelula(linha, indice) : '';
+}
+
+function valorEhSim(valor) {
+    const texto = normalizarTexto(valor);
+    return ['SIM', 'S', 'TRUE', 'VERDADEIRO', '1', 'VALIDADO', 'PUBLICADO', 'RESOLVIDO'].includes(texto);
+}
+
+function valorEhNao(valor) {
+    const texto = normalizarTexto(valor);
+    return ['NAO', 'N', 'FALSE', 'FALSO', '0'].includes(texto);
+}
+
+function valorNaoSeAplica(valor) {
+    const texto = normalizarTexto(valor);
+    return texto.includes('NAO SE APLICA') || texto === 'N/A';
+}
+
+function textoPossuiValor(valor) {
+    const texto = normalizarTexto(valor);
+    return Boolean(texto && texto !== '-' && texto !== 'NAO INFORMADO' && texto !== 'N/A');
+}
+
+function documentoAplicavelAUf(documento, uf) {
+    const aplicavel = normalizarTexto(documento?.aplicavelUfs || '');
+    if (!aplicavel || aplicavel === 'TODAS' || aplicavel === 'TODOS') {
+        return true;
+    }
+    return aplicavel.split(/[^A-Z]+/).includes(uf);
+}
+
+function extrairDicionarioDocumentosFormalizacao(workbook) {
+    const tabela = obterTabelaFormalizacao(workbook, ABA_FORMALIZACAO_DICIONARIO, ['Código']);
+    const documentos = new Map();
+
+    if (!tabela) {
+        return documentos;
+    }
+
+    tabela.linhas.forEach((linha) => {
+        const codigo = normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['Código do Documento', 'Código']));
+        if (!codigo) return;
+
+        documentos.set(codigo, {
+            codigo,
+            etapa: obterCelulaFormalizacao(linha, tabela, ['Etapa']),
+            nome: obterCelulaFormalizacao(linha, tabela, ['Nome do Documento', 'Nome Documento']),
+            descricao: obterCelulaFormalizacao(linha, tabela, ['Descrição', 'Observação']),
+            obrigatorio: !valorEhNao(obterCelulaFormalizacao(linha, tabela, ['Obrigatório?'])),
+            aplicavelUfs: obterCelulaFormalizacao(linha, tabela, ['Aplicável a quais UFs', 'Aplicável']),
+            ordem: converterNumeroPlanilha(obterCelulaFormalizacao(linha, tabela, ['Ordem de Exibição', 'Ordem']))
+        });
+    });
+
+    return documentos;
+}
+
+function extrairChecklistFormalizacao(workbook) {
+    const tabela = obterTabelaFormalizacao(workbook, ABA_FORMALIZACAO_CHECKLIST, ['ID_Checklist']);
+    const porProposta = new Map();
+
+    if (!tabela) {
+        return porProposta;
+    }
+
+    tabela.linhas.forEach((linha) => {
+        const idProposta = obterCelulaFormalizacao(linha, tabela, ['ID_Proposta', 'ID Proposta']);
+        const codigo = normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['Código Documento', 'Código do Documento', 'Código']));
+        if (!idProposta || !codigo) return;
+
+        const enviadoRaw = obterCelulaFormalizacao(linha, tabela, ['Enviado?']);
+        const item = {
+            idChecklist: obterCelulaFormalizacao(linha, tabela, ['ID_Checklist', 'ID Checklist']),
+            idProposta,
+            uf: normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['UF'])),
+            etapa: obterCelulaFormalizacao(linha, tabela, ['Etapa']),
+            codigo,
+            nome: obterCelulaFormalizacao(linha, tabela, ['Nome Documento', 'Nome do Documento']),
+            obrigatorio: !valorEhNao(obterCelulaFormalizacao(linha, tabela, ['Obrigatório?'])),
+            enviado: valorEhSim(enviadoRaw),
+            enviadoRaw,
+            dataEnvio: obterDataFormalizacao(linha, tabela, ['Data de Envio', 'Data Envio']),
+            statusAnalise: obterCelulaFormalizacao(linha, tabela, ['Status de Análise', 'Status Análise'], 'Não enviado'),
+            unidadeResponsavel: obterCelulaFormalizacao(linha, tabela, ['Unidade Responsável pela Análise', 'Unidade Responsável']),
+            link: obterCelulaFormalizacao(linha, tabela, ['Link SEI/Transferegov', 'Link SEI', 'Link']),
+            pendencia: obterCelulaFormalizacao(linha, tabela, ['Pendência']),
+            dataValidacao: obterDataFormalizacao(linha, tabela, ['Data de Validação', 'Data Validação']),
+            observacao: obterCelulaFormalizacao(linha, tabela, ['Observação'])
+        };
+
+        if (!porProposta.has(idProposta)) {
+            porProposta.set(idProposta, new Map());
+        }
+        porProposta.get(idProposta).set(codigo, item);
+    });
+
+    return porProposta;
+}
+
+function extrairGestoresFormalizacao(workbook) {
+    const tabela = obterTabelaFormalizacao(workbook, ABA_FORMALIZACAO_GESTORES, ['UF', 'Nome']);
+    const porPropostaOuUf = new Map();
+
+    if (!tabela) {
+        return porPropostaOuUf;
+    }
+
+    tabela.linhas.forEach((linha) => {
+        const uf = normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['UF']));
+        const nome = obterCelulaFormalizacao(linha, tabela, ['Nome']);
+        if (!uf || !nome) return;
+
+        const idProposta = obterCelulaFormalizacao(linha, tabela, ['ID_Proposta', 'ID Proposta']);
+        const ativoRaw = obterCelulaFormalizacao(linha, tabela, ['Ativo?'], 'Sim');
+        const gestor = {
+            uf,
+            idProposta,
+            tipo: obterCelulaFormalizacao(linha, tabela, ['Tipo de Responsável', 'Tipo responsável', 'Tipo']),
+            nome,
+            cargo: obterCelulaFormalizacao(linha, tabela, ['Cargo']),
+            orgao: obterCelulaFormalizacao(linha, tabela, ['Órgão', 'Órgão estadual', 'Órgão/Secretaria']),
+            email: obterCelulaFormalizacao(linha, tabela, ['E-mail', 'Email']),
+            telefone: obterCelulaFormalizacao(linha, tabela, ['Telefone']),
+            ativo: valorEhSim(ativoRaw) || (!valorEhNao(ativoRaw) && !valorNaoSeAplica(ativoRaw)),
+            dataInicio: obterDataFormalizacao(linha, tabela, ['Data de Início', 'Início vigência']),
+            dataFim: obterDataFormalizacao(linha, tabela, ['Data de Fim', 'Fim vigência']),
+            observacao: obterCelulaFormalizacao(linha, tabela, ['Observação'])
+        };
+
+        [idProposta, uf].filter(Boolean).forEach((chave) => {
+            if (!porPropostaOuUf.has(chave)) {
+                porPropostaOuUf.set(chave, []);
+            }
+            porPropostaOuUf.get(chave).push(gestor);
+        });
+    });
+
+    return porPropostaOuUf;
+}
+
+function extrairPlanoAplicacaoFormalizacao(workbook, uf) {
+    const tabela = obterTabelaFormalizacao(workbook, `Plano_${uf}`, ['ID_Item']);
+    if (!tabela) {
+        return [];
+    }
+
+    return tabela.linhas.map((linha, index) => {
+        const item = obterCelulaFormalizacao(linha, tabela, ['Item']);
+        const descricao = obterCelulaFormalizacao(linha, tabela, ['Descrição detalhada', 'Descrição']);
+        const idProposta = obterCelulaFormalizacao(linha, tabela, ['ID_Proposta', 'ID Proposta']);
+        const quantidade = converterNumeroPlanilha(obterCelulaFormalizacao(linha, tabela, ['Quantidade']));
+        const valorUnitario = obterNumeroFormalizacao(linha, tabela, ['Valor Unitário', 'Valor Unitario']);
+        const valorTotalInformado = obterNumeroFormalizacao(linha, tabela, ['Valor Total']);
+        const valorTotalCalculado = arredondarMoeda(quantidade * valorUnitario);
+        const valorTotal = valorTotalCalculado > 0 ? valorTotalCalculado : valorTotalInformado;
+
+        if (!item && !descricao && !valorTotal && !idProposta) {
+            return null;
+        }
+
+        return {
+            idItem: obterCelulaFormalizacao(linha, tabela, ['ID_Item', 'ID Item'], `${uf}-${index + 1}`),
+            idProposta,
+            uf: normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['UF'], uf)),
+            categoria: obterCelulaFormalizacao(linha, tabela, ['Categoria']),
+            item,
+            descricao,
+            unidade: obterCelulaFormalizacao(linha, tabela, ['Unidade de Medida', 'Unidade']),
+            quantidade,
+            valorUnitario,
+            valorTotal,
+            valorTotalInformado,
+            valorTotalCalculado,
+            divergenciaItem: arredondarMoeda(valorTotalCalculado - valorTotalInformado),
+            fonteRecurso: obterCelulaFormalizacao(linha, tabela, ['Fonte do Recurso', 'Fonte']),
+            naturezaDespesa: obterCelulaFormalizacao(linha, tabela, ['Natureza da Despesa', 'Natureza']),
+            elegivel: obterCelulaFormalizacao(linha, tabela, ['Elegível ao PROFOR?', 'Elegível?'], 'Sim'),
+            observacao: obterCelulaFormalizacao(linha, tabela, ['Observação'])
+        };
+    }).filter(Boolean);
+}
+
+function somarValoresPorCampo(itens, campo) {
+    const mapa = itens.reduce((acc, item) => {
+        const chave = item[campo] || 'Não informado';
+        acc[chave] = acc[chave] || { nome: chave, total: 0, itens: 0 };
+        acc[chave].total = arredondarMoeda(acc[chave].total + (Number(item.valorTotal) || 0));
+        acc[chave].itens += 1;
+        return acc;
+    }, {});
+
+    return Object.values(mapa).sort((a, b) => b.total - a.total || a.nome.localeCompare(b.nome, 'pt-BR'));
+}
+
+function planoContemItemIncompativel(item) {
+    const texto = normalizarTexto(`${item.categoria} ${item.item} ${item.descricao} ${item.observacao}`);
+    return valorEhNao(item.elegivel) || /\bOBRAS?\b|\bREFORMAS?\b/.test(texto);
+}
+
+function montarResumoPlanoFormalizacao(itens, valorGlobal) {
+    const totalCentavos = itens.reduce((total, item) => total + moedaParaCentavos(item.valorTotal), 0);
+    const valorGlobalCentavos = moedaParaCentavos(valorGlobal);
+    const diferencaCentavos = totalCentavos - valorGlobalCentavos;
+    const itensInelegiveis = itens.filter(planoContemItemIncompativel);
+
+    return {
+        itens,
+        total: centavosParaMoeda(totalCentavos),
+        valorGlobal,
+        diferenca: centavosParaMoeda(diferencaCentavos),
+        fechaComValorGlobal: Math.abs(diferencaCentavos) <= TOLERANCIA_VALIDACAO_CENTAVOS,
+        quantidadeItens: itens.length,
+        porCategoria: somarValoresPorCampo(itens, 'categoria'),
+        porNatureza: somarValoresPorCampo(itens, 'naturezaDespesa'),
+        porFonte: somarValoresPorCampo(itens, 'fonteRecurso'),
+        itensInelegiveis
+    };
+}
+
+function obterCodigosDocumentosPorEtapa(dicionario, etapa, uf) {
+    const etapaNormalizada = normalizarTexto(etapa);
+    return Array.from(dicionario.values())
+        .filter((documento) => normalizarTexto(documento.etapa).includes(etapaNormalizada))
+        .filter((documento) => documento.obrigatorio && documentoAplicavelAUf(documento, uf))
+        .sort((a, b) => (a.ordem || 999) - (b.ordem || 999) || a.codigo.localeCompare(b.codigo))
+        .map((documento) => documento.codigo);
+}
+
+function montarDocumentoFormalizacao(codigo, etapa, propostaBase, dicionario, checklistPorCodigo) {
+    const detalhes = checklistPorCodigo?.get(codigo);
+    const catalogo = dicionario.get(codigo);
+    const valorPainel = propostaBase.documentosPainel[codigo];
+    const enviadoPainel = valorEhSim(valorPainel);
+    const naoSeAplica = valorNaoSeAplica(valorPainel) || valorNaoSeAplica(detalhes?.statusAnalise);
+    const enviado = !naoSeAplica && (detalhes?.enviado || enviadoPainel);
+    const statusAnalise = naoSeAplica
+        ? 'Não se aplica'
+        : detalhes?.statusAnalise || (enviado ? 'Enviado' : 'Não enviado');
+
+    return {
+        codigo,
+        etapa,
+        nome: detalhes?.nome || catalogo?.nome || codigo,
+        descricao: catalogo?.descricao || detalhes?.observacao || '',
+        obrigatorio: detalhes?.obrigatorio ?? catalogo?.obrigatorio ?? true,
+        enviado,
+        enviadoPainel,
+        valorPainel,
+        statusAnalise,
+        dataEnvio: detalhes?.dataEnvio || '',
+        unidadeResponsavel: detalhes?.unidadeResponsavel || '',
+        link: detalhes?.link || '',
+        pendencia: detalhes?.pendencia || '',
+        dataValidacao: detalhes?.dataValidacao || '',
+        observacao: detalhes?.observacao || ''
+    };
+}
+
+function calcularProgressoDocumentos(documentos) {
+    const exigidos = documentos.filter((documento) => documento.obrigatorio && !valorNaoSeAplica(documento.statusAnalise));
+    const enviados = exigidos.filter((documento) => documento.enviado);
+    const validados = exigidos.filter((documento) => normalizarTexto(documento.statusAnalise) === 'VALIDADO');
+
+    return {
+        total: exigidos.length,
+        enviados: enviados.length,
+        validados: validados.length,
+        percentual: exigidos.length ? (enviados.length / exigidos.length) * 100 : 0,
+        percentualValidado: exigidos.length ? (validados.length / exigidos.length) * 100 : 0,
+        completo: exigidos.length > 0 && enviados.length === exigidos.length,
+        validado: exigidos.length > 0 && validados.length === exigidos.length
+    };
+}
+
+function gerarAlertasFormalizacao(proposta) {
+    const alertas = [];
+    const adicionar = (severidade, tipo, mensagem) => {
+        alertas.push({ severidade, tipo, mensagem });
+    };
+
+    if (!UFS_FORMALIZACAO_PROFOR.includes(proposta.uf)) {
+        adicionar('critico', 'UF não elegível', 'UF fora da lista das 14 Unidades Federativas autorizadas para esta rodada.');
+    }
+
+    if (!proposta.validacoes.valorRepasseOk) {
+        adicionar('critico', 'Valor de repasse', 'Valor de repasse diferente de R$ 200.000,00.');
+    }
+
+    if (!proposta.validacoes.valorGlobalOk) {
+        adicionar('critico', 'Valor global', 'Valor global diferente da soma entre repasse e contrapartida.');
+    }
+
+    if (!proposta.plano.fechaComValorGlobal) {
+        adicionar('critico', 'Divergência financeira', 'Plano de aplicação não fecha com o valor global da proposta.');
+    }
+
+    if (proposta.condicaoSuspensiva.exige && !proposta.condicaoSuspensiva.resolvida) {
+        adicionar('critico', 'Condição suspensiva pendente', 'Ato normativo publicado ainda não foi comprovado para a UF.');
+    }
+
+    if (!proposta.falaBr.previsto) {
+        adicionar('critico', 'Fala.BR não previsto', 'A proposta não registra previsão de adesão, integração ou indicação da Plataforma Fala.BR.');
+    }
+
+    if (!proposta.progressoDocumentosProjeto.completo) {
+        adicionar('critico', 'Documento pendente', 'Há documento essencial da etapa de projeto ainda não enviado.');
+    }
+
+    if (proposta.plano.itensInelegiveis.length > 0) {
+        adicionar('critico', 'Item incompatível', `${proposta.plano.itensInelegiveis.length} item(ns) do plano podem estar fora do objeto do PROFOR/ONASP.`);
+    }
+
+    if (!proposta.progressoDocumentosFormalizacao.completo) {
+        adicionar('moderado', 'Formalização pendente', 'Documentos de formalização ainda não foram enviados integralmente.');
+    }
+
+    const documentosNaoValidados = [...proposta.documentosProjeto, ...proposta.documentosFormalizacao]
+        .filter((documento) => documento.enviado && normalizarTexto(documento.statusAnalise) !== 'VALIDADO' && normalizarTexto(documento.statusAnalise) !== 'NAO SE APLICA');
+    if (documentosNaoValidados.length > 0) {
+        adicionar('moderado', 'Documento em análise', `${documentosNaoValidados.length} documento(s) enviado(s) ainda não estão validados.`);
+    }
+
+    const documentosComPendencia = [...proposta.documentosProjeto, ...proposta.documentosFormalizacao]
+        .filter((documento) => textoPossuiValor(documento.pendencia) || ['REPROVADO', 'PENDENTE DE CORRECAO'].includes(normalizarTexto(documento.statusAnalise)));
+    if (documentosComPendencia.length > 0) {
+        adicionar('moderado', 'Pendência documental', `${documentosComPendencia.length} documento(s) possuem pendência ou necessidade de correção.`);
+    }
+
+    if (!textoPossuiValor(proposta.gestor.email) || !textoPossuiValor(proposta.responsavelTecnico.email) || !textoPossuiValor(proposta.responsavelTecnico.telefone)) {
+        adicionar('moderado', 'Contato incompleto', 'Há e-mail ou telefone de responsável ausente no cadastro.');
+    }
+
+    const documentosSemLink = [...proposta.documentosProjeto, ...proposta.documentosFormalizacao]
+        .filter((documento) => documento.enviado && !textoPossuiValor(documento.link));
+    if (documentosSemLink.length > 0) {
+        adicionar('moderado', 'Link ausente', `${documentosSemLink.length} documento(s) enviado(s) não possuem link SEI/Transferegov informado.`);
+    }
+
+    const status = normalizarTexto(proposta.situacaoGeral);
+    if (status.includes('ELABORACAO') || status.includes('ANALISE')) {
+        adicionar('informativo', 'Proposta em tramitação', `Status informado: ${proposta.situacaoGeral}.`);
+    }
+
+    if (proposta.progressoGeral > 0 && proposta.progressoGeral < 100) {
+        adicionar('informativo', 'Avanço parcial', `Progresso geral calculado em ${proposta.progressoGeral.toFixed(1).replace('.', ',')}%.`);
+    }
+
+    return alertas;
+}
+
+function calcularTrilhaFormalizacao(proposta) {
+    const status = normalizarTexto(proposta.situacaoGeral);
+    const semAlertasCriticos = !proposta.alertas.some((alerta) => alerta.severidade === 'critico');
+    const aptaPelasRegras = proposta.progressoDocumentosProjeto.completo
+        && proposta.progressoDocumentosFormalizacao.completo
+        && proposta.plano.fechaComValorGlobal
+        && proposta.falaBr.previsto
+        && proposta.condicaoSuspensiva.resolvida
+        && proposta.validacoes.valorRepasseOk
+        && proposta.validacoes.valorGlobalOk
+        && semAlertasCriticos;
+
+    const etapas = [
+        {
+            chave: 'proposta-cadastrada',
+            rotulo: 'Proposta cadastrada',
+            concluida: textoPossuiValor(proposta.numeroProposta)
+        },
+        {
+            chave: 'docs-projeto',
+            rotulo: 'Documentos do projeto enviados',
+            concluida: proposta.progressoDocumentosProjeto.completo
+        },
+        {
+            chave: 'projeto-aprovado',
+            rotulo: 'Projeto aprovado',
+            concluida: proposta.progressoDocumentosProjeto.validado || status.includes('PROJETO APROVADO') || status.includes('APTA')
+        },
+        {
+            chave: 'docs-formalizacao',
+            rotulo: 'Documentos de formalização enviados',
+            concluida: proposta.progressoDocumentosFormalizacao.completo
+        },
+        {
+            chave: 'condicao-suspensiva',
+            rotulo: 'Condição suspensiva resolvida',
+            concluida: proposta.condicaoSuspensiva.resolvida,
+            naoSeAplica: !proposta.condicaoSuspensiva.exige
+        },
+        {
+            chave: 'plano-validado',
+            rotulo: 'Plano de aplicação validado',
+            concluida: proposta.plano.fechaComValorGlobal
+        },
+        {
+            chave: 'apta-celebracao',
+            rotulo: 'Apta à celebração',
+            concluida: aptaPelasRegras || status.includes('APTA A CELEBRACAO')
+        },
+        {
+            chave: 'convenio-celebrado',
+            rotulo: 'Convênio celebrado',
+            concluida: status.includes('CELEBRADO') || status.includes('PUBLICADO') || status.includes('EXECUCAO')
+        },
+        {
+            chave: 'instrumento-publicado',
+            rotulo: 'Instrumento publicado',
+            concluida: status.includes('PUBLICADO') || status.includes('EXECUCAO')
+        }
+    ];
+
+    let etapaAtualMarcada = false;
+    return etapas.map((etapa) => {
+        if (etapa.naoSeAplica) {
+            return { ...etapa, estado: 'nao-aplica' };
+        }
+        if (etapa.concluida) {
+            return { ...etapa, estado: 'concluida' };
+        }
+        if (!etapaAtualMarcada) {
+            etapaAtualMarcada = true;
+            return { ...etapa, estado: 'atual' };
+        }
+        return { ...etapa, estado: 'pendente' };
+    });
+}
+
+function calcularProgressoGeralFormalizacao(proposta) {
+    const projeto = proposta.progressoDocumentosProjeto.percentual / 100;
+    const formalizacao = proposta.progressoDocumentosFormalizacao.percentual / 100;
+    const plano = proposta.plano.fechaComValorGlobal ? 1 : 0;
+    const falaBr = proposta.falaBr.previsto ? 1 : 0;
+    const condicao = proposta.condicaoSuspensiva.resolvida ? 1 : 0;
+
+    return Math.max(0, Math.min(100, (projeto * 30) + (formalizacao * 40) + (plano * 15) + (falaBr * 5) + (condicao * 10)));
+}
+
+function obterResponsavelFormalizacao(responsaveis, termos) {
+    return responsaveis.find((responsavel) => {
+        const tipo = normalizarTexto(responsavel.tipo);
+        return termos.some((termo) => tipo.includes(normalizarTexto(termo)));
+    });
+}
+
+function montarPropostasFormalizacao(workbook) {
+    const painel = obterTabelaFormalizacao(workbook, ABA_FORMALIZACAO_PAINEL, ['ID_Proposta', 'UF']);
+    if (!painel) {
+        throw new Error(`A aba ${ABA_FORMALIZACAO_PAINEL} nao foi encontrada ou nao possui os cabecalhos esperados.`);
+    }
+
+    const dicionario = extrairDicionarioDocumentosFormalizacao(workbook);
+    const checklist = extrairChecklistFormalizacao(workbook);
+    const gestores = extrairGestoresFormalizacao(workbook);
+
+    return painel.linhas.map((linha) => {
+        const idProposta = obterCelulaFormalizacao(linha, painel, ['ID_Proposta', 'ID Proposta']);
+        const uf = normalizarTexto(obterCelulaFormalizacao(linha, painel, ['UF']));
+        if (!idProposta || !uf) return null;
+
+        const valorRepasse = obterNumeroFormalizacao(linha, painel, ['Valor de Repasse', 'Valor Repasse']);
+        const valorContrapartida = obterNumeroFormalizacao(linha, painel, ['Valor de Contrapartida', 'Valor Contrapartida']);
+        const valorGlobal = obterNumeroFormalizacao(linha, painel, ['Valor Global']);
+        const documentosPainel = {};
+        painel.headers.forEach((header, index) => {
+            if (/^DOC (PROJ|FORM) \d+$/i.test(header)) {
+                documentosPainel[header.replace(/ /g, '_')] = obterCelulaFormalizacao(linha, { indice: () => index }, header);
+            }
+        });
+
+        const planoItens = extrairPlanoAplicacaoFormalizacao(workbook, uf).filter((item) => (
+            !item.idProposta || item.idProposta === idProposta
+        ));
+        const plano = montarResumoPlanoFormalizacao(planoItens, valorGlobal);
+        const checklistProposta = checklist.get(idProposta) || new Map();
+        const codigosProjeto = obterCodigosDocumentosPorEtapa(dicionario, 'Projeto', uf);
+        const codigosFormalizacao = obterCodigosDocumentosPorEtapa(dicionario, 'Formalização', uf);
+        const codigosProjetoBase = codigosProjeto.length ? codigosProjeto : Object.keys(documentosPainel).filter((codigo) => codigo.startsWith('DOC_PROJ'));
+        const codigosFormalizacaoBase = codigosFormalizacao.length ? codigosFormalizacao : Object.keys(documentosPainel).filter((codigo) => codigo.startsWith('DOC_FORM'));
+
+        const propostaBase = { documentosPainel };
+        const documentosProjeto = codigosProjetoBase.map((codigo) => montarDocumentoFormalizacao(codigo, 'Projeto', propostaBase, dicionario, checklistProposta));
+        const documentosFormalizacao = codigosFormalizacaoBase.map((codigo) => montarDocumentoFormalizacao(codigo, 'Formalização', propostaBase, dicionario, checklistProposta));
+        const progressoDocumentosProjeto = calcularProgressoDocumentos(documentosProjeto);
+        const progressoDocumentosFormalizacao = calcularProgressoDocumentos(documentosFormalizacao);
+        const responsaveisAtivos = [
+            ...(gestores.get(idProposta) || []),
+            ...(gestores.get(uf) || [])
+        ].filter((responsavel, index, array) => (
+            responsavel.ativo
+            && array.findIndex((item) => item.nome === responsavel.nome && item.tipo === responsavel.tipo) === index
+        ));
+        const responsavelPolitico = obterResponsavelFormalizacao(responsaveisAtivos, ['secretario', 'gestor politico', 'secretário']) || {};
+        const responsavelTecnico = obterResponsavelFormalizacao(responsaveisAtivos, ['responsavel tecnico', 'técnico', 'gestor da proposta']) || {};
+        const condicaoPendenteRaw = obterCelulaFormalizacao(linha, painel, ['Condição Suspensiva Pendente?']);
+        const exigeCondicao = UFS_CONDICAO_SUSPENSIVA_PROFOR.has(uf)
+            || valorEhSim(obterCelulaFormalizacao(linha, painel, ['Exige Ato Normativo?', 'Ato normativo exigido?']));
+        const atoEnviado = valorEhSim(obterCelulaFormalizacao(linha, painel, ['Ato Normativo Enviado?', 'Ato normativo enviado?']));
+        const atoPublicadoRaw = obterCelulaFormalizacao(linha, painel, ['Ato Normativo Publicado?', 'Ato normativo publicado?']);
+        const condicaoPendente = exigeCondicao
+            ? (textoPossuiValor(condicaoPendenteRaw) ? valorEhSim(condicaoPendenteRaw) : !valorEhSim(atoPublicadoRaw))
+            : false;
+        const atoPublicado = valorEhSim(atoPublicadoRaw) || (exigeCondicao && atoEnviado && !condicaoPendente);
+        const condicaoResolvida = !exigeCondicao || (!condicaoPendente && (atoPublicado || atoEnviado));
+
+        const proposta = {
+            idProposta,
+            uf,
+            estado: obterCelulaFormalizacao(linha, painel, ['Estado'], uf),
+            grupo: obterCelulaFormalizacao(linha, painel, ['Grupo']),
+            numeroProposta: obterCelulaFormalizacao(linha, painel, ['Número da Proposta', 'Nº Proposta', 'N Proposta']),
+            ano: obterCelulaFormalizacao(linha, painel, ['Ano']),
+            processoSei: obterCelulaFormalizacao(linha, painel, ['Processo SEI']),
+            situacaoGeral: obterCelulaFormalizacao(linha, painel, ['Situação Geral', 'Status Geral'], 'Não informado'),
+            ultimaAtualizacao: obterDataFormalizacao(linha, painel, ['Última Atualização', 'Data da Última Atualização']),
+            observacoes: obterCelulaFormalizacao(linha, painel, ['Observações', 'Observação']),
+            fonteOrigem: obterCelulaFormalizacao(linha, painel, ['Fonte/Origem', 'Fonte']),
+            gestor: {
+                nome: obterCelulaFormalizacao(linha, painel, ['Nome do Secretário', 'Nome do Secretario']) || responsavelPolitico.nome || '',
+                cargo: obterCelulaFormalizacao(linha, painel, ['Cargo']) || responsavelPolitico.cargo || '',
+                orgao: obterCelulaFormalizacao(linha, painel, ['Órgão/Secretaria', 'Órgão Secretaria']) || responsavelPolitico.orgao || '',
+                email: obterCelulaFormalizacao(linha, painel, ['E-mail institucional', 'E-mail Gestor', 'Email Gestor']) || responsavelPolitico.email || '',
+                telefone: obterCelulaFormalizacao(linha, painel, ['Telefone']) || responsavelPolitico.telefone || ''
+            },
+            responsavelTecnico: {
+                nome: obterCelulaFormalizacao(linha, painel, ['Nome do responsável técnico', 'Responsável Técnico', 'Responsavel Tecnico']) || responsavelTecnico.nome || '',
+                cargo: obterCelulaFormalizacao(linha, painel, ['Cargo do responsável técnico', 'Cargo Resp. Técnico']) || responsavelTecnico.cargo || '',
+                email: obterCelulaFormalizacao(linha, painel, ['E-mail do responsável técnico', 'E-mail Resp. Técnico', 'Email Resp. Tecnico']) || responsavelTecnico.email || '',
+                telefone: obterCelulaFormalizacao(linha, painel, ['Telefone do responsável técnico', 'Telefone Resp. Técnico']) || responsavelTecnico.telefone || ''
+            },
+            responsaveisAtivos,
+            valorRepasse,
+            valorContrapartida,
+            valorGlobal,
+            valorGlobalCalculado: arredondarMoeda(valorRepasse + valorContrapartida),
+            percentualContrapartida: valorGlobal > 0 ? (valorContrapartida / valorGlobal) * 100 : 0,
+            documentosPainel,
+            documentosProjeto,
+            documentosFormalizacao,
+            progressoDocumentosProjeto,
+            progressoDocumentosFormalizacao,
+            plano,
+            condicaoSuspensiva: {
+                exige: exigeCondicao,
+                atoEnviado,
+                atoPublicado,
+                dataPublicacao: obterDataFormalizacao(linha, painel, ['Data de Publicação', 'Data Publicação']),
+                linkReferencia: obterCelulaFormalizacao(linha, painel, ['Link/Referência do Ato', 'Link Referência do Ato', 'Link do Ato']),
+                pendente: condicaoPendente,
+                resolvida: condicaoResolvida,
+                situacao: !exigeCondicao
+                    ? 'Não se aplica'
+                    : condicaoResolvida
+                        ? 'Resolvido'
+                        : atoEnviado
+                            ? 'Enviado, aguardando análise'
+                            : 'Pendente'
+            },
+            falaBr: {
+                previsto: valorEhSim(obterCelulaFormalizacao(linha, painel, ['FalaBR_Previsto', 'Fala.BR previsto no cronograma?', 'FalaBR Previsto'])),
+                forma: obterCelulaFormalizacao(linha, painel, ['FalaBR_Forma', 'FalaBR Forma', 'Fala.BR Forma']),
+                observacao: obterCelulaFormalizacao(linha, painel, ['FalaBR_Observacao', 'FalaBR Observacao', 'Fala.BR Observação'])
+            },
+            validacoes: {
+                ufElegivel: UFS_FORMALIZACAO_PROFOR.includes(uf),
+                valorRepasseOk: Math.abs(moedaParaCentavos(valorRepasse) - moedaParaCentavos(VALOR_REPASSE_PROFOR)) <= TOLERANCIA_VALIDACAO_CENTAVOS,
+                valorGlobalOk: Math.abs(moedaParaCentavos(valorGlobal) - moedaParaCentavos(valorRepasse + valorContrapartida)) <= TOLERANCIA_VALIDACAO_CENTAVOS
+            }
+        };
+
+        proposta.progressoGeral = calcularProgressoGeralFormalizacao(proposta);
+        proposta.alertas = gerarAlertasFormalizacao(proposta);
+        proposta.trilha = calcularTrilhaFormalizacao(proposta);
+        proposta.situacaoPlano = proposta.plano.fechaComValorGlobal ? 'Plano de aplicação compatível' : 'Divergência no plano de aplicação';
+        proposta.aptaCelebracao = proposta.trilha.find((etapa) => etapa.chave === 'apta-celebracao')?.concluida || false;
+
+        return proposta;
+    }).filter((proposta) => proposta && UFS_FORMALIZACAO_PROFOR.includes(proposta.uf))
+        .sort((a, b) => UFS_FORMALIZACAO_PROFOR.indexOf(a.uf) - UFS_FORMALIZACAO_PROFOR.indexOf(b.uf));
+}
+
+function montarResumoFormalizacao(propostas) {
+    const totalValorGlobalCentavos = propostas.reduce((total, proposta) => total + moedaParaCentavos(proposta.valorGlobal), 0);
+    const alertas = propostas.flatMap((proposta) => (
+        proposta.alertas.map((alerta) => ({
+            ...alerta,
+            uf: proposta.uf,
+            estado: proposta.estado,
+            idProposta: proposta.idProposta
+        }))
+    ));
+
+    return {
+        totalPropostas: propostas.length,
+        totalValorGlobal: centavosParaMoeda(totalValorGlobalCentavos),
+        totalRepasse: propostas.reduce((total, proposta) => total + proposta.valorRepasse, 0),
+        totalContrapartida: propostas.reduce((total, proposta) => total + proposta.valorContrapartida, 0),
+        aptasCelebracao: propostas.filter((proposta) => proposta.aptaCelebracao).length,
+        planosCompativeis: propostas.filter((proposta) => proposta.plano.fechaComValorGlobal).length,
+        condicoesPendentes: propostas.filter((proposta) => proposta.condicaoSuspensiva.exige && !proposta.condicaoSuspensiva.resolvida).length,
+        falaBrPendentes: propostas.filter((proposta) => !proposta.falaBr.previsto).length,
+        alertasCriticos: alertas.filter((alerta) => alerta.severidade === 'critico').length,
+        propostasComAlertaCritico: propostas.filter((proposta) => proposta.alertas.some((alerta) => alerta.severidade === 'critico')).length,
+        mediaProgressoGeral: propostas.length
+            ? propostas.reduce((total, proposta) => total + proposta.progressoGeral, 0) / propostas.length
+            : 0,
+        documentosProjetoCompletos: propostas.filter((proposta) => proposta.progressoDocumentosProjeto.completo).length,
+        documentosFormalizacaoCompletos: propostas.filter((proposta) => proposta.progressoDocumentosFormalizacao.completo).length,
+        alertas,
+        filtros: {
+            ufs: UFS_FORMALIZACAO_PROFOR,
+            grupos: Array.from(new Set(propostas.map((proposta) => proposta.grupo).filter(Boolean))).sort(),
+            status: Array.from(new Set(propostas.map((proposta) => proposta.situacaoGeral).filter(Boolean))).sort()
+        }
+    };
+}
+
+function extrairFormalizacaoProforDoWorkbook(workbook) {
+    const propostas = montarPropostasFormalizacao(workbook);
+    return {
+        arquivo: ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR,
+        ufsAutorizadas: UFS_FORMALIZACAO_PROFOR,
+        ufsCondicaoSuspensiva: Array.from(UFS_CONDICAO_SUSPENSIVA_PROFOR),
+        valorRepassePadrao: VALOR_REPASSE_PROFOR,
+        propostas,
+        resumo: montarResumoFormalizacao(propostas)
+    };
+}
+
 async function lerWorkbookDeArrayBuffer(arrayBuffer) {
     const xlsx = obterXlsxGlobal();
     return xlsx.read(arrayBuffer, { type: 'array', raw: true });
@@ -1191,6 +1901,33 @@ async function carregarPlanilhaOrcamento() {
 
 export async function carregarDadosOrcamento() {
     return carregarPlanilhaOrcamento();
+}
+
+export async function carregarDadosFormalizacaoProfor() {
+    if (dadosFormalizacaoProforCache) {
+        return dadosFormalizacaoProforCache;
+    }
+
+    try {
+        if (window.location.protocol === 'file:') {
+            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de formalizacao.');
+        }
+
+        const planilhaUrl = new URL(`../../${ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR}`, import.meta.url);
+        const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
+
+        if (!resposta.ok) {
+            throw new Error(`Planilha de formalizacao nao encontrada (${resposta.status}).`);
+        }
+
+        const workbook = await lerWorkbookDeArrayBuffer(await resposta.arrayBuffer());
+        dadosFormalizacaoProforCache = extrairFormalizacaoProforDoWorkbook(workbook);
+        return dadosFormalizacaoProforCache;
+    } catch (error) {
+        dadosFormalizacaoProforCache = null;
+        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR}:`, error);
+        return null;
+    }
 }
 
 export async function carregarCatalogoAplicacao() {

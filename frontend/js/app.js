@@ -9,13 +9,15 @@
 import {
     carregarCatalogoAplicacao,
     carregarDadosAplicacao,
+    carregarDadosFormalizacaoProfor,
     carregarDadosOrcamento,
     obterDadosDoacoes2023,
     obterDadosFaf2021,
+    obterDadosFormalizacaoProfor,
     obterDadosProfor2022,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento
-} from '../../backend/services/data-service.js?v=20260501-2';
+} from '../../backend/services/data-service.js?v=20260504-1';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -37,6 +39,7 @@ let filtroDataTableRegistrado = false;
 let orcamentoItensRastreioAbertos = new Set();
 let proforConvenioAtual = null;
 let proforFiltroAreaAtual = 'OUVIDORIA';
+let formalizacaoUfAtual = null;
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -48,7 +51,9 @@ const VIEWS_REPASSES_FUNPEN = new Set([
     'faf2021',
     'faf2021-detalhe',
     'doacoes2023',
-    'doacoes2023-detalhe'
+    'doacoes2023-detalhe',
+    'formalizacao',
+    'formalizacao-detalhe'
 ]);
 const TODAS_UFS_BRASIL = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
@@ -157,6 +162,8 @@ function atualizarNavegacao(viewName = 'dashboard') {
         ? 'detalhamento'
         : viewName === 'profor-convenio-detalhe'
             ? 'profor2022'
+            : viewName === 'formalizacao-detalhe'
+                ? 'formalizacao'
             : viewName === 'faf2021-detalhe'
                 ? 'faf2021'
                 : viewName === 'doacoes2023-detalhe'
@@ -460,10 +467,20 @@ async function carregarLogoParaPDF() {
                 }
             }
 
+            if (['formalizacao', 'formalizacao-detalhe'].includes(viewName) && !obterDadosFormalizacaoProfor()) {
+                showLoading('Carregando formalização PROFOR/ONASP...');
+                try {
+                    await carregarDadosFormalizacaoProfor();
+                } finally {
+                    hideLoading();
+                }
+            }
+
             const podeAbrirOrcamento = viewName === 'orcamento' && obterDadosOrcamento();
+            const podeAbrirFormalizacao = ['formalizacao', 'formalizacao-detalhe'].includes(viewName);
             const podeAbrirComDadosEstaticos = ['faf2021', 'faf2021-detalhe', 'doacoes2023', 'doacoes2023-detalhe'].includes(viewName);
 
-            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirComDadosEstaticos) {
+            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirFormalizacao && !podeAbrirComDadosEstaticos) {
                 mostrarAlertaCarregamentoPlanilha(
                     'Dados financeiros indisponiveis: carregue uma planilha valida antes de acessar detalhes ou exportacoes.',
                     true,
@@ -482,6 +499,8 @@ async function carregarLogoParaPDF() {
             const viewDoacoes = document.getElementById('view-doacoes-2023');
             const viewDoacoesDetalhe = document.getElementById('view-doacoes-2023-detalhe');
             const viewOrcamento = document.getElementById('view-orcamento');
+            const viewFormalizacao = document.getElementById('view-formalizacao-profor');
+            const viewFormalizacaoDetalhe = document.getElementById('view-formalizacao-profor-detalhe');
             if (viewProfor) viewProfor.style.display = 'none';
             if (viewProforDetalhe) viewProforDetalhe.style.display = 'none';
             if (viewFaf) viewFaf.style.display = 'none';
@@ -489,6 +508,8 @@ async function carregarLogoParaPDF() {
             if (viewDoacoes) viewDoacoes.style.display = 'none';
             if (viewDoacoesDetalhe) viewDoacoesDetalhe.style.display = 'none';
             if (viewOrcamento) viewOrcamento.style.display = 'none';
+            if (viewFormalizacao) viewFormalizacao.style.display = 'none';
+            if (viewFormalizacaoDetalhe) viewFormalizacaoDetalhe.style.display = 'none';
 
             if (viewName === 'detalhamento') {
                 document.getElementById('view-detalhamento').style.display = 'block';
@@ -508,6 +529,10 @@ async function carregarLogoParaPDF() {
                 if (viewDoacoesDetalhe) viewDoacoesDetalhe.style.display = 'block';
             } else if (viewName === 'orcamento') {
                 renderOrcamentoView();
+            } else if (viewName === 'formalizacao') {
+                renderFormalizacaoProforView();
+            } else if (viewName === 'formalizacao-detalhe') {
+                renderFormalizacaoProforDetalheView();
             } else {
                 document.getElementById('view-dashboard').style.display = 'block';
             }
@@ -2313,6 +2338,780 @@ async function carregarLogoParaPDF() {
             toggleView('doacoes2023-detalhe');
         }
 
+        // --- MÓDULO DE FORMALIZAÇÃO PROFOR/ONASP 2026 ---
+        function obterClasseAlertaFormalizacao(severidade) {
+            if (severidade === 'critico') return 'danger';
+            if (severidade === 'moderado') return 'warning';
+            if (severidade === 'informativo') return 'info';
+            return 'neutral';
+        }
+
+        function renderizarBadgeAlertaFormalizacao(alerta) {
+            const classe = obterClasseAlertaFormalizacao(alerta.severidade);
+            return `<span class="profor-alert-badge profor-alert-${classe}" title="${escapeHtml(alerta.mensagem)}">${escapeHtml(alerta.tipo)}</span>`;
+        }
+
+        function renderizarStatusFormalizacao(proposta) {
+            const temCritico = proposta.alertas.some((alerta) => alerta.severidade === 'critico');
+            const classe = proposta.aptaCelebracao
+                ? 'success'
+                : temCritico
+                    ? 'danger'
+                    : proposta.progressoGeral >= 70
+                        ? 'warning'
+                        : 'info';
+            return `<span class="budget-status formalizacao-status-${classe}">${escapeHtml(proposta.situacaoGeral)}</span>`;
+        }
+
+        function renderizarProgressoFormalizacao(percentual, rotulo = '') {
+            const valor = getProgressWidth(percentual);
+            return `
+                <div class="custom-progress-pill formalizacao-progress" title="${escapeHtml(rotulo || formatPercent(valor))}">
+                    <div class="pill-fill" style="width: ${valor}%; background-color: ${getProgressColor(valor)}"></div>
+                    <div class="pill-text">${formatPercent(valor)}</div>
+                </div>
+            `;
+        }
+
+        function filtrarPropostasFormalizacao(dados) {
+            const busca = normalizarBusca(document.getElementById('filtroFormalizacaoBusca')?.value || '');
+            const uf = document.getElementById('filtroFormalizacaoUf')?.value || '';
+            const grupo = document.getElementById('filtroFormalizacaoGrupo')?.value || '';
+            const status = document.getElementById('filtroFormalizacaoStatus')?.value || '';
+            const pendencia = document.getElementById('filtroFormalizacaoPendencia')?.value || '';
+
+            return dados.propostas.filter((proposta) => {
+                const textoBusca = normalizarBusca([
+                    proposta.uf,
+                    proposta.estado,
+                    proposta.idProposta,
+                    proposta.numeroProposta,
+                    proposta.situacaoGeral,
+                    proposta.gestor.nome,
+                    proposta.responsavelTecnico.nome
+                ].join(' '));
+
+                const passaPendencia = !pendencia
+                    || (pendencia === 'alerta-critico' && proposta.alertas.some((alerta) => alerta.severidade === 'critico'))
+                    || (pendencia === 'condicao' && proposta.condicaoSuspensiva.exige && !proposta.condicaoSuspensiva.resolvida)
+                    || (pendencia === 'financeiro' && (!proposta.validacoes.valorRepasseOk || !proposta.validacoes.valorGlobalOk || !proposta.plano.fechaComValorGlobal))
+                    || (pendencia === 'falabr' && !proposta.falaBr.previsto)
+                    || (pendencia === 'documentos' && (!proposta.progressoDocumentosProjeto.completo || !proposta.progressoDocumentosFormalizacao.completo))
+                    || (pendencia === 'plano' && !proposta.plano.fechaComValorGlobal)
+                    || (pendencia === 'aptas' && proposta.aptaCelebracao);
+
+                return (!busca || textoBusca.includes(busca))
+                    && (!uf || proposta.uf === uf)
+                    && (!grupo || proposta.grupo === grupo)
+                    && (!status || proposta.situacaoGeral === status)
+                    && passaPendencia;
+            });
+        }
+
+        function renderizarCartaoFormalizacao(proposta) {
+            const alertasCriticos = proposta.alertas.filter((alerta) => alerta.severidade === 'critico').length;
+            const planoClasse = proposta.plano.fechaComValorGlobal ? 'success' : 'danger';
+            const condicao = proposta.condicaoSuspensiva.exige
+                ? proposta.condicaoSuspensiva.situacao
+                : 'Não se aplica';
+
+            return `
+                <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''}" data-formalizacao-uf="${escapeHtml(proposta.uf)}">
+                    <div class="formalizacao-card-header">
+                        <div>
+                            <span class="badge badge-uf">${escapeHtml(proposta.uf)}</span>
+                            <h3>${escapeHtml(proposta.estado)}</h3>
+                            <p>${escapeHtml(proposta.numeroProposta || proposta.idProposta)}</p>
+                        </div>
+                        ${renderizarStatusFormalizacao(proposta)}
+                    </div>
+                    <div class="formalizacao-card-metrics">
+                        <div><span>Valor global</span><strong>${formatMoney(proposta.valorGlobal)}</strong></div>
+                        <div><span>Repasse</span><strong>${formatMoney(proposta.valorRepasse)}</strong></div>
+                        <div><span>Contrapartida</span><strong>${formatMoney(proposta.valorContrapartida)}</strong></div>
+                    </div>
+                    <div class="formalizacao-card-progress">
+                        <div>
+                            <span>Projeto</span>
+                            ${renderizarProgressoFormalizacao(proposta.progressoDocumentosProjeto.percentual, 'Documentos do projeto')}
+                        </div>
+                        <div>
+                            <span>Formalização</span>
+                            ${renderizarProgressoFormalizacao(proposta.progressoDocumentosFormalizacao.percentual, 'Documentos da formalização')}
+                        </div>
+                    </div>
+                    <div class="formalizacao-card-tags">
+                        <span class="profor-alert-badge profor-alert-${planoClasse}">${escapeHtml(proposta.situacaoPlano)}</span>
+                        ${proposta.condicaoSuspensiva.exige ? `<span class="profor-alert-badge profor-alert-${proposta.condicaoSuspensiva.resolvida ? 'success' : 'danger'}">${escapeHtml(condicao)}</span>` : ''}
+                        ${proposta.falaBr.previsto ? '<span class="profor-alert-badge profor-alert-success">Fala.BR previsto</span>' : '<span class="profor-alert-badge profor-alert-danger">Fala.BR pendente</span>'}
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-icon-text formalizacao-open-button">
+                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        <span>Abrir UF</span>
+                    </button>
+                </article>
+            `;
+        }
+
+        function calcularResumoSelecaoFormalizacao(propostas) {
+            return propostas.reduce((resumo, proposta) => {
+                resumo.valorGlobal += Number(proposta.valorGlobal) || 0;
+                resumo.alertasCriticos += proposta.alertas.filter((alerta) => alerta.severidade === 'critico').length;
+                resumo.aptas += proposta.aptaCelebracao ? 1 : 0;
+                resumo.planosOk += proposta.plano.fechaComValorGlobal ? 1 : 0;
+                resumo.progresso += proposta.progressoGeral;
+                return resumo;
+            }, { valorGlobal: 0, alertasCriticos: 0, aptas: 0, planosOk: 0, progresso: 0 });
+        }
+
+        function renderizarAlertasConsolidadosFormalizacao(alertas) {
+            const alertasPrioritarios = alertas
+                .filter((alerta) => alerta.severidade !== 'informativo')
+                .slice(0, 10);
+
+            if (!alertasPrioritarios.length) {
+                return `
+                    <div class="formalizacao-empty-state">
+                        <i class="fas fa-circle-check" aria-hidden="true"></i>
+                        <span>Nenhuma pendência crítica ou moderada encontrada na seleção atual.</span>
+                    </div>
+                `;
+            }
+
+            return alertasPrioritarios.map((alerta) => `
+                <button type="button" class="formalizacao-alert-item" data-formalizacao-uf="${escapeHtml(alerta.uf)}">
+                    <span class="profor-alert-badge profor-alert-${obterClasseAlertaFormalizacao(alerta.severidade)}">${escapeHtml(alerta.uf)}</span>
+                    <strong>${escapeHtml(alerta.tipo)}</strong>
+                    <span>${escapeHtml(alerta.mensagem)}</span>
+                </button>
+            `).join('');
+        }
+
+        function atualizarListaFormalizacao(dados) {
+            const propostas = filtrarPropostasFormalizacao(dados);
+            const resumoSelecao = calcularResumoSelecaoFormalizacao(propostas);
+            const progressoMedio = propostas.length ? resumoSelecao.progresso / propostas.length : 0;
+            const selectedSummary = document.getElementById('formalizacao-selected-summary');
+            const cardGrid = document.getElementById('formalizacao-card-grid');
+            const tbody = document.getElementById('formalizacao-table-body');
+            const alertasContainer = document.getElementById('formalizacao-alert-list');
+
+            if (selectedSummary) {
+                selectedSummary.innerHTML = `
+                    <div class="budget-insight-card kpi-card">
+                        <div class="kpi-title"><i class="fas fa-filter" aria-hidden="true"></i>UFs na seleção</div>
+                        <div class="kpi-value">${propostas.length}</div>
+                        <div class="kpi-desc">de ${dados.resumo.totalPropostas} propostas</div>
+                    </div>
+                    <div class="budget-insight-card kpi-card">
+                        <div class="kpi-title"><i class="fas fa-scale-balanced" aria-hidden="true"></i>Valor Global</div>
+                        <div class="kpi-value text-money">${formatMoney(resumoSelecao.valorGlobal)}</div>
+                        <div class="kpi-desc">repasse + contrapartida</div>
+                    </div>
+                    <div class="budget-insight-card kpi-card ${resumoSelecao.alertasCriticos ? 'kpi-card-warning' : 'kpi-card-success'}">
+                        <div class="kpi-title"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Alertas críticos</div>
+                        <div class="kpi-value">${resumoSelecao.alertasCriticos}</div>
+                        <div class="kpi-desc">${resumoSelecao.aptas} apta(s) à celebração</div>
+                    </div>
+                    <div class="budget-insight-card kpi-card kpi-card-info">
+                        <div class="kpi-title"><i class="fas fa-chart-line" aria-hidden="true"></i>Progresso médio</div>
+                        <div class="kpi-value">${formatPercent(progressoMedio)}</div>
+                        <div class="kpi-desc">${resumoSelecao.planosOk} plano(s) compatíveis</div>
+                    </div>
+                `;
+            }
+
+            if (alertasContainer) {
+                const ufsSelecionadas = new Set(propostas.map((proposta) => proposta.uf));
+                const alertas = dados.resumo.alertas.filter((alerta) => ufsSelecionadas.has(alerta.uf));
+                alertasContainer.innerHTML = renderizarAlertasConsolidadosFormalizacao(alertas);
+            }
+
+            if (cardGrid) {
+                cardGrid.innerHTML = propostas.length
+                    ? propostas.map(renderizarCartaoFormalizacao).join('')
+                    : '<div class="formalizacao-empty-state"><i class="fas fa-search" aria-hidden="true"></i><span>Nenhuma proposta encontrada para os filtros selecionados.</span></div>';
+            }
+
+            if (!tbody) return;
+            tbody.innerHTML = propostas.length ? propostas.map((proposta) => {
+                const alertasCriticos = proposta.alertas.filter((alerta) => alerta.severidade === 'critico');
+                return `
+                    <tr class="profor-row ${alertasCriticos.length ? 'profor-row-risk' : ''}" tabindex="0" data-formalizacao-uf="${escapeHtml(proposta.uf)}">
+                        <td data-label="UF" class="align-middle">
+                            <div class="profor-convenio-cell">
+                                <span class="badge badge-uf">${escapeHtml(proposta.uf)}</span>
+                                <div>
+                                    <strong>${escapeHtml(proposta.estado)}</strong>
+                                    <span>${escapeHtml(proposta.numeroProposta || proposta.idProposta)}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-label="Status" class="align-middle text-center">${renderizarStatusFormalizacao(proposta)}</td>
+                        <td data-label="Valor Global" class="align-middle text-end font-monospace">${formatMoney(proposta.valorGlobal)}</td>
+                        <td data-label="Projeto" class="align-middle text-center">${renderizarProgressoFormalizacao(proposta.progressoDocumentosProjeto.percentual)}</td>
+                        <td data-label="Formalização" class="align-middle text-center">${renderizarProgressoFormalizacao(proposta.progressoDocumentosFormalizacao.percentual)}</td>
+                        <td data-label="Plano" class="align-middle text-center">
+                            <span class="profor-alert-badge profor-alert-${proposta.plano.fechaComValorGlobal ? 'success' : 'danger'}">${proposta.plano.fechaComValorGlobal ? 'Compatível' : 'Divergente'}</span>
+                        </td>
+                        <td data-label="Cond. suspensiva" class="align-middle text-center">
+                            <span class="profor-alert-badge profor-alert-${!proposta.condicaoSuspensiva.exige ? 'neutral' : proposta.condicaoSuspensiva.resolvida ? 'success' : 'danger'}">${escapeHtml(proposta.condicaoSuspensiva.situacao)}</span>
+                        </td>
+                        <td data-label="Alertas" class="align-middle">
+                            <div class="profor-alert-list">${proposta.alertas.length ? proposta.alertas.slice(0, 4).map(renderizarBadgeAlertaFormalizacao).join('') : '<span class="profor-alert-badge profor-alert-success">Sem alerta</span>'}</div>
+                        </td>
+                    </tr>
+                `;
+            }).join('') : `
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">Nenhuma proposta encontrada para os filtros selecionados.</td>
+                </tr>
+            `;
+
+            document.querySelectorAll('[data-formalizacao-uf]').forEach((elemento) => {
+                elemento.addEventListener('click', () => abrirDetalheFormalizacaoProfor(elemento.dataset.formalizacaoUf));
+                if (elemento.tagName !== 'BUTTON') {
+                    elemento.addEventListener('keydown', (event) => {
+                        if (event.key !== 'Enter' && event.key !== ' ') return;
+                        event.preventDefault();
+                        abrirDetalheFormalizacaoProfor(elemento.dataset.formalizacaoUf);
+                    });
+                }
+            });
+        }
+
+        function registrarEventosFormalizacao(dados) {
+            ['filtroFormalizacaoBusca', 'filtroFormalizacaoUf', 'filtroFormalizacaoGrupo', 'filtroFormalizacaoStatus', 'filtroFormalizacaoPendencia']
+                .forEach((id) => {
+                    const elemento = document.getElementById(id);
+                    if (!elemento) return;
+                    const evento = elemento.tagName === 'INPUT' ? 'input' : 'change';
+                    elemento.addEventListener(evento, () => atualizarListaFormalizacao(dados));
+                });
+
+            document.getElementById('btnLimparFiltroFormalizacao')?.addEventListener('click', () => {
+                ['filtroFormalizacaoBusca', 'filtroFormalizacaoUf', 'filtroFormalizacaoGrupo', 'filtroFormalizacaoStatus', 'filtroFormalizacaoPendencia']
+                    .forEach((id) => {
+                        const elemento = document.getElementById(id);
+                        if (elemento) elemento.value = '';
+                    });
+                atualizarListaFormalizacao(dados);
+            });
+        }
+
+        function renderFormalizacaoProforView() {
+            const container = document.getElementById('view-formalizacao-profor');
+            if (!container) return;
+
+            container.style.display = 'block';
+            const dados = obterDadosFormalizacaoProfor();
+            if (!dados) {
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados de formalização indisponíveis. Verifique se o arquivo <strong>Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx</strong> está disponível e abra a aplicação por servidor local.</div>';
+                return;
+            }
+
+            const resumo = dados.resumo;
+            const opcoesUf = resumo.filtros.ufs.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(uf)}</option>`).join('');
+            const opcoesGrupo = resumo.filtros.grupos.map((grupo) => `<option value="${escapeHtml(grupo)}">${escapeHtml(grupo)}</option>`).join('');
+            const opcoesStatus = resumo.filtros.status.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join('');
+
+            container.innerHTML = `
+                <section class="dashboard-intro formalizacao-intro">
+                    <div>
+                        <p class="section-eyebrow mb-1">PROFOR/ONASP 2026</p>
+                        <h2>Formalização PROFOR 2026</h2>
+                        <p>Acompanhamento das 14 propostas com cálculos, trilhas e alertas gerados pela aplicação.</p>
+                    </div>
+                    <div class="intro-badges" aria-label="Resumo da formalização PROFOR/ONASP">
+                        <span><i class="fas fa-map-location-dot" aria-hidden="true"></i> ${resumo.totalPropostas} UFs</span>
+                        <span><i class="fas fa-building-columns" aria-hidden="true"></i> ${formatMoney(dados.valorRepassePadrao)} por UF</span>
+                        <span><i class="fas fa-file-contract" aria-hidden="true"></i> Convênios</span>
+                    </div>
+                </section>
+
+                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores de formalização">
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-success">
+                            <div class="kpi-title"><i class="fas fa-file-signature" aria-hidden="true"></i>Propostas</div>
+                            <div class="kpi-value">${resumo.totalPropostas}</div>
+                            <div class="kpi-desc">UFs contempladas</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-scale-balanced" aria-hidden="true"></i>Valor Global</div>
+                            <div class="kpi-value text-money">${formatMoney(resumo.totalValorGlobal)}</div>
+                            <div class="kpi-desc">Repasse + contrapartida</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card">
+                            <div class="kpi-title"><i class="fas fa-chart-line" aria-hidden="true"></i>Progresso Médio</div>
+                            <div class="kpi-value">${formatPercent(resumo.mediaProgressoGeral)}</div>
+                            <div class="kpi-desc">Cálculo ponderado</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card ${resumo.alertasCriticos ? 'kpi-card-warning' : 'kpi-card-success'}">
+                            <div class="kpi-title"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Alertas críticos</div>
+                            <div class="kpi-value">${resumo.alertasCriticos}</div>
+                            <div class="kpi-desc">${resumo.propostasComAlertaCritico} UF(s) com alerta crítico</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-info">
+                            <div class="kpi-title"><i class="fas fa-circle-check" aria-hidden="true"></i>Aptas à celebração</div>
+                            <div class="kpi-value">${resumo.aptasCelebracao}</div>
+                            <div class="kpi-desc">${resumo.planosCompativeis} plano(s) compatíveis</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="filter-section mb-4" aria-label="Filtros da formalização">
+                    <div class="filter-toolbar">
+                        <div class="filter-title">
+                            <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
+                            <strong>Filtros</strong>
+                        </div>
+                        <div class="filter-search-actions">
+                            <input type="text" id="filtroFormalizacaoBusca" class="form-control" placeholder="Buscar por UF, proposta, gestor ou status..." aria-label="Buscar formalização">
+                            <button id="btnLimparFiltroFormalizacao" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                <span>Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="budget-filter-grid formalizacao-filter-grid">
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFormalizacaoUf">UF</label>
+                            <select id="filtroFormalizacaoUf" class="form-select">
+                                <option value="">Todas</option>
+                                ${opcoesUf}
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFormalizacaoGrupo">Grupo</label>
+                            <select id="filtroFormalizacaoGrupo" class="form-select">
+                                <option value="">Todos</option>
+                                ${opcoesGrupo}
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFormalizacaoStatus">Status geral</label>
+                            <select id="filtroFormalizacaoStatus" class="form-select">
+                                <option value="">Todos</option>
+                                ${opcoesStatus}
+                            </select>
+                        </div>
+                        <div class="visible-filter-group">
+                            <label class="visible-filter-title" for="filtroFormalizacaoPendencia">Pendência</label>
+                            <select id="filtroFormalizacaoPendencia" class="form-select">
+                                <option value="">Todas</option>
+                                <option value="alerta-critico">Com alerta crítico</option>
+                                <option value="condicao">Condição suspensiva pendente</option>
+                                <option value="financeiro">Divergência financeira</option>
+                                <option value="falabr">Fala.BR pendente</option>
+                                <option value="documentos">Documentação incompleta</option>
+                                <option value="plano">Plano divergente</option>
+                                <option value="aptas">Aptas à celebração</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="budget-insight-grid formalizacao-insight-grid mb-4" id="formalizacao-selected-summary" aria-label="Resumo da seleção"></section>
+
+                <section class="formalizacao-alert-panel mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Alertas e pendências</p>
+                            <h2>Providências prioritárias</h2>
+                        </div>
+                    </div>
+                    <div class="formalizacao-alert-list" id="formalizacao-alert-list"></div>
+                </section>
+
+                <section class="formalizacao-card-grid mb-4" id="formalizacao-card-grid" aria-label="Cards por UF"></section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Propostas</p>
+                            <h2>Base de acompanhamento</h2>
+                        </div>
+                        <small class="text-muted"><i class="fas fa-mouse-pointer me-1" aria-hidden="true"></i> Clique em uma linha para abrir a UF</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table formalizacao-data-table">
+                            <thead>
+                                <tr>
+                                    <th>UF</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-end">Valor Global</th>
+                                    <th class="text-center">Projeto</th>
+                                    <th class="text-center">Formalização</th>
+                                    <th class="text-center">Plano</th>
+                                    <th class="text-center">Cond. suspensiva</th>
+                                    <th>Alertas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="formalizacao-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+
+            registrarEventosFormalizacao(dados);
+            atualizarListaFormalizacao(dados);
+        }
+
+        function abrirDetalheFormalizacaoProfor(uf) {
+            formalizacaoUfAtual = uf;
+            toggleView('formalizacao-detalhe');
+        }
+
+        function renderizarCampoFormalizacao(rotulo, valor, icone = 'fa-circle-info') {
+            return `
+                <div class="formalizacao-info-item">
+                    <span><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(rotulo)}</span>
+                    <strong>${escapeHtml(valor || '-')}</strong>
+                </div>
+            `;
+        }
+
+        function renderizarTrilhaFormalizacao(trilha) {
+            const icones = {
+                'proposta-cadastrada': 'fa-file-circle-plus',
+                'docs-projeto': 'fa-folder-tree',
+                'projeto-aprovado': 'fa-circle-check',
+                'docs-formalizacao': 'fa-file-signature',
+                'condicao-suspensiva': 'fa-landmark',
+                'plano-validado': 'fa-list-check',
+                'apta-celebracao': 'fa-handshake',
+                'convenio-celebrado': 'fa-pen-nib',
+                'instrumento-publicado': 'fa-newspaper'
+            };
+
+            return `
+                <ol class="formalizacao-timeline" style="--formalizacao-steps: ${trilha.length};">
+                    ${trilha.map((etapa) => `
+                        <li class="formalizacao-step formalizacao-step-${etapa.estado}" ${etapa.estado === 'atual' ? 'aria-current="step"' : ''}>
+                            <span class="formalizacao-step-marker" aria-hidden="true">
+                                <i class="fas ${icones[etapa.chave] || 'fa-circle'}"></i>
+                            </span>
+                            <span class="formalizacao-step-label">${escapeHtml(etapa.rotulo)}</span>
+                        </li>
+                    `).join('')}
+                </ol>
+            `;
+        }
+
+        function renderizarStatusDocumentoFormalizacao(status) {
+            const normalizado = normalizarBusca(status);
+            const classe = normalizado.includes('validado')
+                ? 'success'
+                : normalizado.includes('reprovado') || normalizado.includes('correcao') || normalizado.includes('pendente')
+                    ? 'danger'
+                    : normalizado.includes('analise') || normalizado.includes('enviado')
+                        ? 'warning'
+                        : normalizado.includes('aplica')
+                            ? 'neutral'
+                            : 'default';
+            return `<span class="formalizacao-doc-status formalizacao-doc-status-${classe}">${escapeHtml(status || 'Não enviado')}</span>`;
+        }
+
+        function renderizarLinkDocumentoFormalizacao(link) {
+            if (!link) {
+                return '<span class="text-muted">-</span>';
+            }
+
+            if (/^https?:\/\//i.test(link)) {
+                return `
+                    <a class="budget-link-button" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-up-right-from-square" aria-hidden="true"></i>
+                        <span>Abrir</span>
+                    </a>
+                `;
+            }
+
+            return `<span class="formalizacao-doc-ref">${escapeHtml(link)}</span>`;
+        }
+
+        function renderizarTabelaDocumentosFormalizacao(titulo, documentos, progresso, incluirResponsavel = false) {
+            return `
+                <section class="table-container mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Documentos</p>
+                            <h2>${escapeHtml(titulo)}</h2>
+                        </div>
+                        <div class="formalizacao-doc-progress">
+                            <strong>${progresso.enviados} de ${progresso.total} enviados</strong>
+                            ${renderizarProgressoFormalizacao(progresso.percentual)}
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table formalizacao-doc-table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Documento</th>
+                                    <th class="text-center">Enviado?</th>
+                                    <th>Status</th>
+                                    <th>Data envio</th>
+                                    <th>Pendência</th>
+                                    ${incluirResponsavel ? '<th>Unidade</th>' : ''}
+                                    <th>Link</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${documentos.map((documento) => `
+                                    <tr>
+                                        <td data-label="Código" class="font-monospace">${escapeHtml(documento.codigo)}</td>
+                                        <td data-label="Documento"><strong>${escapeHtml(documento.nome)}</strong></td>
+                                        <td data-label="Enviado?" class="text-center">
+                                            <span class="profor-alert-badge profor-alert-${documento.enviado ? 'success' : 'danger'}">${documento.enviado ? 'Sim' : 'Não'}</span>
+                                        </td>
+                                        <td data-label="Status">${renderizarStatusDocumentoFormalizacao(documento.statusAnalise)}</td>
+                                        <td data-label="Data envio">${escapeHtml(documento.dataEnvio || '-')}</td>
+                                        <td data-label="Pendência">${escapeHtml(documento.pendencia || '-')}</td>
+                                        ${incluirResponsavel ? `<td data-label="Unidade">${escapeHtml(documento.unidadeResponsavel || '-')}</td>` : ''}
+                                        <td data-label="Link">${renderizarLinkDocumentoFormalizacao(documento.link)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderizarResumoPlanoFormalizacao(titulo, itens) {
+            if (!itens.length) return '';
+
+            return `
+                <div class="formalizacao-plan-breakdown">
+                    <h3>${escapeHtml(titulo)}</h3>
+                    <div>
+                        ${itens.map((item) => `
+                            <span>
+                                <strong>${escapeHtml(item.nome)}</strong>
+                                ${formatMoney(item.total)}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderizarCondicaoSuspensivaFormalizacao(proposta) {
+            if (!proposta.condicaoSuspensiva.exige) {
+                return '';
+            }
+
+            const condicao = proposta.condicaoSuspensiva;
+            return `
+                <section class="table-container mb-4 formalizacao-condition-panel ${condicao.resolvida ? 'formalizacao-condition-ok' : 'formalizacao-condition-risk'}">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Condição suspensiva</p>
+                            <h2>Ato normativo da ouvidoria própria/autônoma</h2>
+                        </div>
+                        <span class="profor-alert-badge profor-alert-${condicao.resolvida ? 'success' : 'danger'}">${escapeHtml(condicao.situacao)}</span>
+                    </div>
+                    <div class="formalizacao-info-grid">
+                        ${renderizarCampoFormalizacao('Exige condição suspensiva?', 'Sim', 'fa-landmark')}
+                        ${renderizarCampoFormalizacao('Ato normativo enviado?', condicao.atoEnviado ? 'Sim' : 'Não', 'fa-file-arrow-up')}
+                        ${renderizarCampoFormalizacao('Ato normativo publicado?', condicao.atoPublicado ? 'Sim' : 'Não', 'fa-newspaper')}
+                        ${renderizarCampoFormalizacao('Data de publicação', condicao.dataPublicacao || '-', 'fa-calendar-day')}
+                        ${renderizarCampoFormalizacao('Link ou referência', condicao.linkReferencia || '-', 'fa-link')}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderizarPlanoAplicacaoFormalizacao(proposta) {
+            const plano = proposta.plano;
+            return `
+                <section class="table-container mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Plano de aplicação</p>
+                            <h2>Itens da guia Plano_${escapeHtml(proposta.uf)}</h2>
+                        </div>
+                        <span class="profor-alert-badge profor-alert-${plano.fechaComValorGlobal ? 'success' : 'danger'}">${escapeHtml(proposta.situacaoPlano)}</span>
+                    </div>
+
+                    <div class="profor-plan-summary">
+                        <div class="profor-plan-summary-item"><span>Total do plano</span><strong>${formatMoney(plano.total)}</strong></div>
+                        <div class="profor-plan-summary-item"><span>Valor global</span><strong>${formatMoney(proposta.valorGlobal)}</strong></div>
+                        <div class="profor-plan-summary-item"><span>Diferença</span><strong class="${Math.abs(plano.diferenca) > 0.01 ? 'text-danger' : 'text-success'}">${formatMoney(plano.diferenca)}</strong></div>
+                        <div class="profor-plan-summary-item"><span>Itens</span><strong>${plano.quantidadeItens}</strong></div>
+                        <div class="profor-plan-summary-item"><span>Inelegíveis</span><strong class="${plano.itensInelegiveis.length ? 'text-danger' : 'text-success'}">${plano.itensInelegiveis.length}</strong></div>
+                    </div>
+
+                    <div class="formalizacao-plan-breakdowns">
+                        ${renderizarResumoPlanoFormalizacao('Por categoria', plano.porCategoria)}
+                        ${renderizarResumoPlanoFormalizacao('Por natureza', plano.porNatureza)}
+                        ${renderizarResumoPlanoFormalizacao('Por fonte', plano.porFonte)}
+                    </div>
+
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-hover w-100 app-data-table profor-plan-table">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Item</th>
+                                    <th>Descrição</th>
+                                    <th class="text-center">Qtd.</th>
+                                    <th class="text-center">Unid.</th>
+                                    <th class="text-end">Valor Unit.</th>
+                                    <th class="text-end">Valor Total</th>
+                                    <th>Fonte</th>
+                                    <th>Natureza</th>
+                                    <th class="text-center">Elegível</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${plano.itens.map((item) => {
+                                    const inelegivel = plano.itensInelegiveis.some((alertaItem) => alertaItem.idItem === item.idItem);
+                                    return `
+                                        <tr class="${inelegivel ? 'table-warning' : ''}">
+                                            <td data-label="Categoria">${escapeHtml(item.categoria || '-')}</td>
+                                            <td data-label="Item"><strong>${escapeHtml(item.item || '-')}</strong></td>
+                                            <td data-label="Descrição"><span class="truncate-text">${escapeHtml(item.descricao || '-')}</span></td>
+                                            <td data-label="Qtd." class="text-center">${formatarQuantidadeProfor(item.quantidade)}</td>
+                                            <td data-label="Unid." class="text-center">${escapeHtml(item.unidade || '-')}</td>
+                                            <td data-label="Valor Unit." class="text-end font-monospace">${formatMoney(item.valorUnitario)}</td>
+                                            <td data-label="Valor Total" class="text-end font-monospace fw-bold">${formatMoney(item.valorTotal)}</td>
+                                            <td data-label="Fonte">${escapeHtml(item.fonteRecurso || '-')}</td>
+                                            <td data-label="Natureza">${escapeHtml(item.naturezaDespesa || '-')}</td>
+                                            <td data-label="Elegível" class="text-center">
+                                                <span class="profor-alert-badge profor-alert-${inelegivel ? 'danger' : 'success'}">${escapeHtml(item.elegivel || 'Sim')}</span>
+                                            </td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderFormalizacaoProforDetalheView() {
+            const container = document.getElementById('view-formalizacao-profor-detalhe');
+            const dados = obterDadosFormalizacaoProfor();
+            if (!container) return;
+
+            const proposta = dados?.propostas.find((item) => item.uf === formalizacaoUfAtual || item.idProposta === formalizacaoUfAtual);
+            if (!dados || !proposta) {
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Proposta de formalização não localizada.</div>';
+                container.style.display = 'block';
+                return;
+            }
+
+            const flagUrl = catalogoAplicacao.imagensBandeiras?.[proposta.uf] || '';
+            const imgElement = flagUrl
+                ? `<img src="${escapeHtml(flagUrl)}" alt="Bandeira ${escapeHtml(proposta.uf)}" class="state-flag report-state-flag me-3">`
+                : '<i class="fas fa-flag text-secondary report-state-icon me-3"></i>';
+            const alertasCriticos = proposta.alertas.filter((alerta) => alerta.severidade === 'critico');
+
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="report-actions pdf-hidden">
+                    <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('formalizacao')">
+                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        <span>Voltar para Formalização</span>
+                    </button>
+                </div>
+
+                <div class="report-content profor-detail-content formalizacao-detail-content">
+                    <section class="profor-detail-header">
+                        <div class="d-flex align-items-center">
+                            ${imgElement}
+                            <div>
+                                <p class="section-eyebrow mb-1">Formalização PROFOR/ONASP 2026</p>
+                                <h2>${escapeHtml(proposta.estado)} — ${escapeHtml(proposta.uf)}</h2>
+                                <div class="profor-detail-meta">
+                                    <span><i class="fas fa-file-contract" aria-hidden="true"></i> Proposta ${escapeHtml(proposta.numeroProposta || '-')}</span>
+                                    <span><i class="fas fa-layer-group" aria-hidden="true"></i> ${escapeHtml(proposta.grupo || '-')}</span>
+                                    <span><i class="fas fa-calendar-alt" aria-hidden="true"></i> ${escapeHtml(proposta.ano || '-')}</span>
+                                    <span><i class="fas fa-clock" aria-hidden="true"></i> Atualização ${escapeHtml(proposta.ultimaAtualizacao || '-')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profor-alert-list">${proposta.alertas.length ? proposta.alertas.slice(0, 8).map(renderizarBadgeAlertaFormalizacao).join('') : '<span class="profor-alert-badge profor-alert-success">Sem alerta</span>'}</div>
+                    </section>
+
+                    <section class="row my-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Indicadores da proposta">
+                        ${renderizarKpiDetalheProfor('Valor de Repasse', formatMoney(proposta.valorRepasse), 'Regra PROFOR/ONASP', proposta.validacoes.valorRepasseOk ? '' : 'kpi-card-warning', 'fa-building-columns')}
+                        ${renderizarKpiDetalheProfor('Contrapartida', formatMoney(proposta.valorContrapartida), formatPercent(proposta.percentualContrapartida), '', 'fa-handshake')}
+                        ${renderizarKpiDetalheProfor('Valor Global', formatMoney(proposta.valorGlobal), 'Repasse + contrapartida', proposta.validacoes.valorGlobalOk ? '' : 'kpi-card-warning', 'fa-scale-balanced')}
+                        ${renderizarKpiDetalheProfor('Progresso Geral', formatPercent(proposta.progressoGeral), 'Cálculo ponderado', 'kpi-card-info', 'fa-chart-line')}
+                        ${renderizarKpiDetalheProfor('Docs do Projeto', `${proposta.progressoDocumentosProjeto.enviados}/${proposta.progressoDocumentosProjeto.total}`, formatPercent(proposta.progressoDocumentosProjeto.percentual), proposta.progressoDocumentosProjeto.completo ? 'kpi-card-success' : 'kpi-card-warning', 'fa-folder-tree')}
+                        ${renderizarKpiDetalheProfor('Docs Formalização', `${proposta.progressoDocumentosFormalizacao.enviados}/${proposta.progressoDocumentosFormalizacao.total}`, formatPercent(proposta.progressoDocumentosFormalizacao.percentual), proposta.progressoDocumentosFormalizacao.completo ? 'kpi-card-success' : 'kpi-card-warning', 'fa-file-signature')}
+                        ${renderizarKpiDetalheProfor('Total do Plano', formatMoney(proposta.plano.total), proposta.situacaoPlano, proposta.plano.fechaComValorGlobal ? 'kpi-card-success' : 'kpi-card-warning', 'fa-list-check')}
+                        ${renderizarKpiDetalheProfor('Alertas Críticos', String(alertasCriticos.length), proposta.aptaCelebracao ? 'Apta à celebração' : 'Verificar pendências', alertasCriticos.length ? 'kpi-card-warning' : 'kpi-card-success', 'fa-triangle-exclamation')}
+                    </section>
+
+                    <section class="table-container mb-4">
+                        <div class="section-header compact">
+                            <div>
+                                <p class="section-eyebrow mb-1">Responsáveis</p>
+                                <h2>Dados do gestor estadual</h2>
+                            </div>
+                        </div>
+                        <div class="formalizacao-info-grid">
+                            ${renderizarCampoFormalizacao('Secretário', proposta.gestor.nome, 'fa-user-tie')}
+                            ${renderizarCampoFormalizacao('Cargo', proposta.gestor.cargo, 'fa-id-badge')}
+                            ${renderizarCampoFormalizacao('Órgão', proposta.gestor.orgao, 'fa-building')}
+                            ${renderizarCampoFormalizacao('E-mail institucional', proposta.gestor.email, 'fa-envelope')}
+                            ${renderizarCampoFormalizacao('Telefone', proposta.gestor.telefone, 'fa-phone')}
+                            ${renderizarCampoFormalizacao('Responsável técnico', proposta.responsavelTecnico.nome, 'fa-user-gear')}
+                            ${renderizarCampoFormalizacao('Cargo técnico', proposta.responsavelTecnico.cargo, 'fa-address-card')}
+                            ${renderizarCampoFormalizacao('E-mail técnico', proposta.responsavelTecnico.email, 'fa-envelope-open-text')}
+                            ${renderizarCampoFormalizacao('Telefone técnico', proposta.responsavelTecnico.telefone, 'fa-phone-volume')}
+                        </div>
+                    </section>
+
+                    <section class="table-container mb-4">
+                        <div class="section-header compact">
+                            <div>
+                                <p class="section-eyebrow mb-1">Trilha</p>
+                                <h2>Andamento da formalização</h2>
+                            </div>
+                            ${renderizarStatusFormalizacao(proposta)}
+                        </div>
+                        ${renderizarTrilhaFormalizacao(proposta.trilha)}
+                    </section>
+
+                    ${renderizarTabelaDocumentosFormalizacao('Documentos do projeto', proposta.documentosProjeto, proposta.progressoDocumentosProjeto)}
+                    ${renderizarTabelaDocumentosFormalizacao('Documentos da formalização', proposta.documentosFormalizacao, proposta.progressoDocumentosFormalizacao, true)}
+                    ${renderizarCondicaoSuspensivaFormalizacao(proposta)}
+                    ${renderizarPlanoAplicacaoFormalizacao(proposta)}
+
+                    <section class="formalizacao-alert-panel mb-0">
+                        <div class="section-header compact">
+                            <div>
+                                <p class="section-eyebrow mb-1">Observações e pendências</p>
+                                <h2>Alertas da UF</h2>
+                            </div>
+                        </div>
+                        <div class="formalizacao-detail-alerts">
+                            ${proposta.alertas.length ? proposta.alertas.map((alerta) => `
+                                <div class="formalizacao-detail-alert formalizacao-detail-alert-${obterClasseAlertaFormalizacao(alerta.severidade)}">
+                                    ${renderizarBadgeAlertaFormalizacao(alerta)}
+                                    <span>${escapeHtml(alerta.mensagem)}</span>
+                                </div>
+                            `).join('') : '<div class="formalizacao-empty-state"><i class="fas fa-circle-check" aria-hidden="true"></i><span>Nenhum alerta calculado para esta UF.</span></div>'}
+                        </div>
+                        ${proposta.observacoes ? `<p class="formalizacao-observation">${escapeHtml(proposta.observacoes)}</p>` : ''}
+                    </section>
+                </div>
+            `;
+        }
+
         // --- MÓDULO DE ORÇAMENTO 2026 ---
         // Contrato visual do fluxo padrão. Cada etapa aponta para propriedades
         // preenchidas pelo data-service a partir das abas de andamento.
@@ -3962,6 +4761,7 @@ async function carregarLogoParaPDF() {
 window.toggleView = toggleView;
 window.abrirDetalheEstado = abrirDetalheEstado;
 window.abrirDetalheConvenioProfor = abrirDetalheConvenioProfor;
+window.abrirDetalheFormalizacaoProfor = abrirDetalheFormalizacaoProfor;
 window.abrirDetalheFaf2021 = abrirDetalheFaf2021;
 window.abrirDetalheDoacoes2023 = abrirDetalheDoacoes2023;
 window.abrirSelecaoUfExportacao = abrirSelecaoUfExportacao;
@@ -3971,4 +4771,5 @@ window.exportarRelatorioPDF = exportarRelatorioPDF;
 window.exportarOrcamentoPDF = exportarOrcamentoPDF;
 window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;
 window.abrirOrcamento = () => toggleView('orcamento');
+window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
 window.aplicarFiltroUF = aplicarFiltroUF;
