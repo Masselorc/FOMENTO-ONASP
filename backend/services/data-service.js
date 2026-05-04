@@ -8,6 +8,8 @@
 // ============================================================================
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
+// Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
+const VERSAO_DADOS = '20260504-8';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
@@ -26,6 +28,11 @@ const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
 const UFS_FORMALIZACAO_PROFOR = ['AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MG', 'PA', 'PE', 'RN', 'RR', 'RS', 'SE'];
 const UFS_CONDICAO_SUSPENSIVA_PROFOR = new Set(['PA', 'RR', 'RS', 'SE']);
 const VALOR_REPASSE_PROFOR = 200000;
+const TODAS_UFS_BRASIL = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+    'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+    'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+];
 const COLUNAS_GERAL_PROFOR = {
     uf: 0,
     instrumento: 1,
@@ -1024,7 +1031,24 @@ function criarContatosFormalizacaoVazios(erro = '') {
     };
 }
 
-function extrairCadastroInstitucionalContatos(workbook) {
+function ufContatoValida(uf) {
+    return TODAS_UFS_BRASIL.includes(normalizarTexto(uf));
+}
+
+function linhaPlanilhaPossuiValor(linha) {
+    return (linha || []).some((valor) => textoPossuiValor(valor));
+}
+
+function registrarLinhaContatoInvalida(registros, origem, linha, uf) {
+    if (!linhaPlanilhaPossuiValor(linha)) return;
+    registros.push({
+        origem,
+        uf: uf || '',
+        motivo: uf ? 'UF inválida' : 'UF ausente'
+    });
+}
+
+function extrairCadastroInstitucionalContatos(workbook, linhasInvalidas = []) {
     const tabela = obterTabelaFormalizacao(workbook, ABA_CONTATOS_UF, ['UF', 'Órgão_Entidade']);
     if (!tabela) {
         throw new Error(`A aba ${ABA_CONTATOS_UF} nao foi encontrada ou nao possui os cabecalhos esperados.`);
@@ -1033,7 +1057,10 @@ function extrairCadastroInstitucionalContatos(workbook) {
     const porUf = new Map();
     tabela.linhas.forEach((linha) => {
         const uf = normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['UF']));
-        if (!uf) return;
+        if (!ufContatoValida(uf)) {
+            registrarLinhaContatoInvalida(linhasInvalidas, ABA_CONTATOS_UF, linha, uf);
+            return;
+        }
 
         const celularTitular = obterCelulaFormalizacao(linha, tabela, ['Celular_Titular', 'Celular Titular']);
         const telefoneTitular = obterCelulaFormalizacao(linha, tabela, ['Telefone_Titular', 'Telefone Titular']);
@@ -1073,6 +1100,20 @@ function extrairCadastroInstitucionalContatos(workbook) {
             emailSubstituto: obterCelulaFormalizacao(linha, tabela, ['Email_Substituto', 'E-mail Substituto']),
             atoNomeacao: obterCelulaFormalizacao(linha, tabela, ['Ato_Nomeação', 'Ato Nomeação', 'Ato Nomeacao']),
             observacoes: obterCelulaFormalizacao(linha, tabela, ['Observações', 'Observacoes', 'Observação']),
+            tratamentoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Tratamento_Destinatario', 'Tratamento Destinatario', 'Tratamento Destinatário']),
+            nomeDestinatario: obterCelulaFormalizacao(linha, tabela, ['Nome_Destinatario', 'Nome Destinatario', 'Nome Destinatário']),
+            cargoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Cargo_Destinatario', 'Cargo Destinatario', 'Cargo Destinatário']),
+            enderecoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Endereco_Destinatario', 'Endereço_Destinatario', 'Endereco Destinatario', 'Endereço Destinatário']),
+            complementoEnderecoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Complemento_Endereco_Destinatario', 'Complemento Endereco Destinatario', 'Complemento Endereço Destinatário']),
+            bairroDestinatario: obterCelulaFormalizacao(linha, tabela, ['Bairro_Destinatario', 'Bairro Destinatario', 'Bairro Destinatário']),
+            cepDestinatario: obterCelulaFormalizacao(linha, tabela, ['CEP_Destinatario', 'CEP Destinatario', 'CEP Destinatário']),
+            cidadeDestinatario: obterCelulaFormalizacao(linha, tabela, ['Cidade_Destinatario', 'Cidade Destinatario', 'Cidade Destinatário']),
+            siglaUfDestinatario: obterCelulaFormalizacao(linha, tabela, ['Sigla_UF_Destinatario', 'Sigla UF Destinatario', 'Sigla UF Destinatário']),
+            telefoneFixoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Telefone_Fixo_Destinatario', 'Telefone Fixo Destinatario', 'Telefone Fixo Destinatário']),
+            telefoneCelularDestinatario: obterCelulaFormalizacao(linha, tabela, ['Telefone_Celular_Destinatario', 'Telefone Celular Destinatario', 'Telefone Celular Destinatário']),
+            emailDestinatario: obterCelulaFormalizacao(linha, tabela, ['Email_Destinatario', 'E-mail_Destinatario', 'Email Destinatario', 'E-mail Destinatário']),
+            destinatarioOficioFlag: obterCelulaFormalizacao(linha, tabela, ['Destinatario_Oficio', 'Destinatário_Ofício', 'Destinatario Oficio', 'Destinatário Ofício']),
+            tipoContato: obterCelulaFormalizacao(linha, tabela, ['Tipo_Contato', 'Tipo Contato']),
             emailInstitucional: primeiroTextoComValor([emailTitular, emailGabinete]),
             telefoneInstitucional: primeiroTextoComValor([celularTitular, telefoneTitular, contatoChefe, contatoSecretaria, ramaisGabinete])
         });
@@ -1081,7 +1122,7 @@ function extrairCadastroInstitucionalContatos(workbook) {
     return porUf;
 }
 
-function extrairPessoasContatos(workbook) {
+function extrairPessoasContatos(workbook, linhasInvalidas = []) {
     const tabela = obterTabelaFormalizacao(workbook, ABA_CONTATOS_PESSOAS, ['UF', 'Papel', 'Nome']);
     if (!tabela) {
         throw new Error(`A aba ${ABA_CONTATOS_PESSOAS} nao foi encontrada ou nao possui os cabecalhos esperados.`);
@@ -1090,7 +1131,10 @@ function extrairPessoasContatos(workbook) {
     const porUf = new Map();
     tabela.linhas.forEach((linha) => {
         const uf = normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['UF']));
-        if (!uf) return;
+        if (!ufContatoValida(uf)) {
+            registrarLinhaContatoInvalida(linhasInvalidas, ABA_CONTATOS_PESSOAS, linha, uf);
+            return;
+        }
 
         const pessoa = {
             uf,
@@ -1104,6 +1148,18 @@ function extrairPessoasContatos(workbook) {
             cpf: obterCelulaFormalizacao(linha, tabela, ['CPF']),
             telefone: obterCelulaFormalizacao(linha, tabela, ['Telefone/Contato', 'Telefone Contato', 'Telefone']),
             email: obterCelulaFormalizacao(linha, tabela, ['E-mail', 'Email']),
+            tipoContato: obterCelulaFormalizacao(linha, tabela, ['Tipo_Contato', 'Tipo Contato']),
+            destinatarioOficioFlag: obterCelulaFormalizacao(linha, tabela, ['Destinatario_Oficio', 'Destinatário_Ofício', 'Destinatario Oficio', 'Destinatário Ofício']),
+            tratamentoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Tratamento_Destinatario', 'Tratamento Destinatario', 'Tratamento Destinatário']),
+            enderecoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Endereco_Destinatario', 'Endereço_Destinatario', 'Endereco Destinatario', 'Endereço Destinatário']),
+            complementoEnderecoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Complemento_Endereco_Destinatario', 'Complemento Endereco Destinatario', 'Complemento Endereço Destinatário']),
+            bairroDestinatario: obterCelulaFormalizacao(linha, tabela, ['Bairro_Destinatario', 'Bairro Destinatario', 'Bairro Destinatário']),
+            cepDestinatario: obterCelulaFormalizacao(linha, tabela, ['CEP_Destinatario', 'CEP Destinatario', 'CEP Destinatário']),
+            cidadeDestinatario: obterCelulaFormalizacao(linha, tabela, ['Cidade_Destinatario', 'Cidade Destinatario', 'Cidade Destinatário']),
+            siglaUfDestinatario: obterCelulaFormalizacao(linha, tabela, ['Sigla_UF_Destinatario', 'Sigla UF Destinatario', 'Sigla UF Destinatário']),
+            telefoneFixoDestinatario: obterCelulaFormalizacao(linha, tabela, ['Telefone_Fixo_Destinatario', 'Telefone Fixo Destinatario', 'Telefone Fixo Destinatário']),
+            telefoneCelularDestinatario: obterCelulaFormalizacao(linha, tabela, ['Telefone_Celular_Destinatario', 'Telefone Celular Destinatario', 'Telefone Celular Destinatário']),
+            emailDestinatario: obterCelulaFormalizacao(linha, tabela, ['Email_Destinatario', 'E-mail_Destinatario', 'Email Destinatario', 'E-mail Destinatário']),
             observacoes: obterCelulaFormalizacao(linha, tabela, ['Observações', 'Observacoes', 'Observação'])
         };
 
@@ -1120,10 +1176,247 @@ function extrairPessoasContatos(workbook) {
     return porUf;
 }
 
-function extrairDadosContatosFormalizacao(workbookContatos) {
+function campoDestinatarioExplicito(valor) {
+    return textoPossuiValor(valor);
+}
+
+function contatoMarcadoComoDestinatario(contato = {}) {
+    const tipo = normalizarTexto(contato.tipoContato).replace(/[^A-Z0-9]+/g, '');
+    const flag = normalizarTexto(contato.destinatarioOficioFlag).replace(/[^A-Z0-9]+/g, '');
+    return valorEhSim(contato.destinatarioOficioFlag)
+        || flag === 'DESTINATARIO'
+        || flag === 'DESTINATARIOOFICIO'
+        || tipo === 'SECRETARIOTITULAR'
+        || tipo === 'DESTINATARIOOFICIO';
+}
+
+function cadastroTemDestinatarioExplicito(cadastro = {}) {
+    return [
+        cadastro.tratamentoDestinatario,
+        cadastro.nomeDestinatario,
+        cadastro.cargoDestinatario,
+        cadastro.enderecoDestinatario,
+        cadastro.emailDestinatario,
+        cadastro.telefoneFixoDestinatario,
+        cadastro.telefoneCelularDestinatario
+    ].some(campoDestinatarioExplicito) || contatoMarcadoComoDestinatario(cadastro);
+}
+
+function valoresUnicosComValor(valores) {
+    return Array.from(new Set(
+        valores
+            .flatMap((valor) => String(valor ?? '').split(/[;|]+/))
+            .map((valor) => valor.replace(/\s+/g, ' ').trim())
+            .filter(textoPossuiValor)
+    ));
+}
+
+function extrairEmailsTexto(valor) {
+    const texto = String(valor ?? '').trim();
+    if (!texto) return [];
+    return texto.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [];
+}
+
+function emailTemFormatoValido(valor) {
+    return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(String(valor || '').trim());
+}
+
+function coletarEmailsContato(valores) {
+    return Array.from(new Set(
+        valores
+            .flatMap((valor) => extrairEmailsTexto(valor))
+            .map((email) => email.trim())
+            .filter(emailTemFormatoValido)
+    ));
+}
+
+function coletarEmailsInvalidosContato(uf, origem, valores) {
+    return valores.flatMap((valor) => {
+        const texto = String(valor ?? '').trim();
+        if (!texto) return [];
+
+        const tokens = texto
+            .split(/[;,|\s]+/)
+            .map((token) => token.trim())
+            .filter(Boolean)
+            .filter((token) => token.includes('@'));
+
+        if (!tokens.length && textoPossuiValor(texto)) {
+            return [{ uf, origem, valor: texto }];
+        }
+
+        return tokens
+            .filter((token) => !emailTemFormatoValido(token))
+            .map((token) => ({ uf, origem, valor: token }));
+    });
+}
+
+function telefoneTemPadraoMinimo(valor) {
+    return String(valor ?? '').replace(/\D/g, '').length >= 8;
+}
+
+// Consolida o destinatário do ofício com precedência determinística:
+// campos explícitos da UF, contato nominal marcado e, por último, legado do titular.
+function normalizarDestinatarioOficioContato(cadastro = {}, pessoas = []) {
+    const pessoasDestinatarias = pessoas.filter(contatoMarcadoComoDestinatario);
+    const candidatosOficiais = [
+        ...(cadastroTemDestinatarioExplicito(cadastro) ? [cadastro] : []),
+        ...pessoasDestinatarias
+    ];
+    const origemOficial = cadastroTemDestinatarioExplicito(cadastro)
+        ? 'cadastro_destinatario'
+        : pessoasDestinatarias.length
+            ? 'pessoa_destinataria'
+            : '';
+    const fonteOficial = candidatosOficiais[0];
+    const fonteLegada = campoDestinatarioExplicito(cadastro.nomeTitular) || campoDestinatarioExplicito(cadastro.cargoTitular)
+        ? cadastro
+        : null;
+    const fonte = fonteOficial || fonteLegada || {};
+    const origem = origemOficial || (fonteLegada ? 'cadastro_legado' : '');
+
+    const destinatario = {
+        origem,
+        inferido: origem === 'cadastro_legado',
+        duplicado: candidatosOficiais.length > 1,
+        tratamento: primeiroTextoComValor([fonte.tratamentoDestinatario, cadastro.tratamentoDestinatario]),
+        nome: primeiroTextoComValor([fonte.nomeDestinatario, fonte.nome, cadastro.nomeDestinatario, cadastro.nomeTitular]),
+        cargo: primeiroTextoComValor([fonte.cargoDestinatario, fonte.cargo, cadastro.cargoDestinatario, cadastro.cargoTitular]),
+        endereco: primeiroTextoComValor([fonte.enderecoDestinatario, cadastro.enderecoDestinatario, cadastro.endereco]),
+        complemento: primeiroTextoComValor([fonte.complementoEnderecoDestinatario, cadastro.complementoEnderecoDestinatario]),
+        bairro: primeiroTextoComValor([fonte.bairroDestinatario, cadastro.bairroDestinatario]),
+        cep: primeiroTextoComValor([fonte.cepDestinatario, cadastro.cepDestinatario, cadastro.cep]),
+        cidade: primeiroTextoComValor([fonte.cidadeDestinatario, cadastro.cidadeDestinatario, cadastro.estado]),
+        uf: primeiroTextoComValor([fonte.siglaUfDestinatario, fonte.uf, cadastro.siglaUfDestinatario, cadastro.uf]),
+        telefones: valoresUnicosComValor([
+            cadastro.contatoSecretaria,
+            fonte.telefoneFixoDestinatario,
+            fonte.telefoneCelularDestinatario,
+            fonte.telefone,
+            cadastro.telefoneFixoDestinatario,
+            cadastro.telefoneCelularDestinatario,
+            cadastro.telefoneTitular,
+            cadastro.celularTitular,
+            cadastro.ramaisGabinete
+        ]),
+        emails: coletarEmailsContato([
+            fonte.emailDestinatario,
+            cadastro.emailDestinatario,
+            cadastro.emailGabinete,
+            cadastro.emailTitular,
+            fonte.email
+        ])
+    };
+
+    const camposFaltantes = [];
+    if (!textoPossuiValor(destinatario.nome)) camposFaltantes.push('nome');
+    if (!textoPossuiValor(destinatario.cargo)) camposFaltantes.push('cargo');
+    if (!textoPossuiValor(destinatario.endereco)) camposFaltantes.push('endereço');
+    if (!destinatario.telefones.some(telefoneTemPadraoMinimo)) camposFaltantes.push('telefone');
+    if (!destinatario.emails.length) camposFaltantes.push('e-mail');
+
+    destinatario.camposFaltantes = camposFaltantes;
+    destinatario.completo = camposFaltantes.length === 0;
+    destinatario.temDados = [
+        destinatario.tratamento,
+        destinatario.nome,
+        destinatario.cargo,
+        destinatario.endereco,
+        destinatario.cep,
+        destinatario.cidade,
+        destinatario.uf,
+        ...destinatario.telefones,
+        ...destinatario.emails
+    ].some(textoPossuiValor);
+
+    return destinatario;
+}
+
+// Gera o diagnóstico consumido pela tela de Contatos; a UI apenas renderiza estes achados.
+function montarDiagnosticoContatos(cadastroPorUf, pessoasPorUf, linhasInvalidas = []) {
+    const ufs = Array.from(new Set([...cadastroPorUf.keys(), ...pessoasPorUf.keys()])).sort();
+    const ufsComCadastro = Array.from(cadastroPorUf.keys()).sort();
+    const ufsSemCadastro = ufs.filter((uf) => !cadastroPorUf.has(uf));
+    const ufsSemDestinatario = [];
+    const ufsComDestinatarioIncompleto = [];
+    const destinatariosDuplicados = [];
+    const telefonesAusentes = [];
+    const emailsInvalidos = [];
+
+    ufs.forEach((uf) => {
+        const cadastro = cadastroPorUf.get(uf) || { uf };
+        const pessoas = pessoasPorUf.get(uf) || [];
+        const destinatario = normalizarDestinatarioOficioContato(cadastro, pessoas);
+
+        if (cadastroPorUf.has(uf)) {
+            cadastro.destinatarioOficio = destinatario;
+        }
+
+        if (!destinatario.temDados) {
+            ufsSemDestinatario.push(uf);
+        } else if (!destinatario.completo) {
+            ufsComDestinatarioIncompleto.push({
+                uf,
+                camposFaltantes: destinatario.camposFaltantes,
+                origem: destinatario.origem
+            });
+        }
+
+        if (!destinatario.telefones.some(telefoneTemPadraoMinimo)) {
+            telefonesAusentes.push(uf);
+        }
+
+        if (destinatario.duplicado) {
+            const quantidadeDestinatarios = (cadastroTemDestinatarioExplicito(cadastro) ? 1 : 0)
+                + pessoas.filter(contatoMarcadoComoDestinatario).length;
+            destinatariosDuplicados.push({
+                uf,
+                quantidade: quantidadeDestinatarios
+            });
+        }
+
+        emailsInvalidos.push(
+            ...coletarEmailsInvalidosContato(uf, ABA_CONTATOS_UF, [
+                cadastro.emailDestinatario,
+                cadastro.emailGabinete,
+                cadastro.emailTitular,
+                cadastro.emailSubstituto
+            ]),
+            ...pessoas.flatMap((pessoa) => coletarEmailsInvalidosContato(uf, ABA_CONTATOS_PESSOAS, [
+                pessoa.emailDestinatario,
+                pessoa.email
+            ]))
+        );
+    });
+
+    const severidadeGeral = linhasInvalidas.length || ufsSemCadastro.length || ufsSemDestinatario.length || destinatariosDuplicados.length
+        ? 'danger'
+        : ufsComDestinatarioIncompleto.length || emailsInvalidos.length || telefonesAusentes.length
+            ? 'warning'
+            : 'success';
+
     return {
-        cadastroPorUf: extrairCadastroInstitucionalContatos(workbookContatos),
-        pessoasPorUf: extrairPessoasContatos(workbookContatos),
+        ufsComCadastro,
+        ufsSemCadastro,
+        ufsSemDestinatario,
+        ufsComDestinatarioIncompleto,
+        destinatariosDuplicados,
+        emailsInvalidos,
+        telefonesAusentes,
+        linhasIgnoradasPorUfInvalida: linhasInvalidas,
+        severidadeGeral
+    };
+}
+
+function extrairDadosContatosFormalizacao(workbookContatos) {
+    const linhasInvalidas = [];
+    const cadastroPorUf = extrairCadastroInstitucionalContatos(workbookContatos, linhasInvalidas);
+    const pessoasPorUf = extrairPessoasContatos(workbookContatos, linhasInvalidas);
+
+    return {
+        cadastroPorUf,
+        pessoasPorUf,
+        diagnostico: montarDiagnosticoContatos(cadastroPorUf, pessoasPorUf, linhasInvalidas),
         disponivel: true,
         erro: ''
     };
@@ -1633,6 +1926,109 @@ function montarResumoFormalizacao(propostas) {
     };
 }
 
+// A condição suspensiva pode aparecer com nomes diferentes na planilha; esta regra
+// identifica o item documental esperado sem depender de um único código rígido.
+function documentoRepresentaCondicaoSuspensiva(documento) {
+    const texto = normalizarTexto(`${documento.codigo} ${documento.nome} ${documento.descricao}`);
+    return texto.includes('ATO NORMATIVO') || texto.includes('CONDICAO SUSPENSIVA');
+}
+
+// Valida a planilha de formalização antes do filtro das 14 UFs mascarar erros de base.
+function montarDiagnosticoFormalizacao(workbook, propostas) {
+    const painel = obterTabelaFormalizacao(workbook, ABA_FORMALIZACAO_PAINEL, ['ID_Proposta', 'UF']);
+    const dicionario = extrairDicionarioDocumentosFormalizacao(workbook);
+    const checklist = extrairChecklistFormalizacao(workbook);
+    const registrosPainel = painel
+        ? painel.linhas.map((linha) => ({
+            idProposta: obterCelulaFormalizacao(linha, painel, ['ID_Proposta', 'ID Proposta']),
+            uf: normalizarTexto(obterCelulaFormalizacao(linha, painel, ['UF'])),
+            valorRepasse: obterNumeroFormalizacao(linha, painel, ['Valor de Repasse', 'Valor Repasse'])
+        })).filter((registro) => registro.idProposta || registro.uf || registro.valorRepasse)
+        : [];
+    const ufsEncontradas = Array.from(new Set(registrosPainel.map((registro) => registro.uf).filter(Boolean))).sort();
+    const ufsFaltantes = UFS_FORMALIZACAO_PROFOR.filter((uf) => !ufsEncontradas.includes(uf));
+    const ufsExcedentes = ufsEncontradas.filter((uf) => !UFS_FORMALIZACAO_PROFOR.includes(uf));
+    const totalRepasseEncontrado = registrosPainel.reduce((total, registro) => total + (Number(registro.valorRepasse) || 0), 0);
+    const repassesDivergentes = registrosPainel
+        .filter((registro) => UFS_FORMALIZACAO_PROFOR.includes(registro.uf))
+        .filter((registro) => Math.abs(moedaParaCentavos(registro.valorRepasse) - moedaParaCentavos(VALOR_REPASSE_PROFOR)) > TOLERANCIA_VALIDACAO_CENTAVOS)
+        .map((registro) => ({
+            uf: registro.uf,
+            idProposta: registro.idProposta,
+            valor: registro.valorRepasse,
+            esperado: VALOR_REPASSE_PROFOR
+        }));
+    const condicoesSuspensivasPendentes = propostas
+        .filter((proposta) => proposta.condicaoSuspensiva.exige && !proposta.condicaoSuspensiva.resolvida)
+        .map((proposta) => ({
+            uf: proposta.uf,
+            situacao: proposta.condicaoSuspensiva.situacao,
+            idProposta: proposta.idProposta
+        }));
+    const condicoesSuspensivasSemChecklist = Array.from(UFS_CONDICAO_SUSPENSIVA_PROFOR)
+        .filter((uf) => {
+            const proposta = propostas.find((item) => item.uf === uf);
+            if (!proposta) return true;
+            return ![...proposta.documentosProjeto, ...proposta.documentosFormalizacao]
+                .some(documentoRepresentaCondicaoSuspensiva);
+        })
+        .map((uf) => ({ uf, documento: 'Ato normativo publicado' }));
+    const documentosObrigatoriosIncompletos = propostas.flatMap((proposta) => (
+        [...proposta.documentosProjeto, ...proposta.documentosFormalizacao]
+            .filter((documento) => documento.obrigatorio && !valorNaoSeAplica(documento.statusAnalise) && !documento.enviado)
+            .map((documento) => ({
+                uf: proposta.uf,
+                codigo: documento.codigo,
+                nome: documento.nome,
+                etapa: documento.etapa
+            }))
+    ));
+    const documentosEnviadosSemLink = propostas.flatMap((proposta) => (
+        [...proposta.documentosProjeto, ...proposta.documentosFormalizacao]
+            .filter((documento) => documento.enviado && !textoPossuiValor(documento.link))
+            .map((documento) => ({
+                uf: proposta.uf,
+                codigo: documento.codigo,
+                nome: documento.nome,
+                etapa: documento.etapa
+            }))
+    ));
+    const documentosSemDicionario = [];
+    checklist.forEach((documentos, idProposta) => {
+        documentos.forEach((documento, codigo) => {
+            if (dicionario.has(codigo)) return;
+            documentosSemDicionario.push({
+                idProposta,
+                uf: documento.uf,
+                codigo,
+                nome: documento.nome
+            });
+        });
+    });
+
+    const severidadeGeral = ufsFaltantes.length || ufsExcedentes.length || repassesDivergentes.length || condicoesSuspensivasSemChecklist.length || documentosSemDicionario.length
+        ? 'danger'
+        : condicoesSuspensivasPendentes.length || documentosObrigatoriosIncompletos.length || documentosEnviadosSemLink.length
+            ? 'warning'
+            : 'success';
+
+    return {
+        ufsEsperadas: [...UFS_FORMALIZACAO_PROFOR],
+        ufsEncontradas,
+        ufsFaltantes,
+        ufsExcedentes,
+        totalRepasseEsperado: UFS_FORMALIZACAO_PROFOR.length * VALOR_REPASSE_PROFOR,
+        totalRepasseEncontrado: arredondarMoeda(totalRepasseEncontrado),
+        repassesDivergentes,
+        condicoesSuspensivasPendentes,
+        condicoesSuspensivasSemChecklist,
+        documentosObrigatoriosIncompletos,
+        documentosSemDicionario,
+        documentosEnviadosSemLink,
+        severidadeGeral
+    };
+}
+
 function extrairFormalizacaoProforDoWorkbook(workbook, contatosFormalizacao = criarContatosFormalizacaoVazios()) {
     const propostas = montarPropostasFormalizacao(workbook, contatosFormalizacao);
     return {
@@ -1644,6 +2040,7 @@ function extrairFormalizacaoProforDoWorkbook(workbook, contatosFormalizacao = cr
         ufsCondicaoSuspensiva: Array.from(UFS_CONDICAO_SUSPENSIVA_PROFOR),
         valorRepassePadrao: VALOR_REPASSE_PROFOR,
         propostas,
+        diagnostico: montarDiagnosticoFormalizacao(workbook, propostas),
         resumo: montarResumoFormalizacao(propostas)
     };
 }
@@ -1653,8 +2050,14 @@ async function lerWorkbookDeArrayBuffer(arrayBuffer) {
     return xlsx.read(arrayBuffer, { type: 'array', raw: true });
 }
 
+// Aplica cache-busting também nos XLSX, não só nos assets JS/CSS.
+function aplicarVersaoDados(url) {
+    url.searchParams.set('v', VERSAO_DADOS);
+    return url;
+}
+
 async function carregarWorkbookPorCaminho(caminhoPlanilha, nomeErro) {
-    const planilhaUrl = new URL(`../../${caminhoPlanilha}`, import.meta.url);
+    const planilhaUrl = aplicarVersaoDados(new URL(`../../${caminhoPlanilha}`, import.meta.url));
     const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
 
     if (!resposta.ok) {
@@ -1669,7 +2072,7 @@ async function carregarConveniosDaPlanilha(catalogoAplicacao) {
         throw new Error('Abra a aplicacao por um servidor local ou selecione a planilha manualmente.');
     }
 
-    const planilhaUrl = new URL(`../../${catalogoAplicacao.configuracao.arquivoPlanilhaConvenios}`, import.meta.url);
+    const planilhaUrl = aplicarVersaoDados(new URL(`../../${catalogoAplicacao.configuracao.arquivoPlanilhaConvenios}`, import.meta.url));
     const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
 
     if (!resposta.ok) {
@@ -1691,7 +2094,7 @@ async function carregarPlanilhaOrcamento() {
             return dadosOrcamentoCache;
         }
 
-        const planilhaUrl = new URL(`../../${ARQUIVO_PLANILHA_ORCAMENTO}`, import.meta.url);
+        const planilhaUrl = aplicarVersaoDados(new URL(`../../${ARQUIVO_PLANILHA_ORCAMENTO}`, import.meta.url));
         const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
         
         if (!resposta.ok) {

@@ -19,7 +19,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260504-7';
+} from '../../backend/services/data-service.js?v=20260504-8';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -2626,6 +2626,83 @@ async function carregarLogoParaPDF() {
             `).join('');
         }
 
+        function obterClasseDiagnostico(severidade = 'success') {
+            if (severidade === 'danger') return 'danger';
+            if (severidade === 'warning') return 'warning';
+            return 'success';
+        }
+
+        function renderizarItensDiagnostico(itens = [], renderItem = (item) => item, limite = 8) {
+            if (!itens.length) {
+                return '<span class="diagnostic-empty">Nenhuma ocorrência</span>';
+            }
+
+            const exibidos = itens.slice(0, limite);
+            const restante = itens.length - exibidos.length;
+            return `
+                <ul class="diagnostic-list">
+                    ${exibidos.map((item) => `<li>${renderItem(item)}</li>`).join('')}
+                    ${restante > 0 ? `<li>+ ${restante} ocorrência(s)</li>` : ''}
+                </ul>
+            `;
+        }
+
+        // Painel superior da Formalização: transforma inconsistências da planilha
+        // em itens acionáveis antes que o usuário abra cada UF.
+        function renderizarDiagnosticoFormalizacao(diagnostico = {}) {
+            const classe = obterClasseDiagnostico(diagnostico.severidadeGeral);
+            const totalPendencias = [
+                ...(diagnostico.ufsFaltantes || []),
+                ...(diagnostico.ufsExcedentes || []),
+                ...(diagnostico.repassesDivergentes || []),
+                ...(diagnostico.condicoesSuspensivasPendentes || []),
+                ...(diagnostico.condicoesSuspensivasSemChecklist || []),
+                ...(diagnostico.documentosObrigatoriosIncompletos || []),
+                ...(diagnostico.documentosSemDicionario || []),
+                ...(diagnostico.documentosEnviadosSemLink || [])
+            ].length;
+
+            return `
+                <section class="data-diagnostic-panel data-diagnostic-${classe} mb-4" aria-label="Diagnóstico da base PROFOR">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Controle de qualidade</p>
+                            <h2>Diagnóstico da base PROFOR</h2>
+                        </div>
+                        <span class="profor-alert-badge profor-alert-${classe}">${totalPendencias ? `${totalPendencias} ocorrência(s)` : 'Sem inconsistências'}</span>
+                    </div>
+                    <div class="diagnostic-metric-grid">
+                        <div><span>UFs esperadas/localizadas</span><strong>${(diagnostico.ufsEsperadas || []).length}/${(diagnostico.ufsEncontradas || []).length}</strong></div>
+                        <div><span>UFs faltantes</span><strong>${(diagnostico.ufsFaltantes || []).length}</strong></div>
+                        <div><span>UFs excedentes</span><strong>${(diagnostico.ufsExcedentes || []).length}</strong></div>
+                        <div><span>Repasse esperado</span><strong>${formatMoney(diagnostico.totalRepasseEsperado || 0)}</strong></div>
+                        <div><span>Repasse encontrado</span><strong>${formatMoney(diagnostico.totalRepasseEncontrado || 0)}</strong></div>
+                        <div><span>Repasse divergente</span><strong>${(diagnostico.repassesDivergentes || []).length}</strong></div>
+                    </div>
+                    <div class="diagnostic-detail-grid">
+                        <div>
+                            <h3>Estrutura</h3>
+                            ${renderizarItensDiagnostico([
+                                ...(diagnostico.ufsFaltantes || []).map((uf) => ({ texto: `UF faltante: ${uf}` })),
+                                ...(diagnostico.ufsExcedentes || []).map((uf) => ({ texto: `UF fora da rodada: ${uf}` })),
+                                ...(diagnostico.repassesDivergentes || []).map((item) => ({ texto: `${item.uf}: ${formatMoney(item.valor)} em vez de ${formatMoney(item.esperado)}` }))
+                            ], (item) => escapeHtml(item.texto))}
+                        </div>
+                        <div>
+                            <h3>Documentos</h3>
+                            ${renderizarItensDiagnostico([
+                                ...(diagnostico.condicoesSuspensivasPendentes || []).map((item) => ({ texto: `${item.uf}: condição suspensiva ${item.situacao}` })),
+                                ...(diagnostico.condicoesSuspensivasSemChecklist || []).map((item) => ({ texto: `${item.uf}: sem item de ato normativo no checklist` })),
+                                ...(diagnostico.documentosSemDicionario || []).map((item) => ({ texto: `${item.uf || item.idProposta}: ${item.codigo} sem dicionário` })),
+                                ...(diagnostico.documentosEnviadosSemLink || []).map((item) => ({ texto: `${item.uf}: ${item.codigo} enviado sem link` })),
+                                ...(diagnostico.documentosObrigatoriosIncompletos || []).map((item) => ({ texto: `${item.uf}: ${item.codigo} pendente` }))
+                            ], (item) => escapeHtml(item.texto))}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
         function atualizarListaFormalizacao(dados) {
             const propostas = filtrarPropostasFormalizacao(dados);
             const resumoSelecao = calcularResumoSelecaoFormalizacao(propostas);
@@ -2781,6 +2858,8 @@ async function carregarLogoParaPDF() {
                         <span><i class="fas fa-file-contract" aria-hidden="true"></i> Convênios</span>
                     </div>
                 </section>
+
+                ${renderizarDiagnosticoFormalizacao(dados.diagnostico)}
 
                 <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores de formalização">
                     <div class="col">
@@ -4544,6 +4623,10 @@ async function carregarLogoParaPDF() {
                         : '<div class="alert alert-info">Nenhum contato encontrado na planilha.</div>'
                     }
                 </section>
+                <div class="formalizacao-empty-state d-none" id="contacts-filter-empty">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <span>Nenhum contato localizado para o filtro selecionado.</span>
+                </div>
             `;
 
             configurarFiltroContatos();
@@ -4590,7 +4673,10 @@ async function carregarLogoParaPDF() {
                 mapa.get(uf).pessoas.push(pessoa);
             });
 
-            return Array.from(mapa.values()).sort((a, b) => {
+            return Array.from(mapa.values()).map((grupo) => ({
+                ...grupo,
+                destinatarioOficio: grupo.dadosUf?.destinatarioOficio || normalizarDestinatarioOficioGrupoContato(grupo)
+            })).sort((a, b) => {
                 const ordemA = TODAS_UFS_BRASIL.indexOf(a.uf);
                 const ordemB = TODAS_UFS_BRASIL.indexOf(b.uf);
 
@@ -4781,9 +4867,143 @@ async function carregarLogoParaPDF() {
                 : '<span class="filter-count-empty">Nenhuma UF disponível</span>';
         }
 
+        function contatoMarcadoComoDestinatarioOficio(contato = {}) {
+            const tipo = normalizarBusca(contato.tipoContato || '').replace(/[^a-z0-9]+/g, '');
+            return valorContatoEhSim(contato.destinatarioOficioFlag)
+                || tipo === 'secretariotitular'
+                || tipo === 'destinatariooficio';
+        }
+
+        function valorContatoEhSim(valor) {
+            return ['sim', 's', 'true', '1', 'destinatario', 'destinatário'].includes(normalizarBusca(valor || ''));
+        }
+
+        function textoContatoPossuiValor(valor) {
+            const texto = String(valor ?? '').replace(/\s+/g, ' ').trim();
+            return Boolean(texto && texto !== '-' && normalizarBusca(texto) !== 'nao informado' && normalizarBusca(texto) !== 'n a');
+        }
+
+        function primeiroCampoContato(valores = []) {
+            return valores.find(textoContatoPossuiValor) || '';
+        }
+
+        function valoresUnicosContato(valores = []) {
+            return Array.from(new Set(
+                valores
+                    .flatMap((valor) => String(valor ?? '').split(/[;|]+/))
+                    .map((valor) => valor.replace(/\s+/g, ' ').trim())
+                    .filter(textoContatoPossuiValor)
+            ));
+        }
+
+        function emailsValidosContato(valores = []) {
+            return Array.from(new Set(
+                valores
+                    .flatMap((valor) => String(valor ?? '').match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [])
+                    .map((email) => email.trim())
+            ));
+        }
+
+        function telefoneContatoValido(valor) {
+            return String(valor ?? '').replace(/\D/g, '').length >= 8;
+        }
+
+        function cadastroTemDestinatarioExplicitoContato(cadastro = {}) {
+            return [
+                cadastro.tratamentoDestinatario,
+                cadastro.nomeDestinatario,
+                cadastro.cargoDestinatario,
+                cadastro.enderecoDestinatario,
+                cadastro.emailDestinatario,
+                cadastro.telefoneFixoDestinatario,
+                cadastro.telefoneCelularDestinatario
+            ].some(textoContatoPossuiValor) || contatoMarcadoComoDestinatarioOficio(cadastro);
+        }
+
+        // Fallback local para grupos montados no frontend; deve espelhar a regra
+        // do data-service para manter o HTML SEI determinístico mesmo em dados legados.
+        function normalizarDestinatarioOficioGrupoContato(grupo = {}) {
+            const cadastro = grupo.dadosUf || {};
+            const pessoas = Array.isArray(grupo.pessoas) ? grupo.pessoas : [];
+            const pessoasDestinatarias = pessoas.filter(contatoMarcadoComoDestinatarioOficio);
+            const fonteOficial = cadastroTemDestinatarioExplicitoContato(cadastro)
+                ? cadastro
+                : pessoasDestinatarias[0];
+            const fonteLegada = textoContatoPossuiValor(cadastro.nomeTitular) || textoContatoPossuiValor(cadastro.cargoTitular)
+                ? cadastro
+                : null;
+            const fonte = fonteOficial || fonteLegada || {};
+            const origem = fonteOficial
+                ? (fonteOficial === cadastro ? 'cadastro_destinatario' : 'pessoa_destinataria')
+                : fonteLegada
+                    ? 'cadastro_legado'
+                    : '';
+            const candidatosOficiais = [
+                ...(cadastroTemDestinatarioExplicitoContato(cadastro) ? [cadastro] : []),
+                ...pessoasDestinatarias
+            ];
+            const destinatario = {
+                origem,
+                inferido: origem === 'cadastro_legado',
+                duplicado: candidatosOficiais.length > 1,
+                tratamento: primeiroCampoContato([fonte.tratamentoDestinatario, cadastro.tratamentoDestinatario]),
+                nome: primeiroCampoContato([fonte.nomeDestinatario, fonte.nome, cadastro.nomeDestinatario, cadastro.nomeTitular]),
+                cargo: primeiroCampoContato([fonte.cargoDestinatario, fonte.cargo, cadastro.cargoDestinatario, cadastro.cargoTitular]),
+                endereco: primeiroCampoContato([fonte.enderecoDestinatario, cadastro.enderecoDestinatario, cadastro.endereco]),
+                complemento: primeiroCampoContato([fonte.complementoEnderecoDestinatario, cadastro.complementoEnderecoDestinatario]),
+                bairro: primeiroCampoContato([fonte.bairroDestinatario, cadastro.bairroDestinatario]),
+                cep: primeiroCampoContato([fonte.cepDestinatario, cadastro.cepDestinatario, cadastro.cep]),
+                cidade: primeiroCampoContato([fonte.cidadeDestinatario, cadastro.cidadeDestinatario, cadastro.estado]),
+                uf: primeiroCampoContato([fonte.siglaUfDestinatario, fonte.uf, cadastro.siglaUfDestinatario, cadastro.uf, grupo.uf]),
+                telefones: valoresUnicosContato([
+                    cadastro.contatoSecretaria,
+                    fonte.telefoneFixoDestinatario,
+                    fonte.telefoneCelularDestinatario,
+                    fonte.telefone,
+                    cadastro.telefoneFixoDestinatario,
+                    cadastro.telefoneCelularDestinatario,
+                    cadastro.telefoneTitular,
+                    cadastro.celularTitular,
+                    cadastro.ramaisGabinete
+                ]),
+                emails: emailsValidosContato([
+                    fonte.emailDestinatario,
+                    cadastro.emailDestinatario,
+                    cadastro.emailGabinete,
+                    cadastro.emailTitular,
+                    fonte.email
+                ])
+            };
+            const camposFaltantes = [];
+            if (!textoContatoPossuiValor(destinatario.nome)) camposFaltantes.push('nome');
+            if (!textoContatoPossuiValor(destinatario.cargo)) camposFaltantes.push('cargo');
+            if (!textoContatoPossuiValor(destinatario.endereco)) camposFaltantes.push('endereço');
+            if (!destinatario.telefones.some(telefoneContatoValido)) camposFaltantes.push('telefone');
+            if (!destinatario.emails.length) camposFaltantes.push('e-mail');
+            destinatario.camposFaltantes = camposFaltantes;
+            destinatario.completo = camposFaltantes.length === 0;
+            destinatario.temDados = [
+                destinatario.tratamento,
+                destinatario.nome,
+                destinatario.cargo,
+                destinatario.endereco,
+                destinatario.cep,
+                destinatario.cidade,
+                destinatario.uf,
+                ...destinatario.telefones,
+                ...destinatario.emails
+            ].some(textoContatoPossuiValor);
+            return destinatario;
+        }
+
+        // Renderiza somente o bloco de endereçamento aceito pelo SEI; o botão é
+        // bloqueado quando não existe nenhuma linha real para copiar.
         function renderGeradorHtmlOficioSei(grupo) {
             const textareaId = `html-oficio-sei-${grupo.uf}`;
             const htmlOficio = gerarHtmlOficioSei(grupo);
+            const destinatario = obterDestinatarioSecretario(grupo);
+            const podeCopiar = htmlOficio.trim().length > 0;
+            const classeValidacao = destinatario.completo ? 'success' : 'warning';
 
             return `
                 <section class="sei-html-generator">
@@ -4800,10 +5020,18 @@ async function carregarLogoParaPDF() {
                             type="button"
                             class="btn btn-sm btn-outline-primary btn-icon-text btn-copy-sei-html"
                             data-target="${textareaId}"
+                            ${podeCopiar ? '' : 'disabled aria-disabled="true"'}
                         >
                             <i class="fas fa-copy" aria-hidden="true"></i>
                             <span>Copiar HTML</span>
                         </button>
+                    </div>
+
+                    <div class="sei-address-validation sei-address-${classeValidacao}">
+                        <strong>Endereçamento completo: ${destinatario.completo ? 'Sim' : 'Não'}</strong>
+                        ${destinatario.camposFaltantes?.length ? `<span>Campos faltantes: ${escapeHtml(destinatario.camposFaltantes.join(', '))}</span>` : ''}
+                        ${destinatario.inferido ? '<span>Destinatário inferido pelo cadastro legado da UF.</span>' : ''}
+                        ${destinatario.duplicado ? '<span>Há mais de um destinatário oficial marcado para esta UF.</span>' : ''}
                     </div>
 
                     <textarea
@@ -4825,9 +5053,11 @@ async function carregarLogoParaPDF() {
                 destinatario.cargo ? escapeHtml(destinatario.cargo) : '',
                 montarLinhaEnderecoDestinatario(destinatario),
                 montarLinhaLocalidadeDestinatario(destinatario),
-                destinatario.telefones.length ? destinatario.telefones.map(escapeHtml).join(' / ') : '',
-                destinatario.emails.length ? destinatario.emails.map(escapeHtml).join(' / ') : ''
+                destinatario.telefones?.length ? destinatario.telefones.map(escapeHtml).join(' / ') : '',
+                destinatario.emails?.length ? destinatario.emails.map(escapeHtml).join(' / ') : ''
             ].filter(Boolean);
+
+            if (!linhas.length) return '';
 
             return `<p class="Texto_Alinhado_Esquerda_Espaçamento_Simples" data-c="3">
 ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>' : ''}`).join('\n')}
@@ -4861,185 +5091,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
         }
 
         function obterDestinatarioSecretario(grupo) {
-            const dadosUf = grupo.dadosUf || {};
-            const pessoas = Array.isArray(grupo.pessoas) ? grupo.pessoas : [];
-
-            const pessoaSecretario = pessoas.find((pessoa) => {
-                const texto = Object.values(pessoa || {})
-                    .join(' ')
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .toUpperCase();
-
-                return texto.includes('SECRETARI');
-            }) || {};
-
-            const fontes = [dadosUf, pessoaSecretario];
-
-            return {
-                tratamento: obterCampoContato(fontes, [
-                    'tratamento',
-                    'tratamento_destinatario',
-                    'tratamentoDestinatario'
-                ]),
-
-                nome: obterCampoContato(fontes, [
-                    'nomeTitular',
-                    'nome_titular',
-                    'nome titular',
-                    'nome_secretario',
-                    'nome_secretaria',
-                    'secretario',
-                    'secretaria',
-                    'nome_destinatario',
-                    'nomeDestinatario',
-                    'nome',
-                    'Nome'
-                ]),
-
-                cargo: obterCampoContato(fontes, [
-                    'cargoTitular',
-                    'cargo_titular',
-                    'cargo titular',
-                    'cargo_secretario',
-                    'cargo_secretaria',
-                    'cargo_destinatario',
-                    'cargoDestinatario',
-                    'cargo',
-                    'Cargo',
-                    'funcao',
-                    'função'
-                ]),
-
-                endereco: obterCampoContato(fontes, [
-                    'endereco_destinatario',
-                    'endereço_destinatario',
-                    'endereco',
-                    'endereço',
-                    'logradouro'
-                ]),
-
-                complemento: obterCampoContato(fontes, [
-                    'complemento_endereco_destinatario',
-                    'complemento',
-                    'complemento_endereco'
-                ]),
-
-                bairro: obterCampoContato(fontes, [
-                    'bairro_destinatario',
-                    'bairro'
-                ]),
-
-                cep: obterCampoContato(fontes, [
-                    'cep_destinatario',
-                    'cep',
-                    'CEP'
-                ]),
-
-                cidade: obterCampoContato(fontes, [
-                    'cidade_destinatario',
-                    'cidade',
-                    'município',
-                    'municipio'
-                ]),
-
-                uf: obterCampoContato(fontes, [
-                    'sigla_uf_destinatario',
-                    'uf',
-                    'UF',
-                    'siglaUf'
-                ], grupo.uf || ''),
-
-                telefones: obterValoresUnicosContato(fontes, [
-                    'contatoSecretaria',
-                    'contato_secretaria',
-                    'contato secretaria',
-                    'telefone_fixo_destinatario',
-                    'telefone_fixo',
-                    'telefoneTitular',
-                    'telefone_titular',
-                    'telefone titular',
-                    'celularTitular',
-                    'celular_titular',
-                    'celular titular',
-                    'ramaisGabinete',
-                    'ramais_gabinete',
-                    'ramais gabinete',
-                    'telefone',
-                    'Telefone',
-                    'telefone_celular_destinatario',
-                    'telefone_celular',
-                    'celular',
-                    'Celular'
-                ]),
-
-                emails: obterEmailsContato(fontes, [
-                    'emailGabinete',
-                    'email_gabinete',
-                    'email gabinete',
-                    'emailTitular',
-                    'email_titular',
-                    'email titular',
-                    'email_destinatario',
-                    'email',
-                    'e-mail',
-                    'Email',
-                    'E-mail'
-                ])
-            };
-        }
-
-        function obterCampoContato(fontes, nomesPossiveis, fallback = '') {
-            const listaFontes = Array.isArray(fontes) ? fontes : [fontes];
-            const chavesNormalizadas = nomesPossiveis.map(normalizarChaveContato);
-
-            for (const fonte of listaFontes) {
-                if (!fonte || typeof fonte !== 'object') continue;
-
-                for (const [chave, valor] of Object.entries(fonte)) {
-                    if (!chavesNormalizadas.includes(normalizarChaveContato(chave))) continue;
-
-                    const texto = String(valor ?? '').replace(/\s+/g, ' ').trim();
-                    if (texto) return texto;
-                }
-            }
-
-            return fallback;
-        }
-
-        function obterValoresUnicosContato(fontes, nomesPossiveis) {
-            const listaFontes = Array.isArray(fontes) ? fontes : [fontes];
-            const chavesNormalizadas = nomesPossiveis.map(normalizarChaveContato);
-            const valores = [];
-
-            listaFontes.forEach((fonte) => {
-                if (!fonte || typeof fonte !== 'object') return;
-
-                Object.entries(fonte).forEach(([chave, valor]) => {
-                    if (!chavesNormalizadas.includes(normalizarChaveContato(chave))) return;
-
-                    const texto = String(valor ?? '').replace(/\s+/g, ' ').trim();
-                    if (texto) valores.push(texto);
-                });
-            });
-
-            return Array.from(new Set(valores));
-        }
-
-        function obterEmailsContato(fontes, nomesPossiveis) {
-            return obterValoresUnicosContato(fontes, nomesPossiveis)
-                .flatMap((valor) => valor.match(/[^\s,;<>]+@[^\s,;<>]+/g) || [valor])
-                .map((valor) => valor.trim())
-                .filter(Boolean)
-                .filter((valor, index, lista) => lista.indexOf(valor) === index);
-        }
-
-        function normalizarChaveContato(chave) {
-            return String(chave || '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-zA-Z0-9]/g, '')
-                .toUpperCase();
+            return grupo.destinatarioOficio || normalizarDestinatarioOficioGrupoContato(grupo);
         }
 
         function configurarCopiasHtmlOficioSei() {
@@ -5096,6 +5148,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
                     .replace(/[\u0300-\u036f]/g, '')
                     .toLowerCase()
                     .trim();
+                let visiveis = 0;
 
                 cards.forEach((card) => {
                     const textoBusca = card.dataset.contactSearch || '';
@@ -5104,7 +5157,10 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
                     const matchUf = ufsSelecionadas.size === 0 || ufsSelecionadas.has(ufCard);
                     const visivel = matchTexto && matchUf;
                     card.classList.toggle('d-none', !visivel);
+                    if (visivel) visiveis += 1;
                 });
+
+                document.getElementById('contacts-filter-empty')?.classList.toggle('d-none', visiveis > 0);
             };
 
             input.addEventListener('input', aplicarFiltros);
