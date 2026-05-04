@@ -19,7 +19,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260504-5';
+} from '../../backend/services/data-service.js?v=20260504-7';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4547,6 +4547,7 @@ async function carregarLogoParaPDF() {
             `;
 
             configurarFiltroContatos();
+            configurarCopiasHtmlOficioSei();
         }
 
         function montarGruposContatosPorUf(contatosUf, contatosPessoas) {
@@ -4663,6 +4664,7 @@ async function carregarLogoParaPDF() {
                         <div class="contact-uf-body">
                             ${renderDadosInstitucionaisUf(grupo.dadosUf)}
                             ${renderPessoasContato(grupo.pessoas)}
+                            ${renderGeradorHtmlOficioSei(grupo)}
                         </div>
                     </div>
                 </article>
@@ -4777,6 +4779,306 @@ async function carregarLogoParaPDF() {
                     </button>
                 `).join('')
                 : '<span class="filter-count-empty">Nenhuma UF disponível</span>';
+        }
+
+        function renderGeradorHtmlOficioSei(grupo) {
+            const textareaId = `html-oficio-sei-${grupo.uf}`;
+            const htmlOficio = gerarHtmlOficioSei(grupo);
+
+            return `
+                <section class="sei-html-generator">
+                    <div class="sei-html-generator-header">
+                        <div>
+                            <p class="section-eyebrow mb-1">Modelo SEI</p>
+                            <h4>Endereçamento HTML</h4>
+                            <p>
+                                Trecho de endereçamento do(a) Secretário(a) pronto para colar no SEI.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary btn-icon-text btn-copy-sei-html"
+                            data-target="${textareaId}"
+                        >
+                            <i class="fas fa-copy" aria-hidden="true"></i>
+                            <span>Copiar HTML</span>
+                        </button>
+                    </div>
+
+                    <textarea
+                        id="${textareaId}"
+                        class="sei-html-textarea"
+                        readonly
+                        spellcheck="false"
+                        aria-label="HTML do endereçamento SEI para ${escapeHtml(grupo.uf)}"
+                    >${escapeHtml(htmlOficio)}</textarea>
+                </section>
+            `;
+        }
+
+        function gerarHtmlOficioSei(grupo) {
+            const destinatario = obterDestinatarioSecretario(grupo);
+            const linhas = [
+                destinatario.tratamento ? escapeHtml(destinatario.tratamento) : '',
+                destinatario.nome ? `<strong>${escapeHtml(destinatario.nome)}</strong>` : '',
+                destinatario.cargo ? escapeHtml(destinatario.cargo) : '',
+                montarLinhaEnderecoDestinatario(destinatario),
+                montarLinhaLocalidadeDestinatario(destinatario),
+                destinatario.telefones.length ? destinatario.telefones.map(escapeHtml).join(' / ') : '',
+                destinatario.emails.length ? destinatario.emails.map(escapeHtml).join(' / ') : ''
+            ].filter(Boolean);
+
+            return `<p class="Texto_Alinhado_Esquerda_Espaçamento_Simples" data-c="3">
+${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>' : ''}`).join('\n')}
+</p>
+
+<p class="Texto_Alinhado_Esquerda_Espaçamento_Simples" data-c="4">
+    &nbsp;
+</p>`;
+        }
+
+        function montarLinhaEnderecoDestinatario(destinatario) {
+            const enderecoBase = [destinatario.endereco, destinatario.complemento]
+                .filter(Boolean)
+                .join(' ');
+            const linha = [enderecoBase, destinatario.bairro]
+                .filter(Boolean)
+                .join(', ');
+
+            return linha ? escapeHtml(linha) : '';
+        }
+
+        function montarLinhaLocalidadeDestinatario(destinatario) {
+            const cidadeUf = destinatario.cidade && destinatario.uf
+                ? `${destinatario.cidade}/${destinatario.uf}`
+                : destinatario.cidade || destinatario.uf;
+            const linha = destinatario.cep && cidadeUf
+                ? `${destinatario.cep} – ${cidadeUf}`
+                : destinatario.cep || cidadeUf;
+
+            return linha ? escapeHtml(linha) : '';
+        }
+
+        function obterDestinatarioSecretario(grupo) {
+            const dadosUf = grupo.dadosUf || {};
+            const pessoas = Array.isArray(grupo.pessoas) ? grupo.pessoas : [];
+
+            const pessoaSecretario = pessoas.find((pessoa) => {
+                const texto = Object.values(pessoa || {})
+                    .join(' ')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toUpperCase();
+
+                return texto.includes('SECRETARI');
+            }) || {};
+
+            const fontes = [dadosUf, pessoaSecretario];
+
+            return {
+                tratamento: obterCampoContato(fontes, [
+                    'tratamento',
+                    'tratamento_destinatario',
+                    'tratamentoDestinatario'
+                ]),
+
+                nome: obterCampoContato(fontes, [
+                    'nomeTitular',
+                    'nome_titular',
+                    'nome titular',
+                    'nome_secretario',
+                    'nome_secretaria',
+                    'secretario',
+                    'secretaria',
+                    'nome_destinatario',
+                    'nomeDestinatario',
+                    'nome',
+                    'Nome'
+                ]),
+
+                cargo: obterCampoContato(fontes, [
+                    'cargoTitular',
+                    'cargo_titular',
+                    'cargo titular',
+                    'cargo_secretario',
+                    'cargo_secretaria',
+                    'cargo_destinatario',
+                    'cargoDestinatario',
+                    'cargo',
+                    'Cargo',
+                    'funcao',
+                    'função'
+                ]),
+
+                endereco: obterCampoContato(fontes, [
+                    'endereco_destinatario',
+                    'endereço_destinatario',
+                    'endereco',
+                    'endereço',
+                    'logradouro'
+                ]),
+
+                complemento: obterCampoContato(fontes, [
+                    'complemento_endereco_destinatario',
+                    'complemento',
+                    'complemento_endereco'
+                ]),
+
+                bairro: obterCampoContato(fontes, [
+                    'bairro_destinatario',
+                    'bairro'
+                ]),
+
+                cep: obterCampoContato(fontes, [
+                    'cep_destinatario',
+                    'cep',
+                    'CEP'
+                ]),
+
+                cidade: obterCampoContato(fontes, [
+                    'cidade_destinatario',
+                    'cidade',
+                    'município',
+                    'municipio'
+                ]),
+
+                uf: obterCampoContato(fontes, [
+                    'sigla_uf_destinatario',
+                    'uf',
+                    'UF',
+                    'siglaUf'
+                ], grupo.uf || ''),
+
+                telefones: obterValoresUnicosContato(fontes, [
+                    'contatoSecretaria',
+                    'contato_secretaria',
+                    'contato secretaria',
+                    'telefone_fixo_destinatario',
+                    'telefone_fixo',
+                    'telefoneTitular',
+                    'telefone_titular',
+                    'telefone titular',
+                    'celularTitular',
+                    'celular_titular',
+                    'celular titular',
+                    'ramaisGabinete',
+                    'ramais_gabinete',
+                    'ramais gabinete',
+                    'telefone',
+                    'Telefone',
+                    'telefone_celular_destinatario',
+                    'telefone_celular',
+                    'celular',
+                    'Celular'
+                ]),
+
+                emails: obterEmailsContato(fontes, [
+                    'emailGabinete',
+                    'email_gabinete',
+                    'email gabinete',
+                    'emailTitular',
+                    'email_titular',
+                    'email titular',
+                    'email_destinatario',
+                    'email',
+                    'e-mail',
+                    'Email',
+                    'E-mail'
+                ])
+            };
+        }
+
+        function obterCampoContato(fontes, nomesPossiveis, fallback = '') {
+            const listaFontes = Array.isArray(fontes) ? fontes : [fontes];
+            const chavesNormalizadas = nomesPossiveis.map(normalizarChaveContato);
+
+            for (const fonte of listaFontes) {
+                if (!fonte || typeof fonte !== 'object') continue;
+
+                for (const [chave, valor] of Object.entries(fonte)) {
+                    if (!chavesNormalizadas.includes(normalizarChaveContato(chave))) continue;
+
+                    const texto = String(valor ?? '').replace(/\s+/g, ' ').trim();
+                    if (texto) return texto;
+                }
+            }
+
+            return fallback;
+        }
+
+        function obterValoresUnicosContato(fontes, nomesPossiveis) {
+            const listaFontes = Array.isArray(fontes) ? fontes : [fontes];
+            const chavesNormalizadas = nomesPossiveis.map(normalizarChaveContato);
+            const valores = [];
+
+            listaFontes.forEach((fonte) => {
+                if (!fonte || typeof fonte !== 'object') return;
+
+                Object.entries(fonte).forEach(([chave, valor]) => {
+                    if (!chavesNormalizadas.includes(normalizarChaveContato(chave))) return;
+
+                    const texto = String(valor ?? '').replace(/\s+/g, ' ').trim();
+                    if (texto) valores.push(texto);
+                });
+            });
+
+            return Array.from(new Set(valores));
+        }
+
+        function obterEmailsContato(fontes, nomesPossiveis) {
+            return obterValoresUnicosContato(fontes, nomesPossiveis)
+                .flatMap((valor) => valor.match(/[^\s,;<>]+@[^\s,;<>]+/g) || [valor])
+                .map((valor) => valor.trim())
+                .filter(Boolean)
+                .filter((valor, index, lista) => lista.indexOf(valor) === index);
+        }
+
+        function normalizarChaveContato(chave) {
+            return String(chave || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-zA-Z0-9]/g, '')
+                .toUpperCase();
+        }
+
+        function configurarCopiasHtmlOficioSei() {
+            document.querySelectorAll('.btn-copy-sei-html').forEach((botao) => {
+                botao.addEventListener('click', async () => {
+                    const targetId = botao.dataset.target;
+                    const textarea = document.getElementById(targetId);
+
+                    if (!textarea) return;
+
+                    try {
+                        await navigator.clipboard.writeText(textarea.value);
+                        sinalizarCopiaHtmlSei(botao, true);
+                    } catch (error) {
+                        textarea.focus();
+                        textarea.select();
+                        const sucesso = document.execCommand('copy');
+                        sinalizarCopiaHtmlSei(botao, sucesso);
+                    }
+                });
+            });
+        }
+
+        function sinalizarCopiaHtmlSei(botao, sucesso) {
+            const conteudoOriginal = botao.innerHTML;
+
+            botao.innerHTML = sucesso
+                ? '<i class="fas fa-check" aria-hidden="true"></i><span>Copiado</span>'
+                : '<i class="fas fa-triangle-exclamation" aria-hidden="true"></i><span>Erro ao copiar</span>';
+
+            botao.classList.toggle('btn-outline-primary', !sucesso);
+            botao.classList.toggle('btn-success', sucesso);
+            botao.classList.toggle('btn-outline-danger', !sucesso);
+
+            setTimeout(() => {
+                botao.innerHTML = conteudoOriginal;
+                botao.classList.add('btn-outline-primary');
+                botao.classList.remove('btn-success', 'btn-outline-danger');
+            }, 1800);
         }
 
         function configurarFiltroContatos() {
