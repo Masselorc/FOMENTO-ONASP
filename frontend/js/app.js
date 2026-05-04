@@ -4511,13 +4511,31 @@ async function carregarLogoParaPDF() {
                         <p class="section-eyebrow mb-1">Consulta rápida</p>
                         <h3>Localize contatos por UF, órgão, nome, cargo, e-mail ou telefone</h3>
                     </div>
-                    <input
-                        type="text"
-                        id="filtro-contatos"
-                        class="form-control"
-                        placeholder="Buscar contatos..."
-                        aria-label="Buscar contatos"
-                    >
+                    <div class="contacts-toolbar-actions">
+                        <input
+                            type="text"
+                            id="filtro-contatos"
+                            class="form-control"
+                            placeholder="Buscar contatos..."
+                            aria-label="Buscar contatos"
+                        >
+                    </div>
+                </section>
+
+                <section class="contact-uf-filter panel-section mb-3" aria-label="Filtro de contatos por UF">
+                    <div class="contact-uf-filter-header">
+                        <div>
+                            <p class="section-eyebrow mb-1">Filtro por estado</p>
+                            <h3>Selecione uma ou mais UFs</h3>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btn-limpar-filtro-contatos-uf">
+                            <i class="fas fa-undo" aria-hidden="true"></i>
+                            <span>Limpar filtro</span>
+                        </button>
+                    </div>
+                    <div class="contact-uf-chip-list" id="filtro-contatos-ufs">
+                        ${renderFiltroUfsContatos(grupos)}
+                    </div>
                 </section>
 
                 <section class="contacts-accordion" id="contacts-accordion">
@@ -4618,7 +4636,7 @@ async function carregarLogoParaPDF() {
             const textoBusca = montarTextoBuscaGrupoContato(grupo);
 
             return `
-                <article class="contact-uf-card" data-contact-search="${escapeHtml(textoBusca)}">
+                <article class="contact-uf-card" data-contact-search="${escapeHtml(textoBusca)}" data-contact-uf="${escapeHtml(grupo.uf)}">
                     <button
                         class="contact-uf-bar"
                         type="button"
@@ -4745,13 +4763,32 @@ async function carregarLogoParaPDF() {
                 .toLowerCase();
         }
 
+        function renderFiltroUfsContatos(grupos = []) {
+            return grupos.length
+                ? grupos.map((grupo) => `
+                    <button
+                        type="button"
+                        class="contact-uf-filter-chip"
+                        data-contact-filter-uf="${escapeHtml(grupo.uf)}"
+                        title="${escapeHtml(grupo.nomeEstado || grupo.uf)}"
+                        aria-pressed="false"
+                    >
+                        ${escapeHtml(grupo.uf)}
+                    </button>
+                `).join('')
+                : '<span class="filter-count-empty">Nenhuma UF disponível</span>';
+        }
+
         function configurarFiltroContatos() {
             const input = document.getElementById('filtro-contatos');
             const cards = Array.from(document.querySelectorAll('.contact-uf-card'));
+            const chips = Array.from(document.querySelectorAll('[data-contact-filter-uf]'));
+            const btnLimparUf = document.getElementById('btn-limpar-filtro-contatos-uf');
+            const ufsSelecionadas = new Set();
 
             if (!input || cards.length === 0) return;
 
-            input.addEventListener('input', () => {
+            const aplicarFiltros = () => {
                 const termo = input.value
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
@@ -4760,9 +4797,40 @@ async function carregarLogoParaPDF() {
 
                 cards.forEach((card) => {
                     const textoBusca = card.dataset.contactSearch || '';
-                    const visivel = !termo || textoBusca.includes(termo);
+                    const ufCard = card.dataset.contactUf || '';
+                    const matchTexto = !termo || textoBusca.includes(termo);
+                    const matchUf = ufsSelecionadas.size === 0 || ufsSelecionadas.has(ufCard);
+                    const visivel = matchTexto && matchUf;
                     card.classList.toggle('d-none', !visivel);
                 });
+            };
+
+            input.addEventListener('input', aplicarFiltros);
+
+            chips.forEach((chip) => {
+                chip.addEventListener('click', () => {
+                    const uf = chip.dataset.contactFilterUf || '';
+                    if (!uf) return;
+
+                    if (ufsSelecionadas.has(uf)) {
+                        ufsSelecionadas.delete(uf);
+                    } else {
+                        ufsSelecionadas.add(uf);
+                    }
+
+                    chip.classList.toggle('active', ufsSelecionadas.has(uf));
+                    chip.setAttribute('aria-pressed', String(ufsSelecionadas.has(uf)));
+                    aplicarFiltros();
+                });
+            });
+
+            btnLimparUf?.addEventListener('click', () => {
+                ufsSelecionadas.clear();
+                chips.forEach((chip) => {
+                    chip.classList.remove('active');
+                    chip.setAttribute('aria-pressed', 'false');
+                });
+                aplicarFiltros();
             });
         }
 

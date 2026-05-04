@@ -3504,6 +3504,12 @@ table.dataTable thead td,
     justify-content: space-between;
 }
 
+.contacts-toolbar-actions {
+    display: flex;
+    flex: 0 1 420px;
+    justify-content: flex-end;
+}
+
 .contacts-toolbar h3 {
     color: var(--color-primary-strong);
     font-size: 1rem;
@@ -3513,6 +3519,60 @@ table.dataTable thead td,
 
 .contacts-toolbar .form-control {
     max-width: 420px;
+}
+
+.contact-uf-filter,
+.contact-uf-filter-header {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.contact-uf-filter-header {
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.contact-uf-filter-header h3 {
+    color: var(--color-primary-strong);
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.contact-uf-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.contact-uf-filter-chip {
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-primary-strong);
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 0.8rem;
+    font-weight: 800;
+    justify-content: center;
+    min-height: 34px;
+    min-width: 48px;
+    padding: 0.35rem 0.75rem;
+}
+
+.contact-uf-filter-chip:hover,
+.contact-uf-filter-chip:focus {
+    background: var(--color-primary-soft);
+    border-color: rgba(23, 74, 124, 0.36);
+    color: var(--color-primary-strong);
+}
+
+.contact-uf-filter-chip.active,
+.contact-uf-filter-chip[aria-pressed="true"] {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #ffffff;
 }
 
 .contacts-accordion {
@@ -3750,8 +3810,13 @@ table.dataTable thead td,
         flex-direction: column;
     }
 
+    .contacts-toolbar-actions,
     .contacts-toolbar .form-control {
         max-width: none;
+    }
+
+    .contact-uf-filter-header {
+        grid-template-columns: 1fr;
     }
 
     .contact-info-grid,
