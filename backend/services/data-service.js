@@ -11,13 +11,15 @@ const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
+const ARQUIVO_PLANILHA_CONTATOS = 'Planilhas/Contatos.xlsx';
 const ABA_ORCAMENTO_DADOS = 'Base_Dados';
 const ABA_ORCAMENTO_PROCESSOS_NORMAIS = 'Processos_Normais';
 const ABA_ORCAMENTO_PROFOR = 'Andamento_CONV_PROFOR';
 const ABA_FORMALIZACAO_PAINEL = 'Painel_Propostas';
 const ABA_FORMALIZACAO_CHECKLIST = 'Checklist_Documentos';
 const ABA_FORMALIZACAO_DICIONARIO = 'Dicionario_Documentos';
-const ABA_FORMALIZACAO_GESTORES = 'Gestores_Responsaveis';
+const ABA_CONTATOS_UF = 'Contatos_UF';
+const ABA_CONTATOS_PESSOAS = 'Contatos_Pessoas';
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
@@ -928,6 +930,10 @@ function textoPossuiValor(valor) {
     return Boolean(texto && texto !== '-' && texto !== 'NAO INFORMADO' && texto !== 'N/A');
 }
 
+function primeiroTextoComValor(valores) {
+    return valores.find((valor) => textoPossuiValor(valor)) || '';
+}
+
 function documentoAplicavelAUf(documento, uf) {
     const aplicavel = normalizarTexto(documento?.aplicavelUfs || '');
     if (!aplicavel || aplicavel === 'TODAS' || aplicavel === 'TODOS') {
@@ -1004,45 +1010,118 @@ function extrairChecklistFormalizacao(workbook) {
     return porProposta;
 }
 
-function extrairGestoresFormalizacao(workbook) {
-    const tabela = obterTabelaFormalizacao(workbook, ABA_FORMALIZACAO_GESTORES, ['UF', 'Nome']);
-    const porPropostaOuUf = new Map();
+function criarContatosFormalizacaoVazios(erro = '') {
+    return {
+        cadastroPorUf: new Map(),
+        pessoasPorUf: new Map(),
+        disponivel: false,
+        erro
+    };
+}
 
+function extrairCadastroInstitucionalContatos(workbook) {
+    const tabela = obterTabelaFormalizacao(workbook, ABA_CONTATOS_UF, ['UF', 'Órgão_Entidade']);
     if (!tabela) {
-        return porPropostaOuUf;
+        throw new Error(`A aba ${ABA_CONTATOS_UF} nao foi encontrada ou nao possui os cabecalhos esperados.`);
     }
 
+    const porUf = new Map();
     tabela.linhas.forEach((linha) => {
         const uf = normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['UF']));
-        const nome = obterCelulaFormalizacao(linha, tabela, ['Nome']);
-        if (!uf || !nome) return;
+        if (!uf) return;
 
-        const idProposta = obterCelulaFormalizacao(linha, tabela, ['ID_Proposta', 'ID Proposta']);
-        const ativoRaw = obterCelulaFormalizacao(linha, tabela, ['Ativo?'], 'Sim');
-        const gestor = {
+        const celularTitular = obterCelulaFormalizacao(linha, tabela, ['Celular_Titular', 'Celular Titular']);
+        const telefoneTitular = obterCelulaFormalizacao(linha, tabela, ['Telefone_Titular', 'Telefone Titular']);
+        const emailTitular = obterCelulaFormalizacao(linha, tabela, ['Email_Titular', 'E-mail Titular']);
+        const emailGabinete = obterCelulaFormalizacao(linha, tabela, ['Email_Gabinete', 'E-mail Gabinete']);
+        const contatoChefe = obterCelulaFormalizacao(linha, tabela, ['Contato_Chefe', 'Contato Chefe']);
+        const contatoSecretaria = obterCelulaFormalizacao(linha, tabela, ['Contato_Secretaria', 'Contato Secretaria']);
+        const ramaisGabinete = obterCelulaFormalizacao(linha, tabela, ['Ramais_Gabinete', 'Ramais Gabinete']);
+
+        porUf.set(uf, {
             uf,
-            idProposta,
-            tipo: obterCelulaFormalizacao(linha, tabela, ['Tipo de Responsável', 'Tipo responsável', 'Tipo']),
-            nome,
-            cargo: obterCelulaFormalizacao(linha, tabela, ['Cargo']),
-            orgao: obterCelulaFormalizacao(linha, tabela, ['Órgão', 'Órgão estadual', 'Órgão/Secretaria']),
-            email: obterCelulaFormalizacao(linha, tabela, ['E-mail', 'Email']),
-            telefone: obterCelulaFormalizacao(linha, tabela, ['Telefone']),
-            ativo: valorEhSim(ativoRaw) || (!valorEhNao(ativoRaw) && !valorNaoSeAplica(ativoRaw)),
-            dataInicio: obterDataFormalizacao(linha, tabela, ['Data de Início', 'Início vigência']),
-            dataFim: obterDataFormalizacao(linha, tabela, ['Data de Fim', 'Fim vigência']),
-            observacao: obterCelulaFormalizacao(linha, tabela, ['Observação'])
-        };
-
-        [idProposta, uf].filter(Boolean).forEach((chave) => {
-            if (!porPropostaOuUf.has(chave)) {
-                porPropostaOuUf.set(chave, []);
-            }
-            porPropostaOuUf.get(chave).push(gestor);
+            estado: obterCelulaFormalizacao(linha, tabela, ['Estado']),
+            regiao: obterCelulaFormalizacao(linha, tabela, ['Região', 'Regiao']),
+            orgao: obterCelulaFormalizacao(linha, tabela, ['Órgão_Entidade', 'Órgão Entidade', 'Orgao Entidade']),
+            sigla: obterCelulaFormalizacao(linha, tabela, ['Sigla']),
+            tipoOrgao: obterCelulaFormalizacao(linha, tabela, ['Tipo_Órgão', 'Tipo Órgão', 'Tipo Orgao']),
+            cnpj: obterCelulaFormalizacao(linha, tabela, ['CNPJ']),
+            endereco: obterCelulaFormalizacao(linha, tabela, ['Endereço', 'Endereco']),
+            cep: obterCelulaFormalizacao(linha, tabela, ['CEP']),
+            cargoTitular: obterCelulaFormalizacao(linha, tabela, ['Cargo_Titular', 'Cargo Titular']),
+            nomeTitular: obterCelulaFormalizacao(linha, tabela, ['Nome_Titular', 'Nome Titular']),
+            cpfTitular: obterCelulaFormalizacao(linha, tabela, ['CPF_Titular', 'CPF Titular']),
+            celularTitular,
+            telefoneTitular,
+            emailTitular,
+            emailGabinete,
+            chefeGabinete: obterCelulaFormalizacao(linha, tabela, ['Chefe_Gabinete', 'Chefe Gabinete']),
+            contatoChefe,
+            secretariaGabinete: obterCelulaFormalizacao(linha, tabela, ['Secretaria_Gabinete', 'Secretaria Gabinete']),
+            contatoSecretaria,
+            ramaisGabinete,
+            assessor: obterCelulaFormalizacao(linha, tabela, ['Assessor']),
+            contatoAssessor: obterCelulaFormalizacao(linha, tabela, ['Contato_Assessor', 'Contato Assessor']),
+            cargoSubstituto: obterCelulaFormalizacao(linha, tabela, ['Cargo_Substituto', 'Cargo Substituto']),
+            nomeSubstituto: obterCelulaFormalizacao(linha, tabela, ['Nome_Substituto', 'Nome Substituto']),
+            contatoSubstituto: obterCelulaFormalizacao(linha, tabela, ['Contato_Substituto', 'Contato Substituto']),
+            emailSubstituto: obterCelulaFormalizacao(linha, tabela, ['Email_Substituto', 'E-mail Substituto']),
+            atoNomeacao: obterCelulaFormalizacao(linha, tabela, ['Ato_Nomeação', 'Ato Nomeação', 'Ato Nomeacao']),
+            observacoes: obterCelulaFormalizacao(linha, tabela, ['Observações', 'Observacoes', 'Observação']),
+            emailInstitucional: primeiroTextoComValor([emailTitular, emailGabinete]),
+            telefoneInstitucional: primeiroTextoComValor([celularTitular, telefoneTitular, contatoChefe, contatoSecretaria, ramaisGabinete])
         });
     });
 
-    return porPropostaOuUf;
+    return porUf;
+}
+
+function extrairPessoasContatos(workbook) {
+    const tabela = obterTabelaFormalizacao(workbook, ABA_CONTATOS_PESSOAS, ['UF', 'Papel', 'Nome']);
+    if (!tabela) {
+        throw new Error(`A aba ${ABA_CONTATOS_PESSOAS} nao foi encontrada ou nao possui os cabecalhos esperados.`);
+    }
+
+    const porUf = new Map();
+    tabela.linhas.forEach((linha) => {
+        const uf = normalizarTexto(obterCelulaFormalizacao(linha, tabela, ['UF']));
+        if (!uf) return;
+
+        const pessoa = {
+            uf,
+            estado: obterCelulaFormalizacao(linha, tabela, ['Estado']),
+            orgao: obterCelulaFormalizacao(linha, tabela, ['Órgão_Entidade', 'Órgão Entidade', 'Orgao Entidade']),
+            sigla: obterCelulaFormalizacao(linha, tabela, ['Sigla']),
+            tipoOrgao: obterCelulaFormalizacao(linha, tabela, ['Tipo_Órgão', 'Tipo Órgão', 'Tipo Orgao']),
+            papel: obterCelulaFormalizacao(linha, tabela, ['Papel']),
+            cargo: obterCelulaFormalizacao(linha, tabela, ['Cargo/Função', 'Cargo Função', 'Cargo Funcao']),
+            nome: obterCelulaFormalizacao(linha, tabela, ['Nome']),
+            cpf: obterCelulaFormalizacao(linha, tabela, ['CPF']),
+            telefone: obterCelulaFormalizacao(linha, tabela, ['Telefone/Contato', 'Telefone Contato', 'Telefone']),
+            email: obterCelulaFormalizacao(linha, tabela, ['E-mail', 'Email']),
+            observacoes: obterCelulaFormalizacao(linha, tabela, ['Observações', 'Observacoes', 'Observação'])
+        };
+
+        if (!textoPossuiValor(pessoa.papel) && !textoPossuiValor(pessoa.nome) && !textoPossuiValor(pessoa.email) && !textoPossuiValor(pessoa.telefone)) {
+            return;
+        }
+
+        if (!porUf.has(uf)) {
+            porUf.set(uf, []);
+        }
+        porUf.get(uf).push(pessoa);
+    });
+
+    return porUf;
+}
+
+function extrairDadosContatosFormalizacao(workbookContatos) {
+    return {
+        cadastroPorUf: extrairCadastroInstitucionalContatos(workbookContatos),
+        pessoasPorUf: extrairPessoasContatos(workbookContatos),
+        disponivel: true,
+        erro: ''
+    };
 }
 
 function extrairPlanoAplicacaoFormalizacao(workbook, uf) {
@@ -1233,8 +1312,18 @@ function gerarAlertasFormalizacao(proposta) {
         adicionar('moderado', 'Pendência documental', `${documentosComPendencia.length} documento(s) possuem pendência ou necessidade de correção.`);
     }
 
-    if (!textoPossuiValor(proposta.gestor.email) || !textoPossuiValor(proposta.responsavelTecnico.email) || !textoPossuiValor(proposta.responsavelTecnico.telefone)) {
-        adicionar('moderado', 'Contato incompleto', 'Há e-mail ou telefone de responsável ausente no cadastro.');
+    if (!proposta.contatosDisponiveis) {
+        adicionar('moderado', 'Contatos indisponíveis', 'Cadastro institucional ou contatos da UF não foram localizados na planilha Contatos.');
+    } else {
+        const temEmailContato = textoPossuiValor(proposta.gestor.email)
+            || textoPossuiValor(proposta.cadastroInstitucional?.emailGabinete)
+            || proposta.contatosPessoas.some((pessoa) => textoPossuiValor(pessoa.email));
+        const temTelefoneContato = textoPossuiValor(proposta.gestor.telefone)
+            || proposta.contatosPessoas.some((pessoa) => textoPossuiValor(pessoa.telefone));
+
+        if (!temEmailContato || !temTelefoneContato) {
+            adicionar('moderado', 'Contato incompleto', 'Há e-mail institucional ou telefone/contato ausente no cadastro da UF.');
+        }
     }
 
     const documentosSemLink = [...proposta.documentosProjeto, ...proposta.documentosFormalizacao]
@@ -1342,14 +1431,7 @@ function calcularProgressoGeralFormalizacao(proposta) {
     return Math.max(0, Math.min(100, (projeto * 30) + (formalizacao * 40) + (plano * 15) + (falaBr * 5) + (condicao * 10)));
 }
 
-function obterResponsavelFormalizacao(responsaveis, termos) {
-    return responsaveis.find((responsavel) => {
-        const tipo = normalizarTexto(responsavel.tipo);
-        return termos.some((termo) => tipo.includes(normalizarTexto(termo)));
-    });
-}
-
-function montarPropostasFormalizacao(workbook) {
+function montarPropostasFormalizacao(workbook, contatosFormalizacao = criarContatosFormalizacaoVazios()) {
     const painel = obterTabelaFormalizacao(workbook, ABA_FORMALIZACAO_PAINEL, ['ID_Proposta', 'UF']);
     if (!painel) {
         throw new Error(`A aba ${ABA_FORMALIZACAO_PAINEL} nao foi encontrada ou nao possui os cabecalhos esperados.`);
@@ -1357,7 +1439,6 @@ function montarPropostasFormalizacao(workbook) {
 
     const dicionario = extrairDicionarioDocumentosFormalizacao(workbook);
     const checklist = extrairChecklistFormalizacao(workbook);
-    const gestores = extrairGestoresFormalizacao(workbook);
 
     return painel.linhas.map((linha) => {
         const idProposta = obterCelulaFormalizacao(linha, painel, ['ID_Proposta', 'ID Proposta']);
@@ -1389,15 +1470,26 @@ function montarPropostasFormalizacao(workbook) {
         const documentosFormalizacao = codigosFormalizacaoBase.map((codigo) => montarDocumentoFormalizacao(codigo, 'Formalização', propostaBase, dicionario, checklistProposta));
         const progressoDocumentosProjeto = calcularProgressoDocumentos(documentosProjeto);
         const progressoDocumentosFormalizacao = calcularProgressoDocumentos(documentosFormalizacao);
-        const responsaveisAtivos = [
-            ...(gestores.get(idProposta) || []),
-            ...(gestores.get(uf) || [])
-        ].filter((responsavel, index, array) => (
-            responsavel.ativo
-            && array.findIndex((item) => item.nome === responsavel.nome && item.tipo === responsavel.tipo) === index
-        ));
-        const responsavelPolitico = obterResponsavelFormalizacao(responsaveisAtivos, ['secretario', 'gestor politico', 'secretário']) || {};
-        const responsavelTecnico = obterResponsavelFormalizacao(responsaveisAtivos, ['responsavel tecnico', 'técnico', 'gestor da proposta']) || {};
+        const cadastroInstitucional = contatosFormalizacao.cadastroPorUf.get(uf) || {
+            uf,
+            estado: obterCelulaFormalizacao(linha, painel, ['Estado'], uf),
+            regiao: '',
+            orgao: '',
+            sigla: '',
+            tipoOrgao: '',
+            cnpj: '',
+            endereco: '',
+            cep: '',
+            emailGabinete: '',
+            chefeGabinete: '',
+            contatoChefe: '',
+            secretariaGabinete: '',
+            contatoSecretaria: '',
+            ramaisGabinete: '',
+            observacoes: ''
+        };
+        const contatosPessoas = contatosFormalizacao.pessoasPorUf.get(uf) || [];
+        const contatosDisponiveis = contatosFormalizacao.disponivel && contatosFormalizacao.cadastroPorUf.has(uf);
         const condicaoPendenteRaw = obterCelulaFormalizacao(linha, painel, ['Condição Suspensiva Pendente?']);
         const exigeCondicao = UFS_CONDICAO_SUSPENSIVA_PROFOR.has(uf)
             || valorEhSim(obterCelulaFormalizacao(linha, painel, ['Exige Ato Normativo?', 'Ato normativo exigido?']));
@@ -1412,7 +1504,7 @@ function montarPropostasFormalizacao(workbook) {
         const proposta = {
             idProposta,
             uf,
-            estado: obterCelulaFormalizacao(linha, painel, ['Estado'], uf),
+            estado: obterCelulaFormalizacao(linha, painel, ['Estado'], cadastroInstitucional.estado || uf),
             grupo: obterCelulaFormalizacao(linha, painel, ['Grupo']),
             numeroProposta: obterCelulaFormalizacao(linha, painel, ['Número da Proposta', 'Nº Proposta', 'N Proposta']),
             ano: obterCelulaFormalizacao(linha, painel, ['Ano']),
@@ -1422,19 +1514,34 @@ function montarPropostasFormalizacao(workbook) {
             observacoes: obterCelulaFormalizacao(linha, painel, ['Observações', 'Observação']),
             fonteOrigem: obterCelulaFormalizacao(linha, painel, ['Fonte/Origem', 'Fonte']),
             gestor: {
-                nome: obterCelulaFormalizacao(linha, painel, ['Nome do Secretário', 'Nome do Secretario']) || responsavelPolitico.nome || '',
-                cargo: obterCelulaFormalizacao(linha, painel, ['Cargo']) || responsavelPolitico.cargo || '',
-                orgao: obterCelulaFormalizacao(linha, painel, ['Órgão/Secretaria', 'Órgão Secretaria']) || responsavelPolitico.orgao || '',
-                email: obterCelulaFormalizacao(linha, painel, ['E-mail institucional', 'E-mail Gestor', 'Email Gestor']) || responsavelPolitico.email || '',
-                telefone: obterCelulaFormalizacao(linha, painel, ['Telefone']) || responsavelPolitico.telefone || ''
+                nome: cadastroInstitucional.nomeTitular || '',
+                cargo: cadastroInstitucional.cargoTitular || '',
+                orgao: cadastroInstitucional.orgao || '',
+                email: primeiroTextoComValor([cadastroInstitucional.emailTitular, cadastroInstitucional.emailGabinete]),
+                telefone: primeiroTextoComValor([
+                    cadastroInstitucional.celularTitular,
+                    cadastroInstitucional.telefoneTitular,
+                    cadastroInstitucional.contatoChefe,
+                    cadastroInstitucional.contatoSecretaria,
+                    cadastroInstitucional.ramaisGabinete
+                ])
             },
-            responsavelTecnico: {
-                nome: obterCelulaFormalizacao(linha, painel, ['Nome do responsável técnico', 'Responsável Técnico', 'Responsavel Tecnico']) || responsavelTecnico.nome || '',
-                cargo: obterCelulaFormalizacao(linha, painel, ['Cargo do responsável técnico', 'Cargo Resp. Técnico']) || responsavelTecnico.cargo || '',
-                email: obterCelulaFormalizacao(linha, painel, ['E-mail do responsável técnico', 'E-mail Resp. Técnico', 'Email Resp. Tecnico']) || responsavelTecnico.email || '',
-                telefone: obterCelulaFormalizacao(linha, painel, ['Telefone do responsável técnico', 'Telefone Resp. Técnico']) || responsavelTecnico.telefone || ''
-            },
-            responsaveisAtivos,
+            responsavelTecnico: { nome: '', cargo: '', email: '', telefone: '' },
+            responsaveisAtivos: contatosPessoas.map((pessoa) => ({
+                uf,
+                tipo: pessoa.papel,
+                nome: pessoa.nome,
+                cargo: pessoa.cargo,
+                orgao: pessoa.orgao,
+                email: pessoa.email,
+                telefone: pessoa.telefone,
+                ativo: true,
+                observacao: pessoa.observacoes
+            })),
+            cadastroInstitucional,
+            contatosPessoas,
+            contatosDisponiveis,
+            contatosErro: contatosFormalizacao.erro || '',
             valorRepasse,
             valorContrapartida,
             valorGlobal,
@@ -1521,10 +1628,13 @@ function montarResumoFormalizacao(propostas) {
     };
 }
 
-function extrairFormalizacaoProforDoWorkbook(workbook) {
-    const propostas = montarPropostasFormalizacao(workbook);
+function extrairFormalizacaoProforDoWorkbook(workbook, contatosFormalizacao = criarContatosFormalizacaoVazios()) {
+    const propostas = montarPropostasFormalizacao(workbook, contatosFormalizacao);
     return {
         arquivo: ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR,
+        arquivoContatos: ARQUIVO_PLANILHA_CONTATOS,
+        contatosDisponiveis: contatosFormalizacao.disponivel,
+        contatosErro: contatosFormalizacao.erro || '',
         ufsAutorizadas: UFS_FORMALIZACAO_PROFOR,
         ufsCondicaoSuspensiva: Array.from(UFS_CONDICAO_SUSPENSIVA_PROFOR),
         valorRepassePadrao: VALOR_REPASSE_PROFOR,
@@ -1536,6 +1646,17 @@ function extrairFormalizacaoProforDoWorkbook(workbook) {
 async function lerWorkbookDeArrayBuffer(arrayBuffer) {
     const xlsx = obterXlsxGlobal();
     return xlsx.read(arrayBuffer, { type: 'array', raw: true });
+}
+
+async function carregarWorkbookPorCaminho(caminhoPlanilha, nomeErro) {
+    const planilhaUrl = new URL(`../../${caminhoPlanilha}`, import.meta.url);
+    const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
+
+    if (!resposta.ok) {
+        throw new Error(`${nomeErro} nao encontrada (${resposta.status}).`);
+    }
+
+    return lerWorkbookDeArrayBuffer(await resposta.arrayBuffer());
 }
 
 async function carregarConveniosDaPlanilha(catalogoAplicacao) {
@@ -1913,15 +2034,18 @@ export async function carregarDadosFormalizacaoProfor() {
             throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de formalizacao.');
         }
 
-        const planilhaUrl = new URL(`../../${ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR}`, import.meta.url);
-        const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
+        const workbook = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR, 'Planilha de formalizacao');
+        let contatosFormalizacao = criarContatosFormalizacaoVazios('Planilha de contatos não carregada.');
 
-        if (!resposta.ok) {
-            throw new Error(`Planilha de formalizacao nao encontrada (${resposta.status}).`);
+        try {
+            const workbookContatos = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_CONTATOS, 'Planilha de contatos');
+            contatosFormalizacao = extrairDadosContatosFormalizacao(workbookContatos);
+        } catch (error) {
+            contatosFormalizacao = criarContatosFormalizacaoVazios(error.message);
+            console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_CONTATOS}:`, error);
         }
 
-        const workbook = await lerWorkbookDeArrayBuffer(await resposta.arrayBuffer());
-        dadosFormalizacaoProforCache = extrairFormalizacaoProforDoWorkbook(workbook);
+        dadosFormalizacaoProforCache = extrairFormalizacaoProforDoWorkbook(workbook, contatosFormalizacao);
         return dadosFormalizacaoProforCache;
     } catch (error) {
         dadosFormalizacaoProforCache = null;

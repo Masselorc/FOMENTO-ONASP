@@ -1706,6 +1706,17 @@ table.dataTable thead td,
     min-width: 1180px;
 }
 
+.profor-plan-table tbody td {
+    color: var(--color-primary-strong);
+    font-family: 'Consolas', 'SFMono-Regular', Menlo, monospace;
+    font-size: 0.84rem;
+    overflow-wrap: anywhere;
+}
+
+.profor-plan-table tbody td strong {
+    color: inherit;
+}
+
 .funpen-donation-table {
     min-width: 720px;
 }
@@ -2402,6 +2413,22 @@ table.dataTable thead td,
 
 .formalizacao-doc-table {
     min-width: 980px;
+}
+
+.formalizacao-contact-table {
+    min-width: 920px;
+}
+
+.formalizacao-contact-table tbody td {
+    color: var(--color-primary-strong);
+    font-family: 'Consolas', 'SFMono-Regular', Menlo, monospace;
+    font-size: 0.84rem;
+    overflow-wrap: anywhere;
+}
+
+.formalizacao-contact-table tbody td strong {
+    color: inherit;
+    font-weight: 700;
 }
 
 .formalizacao-status-success,
@@ -3419,7 +3446,8 @@ table.dataTable thead td,
     }
 
     .formalizacao-data-table,
-    .formalizacao-doc-table {
+    .formalizacao-doc-table,
+    .formalizacao-contact-table {
         min-width: 0;
     }
 

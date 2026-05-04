@@ -2397,7 +2397,19 @@ async function carregarLogoParaPDF() {
                     proposta.numeroProposta,
                     proposta.situacaoGeral,
                     proposta.gestor.nome,
-                    proposta.responsavelTecnico.nome
+                    proposta.gestor.email,
+                    proposta.gestor.telefone,
+                    proposta.cadastroInstitucional?.orgao,
+                    proposta.cadastroInstitucional?.sigla,
+                    proposta.cadastroInstitucional?.cnpj,
+                    proposta.cadastroInstitucional?.emailGabinete,
+                    proposta.contatosPessoas?.map((contato) => [
+                        contato.papel,
+                        contato.cargo,
+                        contato.nome,
+                        contato.telefone,
+                        contato.email
+                    ].join(' ')).join(' ')
                 ].join(' '));
 
                 const passaPendencia = !pendencia
@@ -2744,7 +2756,6 @@ async function carregarLogoParaPDF() {
                     <div>
                         <p class="section-eyebrow mb-1">PROFOR/ONASP 2026</p>
                         <h2>Formalização PROFOR 2026</h2>
-                        <p>Acompanhamento das 14 propostas com cálculos, trilhas e alertas gerados pela aplicação.</p>
                     </div>
                     <div class="intro-badges" aria-label="Resumo da formalização PROFOR/ONASP">
                         <span><i class="fas fa-map-location-dot" aria-hidden="true"></i> ${resumo.totalPropostas} UFs</span>
@@ -2798,7 +2809,7 @@ async function carregarLogoParaPDF() {
                             <strong>Filtros</strong>
                         </div>
                         <div class="filter-search-actions">
-                            <input type="text" id="filtroFormalizacaoBusca" class="form-control" placeholder="Buscar por UF, proposta, gestor ou status..." aria-label="Buscar formalização">
+                            <input type="text" id="filtroFormalizacaoBusca" class="form-control" placeholder="Buscar por UF, proposta, contato, órgão ou status..." aria-label="Buscar formalização">
                             <button id="btnLimparFiltroFormalizacao" type="button" class="btn btn-outline-secondary btn-icon-text">
                                 <i class="fas fa-undo" aria-hidden="true"></i>
                                 <span>Limpar</span>
@@ -2922,6 +2933,72 @@ async function carregarLogoParaPDF() {
                     <span><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(rotulo)}</span>
                     <strong>${escapeHtml(valor || '-')}</strong>
                 </div>
+            `;
+        }
+
+        function renderizarCadastroInstitucionalFormalizacao(proposta) {
+            const cadastro = proposta.cadastroInstitucional || {};
+
+            return `
+                <section class="table-container mb-4">
+                    <div class="section-header compact">
+                        <p class="section-eyebrow mb-0">Cadastro</p>
+                    </div>
+                    <div class="formalizacao-info-grid">
+                        ${renderizarCampoFormalizacao('Órgão', cadastro.orgao || proposta.gestor.orgao, 'fa-building')}
+                        ${renderizarCampoFormalizacao('Sigla', cadastro.sigla, 'fa-signature')}
+                        ${renderizarCampoFormalizacao('CNPJ', cadastro.cnpj, 'fa-id-card')}
+                        ${renderizarCampoFormalizacao('Endereço', cadastro.endereco, 'fa-location-dot')}
+                        ${renderizarCampoFormalizacao('CEP', cadastro.cep, 'fa-map-pin')}
+                        ${renderizarCampoFormalizacao('Região', cadastro.regiao || obterRegiaoPorUf(proposta.uf), 'fa-map-location-dot')}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderizarContatosInstitucionaisFormalizacao(proposta) {
+            const contatos = proposta.contatosPessoas || [];
+
+            return `
+                <section class="table-container mb-4">
+                    <div class="section-header compact">
+                        <p class="section-eyebrow mb-0">Contatos</p>
+                        ${proposta.contatosDisponiveis ? '' : '<span class="profor-alert-badge profor-alert-warning">Contatos indisponíveis</span>'}
+                    </div>
+                    ${contatos.length ? `
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover w-100 app-data-table formalizacao-contact-table">
+                                <thead>
+                                    <tr>
+                                        <th>Papel</th>
+                                        <th>Nome</th>
+                                        <th>Cargo/Função</th>
+                                        <th>Telefone/Contato</th>
+                                        <th>E-mail</th>
+                                        <th>Observações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${contatos.map((contato) => `
+                                        <tr>
+                                            <td data-label="Papel"><strong>${escapeHtml(contato.papel || '-')}</strong></td>
+                                            <td data-label="Nome">${escapeHtml(contato.nome || '-')}</td>
+                                            <td data-label="Cargo/Função">${escapeHtml(contato.cargo || '-')}</td>
+                                            <td data-label="Telefone/Contato">${escapeHtml(contato.telefone || '-')}</td>
+                                            <td data-label="E-mail">${escapeHtml(contato.email || '-')}</td>
+                                            <td data-label="Observações">${escapeHtml(contato.observacoes || '-')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    ` : `
+                        <div class="formalizacao-empty-state">
+                            <i class="fas fa-address-book" aria-hidden="true"></i>
+                            <span>Nenhum contato institucional localizado para esta UF.</span>
+                        </div>
+                    `}
+                </section>
             `;
         }
 
@@ -3079,10 +3156,7 @@ async function carregarLogoParaPDF() {
             return `
                 <section class="table-container mb-4">
                     <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Plano de aplicação</p>
-                            <h2>Itens da guia Plano_${escapeHtml(proposta.uf)}</h2>
-                        </div>
+                        <p class="section-eyebrow mb-0">Plano de aplicação</p>
                         <span class="profor-alert-badge profor-alert-${plano.fechaComValorGlobal ? 'success' : 'danger'}">${escapeHtml(proposta.situacaoPlano)}</span>
                     </div>
 
@@ -3104,14 +3178,12 @@ async function carregarLogoParaPDF() {
                         <table class="table table-sm table-hover w-100 app-data-table profor-plan-table">
                             <thead>
                                 <tr>
-                                    <th>Categoria</th>
                                     <th>Item</th>
                                     <th>Descrição</th>
                                     <th class="text-center">Qtd.</th>
                                     <th class="text-center">Unid.</th>
                                     <th class="text-end">Valor Unit.</th>
                                     <th class="text-end">Valor Total</th>
-                                    <th>Fonte</th>
                                     <th>Natureza</th>
                                     <th class="text-center">Elegível</th>
                                 </tr>
@@ -3121,14 +3193,12 @@ async function carregarLogoParaPDF() {
                                     const inelegivel = plano.itensInelegiveis.some((alertaItem) => alertaItem.idItem === item.idItem);
                                     return `
                                         <tr class="${inelegivel ? 'table-warning' : ''}">
-                                            <td data-label="Categoria">${escapeHtml(item.categoria || '-')}</td>
                                             <td data-label="Item"><strong>${escapeHtml(item.item || '-')}</strong></td>
                                             <td data-label="Descrição"><span class="truncate-text">${escapeHtml(item.descricao || '-')}</span></td>
                                             <td data-label="Qtd." class="text-center">${formatarQuantidadeProfor(item.quantidade)}</td>
                                             <td data-label="Unid." class="text-center">${escapeHtml(item.unidade || '-')}</td>
                                             <td data-label="Valor Unit." class="text-end font-monospace">${formatMoney(item.valorUnitario)}</td>
                                             <td data-label="Valor Total" class="text-end font-monospace fw-bold">${formatMoney(item.valorTotal)}</td>
-                                            <td data-label="Fonte">${escapeHtml(item.fonteRecurso || '-')}</td>
                                             <td data-label="Natureza">${escapeHtml(item.naturezaDespesa || '-')}</td>
                                             <td data-label="Elegível" class="text-center">
                                                 <span class="profor-alert-badge profor-alert-${inelegivel ? 'danger' : 'success'}">${escapeHtml(item.elegivel || 'Sim')}</span>
@@ -3202,26 +3272,6 @@ async function carregarLogoParaPDF() {
                     <section class="table-container mb-4">
                         <div class="section-header compact">
                             <div>
-                                <p class="section-eyebrow mb-1">Responsáveis</p>
-                                <h2>Dados do gestor estadual</h2>
-                            </div>
-                        </div>
-                        <div class="formalizacao-info-grid">
-                            ${renderizarCampoFormalizacao('Secretário', proposta.gestor.nome, 'fa-user-tie')}
-                            ${renderizarCampoFormalizacao('Cargo', proposta.gestor.cargo, 'fa-id-badge')}
-                            ${renderizarCampoFormalizacao('Órgão', proposta.gestor.orgao, 'fa-building')}
-                            ${renderizarCampoFormalizacao('E-mail institucional', proposta.gestor.email, 'fa-envelope')}
-                            ${renderizarCampoFormalizacao('Telefone', proposta.gestor.telefone, 'fa-phone')}
-                            ${renderizarCampoFormalizacao('Responsável técnico', proposta.responsavelTecnico.nome, 'fa-user-gear')}
-                            ${renderizarCampoFormalizacao('Cargo técnico', proposta.responsavelTecnico.cargo, 'fa-address-card')}
-                            ${renderizarCampoFormalizacao('E-mail técnico', proposta.responsavelTecnico.email, 'fa-envelope-open-text')}
-                            ${renderizarCampoFormalizacao('Telefone técnico', proposta.responsavelTecnico.telefone, 'fa-phone-volume')}
-                        </div>
-                    </section>
-
-                    <section class="table-container mb-4">
-                        <div class="section-header compact">
-                            <div>
                                 <p class="section-eyebrow mb-1">Trilha</p>
                                 <h2>Andamento da formalização</h2>
                             </div>
@@ -3252,6 +3302,9 @@ async function carregarLogoParaPDF() {
                         </div>
                         ${proposta.observacoes ? `<p class="formalizacao-observation">${escapeHtml(proposta.observacoes)}</p>` : ''}
                     </section>
+
+                    ${renderizarCadastroInstitucionalFormalizacao(proposta)}
+                    ${renderizarContatosInstitucionaisFormalizacao(proposta)}
                 </div>
             `;
         }
