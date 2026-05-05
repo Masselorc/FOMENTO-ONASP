@@ -4078,6 +4078,28 @@ table.dataTable thead td,
     border-left: 5px solid #0f766e;
 }
 
+.diagnostico-header-title {
+    align-items: center;
+    display: flex;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+.diagnostico-header-flag {
+    flex: 0 0 auto;
+}
+
+.diagnostico-header-flag-icon {
+    align-items: center;
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    display: inline-flex;
+    height: 36px;
+    justify-content: center;
+    width: 52px;
+}
+
 .diagnostico-general-block {
     border-left: 5px solid #2563eb;
 }
@@ -4180,97 +4202,7 @@ table.dataTable thead td,
     color: #4b5563;
 }
 
-.diagnostico-trail {
-    display: grid;
-    gap: 0.75rem;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-}
-
-.diagnostico-trail-step {
-    align-items: center;
-    background: #f8fafc;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    display: grid;
-    gap: 0.35rem;
-    min-height: 120px;
-    padding: 0.85rem;
-    position: relative;
-}
-
-.diagnostico-trail-step::after {
-    background: var(--color-border);
-    content: "";
-    height: 2px;
-    left: calc(100% + 0.1rem);
-    position: absolute;
-    top: 1.55rem;
-    width: 0.55rem;
-}
-
-.diagnostico-trail-step:last-child::after {
-    display: none;
-}
-
-.diagnostico-trail-icon {
-    align-items: center;
-    border-radius: 999px;
-    display: inline-flex;
-    height: 2rem;
-    justify-content: center;
-    width: 2rem;
-}
-
-.diagnostico-trail-step strong {
-    color: var(--color-primary-strong);
-    font-size: 0.9rem;
-    line-height: 1.2;
-}
-
-.diagnostico-trail-step small {
-    color: var(--color-muted);
-    font-size: 0.76rem;
-    font-weight: 800;
-}
-
-.diagnostico-trail-success {
-    border-color: #a7f3d0;
-}
-
-.diagnostico-trail-success .diagnostico-trail-icon {
-    background: var(--color-success-soft);
-    color: #047857;
-}
-
-.diagnostico-trail-warning {
-    border-color: #fde68a;
-}
-
-.diagnostico-trail-warning .diagnostico-trail-icon {
-    background: var(--color-warning-soft);
-    color: #92400e;
-}
-
-.diagnostico-trail-danger {
-    border-color: #fecaca;
-}
-
-.diagnostico-trail-danger .diagnostico-trail-icon {
-    background: #fee2e2;
-    color: #b91c1c;
-}
-
-.diagnostico-trail-info,
-.diagnostico-trail-muted {
-    border-color: #bfdbfe;
-}
-
-.diagnostico-trail-info .diagnostico-trail-icon,
-.diagnostico-trail-muted .diagnostico-trail-icon {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
+/* Timeline vertical dos parâmetros mínimos, organizada por grupo de acompanhamento. */
 .diagnostico-trail-groups {
     display: grid;
     gap: 0.85rem;
@@ -4282,8 +4214,8 @@ table.dataTable thead td,
     border: 1px solid var(--color-border);
     border-radius: 8px;
     display: grid;
-    gap: 0.65rem;
-    padding: 0.85rem;
+    gap: 0.8rem;
+    padding: 0.9rem;
 }
 
 .diagnostico-trail-group h3 {
@@ -4293,13 +4225,104 @@ table.dataTable thead td,
     margin: 0;
 }
 
-.diagnostico-trail-items,
+.diagnostico-trail-items {
+    display: grid;
+    gap: 0;
+}
+
+.diagnostico-trail-row {
+    align-items: start;
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: 2.3rem minmax(0, 1fr);
+    min-height: 4.1rem;
+    padding-bottom: 0.45rem;
+    position: relative;
+}
+
+.diagnostico-trail-row::after {
+    background: #dbe4ef;
+    bottom: 0;
+    content: "";
+    left: 1.05rem;
+    position: absolute;
+    top: 2.05rem;
+    width: 2px;
+}
+
+.diagnostico-trail-row:last-child {
+    min-height: 2.4rem;
+    padding-bottom: 0;
+}
+
+.diagnostico-trail-row:last-child::after {
+    display: none;
+}
+
+.diagnostico-trail-marker {
+    align-items: center;
+    background: #e5e7eb;
+    border: 3px solid #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 0 0 2px #cbd5e1;
+    color: #4b5563;
+    display: inline-flex;
+    height: 2.1rem;
+    justify-content: center;
+    position: relative;
+    width: 2.1rem;
+    z-index: 1;
+}
+
+.diagnostico-trail-content {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+    padding-top: 0.15rem;
+}
+
+.diagnostico-trail-content strong,
+.diagnostico-missing-item strong {
+    color: var(--color-primary-strong);
+    font-size: 0.86rem;
+}
+
+.diagnostico-trail-content small,
+.diagnostico-missing-item span {
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    overflow-wrap: anywhere;
+}
+
+.diagnostico-trail-row-success .diagnostico-trail-marker {
+    background: #059669;
+    box-shadow: 0 0 0 2px #a7f3d0;
+    color: #ffffff;
+}
+
+.diagnostico-trail-row-warning .diagnostico-trail-marker {
+    background: #d97706;
+    box-shadow: 0 0 0 2px #fde68a;
+    color: #ffffff;
+}
+
+.diagnostico-trail-row-danger .diagnostico-trail-marker {
+    background: #dc2626;
+    box-shadow: 0 0 0 2px #fecaca;
+    color: #ffffff;
+}
+
+.diagnostico-trail-row-info .diagnostico-trail-marker {
+    background: #2563eb;
+    box-shadow: 0 0 0 2px #bfdbfe;
+    color: #ffffff;
+}
+
 .diagnostico-missing-list {
     display: grid;
     gap: 0.5rem;
 }
 
-.diagnostico-trail-row,
 .diagnostico-missing-item {
     align-items: center;
     background: #ffffff;
@@ -4309,34 +4332,6 @@ table.dataTable thead td,
     display: grid;
     gap: 0.45rem;
     padding: 0.65rem;
-}
-
-.diagnostico-trail-row strong,
-.diagnostico-missing-item strong {
-    color: var(--color-primary-strong);
-    font-size: 0.86rem;
-}
-
-.diagnostico-trail-row small,
-.diagnostico-missing-item span {
-    color: var(--color-muted);
-    font-size: 0.78rem;
-}
-
-.diagnostico-trail-row-success {
-    border-left-color: #059669;
-}
-
-.diagnostico-trail-row-warning {
-    border-left-color: #d97706;
-}
-
-.diagnostico-trail-row-danger {
-    border-left-color: #dc2626;
-}
-
-.diagnostico-trail-row-info {
-    border-left-color: #2563eb;
 }
 
 .diagnostico-operational-list {
@@ -4489,13 +4484,8 @@ table.dataTable thead td,
     .diagnostico-filter-grid,
     .diagnostico-header-grid,
     .diagnostico-summary-grid,
-    .diagnostico-trail,
     .diagnostico-trail-groups {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .diagnostico-trail-step::after {
-        display: none;
     }
 
     .diagnostico-operational-item summary,
@@ -4508,7 +4498,6 @@ table.dataTable thead td,
     .diagnostico-filter-grid,
     .diagnostico-header-grid,
     .diagnostico-summary-grid,
-    .diagnostico-trail,
     .diagnostico-trail-groups,
     .diagnostico-operational-item summary,
     .diagnostico-audit-grid {

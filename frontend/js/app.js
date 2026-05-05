@@ -4621,14 +4621,22 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarTrilhaParametrosDiagnostico(resposta) {
+            // A trilha segue o padrão visual vertical por grupo, mantendo a leitura operacional de cada parâmetro.
             const itens = obterItensOperacionaisDiagnostico(resposta);
+            const icones = {
+                'Tem': 'fa-check',
+                'Não tem': 'fa-xmark',
+                'Parcial': 'fa-triangle-exclamation',
+                'Validar': 'fa-file-circle-question',
+                'Não informado': 'fa-minus'
+            };
 
             return `
                 <section class="diagnostico-block" aria-label="Trilha de parâmetros mínimos">
                     <div class="section-header compact">
                         <div>
-                            <p class="section-eyebrow mb-1">Trilha objetiva</p>
-                            <h2>Tem, não tem, falta</h2>
+                            <p class="section-eyebrow mb-1">Trilha de acompanhamento</p>
+                            <h2>Parâmetros mínimos</h2>
                         </div>
                     </div>
                     <div class="diagnostico-trail-groups">
@@ -4642,9 +4650,13 @@ async function carregarLogoParaPDF() {
                                     <div class="diagnostico-trail-items">
                                         ${itensTrilha.map((item) => `
                                             <div class="diagnostico-trail-row diagnostico-trail-row-${obterClasseStatusDiagnostico(item.status)}">
-                                                ${renderizarBadgeDiagnostico(item.status)}
-                                                <strong>${escapeHtml(item.parametro)}</strong>
-                                                <small>${escapeHtml(item.falta && item.falta !== '-' ? item.falta : item.providencia)}</small>
+                                                <span class="diagnostico-trail-marker" aria-hidden="true">
+                                                    <i class="fas ${item.status.startsWith('Falta +') ? 'fa-box' : (icones[item.status] || 'fa-circle')}"></i>
+                                                </span>
+                                                <span class="diagnostico-trail-content">
+                                                    <strong>${escapeHtml(item.parametro)}</strong>
+                                                    <small>${escapeHtml(item.falta && item.falta !== '-' ? item.falta : item.status)}</small>
+                                                </span>
                                             </div>
                                         `).join('')}
                                     </div>
@@ -4664,7 +4676,7 @@ async function carregarLogoParaPDF() {
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">O que falta</p>
-                            <h2>Lista objetiva da ouvidoria</h2>
+                            <h2>Pendências</h2>
                         </div>
                         <small class="text-muted">${faltas.length} item(ns)</small>
                     </div>
@@ -4691,7 +4703,7 @@ async function carregarLogoParaPDF() {
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">Providências necessárias</p>
-                            <h2>Ações objetivas para saneamento</h2>
+                            <h2>Providências</h2>
                         </div>
                     </div>
                     ${providencias.length ? `
@@ -4728,7 +4740,7 @@ async function carregarLogoParaPDF() {
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">Detalhe técnico</p>
-                            <h2>Rastreabilidade por item</h2>
+                            <h2>Rastreabilidade</h2>
                         </div>
                         <small class="text-muted">${itens.length} item(ns)</small>
                     </div>
@@ -4763,11 +4775,23 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarCabecalhoUfDiagnostico(resposta) {
+            const flagUrl = catalogoAplicacao.imagensBandeiras?.[resposta.uf] || '';
+            const imgElement = flagUrl
+                ? `<img src="${escapeHtml(flagUrl)}" alt="Bandeira ${escapeHtml(resposta.uf)}" class="state-flag report-state-flag diagnostico-header-flag">`
+                : '<i class="fas fa-flag text-secondary report-state-icon diagnostico-header-flag-icon"></i>';
+            const unidade = resposta.unidadeDiagnosticada && resposta.unidadeDiagnosticada !== resposta.uf
+                ? resposta.unidadeDiagnosticada
+                : '';
+            const titulo = unidade ? `${resposta.uf} - ${unidade}` : resposta.uf;
+
             return `
                 <section class="diagnostico-block diagnostico-header-block" aria-label="Cabeçalho da UF">
-                    <div>
-                        <p class="section-eyebrow mb-1">Cabeçalho da UF</p>
-                        <h2>${escapeHtml(resposta.uf)} - ${escapeHtml(resposta.unidadeDiagnosticada)}</h2>
+                    <div class="diagnostico-header-title">
+                        ${imgElement}
+                        <div>
+                            <p class="section-eyebrow mb-1">Cabeçalho da UF</p>
+                            <h2>${escapeHtml(titulo)}</h2>
+                        </div>
                     </div>
                     <div class="diagnostico-header-grid">
                         <div><span>UF</span><strong>${escapeHtml(resposta.uf)}</strong></div>
@@ -4850,7 +4874,7 @@ async function carregarLogoParaPDF() {
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">Resumo da UF</p>
-                            <h2>Leitura rápida da situação</h2>
+                            <h2>Indicadores</h2>
                         </div>
                     </div>
                     <div class="diagnostico-summary-grid">
