@@ -21,7 +21,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260505-1';
+} from '../../backend/services/data-service.js?v=20260505-3';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -45,6 +45,7 @@ let proforConvenioAtual = null;
 let proforFiltroAreaAtual = 'OUVIDORIA';
 let formalizacaoUfAtual = null;
 let diagnosticoOuvidoriaAtual = null;
+let diagnosticoUfAtual = '';
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -4502,27 +4503,27 @@ async function carregarLogoParaPDF() {
         // --- MÓDULO DE DIAGNÓSTICO E CONFORMIDADE DAS OUVIDORIAS ---
         function obterFiltrosDiagnosticoOuvidorias() {
             return {
-                uf: document.getElementById('filtroDiagnosticoUf')?.value || '',
-                unidade: document.getElementById('filtroDiagnosticoUnidade')?.value || '',
-                statusGeral: document.getElementById('filtroDiagnosticoStatusGeral')?.value || '',
-                eixo: document.getElementById('filtroDiagnosticoEixo')?.value || '',
-                statusParametro: document.getElementById('filtroDiagnosticoStatusParametro')?.value || '',
-                validacao: document.getElementById('filtroDiagnosticoValidacao')?.value || '',
-                deficit: document.getElementById('filtroDiagnosticoDeficit')?.value || ''
+                uf: diagnosticoUfAtual || '',
+                unidade: '',
+                statusGeral: '',
+                eixo: '',
+                statusParametro: '',
+                validacao: '',
+                deficit: ''
             };
         }
 
         function aplicarFiltrosDiagnosticoOuvidorias(respostas, filtros = obterFiltrosDiagnosticoOuvidorias()) {
             return respostas.filter((resposta) => {
-                const possuiDeficit = resposta.deficitAparelhamento.some((item) => Number(item.deficit) > 0);
+                const parametros = resposta.parametrosMinimos || [];
+                const possuiDeficit = parametros.some((item) => Number(item.deficit) > 0);
                 const passaUf = !filtros.uf || resposta.uf === filtros.uf;
                 const passaUnidade = !filtros.unidade || resposta.idResposta === filtros.unidade;
-                const passaStatusGeral = !filtros.statusGeral || resposta.statusGeral === filtros.statusGeral;
-                const passaEixo = !filtros.eixo || resposta.checklist.some((item) => item.eixo === filtros.eixo);
+                const passaStatusGeral = !filtros.statusGeral || resposta.statusGeralParametrosMinimos === filtros.statusGeral;
+                const passaEixo = !filtros.eixo || parametros.some((item) => item.trilha === filtros.eixo || item.eixo === filtros.eixo);
                 const passaStatusParametro = !filtros.statusParametro
-                    || resposta.checklist.some((item) => item.statusAutomatico === filtros.statusParametro || item.statusOperacional === filtros.statusParametro)
-                    || resposta.deficitAparelhamento.some((item) => normalizarBusca(item.statusOperacional).includes(normalizarBusca(filtros.statusParametro)));
-                const passaValidacao = !filtros.validacao || resposta.checklist.some((item) => item.validacaoOnasp === filtros.validacao);
+                    || parametros.some((item) => item.statusNormalizado === filtros.statusParametro || normalizarBusca(item.statusNormalizado).includes(normalizarBusca(filtros.statusParametro)));
+                const passaValidacao = !filtros.validacao || parametros.some((item) => item.validacaoOnasp === filtros.validacao);
                 const passaDeficit = !filtros.deficit
                     || (filtros.deficit === 'com-deficit' && possuiDeficit)
                     || (filtros.deficit === 'sem-deficit' && !possuiDeficit);
@@ -4535,10 +4536,6 @@ async function carregarLogoParaPDF() {
                     && passaValidacao
                     && passaDeficit;
             });
-        }
-
-        function renderizarOpcoesDiagnostico(valores) {
-            return valores.map((valor) => `<option value="${escapeHtml(valor)}">${escapeHtml(valor)}</option>`).join('');
         }
 
         function obterClasseStatusDiagnostico(status) {
@@ -4554,7 +4551,19 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarBadgeDiagnostico(status) {
-            return `<span class="diagnostico-status-badge diagnostico-status-${obterClasseStatusDiagnostico(status)}">${escapeHtml(status || 'Não informado')}</span>`;
+            const texto = status || 'Não informado';
+            const icone = texto === 'Tem'
+                ? 'fa-check'
+                : texto === 'Não tem'
+                    ? 'fa-xmark'
+                    : texto === 'Parcial'
+                        ? 'fa-triangle-exclamation'
+                        : texto === 'Validar'
+                            ? 'fa-hourglass-half'
+                            : texto.startsWith('Falta +')
+                                ? 'fa-box'
+                                : 'fa-minus';
+            return `<span class="diagnostico-status-badge diagnostico-status-${obterClasseStatusDiagnostico(texto)}"><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(texto)}</span>`;
         }
 
         function formatarNumeroDiagnostico(valor) {
@@ -4563,9 +4572,9 @@ async function carregarLogoParaPDF() {
         }
 
         function obterChecklistVisivelDiagnostico(resposta, filtros = obterFiltrosDiagnosticoOuvidorias()) {
-            return resposta.checklist.filter((item) => (
-                (!filtros.eixo || item.eixo === filtros.eixo)
-                && (!filtros.statusParametro || item.statusAutomatico === filtros.statusParametro || item.statusOperacional === filtros.statusParametro)
+            return (resposta.parametrosMinimos || []).filter((item) => (
+                (!filtros.eixo || item.trilha === filtros.eixo || item.eixo === filtros.eixo)
+                && (!filtros.statusParametro || item.statusNormalizado === filtros.statusParametro || normalizarBusca(item.statusNormalizado).includes(normalizarBusca(filtros.statusParametro)))
                 && (!filtros.validacao || item.validacaoOnasp === filtros.validacao)
             ));
         }
@@ -4576,7 +4585,6 @@ async function carregarLogoParaPDF() {
             'Estrutura',
             'Canais',
             'Fluxo',
-            'Relatórios'
         ];
 
         function obterEixoOperacionalDiagnostico(eixo = '', parametro = '') {
@@ -4592,65 +4600,28 @@ async function carregarLogoParaPDF() {
 
         function obterItensOperacionaisDiagnostico(resposta) {
             const filtros = obterFiltrosDiagnosticoOuvidorias();
-            const parametrosQuantitativos = new Set(['ESTRUTURA_015', 'ESTRUTURA_016', 'ESTRUTURA_017', 'ESTRUTURA_018', 'ESTRUTURA_019']);
-            const checklist = obterChecklistVisivelDiagnostico(resposta, filtros)
-                .filter((item) => !parametrosQuantitativos.has(item.idParametro))
-                .map((item) => ({
-                tipo: 'Checklist',
-                eixo: obterEixoOperacionalDiagnostico(item.eixo, item.parametroCurto || item.parametro),
+            return obterChecklistVisivelDiagnostico(resposta, filtros).map((item) => ({
+                tipo: item.tipo,
+                eixo: item.trilha || item.eixo,
                 parametro: item.parametroCurto || item.parametro,
-                status: item.statusOperacional || item.statusAutomatico,
-                falta: item.faltaObjetiva || (item.statusAutomatico === 'Conforme' ? '-' : item.providencia),
-                providencia: item.providenciaObjetiva || (item.statusAutomatico === 'Conforme' ? 'Não se aplica' : item.providencia),
+                status: item.statusNormalizado || item.statusOperacional,
+                falta: item.faltaObjetiva,
+                providencia: item.providenciaObjetiva,
                 fundamentoIn: item.fundamentoIn,
                 perguntasDiagnostico: item.perguntasDiagnostico || [],
-                respostaUf: item.respostaUf,
+                respostaUf: item.respostaOriginal || item.respostaUf,
                 prioridade: item.prioridade,
-                validacaoOnasp: item.validacaoOnasp
-            }));
-
-            const deficits = (resposta.deficitAparelhamento || [])
-                .filter((item) => !filtros.deficit || (filtros.deficit === 'com-deficit' ? Number(item.deficit) > 0 : Number(item.deficit) <= 0))
-                .map((item) => ({
-                    tipo: 'Aparelhamento',
-                    eixo: 'Estrutura',
-                    parametro: item.item,
-                    status: item.statusOperacional || (Number(item.deficit) > 0 ? `Falta +${item.deficit}` : 'Tem'),
-                    falta: item.faltaObjetiva || (Number(item.deficit) > 0 ? `+${item.deficit}` : '-'),
-                    providencia: item.providenciaObjetiva || (Number(item.deficit) > 0 ? `Prever aquisição de ${item.item.toLowerCase()}` : 'Não se aplica'),
-                    fundamentoIn: item.fundamentoIn,
-                    perguntasDiagnostico: item.perguntasDiagnostico || [],
-                    respostaUf: `Atual: ${formatarNumeroDiagnostico(item.atualDeclarado)} | Ideal: ${formatarNumeroDiagnostico(item.idealDeclarado)}`,
-                    prioridade: item.prioridade,
-                    atualDeclarado: item.atualDeclarado,
-                    idealDeclarado: item.idealDeclarado,
-                    deficit: item.deficit
-                }));
-
-            const statusParametro = filtros.statusParametro;
-            return [...checklist, ...deficits]
-                .filter((item) => !statusParametro || item.status === statusParametro || normalizarBusca(item.status).includes(normalizarBusca(statusParametro)))
-                .sort((a, b) => (
-                    ORDEM_TRILHAS_DIAGNOSTICO.indexOf(a.eixo) - ORDEM_TRILHAS_DIAGNOSTICO.indexOf(b.eixo)
-                    || a.parametro.localeCompare(b.parametro)
-                ));
-        }
-
-        function obterStatusTrilhaDiagnostico(itens) {
-            if (!itens.length) return 'Não informado';
-            if (itens.some((item) => ['danger'].includes(obterClasseStatusDiagnostico(item.status)))) return 'Pendente';
-            if (itens.some((item) => ['warning', 'info', 'muted'].includes(obterClasseStatusDiagnostico(item.status)))) return 'Parcial';
-            return 'Completo';
+                validacaoOnasp: item.validacaoOnasp,
+                atualDeclarado: item.atualDeclarado,
+                idealDeclarado: item.idealDeclarado,
+                deficit: item.deficit
+            })).sort((a, b) => (
+                ORDEM_TRILHAS_DIAGNOSTICO.indexOf(a.eixo) - ORDEM_TRILHAS_DIAGNOSTICO.indexOf(b.eixo)
+            ));
         }
 
         function renderizarTrilhaParametrosDiagnostico(resposta) {
             const itens = obterItensOperacionaisDiagnostico(resposta);
-            const totalPorEixo = ORDEM_TRILHAS_DIAGNOSTICO.map((eixo) => {
-                const itensEixo = itens.filter((item) => item.eixo === eixo);
-                const status = obterStatusTrilhaDiagnostico(itensEixo);
-                const pendencias = itensEixo.filter((item) => obterClasseStatusDiagnostico(item.status) !== 'success').length;
-                return { eixo, itens: itensEixo.length, status, pendencias };
-            });
 
             return `
                 <section class="diagnostico-block" aria-label="Trilha de parâmetros mínimos">
@@ -4660,15 +4631,131 @@ async function carregarLogoParaPDF() {
                             <h2>Tem, não tem, falta</h2>
                         </div>
                     </div>
-                    <div class="diagnostico-trail">
-                        ${totalPorEixo.map((trilha) => `
-                            <div class="diagnostico-trail-step diagnostico-trail-${obterClasseStatusDiagnostico(trilha.status)}">
-                                <span class="diagnostico-trail-icon" aria-hidden="true">
-                                    <i class="fas ${trilha.status === 'Completo' ? 'fa-check' : trilha.status === 'Pendente' ? 'fa-xmark' : 'fa-triangle-exclamation'}"></i>
-                                </span>
-                                <strong>${escapeHtml(trilha.eixo)}</strong>
-                                <small>${escapeHtml(trilha.status)} · ${trilha.pendencias} pendência(s)</small>
-                            </div>
+                    <div class="diagnostico-trail-groups">
+                        ${ORDEM_TRILHAS_DIAGNOSTICO.map((trilha) => {
+                            const itensTrilha = itens.filter((item) => item.eixo === trilha);
+                            if (!itensTrilha.length) return '';
+
+                            return `
+                                <div class="diagnostico-trail-group">
+                                    <h3>${escapeHtml(trilha)}</h3>
+                                    <div class="diagnostico-trail-items">
+                                        ${itensTrilha.map((item) => `
+                                            <div class="diagnostico-trail-row diagnostico-trail-row-${obterClasseStatusDiagnostico(item.status)}">
+                                                ${renderizarBadgeDiagnostico(item.status)}
+                                                <strong>${escapeHtml(item.parametro)}</strong>
+                                                <small>${escapeHtml(item.falta && item.falta !== '-' ? item.falta : item.providencia)}</small>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderizarFaltasParametrosMinimos(resposta) {
+            const faltas = resposta.faltasParametrosMinimos || [];
+
+            return `
+                <section class="diagnostico-block" aria-label="O que está faltando">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">O que falta</p>
+                            <h2>Lista objetiva da ouvidoria</h2>
+                        </div>
+                        <small class="text-muted">${faltas.length} item(ns)</small>
+                    </div>
+                    ${faltas.length ? `
+                        <div class="diagnostico-missing-list">
+                            ${faltas.map((item) => `
+                                <div class="diagnostico-missing-item diagnostico-operational-${obterClasseStatusDiagnostico(item.status)}">
+                                    ${renderizarBadgeDiagnostico(item.status)}
+                                    <strong>${escapeHtml(item.item)}</strong>
+                                    <span>${escapeHtml(item.providencia || item.falta || '-')}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : '<div class="diagnostico-empty-state">Nenhuma falta calculada para esta ouvidoria.</div>'}
+                </section>
+            `;
+        }
+
+        function renderizarProvidenciasParametrosMinimos(resposta) {
+            const providencias = resposta.providenciasParametrosMinimos || [];
+
+            return `
+                <section class="diagnostico-block" aria-label="Providências necessárias">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Providências necessárias</p>
+                            <h2>Ações objetivas para saneamento</h2>
+                        </div>
+                    </div>
+                    ${providencias.length ? `
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover w-100 app-data-table diagnostico-table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Situação</th>
+                                        <th>Providência</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${providencias.map((item) => `
+                                        <tr>
+                                            <td data-label="Item"><strong>${escapeHtml(item.item)}</strong></td>
+                                            <td data-label="Situação">${renderizarBadgeDiagnostico(item.situacao)}</td>
+                                            <td data-label="Providência">${escapeHtml(item.providencia || '-')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    ` : '<div class="diagnostico-empty-state">Nenhuma providência necessária calculada para esta ouvidoria.</div>'}
+                </section>
+            `;
+        }
+
+        function renderizarDetalheTecnicoParametrosMinimos(resposta) {
+            const itens = obterItensOperacionaisDiagnostico(resposta);
+
+            return `
+                <section class="diagnostico-block" aria-label="Detalhe técnico dos parâmetros mínimos">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Detalhe técnico</p>
+                            <h2>Rastreabilidade por item</h2>
+                        </div>
+                        <small class="text-muted">${itens.length} item(ns)</small>
+                    </div>
+                    <div class="diagnostico-operational-list">
+                        ${itens.map((item) => `
+                            <details class="diagnostico-operational-item diagnostico-operational-${obterClasseStatusDiagnostico(item.status)}">
+                                <summary>
+                                    <span class="diagnostico-operational-main">
+                                        <strong>${escapeHtml(item.parametro)}</strong>
+                                        <small>${escapeHtml(item.eixo)}</small>
+                                    </span>
+                                    <span class="diagnostico-operational-status">${renderizarBadgeDiagnostico(item.status)}</span>
+                                    <span class="diagnostico-operational-gap">${escapeHtml(item.falta || '-')}</span>
+                                    <span class="diagnostico-operational-action">${escapeHtml(item.providencia || 'Não se aplica')}</span>
+                                </summary>
+                                <div class="diagnostico-audit-grid">
+                                    <div><span>Item</span><strong>${escapeHtml(item.parametro)}</strong></div>
+                                    <div><span>Fundamento normativo</span><strong>${escapeHtml(item.fundamentoIn || 'Não informado')}</strong></div>
+                                    <div><span>Pergunta de origem</span><strong>${escapeHtml((item.perguntasDiagnostico || []).join(', ') || 'Não informado')}</strong></div>
+                                    <div><span>Resultado normalizado</span><strong>${escapeHtml(item.status || 'Não informado')}</strong></div>
+                                    <div><span>Providência sugerida</span><strong>${escapeHtml(item.providencia || 'Não se aplica')}</strong></div>
+                                    <div><span>Validação ONASP</span><strong>${escapeHtml(item.validacaoOnasp || 'Não se aplica')}</strong></div>
+                                    <div><span>Atual</span><strong>${escapeHtml(formatarNumeroDiagnostico(item.atualDeclarado))}</strong></div>
+                                    <div><span>Ideal</span><strong>${escapeHtml(formatarNumeroDiagnostico(item.idealDeclarado))}</strong></div>
+                                </div>
+                                <p class="diagnostico-original-response">${escapeHtml(item.respostaUf || 'Resposta original não informada')}</p>
+                            </details>
                         `).join('')}
                     </div>
                 </section>
@@ -4686,8 +4773,8 @@ async function carregarLogoParaPDF() {
                         <div><span>UF</span><strong>${escapeHtml(resposta.uf)}</strong></div>
                         <div><span>Unidade diagnosticada</span><strong>${escapeHtml(resposta.unidadeDiagnosticada || 'Não informado')}</strong></div>
                         <div><span>Data da resposta</span><strong>${escapeHtml(resposta.dataResposta || 'Não informado')}</strong></div>
-                        <div><span>Status geral de conformidade</span>${renderizarBadgeDiagnostico(resposta.statusGeral)}</div>
-                        <div><span>Validação ONASP</span>${renderizarBadgeDiagnostico(resposta.resumo.validacaoOnasp)}</div>
+                        <div><span>Status geral</span>${renderizarBadgeDiagnostico(resposta.statusGeralParametrosMinimos)}</div>
+                        <div><span>Itens avaliados</span><strong>${escapeHtml(String(resposta.resumoParametrosMinimos?.total || 0))}</strong></div>
                     </div>
                 </section>
             `;
@@ -4695,17 +4782,17 @@ async function carregarLogoParaPDF() {
 
         function montarResumoGeralParametrosDiagnostico(respostas = []) {
             const total = respostas.length;
-            const totalAvaliavel = respostas.reduce((soma, resposta) => soma + (resposta.resumo?.totalAvaliavel || 0), 0);
-            const conformes = respostas.reduce((soma, resposta) => soma + (resposta.resumo?.conformes || 0), 0);
-            const deficitAparelhamento = respostas.reduce((soma, resposta) => soma + (resposta.resumo?.deficitAparelhamento || 0), 0);
+            const totalAvaliavel = respostas.reduce((soma, resposta) => soma + (resposta.resumoParametrosMinimos?.total || 0), 0);
+            const conformes = respostas.reduce((soma, resposta) => soma + (resposta.resumoParametrosMinimos?.parametrosAtendidos || 0), 0);
+            const deficitAparelhamento = respostas.reduce((soma, resposta) => soma + (resposta.resumoParametrosMinimos?.deficitMaterial || 0), 0);
 
             return {
                 totalRespostas: total,
                 ufsDiagnosticadas: new Set(respostas.map((resposta) => resposta.uf).filter(Boolean)).size,
-                conformes: respostas.filter((resposta) => resposta.statusGeral === 'Conforme').length,
-                parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeral === 'Parcialmente conforme').length,
-                naoConformes: respostas.filter((resposta) => resposta.statusGeral === 'Não conforme').length,
-                naoInformadas: respostas.filter((resposta) => resposta.statusGeral === 'Não informado').length,
+                conformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Tem').length,
+                parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Parcial').length,
+                naoConformes: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não tem')).length,
+                naoInformadas: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não informado')).length,
                 conformidadePercentual: totalAvaliavel ? Math.round((conformes / totalAvaliavel) * 100) : 0,
                 deficitAparelhamento
             };
@@ -4742,22 +4829,20 @@ async function carregarLogoParaPDF() {
                     </div>
                     <div class="diagnostico-general-callout">
                         <i class="fas fa-filter" aria-hidden="true"></i>
-                        <span>Selecione uma UF no filtro para abrir o checklist operacional daquela ouvidoria.</span>
+                        <span>Selecione uma UF nos botões acima para abrir o checklist operacional daquela ouvidoria.</span>
                     </div>
                 </section>
             `;
         }
 
         function renderizarResumoConformidadeDiagnostico(resposta) {
-            const resumo = resposta.resumo;
+            const resumo = resposta.resumoParametrosMinimos || {};
             const cards = [
-                ['Conformidade IN', `${resumo.conformidadePercentual}%`],
-                ['Tem', resumo.conformes],
-                ['Parcial', resumo.parcialmenteConformes],
-                ['Não tem', resumo.naoConformes],
-                ['Não informado', resumo.naoInformados],
-                ['Falta material', resumo.deficitAparelhamento],
-                ['Validação ONASP', resumo.validacaoOnasp]
+                ['Parâmetros atendidos', resumo.parametrosAtendidos || 0],
+                ['Pendências', resumo.pendencias || 0],
+                ['Déficit material', resumo.deficitMaterial || 0],
+                ['Itens para validar', resumo.itensParaValidar || 0],
+                ['Status geral', resumo.statusGeral || 'Não informado']
             ];
 
             return `
@@ -4776,131 +4861,6 @@ async function carregarLogoParaPDF() {
                             </div>
                         `).join('')}
                     </div>
-                </section>
-            `;
-        }
-
-        function renderizarChecklistDiagnostico(resposta) {
-            const itens = obterItensOperacionaisDiagnostico(resposta);
-
-            return `
-                <section class="diagnostico-block" aria-label="Checklist operacional de parâmetros mínimos">
-                    <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Checklist operacional</p>
-                            <h2>O que tem, o que falta e a providência</h2>
-                        </div>
-                        <small class="text-muted">${itens.length} item(ns)</small>
-                    </div>
-                    ${itens.length ? `
-                        <div class="diagnostico-operational-list">
-                            ${itens.map((item) => `
-                                <details class="diagnostico-operational-item diagnostico-operational-${obterClasseStatusDiagnostico(item.status)}">
-                                    <summary>
-                                        <span class="diagnostico-operational-main">
-                                            <strong>${escapeHtml(item.parametro)}</strong>
-                                            <small>${escapeHtml(item.eixo)}</small>
-                                        </span>
-                                        <span class="diagnostico-operational-status">${renderizarBadgeDiagnostico(item.status)}</span>
-                                        <span class="diagnostico-operational-gap">${escapeHtml(item.falta || '-')}</span>
-                                        <span class="diagnostico-operational-action">${escapeHtml(item.providencia || 'Não se aplica')}</span>
-                                    </summary>
-                                    <div class="diagnostico-audit-grid">
-                                        <div><span>Fundamento IN</span><strong>${escapeHtml(item.fundamentoIn || 'Não informado')}</strong></div>
-                                        <div><span>Perguntas</span><strong>${escapeHtml((item.perguntasDiagnostico || []).join(', ') || 'Não informado')}</strong></div>
-                                        <div><span>Prioridade</span><strong>${escapeHtml(item.prioridade || 'Não informado')}</strong></div>
-                                        <div><span>Validação ONASP</span><strong>${escapeHtml(item.validacaoOnasp || 'Não se aplica')}</strong></div>
-                                    </div>
-                                    <p class="diagnostico-original-response">${escapeHtml(item.respostaUf || 'Resposta original não informada')}</p>
-                                </details>
-                            `).join('')}
-                        </div>
-                    ` : '<div class="diagnostico-empty-state">Nenhum parâmetro avaliável localizado para os filtros atuais.</div>'}
-                </section>
-            `;
-        }
-
-        function renderizarDeficitDiagnostico(resposta) {
-            const itens = resposta.deficitAparelhamento;
-
-            return `
-                <section class="diagnostico-block" aria-label="Déficit de Aparelhamento">
-                    <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Déficit de Aparelhamento</p>
-                            <h2>Diferença entre atual e ideal declarado</h2>
-                        </div>
-                    </div>
-                    <p class="diagnostico-safety-text">
-                        O déficit apresentado decorre das informações declaradas pela Unidade Federativa na planilha Diagnostico.xlsx e serve como subsídio para planejamento do aparelhamento, não substituindo a análise técnica da ONASP.
-                    </p>
-                    ${itens.length ? `
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover w-100 app-data-table diagnostico-table">
-                                <thead>
-                                    <tr>
-                                        <th>Item</th>
-                                        <th class="text-end">Atual declarado</th>
-                                        <th class="text-end">Ideal declarado</th>
-                                        <th class="text-end">Déficit</th>
-                                        <th>Pode compor plano de aplicação?</th>
-                                        <th>Observação</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${itens.map((item) => `
-                                        <tr>
-                                            <td data-label="Item"><strong>${escapeHtml(item.item)}</strong></td>
-                                            <td data-label="Atual declarado" class="text-end">${escapeHtml(formatarNumeroDiagnostico(item.atualDeclarado))}</td>
-                                            <td data-label="Ideal declarado" class="text-end">${escapeHtml(formatarNumeroDiagnostico(item.idealDeclarado))}</td>
-                                            <td data-label="Déficit" class="text-end">${escapeHtml(formatarNumeroDiagnostico(item.deficit))}</td>
-                                            <td data-label="Pode compor plano de aplicação?">${item.podeComporPlanoAplicacao ? 'Sim' : 'Não'}</td>
-                                            <td data-label="Observação">${escapeHtml(item.observacao)}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    ` : '<div class="diagnostico-empty-state">Nenhum item quantitativo de aparelhamento foi localizado na planilha.</div>'}
-                </section>
-            `;
-        }
-
-        function renderizarProvidenciasDiagnostico(resposta) {
-            const providencias = resposta.providencias;
-
-            return `
-                <section class="diagnostico-block" aria-label="Providências necessárias">
-                    <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Providências necessárias</p>
-                            <h2>Ações objetivas para saneamento</h2>
-                        </div>
-                    </div>
-                    ${providencias.length ? `
-                        <div class="table-responsive">
-                            <table class="table table-sm table-hover w-100 app-data-table diagnostico-table">
-                                <thead>
-                                    <tr>
-                                        <th>Origem</th>
-                                        <th>Providência necessária</th>
-                                        <th>Prioridade</th>
-                                        <th>Status da providência</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${providencias.map((item) => `
-                                        <tr>
-                                            <td data-label="Origem">${escapeHtml(item.origem)}</td>
-                                            <td data-label="Providência necessária"><strong>${escapeHtml(item.providenciaNecessaria)}</strong></td>
-                                            <td data-label="Prioridade">${escapeHtml(item.prioridade)}</td>
-                                            <td data-label="Status da providência">${escapeHtml(item.statusProvidencia)}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    ` : '<div class="diagnostico-empty-state">Nenhuma providência necessária calculada para esta unidade.</div>'}
                 </section>
             `;
         }
@@ -4943,132 +4903,20 @@ async function carregarLogoParaPDF() {
             `;
         }
 
-        function renderizarFiltrosDiagnostico(dados, respostasFiltradas) {
-            const filtros = dados.resumo.filtros;
-            const opcoesUnidades = dados.respostas.map((resposta) => (
-                `<option value="${escapeHtml(resposta.idResposta)}">${escapeHtml(`${resposta.uf} - ${resposta.unidadeDiagnosticada}`)}</option>`
-            )).join('');
-
-            return `
-                <section class="filter-section diagnostico-filter-section mb-4" aria-label="Filtros do diagnóstico">
-                    <div class="filter-toolbar">
-                        <div class="filter-title">
-                            <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
-                            <strong>Filtros técnicos</strong>
-                        </div>
-                        <button id="btnLimparFiltrosDiagnostico" type="button" class="btn btn-outline-secondary btn-icon-text">
-                            <i class="fas fa-undo" aria-hidden="true"></i>
-                            <span>Limpar</span>
-                        </button>
-                    </div>
-                    <div class="budget-filter-grid diagnostico-filter-grid">
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDiagnosticoUf">UF</label>
-                            <select id="filtroDiagnosticoUf" class="form-select">
-                                <option value="">Todas</option>
-                                ${renderizarOpcoesDiagnostico(filtros.ufs)}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDiagnosticoUnidade">Unidade diagnosticada</label>
-                            <select id="filtroDiagnosticoUnidade" class="form-select">
-                                <option value="">Todas</option>
-                                ${opcoesUnidades}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDiagnosticoStatusGeral">Status geral</label>
-                            <select id="filtroDiagnosticoStatusGeral" class="form-select">
-                                <option value="">Todos</option>
-                                ${renderizarOpcoesDiagnostico(filtros.statusGerais)}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDiagnosticoEixo">Eixo do checklist</label>
-                            <select id="filtroDiagnosticoEixo" class="form-select">
-                                <option value="">Todos</option>
-                                ${renderizarOpcoesDiagnostico(filtros.eixos)}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDiagnosticoStatusParametro">Status do parâmetro</label>
-                            <select id="filtroDiagnosticoStatusParametro" class="form-select">
-                                <option value="">Todos</option>
-                                ${renderizarOpcoesDiagnostico(filtros.statusParametros)}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDiagnosticoValidacao">Validação ONASP</label>
-                            <select id="filtroDiagnosticoValidacao" class="form-select">
-                                <option value="">Todas</option>
-                                ${renderizarOpcoesDiagnostico(filtros.validacoesOnasp)}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDiagnosticoDeficit">Déficit de aparelhamento</label>
-                            <select id="filtroDiagnosticoDeficit" class="form-select">
-                                <option value="">Todos</option>
-                                <option value="com-deficit">Com déficit</option>
-                                <option value="sem-deficit">Sem déficit</option>
-                            </select>
-                        </div>
-                    </div>
-                    <small class="text-muted">${respostasFiltradas.length} unidade(s) localizada(s) pelos filtros atuais.</small>
-                </section>
-            `;
-        }
-
-        function restaurarFiltrosDiagnostico(filtros) {
-            Object.entries({
-                filtroDiagnosticoUf: filtros.uf,
-                filtroDiagnosticoUnidade: filtros.unidade,
-                filtroDiagnosticoStatusGeral: filtros.statusGeral,
-                filtroDiagnosticoEixo: filtros.eixo,
-                filtroDiagnosticoStatusParametro: filtros.statusParametro,
-                filtroDiagnosticoValidacao: filtros.validacao,
-                filtroDiagnosticoDeficit: filtros.deficit
-            }).forEach(([id, valor]) => {
-                const elemento = document.getElementById(id);
-                if (elemento) elemento.value = valor;
-            });
-        }
-
         function registrarEventosDiagnosticoOuvidorias(dados) {
             document.querySelectorAll('[data-diagnostico-uf]').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     const uf = botao.dataset.diagnosticoUf || '';
-                    const filtroUf = document.getElementById('filtroDiagnosticoUf');
-                    const filtroUnidade = document.getElementById('filtroDiagnosticoUnidade');
 
-                    if (filtroUf) filtroUf.value = uf;
-                    if (filtroUnidade) filtroUnidade.value = '';
+                    diagnosticoUfAtual = uf;
                     diagnosticoOuvidoriaAtual = null;
                     renderDiagnosticoOuvidoriasView();
                 });
             });
 
-            document.getElementById('filtroDiagnosticoUf')?.addEventListener('change', (evento) => {
-                diagnosticoOuvidoriaAtual = null;
-                if (!evento.target.value) {
-                    const unidade = document.getElementById('filtroDiagnosticoUnidade');
-                    if (unidade) unidade.value = '';
-                }
-                renderDiagnosticoOuvidoriasView();
-            });
-
-            ['filtroDiagnosticoUnidade', 'filtroDiagnosticoStatusGeral', 'filtroDiagnosticoEixo', 'filtroDiagnosticoStatusParametro', 'filtroDiagnosticoValidacao', 'filtroDiagnosticoDeficit']
-                .forEach((id) => {
-                    document.getElementById(id)?.addEventListener('change', () => renderDiagnosticoOuvidoriasView());
-                });
-
             document.getElementById('diagnosticoRespostaAtual')?.addEventListener('change', (evento) => {
                 diagnosticoOuvidoriaAtual = evento.target.value;
                 renderDiagnosticoOuvidoriasView();
-            });
-
-            document.getElementById('btnLimparFiltrosDiagnostico')?.addEventListener('click', () => {
-                diagnosticoOuvidoriaAtual = null;
-                renderDiagnosticoOuvidoriasView(true);
             });
         }
 
@@ -5108,6 +4956,7 @@ async function carregarLogoParaPDF() {
                 validacao: '',
                 deficit: ''
             } : obterFiltrosDiagnosticoOuvidorias();
+            if (limparFiltros) diagnosticoUfAtual = '';
             const respostasFiltradas = aplicarFiltrosDiagnosticoOuvidorias(dados.respostas, filtrosAtuais);
             const deveExibirDetalheUf = Boolean(filtrosAtuais.uf);
 
@@ -5150,7 +4999,6 @@ async function carregarLogoParaPDF() {
                 </section>
 
                 ${renderizarAtalhosUfDiagnostico(dados, filtrosAtuais)}
-                ${renderizarFiltrosDiagnostico(dados, respostasFiltradas)}
                 ${avisoBase}
                 ${seletorRespostas}
 
@@ -5158,9 +5006,9 @@ async function carregarLogoParaPDF() {
                     ${renderizarCabecalhoUfDiagnostico(respostaAtual)}
                     ${renderizarResumoConformidadeDiagnostico(respostaAtual)}
                     ${renderizarTrilhaParametrosDiagnostico(respostaAtual)}
-                    ${renderizarChecklistDiagnostico(respostaAtual)}
-                    ${renderizarDeficitDiagnostico(respostaAtual)}
-                    ${renderizarProvidenciasDiagnostico(respostaAtual)}
+                    ${renderizarFaltasParametrosMinimos(respostaAtual)}
+                    ${renderizarProvidenciasParametrosMinimos(respostaAtual)}
+                    ${renderizarDetalheTecnicoParametrosMinimos(respostaAtual)}
                 ` : !deveExibirDetalheUf ? `
                     ${renderizarVisaoGeralParametrosDiagnostico(dados, respostasFiltradas)}
                 ` : `
@@ -5170,7 +5018,6 @@ async function carregarLogoParaPDF() {
                 `}
             `;
 
-            restaurarFiltrosDiagnostico(filtrosAtuais);
             registrarEventosDiagnosticoOuvidorias(dados);
         }
 

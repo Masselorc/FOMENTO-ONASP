@@ -9,7 +9,7 @@
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260505-1';
+const VERSAO_DADOS = '20260505-3';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
@@ -88,9 +88,227 @@ const PARAMETROS_DIAGNOSTICO_ONASP = [
 const ITENS_DEFICIT_DIAGNOSTICO = [
     { item: 'Computadores', atual: ['M2-17'], ideal: ['M2-18'], fundamentoIn: 'Art. 7º, I', prioridade: 'Alta', providencia: 'Prever aquisição de computadores' },
     { item: 'Impressoras multifuncionais', atual: ['M2-19'], ideal: ['M2-20'], fundamentoIn: 'Art. 7º, II', prioridade: 'Média', providencia: 'Prever aquisição de impressora multifuncional' },
+    { item: 'Scanners', atual: ['M2-21', 'Scanner atual', 'Scanners atuais'], ideal: ['M2-22', 'Scanner ideal', 'Scanners ideais'], fundamentoIn: 'Art. 7º, II', prioridade: 'Média', providencia: 'Prever aquisição de scanner' },
     { item: 'Mobiliário/estações de trabalho', atual: ['M2-29'], ideal: ['M2-30'], fundamentoIn: 'Art. 7º, III', prioridade: 'Média', providencia: 'Prever adequação de mobiliário e estações de trabalho' },
     { item: 'Armários/arquivos', atual: ['M2-31'], ideal: ['M2-32'], fundamentoIn: 'Art. 7º, III; art. 4º, II', prioridade: 'Alta', providencia: 'Prever armários ou arquivos para guarda de documentos' },
     { item: 'Licenças de software', atual: ['M2-33'], ideal: ['M2-34'], fundamentoIn: 'Art. 7º, VIII', prioridade: 'Média', providencia: 'Prever licenças de software necessárias' }
+];
+
+const PARAMETROS_MINIMOS_DIAGNOSTICO = [
+    {
+        id: 'ato_normativo',
+        trilha: 'Institucionalização',
+        nome: 'Ato normativo específico',
+        tipo: 'qualitativo',
+        perguntas: ['M1-11', 'M1-14', 'M1-15'],
+        fundamentoIn: 'IN ONASP - formalização por ato normativo próprio',
+        requerValidacao: true,
+        falta: 'Comprovação documental do ato normativo',
+        providencias: {
+            Validar: 'Anexar ato normativo publicado',
+            'Não tem': 'Instituir ato normativo específico',
+            'Não informado': 'Informar situação do ato normativo'
+        }
+    },
+    {
+        id: 'autonomia_tecnica',
+        trilha: 'Institucionalização',
+        nome: 'Autonomia técnica',
+        tipo: 'qualitativo',
+        perguntas: ['M3-56', 'M1-12'],
+        fundamentoIn: 'IN ONASP - autonomia técnica e funcional da ouvidoria',
+        requerValidacao: true,
+        falta: 'Comprovação da autonomia técnica',
+        providencias: {
+            Validar: 'Validar autonomia técnica no ato ou estrutura declarada',
+            Parcial: 'Complementar comprovação da autonomia técnica',
+            'Não tem': 'Instituir autonomia técnica mínima',
+            'Não informado': 'Informar autonomia técnica da ouvidoria'
+        }
+    },
+    {
+        id: 'ouvidor_designado',
+        trilha: 'Pessoas',
+        nome: 'Ouvidor formalmente designado',
+        tipo: 'qualitativo',
+        perguntas: ['M0-06', 'M0-07', 'M3-57'],
+        fundamentoIn: 'IN ONASP - designação formal de ouvidor ou responsável',
+        requerValidacao: true,
+        falta: 'Ato de designação formal',
+        providencias: {
+            Validar: 'Apresentar ato de designação',
+            'Não tem': 'Designar formalmente ouvidor/responsável',
+            'Não informado': 'Informar responsável pela ouvidoria'
+        }
+    },
+    {
+        id: 'dedicacao_equipe',
+        trilha: 'Pessoas',
+        nome: 'Dedicação da equipe',
+        tipo: 'qualitativo',
+        perguntas: ['M3-60'],
+        fundamentoIn: 'IN ONASP - dedicação funcional às atividades da ouvidoria',
+        falta: 'Dedicação funcional definida',
+        providencias: {
+            Parcial: 'Definir dedicação funcional mínima à ouvidoria',
+            'Não tem': 'Definir dedicação funcional mínima à ouvidoria',
+            'Não informado': 'Informar dedicação funcional da equipe'
+        }
+    },
+    {
+        id: 'sala_reservada',
+        trilha: 'Estrutura',
+        nome: 'Sala/ambiente reservado',
+        tipo: 'qualitativo',
+        perguntas: ['M2-16'],
+        fundamentoIn: 'IN ONASP - ambiente reservado para atendimento',
+        falta: 'Ambiente reservado adequado',
+        providencias: {
+            Parcial: 'Adequar espaço para atendimento com privacidade',
+            'Não tem': 'Destinar sala ou ambiente reservado',
+            'Não informado': 'Informar estrutura física da ouvidoria'
+        }
+    },
+    {
+        id: 'computadores_notebooks',
+        trilha: 'Estrutura',
+        nome: 'Computadores/notebooks',
+        tipo: 'quantitativo',
+        atual: ['M2-17'],
+        ideal: ['M2-18'],
+        fundamentoIn: 'Art. 7º, I',
+        unidadeProvidencia: 'computadores/notebooks'
+    },
+    {
+        id: 'impressora_multifuncional',
+        trilha: 'Estrutura',
+        nome: 'Impressora multifuncional',
+        tipo: 'quantitativo',
+        atual: ['M2-19'],
+        ideal: ['M2-20'],
+        fundamentoIn: 'Art. 7º, II',
+        unidadeProvidencia: 'impressora(s) multifuncional(is)'
+    },
+    {
+        id: 'scanner',
+        trilha: 'Estrutura',
+        nome: 'Scanner',
+        tipo: 'quantitativo',
+        atual: ['M2-21', 'Scanner atual', 'Scanners atuais'],
+        ideal: ['M2-22', 'Scanner ideal', 'Scanners ideais'],
+        fundamentoIn: 'Art. 7º, II',
+        unidadeProvidencia: 'scanner(s)'
+    },
+    {
+        id: 'mobiliario_estacoes',
+        trilha: 'Estrutura',
+        nome: 'Mobiliário/estações de trabalho',
+        tipo: 'quantitativo',
+        atual: ['M2-29'],
+        ideal: ['M2-30'],
+        fundamentoIn: 'Art. 7º, III',
+        unidadeProvidencia: 'estação(ões) de trabalho ou mobiliário equivalente'
+    },
+    {
+        id: 'armarios_arquivos',
+        trilha: 'Estrutura',
+        nome: 'Armários/arquivos com chave',
+        tipo: 'quantitativo',
+        atual: ['M2-31'],
+        ideal: ['M2-32'],
+        fundamentoIn: 'Art. 7º, III; art. 4º, II',
+        unidadeProvidencia: 'armário(s)/arquivo(s) com chave'
+    },
+    {
+        id: 'email_institucional',
+        trilha: 'Canais',
+        nome: 'E-mail institucional',
+        tipo: 'qualitativo',
+        perguntas: ['M2-41', 'M2-42'],
+        fundamentoIn: 'Art. 6º, §2º, I',
+        falta: 'E-mail institucional da ouvidoria',
+        providencias: {
+            Validar: 'Comprovar e-mail institucional da ouvidoria',
+            'Não tem': 'Criar e-mail institucional da ouvidoria',
+            'Não informado': 'Informar e-mail institucional da ouvidoria'
+        }
+    },
+    {
+        id: 'linha_telefonica',
+        trilha: 'Canais',
+        nome: 'Linha telefônica',
+        tipo: 'qualitativo',
+        perguntas: ['M2-43', 'M2-44'],
+        fundamentoIn: 'Art. 6º, §2º, II; art. 7º, IV',
+        falta: 'Linha telefônica funcional',
+        providencias: {
+            Validar: 'Comprovar linha telefônica funcional',
+            'Não tem': 'Disponibilizar linha telefônica funcional',
+            'Não informado': 'Informar linha telefônica de atendimento'
+        }
+    },
+    {
+        id: 'canal_eletronico',
+        trilha: 'Canais',
+        nome: 'Canal eletrônico de registro',
+        tipo: 'qualitativo',
+        perguntas: ['M2-45', 'M2-49', 'M2-52'],
+        fundamentoIn: 'Art. 6º, §2º, III; art. 6º, §3º',
+        requerValidacao: true,
+        falta: 'Canal eletrônico de registro',
+        providencias: {
+            Validar: 'Comprovar canal eletrônico de registro',
+            Parcial: 'Implantar canal eletrônico completo de registro',
+            'Não tem': 'Implantar canal eletrônico de registro de manifestações',
+            'Não informado': 'Informar canal eletrônico de registro'
+        }
+    },
+    {
+        id: 'falabr',
+        trilha: 'Canais',
+        nome: 'Fala.BR',
+        tipo: 'qualitativo',
+        perguntas: ['M2-46'],
+        fundamentoIn: 'Art. 4º, V; art. 6º, §2º, III; art. 6º, §3º',
+        requerValidacao: true,
+        falta: 'Adesão ou integração ao Fala.BR',
+        providencias: {
+            Validar: 'Comprovar uso ou integração ao Fala.BR',
+            Parcial: 'Prever integração ou uso direto do Fala.BR',
+            'Não tem': 'Prever adesão, integração ou indicação da Plataforma Fala.BR',
+            'Não informado': 'Informar uso da Plataforma Fala.BR'
+        }
+    },
+    {
+        id: 'endereco_postal',
+        trilha: 'Canais',
+        nome: 'Endereço postal',
+        tipo: 'qualitativo',
+        perguntas: ['M2-47', 'M2-48'],
+        fundamentoIn: 'Art. 6º, §2º, IV',
+        falta: 'Endereço postal para correspondências',
+        providencias: {
+            Validar: 'Comprovar endereço postal da ouvidoria',
+            'Não tem': 'Instituir endereço postal para correspondências',
+            'Não informado': 'Informar endereço postal da ouvidoria'
+        }
+    },
+    {
+        id: 'fluxo_interno',
+        trilha: 'Fluxo',
+        nome: 'Fluxo interno de tratamento',
+        tipo: 'qualitativo',
+        perguntas: ['M4-67'],
+        fundamentoIn: 'Art. 13, I a V',
+        requerValidacao: true,
+        falta: 'Fluxo interno formalizado',
+        providencias: {
+            Validar: 'Validar documento ou rotina de fluxo interno',
+            Parcial: 'Formalizar fluxo interno mínimo',
+            'Não tem': 'Formalizar fluxo interno de tratamento das manifestações',
+            'Não informado': 'Informar fluxo interno de tratamento'
+        }
+    }
 ];
 const COLUNAS_GERAL_PROFOR = {
     uf: 0,
@@ -2540,6 +2758,160 @@ function montarDeficitsDiagnostico(resposta, tabela) {
         });
 }
 
+function obterProvidenciaParametroMinimo(config, status, deficit = null) {
+    if (status === 'Tem') return 'Não se aplica';
+    if (status.startsWith('Falta +')) {
+        return `Prever aquisição de ${deficit} ${config.unidadeProvidencia || config.nome.toLowerCase()}`;
+    }
+
+    return config.providencias?.[status]
+        || config.providencias?.Parcial
+        || `Adequar/comprovar ${config.nome.toLowerCase()}`;
+}
+
+function obterFaltaParametroMinimo(config, status, deficit = null) {
+    if (status === 'Tem') return '-';
+    if (status.startsWith('Falta +')) return `+${deficit} ${config.unidadeProvidencia || config.nome.toLowerCase()}`;
+    if (status === 'Não informado') return 'Informação insuficiente';
+    return config.falta || config.nome;
+}
+
+function montarRespostaOriginalParametroMinimo(respostasPerguntas) {
+    return respostasPerguntas.length
+        ? respostasPerguntas.map((item) => `${item.pergunta}: ${item.resposta}`).join(' | ')
+        : 'Não informado';
+}
+
+function avaliarParametroMinimoQualitativo(resposta, config, tabela) {
+    const perguntasDisponiveis = config.perguntas.filter((pergunta) => tabela.indice(pergunta) >= 0);
+    const respostasPerguntas = perguntasDisponiveis.map((pergunta) => ({
+        pergunta,
+        resposta: limparTexto(resposta.respostas[pergunta] || obterTextoDiagnostico(resposta.linha, tabela, pergunta))
+    })).filter((item) => item.resposta);
+    let status = normalizarStatusOperacionalDiagnostico(classificarRespostasDiagnostico(respostasPerguntas.map((item) => item.resposta)));
+    const validacaoOnasp = config.requerValidacao
+        ? normalizarValidacaoOnaspDiagnostico(resposta.validacaoOnasp, 'Pendente')
+        : 'Não se aplica';
+
+    if (config.requerValidacao && status === 'Tem' && validacaoOnasp !== 'Validado') {
+        status = 'Validar';
+    }
+
+    return {
+        arquivoOrigem: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        uf: resposta.uf,
+        idResposta: resposta.idResposta,
+        idParametro: config.id,
+        trilha: config.trilha,
+        eixo: config.trilha,
+        parametro: config.nome,
+        parametroCurto: config.nome,
+        tipo: config.tipo,
+        fundamentoIn: config.fundamentoIn,
+        perguntasDiagnostico: perguntasDisponiveis,
+        respostaUf: montarRespostaOriginalParametroMinimo(respostasPerguntas),
+        respostaOriginal: montarRespostaOriginalParametroMinimo(respostasPerguntas),
+        statusOperacional: status,
+        statusNormalizado: status,
+        faltaObjetiva: obterFaltaParametroMinimo(config, status),
+        providenciaObjetiva: obterProvidenciaParametroMinimo(config, status),
+        validacaoOnasp,
+        prioridade: ['Não tem', 'Validar'].includes(status) ? 'Alta' : 'Média'
+    };
+}
+
+function avaliarParametroMinimoQuantitativo(resposta, config, tabela) {
+    const atualDeclarado = obterNumeroOpcionalDiagnostico(resposta.linha, tabela, config.atual);
+    const idealDeclarado = obterNumeroOpcionalDiagnostico(resposta.linha, tabela, config.ideal);
+    const deficit = atualDeclarado === null || idealDeclarado === null
+        ? null
+        : Math.max(0, idealDeclarado - atualDeclarado);
+    const status = deficit === null ? 'Não informado' : (deficit > 0 ? `Falta +${deficit}` : 'Tem');
+    const perguntasDiagnostico = [...config.atual, ...config.ideal].filter((pergunta) => tabela.indice(pergunta) >= 0);
+    const respostaOriginal = `Atual: ${atualDeclarado === null ? 'Não informado' : atualDeclarado} | Ideal: ${idealDeclarado === null ? 'Não informado' : idealDeclarado}`;
+
+    return {
+        arquivoOrigem: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        uf: resposta.uf,
+        idResposta: resposta.idResposta,
+        idParametro: config.id,
+        trilha: config.trilha,
+        eixo: config.trilha,
+        parametro: config.nome,
+        parametroCurto: config.nome,
+        tipo: config.tipo,
+        fundamentoIn: config.fundamentoIn,
+        perguntasDiagnostico,
+        respostaUf: respostaOriginal,
+        respostaOriginal,
+        atualDeclarado,
+        idealDeclarado,
+        deficit,
+        statusOperacional: status,
+        statusNormalizado: status,
+        faltaObjetiva: obterFaltaParametroMinimo(config, status, deficit),
+        providenciaObjetiva: obterProvidenciaParametroMinimo(config, status, deficit),
+        validacaoOnasp: 'Não se aplica',
+        prioridade: deficit > 0 ? 'Alta' : 'Média'
+    };
+}
+
+function montarParametrosMinimosDiagnostico(resposta, tabela) {
+    return PARAMETROS_MINIMOS_DIAGNOSTICO.map((config) => (
+        config.tipo === 'quantitativo'
+            ? avaliarParametroMinimoQuantitativo(resposta, config, tabela)
+            : avaliarParametroMinimoQualitativo(resposta, config, tabela)
+    ));
+}
+
+function montarResumoParametrosMinimos(parametros) {
+    const parametrosAtendidos = parametros.filter((item) => item.statusNormalizado === 'Tem').length;
+    const itensParaValidar = parametros.filter((item) => item.statusNormalizado === 'Validar').length;
+    const pendencias = parametros.filter((item) => (
+        item.statusNormalizado === 'Não tem'
+        || item.statusNormalizado === 'Parcial'
+        || item.statusNormalizado === 'Não informado'
+        || item.statusNormalizado.startsWith('Falta +')
+    )).length;
+    const deficitMaterial = parametros.reduce((total, item) => total + (Number(item.deficit) > 0 ? Number(item.deficit) : 0), 0);
+    const statusGeral = pendencias === 0 && itensParaValidar === 0
+        ? 'Tem'
+        : itensParaValidar > 0 && pendencias === 0
+            ? 'Validar'
+            : 'Parcial';
+
+    return {
+        total: parametros.length,
+        parametrosAtendidos,
+        pendencias,
+        deficitMaterial,
+        itensParaValidar,
+        statusGeral
+    };
+}
+
+function montarFaltasParametrosMinimos(parametros) {
+    return parametros
+        .filter((item) => item.statusNormalizado !== 'Tem')
+        .map((item) => ({
+            item: item.parametro,
+            status: item.statusNormalizado,
+            falta: item.faltaObjetiva,
+            providencia: item.providenciaObjetiva
+        }));
+}
+
+function montarProvidenciasParametrosMinimos(parametros) {
+    return parametros
+        .filter((item) => item.statusNormalizado !== 'Tem')
+        .map((item) => ({
+            item: item.parametro,
+            situacao: item.statusNormalizado,
+            providencia: item.providenciaObjetiva,
+            prioridade: item.prioridade
+        }));
+}
+
 function calcularStatusGeralDiagnostico(checklist) {
     if (!checklist.length) return STATUS_CHECKLIST_DIAGNOSTICO.NAO_INFORMADO;
 
@@ -2598,16 +2970,23 @@ function montarProvidenciasDiagnostico(checklist, deficits) {
 function montarAnaliseRespostaDiagnostico(resposta, parametrosDisponiveis, tabela) {
     const checklist = parametrosDisponiveis.map((parametro) => avaliarParametroDiagnostico(resposta, parametro));
     const deficits = montarDeficitsDiagnostico(resposta, tabela);
+    const parametrosMinimos = montarParametrosMinimosDiagnostico(resposta, tabela);
+    const resumoParametrosMinimos = montarResumoParametrosMinimos(parametrosMinimos);
     const statusGeral = calcularStatusGeralDiagnostico(checklist);
     const validacaoOnasp = normalizarValidacaoOnaspDiagnostico(resposta.validacaoOnasp, checklist.some((item) => item.validacaoOnasp === 'Pendente') ? 'Pendente' : 'Não se aplica');
 
     return {
         ...resposta,
         statusGeral,
+        statusGeralParametrosMinimos: resumoParametrosMinimos.statusGeral,
         resumo: montarResumoConformidadeDiagnostico(checklist, deficits, validacaoOnasp),
+        resumoParametrosMinimos,
         checklist,
         deficitAparelhamento: deficits,
-        providencias: montarProvidenciasDiagnostico(checklist, deficits)
+        providencias: montarProvidenciasDiagnostico(checklist, deficits),
+        parametrosMinimos,
+        faltasParametrosMinimos: montarFaltasParametrosMinimos(parametrosMinimos),
+        providenciasParametrosMinimos: montarProvidenciasParametrosMinimos(parametrosMinimos)
     };
 }
 
@@ -2619,17 +2998,17 @@ function montarResumoGeralDiagnosticoOuvidorias(respostas) {
         totalRespostas: respostas.length,
         ufsDiagnosticadas: ufs.length,
         unidadesDiagnosticadas: unidades.length,
-        conformes: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.CONFORME).length,
-        parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.PARCIAL).length,
-        naoConformes: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.NAO_CONFORME).length,
-        naoInformadas: respostas.filter((resposta) => resposta.statusGeral === STATUS_CHECKLIST_DIAGNOSTICO.NAO_INFORMADO).length,
-        deficitTotalDeclarado: respostas.reduce((total, resposta) => total + resposta.resumo.deficitAparelhamento, 0),
+        conformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Tem').length,
+        parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Parcial').length,
+        naoConformes: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não tem')).length,
+        naoInformadas: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não informado')).length,
+        deficitTotalDeclarado: respostas.reduce((total, resposta) => total + (resposta.resumoParametrosMinimos?.deficitMaterial || 0), 0),
         filtros: {
             ufs,
             unidades,
-            statusGerais: [...new Set(respostas.map((resposta) => resposta.statusGeral))].sort(),
-            eixos: [...new Set(respostas.flatMap((resposta) => resposta.checklist.map((item) => item.eixo)))].sort(),
-            statusParametros: ['Tem', 'Parcial', 'Não tem', 'Validar', 'Não informado', 'Falta'],
+            statusGerais: [...new Set(respostas.map((resposta) => resposta.statusGeralParametrosMinimos))].filter(Boolean).sort(),
+            eixos: ['Institucionalização', 'Pessoas', 'Estrutura', 'Canais', 'Fluxo'],
+            statusParametros: ['Tem', 'Parcial', 'Não tem', 'Validar', 'Não informado', 'Falta +X'],
             validacoesOnasp: VALIDACOES_ONASP_DIAGNOSTICO
         }
     };
