@@ -23,7 +23,7 @@ import {
     carregarDadosContatos,
     fetchJsonApiOnasp,
     obterUrlApiOnasp
-} from '../../backend/services/data-service.js?v=20260505-13';
+} from '../../backend/services/data-service.js?v=20260505-15';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4647,6 +4647,37 @@ async function carregarLogoParaPDF() {
             return [status, ...detalhes].join(' | ');
         }
 
+        async function reverterHistoricoParametrosMinimos(historicoId) {
+            const senha = window.prompt('Digite a senha para reverter esta alteração:');
+            if (!senha) return;
+
+            try {
+                const { resposta, payload } = await fetchJsonApiOnasp('/api/parametros-minimos/historico/reverter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password: senha,
+                        historicoId
+                    })
+                });
+
+                if (!resposta.ok || !payload.success) {
+                    alert(payload.message || 'Não foi possível reverter a alteração.');
+                    return;
+                }
+
+                parametrosMinimosAlteracoesPendentes = {};
+                parametrosMinimosModoEdicao = false;
+                parametrosMinimosEditorAtivo = null;
+                removerModalParametrosMinimos('modalHistoricoParametrosMinimos');
+                await carregarDadosDiagnosticoOuvidorias(true);
+                renderDiagnosticoOuvidoriasView();
+                alert('Alteração revertida com sucesso.');
+            } catch (error) {
+                alert(`Não foi possível reverter: ${error.message}`);
+            }
+        }
+
         function calcularStatusQuantitativoParametroMinimo(quantidadeAtual, idealMinimo) {
             const atual = Math.max(0, Number(quantidadeAtual) || 0);
             const ideal = Math.max(0, Number(idealMinimo) || 0);
@@ -4724,7 +4755,7 @@ async function carregarLogoParaPDF() {
 
         function renderizarEditorParametroMinimo(resposta, item, statusAtual) {
             const editorId = `${resposta.idResposta}::${item.idParametro}`;
-            if (!parametrosMinimosModoEdicao || parametrosMinimosEditorAtivo !== editorId) return '';
+            if (parametrosMinimosEditorAtivo !== editorId) return '';
 
             if (item.tipo === 'quantitativo') {
                 const ideal = Number(item.idealDeclarado ?? item.idealMinimo) || 0;
@@ -4854,17 +4885,15 @@ async function carregarLogoParaPDF() {
                                                     <div class="diagnostico-trail-content">
                                                         <span class="diagnostico-trail-title-line">
                                                             <strong>${escapeHtml(item.parametro)}</strong>
-                                                            ${parametrosMinimosModoEdicao ? `
-                                                                <button
-                                                                    type="button"
-                                                                    class="diagnostico-item-edit-button ${parametrosMinimosEditorAtivo === editorId ? 'active' : ''}"
-                                                                    data-parametros-toggle-editor="${escapeHtml(editorId)}"
-                                                                    aria-label="Editar ${escapeHtml(item.parametro)}"
-                                                                    title="Editar"
-                                                                >
-                                                                    <i class="fas fa-pen" aria-hidden="true"></i>
-                                                                </button>
-                                                            ` : ''}
+                                                            <button
+                                                                type="button"
+                                                                class="diagnostico-item-edit-button ${parametrosMinimosEditorAtivo === editorId ? 'active' : ''}"
+                                                                data-parametros-toggle-editor="${escapeHtml(editorId)}"
+                                                                aria-label="Editar ${escapeHtml(item.parametro)}"
+                                                                title="Editar"
+                                                            >
+                                                                <i class="fas fa-pen" aria-hidden="true"></i>
+                                                            </button>
                                                         </span>
                                                         <small>${escapeHtml(textoResumo)}</small>
                                                         ${renderizarEditorParametroMinimo(resposta, item, statusAtualBanco)}
@@ -4891,21 +4920,14 @@ async function carregarLogoParaPDF() {
                         <h2>Parâmetros mínimos</h2>
                     </div>
                     <div class="diagnostico-action-buttons">
-                        ${parametrosMinimosModoEdicao ? `
-                            <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarParametrosMinimos" ${totalAlteracoes ? '' : 'disabled'}>
-                                <i class="fas fa-save" aria-hidden="true"></i>
-                                <span>Salvar alterações</span>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarParametrosMinimos">
-                                <i class="fas fa-xmark" aria-hidden="true"></i>
-                                <span>Cancelar alterações</span>
-                            </button>
-                        ` : `
-                            <button type="button" class="btn btn-outline-primary btn-icon-text" id="btnEditarParametrosMinimos">
-                                <i class="fas fa-pen-to-square" aria-hidden="true"></i>
-                                <span>Editar</span>
-                            </button>
-                        `}
+                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarParametrosMinimos" ${totalAlteracoes ? '' : 'disabled'}>
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            <span>Salvar alterações</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarParametrosMinimos" ${totalAlteracoes ? '' : 'disabled'}>
+                            <i class="fas fa-xmark" aria-hidden="true"></i>
+                            <span>Cancelar alterações</span>
+                        </button>
                         <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarParametrosMinimos">
                             <i class="fas fa-file-excel" aria-hidden="true"></i>
                             <span>Exportar Excel</span>
@@ -5312,6 +5334,7 @@ async function carregarLogoParaPDF() {
                                                         <th>Campo</th>
                                                         <th>Anterior</th>
                                                         <th>Novo</th>
+                                                        <th class="text-end">Desfazer</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -5322,6 +5345,17 @@ async function carregarLogoParaPDF() {
                                                             <td>${escapeHtml(item.campo || '')}</td>
                                                             <td>${escapeHtml(formatarValorHistoricoParametroMinimo(item.valorAnterior))}</td>
                                                             <td>${escapeHtml(formatarValorHistoricoParametroMinimo(item.valorNovo))}</td>
+                                                            <td class="text-end">
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn btn-sm btn-outline-danger"
+                                                                    data-parametros-reverter-historico="${escapeHtml(String(item.id))}"
+                                                                    aria-label="Reverter alteração ${escapeHtml(String(item.id))}"
+                                                                    title="Reverter alteração"
+                                                                >
+                                                                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                                                                </button>
+                                                            </td>
                                                         </tr>
                                                     `).join('')}
                                                 </tbody>
@@ -5334,6 +5368,11 @@ async function carregarLogoParaPDF() {
                     </div>
                 `);
                 new window.bootstrap.Modal(document.getElementById('modalHistoricoParametrosMinimos')).show();
+                document.querySelectorAll('[data-parametros-reverter-historico]').forEach((botao) => {
+                    botao.addEventListener('click', () => {
+                        reverterHistoricoParametrosMinimos(botao.dataset.parametrosReverterHistorico);
+                    });
+                });
             } catch (error) {
                 alert(`Não foi possível carregar o histórico: ${error.message}`);
             }
@@ -5352,13 +5391,6 @@ async function carregarLogoParaPDF() {
 
             document.getElementById('diagnosticoRespostaAtual')?.addEventListener('change', (evento) => {
                 diagnosticoOuvidoriaAtual = evento.target.value;
-                renderDiagnosticoOuvidoriasView();
-            });
-
-            document.getElementById('btnEditarParametrosMinimos')?.addEventListener('click', () => {
-                parametrosMinimosModoEdicao = true;
-                parametrosMinimosAlteracoesPendentes = {};
-                parametrosMinimosEditorAtivo = null;
                 renderDiagnosticoOuvidoriasView();
             });
 

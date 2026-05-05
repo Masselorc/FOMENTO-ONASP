@@ -10,6 +10,7 @@ const { importarParametrosMinimos } = require("./scripts/importar-parametros-min
 const {
   listarParametrosMinimos,
   salvarParametrosMinimos,
+  reverterHistoricoParametrosMinimos,
   listarHistoricoParametrosMinimos
 } = require("./services/parametros-minimos-service");
 const { exportarParametrosMinimosExcel } = require("./services/excel-export-service");
@@ -106,6 +107,13 @@ async function rotearApi(req, res, pathname) {
         success: true,
         historico: listarHistoricoParametrosMinimos()
       });
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/parametros-minimos/historico/reverter") {
+      const payload = await lerJsonBody(req);
+      const resultado = reverterHistoricoParametrosMinimos(payload);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 
