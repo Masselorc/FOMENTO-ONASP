@@ -1,0 +1,334 @@
+const db = require("../db/database");
+const { criarBackupBanco } = require("./backup-service");
+const { registrarHistorico } = require("./historico-service");
+const { validarSenhaEdicao } = require("./auth-service");
+const {
+  PARAMETROS_MINIMOS,
+  isStatusParametroMinimo,
+  normalizarStatusParametroMinimo,
+  statusParaTela
+} = require("./parametros-minimos-config");
+
+const PAGINA = "parametros-minimos";
+
+function extrairDeficit(status) {
+  const falta = String(status || "").match(/^FALTA \+(\d+)$/);
+  if (falta) return Number(falta[1]);
+  return normalizarStatusParametroMinimo(status) === "DÉFICIT" ? 1 : 0;
+}
+
+function calcularStatusQuantitativo(quantidadeAtual, quantidadeIdeal, statusFallback) {
+  if (quantidadeAtual === null || quantidadeAtual === undefined || quantidadeIdeal === null || quantidadeIdeal === undefined) {
+    return normalizarStatusParametroMinimo(statusFallback);
+  }
+
+  const deficit = Math.max(0, Number(quantidadeIdeal) - Number(quantidadeAtual));
+  return deficit > 0 ? `FALTA +${deficit}` : "TEM";
+}
+
+function calcularQuantidadeAtual(config, statusBanco, deficit) {
+  if (config.tipo !== "quantitativo") return null;
+  const ideal = Number(config.idealMinimo || config.quantidadeIdeal) || 0;
+
+  // Fallback para bancos antigos: antes das colunas quantitativas, só existia o status final.
+  if (statusBanco === "TEM") return ideal;
+  if (deficit > 0) return Math.max(0, ideal - deficit);
+  return null;
+}
+
+function obterClasseStatusGeral(parametros) {
+  const possuiPendencia = parametros.some((item) => item.statusNormalizado !== "Tem");
+  if (!possuiPendencia) return "Tem";
+
+  const somenteValidar = parametros.every((item) => ["Tem", "Validar"].includes(item.statusNormalizado));
+  return somenteValidar ? "Validar" : "Parcial";
+}
+
+function obterFalta(config, statusTela, deficit) {
+  if (statusTela === "Tem") return "-";
+  if (statusTela === "Déficit") return "Déficit material";
+  if (statusTela.startsWith("Falta +")) {
+    return `+${deficit} ${config.unidadeProvidencia || config.label.toLowerCase()}`;
+  }
+  if (statusTela === "Não informado") return "Informação insuficiente";
+  return config.label;
+}
+
+function obterProvidencia(config, statusTela, deficit) {
+  if (statusTela === "Tem") return "Não se aplica";
+  if (statusTela === "Não tem") return `Providenciar ${config.label.toLowerCase()}`;
+  if (statusTela === "Parcial") return `Adequar/complementar ${config.label.toLowerCase()}`;
+  if (statusTela === "Validar") return `Validar/comprovar ${config.label.toLowerCase()}`;
+  if (statusTela === "Não informado") return `Informar ${config.label.toLowerCase()}`;
+  if (statusTela === "Déficit") return `Corrigir déficit em ${config.label.toLowerCase()}`;
+  if (statusTela.startsWith("Falta +")) {
+    return `Prever aquisição/complementação de ${deficit} ${config.unidadeProvidencia || config.label.toLowerCase()}`;
+  }
+
+  return `Verificar ${config.label.toLowerCase()}`;
+}
+
+function montarResumoParametros(parametros) {
+  const parametrosAtendidos = parametros.filter((item) => item.statusNormalizado === "Tem").length;
+  const itensParaValidar = parametros.filter((item) => item.statusNormalizado === "Validar").length;
+  const pendencias = parametros.filter((item) => item.statusNormalizado !== "Tem").length;
+  const deficitMaterial = parametros.reduce((total, item) => total + (Number(item.deficit) || 0), 0);
+
+  return {
+    total: parametros.length,
+    parametrosAtendidos,
+    pendencias,
+    deficitMaterial,
+    itensParaValidar,
+    statusGeral: obterClasseStatusGeral(parametros)
+  };
+}
+
+function montarResposta(uf, linhas) {
+  const porParametro = new Map(linhas.map((linha) => [linha.parametro, linha]));
+  const parametrosMinimos = PARAMETROS_MINIMOS.map((config) => {
+    const linha = porParametro.get(config.key) || {};
+    const quantidadeAtual = linha.quantidade_atual === null || linha.quantidade_atual === undefined ? null : Number(linha.quantidade_atual);
+    const quantidadeIdeal = linha.quantidade_ideal === null || linha.quantidade_ideal === undefined ? null : Number(linha.quantidade_ideal);
+    const statusBanco = config.tipo === "quantitativo"
+      ? calcularStatusQuantitativo(quantidadeAtual, quantidadeIdeal, linha.status)
+      : normalizarStatusParametroMinimo(linha.status);
+    const statusTela = statusParaTela(statusBanco);
+    const deficit = extrairDeficit(statusBanco);
+    const atualDeclarado = config.tipo === "quantitativo"
+      ? (quantidadeAtual === null || Number.isNaN(quantidadeAtual) ? calcularQuantidadeAtual(config, statusBanco, deficit) : quantidadeAtual)
+      : null;
+    const idealDeclarado = config.tipo === "quantitativo"
+      ? (quantidadeIdeal === null || Number.isNaN(quantidadeIdeal) ? null : quantidadeIdeal)
+      : null;
+
+    return {
+      arquivoOrigem: "backend/data/onasp.sqlite",
+      uf,
+      idResposta: uf,
+      idParametro: config.key,
+      trilha: config.trilha,
+      eixo: config.trilha,
+      parametro: config.label,
+      parametroCurto: config.label,
+      tipo: config.tipo === "quantitativo" ? "quantitativo" : "qualitativo",
+      fundamentoIn: "SQLite ONASP",
+      perguntasDiagnostico: [`SQLite: ${config.key}`],
+      respostaUf: statusBanco,
+      respostaOriginal: statusBanco,
+      statusOperacional: statusTela,
+      statusNormalizado: statusTela,
+      faltaObjetiva: obterFalta(config, statusTela, deficit),
+      providenciaObjetiva: obterProvidencia(config, statusTela, deficit),
+      atualDeclarado,
+      idealDeclarado,
+      deficit,
+      validacaoOnasp: "SQLite",
+      prioridade: statusTela === "Tem" ? "Média" : "Alta"
+    };
+  });
+  const resumoParametrosMinimos = montarResumoParametros(parametrosMinimos);
+
+  return {
+    arquivoOrigem: "backend/data/onasp.sqlite",
+    idResposta: uf,
+    codigoValidacao: uf,
+    uf,
+    unidadeDiagnosticada: `Ouvidoria de Serviços Penais - ${uf}`,
+    dataResposta: "SQLite ONASP",
+    statusGeral: resumoParametrosMinimos.statusGeral,
+    statusGeralParametrosMinimos: resumoParametrosMinimos.statusGeral,
+    resumoParametrosMinimos,
+    parametrosMinimos,
+    faltasParametrosMinimos: parametrosMinimos
+      .filter((item) => item.statusNormalizado !== "Tem")
+      .map((item) => ({
+        item: item.parametro,
+        status: item.statusNormalizado,
+        falta: item.faltaObjetiva,
+        providencia: item.providenciaObjetiva
+      })),
+    providenciasParametrosMinimos: parametrosMinimos
+      .filter((item) => item.statusNormalizado !== "Tem")
+      .map((item) => ({
+        item: item.parametro,
+        situacao: item.statusNormalizado,
+        providencia: item.providenciaObjetiva,
+        prioridade: item.prioridade
+      }))
+  };
+}
+
+function montarResumoGeral(respostas) {
+  const ufs = respostas.map((resposta) => resposta.uf).sort();
+  return {
+    totalRespostas: respostas.length,
+    ufsDiagnosticadas: new Set(ufs).size,
+    unidadesDiagnosticadas: respostas.length,
+    conformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === "Tem").length,
+    parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === "Parcial").length,
+    naoConformes: respostas.filter((resposta) => resposta.parametrosMinimos.some((item) => ["Não tem", "Déficit"].includes(item.statusNormalizado) || item.statusNormalizado.startsWith("Falta +"))).length,
+    naoInformadas: respostas.filter((resposta) => resposta.parametrosMinimos.some((item) => item.statusNormalizado === "Não informado")).length,
+    deficitTotalDeclarado: respostas.reduce((total, resposta) => total + resposta.resumoParametrosMinimos.deficitMaterial, 0),
+    filtros: {
+      ufs,
+      unidades: ufs,
+      statusGerais: ["Tem", "Parcial", "Validar"],
+      eixos: ["Institucionalização", "Pessoas", "Estrutura", "Canais", "Fluxo"],
+      statusParametros: ["Tem", "Parcial", "Não tem", "Validar", "Não informado", "Déficit", "Falta +X"],
+      validacoesOnasp: ["SQLite"]
+    }
+  };
+}
+
+function listarParametrosMinimos() {
+  const linhas = db.prepare(`
+    SELECT uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em
+    FROM parametros_minimos
+    ORDER BY uf, parametro
+  `).all();
+  const porUf = new Map();
+
+  linhas.forEach((linha) => {
+    if (!porUf.has(linha.uf)) porUf.set(linha.uf, []);
+    porUf.get(linha.uf).push(linha);
+  });
+
+  const respostas = Array.from(porUf.entries()).map(([uf, itens]) => montarResposta(uf, itens));
+
+  return {
+    arquivo: "backend/data/onasp.sqlite",
+    disponivel: true,
+    erro: "",
+    aba: "parametros_minimos",
+    parametrosDisponiveis: PARAMETROS_MINIMOS,
+    respostasBrutas: linhas,
+    respostas,
+    resumo: montarResumoGeral(respostas),
+    diagnostico: {
+      colunasDisponiveis: ["UF", ...PARAMETROS_MINIMOS.map((item) => item.label)],
+      perguntasDisponiveis: PARAMETROS_MINIMOS.map((item) => item.label),
+      respostasDescartadasPorDuplicidade: 0,
+      aviso: ""
+    }
+  };
+}
+
+function salvarParametrosMinimos({ password, changes }) {
+  if (!validarSenhaEdicao(password)) {
+    return { success: false, message: "Senha inválida. Alterações não foram salvas." };
+  }
+
+  if (!changes || typeof changes !== "object" || Array.isArray(changes)) {
+    return { success: false, message: "Alteração inválida. Nenhuma alteração foi salva." };
+  }
+
+  const parametrosPermitidos = new Set(PARAMETROS_MINIMOS.map((item) => item.key));
+  const atualizacao = [];
+
+  Object.entries(changes).forEach(([uf, campos]) => {
+    if (!uf || typeof campos !== "object" || Array.isArray(campos)) {
+      throw new Error("Registro de alteração inválido.");
+    }
+
+    Object.entries(campos).forEach(([parametro, payload]) => {
+      if (!parametrosPermitidos.has(parametro)) {
+        throw new Error(`Parâmetro não permitido: ${parametro}`);
+      }
+      const config = PARAMETROS_MINIMOS.find((item) => item.key === parametro);
+      const status = typeof payload === "object" && payload !== null ? payload.status : payload;
+      if (!isStatusParametroMinimo(status)) {
+        throw new Error(`Status inválido para ${parametro}: ${status}`);
+      }
+
+      const quantidadeAtual = typeof payload === "object" && payload !== null && payload.quantidadeAtual !== undefined
+        ? Number(payload.quantidadeAtual)
+        : undefined;
+      const quantidadeIdeal = typeof payload === "object" && payload !== null && payload.quantidadeIdeal !== undefined
+        ? Number(payload.quantidadeIdeal)
+        : undefined;
+
+      if (config?.tipo === "quantitativo" && (quantidadeAtual !== undefined || quantidadeIdeal !== undefined)) {
+        if (!Number.isFinite(quantidadeAtual) || quantidadeAtual < 0 || !Number.isFinite(quantidadeIdeal) || quantidadeIdeal < 0) {
+          throw new Error(`Quantidade inválida para ${parametro}.`);
+        }
+      }
+
+      atualizacao.push({
+        uf,
+        parametro,
+        status: normalizarStatusParametroMinimo(status),
+        quantidadeAtual,
+        quantidadeIdeal
+      });
+    });
+  });
+
+  if (!atualizacao.length) {
+    return { success: false, message: "Não há alterações para salvar." };
+  }
+
+  const backupPath = criarBackupBanco(PAGINA);
+  const updatedAt = new Date().toISOString();
+  const selectAtual = db.prepare("SELECT status, quantidade_atual, quantidade_ideal FROM parametros_minimos WHERE uf = ? AND parametro = ?");
+  const upsert = db.prepare(`
+    INSERT INTO parametros_minimos (uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(uf, parametro) DO UPDATE SET
+      status = excluded.status,
+      quantidade_atual = COALESCE(excluded.quantidade_atual, parametros_minimos.quantidade_atual),
+      quantidade_ideal = COALESCE(excluded.quantidade_ideal, parametros_minimos.quantidade_ideal),
+      atualizado_em = excluded.atualizado_em
+  `);
+  const transaction = db.transaction((items) => {
+    items.forEach((item) => {
+      const anterior = selectAtual.get(item.uf, item.parametro);
+      const valorAnterior = anterior
+        ? `${anterior.status}${anterior.quantidade_atual !== null && anterior.quantidade_atual !== undefined ? ` | atual ${anterior.quantidade_atual}` : ""}${anterior.quantidade_ideal !== null && anterior.quantidade_ideal !== undefined ? ` | ideal ${anterior.quantidade_ideal}` : ""}`
+        : "";
+      const valorNovo = `${item.status}${item.quantidadeAtual !== undefined ? ` | atual ${item.quantidadeAtual}` : ""}${item.quantidadeIdeal !== undefined ? ` | ideal ${item.quantidadeIdeal}` : ""}`;
+
+      upsert.run(
+        item.uf,
+        item.parametro,
+        item.status,
+        item.quantidadeAtual === undefined ? null : item.quantidadeAtual,
+        item.quantidadeIdeal === undefined ? null : item.quantidadeIdeal,
+        updatedAt
+      );
+      registrarHistorico(db, {
+        pagina: PAGINA,
+        registro: item.uf,
+        campo: item.parametro,
+        valorAnterior,
+        valorNovo
+      });
+    });
+  });
+
+  transaction(atualizacao);
+
+  return {
+    success: true,
+    message: "Alterações salvas com sucesso.",
+    updatedAt,
+    backupPath
+  };
+}
+
+function listarHistoricoParametrosMinimos() {
+  return db.prepare(`
+    SELECT id, pagina, registro, campo, valor_anterior AS valorAnterior,
+           valor_novo AS valorNovo, alterado_em AS alteradoEm
+    FROM historico_alteracoes
+    WHERE pagina = ?
+    ORDER BY id DESC
+    LIMIT 200
+  `).all(PAGINA);
+}
+
+module.exports = {
+  listarParametrosMinimos,
+  salvarParametrosMinimos,
+  listarHistoricoParametrosMinimos
+};

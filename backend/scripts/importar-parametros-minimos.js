@@ -1,0 +1,207 @@
+const path = require("path");
+const XLSX = require("xlsx");
+const db = require("../db/database");
+const { inicializarBanco } = require("../db/init-db");
+const {
+  PARAMETROS_MINIMOS,
+  normalizarStatusParametroMinimo
+} = require("../services/parametros-minimos-config");
+
+const caminhoPlanilha = path.join(__dirname, "..", "..", "Planilhas", "Parametros_Minimos.xlsx");
+const caminhoDiagnostico = path.join(__dirname, "..", "..", "Planilhas", "Diagnostico.xlsx");
+
+const UFS = new Set([
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+  "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+  "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+]);
+
+function normalizarCabecalho(valor) {
+  return String(valor || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, " ");
+}
+
+function normalizarUf(valor) {
+  const match = normalizarCabecalho(valor).match(/\b(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\b/);
+  return match ? match[1] : "";
+}
+
+function converterNumero(valor) {
+  if (valor === null || valor === undefined || String(valor).trim() === "") return null;
+  if (typeof valor === "number") return Number.isFinite(valor) ? valor : null;
+
+  const texto = String(valor).replace(/[^\d,.-]/g, "").replace(/\.(?=\d{3}(?:\D|$))/g, "").replace(",", ".");
+  const numero = Number(texto);
+  return Number.isFinite(numero) ? numero : null;
+}
+
+function converterDataParaTimestamp(valor) {
+  if (valor instanceof Date) return valor.getTime();
+  if (typeof valor === "number") {
+    return Math.round((valor - 25569) * 86400 * 1000);
+  }
+
+  const data = Date.parse(String(valor || ""));
+  return Number.isFinite(data) ? data : 0;
+}
+
+function montarTabelaDiagnostico(workbook) {
+  const perguntasQuantitativas = PARAMETROS_MINIMOS
+    .filter((parametro) => parametro.tipo === "quantitativo")
+    .flatMap((parametro) => [...(parametro.atual || []), ...(parametro.ideal || [])])
+    .map(normalizarCabecalho);
+
+  for (const nomeAba of workbook.SheetNames) {
+    const linhas = XLSX.utils.sheet_to_json(workbook.Sheets[nomeAba], { header: 1, defval: "", raw: true });
+    const headerRowIndex = linhas.findIndex((linha) => {
+      const cabecalhos = linha.map(normalizarCabecalho);
+      const possuiUf = cabecalhos.some((cabecalho) => ["UF", "UNIDADE FEDERATIVA", "ESTADO"].includes(cabecalho) || cabecalho.includes("UNIDADE DA FEDERACAO"));
+      const possuiPergunta = cabecalhos.some((cabecalho) => perguntasQuantitativas.some((pergunta) => cabecalho.includes(pergunta)));
+      return possuiUf || possuiPergunta;
+    });
+
+    if (headerRowIndex < 0) continue;
+
+    const headersOriginais = linhas[headerRowIndex] || [];
+    const headers = headersOriginais.map(normalizarCabecalho);
+    const indice = (aliases) => {
+      const lista = Array.isArray(aliases) ? aliases : [aliases];
+      const normalizados = lista.map(normalizarCabecalho);
+      let encontrado = headers.findIndex((header) => normalizados.includes(header));
+      if (encontrado < 0) {
+        encontrado = headers.findIndex((header) => normalizados.some((alias) => header.includes(alias)));
+      }
+      return encontrado;
+    };
+
+    return {
+      linhas: linhas.slice(headerRowIndex + 1),
+      indice
+    };
+  }
+
+  return null;
+}
+
+function carregarQuantitativosDiagnostico() {
+  if (!require("fs").existsSync(caminhoDiagnostico)) return new Map();
+
+  const workbook = XLSX.readFile(caminhoDiagnostico, { raw: true, cellDates: true });
+  const tabela = montarTabelaDiagnostico(workbook);
+  if (!tabela) return new Map();
+
+  const respostasPorUf = new Map();
+  tabela.linhas.forEach((linha, index) => {
+    const colUf = tabela.indice(["UF", "Unidade Federativa", "Estado", "Sigla UF"]);
+    const uf = normalizarUf(colUf >= 0 ? linha[colUf] : "");
+    if (!uf || !UFS.has(uf)) return;
+
+    const colData = tabela.indice([
+      "Data/Hora de Conclusão",
+      "Data de Conclusão",
+      "Data/Hora da resposta",
+      "Carimbo de data/hora",
+      "Timestamp",
+      "Hora de conclusão"
+    ]);
+    const timestamp = colData >= 0 ? converterDataParaTimestamp(linha[colData]) : 0;
+    const resposta = { uf, linha, linhaOrigem: index + 1, timestamp };
+
+    if (!respostasPorUf.has(uf)) respostasPorUf.set(uf, []);
+    respostasPorUf.get(uf).push(resposta);
+  });
+
+  const selecionadas = [];
+  respostasPorUf.forEach((respostas, uf) => {
+    if (uf === "ES") {
+      respostas.forEach((resposta, index) => selecionadas.push([`ES_${index + 1}`, resposta]));
+      return;
+    }
+
+    const maisRecente = respostas.sort((a, b) => b.timestamp - a.timestamp || b.linhaOrigem - a.linhaOrigem)[0];
+    selecionadas.push([uf, maisRecente]);
+  });
+
+  const quantitativos = new Map();
+  selecionadas.forEach(([codigo, resposta]) => {
+    const porParametro = {};
+    PARAMETROS_MINIMOS.filter((parametro) => parametro.tipo === "quantitativo").forEach((parametro) => {
+      const colAtual = tabela.indice(parametro.atual || []);
+      const colIdeal = tabela.indice(parametro.ideal || []);
+      porParametro[parametro.key] = {
+        atual: colAtual >= 0 ? converterNumero(resposta.linha[colAtual]) : null,
+        ideal: colIdeal >= 0 ? converterNumero(resposta.linha[colIdeal]) : null
+      };
+    });
+    quantitativos.set(codigo, porParametro);
+    if (codigo === "ES_1") quantitativos.set("ES", porParametro);
+    if (!codigo.includes("_")) quantitativos.set(resposta.uf, porParametro);
+  });
+
+  return quantitativos;
+}
+
+function importarParametrosMinimos() {
+  inicializarBanco();
+
+  const workbook = XLSX.readFile(caminhoPlanilha, { raw: true });
+  const sheet = workbook.Sheets.VALIDACAO;
+  const quantitativosDiagnostico = carregarQuantitativosDiagnostico();
+
+  if (!sheet) {
+    throw new Error("A planilha Planilhas/Parametros_Minimos.xlsx precisa conter a aba VALIDACAO.");
+  }
+
+  const linhas = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+  const upsert = db.prepare(`
+    INSERT INTO parametros_minimos (uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(uf, parametro) DO UPDATE SET
+      status = excluded.status,
+      quantidade_atual = excluded.quantidade_atual,
+      quantidade_ideal = excluded.quantidade_ideal,
+      atualizado_em = excluded.atualizado_em
+  `);
+  const importadoEm = new Date().toISOString();
+  const transaction = db.transaction((rows) => {
+    rows.forEach((linha) => {
+      const uf = String(linha.UF || "").trim();
+      if (!uf) return;
+
+      PARAMETROS_MINIMOS.forEach((parametro) => {
+        const status = normalizarStatusParametroMinimo(linha[parametro.label]);
+        const quantitativo = parametro.tipo === "quantitativo"
+          ? quantitativosDiagnostico.get(uf)?.[parametro.key] || {}
+          : {};
+        upsert.run(
+          uf,
+          parametro.key,
+          status,
+          quantitativo.atual ?? null,
+          quantitativo.ideal ?? null,
+          importadoEm
+        );
+      });
+    });
+  });
+
+  transaction(linhas);
+
+  return {
+    registros: linhas.filter((linha) => String(linha.UF || "").trim()).length,
+    parametros: PARAMETROS_MINIMOS.length
+  };
+}
+
+if (require.main === module) {
+  const resultado = importarParametrosMinimos();
+  console.log(`Parâmetros mínimos importados: ${resultado.registros} registro(s), ${resultado.parametros} parâmetro(s).`);
+}
+
+module.exports = {
+  importarParametrosMinimos
+};

@@ -9,7 +9,8 @@
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260505-6';
+const VERSAO_DADOS = '20260505-11';
+const PORTA_API_ONASP = '8010';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
@@ -3322,6 +3323,63 @@ function aplicarVersaoDados(url) {
     return url;
 }
 
+function obterBasesApiOnasp() {
+    if (typeof window === 'undefined' || !window.location) {
+        return [''];
+    }
+
+    const { protocol, hostname, port } = window.location;
+    const bases = [''];
+
+    if (protocol.startsWith('http')) {
+        if (port !== PORTA_API_ONASP) {
+            bases.push(`${protocol}//${hostname}:${PORTA_API_ONASP}`);
+        }
+
+        if (!['localhost', '127.0.0.1'].includes(hostname)) {
+            bases.push(`${protocol}//localhost:${PORTA_API_ONASP}`);
+            bases.push(`${protocol}//127.0.0.1:${PORTA_API_ONASP}`);
+        }
+    }
+
+    return [...new Set(bases)];
+}
+
+export function obterUrlApiOnasp(caminho) {
+    const bases = obterBasesApiOnasp();
+    const basePreferencial = bases.length > 1 ? bases[1] : bases[0];
+    return `${basePreferencial}${caminho}`;
+}
+
+export async function fetchJsonApiOnasp(caminho, opcoes = {}) {
+    let ultimoErro = null;
+
+    for (const base of obterBasesApiOnasp()) {
+        try {
+            const resposta = await fetch(`${base}${caminho}`, {
+                cache: 'no-store',
+                ...opcoes
+            });
+            const tipoConteudo = resposta.headers.get('content-type') || '';
+
+            if (!tipoConteudo.includes('application/json')) {
+                const trecho = (await resposta.text()).trim().slice(0, 100);
+                throw new Error(`A API respondeu conteúdo não JSON em ${base || 'mesma origem'}: ${trecho || tipoConteudo || 'sem conteúdo'}`);
+            }
+
+            return {
+                resposta,
+                payload: await resposta.json(),
+                base
+            };
+        } catch (error) {
+            ultimoErro = error;
+        }
+    }
+
+    throw ultimoErro || new Error('API da aplicação indisponível.');
+}
+
 async function carregarWorkbookPorCaminho(caminhoPlanilha, nomeErro) {
     const planilhaUrl = aplicarVersaoDados(new URL(`../../${caminhoPlanilha}`, import.meta.url));
     const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
@@ -3717,7 +3775,11 @@ export async function carregarDadosContatos() {
     }
 }
 
-export async function carregarDadosDiagnosticoOuvidorias() {
+export async function carregarDadosDiagnosticoOuvidorias(forcarRecarregamento = false) {
+    if (forcarRecarregamento) {
+        dadosDiagnosticoOuvidoriasCache = null;
+    }
+
     if (dadosDiagnosticoOuvidoriasCache) {
         return dadosDiagnosticoOuvidoriasCache;
     }
@@ -3725,6 +3787,16 @@ export async function carregarDadosDiagnosticoOuvidorias() {
     try {
         if (window.location.protocol === 'file:') {
             throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de parametros minimos.');
+        }
+
+        try {
+            const { resposta: respostaApi, payload } = await fetchJsonApiOnasp('/api/parametros-minimos');
+            if (respostaApi.ok) {
+                dadosDiagnosticoOuvidoriasCache = payload;
+                return dadosDiagnosticoOuvidoriasCache;
+            }
+        } catch (apiError) {
+            console.warn('API de parametros minimos indisponivel; usando fallback da planilha de parametros minimos.', apiError);
         }
 
         let dadosDiagnostico = null;

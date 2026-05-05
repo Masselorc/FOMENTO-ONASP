@@ -1,2 +1,6 @@
 .codex-temp/
 node_modules/
+.env
+backend/data/onasp.sqlite
+backend/data/onasp.sqlite-*
+backend/data/backups/

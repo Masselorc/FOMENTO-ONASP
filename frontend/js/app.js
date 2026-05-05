@@ -20,8 +20,10 @@ import {
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento,
     obterDadosContatos,
-    carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260505-6';
+    carregarDadosContatos,
+    fetchJsonApiOnasp,
+    obterUrlApiOnasp
+} from '../../backend/services/data-service.js?v=20260505-12';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -46,6 +48,9 @@ let proforFiltroAreaAtual = 'OUVIDORIA';
 let formalizacaoUfAtual = null;
 let diagnosticoOuvidoriaAtual = null;
 let diagnosticoUfAtual = '';
+let parametrosMinimosModoEdicao = false;
+let parametrosMinimosAlteracoesPendentes = {};
+let parametrosMinimosEditorAtivo = null;
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -4545,27 +4550,28 @@ async function carregarLogoParaPDF() {
             if (texto.includes('tem') && !texto.includes('nao')) return 'success';
             if (texto.includes('deficit') || texto.includes('falta') || texto.includes('nao tem') || texto.includes('nao conforme')) return 'danger';
             if (texto.includes('validar') || texto.includes('pendente')) return 'info';
-            if (texto.includes('conforme') && !texto.includes('parcial') && !texto.includes('nao')) return 'success';
+            if ((texto.includes('conforme') || texto.includes('conformidade')) && !texto.includes('parcial') && !texto.includes('nao')) return 'success';
             if (texto.includes('parcial')) return 'warning';
             return 'muted';
         }
 
         function renderizarBadgeDiagnostico(status) {
             const texto = status || 'Não informado';
-            const icone = texto === 'Tem'
+            const textoTela = statusParametroMinimoParaTela(texto);
+            const icone = textoTela === 'Em conformidade'
                 ? 'fa-check'
-                : texto === 'Não tem'
+                : textoTela === 'Pendente'
                     ? 'fa-xmark'
-                    : texto === 'Parcial'
+                    : textoTela === 'Parcial'
                         ? 'fa-triangle-exclamation'
-                        : texto === 'Validar'
+                        : textoTela === 'Validar'
                             ? 'fa-hourglass-half'
-                            : texto.startsWith('Falta +')
+                            : textoTela.startsWith('Falta +')
                                 ? 'fa-box'
-                                : texto === 'Déficit'
+                                : textoTela === 'Déficit'
                                     ? 'fa-box'
                                     : 'fa-minus';
-            return `<span class="diagnostico-status-badge diagnostico-status-${obterClasseStatusDiagnostico(texto)}"><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(texto)}</span>`;
+            return `<span class="diagnostico-status-badge diagnostico-status-${obterClasseStatusDiagnostico(textoTela)}"><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(textoTela)}</span>`;
         }
 
         function formatarNumeroDiagnostico(valor) {
@@ -4588,6 +4594,173 @@ async function carregarLogoParaPDF() {
             'Canais',
             'Fluxo',
         ];
+        const STATUS_PARAMETROS_MINIMOS_EDICAO = [
+            { valor: 'TEM', rotulo: 'Em conformidade' },
+            { valor: 'NÃO TEM', rotulo: 'Pendente' }
+        ];
+
+        function normalizarStatusParametroMinimoFrontend(status) {
+            const valor = normalizarBusca(status).replace(/\s+/g, ' ').trim();
+            const falta = valor.match(/^falta\s*\+\s*(\d+)$/i);
+            if (falta) return `FALTA +${Number(falta[1])}`;
+
+            const mapa = {
+                tem: 'TEM',
+                'nao tem': 'NÃO TEM',
+                parcial: 'PARCIAL',
+                validar: 'VALIDAR',
+                'nao informado': 'NÃO INFORMADO',
+                deficit: 'DÉFICIT'
+            };
+
+            return mapa[valor] || String(status || '').trim().toUpperCase();
+        }
+
+        function statusParametroMinimoParaTela(status) {
+            const valor = normalizarStatusParametroMinimoFrontend(status);
+            const mapa = {
+                TEM: 'Em conformidade',
+                'NÃO TEM': 'Pendente',
+                PARCIAL: 'Parcial',
+                VALIDAR: 'Validar',
+                'NÃO INFORMADO': 'Não informado',
+                'DÉFICIT': 'Déficit'
+            };
+
+            if (valor.startsWith('FALTA +')) return valor.replace('FALTA', 'Falta');
+            return mapa[valor] || 'Não informado';
+        }
+
+        function calcularStatusQuantitativoParametroMinimo(quantidadeAtual, idealMinimo) {
+            const atual = Math.max(0, Number(quantidadeAtual) || 0);
+            const ideal = Math.max(0, Number(idealMinimo) || 0);
+            const deficit = Math.max(0, ideal - atual);
+
+            return deficit > 0 ? `FALTA +${deficit}` : 'TEM';
+        }
+
+        function obterQuantidadeAtualParametroMinimo(item, statusAtual) {
+            if (item.tipo !== 'quantitativo') return '';
+
+            const ideal = Number(item.idealDeclarado ?? item.idealMinimo) || 0;
+            if (Number.isFinite(Number(item.atualDeclarado))) return Number(item.atualDeclarado);
+
+            const status = normalizarStatusParametroMinimoFrontend(statusAtual);
+            const falta = status.match(/^FALTA \+(\d+)$/);
+
+            if (falta) return Math.max(0, ideal - Number(falta[1]));
+            if (status === 'TEM') return ideal;
+            return 0;
+        }
+
+        function obterQuantidadeAlteracoesParametrosMinimos() {
+            return Object.values(parametrosMinimosAlteracoesPendentes)
+                .reduce((total, campos) => total + Object.keys(campos || {}).length, 0);
+        }
+
+        function obterValorPendenteParametroMinimo(idResposta, idParametro, valorAtual) {
+            const pendente = parametrosMinimosAlteracoesPendentes[idResposta]?.[idParametro];
+            if (pendente && typeof pendente === 'object') {
+                return normalizarStatusParametroMinimoFrontend(pendente.status);
+            }
+
+            return pendente
+                || normalizarStatusParametroMinimoFrontend(valorAtual);
+        }
+
+        function registrarAlteracaoParametroMinimo(idResposta, idParametro, valorOriginal, novoValor, detalhes = {}) {
+            const original = normalizarStatusParametroMinimoFrontend(valorOriginal);
+            const novo = normalizarStatusParametroMinimoFrontend(
+                novoValor && typeof novoValor === 'object' ? novoValor.status : novoValor
+            );
+
+            if (!parametrosMinimosAlteracoesPendentes[idResposta]) {
+                parametrosMinimosAlteracoesPendentes[idResposta] = {};
+            }
+
+            const quantidadeAtualOriginal = detalhes.quantidadeAtualOriginal === null || detalhes.quantidadeAtualOriginal === undefined
+                ? null
+                : Number(detalhes.quantidadeAtualOriginal);
+            const quantidadeAtualNova = detalhes.quantidadeAtual === null || detalhes.quantidadeAtual === undefined
+                ? null
+                : Number(detalhes.quantidadeAtual);
+            const quantidadeMudou = quantidadeAtualNova !== null
+                && Number.isFinite(quantidadeAtualNova)
+                && quantidadeAtualNova !== quantidadeAtualOriginal;
+
+            if (novo === original && !quantidadeMudou) {
+                delete parametrosMinimosAlteracoesPendentes[idResposta][idParametro];
+                if (!Object.keys(parametrosMinimosAlteracoesPendentes[idResposta]).length) {
+                    delete parametrosMinimosAlteracoesPendentes[idResposta];
+                }
+            } else {
+                parametrosMinimosAlteracoesPendentes[idResposta][idParametro] = detalhes.tipo === 'quantitativo'
+                    ? {
+                        status: novo,
+                        quantidadeAtual: quantidadeAtualNova,
+                        quantidadeIdeal: Number(detalhes.quantidadeIdeal)
+                    }
+                    : novo;
+            }
+
+            renderDiagnosticoOuvidoriasView();
+        }
+
+        function renderizarEditorParametroMinimo(resposta, item, statusAtual) {
+            const editorId = `${resposta.idResposta}::${item.idParametro}`;
+            if (!parametrosMinimosModoEdicao || parametrosMinimosEditorAtivo !== editorId) return '';
+
+            if (item.tipo === 'quantitativo') {
+                const ideal = Number(item.idealDeclarado ?? item.idealMinimo) || 0;
+                const pendente = parametrosMinimosAlteracoesPendentes[resposta.idResposta]?.[item.idParametro];
+                const atual = pendente && typeof pendente === 'object'
+                    ? Number(pendente.quantidadeAtual)
+                    : obterQuantidadeAtualParametroMinimo(item, statusAtual);
+                const limite = Math.max(10, ideal + 5, Number(atual) + 5);
+
+                // Itens quantitativos sao editados por quantidade existente; o deficit e calculado pela interface.
+                return `
+                    <div class="diagnostico-inline-editor" data-parametros-editor="${escapeHtml(editorId)}">
+                        <label>
+                            <span>Quantidade existente</span>
+                            <select
+                                class="form-select form-select-sm"
+                                data-parametros-quantidade-registro="${escapeHtml(resposta.idResposta)}"
+                                data-parametros-quantidade-campo="${escapeHtml(item.idParametro)}"
+                                data-parametros-quantidade-original="${escapeHtml(item.respostaUf || item.status)}"
+                                data-parametros-quantidade-atual-original="${escapeHtml(String(item.atualDeclarado ?? ''))}"
+                                data-parametros-quantidade-ideal="${escapeHtml(String(ideal))}"
+                            >
+                                ${Array.from({ length: limite + 1 }, (_, quantidade) => `
+                                    <option value="${quantidade}" ${Number(atual) === quantidade ? 'selected' : ''}>${quantidade}</option>
+                                `).join('')}
+                            </select>
+                        </label>
+                        <small>Mínimo: ${ideal}. A situação é recalculada automaticamente.</small>
+                    </div>
+                `;
+            }
+
+            // Itens qualitativos usam apenas opcoes fechadas para evitar digitacao livre.
+            return `
+                <div class="diagnostico-inline-editor" data-parametros-editor="${escapeHtml(editorId)}">
+                    <div class="diagnostico-status-choice-group" role="group" aria-label="Opções de status">
+                        ${STATUS_PARAMETROS_MINIMOS_EDICAO.map((opcao) => `
+                            <button
+                                type="button"
+                                class="diagnostico-status-choice ${normalizarStatusParametroMinimoFrontend(statusAtual) === opcao.valor ? 'active' : ''}"
+                                data-parametros-opcao-registro="${escapeHtml(resposta.idResposta)}"
+                                data-parametros-opcao-campo="${escapeHtml(item.idParametro)}"
+                                data-parametros-opcao-original="${escapeHtml(item.respostaUf || item.status)}"
+                                data-parametros-opcao-valor="${escapeHtml(opcao.valor)}"
+                            >
+                                ${escapeHtml(opcao.rotulo)}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
 
         function obterEixoOperacionalDiagnostico(eixo = '', parametro = '') {
             const texto = normalizarBusca(`${eixo} ${parametro}`);
@@ -4603,6 +4776,7 @@ async function carregarLogoParaPDF() {
         function obterItensOperacionaisDiagnostico(resposta) {
             const filtros = obterFiltrosDiagnosticoOuvidorias();
             return obterChecklistVisivelDiagnostico(resposta, filtros).map((item) => ({
+                idParametro: item.idParametro,
                 tipo: item.tipo,
                 eixo: item.trilha || item.eixo,
                 parametro: item.parametroCurto || item.parametro,
@@ -4626,8 +4800,8 @@ async function carregarLogoParaPDF() {
             // A trilha segue o padrão visual vertical por grupo, mantendo a leitura operacional de cada parâmetro.
             const itens = obterItensOperacionaisDiagnostico(resposta);
             const icones = {
-                'Tem': 'fa-check',
-                'Não tem': 'fa-xmark',
+                'Em conformidade': 'fa-check',
+                'Pendente': 'fa-xmark',
                 'Parcial': 'fa-triangle-exclamation',
                 'Validar': 'fa-file-circle-question',
                 'Não informado': 'fa-minus'
@@ -4650,22 +4824,82 @@ async function carregarLogoParaPDF() {
                                 <div class="diagnostico-trail-group">
                                     <h3>${escapeHtml(trilha)}</h3>
                                     <div class="diagnostico-trail-items">
-                                        ${itensTrilha.map((item) => `
-                                            <div class="diagnostico-trail-row diagnostico-trail-row-${obterClasseStatusDiagnostico(item.status)}">
-                                                <span class="diagnostico-trail-marker" aria-hidden="true">
-                                                    <i class="fas ${item.status.startsWith('Falta +') || item.status === 'Déficit' ? 'fa-box' : (icones[item.status] || 'fa-circle')}"></i>
-                                                </span>
-                                                <span class="diagnostico-trail-content">
-                                                    <strong>${escapeHtml(item.parametro)}</strong>
-                                                    <small>${escapeHtml(item.falta && item.falta !== '-' ? item.falta : item.status)}</small>
-                                                </span>
-                                            </div>
-                                        `).join('')}
+                                        ${itensTrilha.map((item) => {
+                                            const statusAtualBanco = obterValorPendenteParametroMinimo(resposta.idResposta, item.idParametro, item.respostaUf || item.status);
+                                            const statusAtualTela = statusParametroMinimoParaTela(statusAtualBanco);
+                                            const editorId = `${resposta.idResposta}::${item.idParametro}`;
+                                            const textoResumo = statusAtualTela;
+
+                                            return `
+                                                <div class="diagnostico-trail-row diagnostico-trail-row-${obterClasseStatusDiagnostico(statusAtualTela)}">
+                                                    <span class="diagnostico-trail-marker" aria-hidden="true">
+                                                        <i class="fas ${statusAtualTela.startsWith('Falta +') || statusAtualTela === 'Déficit' ? 'fa-box' : (icones[statusAtualTela] || 'fa-circle')}"></i>
+                                                    </span>
+                                                    <div class="diagnostico-trail-content">
+                                                        <span class="diagnostico-trail-title-line">
+                                                            <strong>${escapeHtml(item.parametro)}</strong>
+                                                            ${parametrosMinimosModoEdicao ? `
+                                                                <button
+                                                                    type="button"
+                                                                    class="diagnostico-item-edit-button ${parametrosMinimosEditorAtivo === editorId ? 'active' : ''}"
+                                                                    data-parametros-toggle-editor="${escapeHtml(editorId)}"
+                                                                    aria-label="Editar ${escapeHtml(item.parametro)}"
+                                                                    title="Editar"
+                                                                >
+                                                                    <i class="fas fa-pen" aria-hidden="true"></i>
+                                                                </button>
+                                                            ` : ''}
+                                                        </span>
+                                                        <small>${escapeHtml(textoResumo)}</small>
+                                                        ${renderizarEditorParametroMinimo(resposta, item, statusAtualBanco)}
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }).join('')}
                                     </div>
                                 </div>
                             `;
                         }).join('')}
                     </div>
+                </section>
+            `;
+        }
+
+        function renderizarAcoesParametrosMinimos() {
+            const totalAlteracoes = obterQuantidadeAlteracoesParametrosMinimos();
+
+            return `
+                <section class="diagnostico-action-bar diagnostico-block" aria-label="Ações dos parâmetros mínimos">
+                    <div>
+                        <p class="section-eyebrow mb-1">Atualização</p>
+                        <h2>Parâmetros mínimos</h2>
+                    </div>
+                    <div class="diagnostico-action-buttons">
+                        ${parametrosMinimosModoEdicao ? `
+                            <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarParametrosMinimos" ${totalAlteracoes ? '' : 'disabled'}>
+                                <i class="fas fa-save" aria-hidden="true"></i>
+                                <span>Salvar alterações</span>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarParametrosMinimos">
+                                <i class="fas fa-xmark" aria-hidden="true"></i>
+                                <span>Cancelar alterações</span>
+                            </button>
+                        ` : `
+                            <button type="button" class="btn btn-outline-primary btn-icon-text" id="btnEditarParametrosMinimos">
+                                <i class="fas fa-pen-to-square" aria-hidden="true"></i>
+                                <span>Editar</span>
+                            </button>
+                        `}
+                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarParametrosMinimos">
+                            <i class="fas fa-file-excel" aria-hidden="true"></i>
+                            <span>Exportar Excel</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoParametrosMinimos">
+                            <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
+                            <span>Histórico</span>
+                        </button>
+                    </div>
+                    <small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s)</small>
                 </section>
             `;
         }
@@ -4932,6 +5166,163 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        function obterResumoAlteracoesParametrosMinimos(dados) {
+            const respostas = dados?.respostas || [];
+            return Object.entries(parametrosMinimosAlteracoesPendentes).flatMap(([registro, campos]) => {
+                const resposta = respostas.find((item) => item.idResposta === registro || item.uf === registro);
+
+                return Object.entries(campos).map(([campo, novoValor]) => {
+                    const parametro = resposta?.parametrosMinimos?.find((item) => item.idParametro === campo);
+                    const statusNovo = novoValor && typeof novoValor === 'object'
+                        ? novoValor.status
+                        : novoValor;
+                    const complementoQuantidade = novoValor && typeof novoValor === 'object'
+                        ? ` | atual: ${novoValor.quantidadeAtual} | ideal: ${novoValor.quantidadeIdeal}`
+                        : '';
+                    return {
+                        registro,
+                        campo,
+                        label: parametro?.parametro || campo,
+                        anterior: normalizarStatusParametroMinimoFrontend(parametro?.respostaUf || parametro?.statusNormalizado || ''),
+                        novo: `${statusNovo}${complementoQuantidade}`
+                    };
+                });
+            });
+        }
+
+        function removerModalParametrosMinimos(id) {
+            const modalExistente = document.getElementById(id);
+            if (modalExistente) {
+                window.bootstrap?.Modal?.getInstance(modalExistente)?.dispose();
+                modalExistente.remove();
+            }
+        }
+
+        function abrirModalSenhaParametrosMinimos(dados) {
+            const alteracoes = obterResumoAlteracoesParametrosMinimos(dados);
+            if (!alteracoes.length) {
+                alert('Não há alterações para salvar.');
+                return;
+            }
+
+            removerModalParametrosMinimos('modalSenhaParametrosMinimos');
+            document.body.insertAdjacentHTML('beforeend', `
+                <div class="modal fade" id="modalSenhaParametrosMinimos" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirmar alterações</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Você está prestes a salvar ${alteracoes.length} alteração(ões):</p>
+                                <ul class="diagnostico-change-list">
+                                    ${alteracoes.map((item) => `
+                                        <li><strong>${escapeHtml(item.registro)}</strong> — ${escapeHtml(item.label)}: ${escapeHtml(item.anterior)} → ${escapeHtml(item.novo)}</li>
+                                    `).join('')}
+                                </ul>
+                                <label class="form-label" for="senhaParametrosMinimos">Senha de confirmação</label>
+                                <input type="password" class="form-control" id="senhaParametrosMinimos" autocomplete="current-password">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="confirmarSalvarParametrosMinimos">Confirmar e salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            const modalElement = document.getElementById('modalSenhaParametrosMinimos');
+            const modal = new window.bootstrap.Modal(modalElement);
+            modal.show();
+
+            document.getElementById('confirmarSalvarParametrosMinimos')?.addEventListener('click', async () => {
+                const senha = document.getElementById('senhaParametrosMinimos')?.value || '';
+                await salvarParametrosMinimosComSenha(senha, modal);
+            });
+        }
+
+        async function salvarParametrosMinimosComSenha(password, modal) {
+            try {
+                const { resposta: response, payload: result } = await fetchJsonApiOnasp('/api/parametros-minimos/salvar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password,
+                        changes: parametrosMinimosAlteracoesPendentes
+                    })
+                });
+
+                if (!response.ok || !result.success) {
+                    alert(result.message || 'Não foi possível salvar.');
+                    return;
+                }
+
+                parametrosMinimosAlteracoesPendentes = {};
+                parametrosMinimosModoEdicao = false;
+                parametrosMinimosEditorAtivo = null;
+                modal.hide();
+                await carregarDadosDiagnosticoOuvidorias(true);
+                renderDiagnosticoOuvidoriasView();
+                alert('Alterações salvas com sucesso.');
+            } catch (error) {
+                alert(`Não foi possível salvar: ${error.message}`);
+            }
+        }
+
+        async function abrirHistoricoParametrosMinimos() {
+            try {
+                const { payload: result } = await fetchJsonApiOnasp('/api/parametros-minimos/historico');
+                const historico = result.historico || [];
+
+                removerModalParametrosMinimos('modalHistoricoParametrosMinimos');
+                document.body.insertAdjacentHTML('beforeend', `
+                    <div class="modal fade" id="modalHistoricoParametrosMinimos" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Histórico de alterações</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ${historico.length ? `
+                                        <div class="table-responsive">
+                                            <table class="table table-sm app-data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data</th>
+                                                        <th>Registro</th>
+                                                        <th>Campo</th>
+                                                        <th>Anterior</th>
+                                                        <th>Novo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${historico.map((item) => `
+                                                        <tr>
+                                                            <td>${escapeHtml(item.alteradoEm ? new Date(item.alteradoEm).toLocaleString('pt-BR') : '')}</td>
+                                                            <td>${escapeHtml(item.registro || '')}</td>
+                                                            <td>${escapeHtml(item.campo || '')}</td>
+                                                            <td>${escapeHtml(item.valorAnterior || '')}</td>
+                                                            <td>${escapeHtml(item.valorNovo || '')}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ` : '<div class="diagnostico-empty-state">Nenhuma alteração registrada.</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                new window.bootstrap.Modal(document.getElementById('modalHistoricoParametrosMinimos')).show();
+            } catch (error) {
+                alert(`Não foi possível carregar o histórico: ${error.message}`);
+            }
+        }
+
         function registrarEventosDiagnosticoOuvidorias(dados) {
             document.querySelectorAll('[data-diagnostico-uf]').forEach((botao) => {
                 botao.addEventListener('click', () => {
@@ -4946,6 +5337,78 @@ async function carregarLogoParaPDF() {
             document.getElementById('diagnosticoRespostaAtual')?.addEventListener('change', (evento) => {
                 diagnosticoOuvidoriaAtual = evento.target.value;
                 renderDiagnosticoOuvidoriasView();
+            });
+
+            document.getElementById('btnEditarParametrosMinimos')?.addEventListener('click', () => {
+                parametrosMinimosModoEdicao = true;
+                parametrosMinimosAlteracoesPendentes = {};
+                parametrosMinimosEditorAtivo = null;
+                renderDiagnosticoOuvidoriasView();
+            });
+
+            document.getElementById('btnCancelarParametrosMinimos')?.addEventListener('click', () => {
+                parametrosMinimosModoEdicao = false;
+                parametrosMinimosAlteracoesPendentes = {};
+                parametrosMinimosEditorAtivo = null;
+                renderDiagnosticoOuvidoriasView();
+            });
+
+            document.getElementById('btnSalvarParametrosMinimos')?.addEventListener('click', () => {
+                abrirModalSenhaParametrosMinimos(dados);
+            });
+
+            document.getElementById('btnExportarParametrosMinimos')?.addEventListener('click', () => {
+                if (obterQuantidadeAlteracoesParametrosMinimos()) {
+                    alert('Existem alterações não salvas. Salve antes de exportar para que o Excel reflita os dados atualizados.');
+                    return;
+                }
+
+                window.location.href = obterUrlApiOnasp('/api/parametros-minimos/exportar');
+            });
+
+            document.getElementById('btnHistoricoParametrosMinimos')?.addEventListener('click', () => {
+                abrirHistoricoParametrosMinimos();
+            });
+
+            document.querySelectorAll('[data-parametros-toggle-editor]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    const editorId = botao.dataset.parametrosToggleEditor;
+                    parametrosMinimosEditorAtivo = parametrosMinimosEditorAtivo === editorId ? null : editorId;
+                    renderDiagnosticoOuvidoriasView();
+                });
+            });
+
+            document.querySelectorAll('[data-parametros-opcao-registro]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    registrarAlteracaoParametroMinimo(
+                        botao.dataset.parametrosOpcaoRegistro,
+                        botao.dataset.parametrosOpcaoCampo,
+                        botao.dataset.parametrosOpcaoOriginal,
+                        botao.dataset.parametrosOpcaoValor
+                    );
+                });
+            });
+
+            document.querySelectorAll('[data-parametros-quantidade-registro]').forEach((campo) => {
+                campo.addEventListener('change', () => {
+                    const statusCalculado = calcularStatusQuantitativoParametroMinimo(
+                        campo.value,
+                        campo.dataset.parametrosQuantidadeIdeal
+                    );
+
+                    registrarAlteracaoParametroMinimo(
+                        campo.dataset.parametrosQuantidadeRegistro,
+                        campo.dataset.parametrosQuantidadeCampo,
+                        campo.dataset.parametrosQuantidadeOriginal,
+                        statusCalculado,
+                        {
+                            tipo: 'quantitativo',
+                            quantidadeAtual: campo.value,
+                            quantidadeAtualOriginal: campo.dataset.parametrosQuantidadeAtualOriginal,
+                            quantidadeIdeal: campo.dataset.parametrosQuantidadeIdeal
+                        }
+                    );
+                });
             });
         }
 
@@ -5027,10 +5490,10 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
+                ${renderizarAcoesParametrosMinimos()}
                 ${renderizarAtalhosUfDiagnostico(dados, filtrosAtuais)}
                 ${avisoBase}
                 ${seletorRespostas}
-
                 ${deveExibirDetalheUf && respostaAtual ? `
                     ${renderizarCabecalhoUfDiagnostico(respostaAtual)}
                     ${renderizarResumoConformidadeDiagnostico(respostaAtual)}
