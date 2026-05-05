@@ -9,7 +9,7 @@
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260504-8';
+const VERSAO_DADOS = '20260505-1';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
@@ -86,11 +86,11 @@ const PARAMETROS_DIAGNOSTICO_ONASP = [
 // Pares quantitativos usados apenas para déficit declarado. Eles não geram,
 // por si só, descumprimento da IN; servem como insumo de planejamento.
 const ITENS_DEFICIT_DIAGNOSTICO = [
-    { item: 'Computadores', atual: ['M2-17'], ideal: ['M2-18'], prioridade: 'Alta' },
-    { item: 'Impressoras multifuncionais', atual: ['M2-19'], ideal: ['M2-20'], prioridade: 'Média' },
-    { item: 'Mobiliário/estações de trabalho', atual: ['M2-29'], ideal: ['M2-30'], prioridade: 'Média' },
-    { item: 'Armários/arquivos', atual: ['M2-31'], ideal: ['M2-32'], prioridade: 'Alta' },
-    { item: 'Licenças de software', atual: ['M2-33'], ideal: ['M2-34'], prioridade: 'Média' }
+    { item: 'Computadores', atual: ['M2-17'], ideal: ['M2-18'], fundamentoIn: 'Art. 7º, I', prioridade: 'Alta', providencia: 'Prever aquisição de computadores' },
+    { item: 'Impressoras multifuncionais', atual: ['M2-19'], ideal: ['M2-20'], fundamentoIn: 'Art. 7º, II', prioridade: 'Média', providencia: 'Prever aquisição de impressora multifuncional' },
+    { item: 'Mobiliário/estações de trabalho', atual: ['M2-29'], ideal: ['M2-30'], fundamentoIn: 'Art. 7º, III', prioridade: 'Média', providencia: 'Prever adequação de mobiliário e estações de trabalho' },
+    { item: 'Armários/arquivos', atual: ['M2-31'], ideal: ['M2-32'], fundamentoIn: 'Art. 7º, III; art. 4º, II', prioridade: 'Alta', providencia: 'Prever armários ou arquivos para guarda de documentos' },
+    { item: 'Licenças de software', atual: ['M2-33'], ideal: ['M2-34'], fundamentoIn: 'Art. 7º, VIII', prioridade: 'Média', providencia: 'Prever licenças de software necessárias' }
 ];
 const COLUNAS_GERAL_PROFOR = {
     uf: 0,
@@ -2357,6 +2357,10 @@ function respostaDiagnosticoNaoInforma(texto) {
 
 function respostaDiagnosticoEhPositiva(texto) {
     const valor = normalizarTexto(texto);
+    if (!valor || respostaDiagnosticoEhNegativa(valor) || respostaDiagnosticoNaoInforma(valor)) {
+        return false;
+    }
+
     return valor === 'SIM'
         || valor === 'S'
         || valor.includes('POSSUI')
@@ -2375,6 +2379,11 @@ function respostaDiagnosticoEhParcial(texto) {
         || valor.includes('COMPARTILHAD')
         || valor.includes('EM IMPLANTACAO')
         || valor.includes('INFORMAL')
+        || valor.includes('INSUFICIENT')
+        || valor.includes('LIMITAC')
+        || valor.includes('LIMITAD')
+        || valor.includes('INADEQUAD')
+        || valor.includes('PRECISA DE')
         || valor.includes('ALGUNS')
         || valor.includes('CONDICIONAD');
 }
@@ -2408,6 +2417,50 @@ function classificarRespostasDiagnostico(respostas) {
     return STATUS_CHECKLIST_DIAGNOSTICO.CONFORME;
 }
 
+const PARAMETROS_OPERACIONAIS_DIAGNOSTICO = {
+    FORM_001: { rotulo: 'Ato normativo', falta: 'Normativo específico', providencia: 'Publicar/anexar ato normativo específico' },
+    FORM_002: { rotulo: 'Conteúdo do ato', falta: 'Conteúdo mínimo do ato', providencia: 'Complementar ato ou fluxo' },
+    FORM_003: { rotulo: 'Públicos atendidos', falta: 'Públicos atendidos', providencia: 'Detalhar públicos atendidos' },
+    FORM_004: { rotulo: 'Vinculação institucional', falta: 'Comprovação de vinculação', providencia: 'Comprovar vinculação institucional' },
+    FORM_005: { rotulo: 'Autonomia técnica', falta: 'Comprovação de autonomia', providencia: 'Comprovar autonomia técnica e funcional' },
+    EQUIPE_006: { rotulo: 'Ouvidor designado', falta: 'Designação formal', providencia: 'Comprovar designação do ouvidor' },
+    EQUIPE_007: { rotulo: 'Mandato do ouvidor', falta: 'Mandato informado', providencia: 'Informar mandato ou registrar ausência' },
+    EQUIPE_008: { rotulo: 'Perfil do ouvidor', falta: 'Perfil técnico comprovado', providencia: 'Comprovar perfil técnico do ouvidor' },
+    EQUIPE_009: { rotulo: 'Equipe própria', falta: 'Reforço ou formalização de equipe', providencia: 'Instituir/reforçar equipe da ouvidoria' },
+    EQUIPE_010: { rotulo: 'Dedicação da equipe', falta: 'Dedicação definida', providencia: 'Comprovar dedicação da equipe' },
+    EQUIPE_011: { rotulo: 'Perfil da equipe', falta: 'Perfil técnico da equipe', providencia: 'Comprovar perfil técnico da equipe' },
+    EQUIPE_012: { rotulo: 'Capacitação', falta: 'Capacitação específica', providencia: 'Promover/comprovar capacitação' },
+    EQUIPE_013: { rotulo: 'Sigilo', falta: 'Termo ou rotina de sigilo', providencia: 'Instituir/comprovar compromisso de sigilo' },
+    ESTRUTURA_014: { rotulo: 'Sala reservada', falta: 'Adequação de privacidade/acessibilidade', providencia: 'Adequar espaço físico da ouvidoria' },
+    ESTRUTURA_015: { rotulo: 'Computadores', falta: 'Computadores suficientes', providencia: 'Prever aquisição de computadores' },
+    ESTRUTURA_016: { rotulo: 'Impressora', falta: 'Impressora multifuncional', providencia: 'Prever aquisição de impressora' },
+    ESTRUTURA_017: { rotulo: 'Estações de trabalho', falta: 'Mobiliário/estações suficientes', providencia: 'Adequar mobiliário e estações' },
+    ESTRUTURA_018: { rotulo: 'Armários/arquivos', falta: 'Guarda segura de documentos', providencia: 'Prever armários/arquivos' },
+    ESTRUTURA_019: { rotulo: 'Licenças de software', falta: 'Licenças necessárias', providencia: 'Prever licenças de software' },
+    ESTRUTURA_020: { rotulo: 'Segurança da informação', falta: 'Recursos de segurança', providencia: 'Comprovar segurança da informação' },
+    ESTRUTURA_021: { rotulo: 'Placas/cartazes', falta: 'Divulgação visual dos canais', providencia: 'Instalar/divulgar placas e cartazes' },
+    ESTRUTURA_022: { rotulo: 'Materiais educativos', falta: 'Materiais de divulgação', providencia: 'Produzir/disponibilizar materiais' },
+    CANAIS_023: { rotulo: 'E-mail', falta: 'E-mail institucional exclusivo', providencia: 'Instituir/comprovar e-mail institucional' },
+    CANAIS_024: { rotulo: 'Telefone', falta: 'Linha telefônica funcional', providencia: 'Instituir/comprovar telefone' },
+    CANAIS_025: { rotulo: 'Canal eletrônico', falta: 'Canal eletrônico de registro', providencia: 'Inserir/comprovar canal eletrônico' },
+    CANAIS_026: { rotulo: 'Fala.BR', falta: 'Adesão/integração ao Fala.BR', providencia: 'Incluir meta de adesão ou integração ao Fala.BR' },
+    CANAIS_027: { rotulo: 'Endereço postal', falta: 'Endereço postal', providencia: 'Comprovar endereço postal' },
+    FLUXO_028: { rotulo: 'Recebe manifestações', falta: 'Tipos de manifestações', providencia: 'Detalhar tipos tratados' },
+    FLUXO_029: { rotulo: 'Registro/protocolo', falta: 'Registro, protocolo e classificação', providencia: 'Formalizar registro/protocolo/classificação' },
+    FLUXO_030: { rotulo: 'Fluxo interno', falta: 'Fluxo interno formal', providencia: 'Formalizar fluxo interno' },
+    FLUXO_031: { rotulo: 'Prazos de resposta', falta: 'Controle de prazos', providencia: 'Definir/controlar prazos de resposta' },
+    FLUXO_032: { rotulo: 'Denúncias sensíveis', falta: 'Rotina de proteção e sigilo', providencia: 'Formalizar tratamento sigiloso' },
+    FLUXO_033: { rotulo: 'Relatórios', falta: 'Relatórios e recomendações', providencia: 'Criar rotina de relatórios e recomendações' }
+};
+
+function normalizarStatusOperacionalDiagnostico(status) {
+    if (status === STATUS_CHECKLIST_DIAGNOSTICO.CONFORME) return 'Tem';
+    if (status === STATUS_CHECKLIST_DIAGNOSTICO.PARCIAL) return 'Parcial';
+    if (status === STATUS_CHECKLIST_DIAGNOSTICO.NAO_CONFORME) return 'Não tem';
+    if (status === STATUS_CHECKLIST_DIAGNOSTICO.PENDENTE_VALIDACAO) return 'Validar';
+    return 'Não informado';
+}
+
 function avaliarParametroDiagnostico(resposta, parametro) {
     const respostasPerguntas = parametro.perguntasDisponiveis.map((pergunta) => ({
         pergunta,
@@ -2431,6 +2484,9 @@ function avaliarParametroDiagnostico(resposta, parametro) {
         statusAutomatico = STATUS_CHECKLIST_DIAGNOSTICO.PENDENTE_VALIDACAO;
     }
 
+    const configOperacional = PARAMETROS_OPERACIONAIS_DIAGNOSTICO[parametro.id] || {};
+    const statusOperacional = normalizarStatusOperacionalDiagnostico(statusAutomatico);
+
     return {
         arquivoOrigem: ARQUIVO_PLANILHA_DIAGNOSTICO,
         uf: resposta.uf,
@@ -2438,12 +2494,16 @@ function avaliarParametroDiagnostico(resposta, parametro) {
         idParametro: parametro.id,
         eixo: parametro.eixo,
         parametro: parametro.nome,
+        parametroCurto: configOperacional.rotulo || parametro.nome,
         fundamentoIn: parametro.fundamentoIn,
         perguntasDiagnostico: parametro.perguntasDisponiveis,
         respostaUf,
         statusAutomatico,
+        statusOperacional,
         validacaoOnasp,
         providencia: parametro.providencia,
+        providenciaObjetiva: statusOperacional === 'Tem' ? 'Não se aplica' : (configOperacional.providencia || parametro.providencia),
+        faltaObjetiva: statusOperacional === 'Tem' ? '-' : (configOperacional.falta || parametro.providencia),
         prioridade: parametro.prioridade,
         essencial: Boolean(parametro.essencial)
     };
@@ -2464,9 +2524,15 @@ function montarDeficitsDiagnostico(resposta, tabela) {
                 uf: resposta.uf,
                 idResposta: resposta.idResposta,
                 item: config.item,
+                eixo: 'Estrutura física e tecnológica',
+                fundamentoIn: config.fundamentoIn,
+                perguntasDiagnostico: [...config.atual, ...config.ideal],
                 atualDeclarado,
                 idealDeclarado,
                 deficit,
+                statusOperacional: deficit === null ? 'Não informado' : (deficit > 0 ? `Falta +${deficit}` : 'Tem'),
+                faltaObjetiva: deficit === null ? 'Quantidade não informada' : (deficit > 0 ? `+${deficit} ${config.item.toLowerCase()}` : '-'),
+                providenciaObjetiva: deficit === null ? 'Informar quantitativo atual e ideal' : (deficit > 0 ? `${config.providencia} (${deficit})` : 'Não se aplica'),
                 podeComporPlanoAplicacao: true,
                 observacao: 'Déficit declarado no diagnóstico',
                 prioridade: config.prioridade
@@ -2563,7 +2629,7 @@ function montarResumoGeralDiagnosticoOuvidorias(respostas) {
             unidades,
             statusGerais: [...new Set(respostas.map((resposta) => resposta.statusGeral))].sort(),
             eixos: [...new Set(respostas.flatMap((resposta) => resposta.checklist.map((item) => item.eixo)))].sort(),
-            statusParametros: Object.values(STATUS_CHECKLIST_DIAGNOSTICO),
+            statusParametros: ['Tem', 'Parcial', 'Não tem', 'Validar', 'Não informado', 'Falta'],
             validacoesOnasp: VALIDACOES_ONASP_DIAGNOSTICO
         }
     };
