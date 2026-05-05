@@ -9,12 +9,13 @@
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260505-5';
+const VERSAO_DADOS = '20260505-6';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
 const ARQUIVO_PLANILHA_CONTATOS = 'Planilhas/Contatos.xlsx';
 const ARQUIVO_PLANILHA_DIAGNOSTICO = 'Planilhas/Diagnostico.xlsx';
+const ARQUIVO_PLANILHA_PARAMETROS_MINIMOS = 'Planilhas/Parametros_Minimos.xlsx';
 const ABA_ORCAMENTO_DADOS = 'Base_Dados';
 const ABA_ORCAMENTO_PROCESSOS_NORMAIS = 'Processos_Normais';
 const ABA_ORCAMENTO_PROFOR = 'Andamento_CONV_PROFOR';
@@ -24,6 +25,7 @@ const ABA_FORMALIZACAO_DICIONARIO = 'Dicionario_Documentos';
 const ABA_CONTATOS_UF = 'Contatos_UF';
 const ABA_CONTATOS_PESSOAS = 'Contatos_Pessoas';
 const ABAS_DIAGNOSTICO_OUVIDORIAS = ['Diagnostico', 'Diagnóstico', 'Respostas', 'Sheet1'];
+const ABA_PARAMETROS_MINIMOS_VALIDACAO = 'VALIDACAO';
 const ABAS_ORCAMENTO_IGNORADAS = new Set(['DICIONARIO_CAMPOS', 'RESUMO']);
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18; // Coluna S
 const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
@@ -94,6 +96,8 @@ const ITENS_DEFICIT_DIAGNOSTICO = [
     { item: 'Licenças de software', atual: ['M2-33'], ideal: ['M2-34'], fundamentoIn: 'Art. 7º, VIII', prioridade: 'Média', providencia: 'Prever licenças de software necessárias' }
 ];
 
+// Espelha as colunas da aba VALIDACAO em Planilhas/Parametros_Minimos.xlsx.
+// A tela de parâmetros mínimos usa estes 15 itens como lista fechada.
 const PARAMETROS_MINIMOS_DIAGNOSTICO = [
     {
         id: 'ato_normativo',
@@ -2744,8 +2748,9 @@ function montarDeficitsDiagnostico(resposta, tabela) {
 
 function obterProvidenciaParametroMinimo(config, status, deficit = null) {
     if (status === 'Tem') return 'Não se aplica';
+    if (status === 'Déficit') return `Prever aquisição/complementação de ${config.nome.toLowerCase()}`;
     if (status.startsWith('Falta +')) {
-        return `Prever aquisição de ${deficit} ${config.unidadeProvidencia || config.nome.toLowerCase()}`;
+        return `Prever aquisição/complementação de ${deficit} ${config.unidadeProvidencia || config.nome.toLowerCase()}`;
     }
 
     return config.providencias?.[status]
@@ -2755,9 +2760,36 @@ function obterProvidenciaParametroMinimo(config, status, deficit = null) {
 
 function obterFaltaParametroMinimo(config, status, deficit = null) {
     if (status === 'Tem') return '-';
+    if (status === 'Déficit') return 'Déficit material';
     if (status.startsWith('Falta +')) return `+${deficit} ${config.unidadeProvidencia || config.nome.toLowerCase()}`;
     if (status === 'Não informado') return 'Informação insuficiente';
     return config.falta || config.nome;
+}
+
+function normalizarStatusValidacaoParametroMinimo(valor) {
+    const textoOriginal = limparTexto(valor);
+    if (!textoOriginal) return 'Não informado';
+
+    const texto = normalizarTexto(textoOriginal).replace(/\s+/g, ' ');
+    const deficit = texto.match(/^FALTA\s*\+\s*(\d+)$/);
+    if (deficit) return `Falta +${Number(deficit[1])}`;
+
+    const mapa = {
+        TEM: 'Tem',
+        'NAO TEM': 'Não tem',
+        PARCIAL: 'Parcial',
+        VALIDAR: 'Validar',
+        'NAO INFORMADO': 'Não informado',
+        DEFICIT: 'Déficit'
+    };
+
+    return mapa[texto] || 'Não informado';
+}
+
+function extrairDeficitParametroMinimo(status) {
+    const falta = String(status || '').match(/^Falta\s*\+\s*(\d+)$/i);
+    if (falta) return Number(falta[1]);
+    return status === 'Déficit' ? 1 : 0;
 }
 
 function montarRespostaOriginalParametroMinimo(respostasPerguntas) {
@@ -2840,6 +2872,105 @@ function avaliarParametroMinimoQuantitativo(resposta, config, tabela) {
     };
 }
 
+function obterUfValidacaoParametroMinimo(valor) {
+    const texto = normalizarTexto(valor);
+    if (!texto) return '';
+
+    const match = texto.match(/^(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)(?:$|[\s_\-.0-9])/)
+        || texto.match(/\b(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\b/);
+
+    return match ? match[1] : '';
+}
+
+function obterTabelaValidacaoParametrosMinimos(workbook) {
+    const nomeAba = obterNomeAbaWorkbook(workbook, [ABA_PARAMETROS_MINIMOS_VALIDACAO]);
+    if (!nomeAba) return null;
+
+    const linhas = obterLinhasPlanilha(workbook.Sheets[nomeAba]);
+    const headerRowIndex = linhas.findIndex((linha) => {
+        const textoLinha = (linha || []).map((celula) => normalizarTexto(celula)).join(' ');
+        return textoLinha.includes('UF') && textoLinha.includes('ATO NORMATIVO');
+    });
+
+    if (headerRowIndex === -1) return null;
+
+    const headersOriginais = (linhas[headerRowIndex] || []).map(limparTexto);
+    const headersNormalizados = headersOriginais.map(normalizarTexto);
+
+    return {
+        nomeAba,
+        linhas: linhas.slice(headerRowIndex + 1),
+        headersOriginais,
+        indice(alias) {
+            const aliases = Array.isArray(alias) ? alias : [alias];
+            const normalizados = aliases.map(normalizarTexto);
+            return headersNormalizados.findIndex((header) => normalizados.includes(header));
+        }
+    };
+}
+
+function montarContextoDiagnosticoParametrosMinimos(dadosDiagnostico = null) {
+    const porUf = new Map();
+    const porId = new Map();
+
+    (dadosDiagnostico?.respostas || []).forEach((resposta) => {
+        if (!porUf.has(resposta.uf)) {
+            porUf.set(resposta.uf, []);
+        }
+
+        porUf.get(resposta.uf).push(resposta);
+        porId.set(normalizarTexto(resposta.idResposta), resposta);
+    });
+
+    return { porUf, porId };
+}
+
+function obterContextoDiagnosticoValidacao(codigoValidacao, uf, contexto) {
+    const codigo = normalizarTexto(codigoValidacao);
+    if (contexto.porId.has(codigo)) return contexto.porId.get(codigo);
+
+    const respostasUf = contexto.porUf.get(uf) || [];
+    const indiceSufixo = codigo.match(/_(\d+)$/);
+    if (indiceSufixo) {
+        return respostasUf[Number(indiceSufixo[1]) - 1] || null;
+    }
+
+    return respostasUf.length === 1 ? respostasUf[0] : null;
+}
+
+function avaliarParametroMinimoValidacao(resposta, config, tabela) {
+    const coluna = config.colunaValidacao || config.nome;
+    const indiceColuna = tabela.indice(coluna);
+    const valorOriginal = indiceColuna >= 0 ? obterTextoCelula(resposta.linha, indiceColuna, '') : '';
+    const status = normalizarStatusValidacaoParametroMinimo(valorOriginal);
+    const deficit = extrairDeficitParametroMinimo(status);
+
+    return {
+        arquivoOrigem: ARQUIVO_PLANILHA_PARAMETROS_MINIMOS,
+        uf: resposta.uf,
+        idResposta: resposta.idResposta,
+        idParametro: config.id,
+        trilha: config.trilha,
+        eixo: config.trilha,
+        parametro: config.nome,
+        parametroCurto: config.nome,
+        tipo: config.tipo,
+        fundamentoIn: config.fundamentoIn,
+        perguntasDiagnostico: [`VALIDACAO: ${coluna}`],
+        respostaUf: valorOriginal || 'Não informado',
+        respostaOriginal: valorOriginal || 'Não informado',
+        statusOperacional: status,
+        statusNormalizado: status,
+        faltaObjetiva: obterFaltaParametroMinimo(config, status, deficit),
+        providenciaObjetiva: obterProvidenciaParametroMinimo(config, status, deficit),
+        atualDeclarado: null,
+        idealDeclarado: null,
+        deficit,
+        validacaoOnasp: 'Planilha de validação',
+        prioridade: ['Não tem', 'Validar', 'Déficit'].includes(status) || status.startsWith('Falta +') ? 'Alta' : 'Média'
+    };
+}
+
 function montarParametrosMinimosDiagnostico(resposta, tabela) {
     return PARAMETROS_MINIMOS_DIAGNOSTICO.map((config) => (
         config.tipo === 'quantitativo'
@@ -2851,16 +2982,18 @@ function montarParametrosMinimosDiagnostico(resposta, tabela) {
 function montarResumoParametrosMinimos(parametros) {
     const parametrosAtendidos = parametros.filter((item) => item.statusNormalizado === 'Tem').length;
     const itensParaValidar = parametros.filter((item) => item.statusNormalizado === 'Validar').length;
-    const pendencias = parametros.filter((item) => (
+    const pendenciasMateriaisOuInformacionais = parametros.filter((item) => (
         item.statusNormalizado === 'Não tem'
         || item.statusNormalizado === 'Parcial'
         || item.statusNormalizado === 'Não informado'
+        || item.statusNormalizado === 'Déficit'
         || item.statusNormalizado.startsWith('Falta +')
     )).length;
+    const pendencias = pendenciasMateriaisOuInformacionais + itensParaValidar;
     const deficitMaterial = parametros.reduce((total, item) => total + (Number(item.deficit) > 0 ? Number(item.deficit) : 0), 0);
-    const statusGeral = pendencias === 0 && itensParaValidar === 0
+    const statusGeral = pendenciasMateriaisOuInformacionais === 0 && itensParaValidar === 0
         ? 'Tem'
-        : itensParaValidar > 0 && pendencias === 0
+        : itensParaValidar > 0 && pendenciasMateriaisOuInformacionais === 0
             ? 'Validar'
             : 'Parcial';
 
@@ -2984,7 +3117,11 @@ function montarResumoGeralDiagnosticoOuvidorias(respostas) {
         unidadesDiagnosticadas: unidades.length,
         conformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Tem').length,
         parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Parcial').length,
-        naoConformes: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não tem')).length,
+        naoConformes: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => (
+            item.statusNormalizado === 'Não tem'
+            || item.statusNormalizado === 'Déficit'
+            || item.statusNormalizado?.startsWith('Falta +')
+        ))).length,
         naoInformadas: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não informado')).length,
         deficitTotalDeclarado: respostas.reduce((total, resposta) => total + (resposta.resumoParametrosMinimos?.deficitMaterial || 0), 0),
         filtros: {
@@ -2992,15 +3129,15 @@ function montarResumoGeralDiagnosticoOuvidorias(respostas) {
             unidades,
             statusGerais: [...new Set(respostas.map((resposta) => resposta.statusGeralParametrosMinimos))].filter(Boolean).sort(),
             eixos: ['Institucionalização', 'Pessoas', 'Estrutura', 'Canais', 'Fluxo'],
-            statusParametros: ['Tem', 'Parcial', 'Não tem', 'Validar', 'Não informado', 'Falta +X'],
+            statusParametros: ['Tem', 'Parcial', 'Não tem', 'Validar', 'Não informado', 'Déficit', 'Falta +X'],
             validacoesOnasp: VALIDACOES_ONASP_DIAGNOSTICO
         }
     };
 }
 
-function criarDiagnosticoOuvidoriasVazio(erro = '') {
+function criarDiagnosticoOuvidoriasVazio(erro = '', arquivo = ARQUIVO_PLANILHA_DIAGNOSTICO) {
     return {
-        arquivo: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        arquivo,
         disponivel: false,
         erro,
         aba: '',
@@ -3047,6 +3184,129 @@ function extrairDiagnosticoOuvidoriasDoWorkbook(workbook) {
             aviso: perguntasDisponiveis.length
                 ? ''
                 : 'A planilha foi carregada, mas nenhuma pergunta M0/M1/M2/M3/M4 compatível com o checklist foi localizada.'
+        }
+    };
+}
+
+function extrairContextoDiagnosticoOuvidoriasDoWorkbook(workbook) {
+    const tabela = obterTabelaDiagnosticoOuvidorias(workbook);
+    if (!tabela) {
+        return criarDiagnosticoOuvidoriasVazio('Nenhuma aba com cabeçalho reconhecível foi localizada em Diagnostico.xlsx.');
+    }
+
+    const respostasBrutas = tabela.linhas
+        .map((linha, index) => normalizarRespostaBrutaDiagnostico(linha, tabela, index))
+        .filter(Boolean);
+    const respostas = selecionarRespostasValidasDiagnostico(respostasBrutas);
+
+    return {
+        arquivo: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        disponivel: true,
+        erro: '',
+        aba: tabela.nomeAba,
+        respostasBrutas,
+        respostas,
+        diagnostico: {
+            colunasDisponiveis: tabela.headersOriginais.map(limparTexto).filter(Boolean),
+            perguntasDisponiveis: [],
+            respostasDescartadasPorDuplicidade: Math.max(0, respostasBrutas.length - respostas.length),
+            aviso: ''
+        }
+    };
+}
+
+function montarAnaliseParametrosMinimosValidacao(registro, tabela) {
+    const parametrosMinimos = PARAMETROS_MINIMOS_DIAGNOSTICO.map((config) => avaliarParametroMinimoValidacao(registro, config, tabela));
+    const resumoParametrosMinimos = montarResumoParametrosMinimos(parametrosMinimos);
+
+    return {
+        ...registro,
+        statusGeral: resumoParametrosMinimos.statusGeral,
+        statusGeralParametrosMinimos: resumoParametrosMinimos.statusGeral,
+        resumo: {
+            totalAvaliavel: resumoParametrosMinimos.total,
+            conformidadePercentual: resumoParametrosMinimos.total
+                ? Math.round((resumoParametrosMinimos.parametrosAtendidos / resumoParametrosMinimos.total) * 100)
+                : 0,
+            deficitAparelhamento: resumoParametrosMinimos.deficitMaterial,
+            validacaoOnasp: 'Planilha de validação'
+        },
+        resumoParametrosMinimos,
+        checklist: [],
+        deficitAparelhamento: [],
+        providencias: [],
+        parametrosMinimos,
+        faltasParametrosMinimos: montarFaltasParametrosMinimos(parametrosMinimos),
+        providenciasParametrosMinimos: montarProvidenciasParametrosMinimos(parametrosMinimos)
+    };
+}
+
+function extrairParametrosMinimosValidacaoDoWorkbook(workbookValidacao, dadosDiagnostico = null) {
+    const tabela = obterTabelaValidacaoParametrosMinimos(workbookValidacao);
+    if (!tabela) {
+        return criarDiagnosticoOuvidoriasVazio(
+            `A planilha ${ARQUIVO_PLANILHA_PARAMETROS_MINIMOS} precisa conter a aba ${ABA_PARAMETROS_MINIMOS_VALIDACAO}.`,
+            ARQUIVO_PLANILHA_PARAMETROS_MINIMOS
+        );
+    }
+
+    const contextoDiagnostico = montarContextoDiagnosticoParametrosMinimos(dadosDiagnostico);
+    const colUf = tabela.indice('UF');
+    const colunasAusentes = PARAMETROS_MINIMOS_DIAGNOSTICO
+        .map((config) => config.colunaValidacao || config.nome)
+        .filter((coluna) => tabela.indice(coluna) < 0);
+
+    const registrosBrutos = tabela.linhas.map((linha, index) => {
+        const codigoValidacao = obterTextoCelula(linha, colUf, '');
+        const uf = obterUfValidacaoParametroMinimo(codigoValidacao);
+        if (!uf) return null;
+
+        const contexto = obterContextoDiagnosticoValidacao(codigoValidacao, uf, contextoDiagnostico);
+        const unidadeDiagnosticada = contexto?.unidadeDiagnosticada
+            || (normalizarTexto(codigoValidacao) !== uf ? codigoValidacao : `Ouvidoria de Serviços Penais - ${uf}`);
+
+        return {
+            arquivoOrigem: ARQUIVO_PLANILHA_PARAMETROS_MINIMOS,
+            arquivoAuditoria: ARQUIVO_PLANILHA_DIAGNOSTICO,
+            fonteParametrosMinimos: `${ARQUIVO_PLANILHA_PARAMETROS_MINIMOS} / ${tabela.nomeAba}`,
+            idResposta: `${codigoValidacao || uf}-${index + 1}`,
+            codigoValidacao,
+            uf,
+            unidadeDiagnosticada,
+            dataResposta: contexto?.dataResposta || 'Planilha de validação ONASP',
+            dataTimestamp: contexto?.dataTimestamp || 0,
+            responsavelPreenchimento: contexto?.responsavelPreenchimento || '',
+            validacaoOnasp: 'Planilha de validação',
+            linhaOrigem: index + 1,
+            linha
+        };
+    }).filter(Boolean);
+
+    const respostas = registrosBrutos
+        .map((registro) => montarAnaliseParametrosMinimosValidacao(registro, tabela))
+        .sort((a, b) => (
+            a.uf.localeCompare(b.uf)
+            || String(a.codigoValidacao || '').localeCompare(String(b.codigoValidacao || ''), 'pt-BR')
+        ));
+    const avisoColunas = colunasAusentes.length
+        ? ` Colunas ausentes na aba VALIDACAO: ${colunasAusentes.join(', ')}.`
+        : '';
+
+    return {
+        arquivo: ARQUIVO_PLANILHA_PARAMETROS_MINIMOS,
+        arquivoAuditoria: ARQUIVO_PLANILHA_DIAGNOSTICO,
+        disponivel: true,
+        erro: '',
+        aba: tabela.nomeAba,
+        parametrosDisponiveis: PARAMETROS_MINIMOS_DIAGNOSTICO,
+        respostasBrutas: registrosBrutos,
+        respostas,
+        resumo: montarResumoGeralDiagnosticoOuvidorias(respostas),
+        diagnostico: {
+            colunasDisponiveis: tabela.headersOriginais.filter(Boolean),
+            perguntasDisponiveis: PARAMETROS_MINIMOS_DIAGNOSTICO.map((config) => config.nome),
+            respostasDescartadasPorDuplicidade: 0,
+            aviso: avisoColunas.trim()
         }
     };
 }
@@ -3464,15 +3724,24 @@ export async function carregarDadosDiagnosticoOuvidorias() {
 
     try {
         if (window.location.protocol === 'file:') {
-            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de diagnostico.');
+            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de parametros minimos.');
         }
 
-        const workbook = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_DIAGNOSTICO, 'Planilha de diagnostico');
-        dadosDiagnosticoOuvidoriasCache = extrairDiagnosticoOuvidoriasDoWorkbook(workbook);
+        let dadosDiagnostico = null;
+        try {
+            const workbookDiagnostico = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_DIAGNOSTICO, 'Planilha de diagnostico');
+            dadosDiagnostico = extrairContextoDiagnosticoOuvidoriasDoWorkbook(workbookDiagnostico);
+        } catch (errorDiagnostico) {
+            dadosDiagnostico = criarDiagnosticoOuvidoriasVazio(errorDiagnostico.message, ARQUIVO_PLANILHA_DIAGNOSTICO);
+            console.warn(`Diagnostico historico indisponivel para parametros minimos: ${errorDiagnostico.message}`);
+        }
+
+        const workbookParametros = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_PARAMETROS_MINIMOS, 'Planilha de parametros minimos');
+        dadosDiagnosticoOuvidoriasCache = extrairParametrosMinimosValidacaoDoWorkbook(workbookParametros, dadosDiagnostico);
         return dadosDiagnosticoOuvidoriasCache;
     } catch (error) {
-        dadosDiagnosticoOuvidoriasCache = criarDiagnosticoOuvidoriasVazio(error.message);
-        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_DIAGNOSTICO}:`, error);
+        dadosDiagnosticoOuvidoriasCache = criarDiagnosticoOuvidoriasVazio(error.message, ARQUIVO_PLANILHA_PARAMETROS_MINIMOS);
+        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_PARAMETROS_MINIMOS}:`, error);
         return dadosDiagnosticoOuvidoriasCache;
     }
 }

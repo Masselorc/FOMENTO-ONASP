@@ -21,7 +21,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260505-5';
+} from '../../backend/services/data-service.js?v=20260505-6';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4543,7 +4543,7 @@ async function carregarLogoParaPDF() {
             if (texto === 'completo') return 'success';
             if (texto === 'pendente') return 'danger';
             if (texto.includes('tem') && !texto.includes('nao')) return 'success';
-            if (texto.includes('falta') || texto.includes('nao tem') || texto.includes('nao conforme')) return 'danger';
+            if (texto.includes('deficit') || texto.includes('falta') || texto.includes('nao tem') || texto.includes('nao conforme')) return 'danger';
             if (texto.includes('validar') || texto.includes('pendente')) return 'info';
             if (texto.includes('conforme') && !texto.includes('parcial') && !texto.includes('nao')) return 'success';
             if (texto.includes('parcial')) return 'warning';
@@ -4562,7 +4562,9 @@ async function carregarLogoParaPDF() {
                             ? 'fa-hourglass-half'
                             : texto.startsWith('Falta +')
                                 ? 'fa-box'
-                                : 'fa-minus';
+                                : texto === 'Déficit'
+                                    ? 'fa-box'
+                                    : 'fa-minus';
             return `<span class="diagnostico-status-badge diagnostico-status-${obterClasseStatusDiagnostico(texto)}"><i class="fas ${icone}" aria-hidden="true"></i>${escapeHtml(texto)}</span>`;
         }
 
@@ -4651,7 +4653,7 @@ async function carregarLogoParaPDF() {
                                         ${itensTrilha.map((item) => `
                                             <div class="diagnostico-trail-row diagnostico-trail-row-${obterClasseStatusDiagnostico(item.status)}">
                                                 <span class="diagnostico-trail-marker" aria-hidden="true">
-                                                    <i class="fas ${item.status.startsWith('Falta +') ? 'fa-box' : (icones[item.status] || 'fa-circle')}"></i>
+                                                    <i class="fas ${item.status.startsWith('Falta +') || item.status === 'Déficit' ? 'fa-box' : (icones[item.status] || 'fa-circle')}"></i>
                                                 </span>
                                                 <span class="diagnostico-trail-content">
                                                     <strong>${escapeHtml(item.parametro)}</strong>
@@ -4759,7 +4761,7 @@ async function carregarLogoParaPDF() {
                                 <div class="diagnostico-audit-grid">
                                     <div><span>Item</span><strong>${escapeHtml(item.parametro)}</strong></div>
                                     <div><span>Fundamento normativo</span><strong>${escapeHtml(item.fundamentoIn || 'Não informado')}</strong></div>
-                                    <div><span>Pergunta de origem</span><strong>${escapeHtml((item.perguntasDiagnostico || []).join(', ') || 'Não informado')}</strong></div>
+                                    <div><span>Coluna de origem</span><strong>${escapeHtml((item.perguntasDiagnostico || []).join(', ') || 'Não informado')}</strong></div>
                                     <div><span>Resultado normalizado</span><strong>${escapeHtml(item.status || 'Não informado')}</strong></div>
                                     <div><span>Providência sugerida</span><strong>${escapeHtml(item.providencia || 'Não se aplica')}</strong></div>
                                     <div><span>Validação ONASP</span><strong>${escapeHtml(item.validacaoOnasp || 'Não se aplica')}</strong></div>
@@ -4796,7 +4798,6 @@ async function carregarLogoParaPDF() {
                     <div class="diagnostico-header-grid">
                         <div><span>UF</span><strong>${escapeHtml(resposta.uf)}</strong></div>
                         <div><span>Unidade diagnosticada</span><strong>${escapeHtml(resposta.unidadeDiagnosticada || 'Não informado')}</strong></div>
-                        <div><span>Data da resposta</span><strong>${escapeHtml(resposta.dataResposta || 'Não informado')}</strong></div>
                         <div><span>Status geral</span>${renderizarBadgeDiagnostico(resposta.statusGeralParametrosMinimos)}</div>
                         <div><span>Itens avaliados</span><strong>${escapeHtml(String(resposta.resumoParametrosMinimos?.total || 0))}</strong></div>
                     </div>
@@ -4815,7 +4816,11 @@ async function carregarLogoParaPDF() {
                 ufsDiagnosticadas: new Set(respostas.map((resposta) => resposta.uf).filter(Boolean)).size,
                 conformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Tem').length,
                 parcialmenteConformes: respostas.filter((resposta) => resposta.statusGeralParametrosMinimos === 'Parcial').length,
-                naoConformes: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não tem')).length,
+                naoConformes: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => (
+                    item.statusNormalizado === 'Não tem'
+                    || item.statusNormalizado === 'Déficit'
+                    || item.statusNormalizado?.startsWith('Falta +')
+                ))).length,
                 naoInformadas: respostas.filter((resposta) => resposta.parametrosMinimos?.some((item) => item.statusNormalizado === 'Não informado')).length,
                 conformidadePercentual: totalAvaliavel ? Math.round((conformes / totalAvaliavel) * 100) : 0,
                 deficitAparelhamento
@@ -4825,8 +4830,8 @@ async function carregarLogoParaPDF() {
         function renderizarVisaoGeralParametrosDiagnostico(dados, respostasFiltradas) {
             const resumo = montarResumoGeralParametrosDiagnostico(respostasFiltradas);
             const cards = [
-                ['Respostas filtradas', resumo.totalRespostas],
-                ['UFs diagnosticadas', resumo.ufsDiagnosticadas],
+                ['Registros filtrados', resumo.totalRespostas],
+                ['UFs validadas', resumo.ufsDiagnosticadas],
                 ['Conformidade média', `${resumo.conformidadePercentual}%`],
                 ['Conformes', resumo.conformes],
                 ['Parciais', resumo.parcialmenteConformes],
@@ -4841,7 +4846,7 @@ async function carregarLogoParaPDF() {
                             <p class="section-eyebrow mb-1">Visão geral</p>
                             <h2>Panorama dos parâmetros mínimos</h2>
                         </div>
-                        <small class="text-muted">${escapeHtml(String(dados.resumo.totalRespostas || 0))} resposta(s) na base</small>
+                        <small class="text-muted">${escapeHtml(String(dados.resumo.totalRespostas || 0))} registro(s) na base</small>
                     </div>
                     <div class="diagnostico-summary-grid">
                         ${cards.map(([rotulo, valor]) => `
@@ -4853,7 +4858,7 @@ async function carregarLogoParaPDF() {
                     </div>
                     <div class="diagnostico-general-callout">
                         <i class="fas fa-filter" aria-hidden="true"></i>
-                        <span>Selecione uma UF nos botões acima para abrir o checklist operacional daquela ouvidoria.</span>
+                            <span>Selecione uma UF nos botões acima para abrir os parâmetros mínimos validados daquela ouvidoria.</span>
                     </div>
                 </section>
             `;
@@ -4964,8 +4969,8 @@ async function carregarLogoParaPDF() {
                         </div>
                     </section>
                     <div class="alert alert-warning">
-                        Os dados do diagnóstico não foram carregados. Verifique a planilha
-                        <strong>Planilhas/Diagnostico.xlsx</strong> e abra a aplicação por servidor local.
+                        Os dados de parâmetros mínimos não foram carregados. Verifique a planilha
+                        <strong>Planilhas/Parametros_Minimos.xlsx</strong> e abra a aplicação por servidor local.
                     </div>
                 `;
                 return;
@@ -5016,9 +5021,9 @@ async function carregarLogoParaPDF() {
                         <h2>Parâmetros Mínimos</h2>
                     </div>
                     <div class="intro-badges" aria-label="Resumo do diagnóstico">
-                        <span><i class="fas fa-file-excel" aria-hidden="true"></i> Diagnostico.xlsx</span>
-                        <span><i class="fas fa-clipboard-check" aria-hidden="true"></i> ${dados.resumo.totalRespostas} resposta(s)</span>
-                        <span><i class="fas fa-scale-balanced" aria-hidden="true"></i> IN/ONASP</span>
+                        <span><i class="fas fa-file-excel" aria-hidden="true"></i> Parametros_Minimos.xlsx</span>
+                        <span><i class="fas fa-clipboard-check" aria-hidden="true"></i> ${dados.resumo.totalRespostas} registro(s)</span>
+                        <span><i class="fas fa-scale-balanced" aria-hidden="true"></i> Validação ONASP</span>
                     </div>
                 </section>
 

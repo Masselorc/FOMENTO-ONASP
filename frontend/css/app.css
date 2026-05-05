@@ -4115,7 +4115,9 @@ table.dataTable thead td,
 .diagnostico-summary-grid {
     display: grid;
     gap: 0.75rem;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    justify-content: center;
+    width: 100%;
 }
 
 .diagnostico-header-grid > div,
@@ -4126,6 +4128,7 @@ table.dataTable thead td,
     display: grid;
     gap: 0.3rem;
     min-height: 72px;
+    min-width: 0;
     padding: 0.75rem;
 }
 
@@ -4146,7 +4149,7 @@ table.dataTable thead td,
 }
 
 .diagnostico-summary-grid {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .diagnostico-general-callout {
