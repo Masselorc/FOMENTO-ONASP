@@ -21,7 +21,7 @@ import {
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos
-} from '../../backend/services/data-service.js?v=20260505-3';
+} from '../../backend/services/data-service.js?v=20260505-5';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -5324,9 +5324,16 @@ async function carregarLogoParaPDF() {
         }
 
         function renderDadosInstitucionaisUf(dadosUf = {}) {
-            const camposOcultos = new Set(['uf', 'UF', 'estado', 'Estado', 'nomeEstado']);
+            // Esconde chaves técnicas que sustentam a lógica da tela, mas não devem virar cards visíveis.
+            const camposOcultos = new Set(['uf', 'UF', 'estado', 'Estado', 'nomeEstado', 'destinatarioOficio']);
             const entradas = Object.entries(dadosUf)
-                .filter(([chave, valor]) => !camposOcultos.has(chave) && valor !== null && valor !== undefined && String(valor).trim() !== '');
+                .filter(([chave, valor]) => (
+                    !camposOcultos.has(chave)
+                    && valor !== null
+                    && valor !== undefined
+                    && typeof valor !== 'object'
+                    && String(valor).trim() !== ''
+                ));
 
             if (!entradas.length) {
                 return `
@@ -5614,7 +5621,7 @@ async function carregarLogoParaPDF() {
         function gerarHtmlOficioSei(grupo) {
             const destinatario = obterDestinatarioSecretario(grupo);
             const linhas = [
-                destinatario.tratamento ? escapeHtml(destinatario.tratamento) : '',
+                obterVocativoSeiDestinatario(destinatario),
                 destinatario.nome ? `<strong>${escapeHtml(destinatario.nome)}</strong>` : '',
                 destinatario.cargo ? escapeHtml(destinatario.cargo) : '',
                 montarLinhaEnderecoDestinatario(destinatario),
@@ -5654,6 +5661,39 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
                 : destinatario.cep || cidadeUf;
 
             return linha ? escapeHtml(linha) : '';
+        }
+
+        // Padroniza o vocativo do HTML SEI para as formas pedidas na tela de contatos.
+        function obterVocativoSeiDestinatario(destinatario = {}) {
+            const genero = inferirGeneroDestinatario(destinatario);
+            if (genero === 'feminino') return 'À senhora';
+            if (genero === 'masculino') return 'Ao senhor';
+
+            const tratamento = String(destinatario.tratamento || '').trim();
+            return tratamento ? escapeHtml(tratamento) : 'Ao senhor';
+        }
+
+        function inferirGeneroDestinatario(destinatario = {}) {
+            const pistas = [
+                destinatario.tratamento,
+                destinatario.cargo,
+                destinatario.nome
+            ]
+                .filter(Boolean)
+                .join(' ');
+            const texto = normalizarBusca(pistas);
+
+            if (!texto) return '';
+
+            if (/(^|\b)(senhora|sra|secretaria|governadora|ministra|presidenta|diretora|ouvidora|defensora|procuradora|coordenadora)(\b|$)/.test(texto)) {
+                return 'feminino';
+            }
+
+            if (/(^|\b)(senhor|sr|secretario|governador|ministro|presidente|diretor|ouvidor|defensor|procurador|coordenador)(\b|$)/.test(texto)) {
+                return 'masculino';
+            }
+
+            return '';
         }
 
         function obterDestinatarioSecretario(grupo) {

@@ -9,7 +9,7 @@
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260505-3';
+const VERSAO_DADOS = '20260505-5';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
 const ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR = 'Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx';
@@ -108,22 +108,6 @@ const PARAMETROS_MINIMOS_DIAGNOSTICO = [
             Validar: 'Anexar ato normativo publicado',
             'Não tem': 'Instituir ato normativo específico',
             'Não informado': 'Informar situação do ato normativo'
-        }
-    },
-    {
-        id: 'autonomia_tecnica',
-        trilha: 'Institucionalização',
-        nome: 'Autonomia técnica',
-        tipo: 'qualitativo',
-        perguntas: ['M3-56', 'M1-12'],
-        fundamentoIn: 'IN ONASP - autonomia técnica e funcional da ouvidoria',
-        requerValidacao: true,
-        falta: 'Comprovação da autonomia técnica',
-        providencias: {
-            Validar: 'Validar autonomia técnica no ato ou estrutura declarada',
-            Parcial: 'Complementar comprovação da autonomia técnica',
-            'Não tem': 'Instituir autonomia técnica mínima',
-            'Não informado': 'Informar autonomia técnica da ouvidoria'
         }
     },
     {
