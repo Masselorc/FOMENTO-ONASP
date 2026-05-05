@@ -316,6 +316,102 @@ function salvarParametrosMinimos({ password, changes }) {
   };
 }
 
+function extrairValorHistorico(valor) {
+  const partes = String(valor || "").split("|").map((parte) => parte.trim()).filter(Boolean);
+  const status = normalizarStatusParametroMinimo(partes[0] || "");
+  const resultado = {
+    status,
+    quantidadeAtual: undefined,
+    quantidadeIdeal: undefined
+  };
+
+  partes.slice(1).forEach((parte) => {
+    const atual = parte.match(/^atual\s+(-?\d+(?:[.,]\d+)?)$/i);
+    const ideal = parte.match(/^ideal\s+(-?\d+(?:[.,]\d+)?)$/i);
+
+    if (atual) resultado.quantidadeAtual = Number(atual[1].replace(",", "."));
+    if (ideal) resultado.quantidadeIdeal = Number(ideal[1].replace(",", "."));
+  });
+
+  return resultado;
+}
+
+function reverterHistoricoParametrosMinimos({ password, historicoId }) {
+  if (!validarSenhaEdicao(password)) {
+    return { success: false, message: "Senha inválida. Alteração não foi revertida." };
+  }
+
+  const id = Number(historicoId);
+  if (!Number.isInteger(id) || id <= 0) {
+    return { success: false, message: "Histórico inválido. Nenhuma alteração foi revertida." };
+  }
+
+  const historico = db.prepare(`
+    SELECT id, registro, campo, valor_anterior AS valorAnterior, valor_novo AS valorNovo
+    FROM historico_alteracoes
+    WHERE id = ? AND pagina = ?
+  `).get(id, PAGINA);
+
+  if (!historico) {
+    return { success: false, message: "Registro de histórico não localizado." };
+  }
+
+  const parametrosPermitidos = new Set(PARAMETROS_MINIMOS.map((item) => item.key));
+  if (!parametrosPermitidos.has(historico.campo)) {
+    return { success: false, message: "Campo do histórico não é mais editável." };
+  }
+
+  const valorReversao = extrairValorHistorico(historico.valorAnterior);
+  if (!isStatusParametroMinimo(valorReversao.status)) {
+    return { success: false, message: "Valor anterior inválido. Alteração não foi revertida." };
+  }
+
+  const backupPath = criarBackupBanco(PAGINA);
+  const updatedAt = new Date().toISOString();
+  const selectAtual = db.prepare("SELECT status, quantidade_atual, quantidade_ideal FROM parametros_minimos WHERE uf = ? AND parametro = ?");
+  const upsert = db.prepare(`
+    INSERT INTO parametros_minimos (uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(uf, parametro) DO UPDATE SET
+      status = excluded.status,
+      quantidade_atual = excluded.quantidade_atual,
+      quantidade_ideal = excluded.quantidade_ideal,
+      atualizado_em = excluded.atualizado_em
+  `);
+  const transaction = db.transaction(() => {
+    const atual = selectAtual.get(historico.registro, historico.campo);
+    const valorAtual = atual
+      ? `${atual.status}${atual.quantidade_atual !== null && atual.quantidade_atual !== undefined ? ` | atual ${atual.quantidade_atual}` : ""}${atual.quantidade_ideal !== null && atual.quantidade_ideal !== undefined ? ` | ideal ${atual.quantidade_ideal}` : ""}`
+      : "";
+    const valorNovo = `${valorReversao.status}${valorReversao.quantidadeAtual !== undefined ? ` | atual ${valorReversao.quantidadeAtual}` : ""}${valorReversao.quantidadeIdeal !== undefined ? ` | ideal ${valorReversao.quantidadeIdeal}` : ""}`;
+
+    upsert.run(
+      historico.registro,
+      historico.campo,
+      valorReversao.status,
+      valorReversao.quantidadeAtual === undefined ? null : valorReversao.quantidadeAtual,
+      valorReversao.quantidadeIdeal === undefined ? null : valorReversao.quantidadeIdeal,
+      updatedAt
+    );
+    registrarHistorico(db, {
+      pagina: PAGINA,
+      registro: historico.registro,
+      campo: historico.campo,
+      valorAnterior: valorAtual,
+      valorNovo: `${valorNovo} | reversão #${historico.id}`
+    });
+  });
+
+  transaction();
+
+  return {
+    success: true,
+    message: "Alteração revertida com sucesso.",
+    updatedAt,
+    backupPath
+  };
+}
+
 function listarHistoricoParametrosMinimos() {
   return db.prepare(`
     SELECT id, pagina, registro, campo, valor_anterior AS valorAnterior,
@@ -330,5 +426,6 @@ function listarHistoricoParametrosMinimos() {
 module.exports = {
   listarParametrosMinimos,
   salvarParametrosMinimos,
+  reverterHistoricoParametrosMinimos,
   listarHistoricoParametrosMinimos
 };

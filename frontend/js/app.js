@@ -23,7 +23,7 @@ import {
     carregarDadosContatos,
     fetchJsonApiOnasp,
     obterUrlApiOnasp
-} from '../../backend/services/data-service.js?v=20260505-12';
+} from '../../backend/services/data-service.js?v=20260505-13';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4631,6 +4631,22 @@ async function carregarLogoParaPDF() {
             return mapa[valor] || 'Não informado';
         }
 
+        function formatarValorHistoricoParametroMinimo(valor) {
+            const texto = String(valor || '').trim();
+            if (!texto) return '';
+
+            const partes = texto.split('|').map((parte) => parte.trim()).filter(Boolean);
+            const status = statusParametroMinimoParaTela(partes[0] || texto);
+            const detalhes = partes.slice(1).map((parte) => {
+                const detalhe = parte
+                    .replace(/^atual\s+/i, 'atual: ')
+                    .replace(/^ideal\s+/i, 'ideal: ');
+                return detalhe;
+            });
+
+            return [status, ...detalhes].join(' | ');
+        }
+
         function calcularStatusQuantitativoParametroMinimo(quantidadeAtual, idealMinimo) {
             const atual = Math.max(0, Number(quantidadeAtual) || 0);
             const ideal = Math.max(0, Number(idealMinimo) || 0);
@@ -5304,8 +5320,8 @@ async function carregarLogoParaPDF() {
                                                             <td>${escapeHtml(item.alteradoEm ? new Date(item.alteradoEm).toLocaleString('pt-BR') : '')}</td>
                                                             <td>${escapeHtml(item.registro || '')}</td>
                                                             <td>${escapeHtml(item.campo || '')}</td>
-                                                            <td>${escapeHtml(item.valorAnterior || '')}</td>
-                                                            <td>${escapeHtml(item.valorNovo || '')}</td>
+                                                            <td>${escapeHtml(formatarValorHistoricoParametroMinimo(item.valorAnterior))}</td>
+                                                            <td>${escapeHtml(formatarValorHistoricoParametroMinimo(item.valorNovo))}</td>
                                                         </tr>
                                                     `).join('')}
                                                 </tbody>
