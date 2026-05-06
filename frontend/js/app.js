@@ -4365,9 +4365,11 @@ async function carregarLogoParaPDF() {
                             <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
                         </td>
                         <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorPrevisto ?? item.valorTotal)}</td>
-                        <td data-label="Em execução" class="text-end font-monospace align-middle">
-                            <span class="d-block">${formatMoney(Number(valorEstimado) || 0)}</span>
-                            <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} mt-1">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
+                        <td data-label="Em execução" class="align-middle">
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                <span class="font-monospace fw-bold text-money">${formatMoney(Number(valorEstimado) || 0)}</span>
+                                <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} orcamento-badge-autuado" style="white-space: nowrap;">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
+                            </div>
                         </td>
                         <td data-label="Empenhado" class="text-end font-monospace align-middle">${formatMoney(Number(valorEmpenhado) || 0)}</td>
                         <td data-label="Executado" class="text-end font-monospace align-middle">${formatMoney(Number(valorExecutado) || 0)}</td>
@@ -4918,13 +4920,13 @@ async function carregarLogoParaPDF() {
                         <table class="table table-sm table-hover w-100 app-data-table budget-data-table">
                             <thead>
                                 <tr>
-                                    <th>Descrição</th>
-                                    <th>Processo SEI</th>
-                                    <th class="text-end">Valor estimado</th>
-                                    <th class="text-center">Processo autuado</th>
-                                    <th>Status</th>
-                                    <th>Observação</th>
-                                    <th class="text-end">Ações</th>
+                                    <th><i class="fas fa-align-left" aria-hidden="true"></i> Descrição</th>
+                                    <th><i class="fas fa-folder-open" aria-hidden="true"></i> Processo SEI</th>
+                                    <th class="text-end"><i class="fas fa-coins" aria-hidden="true"></i> Valor estimado</th>
+                                    <th class="text-center"><i class="fas fa-file-signature" aria-hidden="true"></i> Processo autuado</th>
+                                    <th><i class="fas fa-info-circle" aria-hidden="true"></i> Status</th>
+                                    <th><i class="fas fa-comment-dots" aria-hidden="true"></i> Observação</th>
+                                    <th class="text-end"><i class="fas fa-cogs" aria-hidden="true"></i> Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="budget-other-table-body"></tbody>

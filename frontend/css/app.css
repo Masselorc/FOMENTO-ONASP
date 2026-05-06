@@ -1320,7 +1320,7 @@ table.dataTable thead td,
 }
 
 .budget-data-table {
-    min-width: 1240px;
+    min-width: 1540px;
 }
 
 .budget-main-table {
@@ -1339,12 +1339,12 @@ table.dataTable thead td,
     padding: 0.7rem 0.55rem !important;
     text-transform: uppercase;
     vertical-align: middle !important;
-    white-space: nowrap !important;
+    white-space: normal !important;
 }
 
 .budget-main-table th:first-child,
 .budget-main-table td[data-label="Item"] {
-    width: 29%;
+    width: 24%;
 }
 
 .budget-main-table th:nth-child(2),
@@ -1358,29 +1358,29 @@ table.dataTable thead td,
 }
 
 .budget-main-table th:nth-child(4),
-.budget-main-table th:nth-child(5),
-.budget-main-table th:nth-child(6),
-.budget-main-table th:nth-child(7),
 .budget-main-table td[data-label="Valor previsto"],
-.budget-main-table td[data-label="Em execução"],
+.budget-main-table th:nth-child(6),
 .budget-main-table td[data-label="Empenhado"],
-.budget-main-table td[data-label="Executado"] {
-    width: 6%;
-}
-
+.budget-main-table th:nth-child(7),
+.budget-main-table td[data-label="Executado"],
 .budget-main-table th:nth-child(8),
 .budget-main-table td[data-label="Status"] {
     width: 8%;
 }
 
+.budget-main-table th:nth-child(5),
+.budget-main-table td[data-label="Em execução"] {
+    width: 9%;
+}
+
 .budget-main-table th:nth-child(9),
 .budget-main-table td[data-label="Observação"] {
-    width: 12%;
+    width: 9%;
 }
 
 .budget-main-table th:nth-child(10),
 .budget-main-table td[data-label="Ações"] {
-    width: 10%;
+    width: 9%;
 }
 
 .budget-main-table tbody td {
@@ -1471,8 +1471,10 @@ table.dataTable thead td,
     display: block;
     flex: 1 1 auto;
     min-width: 0;
-    overflow: visible;
+    overflow: hidden;
     white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .budget-item-cell {
@@ -1502,9 +1504,10 @@ table.dataTable thead td,
     font-size: 0.74rem;
     line-height: 1.25;
     margin-top: 0.25rem;
-    overflow: visible;
-    white-space: nowrap;
-    word-break: normal;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .budget-item-row-open > td {
@@ -1550,6 +1553,7 @@ table.dataTable thead td,
 .budget-main-table .font-monospace {
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
+    white-space: nowrap;
 }
 
 .budget-edit-row > td {
