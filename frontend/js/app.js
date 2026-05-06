@@ -4886,16 +4886,16 @@ async function carregarLogoParaPDF() {
                         <table class="table table-sm table-hover w-100 app-data-table budget-data-table budget-main-table">
                             <thead>
                                 <tr>
-                                    <th>Item</th>
-                                    <th>Modalidade/Natureza</th>
-                                    <th>Abrangência/Qtd.</th>
-                                    <th class="text-end">Valor previsto</th>
-                                    <th class="text-end">Em execução</th>
-                                    <th class="text-end">Empenhado</th>
-                                    <th class="text-end">Executado</th>
-                                    <th class="text-center">Status</th>
-                                    <th>Observação</th>
-                                    <th class="text-end">Ações</th>
+                                    <th><i class="fas fa-box" aria-hidden="true"></i> Item</th>
+                                    <th><i class="fas fa-tags" aria-hidden="true"></i> Modalidade / Natureza</th>
+                                    <th><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Abrangência / Qtd.</th>
+                                    <th class="text-end"><i class="fas fa-coins" aria-hidden="true"></i> Valor Previsto</th>
+                                    <th class="text-end"><i class="fas fa-hourglass-half" aria-hidden="true"></i> Em Execução</th>
+                                    <th class="text-end"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> Empenhado</th>
+                                    <th class="text-end"><i class="fas fa-check-double" aria-hidden="true"></i> Executado</th>
+                                    <th class="text-center"><i class="fas fa-info-circle" aria-hidden="true"></i> Status</th>
+                                    <th><i class="fas fa-comment-dots" aria-hidden="true"></i> Observação</th>
+                                    <th class="text-end"><i class="fas fa-cogs" aria-hidden="true"></i> Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body"></tbody>
