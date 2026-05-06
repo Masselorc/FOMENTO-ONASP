@@ -1320,8 +1320,27 @@ table.dataTable thead td,
 }
 
 .budget-data-table {
+    width: 100%;
     min-width: 1220px;
     font-size: 0.79rem;
+}
+
+@media (min-width: 1440px) {
+    .budget-data-table {
+        min-width: 100%;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .budget-data-table {
+        min-width: 1220px;
+    }
+}
+
+@media (max-width: 1279px) {
+    .budget-data-table {
+        min-width: 1220px;
+    }
 }
 
 .budget-main-table {
@@ -1337,7 +1356,7 @@ table.dataTable thead td,
     font-weight: 700 !important;
     letter-spacing: 0;
     line-height: 1.1;
-    padding: 0.5rem 0.25rem !important;
+    padding: 0.45rem 0.2rem !important;
     text-align: center !important;
     text-transform: uppercase;
     vertical-align: middle !important;
@@ -1577,9 +1596,9 @@ table.dataTable thead td,
 
 .budget-execution-badge,
 .budget-main-table .profor-alert-badge {
-    font-size: 0.64rem !important;
+    font-size: 0.62rem !important;
     line-height: 1 !important;
-    padding: 0.2rem 0.36rem !important;
+    padding: 0.18rem 0.35rem !important;
     white-space: nowrap !important;
 }
 
