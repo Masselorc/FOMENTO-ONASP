@@ -25,15 +25,34 @@ function contarItensPublicados(dados, chavesPreferenciais = []) {
   return Array.isArray(dados) ? dados.length : null;
 }
 
+function sanitizarParametrosMinimos(dados) {
+  const { respostasBrutas, ...resto } = dados || {};
+  return resto;
+}
+
+function sanitizarFormalizacaoProfor(dados) {
+  const { registros, ...resto } = dados || {};
+  return resto;
+}
+
+function sanitizarOrcamento2026(dados) {
+  const { arquivo, ...resto } = dados || {};
+  return resto;
+}
+
 async function publicarDadosEstaticos() {
   const parametrosMinimos = await listarParametrosMinimos();
   const formalizacaoProfor = await listarFormalizacaoProfor();
   const orcamento2026 = await listarOrcamento2026();
   const publicadoEm = new Date().toISOString();
 
-  escreverJsonAtomico("parametros-minimos.json", parametrosMinimos);
-  escreverJsonAtomico("formalizacao-profor.json", formalizacaoProfor);
-  escreverJsonAtomico("orcamento-2026.json", orcamento2026);
+  const parametrosMinimosPublicos = sanitizarParametrosMinimos(parametrosMinimos);
+  const formalizacaoProforPublico = sanitizarFormalizacaoProfor(formalizacaoProfor);
+  const orcamento2026Publico = sanitizarOrcamento2026(orcamento2026);
+
+  escreverJsonAtomico("parametros-minimos.json", parametrosMinimosPublicos);
+  escreverJsonAtomico("formalizacao-profor.json", formalizacaoProforPublico);
+  escreverJsonAtomico("orcamento-2026.json", orcamento2026Publico);
   escreverJsonAtomico("resumo-publicacao.json", {
     publicadoEm,
     fonte: "SQLite local",
@@ -43,9 +62,9 @@ async function publicarDadosEstaticos() {
       "orcamento-2026.json"
     ],
     totais: {
-      parametrosMinimos: contarItensPublicados(parametrosMinimos, ["respostas", "ufs"]),
-      formalizacaoProfor: contarItensPublicados(formalizacaoProfor, ["propostas", "ufs"]),
-      orcamento2026: contarItensPublicados(orcamento2026, ["itens", "itensOficiais"])
+      parametrosMinimos: contarItensPublicados(parametrosMinimosPublicos, ["respostas", "ufs"]),
+      formalizacaoProfor: contarItensPublicados(formalizacaoProforPublico, ["propostas", "ufs"]),
+      orcamento2026: contarItensPublicados(orcamento2026Publico, ["itens", "itensOficiais"])
     }
   });
 
