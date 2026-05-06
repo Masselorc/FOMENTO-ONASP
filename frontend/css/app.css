@@ -1320,8 +1320,8 @@ table.dataTable thead td,
 }
 
 .budget-data-table {
-    min-width: 1360px;
-    font-size: 0.82rem;
+    min-width: 1220px;
+    font-size: 0.79rem;
 }
 
 .budget-main-table {
@@ -1337,7 +1337,7 @@ table.dataTable thead td,
     font-weight: 700 !important;
     letter-spacing: 0;
     line-height: 1.1;
-    padding: 0.55rem 0.35rem !important;
+    padding: 0.5rem 0.25rem !important;
     text-align: center !important;
     text-transform: uppercase;
     vertical-align: middle !important;
@@ -1347,7 +1347,7 @@ table.dataTable thead td,
 .budget-header-cell {
     align-items: center;
     display: inline-flex;
-    gap: 4px;
+    gap: 2px;
     justify-content: center;
     line-height: 1.1;
     min-width: 0;
@@ -1571,15 +1571,15 @@ table.dataTable thead td,
     align-items: flex-end;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     min-width: 0;
 }
 
 .budget-execution-badge,
 .budget-main-table .profor-alert-badge {
-    font-size: 0.66rem !important;
+    font-size: 0.64rem !important;
     line-height: 1 !important;
-    padding: 0.22rem 0.42rem !important;
+    padding: 0.2rem 0.36rem !important;
     white-space: nowrap !important;
 }
 
@@ -1588,7 +1588,7 @@ table.dataTable thead td,
     align-items: center;
     display: flex;
     flex-wrap: nowrap;
-    gap: 4px;
+    gap: 2px;
     justify-content: center;
     white-space: nowrap;
 }
@@ -1601,14 +1601,14 @@ table.dataTable thead td,
     align-items: center;
     border-radius: 6px;
     display: inline-flex;
-    font-size: 0.72rem;
-    height: 30px;
+    font-size: 0.68rem;
+    height: 28px;
     justify-content: center;
     line-height: 1;
-    min-height: 30px !important;
-    min-width: 30px;
+    min-height: 28px !important;
+    min-width: 28px;
     padding: 0 !important;
-    width: 30px;
+    width: 28px;
 }
 
 .budget-row-action-edit {
