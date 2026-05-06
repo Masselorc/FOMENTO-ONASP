@@ -15,7 +15,7 @@ const JSON_PUBLICADOS_URLS = {
     orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url)
 };
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260506-10';
+const VERSAO_DADOS = '20260506-11';
 const PORTA_API_ONASP = '8010';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
@@ -3989,6 +3989,12 @@ export async function carregarCatalogoAplicacao() {
 export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
     const dadosBase = Array.isArray(catalogo?.dadosBase) ? catalogo.dadosBase : [];
+
+    if (estaRodandoNoGitHubPages() && dadosBase.length > 0) {
+        console.warn('GitHub Pages detectado: usando dadosBase publicado imediatamente.');
+        registrarModoDadosOnasp('aplicacao', 'estatico');
+        return dadosBase;
+    }
 
     try {
         await carregarPlanilhaOrcamento();

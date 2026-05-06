@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260506-10';
+} from '../../backend/services/data-service.js?v=20260506-11';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -489,12 +489,6 @@ async function carregarLogoParaPDF() {
             let dadosAplicacaoCarregados = false;
 
             try {
-                await carregarDadosOrcamento();
-            } catch (error) {
-                console.warn('Orcamento 2026 nao carregado no inicio. A aplicacao continuara funcionando.', error);
-            }
-
-            try {
                 dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
                 configurarEstadoDadosValidados(true);
                 ocultarAlertaCarregamentoPlanilha();
@@ -506,7 +500,6 @@ async function carregarLogoParaPDF() {
 
             if (dadosAplicacaoCarregados) {
                 initDashboard(dadosFaf);
-                renderDetailsView();
                 aplicarModoSomenteLeitura();
             }
         });
@@ -597,6 +590,7 @@ async function carregarLogoParaPDF() {
             if (viewFormalizacaoDetalhe) viewFormalizacaoDetalhe.style.display = 'none';
 
             if (viewName === 'detalhamento') {
+                renderDetailsView();
                 document.getElementById('view-detalhamento').style.display = 'block';
             } else if (viewName === 'estado-detalhe') {
                 document.getElementById('view-estado-detalhe').style.display = 'block';
