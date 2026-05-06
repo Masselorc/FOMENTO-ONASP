@@ -53,8 +53,8 @@ let parametrosMinimosAlteracoesPendentes = {};
 let parametrosMinimosEditorAtivo = null;
 let formalizacaoModoEdicao = false;
 let formalizacaoAlteracoesPendentes = {};
-let orcamentoModoEdicao = false;
 let orcamentoAlteracoesPendentes = {};
+let orcamentoEditoresAbertos = new Set();
 let orcamentoNovosProcessos = [];
 let orcamentoProcessosInativos = new Set();
 
@@ -3942,7 +3942,9 @@ async function carregarLogoParaPDF() {
             ].filter((link) => link.url && link.url !== '-');
 
             if (!links.length) {
-                return '<span class="text-muted">-</span>';
+                return item.processoSei
+                    ? `<span class="budget-tracking-ref">${escapeHtml(item.processoSei)}</span>`
+                    : '<span class="text-muted">-</span>';
             }
 
             return `
@@ -4167,7 +4169,7 @@ async function carregarLogoParaPDF() {
 
             return `
                 <tr class="budget-tracking-row pdf-hidden" id="${escapeHtml(idRastreio)}">
-                    <td colspan="10" class="budget-tracking-cell">
+                    <td colspan="8" class="budget-tracking-cell">
                         <div class="budget-tracking-panel" aria-label="Rastreio processual de ${escapeHtml(item.descricao)}">
                             <div class="budget-tracking-header">
                                 <div>
@@ -4212,6 +4214,83 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        function orcamentoItemEmEdicao(itemId) {
+            return orcamentoEditoresAbertos.has(String(itemId));
+        }
+
+        function normalizarBooleanOrcamento(valor) {
+            if (valor === true || valor === 1) return true;
+            const texto = String(valor ?? '').trim().toLowerCase();
+            return ['1', 'true', 'sim', 's'].includes(texto);
+        }
+
+        function renderizarBotaoEdicaoOrcamento(itemId) {
+            const id = String(itemId);
+            const ativo = orcamentoItemEmEdicao(id);
+            return `
+                <button
+                    type="button"
+                    class="btn btn-sm ${ativo ? 'btn-primary' : 'btn-outline-primary'} budget-row-action budget-row-action-edit"
+                    data-orcamento-toggle-editor="${escapeHtml(id)}"
+                    title="${ativo ? 'Fechar edição deste item' : 'Editar este item'}"
+                    aria-pressed="${ativo ? 'true' : 'false'}"
+                >
+                    <i class="fas ${ativo ? 'fa-check' : 'fa-pen'}" aria-hidden="true"></i>
+                    <span class="visually-hidden">${ativo ? 'Fechar edição' : 'Editar'}</span>
+                </button>
+            `;
+        }
+
+        function renderizarPainelEdicaoOrcamento(item, colspan = 8) {
+            const itemId = String(item.id);
+            if (!orcamentoItemEmEdicao(itemId)) return '';
+
+            return `
+                <tr class="budget-edit-row pdf-hidden">
+                    <td colspan="${colspan}">
+                        <div class="budget-edit-panel">
+                            <div class="budget-edit-panel-header">
+                                <strong>Editar acompanhamento</strong>
+                                <span>As alterações ficam pendentes até clicar em Salvar alterações.</span>
+                            </div>
+                            <div class="budget-edit-grid">
+                                <label>
+                                    <span>Valor estimado da pesquisa de preço</span>
+                                    ${renderizarCampoOrcamento(item, 'valor_estimado_pesquisa_preco', 'number')}
+                                </label>
+                                <label>
+                                    <span>Processo autuado</span>
+                                    ${renderizarCampoOrcamento(item, 'processo_autuado')}
+                                </label>
+                                <label>
+                                    <span>Processo SEI</span>
+                                    ${renderizarCampoOrcamento(item, 'processo_sei')}
+                                </label>
+                                <label>
+                                    <span>Status</span>
+                                    ${renderizarCampoOrcamento(item, 'status')}
+                                </label>
+                                <label class="budget-edit-grid-wide">
+                                    <span>Observação</span>
+                                    ${renderizarCampoOrcamento(item, 'observacao')}
+                                </label>
+                            </div>
+                            <div class="budget-edit-panel-actions">
+                                <button type="button" class="btn btn-sm btn-primary btn-icon-text" data-orcamento-salvar-linha="${escapeHtml(itemId)}" ${obterQuantidadeAlteracoesLinhaOrcamento(itemId) ? '' : 'disabled'}>
+                                    <i class="fas fa-save" aria-hidden="true"></i>
+                                    <span>Salvar</span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-text" data-orcamento-cancelar-linha="${escapeHtml(itemId)}">
+                                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                                    <span>Cancelar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
         // Recria o corpo da tabela a cada filtro ou expansão. Como o volume é
         // pequeno, isso reduz estado manual e evita inconsistência visual.
         function atualizarTabelaOrcamento(budgetData) {
@@ -4244,20 +4323,53 @@ async function carregarLogoParaPDF() {
 
             tbody.innerHTML = grupos.map((grupo) => {
                 const linhas = grupo.itens.map((item) => {
+                    const itemId = String(item.id);
+                    const podeExibirRastreio = itemPodeExibirRastreioOrcamento(item);
+                    const rastreioAberto = podeExibirRastreio && orcamentoItensRastreioAbertos.has(itemId);
+                    const idRastreio = obterIdRastreioOrcamento(item);
+                    const quantidadeUnidade = [item.quantidade, item.unidade].filter(Boolean).join(' ');
+                    const processoAutuado = normalizarBooleanOrcamento(obterValorPendenteOrcamento(item, 'processo_autuado'));
+                    const valorEstimado = obterValorPendenteOrcamento(item, 'valor_estimado_pesquisa_preco');
+                    const processoSei = obterValorPendenteOrcamento(item, 'processo_sei') || item.processoSei;
+                    const status = obterValorPendenteOrcamento(item, 'status');
+                    const observacao = obterValorPendenteOrcamento(item, 'observacao');
+
                     return `
-                    <tr class="budget-item-row">
+                    <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
                         <td data-label="Item" class="align-middle">
-                            <div class="budget-item-title budget-item-title-static">${escapeHtml(item.descricao)}</div>
-                            <div class="budget-item-meta">${escapeHtml(item.id)}</div>
+                            ${podeExibirRastreio ? `
+                                <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
+                                    <span>${escapeHtml(item.descricao)}</span>
+                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                </button>
+                            ` : `<div class="budget-item-title budget-item-title-static">${escapeHtml(item.descricao)}</div>`}
+                            ${item.processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(item.processoSei)}</div>` : ''}
                         </td>
-                        <td data-label="Natureza" class="align-middle">${escapeHtml(item.natureza)}</td>
+                        <td data-label="Modalidade/Natureza" class="align-middle">
+                            <strong class="d-block">${escapeHtml(item.modalidade || '-')}</strong>
+                            <span class="text-muted small">${escapeHtml(item.natureza || '-')}</span>
+                        </td>
+                        <td data-label="Abrangência/Qtd." class="align-middle">
+                            <strong class="d-block">${escapeHtml(item.abrangencia || '-')}</strong>
+                            <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
+                        </td>
                         <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorPrevisto ?? item.valorTotal)}</td>
-                        <td data-label="Valor estimado pesquisa de preço" class="text-end font-monospace align-middle">${renderizarCampoOrcamento(item, 'valor_estimado_pesquisa_preco', 'number')}</td>
-                        <td data-label="Processo autuado" class="text-center align-middle">${renderizarCampoOrcamento(item, 'processo_autuado')}</td>
-                        <td data-label="Processo SEI" class="align-middle">${renderizarCampoOrcamento(item, 'processo_sei')}</td>
-                        <td data-label="Status" class="text-center align-middle">${renderizarCampoOrcamento(item, 'status')}</td>
-                        <td data-label="Observação" class="align-middle">${renderizarCampoOrcamento(item, 'observacao')}</td>
+                        <td data-label="Valor estimado" class="text-end font-monospace align-middle">
+                            <span class="d-block">${formatMoney(Number(valorEstimado) || 0)}</span>
+                            <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} mt-1">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
+                        </td>
+                        <td data-label="Status/SEI" class="text-center align-middle">
+                            ${renderizarStatusOrcamento(status)}
+                            ${processoSei ? `<div class="budget-item-meta mt-1">SEI ${escapeHtml(processoSei)}</div>` : ''}
+                            ${observacao ? `<div class="budget-row-note mt-1">${escapeHtml(observacao)}</div>` : ''}
+                        </td>
+                        <td data-label="Links" class="text-center align-middle">${renderizarLinksOrcamento(item)}</td>
+                        <td data-label="Ações" class="text-end align-middle">
+                            <div class="budget-row-actions">${renderizarBotaoEdicaoOrcamento(item.id)}</div>
+                        </td>
                     </tr>
+                    ${renderizarPainelEdicaoOrcamento(item, 8)}
+                    ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
                 `;
                 }).join('');
 
@@ -4280,19 +4392,41 @@ async function carregarLogoParaPDF() {
                 `;
             }).join('');
 
+            registrarEventosRastreioOrcamento(tbody, budgetData);
             registrarEventosCamposOrcamento(budgetData);
             atualizarTabelaOutrosOrcamento(budgetData);
         }
 
         function registrarEventosCamposOrcamento(budgetData) {
+            document.querySelectorAll('[data-orcamento-toggle-editor]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    const itemId = String(botao.dataset.orcamentoToggleEditor);
+                    if (orcamentoEditoresAbertos.has(itemId)) {
+                        orcamentoEditoresAbertos.delete(itemId);
+                    } else {
+                        orcamentoEditoresAbertos.add(itemId);
+                    }
+                    renderOrcamentoView();
+                });
+            });
+
+            document.querySelectorAll('[data-orcamento-salvar-linha]').forEach((botao) => {
+                botao.addEventListener('click', () => abrirModalSenhaOrcamento(botao.dataset.orcamentoSalvarLinha));
+            });
+
+            document.querySelectorAll('[data-orcamento-cancelar-linha]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    cancelarEdicaoLinhaOrcamento(botao.dataset.orcamentoCancelarLinha);
+                });
+            });
+
             document.querySelectorAll('.budget-edit-control').forEach((campo) => {
-                const evento = campo.tagName === 'INPUT' ? 'input' : 'change';
-                campo.addEventListener(evento, () => {
+                campo.addEventListener('change', () => {
                     registrarAlteracaoOrcamento(
                         campo.dataset.orcamentoId,
                         campo.dataset.orcamentoCampo,
                         campo.dataset.orcamentoOriginal,
-                        campo.dataset.orcamentoCampo === 'processo_autuado' ? Boolean(campo.value) : campo.value
+                        campo.dataset.orcamentoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
                     );
                     renderOrcamentoView();
                 });
@@ -4300,26 +4434,46 @@ async function carregarLogoParaPDF() {
         }
 
         function registrarEventosOutrosProcessosOrcamento(budgetData) {
+            document.querySelectorAll('#budget-other-table-body [data-orcamento-toggle-editor]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    const itemId = String(botao.dataset.orcamentoToggleEditor);
+                    if (orcamentoEditoresAbertos.has(itemId)) {
+                        orcamentoEditoresAbertos.delete(itemId);
+                    } else {
+                        orcamentoEditoresAbertos.add(itemId);
+                    }
+                    renderOrcamentoView();
+                });
+            });
+
+            document.querySelectorAll('#budget-other-table-body [data-orcamento-salvar-linha]').forEach((botao) => {
+                botao.addEventListener('click', () => abrirModalSenhaOrcamento(botao.dataset.orcamentoSalvarLinha));
+            });
+
+            document.querySelectorAll('#budget-other-table-body [data-orcamento-cancelar-linha]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    cancelarEdicaoLinhaOrcamento(botao.dataset.orcamentoCancelarLinha);
+                });
+            });
+
             document.querySelectorAll('.budget-other-edit-control').forEach((campo) => {
-                const evento = campo.tagName === 'INPUT' ? 'input' : 'change';
-                campo.addEventListener(evento, () => {
+                campo.addEventListener('change', () => {
                     registrarAlteracaoOrcamento(
                         campo.dataset.orcamentoId,
                         campo.dataset.orcamentoCampo,
                         campo.dataset.orcamentoOriginal,
-                        campo.dataset.orcamentoCampo === 'processo_autuado' ? Boolean(campo.value) : campo.value
+                        campo.dataset.orcamentoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
                     );
                     renderOrcamentoView();
                 });
             });
 
             document.querySelectorAll('.budget-new-control').forEach((campo) => {
-                const evento = campo.tagName === 'INPUT' ? 'input' : 'change';
-                campo.addEventListener(evento, () => {
+                campo.addEventListener('change', () => {
                     atualizarNovoProcessoOrcamento(
                         campo.dataset.orcamentoNovoId,
                         campo.dataset.orcamentoNovoCampo,
-                        campo.dataset.orcamentoNovoCampo === 'processo_autuado' ? Boolean(campo.value) : campo.value
+                        campo.dataset.orcamentoNovoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
                     );
                     renderOrcamentoView();
                 });
@@ -4339,6 +4493,10 @@ async function carregarLogoParaPDF() {
                     renderOrcamentoView();
                 });
             });
+
+            document.querySelectorAll('[data-orcamento-salvar-novo]').forEach((botao) => {
+                botao.addEventListener('click', () => abrirModalSenhaOrcamento(botao.dataset.orcamentoSalvarNovo));
+            });
         }
 
         function atualizarTabelaOutrosOrcamento(budgetData) {
@@ -4347,7 +4505,9 @@ async function carregarLogoParaPDF() {
 
             const outrosProcessos = (budgetData.outrosProcessos || [])
                 .filter((item) => !orcamentoProcessosInativos.has(String(item.id)));
-            const linhasExistentes = outrosProcessos.map((item) => `
+            const linhasExistentes = outrosProcessos.map((item) => {
+                const editando = orcamentoItemEmEdicao(item.id);
+                return `
                 <tr>
                     <td data-label="Descrição">${renderizarCampoOutrosOrcamento(item, 'descricao')}</td>
                     <td data-label="Processo SEI">${renderizarCampoOutrosOrcamento(item, 'processo_sei')}</td>
@@ -4355,18 +4515,26 @@ async function carregarLogoParaPDF() {
                     <td data-label="Processo autuado" class="text-center">${renderizarCampoOutrosOrcamento(item, 'processo_autuado')}</td>
                     <td data-label="Status">${renderizarCampoOutrosOrcamento(item, 'status')}</td>
                     <td data-label="Observação">${renderizarCampoOutrosOrcamento(item, 'observacao')}</td>
-                    <td class="text-end">
-                        ${orcamentoModoEdicao ? `
+                    <td data-label="Ações" class="text-end">
+                        <div class="budget-row-actions justify-content-end">
+                            ${renderizarBotaoEdicaoOrcamento(item.id)}
+                            ${editando ? `
+                            <button type="button" class="btn btn-sm btn-primary budget-row-action" data-orcamento-salvar-linha="${escapeHtml(item.id)}" title="Salvar alterações" ${obterQuantidadeAlteracoesLinhaOrcamento(item.id) ? '' : 'disabled'}>
+                                <i class="fas fa-save" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary budget-row-action" data-orcamento-cancelar-linha="${escapeHtml(item.id)}" title="Cancelar edição">
+                                <i class="fas fa-xmark" aria-hidden="true"></i>
+                            </button>
                             <button type="button" class="btn btn-sm btn-outline-danger" data-orcamento-inativar="${escapeHtml(item.id)}" title="Inativar">
                                 <i class="fas fa-trash" aria-hidden="true"></i>
                             </button>
-                        ` : ''}
+                            ` : ''}
+                        </div>
                     </td>
                 </tr>
-            `);
-            const linhasNovas = orcamentoModoEdicao
-                ? orcamentoNovosProcessos.map(renderizarLinhaNovoProcessoOrcamento)
-                : [];
+            `;
+            });
+            const linhasNovas = orcamentoNovosProcessos.map(renderizarLinhaNovoProcessoOrcamento);
 
             tbody.innerHTML = [...linhasExistentes, ...linhasNovas].join('') || `
                 <tr><td colspan="7" class="text-center text-muted py-4">Nenhum processo adicional cadastrado.</td></tr>
@@ -4380,8 +4548,14 @@ async function carregarLogoParaPDF() {
             return html.replaceAll('budget-edit-control', 'budget-other-edit-control');
         }
 
+        function cancelarEdicaoLinhaOrcamento(itemId) {
+            const id = String(itemId);
+            delete orcamentoAlteracoesPendentes[id];
+            orcamentoEditoresAbertos.delete(id);
+            renderOrcamentoView();
+        }
+
         function adicionarNovoProcessoOrcamento() {
-            orcamentoModoEdicao = true;
             orcamentoNovosProcessos.push({
                 tempId: `novo-${Date.now()}-${orcamentoNovosProcessos.length + 1}`,
                 descricao: '',
@@ -4394,8 +4568,17 @@ async function carregarLogoParaPDF() {
             renderOrcamentoView();
         }
 
-        function abrirModalSenhaOrcamento() {
-            const totalAlteracoes = obterQuantidadeAlteracoesOrcamento();
+        function obterQuantidadeAlteracoesEscopoOrcamento(escopoId = null) {
+            if (!escopoId) return obterQuantidadeAlteracoesOrcamento();
+            const id = String(escopoId);
+            if (id.startsWith('novo-')) {
+                return orcamentoNovosProcessos.some((item) => item.tempId === id) ? 1 : 0;
+            }
+            return obterQuantidadeAlteracoesLinhaOrcamento(id) + (orcamentoProcessosInativos.has(id) ? 1 : 0);
+        }
+
+        function abrirModalSenhaOrcamento(escopoId = null) {
+            const totalAlteracoes = obterQuantidadeAlteracoesEscopoOrcamento(escopoId);
             if (!totalAlteracoes) {
                 alert('Não há alterações para salvar.');
                 return;
@@ -4428,13 +4611,17 @@ async function carregarLogoParaPDF() {
             const modal = new window.bootstrap.Modal(modalElement);
             modal.show();
             document.getElementById('confirmarSalvarOrcamento')?.addEventListener('click', async () => {
-                await salvarOrcamentoComSenha(document.getElementById('senhaOrcamento')?.value || '', modal);
+                await salvarOrcamentoComSenha(document.getElementById('senhaOrcamento')?.value || '', modal, escopoId);
             });
         }
 
-        async function salvarOrcamentoComSenha(password, modal) {
+        async function salvarOrcamentoComSenha(password, modal, escopoId = null) {
             try {
-                const novos = orcamentoNovosProcessos.map((item) => ({
+                const idEscopo = escopoId ? String(escopoId) : null;
+                const processosNovosParaSalvar = idEscopo?.startsWith('novo-')
+                    ? orcamentoNovosProcessos.filter((item) => item.tempId === idEscopo)
+                    : orcamentoNovosProcessos;
+                const novos = processosNovosParaSalvar.map((item) => ({
                     descricao: item.descricao,
                     processo_sei: item.processo_sei,
                     valor_estimado_pesquisa_preco: item.valor_estimado_pesquisa_preco,
@@ -4442,14 +4629,20 @@ async function carregarLogoParaPDF() {
                     status: item.status,
                     observacao: item.observacao
                 }));
+                const changes = idEscopo && !idEscopo.startsWith('novo-')
+                    ? (orcamentoAlteracoesPendentes[idEscopo] ? { [idEscopo]: orcamentoAlteracoesPendentes[idEscopo] } : {})
+                    : orcamentoAlteracoesPendentes;
+                const inativos = idEscopo && !idEscopo.startsWith('novo-')
+                    ? (orcamentoProcessosInativos.has(idEscopo) ? [idEscopo] : [])
+                    : Array.from(orcamentoProcessosInativos);
                 const { resposta, payload } = await fetchJsonApiOnasp('/api/orcamento-2026/salvar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         password,
-                        changes: orcamentoAlteracoesPendentes,
+                        changes,
                         novos,
-                        inativos: Array.from(orcamentoProcessosInativos)
+                        inativos
                     })
                 });
 
@@ -4458,10 +4651,17 @@ async function carregarLogoParaPDF() {
                     return;
                 }
 
-                orcamentoAlteracoesPendentes = {};
-                orcamentoNovosProcessos = [];
-                orcamentoProcessosInativos = new Set();
-                orcamentoModoEdicao = false;
+                if (idEscopo) {
+                    delete orcamentoAlteracoesPendentes[idEscopo];
+                    orcamentoEditoresAbertos.delete(idEscopo);
+                    orcamentoNovosProcessos = orcamentoNovosProcessos.filter((item) => item.tempId !== idEscopo);
+                    orcamentoProcessosInativos.delete(idEscopo);
+                } else {
+                    orcamentoAlteracoesPendentes = {};
+                    orcamentoEditoresAbertos = new Set();
+                    orcamentoNovosProcessos = [];
+                    orcamentoProcessosInativos = new Set();
+                }
                 modal.hide();
                 await carregarDadosOrcamento(true);
                 renderOrcamentoView();
@@ -4661,17 +4861,17 @@ async function carregarLogoParaPDF() {
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover w-100 app-data-table budget-data-table">
+                        <table class="table table-sm table-hover w-100 app-data-table budget-data-table budget-main-table">
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th>Natureza</th>
+                                    <th>Modalidade/Natureza</th>
+                                    <th>Abrangência/Qtd.</th>
                                     <th class="text-end">Valor previsto</th>
-                                    <th class="text-end">Valor estimado pesquisa de preço</th>
-                                    <th class="text-center">Processo autuado</th>
-                                    <th>Processo SEI</th>
-                                    <th class="text-center">Status</th>
-                                    <th>Observação</th>
+                                    <th class="text-end">Valor estimado</th>
+                                    <th class="text-center">Status/SEI</th>
+                                    <th class="text-center">Links</th>
+                                    <th class="text-end">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body"></tbody>
@@ -4685,7 +4885,7 @@ async function carregarLogoParaPDF() {
                             <p class="section-eyebrow mb-1">Processos relacionados</p>
                             <h2>Outros processos de interesse da Ouvidoria</h2>
                         </div>
-                        <button type="button" class="btn btn-outline-primary btn-icon-text pdf-hidden" id="btnAdicionarOutroProcesso" ${orcamentoModoEdicao ? '' : 'disabled'}>
+                        <button type="button" class="btn btn-outline-primary btn-icon-text pdf-hidden" id="btnAdicionarOutroProcesso">
                             <i class="fas fa-plus" aria-hidden="true"></i>
                             <span>Adicionar processo</span>
                         </button>
@@ -4710,18 +4910,6 @@ async function carregarLogoParaPDF() {
             `;
 
             const atualizar = () => atualizarTabelaOrcamento(budgetData);
-            document.getElementById('btnEditarOrcamento')?.addEventListener('click', () => {
-                orcamentoModoEdicao = true;
-                renderOrcamentoView();
-            });
-            document.getElementById('btnCancelarOrcamento')?.addEventListener('click', () => {
-                orcamentoModoEdicao = false;
-                orcamentoAlteracoesPendentes = {};
-                orcamentoNovosProcessos = [];
-                orcamentoProcessosInativos = new Set();
-                renderOrcamentoView();
-            });
-            document.getElementById('btnSalvarOrcamento')?.addEventListener('click', abrirModalSenhaOrcamento);
             document.getElementById('btnExportarOrcamentoExcel')?.addEventListener('click', () => {
                 if (obterQuantidadeAlteracoesOrcamento()) {
                     alert('Existem alterações não salvas. Salve antes de exportar para que o Excel reflita os dados atualizados.');
@@ -5833,10 +6021,17 @@ async function carregarLogoParaPDF() {
             return alteracoes + orcamentoNovosProcessos.length + orcamentoProcessosInativos.size;
         }
 
+        function obterQuantidadeAlteracoesLinhaOrcamento(itemId) {
+            return Object.keys(orcamentoAlteracoesPendentes[String(itemId)] || {}).length;
+        }
+
         function obterValorPendenteOrcamento(item, campo, fallback = '') {
             const pendente = orcamentoAlteracoesPendentes[item.id]?.[campo];
             if (pendente !== undefined) return pendente;
+            return obterValorOriginalOrcamento(item, campo, fallback);
+        }
 
+        function obterValorOriginalOrcamento(item, campo, fallback = '') {
             const mapa = {
                 valor_estimado_pesquisa_preco: item.valorEstimadoPesquisaPreco,
                 processo_autuado: item.processoAutuado,
@@ -5854,12 +6049,12 @@ async function carregarLogoParaPDF() {
             const originalNormalizado = campo.startsWith('valor_')
                 ? parseNumeroMonetarioFrontend(valorOriginal)
                 : campo === 'processo_autuado'
-                    ? Boolean(valorOriginal)
+                    ? normalizarBooleanOrcamento(valorOriginal)
                     : String(valorOriginal ?? '');
             const novoNormalizado = campo.startsWith('valor_')
                 ? parseNumeroMonetarioFrontend(novoValor)
                 : campo === 'processo_autuado'
-                    ? Boolean(novoValor)
+                    ? normalizarBooleanOrcamento(novoValor)
                     : String(novoValor ?? '').trim();
 
             if (!orcamentoAlteracoesPendentes[id]) {
@@ -5880,41 +6075,37 @@ async function carregarLogoParaPDF() {
             const totalAlteracoes = obterQuantidadeAlteracoesOrcamento();
 
             return `
-                <div class="budget-report-actions pdf-hidden">
-                    <button id="btn-export-budget-pdf" type="button" class="btn btn-danger btn-icon-text" onclick="exportarOrcamentoPDF()">
-                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
-                        <span>Exportar PDF</span>
-                    </button>
-                    <button id="btnEditarOrcamento" type="button" class="btn btn-outline-primary btn-icon-text" ${orcamentoModoEdicao ? 'disabled' : ''}>
-                        <i class="fas fa-pen" aria-hidden="true"></i>
-                        <span>Editar</span>
-                    </button>
-                    <button id="btnSalvarOrcamento" type="button" class="btn btn-primary btn-icon-text" ${totalAlteracoes ? '' : 'disabled'}>
-                        <i class="fas fa-save" aria-hidden="true"></i>
-                        <span>Salvar alterações</span>
-                    </button>
-                    <button id="btnCancelarOrcamento" type="button" class="btn btn-outline-secondary btn-icon-text" ${totalAlteracoes || orcamentoModoEdicao ? '' : 'disabled'}>
-                        <i class="fas fa-xmark" aria-hidden="true"></i>
-                        <span>Cancelar alterações</span>
-                    </button>
-                    <button id="btnExportarOrcamentoExcel" type="button" class="btn btn-outline-success btn-icon-text">
-                        <i class="fas fa-file-excel" aria-hidden="true"></i>
-                        <span>Exportar Excel</span>
-                    </button>
-                    <button id="btnHistoricoOrcamento" type="button" class="btn btn-outline-dark btn-icon-text">
-                        <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
-                        <span>Histórico</span>
-                    </button>
-                </div>
-                <small class="text-muted d-block mb-3">${totalAlteracoes} alteração(ões) pendente(s)</small>
+                <section class="diagnostico-action-bar diagnostico-block budget-action-bar-compact mb-4" aria-label="Ações do orçamento 2026">
+                    <div>
+                        <p class="section-eyebrow mb-1">Relatórios</p>
+                        <h2>Orçamento 2026</h2>
+                        ${totalAlteracoes ? `<small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas linhas.</small>` : '<small class="text-muted">Edite cada item pelo botão no fim da linha.</small>'}
+                    </div>
+                    <div class="diagnostico-action-buttons">
+                        <button id="btnExportarOrcamentoExcel" type="button" class="btn btn-outline-success btn-icon-text">
+                            <i class="fas fa-file-excel" aria-hidden="true"></i>
+                            <span>Exportar Excel</span>
+                        </button>
+                        <button id="btnHistoricoOrcamento" type="button" class="btn btn-outline-dark btn-icon-text">
+                            <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
+                            <span>Histórico</span>
+                        </button>
+                        <button id="btn-export-budget-pdf" type="button" class="btn btn-outline-danger btn-icon-text" onclick="exportarOrcamentoPDF()">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                            <span>PDF</span>
+                        </button>
+                    </div>
+                </section>
             `;
         }
 
         function renderizarCampoOrcamento(item, campo, tipo = 'text') {
             const valor = obterValorPendenteOrcamento(item, campo);
-            if (!orcamentoModoEdicao) {
+            const valorOriginal = obterValorOriginalOrcamento(item, campo);
+            if (!orcamentoItemEmEdicao(item.id)) {
                 if (campo === 'processo_autuado') {
-                    return `<span class="profor-alert-badge profor-alert-${valor ? 'success' : 'warning'}">${valor ? 'Sim' : 'Não'}</span>`;
+                    const autuado = normalizarBooleanOrcamento(valor);
+                    return `<span class="profor-alert-badge profor-alert-${autuado ? 'success' : 'warning'}">${autuado ? 'Sim' : 'Não'}</span>`;
                 }
                 if (campo.startsWith('valor_')) return formatMoney(Number(valor) || 0);
                 if (campo === 'status') return renderizarStatusOrcamento(valor);
@@ -5922,17 +6113,19 @@ async function carregarLogoParaPDF() {
             }
 
             if (campo === 'processo_autuado') {
+                const autuado = normalizarBooleanOrcamento(valor);
+                const autuadoOriginal = normalizarBooleanOrcamento(valorOriginal);
                 return `
-                    <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${valor ? '1' : ''}">
+                    <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${autuadoOriginal ? '1' : ''}">
                         <option value="">Não</option>
-                        <option value="1" ${valor ? 'selected' : ''}>Sim</option>
+                        <option value="1" ${autuado ? 'selected' : ''}>Sim</option>
                     </select>
                 `;
             }
 
             if (campo === 'status') {
                 return `
-                    <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${escapeHtml(valor)}">
+                    <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${escapeHtml(valorOriginal)}">
                         ${STATUS_ORCAMENTO_EDICAO.map((status) => `<option value="${escapeHtml(status)}" ${valor === status ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}
                     </select>
                 `;
@@ -5945,7 +6138,7 @@ async function carregarLogoParaPDF() {
                     value="${escapeHtml(valor ?? '')}"
                     data-orcamento-id="${escapeHtml(item.id)}"
                     data-orcamento-campo="${campo}"
-                    data-orcamento-original="${escapeHtml(valor ?? '')}"
+                    data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
                     ${tipo === 'number' ? 'min="0" step="0.01"' : ''}
                 >
             `;
@@ -5955,7 +6148,7 @@ async function carregarLogoParaPDF() {
             const item = orcamentoNovosProcessos.find((processo) => processo.tempId === tempId);
             if (!item) return;
             item[campo] = campo === 'processo_autuado'
-                ? Boolean(valor)
+                ? normalizarBooleanOrcamento(valor)
                 : campo === 'valor_estimado_pesquisa_preco'
                     ? parseNumeroMonetarioFrontend(valor)
                     : String(valor ?? '').trim();
@@ -5980,9 +6173,14 @@ async function carregarLogoParaPDF() {
                     </td>
                     <td><input type="text" class="form-control form-control-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="observacao" value="${escapeHtml(item.observacao || '')}" placeholder="Observação"></td>
                     <td class="text-end">
-                        <button type="button" class="btn btn-sm btn-outline-danger" data-orcamento-remover-novo="${escapeHtml(item.tempId)}" title="Remover">
-                            <i class="fas fa-xmark" aria-hidden="true"></i>
-                        </button>
+                        <div class="budget-row-actions justify-content-end">
+                            <button type="button" class="btn btn-sm btn-primary budget-row-action" data-orcamento-salvar-novo="${escapeHtml(item.tempId)}" title="Salvar novo processo">
+                                <i class="fas fa-save" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger budget-row-action" data-orcamento-remover-novo="${escapeHtml(item.tempId)}" title="Remover">
+                                <i class="fas fa-xmark" aria-hidden="true"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;

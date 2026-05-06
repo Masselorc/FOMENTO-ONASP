@@ -80,7 +80,14 @@ function exportarOrcamento2026Excel() {
     "Valor estimado pesquisa de preço": item.valorEstimadoPesquisaPreco,
     "Processo autuado": item.processoAutuado ? "Sim" : "Não",
     "Processo SEI": item.processoSei,
+    "Link Processo SEI": item.linkProcessoSei,
+    "Data Processo SEI": item.dataProcessoSei,
     "Valor em execução considerado": item.processoAutuado ? item.valorEstimadoPesquisaPreco : 0,
+    "DFD/Demanda": item.demandaFormalizada,
+    "ETP/Especificação": item.estudoTecnico,
+    "Termo de Referência": item.termoReferencia,
+    "Pesquisa de Preços": item.pesquisaPrecos,
+    "Parecer Jurídico": item.parecerJuridico,
     Status: item.status,
     "Observação": item.observacao
   }));
