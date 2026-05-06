@@ -3948,15 +3948,15 @@ async function carregarLogoParaPDF() {
             }
 
             return `
-                <div class="budget-link-list">
+                <div class="budget-link-list budget-action-buttons">
                     ${links.map((link) => `
-                        <a class="budget-link-button"
+                        <a class="budget-link-button btn btn-outline-secondary"
+                           style="border-color: rgba(23, 74, 124, 0.2);"
                            href="${escapeHtml(link.url)}"
                            target="_blank"
                            rel="noopener noreferrer"
                            title="${escapeHtml(link.titulo)}">
                             <i class="fas ${link.icone}" aria-hidden="true"></i>
-                            <span>${escapeHtml(link.rotulo)}</span>
                         </a>
                     `).join('')}
                 </div>
@@ -4366,9 +4366,9 @@ async function carregarLogoParaPDF() {
                         </td>
                         <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorPrevisto ?? item.valorTotal)}</td>
                         <td data-label="Em execução" class="align-middle">
-                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+                            <div class="budget-execution-cell">
                                 <span class="font-monospace fw-bold text-money">${formatMoney(Number(valorEstimado) || 0)}</span>
-                                <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} orcamento-badge-autuado" style="white-space: nowrap; font-size: 0.66rem; line-height: 1; padding: 0.22rem 0.42rem;">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
+                                <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} budget-execution-badge">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
                             </div>
                         </td>
                         <td data-label="Empenhado" class="text-end font-monospace align-middle">${formatMoney(Number(valorEmpenhado) || 0)}</td>
@@ -4380,7 +4380,7 @@ async function carregarLogoParaPDF() {
                             <div class="budget-row-note">${escapeHtml(observacao) || '-'}</div>
                         </td>
                         <td data-label="Ações" class="text-center align-middle">
-                            <div class="budget-row-actions justify-content-center" style="gap: 2px;">
+                            <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(item)}
                                 ${renderizarBotaoEdicaoOrcamento(item.id)}
                             </div>
@@ -4888,16 +4888,16 @@ async function carregarLogoParaPDF() {
                         <table class="table table-sm table-hover w-100 app-data-table budget-data-table budget-main-table">
                             <thead>
                                 <tr>
-                                    <th><div class="orcamento-header-cell"><i class="fas fa-box" aria-hidden="true"></i> <span>Item</span></div></th>
-                                    <th title="Modalidade / Natureza"><div class="orcamento-header-cell"><i class="fas fa-tags" aria-hidden="true"></i> <span>Mod./Nat.</span></div></th>
-                                    <th title="Abrangência / Qtd."><div class="orcamento-header-cell"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span>Abr./Qtd.</span></div></th>
-                                    <th title="Valor Previsto"><div class="orcamento-header-cell"><i class="fas fa-coins" aria-hidden="true"></i> <span>Previsto</span></div></th>
-                                    <th title="Valor em Execução"><div class="orcamento-header-cell"><i class="fas fa-hourglass-half" aria-hidden="true"></i> <span>Em Exec.</span></div></th>
-                                    <th title="Valor Empenhado"><div class="orcamento-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Empenhado</span></div></th>
-                                    <th title="Valor Executado"><div class="orcamento-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Executado</span></div></th>
-                                    <th><div class="orcamento-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
-                                    <th title="Observação"><div class="orcamento-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Obs.</span></div></th>
-                                    <th><div class="orcamento-header-cell"><i class="fas fa-cogs" aria-hidden="true"></i> <span>Ações</span></div></th>
+                                    <th><div class="budget-header-cell"><i class="fas fa-box" aria-hidden="true"></i> <span>Item</span></div></th>
+                                    <th title="Modalidade / Natureza"><div class="budget-header-cell"><i class="fas fa-tags" aria-hidden="true"></i> <span>Mod./Nat.</span></div></th>
+                                    <th title="Abrangência / Quantidade"><div class="budget-header-cell header-abrangencia"><i class="fas fa-layer-group" aria-hidden="true"></i> <span>Abr./Qtd.</span></div></th>
+                                    <th title="Valor previsto"><div class="budget-header-cell"><i class="fas fa-coins" aria-hidden="true"></i> <span>Previsto</span></div></th>
+                                    <th title="Valor em execução"><div class="budget-header-cell"><i class="fas fa-hourglass-half" aria-hidden="true"></i> <span>Execução</span></div></th>
+                                    <th title="Valor empenhado"><div class="budget-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Emp.</span></div></th>
+                                    <th title="Valor executado"><div class="budget-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Exec.</span></div></th>
+                                    <th><div class="budget-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
+                                    <th title="Observação"><div class="budget-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Obs.</span></div></th>
+                                    <th><div class="budget-header-cell"><i class="fas fa-cogs" aria-hidden="true"></i> <span>Ações</span></div></th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body"></tbody>

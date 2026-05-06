@@ -1320,7 +1320,7 @@ table.dataTable thead td,
 }
 
 .budget-data-table {
-    min-width: 1200px;
+    min-width: 1360px;
     font-size: 0.82rem;
 }
 
@@ -1338,30 +1338,36 @@ table.dataTable thead td,
     letter-spacing: 0;
     line-height: 1.1;
     padding: 0.55rem 0.35rem !important;
+    text-align: center !important;
     text-transform: uppercase;
     vertical-align: middle !important;
     white-space: normal !important;
 }
 
-.orcamento-header-cell {
+.budget-header-cell {
     align-items: center;
-    display: flex;
+    display: inline-flex;
     gap: 4px;
     justify-content: center;
     line-height: 1.1;
     min-width: 0;
     text-align: center;
-    white-space: normal;
+    width: 100%;
 }
 
-.orcamento-header-cell i {
+.budget-header-cell i {
     flex: 0 0 auto;
     line-height: 1;
 }
 
-.orcamento-header-cell span {
+.budget-header-cell span {
     display: inline-block;
     max-width: 100%;
+}
+
+.budget-header-cell.header-abrangencia,
+.budget-header-cell.header-abrangencia span {
+    white-space: nowrap;
 }
 
 .budget-main-table th:first-child,
@@ -1412,6 +1418,22 @@ table.dataTable thead td,
 .budget-main-table th:nth-child(10),
 .budget-main-table td[data-label="Ações"] {
     width: 8%;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.budget-main-table td[data-label="Valor previsto"],
+.budget-main-table td[data-label="Em execução"],
+.budget-main-table td[data-label="Empenhado"],
+.budget-main-table td[data-label="Executado"] {
+    text-align: right !important;
+}
+
+.budget-main-table .font-monospace,
+.budget-money,
+.text-money {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 .budget-main-table tbody td {
@@ -1504,8 +1526,8 @@ table.dataTable thead td,
     min-width: 0;
     overflow: hidden;
     white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
+    word-break: normal;
+    overflow-wrap: normal;
 }
 
 .budget-item-cell {
@@ -1545,21 +1567,48 @@ table.dataTable thead td,
     border-bottom-color: transparent !important;
 }
 
-.budget-row-actions {
-    align-items: center;
-    display: inline-flex;
-    flex-wrap: nowrap;
-    gap: 0.15rem;
-    justify-content: flex-end;
+.budget-execution-cell {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
 }
 
+.budget-execution-badge,
+.budget-main-table .profor-alert-badge {
+    font-size: 0.66rem !important;
+    line-height: 1 !important;
+    padding: 0.22rem 0.42rem !important;
+    white-space: nowrap !important;
+}
+
+.budget-action-buttons,
+.budget-row-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.budget-action-buttons .btn,
+.budget-action-buttons button,
+.budget-row-actions .btn,
+.budget-row-actions button,
 .budget-row-action {
     align-items: center;
+    border-radius: 6px;
     display: inline-flex;
-    height: 28px;
+    font-size: 0.72rem;
+    height: 30px;
     justify-content: center;
-    min-width: 28px;
-    padding: 0.2rem 0.35rem;
+    line-height: 1;
+    min-height: 30px !important;
+    min-width: 30px;
+    padding: 0 !important;
+    width: 30px;
 }
 
 .budget-row-action-edit {
