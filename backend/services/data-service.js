@@ -15,7 +15,7 @@ const JSON_PUBLICADOS_URLS = {
     orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url)
 };
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260506-09';
+const VERSAO_DADOS = '20260506-10';
 const PORTA_API_ONASP = '8010';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
@@ -368,6 +368,7 @@ let dadosContatosCache = null;
 let dadosDiagnosticoOuvidoriasCache = null;
 let modoPublicacaoEstatica = false;
 const modosDadosOnasp = {
+    aplicacao: 'api',
     parametrosMinimos: 'api',
     formalizacaoProfor: 'api',
     orcamento2026: 'api'
@@ -384,6 +385,27 @@ export function estaEmModoPublicacaoEstatica() {
 
 export function obterModoDadosOnasp(chave) {
     return modosDadosOnasp[chave] || 'api';
+}
+
+function estaRodandoNoGitHubPages() {
+    return typeof window !== 'undefined' && window.location?.hostname?.endsWith('github.io');
+}
+
+function obterFontesCatalogoAplicacao() {
+    const fontePublicada = {
+        url: JSON_PUBLICADOS_URLS.aplicacao,
+        modo: 'estatico',
+        rotulo: 'catalogo publicado'
+    };
+    const fontePrincipal = {
+        url: JSON_APLICACAO_URL,
+        modo: 'api',
+        rotulo: 'catalogo principal'
+    };
+
+    return estaRodandoNoGitHubPages()
+        ? [fontePublicada, fontePrincipal]
+        : [fontePrincipal, fontePublicada];
 }
 
 export function obterDadosOrcamento() {
@@ -3940,33 +3962,33 @@ export async function carregarCatalogoAplicacao() {
         return catalogoAplicacaoCache;
     }
 
-    let resposta = null;
+    const falhas = [];
 
-    try {
-        resposta = await fetch(JSON_APLICACAO_URL, { cache: 'no-store' });
-    } catch (error) {
-        console.warn('Catalogo principal indisponivel. Tentando catalogo publicado.', error);
-    }
+    for (const fonte of obterFontesCatalogoAplicacao()) {
+        try {
+            const resposta = await fetch(fonte.url, { cache: 'no-store' });
+            if (!resposta.ok) {
+                falhas.push(`${fonte.rotulo}: HTTP ${resposta.status}`);
+                continue;
+            }
 
-    if (!resposta?.ok) {
-        if (resposta) {
-            console.warn(`Catalogo principal indisponivel (${resposta.status}). Tentando catalogo publicado.`);
+            catalogoAplicacaoCache = await resposta.json();
+            registrarModoDadosOnasp('aplicacao', fonte.modo);
+            dadosFaf2021Cache = montarDadosFaf2021(catalogoAplicacaoCache);
+            dadosDoacoes2023Cache = montarDadosDoacoes2023(catalogoAplicacaoCache);
+            return catalogoAplicacaoCache;
+        } catch (error) {
+            falhas.push(`${fonte.rotulo}: ${error.message}`);
+            console.warn(`Falha ao carregar ${fonte.rotulo}. Tentando proxima fonte.`, error);
         }
-        resposta = await fetch(JSON_PUBLICADOS_URLS.aplicacao, { cache: 'no-store' });
     }
 
-    if (!resposta.ok) {
-        throw new Error(`Nao foi possivel carregar os dados estaticos da aplicacao (${resposta.status}).`);
-    }
-
-    catalogoAplicacaoCache = await resposta.json();
-    dadosFaf2021Cache = montarDadosFaf2021(catalogoAplicacaoCache);
-    dadosDoacoes2023Cache = montarDadosDoacoes2023(catalogoAplicacaoCache);
-    return catalogoAplicacaoCache;
+    throw new Error(`Nao foi possivel carregar os dados estaticos da aplicacao. ${falhas.join(' | ')}`);
 }
 
 export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
+    const dadosBase = Array.isArray(catalogo?.dadosBase) ? catalogo.dadosBase : [];
 
     try {
         await carregarPlanilhaOrcamento();
@@ -3977,15 +3999,21 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     try {
         const dadosConvenio = await carregarConveniosDaPlanilha(catalogo);
         console.log(`Convenios carregados da planilha: ${dadosConvenio.length} itens.`);
-        return montarDadosComConvenios(catalogo, dadosConvenio);
-    } catch (error) {
-        if (Array.isArray(catalogo?.dadosBase) && catalogo.dadosBase.length > 0) {
-            console.warn('Usando dadosBase estatico do aplicacao.json.', error);
-            return catalogo.dadosBase;
+        const dadosMontados = montarDadosComConvenios(catalogo, dadosConvenio);
+        if (Array.isArray(dadosMontados) && dadosMontados.length > 0) {
+            return dadosMontados;
         }
-
-        throw error;
+    } catch (error) {
+        console.warn('Falha ao carregar convenios dinamicos. Tentando dadosBase estatico do catalogo da aplicacao.', error);
     }
+
+    if (dadosBase.length > 0) {
+        console.warn('Usando dadosBase estatico do catalogo da aplicacao.');
+        registrarModoDadosOnasp('aplicacao', 'estatico');
+        return dadosBase;
+    }
+
+    throw new Error('Nao foi possivel carregar dados da Home: planilha indisponivel e dadosBase ausente no catalogo da aplicacao.');
 }
 
 // Usado quando o usuário escolhe manualmente a planilha de convênios no browser.
