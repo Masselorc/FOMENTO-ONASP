@@ -1,6 +1,9 @@
 require("dotenv").config();
 
+const { prepararBanco } = require("../db/preparar-banco");
 const { publicarDadosEstaticos } = require("../services/static-publication-service");
+
+prepararBanco();
 
 publicarDadosEstaticos()
   .then((resultado) => {

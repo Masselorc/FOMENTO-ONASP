@@ -4,9 +4,7 @@ const path = require("path");
 const url = require("url");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env"), quiet: true });
 
-const db = require("./db/database");
-const { inicializarBanco } = require("./db/init-db");
-const { importarParametrosMinimos } = require("./scripts/importar-parametros-minimos");
+const { prepararBanco } = require("./db/preparar-banco");
 const {
   listarParametrosMinimos,
   salvarParametrosMinimos,
@@ -251,17 +249,6 @@ async function rotearApi(req, res, pathname) {
       message: error.message || "Erro interno no servidor."
     });
   }
-}
-
-function prepararBanco() {
-  inicializarBanco();
-
-  const total = db.prepare("SELECT COUNT(*) AS total FROM parametros_minimos").get().total;
-  if (total === 0) {
-    importarParametrosMinimos();
-  }
-  inicializarFormalizacaoProfor();
-  inicializarOrcamento2026();
 }
 
 prepararBanco();
