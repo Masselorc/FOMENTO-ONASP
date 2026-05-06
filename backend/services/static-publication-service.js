@@ -6,6 +6,7 @@ const { listarFormalizacaoProfor } = require("./formalizacao-profor-service");
 const { listarOrcamento2026 } = require("./orcamento-2026-service");
 
 const publicDir = path.join(__dirname, "..", "..", "frontend", "data", "publicados");
+const catalogoAplicacaoPath = path.join(__dirname, "..", "data", "aplicacao.json");
 
 function escreverJsonAtomico(nomeArquivo, dados) {
   fs.mkdirSync(publicDir, { recursive: true });
@@ -40,7 +41,12 @@ function sanitizarOrcamento2026(dados) {
   return resto;
 }
 
+function carregarCatalogoAplicacao() {
+  return JSON.parse(fs.readFileSync(catalogoAplicacaoPath, "utf8"));
+}
+
 async function publicarDadosEstaticos() {
+  const catalogoAplicacao = carregarCatalogoAplicacao();
   const parametrosMinimos = await listarParametrosMinimos();
   const formalizacaoProfor = await listarFormalizacaoProfor();
   const orcamento2026 = await listarOrcamento2026();
@@ -50,6 +56,7 @@ async function publicarDadosEstaticos() {
   const formalizacaoProforPublico = sanitizarFormalizacaoProfor(formalizacaoProfor);
   const orcamento2026Publico = sanitizarOrcamento2026(orcamento2026);
 
+  escreverJsonAtomico("aplicacao.json", catalogoAplicacao);
   escreverJsonAtomico("parametros-minimos.json", parametrosMinimosPublicos);
   escreverJsonAtomico("formalizacao-profor.json", formalizacaoProforPublico);
   escreverJsonAtomico("orcamento-2026.json", orcamento2026Publico);
@@ -57,11 +64,13 @@ async function publicarDadosEstaticos() {
     publicadoEm,
     fonte: "SQLite local",
     arquivos: [
+      "aplicacao.json",
       "parametros-minimos.json",
       "formalizacao-profor.json",
       "orcamento-2026.json"
     ],
     totais: {
+      aplicacaoDadosBase: contarItensPublicados(catalogoAplicacao, ["dadosBase"]),
       parametrosMinimos: contarItensPublicados(parametrosMinimosPublicos, ["respostas", "ufs"]),
       formalizacaoProfor: contarItensPublicados(formalizacaoProforPublico, ["propostas", "ufs"]),
       orcamento2026: contarItensPublicados(orcamento2026Publico, ["itens", "itensOficiais"])

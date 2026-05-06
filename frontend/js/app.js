@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260506-08';
+} from '../../backend/services/data-service.js?v=20260506-09';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -488,7 +488,11 @@ async function carregarLogoParaPDF() {
 
             let dadosAplicacaoCarregados = false;
 
-            await carregarDadosOrcamento();
+            try {
+                await carregarDadosOrcamento();
+            } catch (error) {
+                console.warn('Orcamento 2026 nao carregado no inicio. A aplicacao continuara funcionando.', error);
+            }
 
             try {
                 dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
@@ -503,6 +507,7 @@ async function carregarLogoParaPDF() {
             if (dadosAplicacaoCarregados) {
                 initDashboard(dadosFaf);
                 renderDetailsView();
+                aplicarModoSomenteLeitura();
             }
         });
 
@@ -623,6 +628,7 @@ async function carregarLogoParaPDF() {
 
             atualizarNavegacao(viewName);
             fecharMenuLateral();
+            aplicarModoSomenteLeitura();
             window.scrollTo(0, 0);
         }
 
@@ -3816,6 +3822,7 @@ async function carregarLogoParaPDF() {
                     ${renderizarContatosInstitucionaisFormalizacao(proposta)}
                 </div>
             `;
+            aplicarModoSomenteLeitura();
         }
 
         // --- MÓDULO DE ORÇAMENTO 2026 ---
