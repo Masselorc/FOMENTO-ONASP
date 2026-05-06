@@ -4360,15 +4360,15 @@ async function carregarLogoParaPDF() {
                             <strong class="d-block">${escapeHtml(item.modalidade || '-')}</strong>
                             <span class="text-muted small">${escapeHtml(item.natureza || '-')}</span>
                         </td>
-                        <td data-label="Abrangência/Qtd." class="align-middle">
+                        <td data-label="Abrangência/Qtd." class="text-center align-middle">
                             <strong class="d-block">${escapeHtml(item.abrangencia || '-')}</strong>
                             <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
                         </td>
                         <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorPrevisto ?? item.valorTotal)}</td>
                         <td data-label="Em execução" class="align-middle">
-                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
                                 <span class="font-monospace fw-bold text-money">${formatMoney(Number(valorEstimado) || 0)}</span>
-                                <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} orcamento-badge-autuado" style="white-space: nowrap;">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
+                                <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} orcamento-badge-autuado" style="white-space: nowrap; font-size: 0.66rem; line-height: 1; padding: 0.22rem 0.42rem;">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
                             </div>
                         </td>
                         <td data-label="Empenhado" class="text-end font-monospace align-middle">${formatMoney(Number(valorEmpenhado) || 0)}</td>
@@ -4376,15 +4376,15 @@ async function carregarLogoParaPDF() {
                         <td data-label="Status" class="text-center align-middle">
                             ${renderizarStatusOrcamento(status)}
                         </td>
-                        <td data-label="Observação" class="align-middle">${observacao ? `<div class="budget-row-note" title="${escapeHtml(observacao)}">${escapeHtml(observacao)}</div>` : '<span class="text-muted">-</span>'}</td>
-                        <td data-label="Ações" class="text-end align-middle">
-                            <div class="budget-row-actions justify-content-end">
+                        <td data-label="Observação" class="align-middle" title="${escapeHtml(observacao)}">
+                            <div class="budget-row-note">${escapeHtml(observacao) || '-'}</div>
+                        </td>
+                        <td data-label="Ações" class="text-center align-middle">
+                            <div class="budget-row-actions justify-content-center" style="gap: 2px;">
                                 ${renderizarLinksOrcamento(item)}
                                 ${renderizarBotaoEdicaoOrcamento(item.id)}
                             </div>
-                        </td>
-                    </tr>
-                    ${renderizarPainelEdicaoOrcamento(item, 10)}
+                        </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 10)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
                 `;
                 }).join('');
@@ -4531,8 +4531,8 @@ async function carregarLogoParaPDF() {
                     <td data-label="Processo autuado" class="text-center">${renderizarCampoOutrosOrcamento(item, 'processo_autuado')}</td>
                     <td data-label="Status">${renderizarCampoOutrosOrcamento(item, 'status')}</td>
                     <td data-label="Observação">${renderizarCampoOutrosOrcamento(item, 'observacao')}</td>
-                    <td data-label="Ações" class="text-end">
-                        <div class="budget-row-actions justify-content-end">
+                    <td data-label="Ações" class="text-center">
+                        <div class="budget-row-actions justify-content-center">
                             ${renderizarBotaoEdicaoOrcamento(item.id)}
                             ${editando ? `
                             <button type="button" class="btn btn-sm btn-primary budget-row-action" data-orcamento-salvar-linha="${escapeHtml(item.id)}" title="Salvar alterações" ${obterQuantidadeAlteracoesLinhaOrcamento(item.id) ? '' : 'disabled'}>
@@ -4541,7 +4541,7 @@ async function carregarLogoParaPDF() {
                             <button type="button" class="btn btn-sm btn-outline-secondary budget-row-action" data-orcamento-cancelar-linha="${escapeHtml(item.id)}" title="Cancelar edição">
                                 <i class="fas fa-xmark" aria-hidden="true"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" data-orcamento-inativar="${escapeHtml(item.id)}" title="Inativar">
+                            <button type="button" class="btn btn-sm btn-outline-danger budget-row-action" data-orcamento-inativar="${escapeHtml(item.id)}" title="Inativar">
                                 <i class="fas fa-trash" aria-hidden="true"></i>
                             </button>
                             ` : ''}
@@ -4888,16 +4888,16 @@ async function carregarLogoParaPDF() {
                         <table class="table table-sm table-hover w-100 app-data-table budget-data-table budget-main-table">
                             <thead>
                                 <tr>
-                                    <th><i class="fas fa-box" aria-hidden="true"></i> Item</th>
-                                    <th><i class="fas fa-tags" aria-hidden="true"></i> Modalidade / Natureza</th>
-                                    <th><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Abrangência / Qtd.</th>
-                                    <th class="text-end"><i class="fas fa-coins" aria-hidden="true"></i> Valor Previsto</th>
-                                    <th class="text-end"><i class="fas fa-hourglass-half" aria-hidden="true"></i> Em Execução</th>
-                                    <th class="text-end"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> Empenhado</th>
-                                    <th class="text-end"><i class="fas fa-check-double" aria-hidden="true"></i> Executado</th>
-                                    <th class="text-center"><i class="fas fa-info-circle" aria-hidden="true"></i> Status</th>
-                                    <th><i class="fas fa-comment-dots" aria-hidden="true"></i> Observação</th>
-                                    <th class="text-end"><i class="fas fa-cogs" aria-hidden="true"></i> Ações</th>
+                                    <th><div class="orcamento-header-cell"><i class="fas fa-box" aria-hidden="true"></i> <span>Item</span></div></th>
+                                    <th title="Modalidade / Natureza"><div class="orcamento-header-cell"><i class="fas fa-tags" aria-hidden="true"></i> <span>Mod./Nat.</span></div></th>
+                                    <th title="Abrangência / Qtd."><div class="orcamento-header-cell"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span>Abr./Qtd.</span></div></th>
+                                    <th title="Valor Previsto"><div class="orcamento-header-cell"><i class="fas fa-coins" aria-hidden="true"></i> <span>Previsto</span></div></th>
+                                    <th title="Valor em Execução"><div class="orcamento-header-cell"><i class="fas fa-hourglass-half" aria-hidden="true"></i> <span>Em Exec.</span></div></th>
+                                    <th title="Valor Empenhado"><div class="orcamento-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Empenhado</span></div></th>
+                                    <th title="Valor Executado"><div class="orcamento-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Executado</span></div></th>
+                                    <th><div class="orcamento-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
+                                    <th title="Observação"><div class="orcamento-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Obs.</span></div></th>
+                                    <th><div class="orcamento-header-cell"><i class="fas fa-cogs" aria-hidden="true"></i> <span>Ações</span></div></th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body"></tbody>
