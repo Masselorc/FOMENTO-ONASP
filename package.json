@@ -2,7 +2,9 @@
   "scripts": {
     "start": "node backend/server.js",
     "init-db": "node backend/db/init-db.js",
-    "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js"
+    "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js",
+    "publicar:dados": "node backend/scripts/publicar-dados-estaticos.js",
+    "setup:hooks": "node scripts/configurar-git-hooks.js"
   },
   "dependencies": {
     "better-sqlite3": "^12.9.0",

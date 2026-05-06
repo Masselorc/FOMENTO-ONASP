@@ -30,6 +30,7 @@ const {
   exportarFormalizacaoProforExcel,
   exportarOrcamento2026Excel
 } = require("./services/excel-export-service");
+const { publicarDadosEstaticos } = require("./services/static-publication-service");
 
 const rootDir = path.join(__dirname, "..");
 const port = Number(process.env.PORT || 8010);
@@ -80,6 +81,30 @@ function lerJsonBody(req) {
   });
 }
 
+async function publicarAposSalvamento(resultado) {
+  if (!resultado?.success) return resultado;
+
+  try {
+    const publicacao = await publicarDadosEstaticos();
+    return {
+      ...resultado,
+      publicacaoEstatica: publicacao,
+      message: "Alterações salvas e dados públicos atualizados."
+    };
+  } catch (error) {
+    console.error("Falha ao publicar dados estaticos:", error);
+    return {
+      ...resultado,
+      warning: true,
+      publicacaoEstatica: {
+        success: false,
+        message: error.message || "Erro ao atualizar dados publicos."
+      },
+      message: "Alterações salvas no SQLite, mas houve falha ao atualizar os dados públicos."
+    };
+  }
+}
+
 function enviarArquivoEstatico(req, res, pathname) {
   const caminhoRelativo = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
   const caminhoArquivo = path.resolve(rootDir, caminhoRelativo);
@@ -114,7 +139,8 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/parametros-minimos/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = salvarParametrosMinimos(payload);
-      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      const resposta = await publicarAposSalvamento(resultado);
+      enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
     }
 
@@ -129,7 +155,8 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/parametros-minimos/historico/reverter") {
       const payload = await lerJsonBody(req);
       const resultado = reverterHistoricoParametrosMinimos(payload);
-      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      const resposta = await publicarAposSalvamento(resultado);
+      enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
     }
 
@@ -155,7 +182,8 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/formalizacao-profor/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = salvarFormalizacaoProfor(payload);
-      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      const resposta = await publicarAposSalvamento(resultado);
+      enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
     }
 
@@ -189,7 +217,8 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/orcamento-2026/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = salvarOrcamento2026(payload);
-      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      const resposta = await publicarAposSalvamento(resultado);
+      enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
     }
 

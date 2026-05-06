@@ -22,8 +22,10 @@ import {
     obterDadosContatos,
     carregarDadosContatos,
     fetchJsonApiOnasp,
-    obterUrlApiOnasp
-} from '../../backend/services/data-service.js?v=20260505-15';
+    obterUrlApiOnasp,
+    obterModoDadosOnasp,
+    estaEmModoPublicacaoEstatica
+} from '../../backend/services/data-service.js?v=20260506-08';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -79,6 +81,7 @@ const TODAS_UFS_BRASIL = [
     "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
 ];
 const UFS_SEM_OUVIDORIA_ESPECIFICA = ["PA", "RO", "RR", "RS", "SC", "SE", "TO"];
+const MENSAGEM_MODO_PUBLICACAO = 'Modo publicação: dados somente leitura. Para editar, execute a aplicação localmente.';
 let catalogoAplicacao = {
     configuracao: {},
     regioes: {},
@@ -87,6 +90,37 @@ let catalogoAplicacao = {
     infoConvenios: {},
     dadosBase: []
 };
+
+function dadosPaginaEmModoEstatico(chave) {
+    return obterModoDadosOnasp(chave) === 'estatico';
+}
+
+function renderizarAvisoModoPublicacao() {
+    return `
+        <div class="publication-mode-notice" role="status">
+            <i class="fas fa-lock" aria-hidden="true"></i>
+            <span>${MENSAGEM_MODO_PUBLICACAO}</span>
+        </div>
+    `;
+}
+
+function aplicarModoSomenteLeitura() {
+    document.body.classList.toggle('modo-publicacao-estatica', estaEmModoPublicacaoEstatica());
+
+    if (!estaEmModoPublicacaoEstatica()) return;
+
+    document
+        .querySelectorAll('[data-requer-backend="true"]')
+        .forEach((elemento) => {
+            elemento.setAttribute('disabled', 'disabled');
+            elemento.classList.add('disabled');
+            elemento.title = 'Disponível apenas no modo local.';
+        });
+}
+
+function obterMensagemSalvamento(payload) {
+    return payload?.message || 'Alterações salvas com sucesso.';
+}
 
 function fecharMenuLateral() {
     const sidebar = document.getElementById('app-sidebar');
@@ -2857,6 +2891,11 @@ async function carregarLogoParaPDF() {
                 atualizarListaFormalizacao(dados);
             });
 
+            if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
+                aplicarModoSomenteLeitura();
+                return;
+            }
+
             document.getElementById('btnEditarFormalizacao')?.addEventListener('click', () => {
                 formalizacaoModoEdicao = true;
                 renderFormalizacaoProforView();
@@ -2946,32 +2985,38 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarAcoesFormalizacao() {
+            const modoEstatico = dadosPaginaEmModoEstatico('formalizacaoProfor');
             const totalAlteracoes = obterQuantidadeAlteracoesFormalizacao();
+            if (modoEstatico && formalizacaoModoEdicao) {
+                formalizacaoModoEdicao = false;
+                formalizacaoAlteracoesPendentes = {};
+            }
 
             return `
                 <section class="diagnostico-action-bar diagnostico-block mb-4" aria-label="Ações da formalização PROFOR">
                     <div>
                         <p class="section-eyebrow mb-1">Atualização</p>
                         <h2>Formalização PROFOR</h2>
+                        ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
                     </div>
                     <div class="diagnostico-action-buttons">
-                        <button type="button" class="btn btn-outline-primary btn-icon-text" id="btnEditarFormalizacao" ${formalizacaoModoEdicao ? 'disabled' : ''}>
+                        <button type="button" class="btn btn-outline-primary btn-icon-text" id="btnEditarFormalizacao" data-requer-backend="true" ${modoEstatico || formalizacaoModoEdicao ? 'disabled' : ''}>
                             <i class="fas fa-pen" aria-hidden="true"></i>
                             <span>Editar</span>
                         </button>
-                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarFormalizacao" ${totalAlteracoes ? '' : 'disabled'}>
+                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarFormalizacao" data-requer-backend="true" ${!modoEstatico && totalAlteracoes ? '' : 'disabled'}>
                             <i class="fas fa-save" aria-hidden="true"></i>
                             <span>Salvar alterações</span>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarFormalizacao" ${totalAlteracoes || formalizacaoModoEdicao ? '' : 'disabled'}>
+                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarFormalizacao" data-requer-backend="true" ${!modoEstatico && (totalAlteracoes || formalizacaoModoEdicao) ? '' : 'disabled'}>
                             <i class="fas fa-xmark" aria-hidden="true"></i>
                             <span>Cancelar alterações</span>
                         </button>
-                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarFormalizacao">
+                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarFormalizacao" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
                             <i class="fas fa-file-excel" aria-hidden="true"></i>
                             <span>Exportar Excel</span>
                         </button>
-                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoFormalizacao">
+                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoFormalizacao" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
                             <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
                             <span>Histórico</span>
                         </button>
@@ -3023,6 +3068,7 @@ async function carregarLogoParaPDF() {
         function renderizarPainelEdicaoFormalizacao(dados) {
             const etapas = dados.etapas || [];
             const propostas = dados.propostas || [];
+            const modoEstatico = dadosPaginaEmModoEstatico('formalizacaoProfor');
 
             if (!etapas.length || !propostas.length) return '';
 
@@ -3030,10 +3076,10 @@ async function carregarLogoParaPDF() {
                 <section class="table-container mb-4">
                     <div class="section-header compact">
                         <div>
-                            <p class="section-eyebrow mb-1">SQLite</p>
-                            <h2>Andamento editável por UF</h2>
+                            <p class="section-eyebrow mb-1">${modoEstatico ? 'Publicação' : 'SQLite'}</p>
+                            <h2>${modoEstatico ? 'Andamento publicado por UF' : 'Andamento editável por UF'}</h2>
                         </div>
-                        <small class="text-muted">As mudanças ficam pendentes até o botão Salvar alterações</small>
+                        <small class="text-muted">${modoEstatico ? 'Dados somente leitura' : 'As mudanças ficam pendentes até o botão Salvar alterações'}</small>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover w-100 app-data-table formalizacao-data-table">
@@ -3069,6 +3115,11 @@ async function carregarLogoParaPDF() {
         }
 
         function abrirModalSenhaFormalizacao(dados) {
+            if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
             const totalAlteracoes = obterQuantidadeAlteracoesFormalizacao();
             if (!totalAlteracoes) {
                 alert('Não há alterações para salvar.');
@@ -3107,6 +3158,11 @@ async function carregarLogoParaPDF() {
         }
 
         async function salvarFormalizacaoComSenha(password, modal) {
+            if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
             try {
                 const { resposta, payload } = await fetchJsonApiOnasp('/api/formalizacao-profor/salvar', {
                     method: 'POST',
@@ -3127,7 +3183,7 @@ async function carregarLogoParaPDF() {
                 modal.hide();
                 await carregarDadosFormalizacaoProfor(true);
                 renderFormalizacaoProforView();
-                alert('Alterações salvas com sucesso.');
+                alert(obterMensagemSalvamento(payload));
             } catch (error) {
                 alert(`Não foi possível salvar: ${error.message}`);
             }
@@ -3372,6 +3428,7 @@ async function carregarLogoParaPDF() {
 
             registrarEventosFormalizacao(dados);
             atualizarListaFormalizacao(dados);
+            aplicarModoSomenteLeitura();
         }
 
         function abrirDetalheFormalizacaoProfor(uf) {
@@ -4225,6 +4282,8 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarBotaoEdicaoOrcamento(itemId) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+
             const id = String(itemId);
             const ativo = orcamentoItemEmEdicao(id);
             return `
@@ -4242,6 +4301,8 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarPainelEdicaoOrcamento(item, colspan = 8) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+
             const itemId = String(item.id);
             if (!orcamentoItemEmEdicao(itemId)) return '';
 
@@ -4414,6 +4475,11 @@ async function carregarLogoParaPDF() {
         }
 
         function registrarEventosCamposOrcamento(budgetData) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                aplicarModoSomenteLeitura();
+                return;
+            }
+
             document.querySelectorAll('[data-orcamento-toggle-editor]').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     const itemId = String(botao.dataset.orcamentoToggleEditor);
@@ -4450,6 +4516,11 @@ async function carregarLogoParaPDF() {
         }
 
         function registrarEventosOutrosProcessosOrcamento(budgetData) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                aplicarModoSomenteLeitura();
+                return;
+            }
+
             document.querySelectorAll('#budget-other-table-body [data-orcamento-toggle-editor]').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     const itemId = String(botao.dataset.orcamentoToggleEditor);
@@ -4572,6 +4643,11 @@ async function carregarLogoParaPDF() {
         }
 
         function adicionarNovoProcessoOrcamento() {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
             orcamentoNovosProcessos.push({
                 tempId: `novo-${Date.now()}-${orcamentoNovosProcessos.length + 1}`,
                 descricao: '',
@@ -4594,6 +4670,11 @@ async function carregarLogoParaPDF() {
         }
 
         function abrirModalSenhaOrcamento(escopoId = null) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
             const totalAlteracoes = obterQuantidadeAlteracoesEscopoOrcamento(escopoId);
             if (!totalAlteracoes) {
                 alert('Não há alterações para salvar.');
@@ -4632,6 +4713,11 @@ async function carregarLogoParaPDF() {
         }
 
         async function salvarOrcamentoComSenha(password, modal, escopoId = null) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
             try {
                 const idEscopo = escopoId ? String(escopoId) : null;
                 const processosNovosParaSalvar = idEscopo?.startsWith('novo-')
@@ -4681,7 +4767,7 @@ async function carregarLogoParaPDF() {
                 modal.hide();
                 await carregarDadosOrcamento(true);
                 renderOrcamentoView();
-                alert('Alterações salvas com sucesso.');
+                alert(obterMensagemSalvamento(payload));
             } catch (error) {
                 alert(`Não foi possível salvar: ${error.message}`);
             }
@@ -4737,6 +4823,12 @@ async function carregarLogoParaPDF() {
             container.style.display = 'block';
             container.innerHTML = '';
             orcamentoItensRastreioAbertos = new Set();
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                orcamentoAlteracoesPendentes = {};
+                orcamentoEditoresAbertos = new Set();
+                orcamentoNovosProcessos = [];
+                orcamentoProcessosInativos = new Set();
+            }
 
             const budgetData = obterDadosOrcamento();
             if (!budgetData) {
@@ -4911,7 +5003,7 @@ async function carregarLogoParaPDF() {
                             <p class="section-eyebrow mb-1">Processos relacionados</p>
                             <h2>Outros processos de interesse da Ouvidoria</h2>
                         </div>
-                        <button type="button" class="btn btn-outline-primary btn-icon-text pdf-hidden" id="btnAdicionarOutroProcesso">
+                        <button type="button" class="btn btn-outline-primary btn-icon-text pdf-hidden" id="btnAdicionarOutroProcesso" data-requer-backend="true" ${dadosPaginaEmModoEstatico('orcamento2026') ? 'disabled' : ''}>
                             <i class="fas fa-plus" aria-hidden="true"></i>
                             <span>Adicionar processo</span>
                         </button>
@@ -4936,15 +5028,17 @@ async function carregarLogoParaPDF() {
             `;
 
             const atualizar = () => atualizarTabelaOrcamento(budgetData);
-            document.getElementById('btnExportarOrcamentoExcel')?.addEventListener('click', () => {
-                if (obterQuantidadeAlteracoesOrcamento()) {
-                    alert('Existem alterações não salvas. Salve antes de exportar para que o Excel reflita os dados atualizados.');
-                    return;
-                }
-                window.location.href = obterUrlApiOnasp('/api/orcamento-2026/exportar');
-            });
-            document.getElementById('btnHistoricoOrcamento')?.addEventListener('click', abrirHistoricoOrcamento);
-            document.getElementById('btnAdicionarOutroProcesso')?.addEventListener('click', adicionarNovoProcessoOrcamento);
+            if (!dadosPaginaEmModoEstatico('orcamento2026')) {
+                document.getElementById('btnExportarOrcamentoExcel')?.addEventListener('click', () => {
+                    if (obterQuantidadeAlteracoesOrcamento()) {
+                        alert('Existem alterações não salvas. Salve antes de exportar para que o Excel reflita os dados atualizados.');
+                        return;
+                    }
+                    window.location.href = obterUrlApiOnasp('/api/orcamento-2026/exportar');
+                });
+                document.getElementById('btnHistoricoOrcamento')?.addEventListener('click', abrirHistoricoOrcamento);
+                document.getElementById('btnAdicionarOutroProcesso')?.addEventListener('click', adicionarNovoProcessoOrcamento);
+            }
             document.getElementById('filtroOrcamentoBusca')?.addEventListener('input', atualizar);
             document.querySelectorAll('.budget-filter-control').forEach((controle) => {
                 controle.addEventListener('change', atualizar);
@@ -4959,6 +5053,7 @@ async function carregarLogoParaPDF() {
 
             atualizar();
             container.style.display = 'block';
+            aplicarModoSomenteLeitura();
         }
 
         // Exporta o relatório a partir do HTML renderizado. Elementos marcados
@@ -5710,28 +5805,34 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarAcoesParametrosMinimos() {
+            const modoEstatico = dadosPaginaEmModoEstatico('parametrosMinimos');
             const totalAlteracoes = obterQuantidadeAlteracoesParametrosMinimos();
+            if (modoEstatico) {
+                parametrosMinimosAlteracoesPendentes = {};
+                parametrosMinimosEditorAtivo = null;
+            }
 
             return `
                 <section class="diagnostico-action-bar diagnostico-block" aria-label="Ações dos parâmetros mínimos">
                     <div>
                         <p class="section-eyebrow mb-1">Atualização</p>
                         <h2>Parâmetros mínimos</h2>
+                        ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
                     </div>
                     <div class="diagnostico-action-buttons">
-                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarParametrosMinimos" ${totalAlteracoes ? '' : 'disabled'}>
+                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarParametrosMinimos" data-requer-backend="true" ${!modoEstatico && totalAlteracoes ? '' : 'disabled'}>
                             <i class="fas fa-save" aria-hidden="true"></i>
                             <span>Salvar alterações</span>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarParametrosMinimos" ${totalAlteracoes ? '' : 'disabled'}>
+                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarParametrosMinimos" data-requer-backend="true" ${!modoEstatico && totalAlteracoes ? '' : 'disabled'}>
                             <i class="fas fa-xmark" aria-hidden="true"></i>
                             <span>Cancelar alterações</span>
                         </button>
-                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarParametrosMinimos">
+                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarParametrosMinimos" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
                             <i class="fas fa-file-excel" aria-hidden="true"></i>
                             <span>Exportar Excel</span>
                         </button>
-                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoParametrosMinimos">
+                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoParametrosMinimos" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
                             <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
                             <span>Histórico</span>
                         </button>
@@ -6108,6 +6209,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarAcoesOrcamento() {
+            const modoEstatico = dadosPaginaEmModoEstatico('orcamento2026');
             const totalAlteracoes = obterQuantidadeAlteracoesOrcamento();
 
             return `
@@ -6115,14 +6217,19 @@ async function carregarLogoParaPDF() {
                     <div>
                         <p class="section-eyebrow mb-1">Relatórios</p>
                         <h2>Orçamento 2026</h2>
-                        ${totalAlteracoes ? `<small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas linhas.</small>` : '<small class="text-muted">Edite cada item pelo botão no fim da linha.</small>'}
+                        ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
+                        ${modoEstatico
+                            ? '<small class="text-muted">Dados carregados dos JSONs publicados.</small>'
+                            : totalAlteracoes
+                                ? `<small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas linhas.</small>`
+                                : '<small class="text-muted">Edite cada item pelo botão no fim da linha.</small>'}
                     </div>
                     <div class="diagnostico-action-buttons">
-                        <button id="btnExportarOrcamentoExcel" type="button" class="btn btn-outline-success btn-icon-text">
+                        <button id="btnExportarOrcamentoExcel" type="button" class="btn btn-outline-success btn-icon-text" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
                             <i class="fas fa-file-excel" aria-hidden="true"></i>
                             <span>Exportar Excel</span>
                         </button>
-                        <button id="btnHistoricoOrcamento" type="button" class="btn btn-outline-dark btn-icon-text">
+                        <button id="btnHistoricoOrcamento" type="button" class="btn btn-outline-dark btn-icon-text" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
                             <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
                             <span>Histórico</span>
                         </button>
@@ -6195,6 +6302,8 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarLinhaNovoProcessoOrcamento(item) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+
             return `
                 <tr>
                     <td><input type="text" class="form-control form-control-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="descricao" value="${escapeHtml(item.descricao || '')}" placeholder="Descrição"></td>
@@ -6235,6 +6344,11 @@ async function carregarLogoParaPDF() {
         }
 
         function abrirModalSenhaParametrosMinimos(dados) {
+            if (dadosPaginaEmModoEstatico('parametrosMinimos')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
             const alteracoes = obterResumoAlteracoesParametrosMinimos(dados);
             if (!alteracoes.length) {
                 alert('Não há alterações para salvar.');
@@ -6280,6 +6394,11 @@ async function carregarLogoParaPDF() {
         }
 
         async function salvarParametrosMinimosComSenha(password, modal) {
+            if (dadosPaginaEmModoEstatico('parametrosMinimos')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
             try {
                 const { resposta: response, payload: result } = await fetchJsonApiOnasp('/api/parametros-minimos/salvar', {
                     method: 'POST',
@@ -6301,7 +6420,7 @@ async function carregarLogoParaPDF() {
                 modal.hide();
                 await carregarDadosDiagnosticoOuvidorias(true);
                 renderDiagnosticoOuvidoriasView();
-                alert('Alterações salvas com sucesso.');
+                alert(obterMensagemSalvamento(result));
             } catch (error) {
                 alert(`Não foi possível salvar: ${error.message}`);
             }
@@ -6391,6 +6510,11 @@ async function carregarLogoParaPDF() {
                 diagnosticoOuvidoriaAtual = evento.target.value;
                 renderDiagnosticoOuvidoriasView();
             });
+
+            if (dadosPaginaEmModoEstatico('parametrosMinimos')) {
+                aplicarModoSomenteLeitura();
+                return;
+            }
 
             document.getElementById('btnCancelarParametrosMinimos')?.addEventListener('click', () => {
                 parametrosMinimosModoEdicao = false;
@@ -6557,6 +6681,7 @@ async function carregarLogoParaPDF() {
             `;
 
             registrarEventosDiagnosticoOuvidorias(dados);
+            aplicarModoSomenteLeitura();
         }
 
         // --- MÓDULO DE CONTATOS UFS ---

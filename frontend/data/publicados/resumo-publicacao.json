@@ -1,0 +1,14 @@
+{
+  "publicadoEm": "2026-05-06T22:47:25.905Z",
+  "fonte": "SQLite local",
+  "arquivos": [
+    "parametros-minimos.json",
+    "formalizacao-profor.json",
+    "orcamento-2026.json"
+  ],
+  "totais": {
+    "parametrosMinimos": 28,
+    "formalizacaoProfor": 14,
+    "orcamento2026": 10
+  }
+}

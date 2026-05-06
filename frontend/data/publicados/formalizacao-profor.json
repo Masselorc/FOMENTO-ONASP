@@ -1,0 +1,4449 @@
+{
+  "arquivo": "backend/data/onasp.sqlite",
+  "disponivel": true,
+  "aba": "formalizacao_profor",
+  "ufsAutorizadas": [
+    "AM",
+    "AP",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MG",
+    "PA",
+    "PE",
+    "RN",
+    "RR",
+    "RS",
+    "SE"
+  ],
+  "ufsCondicaoSuspensiva": [],
+  "valorRepassePadrao": 200000,
+  "etapas": [
+    {
+      "key": "propostaCadastrada",
+      "label": "Proposta cadastrada"
+    },
+    {
+      "key": "planoTrabalho",
+      "label": "Plano de trabalho"
+    },
+    {
+      "key": "analiseOnasp",
+      "label": "Análise ONASP"
+    },
+    {
+      "key": "ajustesSolicitados",
+      "label": "Ajustes solicitados"
+    },
+    {
+      "key": "ajustesAtendidos",
+      "label": "Ajustes atendidos"
+    },
+    {
+      "key": "analiseOperacional",
+      "label": "Análise operacional"
+    },
+    {
+      "key": "declaracaoOrcamentaria",
+      "label": "Declaração orçamentária"
+    },
+    {
+      "key": "minutaTermo",
+      "label": "Minuta/termo"
+    },
+    {
+      "key": "celebracao",
+      "label": "Celebração"
+    },
+    {
+      "key": "publicacao",
+      "label": "Publicação"
+    }
+  ],
+  "statusPermitidos": [
+    "PENDENTE",
+    "EM ANDAMENTO",
+    "CONCLUÍDO",
+    "COM PENDÊNCIA",
+    "NÃO SE APLICA",
+    "VALIDAR"
+  ],
+  "propostas": [
+    {
+      "idProposta": "AM-2026",
+      "uf": "AM",
+      "estado": "AM",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "AM-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Pendente",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "AM",
+        "estado": "AM",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 50,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 50,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 50,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "AP-2026",
+      "uf": "AP",
+      "estado": "AP",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "AP-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Pendente",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "AP",
+        "estado": "AP",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 50,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 50,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 50,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "BA-2026",
+      "uf": "BA",
+      "estado": "BA",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "BA-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Em andamento",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "BA",
+        "estado": "BA",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 38,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 38,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 38,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "CE-2026",
+      "uf": "CE",
+      "estado": "CE",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "CE-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Com pendência",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "CE",
+        "estado": "CE",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 10,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 10,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 10,
+      "alertas": [
+        {
+          "tipo": "COM PENDÊNCIA",
+          "severidade": "critico",
+          "mensagem": "Ajustes solicitados: COM PENDÊNCIA"
+        }
+      ],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "atual",
+          "status": "COM PENDÊNCIA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "COM PENDÊNCIA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "DF-2026",
+      "uf": "DF",
+      "estado": "DF",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "DF-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Pendente",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "DF",
+        "estado": "DF",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 75,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 75,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 75,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": true,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "ES-2026",
+      "uf": "ES",
+      "estado": "ES",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "ES-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Pendente",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "ES",
+        "estado": "ES",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 13,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "GO-2026",
+      "uf": "GO",
+      "estado": "GO",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "GO-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Pendente",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "GO",
+        "estado": "GO",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 75,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 75,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 75,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": true,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "MG-2026",
+      "uf": "MG",
+      "estado": "MG",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "MG-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Em andamento",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "MG",
+        "estado": "MG",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 13,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "PA-2026",
+      "uf": "PA",
+      "estado": "PA",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "PA-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Com pendência",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "PA",
+        "estado": "PA",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 10,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 10,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 10,
+      "alertas": [
+        {
+          "tipo": "COM PENDÊNCIA",
+          "severidade": "critico",
+          "mensagem": "Ajustes solicitados: COM PENDÊNCIA"
+        }
+      ],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "atual",
+          "status": "COM PENDÊNCIA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "COM PENDÊNCIA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "PE-2026",
+      "uf": "PE",
+      "estado": "PE",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "PE-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Pendente",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "PE",
+        "estado": "PE",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 50,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 50,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 50,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "RN-2026",
+      "uf": "RN",
+      "estado": "RN",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "RN-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Em andamento",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "RN",
+        "estado": "RN",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 13,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "RR-2026",
+      "uf": "RR",
+      "estado": "RR",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "RR-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Em andamento",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "RR",
+        "estado": "RR",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 13,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 13,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "RS-2026",
+      "uf": "RS",
+      "estado": "RS",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "RS-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Em andamento",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "RS",
+        "estado": "RS",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 38,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 38,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 38,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    },
+    {
+      "idProposta": "SE-2026",
+      "uf": "SE",
+      "estado": "SE",
+      "grupo": "PROFOR/ONASP 2026",
+      "numeroProposta": "SE-2026",
+      "ano": "2026",
+      "processoSei": "",
+      "situacaoGeral": "Em andamento",
+      "ultimaAtualizacao": "2026-05-06T15:18:32.969Z",
+      "observacoes": "Preenchimento simulado para modelagem da página de formalização.",
+      "gestor": {
+        "nome": "",
+        "cargo": "",
+        "orgao": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsavelTecnico": {
+        "nome": "",
+        "cargo": "",
+        "email": "",
+        "telefone": ""
+      },
+      "responsaveisAtivos": [],
+      "cadastroInstitucional": {
+        "uf": "SE",
+        "estado": "SE",
+        "orgao": "",
+        "sigla": "",
+        "cnpj": "",
+        "emailGabinete": "",
+        "observacoes": ""
+      },
+      "contatosPessoas": [],
+      "contatosDisponiveis": false,
+      "contatosErro": "",
+      "valorRepasse": 200000,
+      "valorContrapartida": 0,
+      "valorGlobal": 200000,
+      "valorGlobalCalculado": 200000,
+      "percentualContrapartida": 0,
+      "documentosProjeto": [],
+      "documentosFormalizacao": [],
+      "progressoDocumentosProjeto": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 38,
+        "completo": false
+      },
+      "progressoDocumentosFormalizacao": {
+        "total": 0,
+        "enviados": 0,
+        "percentual": 38,
+        "completo": false
+      },
+      "plano": {
+        "total": 200000,
+        "quantidadeItens": 0,
+        "diferenca": 0,
+        "fechaComValorGlobal": true,
+        "itensInelegiveis": [],
+        "itens": [],
+        "porCategoria": [],
+        "porNatureza": [],
+        "porFonte": []
+      },
+      "condicaoSuspensiva": {
+        "exige": false,
+        "atoEnviado": false,
+        "atoPublicado": false,
+        "pendente": false,
+        "resolvida": true,
+        "situacao": "Não se aplica"
+      },
+      "falaBr": {
+        "previsto": true,
+        "forma": "",
+        "observacao": ""
+      },
+      "validacoes": {
+        "ufElegivel": true,
+        "valorRepasseOk": true,
+        "valorGlobalOk": true
+      },
+      "progressoGeral": 38,
+      "alertas": [],
+      "trilha": [
+        {
+          "chave": "propostaCadastrada",
+          "rotulo": "Proposta cadastrada",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "planoTrabalho",
+          "rotulo": "Plano de trabalho",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOnasp",
+          "rotulo": "Análise ONASP",
+          "estado": "concluida",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesSolicitados",
+          "rotulo": "Ajustes solicitados",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "ajustesAtendidos",
+          "rotulo": "Ajustes atendidos",
+          "estado": "nao-aplica",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "analiseOperacional",
+          "rotulo": "Análise operacional",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "declaracaoOrcamentaria",
+          "rotulo": "Declaração orçamentária",
+          "estado": "atual",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "minutaTermo",
+          "rotulo": "Minuta/termo",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "celebracao",
+          "rotulo": "Celebração",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        },
+        {
+          "chave": "publicacao",
+          "rotulo": "Publicação",
+          "estado": "pendente",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização."
+        }
+      ],
+      "situacaoPlano": "Plano de trabalho monitorado no SQLite",
+      "aptaCelebracao": false,
+      "etapasFormalizacao": [
+        {
+          "key": "propostaCadastrada",
+          "label": "Proposta cadastrada",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "planoTrabalho",
+          "label": "Plano de trabalho",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOnasp",
+          "label": "Análise ONASP",
+          "status": "CONCLUÍDO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesSolicitados",
+          "label": "Ajustes solicitados",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "ajustesAtendidos",
+          "label": "Ajustes atendidos",
+          "status": "NÃO SE APLICA",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "analiseOperacional",
+          "label": "Análise operacional",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "declaracaoOrcamentaria",
+          "label": "Declaração orçamentária",
+          "status": "EM ANDAMENTO",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "minutaTermo",
+          "label": "Minuta/termo",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "celebracao",
+          "label": "Celebração",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        },
+        {
+          "key": "publicacao",
+          "label": "Publicação",
+          "status": "PENDENTE",
+          "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+          "atualizadoEm": "2026-05-06T15:18:32.969Z"
+        }
+      ]
+    }
+  ],
+  "registros": [
+    {
+      "uf": "AM",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "analiseOperacional",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AM",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "analiseOperacional",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "AP",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "analiseOperacional",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "BA",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "ajustesAtendidos",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "ajustesSolicitados",
+      "status": "COM PENDÊNCIA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "analiseOnasp",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "analiseOperacional",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "planoTrabalho",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "CE",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "analiseOperacional",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "celebracao",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "minutaTermo",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "DF",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "analiseOnasp",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "analiseOperacional",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "planoTrabalho",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "ES",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "analiseOperacional",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "celebracao",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "minutaTermo",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "GO",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "analiseOnasp",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "analiseOperacional",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "planoTrabalho",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "MG",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "ajustesAtendidos",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "ajustesSolicitados",
+      "status": "COM PENDÊNCIA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "analiseOnasp",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "analiseOperacional",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "planoTrabalho",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PA",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "analiseOperacional",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "PE",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "analiseOnasp",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "analiseOperacional",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "planoTrabalho",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RN",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "analiseOnasp",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "analiseOperacional",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "planoTrabalho",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RR",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "analiseOperacional",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "RS",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "ajustesAtendidos",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "ajustesSolicitados",
+      "status": "NÃO SE APLICA",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "analiseOnasp",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "analiseOperacional",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "celebracao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "declaracaoOrcamentaria",
+      "status": "EM ANDAMENTO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "minutaTermo",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "planoTrabalho",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "propostaCadastrada",
+      "status": "CONCLUÍDO",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    },
+    {
+      "uf": "SE",
+      "etapa": "publicacao",
+      "status": "PENDENTE",
+      "observacao": "Preenchimento simulado para modelagem da página de formalização.",
+      "atualizado_em": "2026-05-06T15:18:32.969Z"
+    }
+  ],
+  "diagnostico": {
+    "ufsEsperadas": [
+      "AM",
+      "AP",
+      "BA",
+      "CE",
+      "DF",
+      "ES",
+      "GO",
+      "MG",
+      "PA",
+      "PE",
+      "RN",
+      "RR",
+      "RS",
+      "SE"
+    ],
+    "ufsEncontradas": [
+      "AM",
+      "AP",
+      "BA",
+      "CE",
+      "DF",
+      "ES",
+      "GO",
+      "MG",
+      "PA",
+      "PE",
+      "RN",
+      "RR",
+      "RS",
+      "SE"
+    ],
+    "ufsFaltantes": [],
+    "ufsExcedentes": [],
+    "totalRepasseEsperado": 2800000,
+    "totalRepasseEncontrado": 2800000,
+    "repassesDivergentes": [],
+    "condicoesSuspensivasPendentes": [],
+    "condicoesSuspensivasSemChecklist": [],
+    "documentosObrigatoriosIncompletos": [],
+    "documentosSemDicionario": [],
+    "documentosEnviadosSemLink": [],
+    "severidadeGeral": "success"
+  },
+  "resumo": {
+    "totalPropostas": 14,
+    "totalValorGlobal": 2800000,
+    "totalRepasse": 2800000,
+    "totalContrapartida": 0,
+    "aptasCelebracao": 2,
+    "planosCompativeis": 14,
+    "condicoesPendentes": 0,
+    "falaBrPendentes": 0,
+    "alertasCriticos": 2,
+    "propostasComAlertaCritico": 2,
+    "mediaProgressoGeral": 34.714285714285715,
+    "documentosProjetoCompletos": 0,
+    "documentosFormalizacaoCompletos": 0,
+    "alertas": [
+      {
+        "tipo": "COM PENDÊNCIA",
+        "severidade": "critico",
+        "mensagem": "Ajustes solicitados: COM PENDÊNCIA",
+        "uf": "CE",
+        "estado": "CE",
+        "idProposta": "CE-2026"
+      },
+      {
+        "tipo": "COM PENDÊNCIA",
+        "severidade": "critico",
+        "mensagem": "Ajustes solicitados: COM PENDÊNCIA",
+        "uf": "PA",
+        "estado": "PA",
+        "idProposta": "PA-2026"
+      }
+    ],
+    "filtros": {
+      "ufs": [
+        "AM",
+        "AP",
+        "BA",
+        "CE",
+        "DF",
+        "ES",
+        "GO",
+        "MG",
+        "PA",
+        "PE",
+        "RN",
+        "RR",
+        "RS",
+        "SE"
+      ],
+      "grupos": [
+        "PROFOR/ONASP 2026"
+      ],
+      "status": [
+        "Com pendência",
+        "Em andamento",
+        "Pendente"
+      ]
+    }
+  }
+}

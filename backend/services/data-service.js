@@ -8,8 +8,13 @@
 // ============================================================================
 
 const JSON_APLICACAO_URL = new URL('../data/aplicacao.json', import.meta.url);
+const JSON_PUBLICADOS_URLS = {
+    parametrosMinimos: new URL('../../frontend/data/publicados/parametros-minimos.json', import.meta.url),
+    formalizacaoProfor: new URL('../../frontend/data/publicados/formalizacao-profor.json', import.meta.url),
+    orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url)
+};
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260505-15';
+const VERSAO_DADOS = '20260506-08';
 const PORTA_API_ONASP = '8010';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
@@ -360,6 +365,25 @@ let dadosDoacoes2023Cache = null;
 let dadosFormalizacaoProforCache = null;
 let dadosContatosCache = null;
 let dadosDiagnosticoOuvidoriasCache = null;
+let modoPublicacaoEstatica = false;
+const modosDadosOnasp = {
+    parametrosMinimos: 'api',
+    formalizacaoProfor: 'api',
+    orcamento2026: 'api'
+};
+
+function registrarModoDadosOnasp(chave, modo) {
+    modosDadosOnasp[chave] = modo;
+    modoPublicacaoEstatica = Object.values(modosDadosOnasp).includes('estatico');
+}
+
+export function estaEmModoPublicacaoEstatica() {
+    return modoPublicacaoEstatica;
+}
+
+export function obterModoDadosOnasp(chave) {
+    return modosDadosOnasp[chave] || 'api';
+}
 
 export function obterDadosOrcamento() {
     return dadosOrcamentoCache;
@@ -3380,6 +3404,35 @@ export async function fetchJsonApiOnasp(caminho, opcoes = {}) {
     throw ultimoErro || new Error('API da aplicação indisponível.');
 }
 
+export async function carregarComFallback(apiUrl, staticUrl, chaveFonte = '') {
+    try {
+        const { resposta, payload } = await fetchJsonApiOnasp(apiUrl);
+
+        if (resposta.ok) {
+            if (chaveFonte) registrarModoDadosOnasp(chaveFonte, 'api');
+            return {
+                dados: payload,
+                modo: 'api'
+            };
+        }
+    } catch (error) {
+        console.warn('API local indisponivel. Usando dados estaticos.', error);
+    }
+
+    const url = aplicarVersaoDados(new URL(staticUrl));
+    const respostaEstatica = await fetch(url, { cache: 'no-store' });
+
+    if (!respostaEstatica.ok) {
+        throw new Error(`Nao foi possivel carregar dados estaticos: ${url.pathname}`);
+    }
+
+    if (chaveFonte) registrarModoDadosOnasp(chaveFonte, 'estatico');
+    return {
+        dados: await respostaEstatica.json(),
+        modo: 'estatico'
+    };
+}
+
 async function carregarWorkbookPorCaminho(caminhoPlanilha, nomeErro) {
     const planilhaUrl = aplicarVersaoDados(new URL(`../../${caminhoPlanilha}`, import.meta.url));
     const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
@@ -3762,13 +3815,15 @@ export async function carregarDadosOrcamento(forcarRecarregamento = false) {
     }
 
     try {
-        const { resposta: respostaApi, payload } = await fetchJsonApiOnasp('/api/orcamento-2026');
-        if (respostaApi.ok) {
-            dadosOrcamentoCache = payload;
-            return dadosOrcamentoCache;
-        }
-    } catch (apiError) {
-        console.warn('API de orçamento 2026 indisponível; usando fallback da planilha.', apiError);
+        const resultado = await carregarComFallback(
+            '/api/orcamento-2026',
+            JSON_PUBLICADOS_URLS.orcamento2026,
+            'orcamento2026'
+        );
+        dadosOrcamentoCache = resultado.dados;
+        return dadosOrcamentoCache;
+    } catch (fallbackError) {
+        console.warn('API e dados estaticos de orçamento 2026 indisponiveis; usando fallback da planilha.', fallbackError);
     }
 
     return carregarPlanilhaOrcamento();
@@ -3803,18 +3858,20 @@ export async function carregarDadosDiagnosticoOuvidorias(forcarRecarregamento = 
     }
 
     try {
-        if (window.location.protocol === 'file:') {
-            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de parametros minimos.');
+        try {
+            const resultado = await carregarComFallback(
+                '/api/parametros-minimos',
+                JSON_PUBLICADOS_URLS.parametrosMinimos,
+                'parametrosMinimos'
+            );
+            dadosDiagnosticoOuvidoriasCache = resultado.dados;
+            return dadosDiagnosticoOuvidoriasCache;
+        } catch (fallbackError) {
+            console.warn('API e dados estaticos de parametros minimos indisponiveis; usando fallback da planilha de parametros minimos.', fallbackError);
         }
 
-        try {
-            const { resposta: respostaApi, payload } = await fetchJsonApiOnasp('/api/parametros-minimos');
-            if (respostaApi.ok) {
-                dadosDiagnosticoOuvidoriasCache = payload;
-                return dadosDiagnosticoOuvidoriasCache;
-            }
-        } catch (apiError) {
-            console.warn('API de parametros minimos indisponivel; usando fallback da planilha de parametros minimos.', apiError);
+        if (window.location.protocol === 'file:') {
+            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de parametros minimos.');
         }
 
         let dadosDiagnostico = null;
@@ -3846,18 +3903,20 @@ export async function carregarDadosFormalizacaoProfor(forcarRecarregamento = fal
     }
 
     try {
-        if (window.location.protocol === 'file:') {
-            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de formalizacao.');
+        try {
+            const resultado = await carregarComFallback(
+                '/api/formalizacao-profor',
+                JSON_PUBLICADOS_URLS.formalizacaoProfor,
+                'formalizacaoProfor'
+            );
+            dadosFormalizacaoProforCache = resultado.dados;
+            return dadosFormalizacaoProforCache;
+        } catch (fallbackError) {
+            console.warn('API e dados estaticos de formalizacao PROFOR indisponiveis; usando fallback da planilha.', fallbackError);
         }
 
-        try {
-            const { resposta: respostaApi, payload } = await fetchJsonApiOnasp('/api/formalizacao-profor');
-            if (respostaApi.ok) {
-                dadosFormalizacaoProforCache = payload;
-                return dadosFormalizacaoProforCache;
-            }
-        } catch (apiError) {
-            console.warn('API de formalizacao PROFOR indisponivel; usando fallback da planilha.', apiError);
+        if (window.location.protocol === 'file:') {
+            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de formalizacao.');
         }
 
         const workbook = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR, 'Planilha de formalizacao');
