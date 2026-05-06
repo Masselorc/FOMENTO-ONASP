@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260506-12';
+} from '../../backend/services/data-service.js?v=20260506-14';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -59,6 +59,7 @@ let orcamentoAlteracoesPendentes = {};
 let orcamentoEditoresAbertos = new Set();
 let orcamentoNovosProcessos = [];
 let orcamentoProcessosInativos = new Set();
+let erroCarregamentoOrcamento = null;
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -512,6 +513,10 @@ async function carregarLogoParaPDF() {
                 showLoading('Carregando orçamento 2026...');
                 try {
                     await carregarDadosOrcamento();
+                    erroCarregamentoOrcamento = null;
+                } catch (error) {
+                    erroCarregamentoOrcamento = error;
+                    console.error('Falha ao carregar Orçamento 2026:', error);
                 } finally {
                     hideLoading();
                 }
@@ -4833,8 +4838,27 @@ async function carregarLogoParaPDF() {
 
             const budgetData = obterDadosOrcamento();
             if (!budgetData) {
-                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados orçamentários não estão disponíveis. Por favor, certifique-se de que o arquivo <strong>Planilhas/orcamento_onasp.xlsx</strong> encontra-se armazenado na aplicação.</div>';
+                const mensagemErro = erroCarregamentoOrcamento?.message || 'Erro desconhecido ao carregar os dados.';
+                container.innerHTML = `
+                    <div class="alert alert-danger m-4">
+                        <strong>Orçamento 2026 não pôde ser carregado.</strong><br>
+                        ${escapeHtml(mensagemErro)}
+                    </div>
+                `;
                 container.style.display = 'block';
+                aplicarModoSomenteLeitura();
+                return;
+            }
+
+            const itensOrcamento = Array.isArray(budgetData?.itens) ? budgetData.itens : [];
+            if (itensOrcamento.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-warning m-4">
+                        Nenhum item orçamentário disponível para exibição.
+                    </div>
+                `;
+                container.style.display = 'block';
+                aplicarModoSomenteLeitura();
                 return;
             }
 

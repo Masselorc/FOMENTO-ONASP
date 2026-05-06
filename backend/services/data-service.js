@@ -15,7 +15,7 @@ const JSON_PUBLICADOS_URLS = {
     orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url)
 };
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260506-12';
+const VERSAO_DADOS = '20260506-14';
 const PORTA_API_ONASP = '8010';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
@@ -3456,6 +3456,44 @@ export async function carregarComFallback(apiUrl, staticUrl, chaveFonte = '') {
     };
 }
 
+async function carregarJsonPublicado(url, mensagemErro) {
+    const urlComVersao = aplicarVersaoDados(new URL(url.href || url));
+    const resposta = await fetch(urlComVersao, { cache: 'no-store' });
+
+    if (!resposta.ok) {
+        throw new Error(`${mensagemErro}: HTTP ${resposta.status}`);
+    }
+
+    return resposta.json();
+}
+
+function normalizarDadosOrcamentoPublicado(dados) {
+    const itens = Array.isArray(dados?.itens)
+        ? dados.itens
+        : Array.isArray(dados)
+            ? dados
+            : [];
+
+    if (itens.length === 0) {
+        throw new Error('Dados do orçamento carregados, mas nenhum item foi encontrado.');
+    }
+
+    const base = Array.isArray(dados) ? {} : (dados || {});
+
+    return {
+        ...base,
+        disponivel: true,
+        itens,
+        resumo: base.resumo || montarResumoOrcamento(itens),
+        filtros: base.filtros || {
+            frentes: obterValoresUnicosOrcamento(itens, 'frente'),
+            status: obterValoresUnicosOrcamento(itens, 'status'),
+            naturezas: obterValoresUnicosOrcamento(itens, 'natureza'),
+            modalidades: obterValoresUnicosOrcamento(itens, 'modalidade')
+        }
+    };
+}
+
 async function carregarWorkbookPorCaminho(caminhoPlanilha, nomeErro) {
     const planilhaUrl = aplicarVersaoDados(new URL(`../../${caminhoPlanilha}`, import.meta.url));
     const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
@@ -3837,19 +3875,36 @@ export async function carregarDadosOrcamento(forcarRecarregamento = false) {
         return dadosOrcamentoCache;
     }
 
-    try {
-        const resultado = await carregarComFallback(
-            '/api/orcamento-2026',
+    if (estaRodandoNoGitHubPages()) {
+        const dados = await carregarJsonPublicado(
             JSON_PUBLICADOS_URLS.orcamento2026,
-            'orcamento2026'
+            'Falha ao carregar orçamento publicado'
         );
-        dadosOrcamentoCache = resultado.dados;
+        dadosOrcamentoCache = normalizarDadosOrcamentoPublicado(dados);
+        registrarModoDadosOnasp('orcamento2026', 'estatico');
         return dadosOrcamentoCache;
-    } catch (fallbackError) {
-        console.warn('API e dados estaticos de orçamento 2026 indisponiveis; usando fallback da planilha.', fallbackError);
     }
 
-    return carregarPlanilhaOrcamento();
+    try {
+        const { resposta, payload } = await fetchJsonApiOnasp('/api/orcamento-2026');
+        if (!resposta.ok) {
+            throw new Error(`API local do orçamento respondeu HTTP ${resposta.status}.`);
+        }
+
+        dadosOrcamentoCache = normalizarDadosOrcamentoPublicado(payload);
+        registrarModoDadosOnasp('orcamento2026', 'api');
+        return dadosOrcamentoCache;
+    } catch (errorApi) {
+        console.warn('API local do orçamento indisponivel. Tentando JSON publicado.', errorApi);
+    }
+
+    const dados = await carregarJsonPublicado(
+        JSON_PUBLICADOS_URLS.orcamento2026,
+        'Falha ao carregar fallback publicado do orçamento'
+    );
+    dadosOrcamentoCache = normalizarDadosOrcamentoPublicado(dados);
+    registrarModoDadosOnasp('orcamento2026', 'estatico');
+    return dadosOrcamentoCache;
 }
 
 export async function carregarDadosContatos() {
@@ -3995,12 +4050,6 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
         console.warn('GitHub Pages detectado: usando dadosBase publicado imediatamente.');
         registrarModoDadosOnasp('aplicacao', 'estatico');
         return dadosBase;
-    }
-
-    try {
-        await carregarPlanilhaOrcamento();
-    } catch (error) {
-        console.warn('Orcamento 2026 nao carregado junto da Home. A aplicacao continuara usando os dados gerais disponiveis.', error);
     }
 
     try {
