@@ -51,6 +51,12 @@ let diagnosticoUfAtual = '';
 let parametrosMinimosModoEdicao = false;
 let parametrosMinimosAlteracoesPendentes = {};
 let parametrosMinimosEditorAtivo = null;
+let formalizacaoModoEdicao = false;
+let formalizacaoAlteracoesPendentes = {};
+let orcamentoModoEdicao = false;
+let orcamentoAlteracoesPendentes = {};
+let orcamentoNovosProcessos = [];
+let orcamentoProcessosInativos = new Set();
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -2850,6 +2856,325 @@ async function carregarLogoParaPDF() {
                     });
                 atualizarListaFormalizacao(dados);
             });
+
+            document.getElementById('btnEditarFormalizacao')?.addEventListener('click', () => {
+                formalizacaoModoEdicao = true;
+                renderFormalizacaoProforView();
+            });
+
+            document.getElementById('btnCancelarFormalizacao')?.addEventListener('click', () => {
+                formalizacaoModoEdicao = false;
+                formalizacaoAlteracoesPendentes = {};
+                renderFormalizacaoProforView();
+            });
+
+            document.getElementById('btnSalvarFormalizacao')?.addEventListener('click', () => abrirModalSenhaFormalizacao(dados));
+
+            document.getElementById('btnHistoricoFormalizacao')?.addEventListener('click', abrirHistoricoFormalizacao);
+
+            document.getElementById('btnExportarFormalizacao')?.addEventListener('click', () => {
+                if (obterQuantidadeAlteracoesFormalizacao()) {
+                    alert('Existem alterações não salvas. Salve antes de exportar para que o Excel reflita os dados atualizados.');
+                    return;
+                }
+                window.location.href = obterUrlApiOnasp('/api/formalizacao-profor/exportar');
+            });
+
+            document.querySelectorAll('[data-formalizacao-status-uf]').forEach((campo) => {
+                campo.addEventListener('change', () => {
+                    registrarAlteracaoFormalizacao(
+                        campo.dataset.formalizacaoStatusUf,
+                        campo.dataset.formalizacaoStatusEtapa,
+                        'status',
+                        campo.dataset.formalizacaoStatusOriginal,
+                        campo.value
+                    );
+                });
+            });
+
+            document.querySelectorAll('[data-formalizacao-observacao-uf]').forEach((campo) => {
+                campo.addEventListener('input', () => {
+                    registrarAlteracaoFormalizacao(
+                        campo.dataset.formalizacaoObservacaoUf,
+                        campo.dataset.formalizacaoObservacaoEtapa,
+                        'observacao',
+                        campo.dataset.formalizacaoObservacaoOriginal,
+                        campo.value
+                    );
+                });
+            });
+        }
+
+        const STATUS_FORMALIZACAO_EDICAO = ['PENDENTE', 'EM ANDAMENTO', 'CONCLUÍDO', 'COM PENDÊNCIA', 'NÃO SE APLICA', 'VALIDAR'];
+
+        function obterQuantidadeAlteracoesFormalizacao() {
+            return Object.values(formalizacaoAlteracoesPendentes)
+                .reduce((total, etapas) => total + Object.keys(etapas || {}).length, 0);
+        }
+
+        function obterAlteracaoFormalizacao(uf, etapa) {
+            return formalizacaoAlteracoesPendentes[uf]?.[etapa] || null;
+        }
+
+        function registrarAlteracaoFormalizacao(uf, etapa, campo, valorOriginal, novoValor) {
+            const proposta = obterDadosFormalizacaoProfor()?.propostas?.find((item) => item.uf === uf);
+            const etapaAtual = proposta?.etapasFormalizacao?.find((item) => item.key === etapa);
+            const pendenteAtual = obterAlteracaoFormalizacao(uf, etapa) || {};
+            const statusOriginal = etapaAtual?.status || 'PENDENTE';
+            const observacaoOriginal = etapaAtual?.observacao || '';
+            const proximo = {
+                status: pendenteAtual.status ?? statusOriginal,
+                observacao: pendenteAtual.observacao ?? observacaoOriginal
+            };
+
+            proximo[campo] = novoValor;
+
+            if (!formalizacaoAlteracoesPendentes[uf]) {
+                formalizacaoAlteracoesPendentes[uf] = {};
+            }
+
+            if (String(proximo.status) === String(statusOriginal) && String(proximo.observacao) === String(observacaoOriginal)) {
+                delete formalizacaoAlteracoesPendentes[uf][etapa];
+                if (!Object.keys(formalizacaoAlteracoesPendentes[uf]).length) {
+                    delete formalizacaoAlteracoesPendentes[uf];
+                }
+            } else {
+                formalizacaoAlteracoesPendentes[uf][etapa] = proximo;
+            }
+
+            renderFormalizacaoProforView();
+        }
+
+        function renderizarAcoesFormalizacao() {
+            const totalAlteracoes = obterQuantidadeAlteracoesFormalizacao();
+
+            return `
+                <section class="diagnostico-action-bar diagnostico-block mb-4" aria-label="Ações da formalização PROFOR">
+                    <div>
+                        <p class="section-eyebrow mb-1">Atualização</p>
+                        <h2>Formalização PROFOR</h2>
+                    </div>
+                    <div class="diagnostico-action-buttons">
+                        <button type="button" class="btn btn-outline-primary btn-icon-text" id="btnEditarFormalizacao" ${formalizacaoModoEdicao ? 'disabled' : ''}>
+                            <i class="fas fa-pen" aria-hidden="true"></i>
+                            <span>Editar</span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarFormalizacao" ${totalAlteracoes ? '' : 'disabled'}>
+                            <i class="fas fa-save" aria-hidden="true"></i>
+                            <span>Salvar alterações</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarFormalizacao" ${totalAlteracoes || formalizacaoModoEdicao ? '' : 'disabled'}>
+                            <i class="fas fa-xmark" aria-hidden="true"></i>
+                            <span>Cancelar alterações</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarFormalizacao">
+                            <i class="fas fa-file-excel" aria-hidden="true"></i>
+                            <span>Exportar Excel</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoFormalizacao">
+                            <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
+                            <span>Histórico</span>
+                        </button>
+                    </div>
+                    <small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s)</small>
+                </section>
+            `;
+        }
+
+        function renderizarControleEtapaFormalizacao(proposta, etapa) {
+            const pendente = obterAlteracaoFormalizacao(proposta.uf, etapa.key);
+            const statusAtual = pendente?.status ?? etapa.status ?? 'PENDENTE';
+            const observacaoAtual = pendente?.observacao ?? etapa.observacao ?? '';
+
+            if (!formalizacaoModoEdicao) {
+                return `
+                    <div class="d-flex flex-column gap-1">
+                        <span class="budget-status">${escapeHtml(statusAtual)}</span>
+                        ${observacaoAtual ? `<small class="text-muted">${escapeHtml(observacaoAtual)}</small>` : ''}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="d-flex flex-column gap-2">
+                    <select
+                        class="form-select form-select-sm"
+                        data-formalizacao-status-uf="${escapeHtml(proposta.uf)}"
+                        data-formalizacao-status-etapa="${escapeHtml(etapa.key)}"
+                        data-formalizacao-status-original="${escapeHtml(etapa.status || 'PENDENTE')}"
+                    >
+                        ${STATUS_FORMALIZACAO_EDICAO.map((status) => `
+                            <option value="${escapeHtml(status)}" ${statusAtual === status ? 'selected' : ''}>${escapeHtml(status)}</option>
+                        `).join('')}
+                    </select>
+                    <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        value="${escapeHtml(observacaoAtual)}"
+                        placeholder="Observação curta"
+                        data-formalizacao-observacao-uf="${escapeHtml(proposta.uf)}"
+                        data-formalizacao-observacao-etapa="${escapeHtml(etapa.key)}"
+                        data-formalizacao-observacao-original="${escapeHtml(etapa.observacao || '')}"
+                    >
+                </div>
+            `;
+        }
+
+        function renderizarPainelEdicaoFormalizacao(dados) {
+            const etapas = dados.etapas || [];
+            const propostas = dados.propostas || [];
+
+            if (!etapas.length || !propostas.length) return '';
+
+            return `
+                <section class="table-container mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">SQLite</p>
+                            <h2>Andamento editável por UF</h2>
+                        </div>
+                        <small class="text-muted">As mudanças ficam pendentes até o botão Salvar alterações</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table formalizacao-data-table">
+                            <thead>
+                                <tr>
+                                    <th>UF</th>
+                                    ${etapas.map((etapa) => `<th>${escapeHtml(etapa.label)}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${propostas.map((proposta) => `
+                                    <tr>
+                                        <td data-label="UF"><strong>${escapeHtml(proposta.uf)}</strong></td>
+                                        ${etapas.map((etapaConfig) => {
+                                            const etapa = proposta.etapasFormalizacao?.find((item) => item.key === etapaConfig.key) || etapaConfig;
+                                            return `<td data-label="${escapeHtml(etapaConfig.label)}">${renderizarControleEtapaFormalizacao(proposta, etapa)}</td>`;
+                                        }).join('')}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+        }
+
+        function removerModalOnasp(id) {
+            const modalExistente = document.getElementById(id);
+            if (modalExistente) {
+                window.bootstrap?.Modal?.getInstance(modalExistente)?.dispose();
+                modalExistente.remove();
+            }
+        }
+
+        function abrirModalSenhaFormalizacao(dados) {
+            const totalAlteracoes = obterQuantidadeAlteracoesFormalizacao();
+            if (!totalAlteracoes) {
+                alert('Não há alterações para salvar.');
+                return;
+            }
+
+            removerModalOnasp('modalSenhaFormalizacao');
+            document.body.insertAdjacentHTML('beforeend', `
+                <div class="modal fade" id="modalSenhaFormalizacao" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirmar alterações</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Você está prestes a salvar ${totalAlteracoes} alteração(ões) na Formalização PROFOR.</p>
+                                <label class="form-label" for="senhaFormalizacao">Senha de confirmação</label>
+                                <input type="password" class="form-control" id="senhaFormalizacao" autocomplete="current-password">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="confirmarSalvarFormalizacao">Confirmar e salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            const modalElement = document.getElementById('modalSenhaFormalizacao');
+            const modal = new window.bootstrap.Modal(modalElement);
+            modal.show();
+            document.getElementById('confirmarSalvarFormalizacao')?.addEventListener('click', async () => {
+                await salvarFormalizacaoComSenha(document.getElementById('senhaFormalizacao')?.value || '', modal);
+            });
+        }
+
+        async function salvarFormalizacaoComSenha(password, modal) {
+            try {
+                const { resposta, payload } = await fetchJsonApiOnasp('/api/formalizacao-profor/salvar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password,
+                        changes: formalizacaoAlteracoesPendentes
+                    })
+                });
+
+                if (!resposta.ok || !payload.success) {
+                    alert(payload.message || 'Não foi possível salvar.');
+                    return;
+                }
+
+                formalizacaoAlteracoesPendentes = {};
+                formalizacaoModoEdicao = false;
+                modal.hide();
+                await carregarDadosFormalizacaoProfor(true);
+                renderFormalizacaoProforView();
+                alert('Alterações salvas com sucesso.');
+            } catch (error) {
+                alert(`Não foi possível salvar: ${error.message}`);
+            }
+        }
+
+        async function abrirHistoricoFormalizacao() {
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/formalizacao-profor/historico');
+                const historico = payload.historico || [];
+
+                removerModalOnasp('modalHistoricoFormalizacao');
+                document.body.insertAdjacentHTML('beforeend', `
+                    <div class="modal fade" id="modalHistoricoFormalizacao" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Histórico da Formalização PROFOR</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ${historico.length ? `
+                                        <div class="table-responsive">
+                                            <table class="table table-sm app-data-table">
+                                                <thead><tr><th>Data</th><th>UF</th><th>Campo</th><th>Anterior</th><th>Novo</th></tr></thead>
+                                                <tbody>
+                                                    ${historico.map((item) => `
+                                                        <tr>
+                                                            <td>${escapeHtml(item.alteradoEm ? new Date(item.alteradoEm).toLocaleString('pt-BR') : '')}</td>
+                                                            <td>${escapeHtml(item.registro || '')}</td>
+                                                            <td>${escapeHtml(item.campo || '')}</td>
+                                                            <td>${escapeHtml(item.valorAnterior || '')}</td>
+                                                            <td>${escapeHtml(item.valorNovo || '')}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ` : '<div class="diagnostico-empty-state">Nenhuma alteração registrada.</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                new window.bootstrap.Modal(document.getElementById('modalHistoricoFormalizacao')).show();
+            } catch (error) {
+                alert(`Não foi possível carregar o histórico: ${error.message}`);
+            }
         }
 
         function renderFormalizacaoProforView() {
@@ -2886,6 +3211,8 @@ async function carregarLogoParaPDF() {
                 </section>
 
                 ${renderizarDiagnosticoFormalizacao(dados.diagnostico)}
+
+                ${renderizarAcoesFormalizacao()}
 
                 <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores de formalização">
                     <div class="col">
@@ -3000,6 +3327,8 @@ async function carregarLogoParaPDF() {
                 </section>
 
                 <section class="budget-insight-grid formalizacao-insight-grid mb-4" id="formalizacao-selected-summary" aria-label="Resumo da seleção"></section>
+
+                ${renderizarPainelEdicaoFormalizacao(dados)}
 
                 <section class="formalizacao-alert-panel mb-4">
                     <div class="section-header compact">
@@ -3475,15 +3804,15 @@ async function carregarLogoParaPDF() {
 
         function calcularResumoItensOrcamento(itens) {
             return itens.reduce((resumo, item) => {
-                const valorTotal = Number(item.valorTotal) || 0;
-                const statusNormalizado = normalizarBusca(item.status);
+                const valorTotal = Number(item.valorPrevisto ?? item.valorTotal) || 0;
+                const valorEstimado = Number(item.valorEstimadoPesquisaPreco) || 0;
                 resumo.total += valorTotal;
                 resumo.quantidade += 1;
                 resumo.frentes.add(item.frente);
                 resumo.modalidades.add(item.modalidade);
                 resumo.status[item.status] = (resumo.status[item.status] || 0) + valorTotal;
-                if (statusNormalizado.includes('execucao')) {
-                    resumo.empenhado += valorTotal;
+                if (item.processoAutuado) {
+                    resumo.empenhado += valorEstimado;
                 }
                 resumo.executado += Number(item.valorExecutado) || 0;
                 return resumo;
@@ -3538,6 +3867,8 @@ async function carregarLogoParaPDF() {
                     item.abrangencia,
                     item.status,
                     item.processoSei,
+                    item.valorEstimadoPesquisaPreco,
+                    item.observacao,
                     item.proforAutuacao,
                     item.proforParecerTecnico,
                     item.proforMinutaEdital,
@@ -3903,7 +4234,7 @@ async function carregarLogoParaPDF() {
             if (!grupos.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="10" class="text-center text-muted py-4">
+                        <td colspan="8" class="text-center text-muted py-4">
                             Nenhum item orçamentário foi encontrado para os filtros selecionados.
                         </td>
                     </tr>
@@ -3913,39 +4244,26 @@ async function carregarLogoParaPDF() {
 
             tbody.innerHTML = grupos.map((grupo) => {
                 const linhas = grupo.itens.map((item) => {
-                    const itemId = String(item.id);
-                    const podeExibirRastreio = itemPodeExibirRastreioOrcamento(item);
-                    const rastreioAberto = podeExibirRastreio && orcamentoItensRastreioAbertos.has(itemId);
-                    const idRastreio = obterIdRastreioOrcamento(item);
-
                     return `
-                    <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
+                    <tr class="budget-item-row">
                         <td data-label="Item" class="align-middle">
-                            ${podeExibirRastreio ? `
-                                <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
-                                    <span>${escapeHtml(item.descricao)}</span>
-                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
-                                </button>
-                            ` : `<div class="budget-item-title budget-item-title-static">${escapeHtml(item.descricao)}</div>`}
-                            ${item.processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(item.processoSei)}</div>` : ''}
+                            <div class="budget-item-title budget-item-title-static">${escapeHtml(item.descricao)}</div>
+                            <div class="budget-item-meta">${escapeHtml(item.id)}</div>
                         </td>
-                        <td data-label="Modalidade" class="align-middle">${escapeHtml(item.modalidade)}</td>
                         <td data-label="Natureza" class="align-middle">${escapeHtml(item.natureza)}</td>
-                        <td data-label="Abrangência" class="align-middle">${escapeHtml(item.abrangencia)}</td>
-                        <td data-label="Qtd." class="text-center align-middle">${escapeHtml(item.quantidade || '-')}</td>
-                        <td data-label="Unid." class="text-center align-middle">${escapeHtml(item.unidade || '-')}</td>
-                        <td data-label="Valor Unit." class="text-end font-monospace align-middle">${formatMoney(item.valorUnitario)}</td>
-                        <td data-label="Valor Total" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorTotal)}</td>
-                        <td data-label="Status" class="text-center align-middle">${renderizarStatusOrcamento(item.status)}</td>
-                        <td data-label="Links" class="text-center align-middle">${renderizarLinksOrcamento(item)}</td>
+                        <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorPrevisto ?? item.valorTotal)}</td>
+                        <td data-label="Valor estimado pesquisa de preço" class="text-end font-monospace align-middle">${renderizarCampoOrcamento(item, 'valor_estimado_pesquisa_preco', 'number')}</td>
+                        <td data-label="Processo autuado" class="text-center align-middle">${renderizarCampoOrcamento(item, 'processo_autuado')}</td>
+                        <td data-label="Processo SEI" class="align-middle">${renderizarCampoOrcamento(item, 'processo_sei')}</td>
+                        <td data-label="Status" class="text-center align-middle">${renderizarCampoOrcamento(item, 'status')}</td>
+                        <td data-label="Observação" class="align-middle">${renderizarCampoOrcamento(item, 'observacao')}</td>
                     </tr>
-                    ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
                 `;
                 }).join('');
 
                 return `
                     <tr class="budget-group-row">
-                        <td colspan="10">
+                        <td colspan="8">
                             <div class="budget-group-heading">
                                 <div>
                                     <span class="budget-group-label">Frente</span>
@@ -3962,7 +4280,238 @@ async function carregarLogoParaPDF() {
                 `;
             }).join('');
 
-            registrarEventosRastreioOrcamento(tbody, budgetData);
+            registrarEventosCamposOrcamento(budgetData);
+            atualizarTabelaOutrosOrcamento(budgetData);
+        }
+
+        function registrarEventosCamposOrcamento(budgetData) {
+            document.querySelectorAll('.budget-edit-control').forEach((campo) => {
+                const evento = campo.tagName === 'INPUT' ? 'input' : 'change';
+                campo.addEventListener(evento, () => {
+                    registrarAlteracaoOrcamento(
+                        campo.dataset.orcamentoId,
+                        campo.dataset.orcamentoCampo,
+                        campo.dataset.orcamentoOriginal,
+                        campo.dataset.orcamentoCampo === 'processo_autuado' ? Boolean(campo.value) : campo.value
+                    );
+                    renderOrcamentoView();
+                });
+            });
+        }
+
+        function registrarEventosOutrosProcessosOrcamento(budgetData) {
+            document.querySelectorAll('.budget-other-edit-control').forEach((campo) => {
+                const evento = campo.tagName === 'INPUT' ? 'input' : 'change';
+                campo.addEventListener(evento, () => {
+                    registrarAlteracaoOrcamento(
+                        campo.dataset.orcamentoId,
+                        campo.dataset.orcamentoCampo,
+                        campo.dataset.orcamentoOriginal,
+                        campo.dataset.orcamentoCampo === 'processo_autuado' ? Boolean(campo.value) : campo.value
+                    );
+                    renderOrcamentoView();
+                });
+            });
+
+            document.querySelectorAll('.budget-new-control').forEach((campo) => {
+                const evento = campo.tagName === 'INPUT' ? 'input' : 'change';
+                campo.addEventListener(evento, () => {
+                    atualizarNovoProcessoOrcamento(
+                        campo.dataset.orcamentoNovoId,
+                        campo.dataset.orcamentoNovoCampo,
+                        campo.dataset.orcamentoNovoCampo === 'processo_autuado' ? Boolean(campo.value) : campo.value
+                    );
+                    renderOrcamentoView();
+                });
+            });
+
+            document.querySelectorAll('[data-orcamento-inativar]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    if (!window.confirm('Inativar este processo de interesse? A alteração só será aplicada ao salvar.')) return;
+                    orcamentoProcessosInativos.add(botao.dataset.orcamentoInativar);
+                    renderOrcamentoView();
+                });
+            });
+
+            document.querySelectorAll('[data-orcamento-remover-novo]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    orcamentoNovosProcessos = orcamentoNovosProcessos.filter((item) => item.tempId !== botao.dataset.orcamentoRemoverNovo);
+                    renderOrcamentoView();
+                });
+            });
+        }
+
+        function atualizarTabelaOutrosOrcamento(budgetData) {
+            const tbody = document.getElementById('budget-other-table-body');
+            if (!tbody) return;
+
+            const outrosProcessos = (budgetData.outrosProcessos || [])
+                .filter((item) => !orcamentoProcessosInativos.has(String(item.id)));
+            const linhasExistentes = outrosProcessos.map((item) => `
+                <tr>
+                    <td data-label="Descrição">${renderizarCampoOutrosOrcamento(item, 'descricao')}</td>
+                    <td data-label="Processo SEI">${renderizarCampoOutrosOrcamento(item, 'processo_sei')}</td>
+                    <td data-label="Valor estimado" class="text-end font-monospace">${renderizarCampoOutrosOrcamento(item, 'valor_estimado_pesquisa_preco', 'number')}</td>
+                    <td data-label="Processo autuado" class="text-center">${renderizarCampoOutrosOrcamento(item, 'processo_autuado')}</td>
+                    <td data-label="Status">${renderizarCampoOutrosOrcamento(item, 'status')}</td>
+                    <td data-label="Observação">${renderizarCampoOutrosOrcamento(item, 'observacao')}</td>
+                    <td class="text-end">
+                        ${orcamentoModoEdicao ? `
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-orcamento-inativar="${escapeHtml(item.id)}" title="Inativar">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `);
+            const linhasNovas = orcamentoModoEdicao
+                ? orcamentoNovosProcessos.map(renderizarLinhaNovoProcessoOrcamento)
+                : [];
+
+            tbody.innerHTML = [...linhasExistentes, ...linhasNovas].join('') || `
+                <tr><td colspan="7" class="text-center text-muted py-4">Nenhum processo adicional cadastrado.</td></tr>
+            `;
+
+            registrarEventosOutrosProcessosOrcamento(budgetData);
+        }
+
+        function renderizarCampoOutrosOrcamento(item, campo, tipo = 'text') {
+            const html = renderizarCampoOrcamento(item, campo, tipo);
+            return html.replaceAll('budget-edit-control', 'budget-other-edit-control');
+        }
+
+        function adicionarNovoProcessoOrcamento() {
+            orcamentoModoEdicao = true;
+            orcamentoNovosProcessos.push({
+                tempId: `novo-${Date.now()}-${orcamentoNovosProcessos.length + 1}`,
+                descricao: '',
+                processo_sei: '',
+                valor_estimado_pesquisa_preco: 0,
+                processo_autuado: false,
+                status: 'PLANEJADO',
+                observacao: ''
+            });
+            renderOrcamentoView();
+        }
+
+        function abrirModalSenhaOrcamento() {
+            const totalAlteracoes = obterQuantidadeAlteracoesOrcamento();
+            if (!totalAlteracoes) {
+                alert('Não há alterações para salvar.');
+                return;
+            }
+
+            removerModalOnasp('modalSenhaOrcamento');
+            document.body.insertAdjacentHTML('beforeend', `
+                <div class="modal fade" id="modalSenhaOrcamento" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirmar alterações</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Você está prestes a salvar ${totalAlteracoes} alteração(ões) no Orçamento 2026.</p>
+                                <label class="form-label" for="senhaOrcamento">Senha de confirmação</label>
+                                <input type="password" class="form-control" id="senhaOrcamento" autocomplete="current-password">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="confirmarSalvarOrcamento">Confirmar e salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            const modalElement = document.getElementById('modalSenhaOrcamento');
+            const modal = new window.bootstrap.Modal(modalElement);
+            modal.show();
+            document.getElementById('confirmarSalvarOrcamento')?.addEventListener('click', async () => {
+                await salvarOrcamentoComSenha(document.getElementById('senhaOrcamento')?.value || '', modal);
+            });
+        }
+
+        async function salvarOrcamentoComSenha(password, modal) {
+            try {
+                const novos = orcamentoNovosProcessos.map((item) => ({
+                    descricao: item.descricao,
+                    processo_sei: item.processo_sei,
+                    valor_estimado_pesquisa_preco: item.valor_estimado_pesquisa_preco,
+                    processo_autuado: item.processo_autuado,
+                    status: item.status,
+                    observacao: item.observacao
+                }));
+                const { resposta, payload } = await fetchJsonApiOnasp('/api/orcamento-2026/salvar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password,
+                        changes: orcamentoAlteracoesPendentes,
+                        novos,
+                        inativos: Array.from(orcamentoProcessosInativos)
+                    })
+                });
+
+                if (!resposta.ok || !payload.success) {
+                    alert(payload.message || 'Não foi possível salvar.');
+                    return;
+                }
+
+                orcamentoAlteracoesPendentes = {};
+                orcamentoNovosProcessos = [];
+                orcamentoProcessosInativos = new Set();
+                orcamentoModoEdicao = false;
+                modal.hide();
+                await carregarDadosOrcamento(true);
+                renderOrcamentoView();
+                alert('Alterações salvas com sucesso.');
+            } catch (error) {
+                alert(`Não foi possível salvar: ${error.message}`);
+            }
+        }
+
+        async function abrirHistoricoOrcamento() {
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/orcamento-2026/historico');
+                const historico = payload.historico || [];
+                removerModalOnasp('modalHistoricoOrcamento');
+                document.body.insertAdjacentHTML('beforeend', `
+                    <div class="modal fade" id="modalHistoricoOrcamento" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Histórico do Orçamento 2026</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ${historico.length ? `
+                                        <div class="table-responsive">
+                                            <table class="table table-sm app-data-table">
+                                                <thead><tr><th>Data</th><th>Registro</th><th>Campo</th><th>Anterior</th><th>Novo</th></tr></thead>
+                                                <tbody>
+                                                    ${historico.map((item) => `
+                                                        <tr>
+                                                            <td>${escapeHtml(item.alteradoEm ? new Date(item.alteradoEm).toLocaleString('pt-BR') : '')}</td>
+                                                            <td>${escapeHtml(item.registro || '')}</td>
+                                                            <td>${escapeHtml(item.campo || '')}</td>
+                                                            <td>${escapeHtml(item.valorAnterior || '')}</td>
+                                                            <td>${escapeHtml(item.valorNovo || '')}</td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ` : '<div class="diagnostico-empty-state">Nenhuma alteração registrada.</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                new window.bootstrap.Modal(document.getElementById('modalHistoricoOrcamento')).show();
+            } catch (error) {
+                alert(`Não foi possível carregar o histórico: ${error.message}`);
+            }
         }
 
         function renderOrcamentoView() {
@@ -3982,11 +4531,11 @@ async function carregarLogoParaPDF() {
 
             const resumo = budgetData.resumo || {};
             const filtros = budgetData.filtros || { status: [], naturezas: [], modalidades: [] };
-            const totalEmpenhado = resumo.totalEmpenhado || 0;
-            const totalExecutado = resumo.totalExecutado || 0;
-            const totalEmExecucao = obterTotalResumoOrcamento(resumo.porStatus, 'Em execução');
+            const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
+            const saldoPlanejado = resumo.saldoPlanejado ?? ((resumo.totalOrcamento || resumo.totalGeral || 0) - valorEmExecucao);
+            const percentualEmExecucao = resumo.percentualEmExecucao || 0;
+            const processosAutuados = resumo.processosAutuados || 0;
             const totalCapital = obterTotalResumoOrcamento(resumo.porNatureza, 'Capital');
-            const totalCusteio = obterTotalResumoOrcamento(resumo.porNatureza, 'Custeio');
 
             container.innerHTML = `
                 <section class="dashboard-intro budget-intro">
@@ -4001,54 +4550,42 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
-                <div class="budget-report-actions pdf-hidden">
-                    <button id="btn-export-budget-pdf" type="button" class="btn btn-danger btn-icon-text" onclick="exportarOrcamentoPDF()">
-                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
-                        <span>Exportar Relatório PDF</span>
-                    </button>
-                </div>
+                ${renderizarAcoesOrcamento()}
 
                 <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores orçamentários">
                     <div class="col">
                         <div class="card kpi-card kpi-card-success">
-                            <div class="kpi-title"><i class="fas fa-wallet" aria-hidden="true"></i>Orçamento Total</div>
-                            <div class="kpi-value text-money text-success">${formatMoney(resumo.totalGeral)}</div>
-                            <div class="kpi-desc">${resumo.totalItens || 0} item(ns) planejado(s)</div>
+                            <div class="kpi-title"><i class="fas fa-wallet" aria-hidden="true"></i>Total do orçamento</div>
+                            <div class="kpi-value text-money text-success">${formatMoney(resumo.totalOrcamento ?? resumo.totalGeral)}</div>
+                            <div class="kpi-desc">Itens oficiais com compõe orçamento</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card kpi-card-warning">
                             <div class="kpi-title"><i class="fas fa-hourglass-half" aria-hidden="true"></i>Valor em Execução</div>
-                            <div class="kpi-value text-money text-warning">${formatMoney(totalEmExecucao)}</div>
-                            <div class="kpi-desc">Em processamento</div>
+                            <div class="kpi-value text-money text-warning">${formatMoney(valorEmExecucao)}</div>
+                            <div class="kpi-desc">Pesquisa de preço de processos autuados</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card kpi-card-info">
-                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Valor Empenhado</div>
-                            <div class="kpi-value text-money text-info">${formatMoney(totalEmpenhado)}</div>
-                            <div class="kpi-desc">Itens com empenho registrado</div>
+                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Saldo planejado</div>
+                            <div class="kpi-value text-money text-info">${formatMoney(saldoPlanejado)}</div>
+                            <div class="kpi-desc">Total oficial menos valor em execução</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card kpi-card-success">
-                            <div class="kpi-title"><i class="fas fa-check-circle" aria-hidden="true"></i>Valor Executado</div>
-                            <div class="kpi-value text-money text-success">${formatMoney(totalExecutado)}</div>
-                            <div class="kpi-desc">Já liquidado/pago</div>
+                            <div class="kpi-title"><i class="fas fa-chart-line" aria-hidden="true"></i>% em execução</div>
+                            <div class="kpi-value">${formatPercent(percentualEmExecucao)}</div>
+                            <div class="kpi-desc">Valor em execução / orçamento</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card">
-                            <div class="kpi-title"><i class="fas fa-boxes-stacked" aria-hidden="true"></i>Capital</div>
-                            <div class="kpi-value text-money">${formatMoney(totalCapital)}</div>
-                            <div class="kpi-desc">Natureza do gasto</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card kpi-card">
-                            <div class="kpi-title"><i class="fas fa-file-invoice" aria-hidden="true"></i>Custeio</div>
-                            <div class="kpi-value text-money">${formatMoney(totalCusteio)}</div>
-                            <div class="kpi-desc">Natureza do gasto</div>
+                            <div class="kpi-title"><i class="fas fa-folder-open" aria-hidden="true"></i>Processos autuados</div>
+                            <div class="kpi-value">${processosAutuados}</div>
+                            <div class="kpi-desc">${formatMoney(totalCapital)} em capital previsto</div>
                         </div>
                     </div>
                 </section>
@@ -4128,24 +4665,72 @@ async function carregarLogoParaPDF() {
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th>Modalidade</th>
                                     <th>Natureza</th>
-                                    <th>Abrangência</th>
-                                    <th class="text-center">Qtd.</th>
-                                    <th class="text-center">Unid.</th>
-                                    <th class="text-end">Valor Unit.</th>
-                                    <th class="text-end">Valor Total</th>
+                                    <th class="text-end">Valor previsto</th>
+                                    <th class="text-end">Valor estimado pesquisa de preço</th>
+                                    <th class="text-center">Processo autuado</th>
+                                    <th>Processo SEI</th>
                                     <th class="text-center">Status</th>
-                                    <th class="text-center">Links</th>
+                                    <th>Observação</th>
                                 </tr>
                             </thead>
                             <tbody id="budget-table-body"></tbody>
                         </table>
                     </div>
                 </section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Processos relacionados</p>
+                            <h2>Outros processos de interesse da Ouvidoria</h2>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-icon-text pdf-hidden" id="btnAdicionarOutroProcesso" ${orcamentoModoEdicao ? '' : 'disabled'}>
+                            <i class="fas fa-plus" aria-hidden="true"></i>
+                            <span>Adicionar processo</span>
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table budget-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Processo SEI</th>
+                                    <th class="text-end">Valor estimado</th>
+                                    <th class="text-center">Processo autuado</th>
+                                    <th>Status</th>
+                                    <th>Observação</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="budget-other-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
             `;
 
             const atualizar = () => atualizarTabelaOrcamento(budgetData);
+            document.getElementById('btnEditarOrcamento')?.addEventListener('click', () => {
+                orcamentoModoEdicao = true;
+                renderOrcamentoView();
+            });
+            document.getElementById('btnCancelarOrcamento')?.addEventListener('click', () => {
+                orcamentoModoEdicao = false;
+                orcamentoAlteracoesPendentes = {};
+                orcamentoNovosProcessos = [];
+                orcamentoProcessosInativos = new Set();
+                renderOrcamentoView();
+            });
+            document.getElementById('btnSalvarOrcamento')?.addEventListener('click', abrirModalSenhaOrcamento);
+            document.getElementById('btnExportarOrcamentoExcel')?.addEventListener('click', () => {
+                if (obterQuantidadeAlteracoesOrcamento()) {
+                    alert('Existem alterações não salvas. Salve antes de exportar para que o Excel reflita os dados atualizados.');
+                    return;
+                }
+                window.location.href = obterUrlApiOnasp('/api/orcamento-2026/exportar');
+            });
+            document.getElementById('btnHistoricoOrcamento')?.addEventListener('click', abrirHistoricoOrcamento);
+            document.getElementById('btnAdicionarOutroProcesso')?.addEventListener('click', adicionarNovoProcessoOrcamento);
             document.getElementById('filtroOrcamentoBusca')?.addEventListener('input', atualizar);
             document.querySelectorAll('.budget-filter-control').forEach((controle) => {
                 controle.addEventListener('change', atualizar);
@@ -5226,6 +5811,181 @@ async function carregarLogoParaPDF() {
                     };
                 });
             });
+        }
+
+        const STATUS_ORCAMENTO_EDICAO = ['PLANEJADO', 'PROCESSO AUTUADO', 'EM PESQUISA DE PREÇOS', 'EM EXECUÇÃO', 'EXECUTADO', 'SUSPENSO', 'CANCELADO', 'VALIDAR'];
+
+        function parseNumeroMonetarioFrontend(valor) {
+            if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
+            const texto = String(valor ?? '').trim();
+            if (!texto) return 0;
+            const normalizado = texto.replace(/\s+/g, '').replace(/^R\$/i, '');
+            if (normalizado.includes(',') && normalizado.includes('.')) {
+                return Number.parseFloat(normalizado.replace(/\./g, '').replace(',', '.')) || 0;
+            }
+            if (normalizado.includes(',')) return Number.parseFloat(normalizado.replace(',', '.')) || 0;
+            return Number.parseFloat(normalizado) || 0;
+        }
+
+        function obterQuantidadeAlteracoesOrcamento() {
+            const alteracoes = Object.values(orcamentoAlteracoesPendentes)
+                .reduce((total, campos) => total + Object.keys(campos || {}).length, 0);
+            return alteracoes + orcamentoNovosProcessos.length + orcamentoProcessosInativos.size;
+        }
+
+        function obterValorPendenteOrcamento(item, campo, fallback = '') {
+            const pendente = orcamentoAlteracoesPendentes[item.id]?.[campo];
+            if (pendente !== undefined) return pendente;
+
+            const mapa = {
+                valor_estimado_pesquisa_preco: item.valorEstimadoPesquisaPreco,
+                processo_autuado: item.processoAutuado,
+                processo_sei: item.processoSei,
+                status: item.status,
+                observacao: item.observacao,
+                descricao: item.descricao,
+                categoria: item.categoria || item.frente,
+                natureza: item.natureza
+            };
+            return mapa[campo] ?? fallback;
+        }
+
+        function registrarAlteracaoOrcamento(id, campo, valorOriginal, novoValor) {
+            const originalNormalizado = campo.startsWith('valor_')
+                ? parseNumeroMonetarioFrontend(valorOriginal)
+                : campo === 'processo_autuado'
+                    ? Boolean(valorOriginal)
+                    : String(valorOriginal ?? '');
+            const novoNormalizado = campo.startsWith('valor_')
+                ? parseNumeroMonetarioFrontend(novoValor)
+                : campo === 'processo_autuado'
+                    ? Boolean(novoValor)
+                    : String(novoValor ?? '').trim();
+
+            if (!orcamentoAlteracoesPendentes[id]) {
+                orcamentoAlteracoesPendentes[id] = {};
+            }
+
+            if (String(originalNormalizado) === String(novoNormalizado)) {
+                delete orcamentoAlteracoesPendentes[id][campo];
+                if (!Object.keys(orcamentoAlteracoesPendentes[id]).length) {
+                    delete orcamentoAlteracoesPendentes[id];
+                }
+            } else {
+                orcamentoAlteracoesPendentes[id][campo] = novoNormalizado;
+            }
+        }
+
+        function renderizarAcoesOrcamento() {
+            const totalAlteracoes = obterQuantidadeAlteracoesOrcamento();
+
+            return `
+                <div class="budget-report-actions pdf-hidden">
+                    <button id="btn-export-budget-pdf" type="button" class="btn btn-danger btn-icon-text" onclick="exportarOrcamentoPDF()">
+                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                        <span>Exportar PDF</span>
+                    </button>
+                    <button id="btnEditarOrcamento" type="button" class="btn btn-outline-primary btn-icon-text" ${orcamentoModoEdicao ? 'disabled' : ''}>
+                        <i class="fas fa-pen" aria-hidden="true"></i>
+                        <span>Editar</span>
+                    </button>
+                    <button id="btnSalvarOrcamento" type="button" class="btn btn-primary btn-icon-text" ${totalAlteracoes ? '' : 'disabled'}>
+                        <i class="fas fa-save" aria-hidden="true"></i>
+                        <span>Salvar alterações</span>
+                    </button>
+                    <button id="btnCancelarOrcamento" type="button" class="btn btn-outline-secondary btn-icon-text" ${totalAlteracoes || orcamentoModoEdicao ? '' : 'disabled'}>
+                        <i class="fas fa-xmark" aria-hidden="true"></i>
+                        <span>Cancelar alterações</span>
+                    </button>
+                    <button id="btnExportarOrcamentoExcel" type="button" class="btn btn-outline-success btn-icon-text">
+                        <i class="fas fa-file-excel" aria-hidden="true"></i>
+                        <span>Exportar Excel</span>
+                    </button>
+                    <button id="btnHistoricoOrcamento" type="button" class="btn btn-outline-dark btn-icon-text">
+                        <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
+                        <span>Histórico</span>
+                    </button>
+                </div>
+                <small class="text-muted d-block mb-3">${totalAlteracoes} alteração(ões) pendente(s)</small>
+            `;
+        }
+
+        function renderizarCampoOrcamento(item, campo, tipo = 'text') {
+            const valor = obterValorPendenteOrcamento(item, campo);
+            if (!orcamentoModoEdicao) {
+                if (campo === 'processo_autuado') {
+                    return `<span class="profor-alert-badge profor-alert-${valor ? 'success' : 'warning'}">${valor ? 'Sim' : 'Não'}</span>`;
+                }
+                if (campo.startsWith('valor_')) return formatMoney(Number(valor) || 0);
+                if (campo === 'status') return renderizarStatusOrcamento(valor);
+                return escapeHtml(valor || '-');
+            }
+
+            if (campo === 'processo_autuado') {
+                return `
+                    <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${valor ? '1' : ''}">
+                        <option value="">Não</option>
+                        <option value="1" ${valor ? 'selected' : ''}>Sim</option>
+                    </select>
+                `;
+            }
+
+            if (campo === 'status') {
+                return `
+                    <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${escapeHtml(valor)}">
+                        ${STATUS_ORCAMENTO_EDICAO.map((status) => `<option value="${escapeHtml(status)}" ${valor === status ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}
+                    </select>
+                `;
+            }
+
+            return `
+                <input
+                    type="${tipo}"
+                    class="form-control form-control-sm budget-edit-control"
+                    value="${escapeHtml(valor ?? '')}"
+                    data-orcamento-id="${escapeHtml(item.id)}"
+                    data-orcamento-campo="${campo}"
+                    data-orcamento-original="${escapeHtml(valor ?? '')}"
+                    ${tipo === 'number' ? 'min="0" step="0.01"' : ''}
+                >
+            `;
+        }
+
+        function atualizarNovoProcessoOrcamento(tempId, campo, valor) {
+            const item = orcamentoNovosProcessos.find((processo) => processo.tempId === tempId);
+            if (!item) return;
+            item[campo] = campo === 'processo_autuado'
+                ? Boolean(valor)
+                : campo === 'valor_estimado_pesquisa_preco'
+                    ? parseNumeroMonetarioFrontend(valor)
+                    : String(valor ?? '').trim();
+        }
+
+        function renderizarLinhaNovoProcessoOrcamento(item) {
+            return `
+                <tr>
+                    <td><input type="text" class="form-control form-control-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="descricao" value="${escapeHtml(item.descricao || '')}" placeholder="Descrição"></td>
+                    <td><input type="text" class="form-control form-control-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="processo_sei" value="${escapeHtml(item.processo_sei || '')}" placeholder="Processo SEI"></td>
+                    <td class="text-end"><input type="number" min="0" step="0.01" class="form-control form-control-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="valor_estimado_pesquisa_preco" value="${escapeHtml(item.valor_estimado_pesquisa_preco ?? '')}"></td>
+                    <td>
+                        <select class="form-select form-select-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="processo_autuado">
+                            <option value="">Não</option>
+                            <option value="1" ${item.processo_autuado ? 'selected' : ''}>Sim</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="status">
+                            ${STATUS_ORCAMENTO_EDICAO.map((status) => `<option value="${escapeHtml(status)}" ${(item.status || 'PLANEJADO') === status ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control form-control-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="observacao" value="${escapeHtml(item.observacao || '')}" placeholder="Observação"></td>
+                    <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-orcamento-remover-novo="${escapeHtml(item.tempId)}" title="Remover">
+                            <i class="fas fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
         }
 
         function removerModalParametrosMinimos(id) {

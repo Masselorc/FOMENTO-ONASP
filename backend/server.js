@@ -13,7 +13,23 @@ const {
   reverterHistoricoParametrosMinimos,
   listarHistoricoParametrosMinimos
 } = require("./services/parametros-minimos-service");
-const { exportarParametrosMinimosExcel } = require("./services/excel-export-service");
+const {
+  listarFormalizacaoProfor,
+  salvarFormalizacaoProfor,
+  listarHistoricoFormalizacaoProfor,
+  inicializarFormalizacaoProfor
+} = require("./services/formalizacao-profor-service");
+const {
+  listarOrcamento2026,
+  salvarOrcamento2026,
+  listarHistoricoOrcamento2026,
+  inicializarOrcamento2026
+} = require("./services/orcamento-2026-service");
+const {
+  exportarParametrosMinimosExcel,
+  exportarFormalizacaoProforExcel,
+  exportarOrcamento2026Excel
+} = require("./services/excel-export-service");
 
 const rootDir = path.join(__dirname, "..");
 const port = Number(process.env.PORT || 8010);
@@ -131,6 +147,74 @@ async function rotearApi(req, res, pathname) {
       return;
     }
 
+    if (req.method === "GET" && pathname === "/api/formalizacao-profor") {
+      enviarJson(res, 200, listarFormalizacaoProfor());
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/formalizacao-profor/salvar") {
+      const payload = await lerJsonBody(req);
+      const resultado = salvarFormalizacaoProfor(payload);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/formalizacao-profor/historico") {
+      enviarJson(res, 200, {
+        success: true,
+        historico: listarHistoricoFormalizacaoProfor()
+      });
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/formalizacao-profor/exportar") {
+      const buffer = exportarFormalizacaoProforExcel();
+      res.writeHead(200, {
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": "attachment; filename=\"formalizacao-profor.xlsx\"",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Content-Length": buffer.length
+      });
+      res.end(buffer);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/orcamento-2026") {
+      enviarJson(res, 200, listarOrcamento2026());
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/orcamento-2026/salvar") {
+      const payload = await lerJsonBody(req);
+      const resultado = salvarOrcamento2026(payload);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/orcamento-2026/historico") {
+      enviarJson(res, 200, {
+        success: true,
+        historico: listarHistoricoOrcamento2026()
+      });
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/orcamento-2026/exportar") {
+      const buffer = exportarOrcamento2026Excel();
+      res.writeHead(200, {
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": "attachment; filename=\"orcamento-2026.xlsx\"",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Content-Length": buffer.length
+      });
+      res.end(buffer);
+      return;
+    }
+
     enviarJson(res, 404, { success: false, message: "Endpoint não encontrado." });
   } catch (error) {
     enviarJson(res, 500, {
@@ -147,6 +231,8 @@ function prepararBanco() {
   if (total === 0) {
     importarParametrosMinimos();
   }
+  inicializarFormalizacaoProfor();
+  inicializarOrcamento2026();
 }
 
 prepararBanco();

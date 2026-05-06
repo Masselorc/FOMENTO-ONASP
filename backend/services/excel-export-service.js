@@ -1,6 +1,8 @@
 const XLSX = require("xlsx");
 const { PARAMETROS_MINIMOS, statusParaTela, normalizarStatusParametroMinimo } = require("./parametros-minimos-config");
 const { listarParametrosMinimos } = require("./parametros-minimos-service");
+const { ETAPAS_FORMALIZACAO, listarFormalizacaoProfor } = require("./formalizacao-profor-service");
+const { listarOrcamento2026 } = require("./orcamento-2026-service");
 
 function statusParaExcel(statusTela) {
   const status = normalizarStatusParametroMinimo(statusTela);
@@ -40,6 +42,67 @@ function exportarParametrosMinimosExcel() {
   return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
 }
 
+function exportarFormalizacaoProforExcel() {
+  const dados = listarFormalizacaoProfor();
+  const linhas = dados.propostas.map((proposta) => {
+    const linha = { UF: proposta.uf };
+
+    ETAPAS_FORMALIZACAO.forEach((etapa) => {
+      const item = proposta.etapasFormalizacao.find((registro) => registro.key === etapa.key);
+      linha[etapa.label] = item?.status || "PENDENTE";
+    });
+    linha["Observação"] = proposta.observacoes || "";
+
+    return linha;
+  });
+
+  const workbook = XLSX.utils.book_new();
+  const sheet = XLSX.utils.json_to_sheet(linhas, {
+    header: ["UF", ...ETAPAS_FORMALIZACAO.map((item) => item.label), "Observação"]
+  });
+  XLSX.utils.book_append_sheet(workbook, sheet, "FORMALIZACAO");
+
+  return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+}
+
+function exportarOrcamento2026Excel() {
+  const dados = listarOrcamento2026();
+  const workbook = XLSX.utils.book_new();
+  const linhasOrcamento = dados.itensOficiais.map((item) => ({
+    ID: item.id,
+    Categoria: item.categoria,
+    "Descrição": item.descricao,
+    "Ação orçamentária": item.acaoOrcamentaria,
+    "Plano orçamentário": item.planoOrcamentario,
+    Natureza: item.natureza,
+    "Valor previsto": item.valorPrevisto,
+    "Valor disponibilizado": item.valorDisponibilizado,
+    "Valor estimado pesquisa de preço": item.valorEstimadoPesquisaPreco,
+    "Processo autuado": item.processoAutuado ? "Sim" : "Não",
+    "Processo SEI": item.processoSei,
+    "Valor em execução considerado": item.processoAutuado ? item.valorEstimadoPesquisaPreco : 0,
+    Status: item.status,
+    "Observação": item.observacao
+  }));
+  const linhasOutros = dados.outrosProcessos.map((item) => ({
+    ID: item.id,
+    Categoria: item.categoria,
+    "Descrição": item.descricao,
+    "Processo SEI": item.processoSei,
+    "Valor estimado pesquisa de preço": item.valorEstimadoPesquisaPreco,
+    "Processo autuado": item.processoAutuado ? "Sim" : "Não",
+    Status: item.status,
+    "Observação": item.observacao
+  }));
+
+  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(linhasOrcamento), "ORCAMENTO_2026");
+  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(linhasOutros), "OUTROS_PROCESSOS");
+
+  return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
+}
+
 module.exports = {
-  exportarParametrosMinimosExcel
+  exportarParametrosMinimosExcel,
+  exportarFormalizacaoProforExcel,
+  exportarOrcamento2026Excel
 };

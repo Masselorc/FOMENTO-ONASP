@@ -3752,7 +3752,25 @@ async function carregarPlanilhaOrcamento() {
     }
 }
 
-export async function carregarDadosOrcamento() {
+export async function carregarDadosOrcamento(forcarRecarregamento = false) {
+    if (forcarRecarregamento) {
+        dadosOrcamentoCache = null;
+    }
+
+    if (dadosOrcamentoCache) {
+        return dadosOrcamentoCache;
+    }
+
+    try {
+        const { resposta: respostaApi, payload } = await fetchJsonApiOnasp('/api/orcamento-2026');
+        if (respostaApi.ok) {
+            dadosOrcamentoCache = payload;
+            return dadosOrcamentoCache;
+        }
+    } catch (apiError) {
+        console.warn('API de orçamento 2026 indisponível; usando fallback da planilha.', apiError);
+    }
+
     return carregarPlanilhaOrcamento();
 }
 
@@ -3818,7 +3836,11 @@ export async function carregarDadosDiagnosticoOuvidorias(forcarRecarregamento = 
     }
 }
 
-export async function carregarDadosFormalizacaoProfor() {
+export async function carregarDadosFormalizacaoProfor(forcarRecarregamento = false) {
+    if (forcarRecarregamento) {
+        dadosFormalizacaoProforCache = null;
+    }
+
     if (dadosFormalizacaoProforCache) {
         return dadosFormalizacaoProforCache;
     }
@@ -3826,6 +3848,16 @@ export async function carregarDadosFormalizacaoProfor() {
     try {
         if (window.location.protocol === 'file:') {
             throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de formalizacao.');
+        }
+
+        try {
+            const { resposta: respostaApi, payload } = await fetchJsonApiOnasp('/api/formalizacao-profor');
+            if (respostaApi.ok) {
+                dadosFormalizacaoProforCache = payload;
+                return dadosFormalizacaoProforCache;
+            }
+        } catch (apiError) {
+            console.warn('API de formalizacao PROFOR indisponivel; usando fallback da planilha.', apiError);
         }
 
         const workbook = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR, 'Planilha de formalizacao');

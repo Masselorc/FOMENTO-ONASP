@@ -49,6 +49,11 @@ function inicializarBanco() {
 
   garantirColuna("parametros_minimos", "quantidade_atual", "REAL");
   garantirColuna("parametros_minimos", "quantidade_ideal", "REAL");
+  garantirColuna("orcamento_2026", "valor_estimado_pesquisa_preco", "REAL DEFAULT 0");
+  garantirColuna("orcamento_2026", "processo_autuado", "INTEGER DEFAULT 0");
+  garantirColuna("orcamento_2026", "processo_sei", "TEXT");
+  garantirColuna("orcamento_2026", "compoe_orcamento", "INTEGER DEFAULT 1");
+  garantirColuna("orcamento_2026", "ativo", "INTEGER DEFAULT 1");
 }
 
 function garantirColuna(tabela, coluna, definicao) {
@@ -64,5 +69,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  inicializarBanco
+  inicializarBanco,
+  garantirColuna
 };
