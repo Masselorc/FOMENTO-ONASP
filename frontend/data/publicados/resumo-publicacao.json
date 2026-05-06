@@ -1,14 +1,41 @@
 {
-  "publicadoEm": "2026-05-06T23:24:27.151Z",
+  "publicadoEm": "2026-05-06T23:34:12.002Z",
   "fonte": "SQLite local",
   "arquivos": [
     "aplicacao.json",
+    "dashboard-geral.json",
     "parametros-minimos.json",
     "formalizacao-profor.json",
     "orcamento-2026.json"
   ],
   "totais": {
-    "aplicacaoDadosBase": 165,
+    "aplicacaoDadosBase": 309,
+    "dashboard": {
+      "totalFomento": 6028180.9,
+      "totalConvenios": 1669823.9,
+      "totalFaf": 1757357,
+      "totalDoacoes": 2601000,
+      "ufsConvenios": [
+        "AC",
+        "AL",
+        "AM",
+        "GO",
+        "MA",
+        "MS",
+        "MT",
+        "PB",
+        "PI",
+        "PR",
+        "RJ",
+        "RO",
+        "SC",
+        "SP",
+        "TO"
+      ],
+      "quantidadeUfsConvenios": 15
+    },
+    "itensConvenio": 144,
+    "conveniosProfor2022": 15,
     "parametrosMinimos": 28,
     "formalizacaoProfor": 14,
     "orcamento2026": 10

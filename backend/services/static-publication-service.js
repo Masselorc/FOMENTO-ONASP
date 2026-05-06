@@ -4,6 +4,7 @@ const path = require("path");
 const { listarParametrosMinimos } = require("./parametros-minimos-service");
 const { listarFormalizacaoProfor } = require("./formalizacao-profor-service");
 const { listarOrcamento2026 } = require("./orcamento-2026-service");
+const { consolidarCatalogoDashboard } = require("./dashboard-publication-service");
 
 const publicDir = path.join(__dirname, "..", "..", "frontend", "data", "publicados");
 const catalogoAplicacaoPath = path.join(__dirname, "..", "data", "aplicacao.json");
@@ -51,12 +52,14 @@ async function publicarDadosEstaticos() {
   const formalizacaoProfor = await listarFormalizacaoProfor();
   const orcamento2026 = await listarOrcamento2026();
   const publicadoEm = new Date().toISOString();
+  const dashboard = consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm);
 
   const parametrosMinimosPublicos = sanitizarParametrosMinimos(parametrosMinimos);
   const formalizacaoProforPublico = sanitizarFormalizacaoProfor(formalizacaoProfor);
   const orcamento2026Publico = sanitizarOrcamento2026(orcamento2026);
 
-  escreverJsonAtomico("aplicacao.json", catalogoAplicacao);
+  escreverJsonAtomico("aplicacao.json", dashboard.catalogoPublicado);
+  escreverJsonAtomico("dashboard-geral.json", dashboard.dashboardGeral);
   escreverJsonAtomico("parametros-minimos.json", parametrosMinimosPublicos);
   escreverJsonAtomico("formalizacao-profor.json", formalizacaoProforPublico);
   escreverJsonAtomico("orcamento-2026.json", orcamento2026Publico);
@@ -65,12 +68,16 @@ async function publicarDadosEstaticos() {
     fonte: "SQLite local",
     arquivos: [
       "aplicacao.json",
+      "dashboard-geral.json",
       "parametros-minimos.json",
       "formalizacao-profor.json",
       "orcamento-2026.json"
     ],
     totais: {
-      aplicacaoDadosBase: contarItensPublicados(catalogoAplicacao, ["dadosBase"]),
+      aplicacaoDadosBase: contarItensPublicados(dashboard.catalogoPublicado, ["dadosBase"]),
+      dashboard: dashboard.resumoDashboard,
+      itensConvenio: dashboard.totaisExtracao.itensConvenio,
+      conveniosProfor2022: dashboard.totaisExtracao.conveniosProfor2022,
       parametrosMinimos: contarItensPublicados(parametrosMinimosPublicos, ["respostas", "ufs"]),
       formalizacaoProfor: contarItensPublicados(formalizacaoProforPublico, ["propostas", "ufs"]),
       orcamento2026: contarItensPublicados(orcamento2026Publico, ["itens", "itensOficiais"])
