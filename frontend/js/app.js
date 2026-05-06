@@ -3811,14 +3811,14 @@ async function carregarLogoParaPDF() {
                 resumo.frentes.add(item.frente);
                 resumo.modalidades.add(item.modalidade);
                 resumo.status[item.status] = (resumo.status[item.status] || 0) + valorTotal;
-                if (item.processoAutuado) {
-                    resumo.empenhado += valorEstimado;
-                }
+                resumo.emExecucao += valorEstimado;
+                resumo.empenhado += Number(item.valorEmpenhado) || 0;
                 resumo.executado += Number(item.valorExecutado) || 0;
                 return resumo;
             }, {
                 total: 0,
                 quantidade: 0,
+                emExecucao: 0,
                 empenhado: 0,
                 executado: 0,
                 frentes: new Set(),
@@ -3943,8 +3943,8 @@ async function carregarLogoParaPDF() {
 
             if (!links.length) {
                 return item.processoSei
-                    ? `<span class="budget-tracking-ref">${escapeHtml(item.processoSei)}</span>`
-                    : '<span class="text-muted">-</span>';
+                    ? `<span class="budget-tracking-ref budget-sei-fallback" title="${escapeHtml(item.processoSei)}">SEI</span>`
+                    : '';
             }
 
             return `
@@ -4169,7 +4169,7 @@ async function carregarLogoParaPDF() {
 
             return `
                 <tr class="budget-tracking-row pdf-hidden" id="${escapeHtml(idRastreio)}">
-                    <td colspan="8" class="budget-tracking-cell">
+                    <td colspan="10" class="budget-tracking-cell">
                         <div class="budget-tracking-panel" aria-label="Rastreio processual de ${escapeHtml(item.descricao)}">
                             <div class="budget-tracking-header">
                                 <div>
@@ -4255,8 +4255,16 @@ async function carregarLogoParaPDF() {
                             </div>
                             <div class="budget-edit-grid">
                                 <label>
-                                    <span>Valor estimado da pesquisa de preço</span>
-                                    ${renderizarCampoOrcamento(item, 'valor_estimado_pesquisa_preco', 'number')}
+                                    <span>Valor em execução (pesquisa de preço)</span>
+                                    ${renderizarCampoOrcamento(item, 'valor_estimado_pesquisa_preco', 'money')}
+                                </label>
+                                <label>
+                                    <span>Valor empenhado (notas de empenho)</span>
+                                    ${renderizarCampoOrcamento(item, 'valor_empenhado', 'money')}
+                                </label>
+                                <label>
+                                    <span>Valor executado (ordens bancárias)</span>
+                                    ${renderizarCampoOrcamento(item, 'valor_executado', 'money')}
                                 </label>
                                 <label>
                                     <span>Processo autuado</span>
@@ -4306,14 +4314,15 @@ async function carregarLogoParaPDF() {
             );
 
             document.getElementById('budget-selected-total').textContent = formatMoney(resumoSelecao.total);
-            document.getElementById('budget-selected-running').textContent = formatMoney(resumoSelecao.empenhado);
+            document.getElementById('budget-selected-running').textContent = formatMoney(resumoSelecao.emExecucao);
+            document.getElementById('budget-selected-committed').textContent = formatMoney(resumoSelecao.empenhado);
             document.getElementById('budget-selected-executed').textContent = formatMoney(resumoSelecao.executado);
 
             const grupos = agruparItensOrcamentoPorFrente(itensFiltrados);
             if (!grupos.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-4">
+                        <td colspan="10" class="text-center text-muted py-4">
                             Nenhum item orçamentário foi encontrado para os filtros selecionados.
                         </td>
                     </tr>
@@ -4330,13 +4339,15 @@ async function carregarLogoParaPDF() {
                     const quantidadeUnidade = [item.quantidade, item.unidade].filter(Boolean).join(' ');
                     const processoAutuado = normalizarBooleanOrcamento(obterValorPendenteOrcamento(item, 'processo_autuado'));
                     const valorEstimado = obterValorPendenteOrcamento(item, 'valor_estimado_pesquisa_preco');
+                    const valorEmpenhado = obterValorPendenteOrcamento(item, 'valor_empenhado');
+                    const valorExecutado = obterValorPendenteOrcamento(item, 'valor_executado');
                     const processoSei = obterValorPendenteOrcamento(item, 'processo_sei') || item.processoSei;
                     const status = obterValorPendenteOrcamento(item, 'status');
                     const observacao = obterValorPendenteOrcamento(item, 'observacao');
 
                     return `
                     <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
-                        <td data-label="Item" class="align-middle">
+                        <td data-label="Item" class="align-middle budget-item-cell">
                             ${podeExibirRastreio ? `
                                 <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
                                     <span>${escapeHtml(item.descricao)}</span>
@@ -4354,28 +4365,31 @@ async function carregarLogoParaPDF() {
                             <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
                         </td>
                         <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorPrevisto ?? item.valorTotal)}</td>
-                        <td data-label="Valor estimado" class="text-end font-monospace align-middle">
+                        <td data-label="Em execução" class="text-end font-monospace align-middle">
                             <span class="d-block">${formatMoney(Number(valorEstimado) || 0)}</span>
                             <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} mt-1">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
                         </td>
-                        <td data-label="Status/SEI" class="text-center align-middle">
+                        <td data-label="Empenhado" class="text-end font-monospace align-middle">${formatMoney(Number(valorEmpenhado) || 0)}</td>
+                        <td data-label="Executado" class="text-end font-monospace align-middle">${formatMoney(Number(valorExecutado) || 0)}</td>
+                        <td data-label="Status" class="text-center align-middle">
                             ${renderizarStatusOrcamento(status)}
-                            ${processoSei ? `<div class="budget-item-meta mt-1">SEI ${escapeHtml(processoSei)}</div>` : ''}
-                            ${observacao ? `<div class="budget-row-note mt-1">${escapeHtml(observacao)}</div>` : ''}
                         </td>
-                        <td data-label="Links" class="text-center align-middle">${renderizarLinksOrcamento(item)}</td>
+                        <td data-label="Observação" class="align-middle">${observacao ? `<div class="budget-row-note" title="${escapeHtml(observacao)}">${escapeHtml(observacao)}</div>` : '<span class="text-muted">-</span>'}</td>
                         <td data-label="Ações" class="text-end align-middle">
-                            <div class="budget-row-actions">${renderizarBotaoEdicaoOrcamento(item.id)}</div>
+                            <div class="budget-row-actions justify-content-end">
+                                ${renderizarLinksOrcamento(item)}
+                                ${renderizarBotaoEdicaoOrcamento(item.id)}
+                            </div>
                         </td>
                     </tr>
-                    ${renderizarPainelEdicaoOrcamento(item, 8)}
+                    ${renderizarPainelEdicaoOrcamento(item, 10)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
                 `;
                 }).join('');
 
                 return `
                     <tr class="budget-group-row">
-                        <td colspan="8">
+                        <td colspan="10">
                             <div class="budget-group-heading">
                                 <div>
                                     <span class="budget-group-label">Frente</span>
@@ -4732,10 +4746,10 @@ async function carregarLogoParaPDF() {
             const resumo = budgetData.resumo || {};
             const filtros = budgetData.filtros || { status: [], naturezas: [], modalidades: [] };
             const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
+            const valorEmpenhado = resumo.valorEmpenhado ?? resumo.totalEmpenhado ?? 0;
+            const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
             const saldoPlanejado = resumo.saldoPlanejado ?? ((resumo.totalOrcamento || resumo.totalGeral || 0) - valorEmExecucao);
-            const percentualEmExecucao = resumo.percentualEmExecucao || 0;
             const processosAutuados = resumo.processosAutuados || 0;
-            const totalCapital = obterTotalResumoOrcamento(resumo.porNatureza, 'Capital');
 
             container.innerHTML = `
                 <section class="dashboard-intro budget-intro">
@@ -4757,35 +4771,35 @@ async function carregarLogoParaPDF() {
                         <div class="card kpi-card kpi-card-success">
                             <div class="kpi-title"><i class="fas fa-wallet" aria-hidden="true"></i>Total do orçamento</div>
                             <div class="kpi-value text-money text-success">${formatMoney(resumo.totalOrcamento ?? resumo.totalGeral)}</div>
-                            <div class="kpi-desc">Itens oficiais com compõe orçamento</div>
+                            <div class="kpi-desc">Orçamento oficial ONASP</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card kpi-card-warning">
                             <div class="kpi-title"><i class="fas fa-hourglass-half" aria-hidden="true"></i>Valor em Execução</div>
                             <div class="kpi-value text-money text-warning">${formatMoney(valorEmExecucao)}</div>
-                            <div class="kpi-desc">Pesquisa de preço de processos autuados</div>
+                            <div class="kpi-desc">Soma das pesquisas de preço cadastradas</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card kpi-card-info">
-                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Saldo planejado</div>
-                            <div class="kpi-value text-money text-info">${formatMoney(saldoPlanejado)}</div>
-                            <div class="kpi-desc">Total oficial menos valor em execução</div>
+                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Valor empenhado</div>
+                            <div class="kpi-value text-money text-info">${formatMoney(valorEmpenhado)}</div>
+                            <div class="kpi-desc">Soma das notas de empenho emitidas</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card kpi-card-success">
-                            <div class="kpi-title"><i class="fas fa-chart-line" aria-hidden="true"></i>% em execução</div>
-                            <div class="kpi-value">${formatPercent(percentualEmExecucao)}</div>
-                            <div class="kpi-desc">Valor em execução / orçamento</div>
+                            <div class="kpi-title"><i class="fas fa-money-check-alt" aria-hidden="true"></i>Valor executado</div>
+                            <div class="kpi-value text-money text-success">${formatMoney(valorExecutado)}</div>
+                            <div class="kpi-desc">Soma das ordens bancárias realizadas</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="card kpi-card">
-                            <div class="kpi-title"><i class="fas fa-folder-open" aria-hidden="true"></i>Processos autuados</div>
-                            <div class="kpi-value">${processosAutuados}</div>
-                            <div class="kpi-desc">${formatMoney(totalCapital)} em capital previsto</div>
+                            <div class="kpi-title"><i class="fas fa-vault" aria-hidden="true"></i>Saldo planejado</div>
+                            <div class="kpi-value text-money">${formatMoney(saldoPlanejado)}</div>
+                            <div class="kpi-desc">${processosAutuados} processo(s) autuado(s)</div>
                         </div>
                     </div>
                 </section>
@@ -4830,7 +4844,7 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
-                <section class="budget-insight-grid mb-4" aria-label="Resumo da seleção orçamentária">
+                <section class="budget-insight-grid budget-insight-grid-four mb-4" aria-label="Resumo da seleção orçamentária">
                     <div class="card kpi-card dynamic-card budget-insight-card py-2">
                         <div>
                             <div class="kpi-title mb-0">Valor Filtrado</div>
@@ -4847,6 +4861,13 @@ async function carregarLogoParaPDF() {
                     </div>
                     <div class="card kpi-card dynamic-card budget-insight-card py-2">
                         <div>
+                            <div class="kpi-title mb-0">Valor Empenhado</div>
+                            <div class="kpi-value text-money text-info" id="budget-selected-committed">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-building-columns card-watermark text-info" aria-hidden="true"></i>
+                    </div>
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
                             <div class="kpi-title mb-0">Valor Executado</div>
                             <div class="kpi-value text-money text-success" id="budget-selected-executed">R$ 0,00</div>
                         </div>
@@ -4857,7 +4878,8 @@ async function carregarLogoParaPDF() {
                 <section class="table-container mb-5">
                     <div class="section-header compact">
                         <div>
-                            <p class="section-eyebrow mb-1">Itens orçamentários</p>
+                            <h2>Itens do Orçamento 2026</h2>
+                            <p class="section-eyebrow mb-0">Itens orçamentários</p>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -4868,9 +4890,11 @@ async function carregarLogoParaPDF() {
                                     <th>Modalidade/Natureza</th>
                                     <th>Abrangência/Qtd.</th>
                                     <th class="text-end">Valor previsto</th>
-                                    <th class="text-end">Valor estimado</th>
-                                    <th class="text-center">Status/SEI</th>
-                                    <th class="text-center">Links</th>
+                                    <th class="text-end">Em execução</th>
+                                    <th class="text-end">Empenhado</th>
+                                    <th class="text-end">Executado</th>
+                                    <th class="text-center">Status</th>
+                                    <th>Observação</th>
                                     <th class="text-end">Ações</th>
                                 </tr>
                             </thead>
@@ -6015,6 +6039,14 @@ async function carregarLogoParaPDF() {
             return Number.parseFloat(normalizado) || 0;
         }
 
+        function formatarValorMonetarioInput(valor) {
+            const numero = Number(valor) || 0;
+            return numero.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
         function obterQuantidadeAlteracoesOrcamento() {
             const alteracoes = Object.values(orcamentoAlteracoesPendentes)
                 .reduce((total, campos) => total + Object.keys(campos || {}).length, 0);
@@ -6034,13 +6066,15 @@ async function carregarLogoParaPDF() {
         function obterValorOriginalOrcamento(item, campo, fallback = '') {
             const mapa = {
                 valor_estimado_pesquisa_preco: item.valorEstimadoPesquisaPreco,
+                valor_empenhado: item.valorEmpenhado,
                 processo_autuado: item.processoAutuado,
                 processo_sei: item.processoSei,
                 status: item.status,
                 observacao: item.observacao,
                 descricao: item.descricao,
                 categoria: item.categoria || item.frente,
-                natureza: item.natureza
+                natureza: item.natureza,
+                valor_executado: item.valorExecutado
             };
             return mapa[campo] ?? fallback;
         }
@@ -6132,15 +6166,19 @@ async function carregarLogoParaPDF() {
             }
 
             return `
+                <div class="${tipo === 'money' ? 'input-group input-group-sm' : ''}">
+                    ${tipo === 'money' ? '<span class="input-group-text">R$</span>' : ''}
                 <input
-                    type="${tipo}"
+                    type="${tipo === 'money' ? 'text' : tipo}"
                     class="form-control form-control-sm budget-edit-control"
-                    value="${escapeHtml(valor ?? '')}"
+                    value="${escapeHtml(tipo === 'money' ? formatarValorMonetarioInput(valor) : (valor ?? ''))}"
                     data-orcamento-id="${escapeHtml(item.id)}"
                     data-orcamento-campo="${campo}"
                     data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
                     ${tipo === 'number' ? 'min="0" step="0.01"' : ''}
+                    ${tipo === 'money' ? 'inputmode="decimal" placeholder="0,00"' : ''}
                 >
+                </div>
             `;
         }
 

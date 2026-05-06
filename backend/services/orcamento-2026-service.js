@@ -576,6 +576,8 @@ function agruparResumo(itens, chave, campoValor = "valorPrevisto") {
 function montarResumo(itensOficiais) {
   const totalOrcamento = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorPrevisto, 0));
   const valorEmExecucao = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorEmExecucaoConsiderado, 0));
+  const valorEmpenhado = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorEmpenhado, 0));
+  const valorExecutado = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorExecutado, 0));
   const saldoPlanejado = arredondarMoeda(totalOrcamento - valorEmExecucao);
   const processosAutuados = itensOficiais.filter((item) => item.processoAutuado).length;
 
@@ -583,10 +585,12 @@ function montarResumo(itensOficiais) {
     totalGeral: totalOrcamento,
     totalOrcamento,
     totalItens: itensOficiais.length,
-    totalEmpenhado: valorEmExecucao,
+    totalEmpenhado: valorEmpenhado,
+    valorEmpenhado,
     totalEmExecucao: valorEmExecucao,
     valorEmExecucao,
-    totalExecutado: arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorExecutado, 0)),
+    totalExecutado: valorExecutado,
+    valorExecutado,
     saldoPlanejado,
     percentualEmExecucao: totalOrcamento > 0 ? (valorEmExecucao / totalOrcamento) * 100 : 0,
     processosAutuados,
@@ -632,7 +636,7 @@ function listarOrcamento2026() {
 }
 
 function valorParaBanco(campo, valor) {
-  if (["valor_previsto", "valor_disponibilizado", "valor_executado", "valor_estimado_pesquisa_preco"].includes(campo)) {
+  if (["valor_previsto", "valor_disponibilizado", "valor_empenhado", "valor_executado", "valor_estimado_pesquisa_preco"].includes(campo)) {
     return arredondarMoeda(converterNumero(valor));
   }
   if (campo === "processo_autuado") return valor ? 1 : 0;
