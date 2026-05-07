@@ -180,6 +180,7 @@ function renderStatusBadge(status, options = {}) {
 }
 
 function renderActionButton({
+    id = '',
     type,
     label,
     onClick,
@@ -189,13 +190,15 @@ function renderActionButton({
     disabled = false,
     title = '',
     extraClass = '',
-    iconOnly = false
+    iconOnly = false,
+    attributes = ''
 }) {
     const icon = UI_ICONS[type] || 'fa-circle';
     const backendAttr = backend ? 'data-requer-backend="true"' : '';
     const disabledAttr = disabled ? 'disabled aria-disabled="true"' : '';
     const titleAttr = title ? `title="${escapeHtml(title)}"` : '';
     const onClickAttr = onClick ? `onclick="${escapeHtml(onClick)}"` : '';
+    const idAttr = id ? `id="${escapeHtml(id)}"` : '';
     const labelHtml = iconOnly
         ? `<span class="visually-hidden">${escapeHtml(label)}</span>`
         : `<span>${escapeHtml(label)}</span>`;
@@ -203,10 +206,12 @@ function renderActionButton({
     return `
         <button type="button"
             class="btn btn-${size} btn-${variant} ${iconOnly ? 'btn-icon-only' : 'btn-icon-text'} ${extraClass}"
+            ${idAttr}
             ${onClickAttr}
             ${backendAttr}
             ${disabledAttr}
-            ${titleAttr}>
+            ${titleAttr}
+            ${attributes}>
             <i class="fas ${icon}" aria-hidden="true"></i>
             ${labelHtml}
         </button>
@@ -293,8 +298,11 @@ function aplicarModoSomenteLeitura() {
         .querySelectorAll('[data-requer-backend="true"]')
         .forEach((elemento) => {
             elemento.setAttribute('disabled', 'disabled');
+            elemento.setAttribute('aria-disabled', 'true');
             elemento.classList.add('disabled');
-            elemento.title = 'Disponível apenas no modo local.';
+            if (!elemento.title) {
+                elemento.title = 'Disponível apenas no modo local.';
+            }
         });
 }
 
@@ -2878,10 +2886,14 @@ async function carregarLogoParaPDF() {
                         ${renderizarChecklistCardFormalizacao(proposta, 'projeto', 'Docs do projeto', proposta.documentosProjeto, proposta.progressoDocumentosProjeto)}
                         ${renderizarChecklistCardFormalizacao(proposta, 'formalizacao', 'Docs da formalização', proposta.documentosFormalizacao, proposta.progressoDocumentosFormalizacao)}
                     </div>
-                    <button type="button" class="btn btn-outline-primary btn-icon-text formalizacao-open-button" data-formalizacao-uf="${escapeHtml(proposta.uf)}">
-                        <i class="fas fa-arrow-right" aria-hidden="true"></i>
-                        <span>Abrir UF</span>
-                    </button>
+                    ${renderActionButton({
+                        type: 'info',
+                        label: 'Abrir UF',
+                        variant: 'outline-primary',
+                        extraClass: 'formalizacao-open-button',
+                        title: `Abrir detalhamento de ${proposta.uf}`,
+                        attributes: `data-formalizacao-uf="${escapeHtml(proposta.uf)}"`
+                    })}
                 </article>
             `;
         }
@@ -3074,12 +3086,27 @@ async function carregarLogoParaPDF() {
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarBotaoEdicaoFormalizacao(proposta.uf)}
                                 ${formalizacaoItemEmEdicao(proposta.uf) ? `
-                                <button type="button" class="btn btn-sm btn-primary budget-row-action" data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}" title="Salvar alterações" ${obterQuantidadeAlteracoesFormalizacao(proposta.uf) ? '' : 'disabled'}>
-                                    <i class="fas fa-save" aria-hidden="true"></i>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary budget-row-action" data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}" title="Cancelar edição">
-                                    <i class="fas fa-xmark" aria-hidden="true"></i>
-                                </button>
+                                ${renderActionButton({
+                                    type: 'save',
+                                    label: 'Salvar alterações',
+                                    variant: 'primary',
+                                    backend: true,
+                                    disabled: !obterQuantidadeAlteracoesFormalizacao(proposta.uf),
+                                    title: 'Salvar alterações',
+                                    iconOnly: true,
+                                    extraClass: 'budget-row-action',
+                                    attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                                })}
+                                ${renderActionButton({
+                                    type: 'cancel',
+                                    label: 'Cancelar edição',
+                                    variant: 'outline-secondary',
+                                    backend: true,
+                                    title: 'Cancelar edição',
+                                    iconOnly: true,
+                                    extraClass: 'budget-row-action',
+                                    attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                                })}
                                 ` : ''}
                             </div>
                         </td>
@@ -3296,14 +3323,22 @@ async function carregarLogoParaPDF() {
                                 : '<small class="text-muted">Edite cada UF pelo botão no fim da linha.</small>'}
                     </div>
                     <div class="diagnostico-action-buttons">
-                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarFormalizacao" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
-                            <i class="fas fa-file-excel" aria-hidden="true"></i>
-                            <span>Exportar Excel</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoFormalizacao" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
-                            <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
-                            <span>Histórico</span>
-                        </button>
+                        ${renderActionButton({
+                            id: 'btnExportarFormalizacao',
+                            type: 'exportExcel',
+                            label: 'Exportar Excel',
+                            variant: 'outline-success',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
+                        ${renderActionButton({
+                            id: 'btnHistoricoFormalizacao',
+                            type: 'history',
+                            label: 'Histórico',
+                            variant: 'outline-dark',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
                     </div>
                 </section>
             `;
@@ -3353,18 +3388,16 @@ async function carregarLogoParaPDF() {
 
             const id = String(uf);
             const ativo = formalizacaoItemEmEdicao(id);
-            return `
-                <button
-                    type="button"
-                    class="btn btn-sm ${ativo ? 'btn-primary' : 'btn-outline-primary'} budget-row-action budget-row-action-edit"
-                    data-formalizacao-toggle-editor="${escapeHtml(id)}"
-                    title="${ativo ? 'Fechar edição desta UF' : 'Editar esta UF'}"
-                    aria-pressed="${ativo ? 'true' : 'false'}"
-                >
-                    <i class="fas ${ativo ? 'fa-check' : 'fa-pen'}" aria-hidden="true"></i>
-                    <span class="visually-hidden">${ativo ? 'Fechar edição' : 'Editar'}</span>
-                </button>
-            `;
+            return renderActionButton({
+                type: ativo ? 'success' : 'edit',
+                label: ativo ? 'Fechar edição' : 'Editar',
+                variant: ativo ? 'primary' : 'outline-primary',
+                backend: true,
+                iconOnly: true,
+                title: ativo ? 'Fechar edição desta UF' : 'Editar esta UF',
+                extraClass: 'budget-row-action budget-row-action-edit',
+                attributes: `data-formalizacao-toggle-editor="${escapeHtml(id)}" aria-pressed="${ativo ? 'true' : 'false'}"`
+            });
         }
 
         function renderizarPainelEdicaoFormalizacaoUf(proposta, colspan = 9) {
@@ -3391,14 +3424,21 @@ async function carregarLogoParaPDF() {
                                 `).join('')}
                             </div>
                             <div class="budget-edit-panel-actions">
-                                <button type="button" class="btn btn-sm btn-primary btn-icon-text" data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}" ${alteracoesUf ? '' : 'disabled'}>
-                                    <i class="fas fa-save" aria-hidden="true"></i>
-                                    <span>Salvar</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-text" data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}">
-                                    <i class="fas fa-xmark" aria-hidden="true"></i>
-                                    <span>Cancelar</span>
-                                </button>
+                                ${renderActionButton({
+                                    type: 'save',
+                                    label: 'Salvar',
+                                    variant: 'primary',
+                                    backend: true,
+                                    disabled: !alteracoesUf,
+                                    attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                                })}
+                                ${renderActionButton({
+                                    type: 'cancel',
+                                    label: 'Cancelar',
+                                    variant: 'outline-secondary',
+                                    backend: true,
+                                    attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                                })}
                             </div>
                         </div>
                     </td>
@@ -3444,12 +3484,27 @@ async function carregarLogoParaPDF() {
                                                 <div class="budget-row-actions justify-content-center">
                                                     ${renderizarBotaoEdicaoFormalizacao(proposta.uf)}
                                                     ${formalizacaoItemEmEdicao(proposta.uf) ? `
-                                                    <button type="button" class="btn btn-sm btn-primary budget-row-action" data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}" title="Salvar alterações" ${obterQuantidadeAlteracoesFormalizacao(proposta.uf) ? '' : 'disabled'}>
-                                                        <i class="fas fa-save" aria-hidden="true"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary budget-row-action" data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}" title="Cancelar edição">
-                                                        <i class="fas fa-xmark" aria-hidden="true"></i>
-                                                    </button>
+                                                    ${renderActionButton({
+                                                        type: 'save',
+                                                        label: 'Salvar alterações',
+                                                        variant: 'primary',
+                                                        backend: true,
+                                                        disabled: !obterQuantidadeAlteracoesFormalizacao(proposta.uf),
+                                                        title: 'Salvar alterações',
+                                                        iconOnly: true,
+                                                        extraClass: 'budget-row-action',
+                                                        attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                                                    })}
+                                                    ${renderActionButton({
+                                                        type: 'cancel',
+                                                        label: 'Cancelar edição',
+                                                        variant: 'outline-secondary',
+                                                        backend: true,
+                                                        title: 'Cancelar edição',
+                                                        iconOnly: true,
+                                                        extraClass: 'budget-row-action',
+                                                        attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                                                    })}
                                                     ` : ''}
                                                 </div>
                                             </td>
@@ -3509,7 +3564,13 @@ async function carregarLogoParaPDF() {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="confirmarSalvarFormalizacao">Confirmar e salvar</button>
+                                ${renderActionButton({
+                                    id: 'confirmarSalvarFormalizacao',
+                                    type: 'save',
+                                    label: 'Confirmar e salvar',
+                                    variant: 'primary',
+                                    backend: true
+                                })}
                             </div>
                         </div>
                     </div>
@@ -4726,18 +4787,16 @@ async function carregarLogoParaPDF() {
 
             const id = String(itemId);
             const ativo = orcamentoItemEmEdicao(id);
-            return `
-                <button
-                    type="button"
-                    class="btn btn-sm ${ativo ? 'btn-primary' : 'btn-outline-primary'} budget-row-action budget-row-action-edit"
-                    data-orcamento-toggle-editor="${escapeHtml(id)}"
-                    title="${ativo ? 'Fechar edição deste item' : 'Editar este item'}"
-                    aria-pressed="${ativo ? 'true' : 'false'}"
-                >
-                    <i class="fas ${ativo ? 'fa-check' : 'fa-pen'}" aria-hidden="true"></i>
-                    <span class="visually-hidden">${ativo ? 'Fechar edição' : 'Editar'}</span>
-                </button>
-            `;
+            return renderActionButton({
+                type: ativo ? 'success' : 'edit',
+                label: ativo ? 'Fechar edição' : 'Editar',
+                variant: ativo ? 'primary' : 'outline-primary',
+                backend: true,
+                iconOnly: true,
+                title: ativo ? 'Fechar edição deste item' : 'Editar este item',
+                extraClass: 'budget-row-action budget-row-action-edit',
+                attributes: `data-orcamento-toggle-editor="${escapeHtml(id)}" aria-pressed="${ativo ? 'true' : 'false'}"`
+            });
         }
 
         function renderizarCabecalhoColunasOrcamento() {
@@ -4807,14 +4866,21 @@ async function carregarLogoParaPDF() {
                                 </label>
                             </div>
                             <div class="budget-edit-panel-actions">
-                                <button type="button" class="btn btn-sm btn-primary btn-icon-text" data-orcamento-salvar-linha="${escapeHtml(itemId)}" ${obterQuantidadeAlteracoesLinhaOrcamento(itemId) ? '' : 'disabled'}>
-                                    <i class="fas fa-save" aria-hidden="true"></i>
-                                    <span>Salvar</span>
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-text" data-orcamento-cancelar-linha="${escapeHtml(itemId)}">
-                                    <i class="fas fa-xmark" aria-hidden="true"></i>
-                                    <span>Cancelar</span>
-                                </button>
+                                ${renderActionButton({
+                                    type: 'save',
+                                    label: 'Salvar',
+                                    variant: 'primary',
+                                    backend: true,
+                                    disabled: !obterQuantidadeAlteracoesLinhaOrcamento(itemId),
+                                    attributes: `data-orcamento-salvar-linha="${escapeHtml(itemId)}"`
+                                })}
+                                ${renderActionButton({
+                                    type: 'cancel',
+                                    label: 'Cancelar',
+                                    variant: 'outline-secondary',
+                                    backend: true,
+                                    attributes: `data-orcamento-cancelar-linha="${escapeHtml(itemId)}"`
+                                })}
                             </div>
                         </div>
                     </td>
@@ -5076,15 +5142,37 @@ async function carregarLogoParaPDF() {
                         <div class="budget-row-actions justify-content-center">
                             ${renderizarBotaoEdicaoOrcamento(item.id)}
                             ${editando ? `
-                            <button type="button" class="btn btn-sm btn-primary budget-row-action" data-orcamento-salvar-linha="${escapeHtml(item.id)}" title="Salvar alterações" ${obterQuantidadeAlteracoesLinhaOrcamento(item.id) ? '' : 'disabled'}>
-                                <i class="fas fa-save" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary budget-row-action" data-orcamento-cancelar-linha="${escapeHtml(item.id)}" title="Cancelar edição">
-                                <i class="fas fa-xmark" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger budget-row-action" data-orcamento-inativar="${escapeHtml(item.id)}" title="Inativar">
-                                <i class="fas fa-trash" aria-hidden="true"></i>
-                            </button>
+                            ${renderActionButton({
+                                type: 'save',
+                                label: 'Salvar alterações',
+                                variant: 'primary',
+                                backend: true,
+                                disabled: !obterQuantidadeAlteracoesLinhaOrcamento(item.id),
+                                title: 'Salvar alterações',
+                                iconOnly: true,
+                                extraClass: 'budget-row-action',
+                                attributes: `data-orcamento-salvar-linha="${escapeHtml(item.id)}"`
+                            })}
+                            ${renderActionButton({
+                                type: 'cancel',
+                                label: 'Cancelar edição',
+                                variant: 'outline-secondary',
+                                backend: true,
+                                title: 'Cancelar edição',
+                                iconOnly: true,
+                                extraClass: 'budget-row-action',
+                                attributes: `data-orcamento-cancelar-linha="${escapeHtml(item.id)}"`
+                            })}
+                            ${renderActionButton({
+                                type: 'cancel',
+                                label: 'Inativar',
+                                variant: 'outline-danger',
+                                backend: true,
+                                title: 'Inativar',
+                                iconOnly: true,
+                                extraClass: 'budget-row-action',
+                                attributes: `data-orcamento-inativar="${escapeHtml(item.id)}"`
+                            })}
                             ` : ''}
                         </div>
                     </td>
@@ -5167,7 +5255,13 @@ async function carregarLogoParaPDF() {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="confirmarSalvarOrcamento">Confirmar e salvar</button>
+                                ${renderActionButton({
+                                    id: 'confirmarSalvarOrcamento',
+                                    type: 'save',
+                                    label: 'Confirmar e salvar',
+                                    variant: 'primary',
+                                    backend: true
+                                })}
                             </div>
                         </div>
                     </div>
@@ -5533,10 +5627,15 @@ async function carregarLogoParaPDF() {
                             <p class="section-eyebrow mb-1">Processos relacionados</p>
                             <h2>Outros processos de interesse da Ouvidoria</h2>
                         </div>
-                        <button type="button" class="btn btn-outline-primary btn-icon-text pdf-hidden" id="btnAdicionarOutroProcesso" data-requer-backend="true" ${dadosPaginaEmModoEstatico('orcamento2026') ? 'disabled' : ''}>
-                            <i class="fas fa-plus" aria-hidden="true"></i>
-                            <span>Adicionar processo</span>
-                        </button>
+                        ${renderActionButton({
+                            id: 'btnAdicionarOutroProcesso',
+                            type: 'add',
+                            label: 'Adicionar processo',
+                            variant: 'outline-primary',
+                            backend: true,
+                            disabled: dadosPaginaEmModoEstatico('orcamento2026'),
+                            extraClass: 'pdf-hidden'
+                        })}
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover w-100 app-data-table budget-data-table">
@@ -6310,15 +6409,17 @@ async function carregarLogoParaPDF() {
                                                     <div class="diagnostico-trail-content">
                                                         <span class="diagnostico-trail-title-line">
                                                             <strong>${escapeHtml(item.parametro)}</strong>
-                                                            <button
-                                                                type="button"
-                                                                class="diagnostico-item-edit-button ${parametrosMinimosEditorAtivo === editorId ? 'active' : ''}"
-                                                                data-parametros-toggle-editor="${escapeHtml(editorId)}"
-                                                                aria-label="Editar ${escapeHtml(item.parametro)}"
-                                                                title="Editar"
-                                                            >
-                                                                <i class="fas fa-pen" aria-hidden="true"></i>
-                                                            </button>
+                                                            ${renderActionButton({
+                                                                type: 'edit',
+                                                                label: `Editar ${item.parametro}`,
+                                                                variant: 'outline-primary',
+                                                                size: 'sm',
+                                                                backend: true,
+                                                                iconOnly: true,
+                                                                title: 'Editar',
+                                                                extraClass: `diagnostico-item-edit-button ${parametrosMinimosEditorAtivo === editorId ? 'active' : ''}`,
+                                                                attributes: `data-parametros-toggle-editor="${escapeHtml(editorId)}" aria-label="Editar ${escapeHtml(item.parametro)}"`
+                                                            })}
                                                         </span>
                                                         <small>${escapeHtml(textoResumo)}</small>
                                                         ${renderizarEditorParametroMinimo(resposta, item, statusAtualBanco)}
@@ -6351,22 +6452,38 @@ async function carregarLogoParaPDF() {
                         ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
                     </div>
                     <div class="diagnostico-action-buttons">
-                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarParametrosMinimos" data-requer-backend="true" ${!modoEstatico && totalAlteracoes ? '' : 'disabled'}>
-                            <i class="fas fa-save" aria-hidden="true"></i>
-                            <span>Salvar alterações</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarParametrosMinimos" data-requer-backend="true" ${!modoEstatico && totalAlteracoes ? '' : 'disabled'}>
-                            <i class="fas fa-xmark" aria-hidden="true"></i>
-                            <span>Cancelar alterações</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarParametrosMinimos" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
-                            <i class="fas fa-file-excel" aria-hidden="true"></i>
-                            <span>Exportar Excel</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-dark btn-icon-text" id="btnHistoricoParametrosMinimos" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
-                            <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
-                            <span>Histórico</span>
-                        </button>
+                        ${renderActionButton({
+                            id: 'btnSalvarParametrosMinimos',
+                            type: 'save',
+                            label: 'Salvar alterações',
+                            variant: 'primary',
+                            backend: true,
+                            disabled: modoEstatico || !totalAlteracoes
+                        })}
+                        ${renderActionButton({
+                            id: 'btnCancelarParametrosMinimos',
+                            type: 'cancel',
+                            label: 'Cancelar alterações',
+                            variant: 'outline-secondary',
+                            backend: true,
+                            disabled: modoEstatico || !totalAlteracoes
+                        })}
+                        ${renderActionButton({
+                            id: 'btnExportarParametrosMinimos',
+                            type: 'exportExcel',
+                            label: 'Exportar Excel',
+                            variant: 'outline-success',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
+                        ${renderActionButton({
+                            id: 'btnHistoricoParametrosMinimos',
+                            type: 'history',
+                            label: 'Histórico',
+                            variant: 'outline-dark',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
                     </div>
                     <small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s)</small>
                 </section>
@@ -6767,18 +6884,29 @@ async function carregarLogoParaPDF() {
                                 : '<small class="text-muted">Edite cada item pelo botão no fim da linha.</small>'}
                     </div>
                     <div class="diagnostico-action-buttons">
-                        <button id="btnExportarOrcamentoExcel" type="button" class="btn btn-outline-success btn-icon-text" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
-                            <i class="fas fa-file-excel" aria-hidden="true"></i>
-                            <span>Exportar Excel</span>
-                        </button>
-                        <button id="btnHistoricoOrcamento" type="button" class="btn btn-outline-dark btn-icon-text" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
-                            <i class="fas fa-clock-rotate-left" aria-hidden="true"></i>
-                            <span>Histórico</span>
-                        </button>
-                        <button id="btn-export-budget-pdf" type="button" class="btn btn-outline-danger btn-icon-text" onclick="exportarOrcamentoPDF()">
-                            <i class="fas fa-file-pdf" aria-hidden="true"></i>
-                            <span>PDF</span>
-                        </button>
+                        ${renderActionButton({
+                            id: 'btnExportarOrcamentoExcel',
+                            type: 'exportExcel',
+                            label: 'Exportar Excel',
+                            variant: 'outline-success',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
+                        ${renderActionButton({
+                            id: 'btnHistoricoOrcamento',
+                            type: 'history',
+                            label: 'Histórico',
+                            variant: 'outline-dark',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
+                        ${renderActionButton({
+                            id: 'btn-export-budget-pdf',
+                            type: 'exportPdf',
+                            label: 'PDF',
+                            variant: 'outline-danger',
+                            onClick: 'exportarOrcamentoPDF()'
+                        })}
                     </div>
                 </section>
             `;
@@ -6877,12 +7005,26 @@ async function carregarLogoParaPDF() {
                     <td><input type="text" class="form-control form-control-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="observacao" value="${escapeHtml(item.observacao || '')}" placeholder="Observação"></td>
                     <td class="text-end">
                         <div class="budget-row-actions justify-content-end">
-                            <button type="button" class="btn btn-sm btn-primary budget-row-action" data-orcamento-salvar-novo="${escapeHtml(item.tempId)}" title="Salvar novo processo">
-                                <i class="fas fa-save" aria-hidden="true"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger budget-row-action" data-orcamento-remover-novo="${escapeHtml(item.tempId)}" title="Remover">
-                                <i class="fas fa-xmark" aria-hidden="true"></i>
-                            </button>
+                            ${renderActionButton({
+                                type: 'save',
+                                label: 'Salvar novo processo',
+                                variant: 'primary',
+                                backend: true,
+                                title: 'Salvar novo processo',
+                                iconOnly: true,
+                                extraClass: 'budget-row-action',
+                                attributes: `data-orcamento-salvar-novo="${escapeHtml(item.tempId)}"`
+                            })}
+                            ${renderActionButton({
+                                type: 'cancel',
+                                label: 'Remover',
+                                variant: 'outline-danger',
+                                backend: true,
+                                title: 'Remover',
+                                iconOnly: true,
+                                extraClass: 'budget-row-action',
+                                attributes: `data-orcamento-remover-novo="${escapeHtml(item.tempId)}"`
+                            })}
                         </div>
                     </td>
                 </tr>
@@ -6930,7 +7072,13 @@ async function carregarLogoParaPDF() {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="confirmarSalvarParametrosMinimos">Confirmar e salvar</button>
+                                ${renderActionButton({
+                                    id: 'confirmarSalvarParametrosMinimos',
+                                    type: 'save',
+                                    label: 'Confirmar e salvar',
+                                    variant: 'primary',
+                                    backend: true
+                                })}
                             </div>
                         </div>
                     </div>
@@ -7017,15 +7165,15 @@ async function carregarLogoParaPDF() {
                                                             <td>${escapeHtml(formatarValorHistoricoParametroMinimo(item.valorAnterior))}</td>
                                                             <td>${escapeHtml(formatarValorHistoricoParametroMinimo(item.valorNovo))}</td>
                                                             <td class="text-end">
-                                                                <button
-                                                                    type="button"
-                                                                    class="btn btn-sm btn-outline-danger"
-                                                                    data-parametros-reverter-historico="${escapeHtml(String(item.id))}"
-                                                                    aria-label="Reverter alteração ${escapeHtml(String(item.id))}"
-                                                                    title="Reverter alteração"
-                                                                >
-                                                                    <i class="fas fa-xmark" aria-hidden="true"></i>
-                                                                </button>
+                                                                ${renderActionButton({
+                                                                    type: 'cancel',
+                                                                    label: `Reverter alteração ${String(item.id)}`,
+                                                                    variant: 'outline-danger',
+                                                                    backend: true,
+                                                                    iconOnly: true,
+                                                                    title: 'Reverter alteração',
+                                                                    attributes: `data-parametros-reverter-historico="${escapeHtml(String(item.id))}" aria-label="Reverter alteração ${escapeHtml(String(item.id))}"`
+                                                                })}
                                                             </td>
                                                         </tr>
                                                     `).join('')}
