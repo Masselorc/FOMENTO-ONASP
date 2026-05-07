@@ -2754,6 +2754,12 @@ async function carregarLogoParaPDF() {
 
                 const passaPendencia = !pendencia
                     || (pendencia === 'alerta-critico' && proposta.alertas.some((alerta) => alerta.severidade === 'critico'))
+                    || (pendencia === 'condicao-suspensiva' && proposta.condicaoSuspensiva.exige)
+                    || (pendencia === 'com-pendencia' && (
+                        proposta.alertas.some((alerta) => alerta.severidade === 'critico' || alerta.severidade === 'moderado')
+                        || (proposta.condicaoSuspensiva.exige && !proposta.condicaoSuspensiva.resolvida)
+                        || !proposta.aptaCelebracao
+                    ))
                     || (pendencia === 'condicao' && proposta.condicaoSuspensiva.exige && !proposta.condicaoSuspensiva.resolvida)
                     || (pendencia === 'financeiro' && (!proposta.validacoes.valorRepasseOk || !proposta.validacoes.valorGlobalOk || !proposta.plano.fechaComValorGlobal))
                     || (pendencia === 'falabr' && !proposta.falaBr.previsto)
@@ -2803,6 +2809,31 @@ async function carregarLogoParaPDF() {
             return proposta.condicaoSuspensiva.resolvida
                 ? '<span class="profor-alert-badge profor-alert-success">Ouvidoria institucionalizada</span>'
                 : '<span class="profor-alert-badge profor-alert-danger">Sem ouvidoria institucionalizada</span>';
+        }
+
+        function renderizarBadgeCondicaoSuspensivaFormalizacao(proposta) {
+            if (!proposta?.condicaoSuspensiva?.exige) return '';
+
+            if (proposta.condicaoSuspensiva.resolvida) {
+                return '<span class="app-status-badge app-status-badge-success"><i class="fas fa-landmark" aria-hidden="true"></i><span>Condição suspensiva resolvida</span></span>';
+            }
+
+            return '<span class="app-status-badge app-status-badge-danger"><i class="fas fa-landmark" aria-hidden="true"></i><span>Condição suspensiva: ato normativo publicado pendente</span></span>';
+        }
+
+        function renderizarResumoTrilhaFormalizacao(proposta) {
+            const trilha = Array.isArray(proposta?.trilha) ? proposta.trilha : [];
+            if (!trilha.length) return '';
+
+            return `
+                <div class="formalizacao-stage-strip" aria-label="Resumo da trilha da formalização">
+                    ${trilha.map((etapa) => `
+                        <span class="formalizacao-stage-pill formalizacao-stage-pill-${escapeHtml(etapa.estado || 'pendente')}">
+                            ${escapeHtml(etapa.rotulo)}
+                        </span>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function obterEstadoChecklistDocumentoFormalizacao(documento, indice, indiceAtual) {
@@ -2897,9 +2928,10 @@ async function carregarLogoParaPDF() {
                             ${renderizarProgressoFormalizacao(proposta.progressoDocumentosFormalizacao.percentual, 'Documentos da formalização')}
                         </div>
                     </div>
+                    ${renderizarResumoTrilhaFormalizacao(proposta)}
                     <div class="formalizacao-card-tags">
                         <span class="profor-alert-badge profor-alert-${planoClasse}">${escapeHtml(proposta.situacaoPlano)}</span>
-                        ${proposta.condicaoSuspensiva.exige ? `<span class="profor-alert-badge profor-alert-${proposta.condicaoSuspensiva.resolvida ? 'success' : 'danger'}">${escapeHtml(condicao)}</span>` : ''}
+                        ${renderizarBadgeCondicaoSuspensivaFormalizacao(proposta)}
                         ${proposta.falaBr.previsto ? '<span class="profor-alert-badge profor-alert-success">Fala.BR previsto</span>' : '<span class="profor-alert-badge profor-alert-danger">Fala.BR pendente</span>'}
                         ${renderizarBadgeOuvidoriaFormalizacao(proposta)}
                     </div>
@@ -2907,7 +2939,7 @@ async function carregarLogoParaPDF() {
                         ${renderizarChecklistCardFormalizacao(proposta, 'projeto', 'Docs do projeto', proposta.documentosProjeto, proposta.progressoDocumentosProjeto)}
                         ${renderizarChecklistCardFormalizacao(proposta, 'formalizacao', 'Docs da formalização', proposta.documentosFormalizacao, proposta.progressoDocumentosFormalizacao)}
                     </div>
-                    <div class="budget-row-actions justify-content-between flex-wrap gap-2">
+                    <div class="formalizacao-card-actions">
                         ${renderActionButton({
                             type: 'info',
                             label: 'Ver detalhe',
@@ -3262,12 +3294,29 @@ async function carregarLogoParaPDF() {
                     elemento.addEventListener(evento, () => atualizarListaFormalizacao(dados));
                 });
 
+            document.querySelectorAll('[data-formalizacao-pendencia-rapida]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    const seletor = document.getElementById('filtroFormalizacaoPendencia');
+                    if (seletor) seletor.value = botao.dataset.formalizacaoPendenciaRapida || '';
+                    document.querySelectorAll('[data-formalizacao-pendencia-rapida]').forEach((item) => {
+                        item.classList.toggle('active', item === botao);
+                        item.setAttribute('aria-pressed', String(item === botao));
+                    });
+                    atualizarListaFormalizacao(dados);
+                });
+            });
+
             document.getElementById('btnLimparFiltroFormalizacao')?.addEventListener('click', () => {
                 ['filtroFormalizacaoBusca', 'filtroFormalizacaoUf', 'filtroFormalizacaoRegiao', 'filtroFormalizacaoStatus', 'filtroFormalizacaoOuvidoria', 'filtroFormalizacaoPendencia']
                     .forEach((id) => {
                         const elemento = document.getElementById(id);
                         if (elemento) elemento.value = '';
                     });
+                document.querySelectorAll('[data-formalizacao-pendencia-rapida]').forEach((item, index) => {
+                    const ativo = index === 0;
+                    item.classList.toggle('active', ativo);
+                    item.setAttribute('aria-pressed', String(ativo));
+                });
                 atualizarListaFormalizacao(dados);
             });
 
@@ -3778,6 +3827,7 @@ async function carregarLogoParaPDF() {
                 .join('');
             const opcoesStatus = statusFiltro.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join('');
             const atalhosUf = renderizarAtalhosUfFormalizacao(dados.ufsAutorizadas || ufsFiltro);
+            const quantidadeCondicaoSuspensiva = propostas.filter((proposta) => proposta.condicaoSuspensiva?.exige).length;
 
             container.innerHTML = `
                 <section class="dashboard-intro formalizacao-intro">
@@ -3798,39 +3848,63 @@ async function carregarLogoParaPDF() {
 
                 <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores de formalização">
                     <div class="col">
-                        <div class="card kpi-card kpi-card-success">
-                            <div class="kpi-title"><i class="fas fa-file-signature" aria-hidden="true"></i>Propostas</div>
-                            <div class="kpi-value">${resumo.totalPropostas}</div>
-                            <div class="kpi-desc">UFs contempladas</div>
-                        </div>
+                        ${renderKpiCard({
+                            titulo: 'UFs elegíveis',
+                            valor: `<span>${resumo.totalPropostas}</span>`,
+                            descricao: 'UFs contempladas na rodada',
+                            icon: 'fa-file-signature',
+                            variant: 'success'
+                        })}
                     </div>
                     <div class="col">
-                        <div class="card kpi-card">
-                            <div class="kpi-title"><i class="fas fa-scale-balanced" aria-hidden="true"></i>Valor Global</div>
-                            <div class="kpi-value text-money">${formatMoney(resumo.totalValorGlobal)}</div>
-                            <div class="kpi-desc">Repasse + contrapartida</div>
-                        </div>
+                        ${renderKpiCard({
+                            titulo: 'Valor total previsto',
+                            valor: `<span class="text-money">${formatMoney(resumo.totalValorGlobal)}</span>`,
+                            descricao: 'Repasse + contrapartida',
+                            icon: 'fa-scale-balanced'
+                        })}
                     </div>
                     <div class="col">
-                        <div class="card kpi-card">
-                            <div class="kpi-title"><i class="fas fa-chart-line" aria-hidden="true"></i>Progresso Médio</div>
-                            <div class="kpi-value">${formatPercent(resumo.mediaProgressoGeral)}</div>
-                            <div class="kpi-desc">Cálculo ponderado</div>
-                        </div>
+                        ${renderKpiCard({
+                            titulo: 'UFs com condição suspensiva',
+                            valor: `<span>${quantidadeCondicaoSuspensiva}</span>`,
+                            descricao: 'PA, RR, RS e SE quando aplicável',
+                            icon: 'fa-landmark',
+                            variant: quantidadeCondicaoSuspensiva ? 'warning' : ''
+                        })}
                     </div>
                     <div class="col">
-                        <div class="card kpi-card ${resumo.alertasCriticos ? 'kpi-card-warning' : 'kpi-card-success'}">
-                            <div class="kpi-title"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Alertas críticos</div>
-                            <div class="kpi-value">${resumo.alertasCriticos}</div>
-                            <div class="kpi-desc">${resumo.propostasComAlertaCritico} UF(s) com alerta crítico</div>
-                        </div>
+                        ${renderKpiCard({
+                            titulo: 'Aptas à celebração',
+                            valor: `<span>${resumo.aptasCelebracao}</span>`,
+                            descricao: `${resumo.planosCompativeis} plano(s) compatíveis`,
+                            icon: 'fa-circle-check',
+                            variant: 'info'
+                        })}
                     </div>
                     <div class="col">
-                        <div class="card kpi-card kpi-card-info">
-                            <div class="kpi-title"><i class="fas fa-circle-check" aria-hidden="true"></i>Aptas à celebração</div>
-                            <div class="kpi-value">${resumo.aptasCelebracao}</div>
-                            <div class="kpi-desc">${resumo.planosCompativeis} plano(s) compatíveis</div>
+                        ${renderKpiCard({
+                            titulo: 'Pendências críticas',
+                            valor: `<span>${resumo.alertasCriticos}</span>`,
+                            descricao: `${resumo.propostasComAlertaCritico} UF(s) com alerta crítico`,
+                            icon: 'fa-triangle-exclamation',
+                            variant: resumo.alertasCriticos ? 'warning' : 'success'
+                        })}
+                    </div>
+                </section>
+
+                <section class="formalizacao-quick-filter-panel mb-4" aria-label="Recortes rápidos da formalização">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Filtros simples</p>
+                            <h2>Recorte da lista</h2>
                         </div>
+                    </div>
+                    <div class="contact-uf-chip-list diagnostico-uf-chip-list formalizacao-quick-filter-grid">
+                        <button type="button" class="contact-uf-filter-chip formalizacao-quick-filter-chip active" data-formalizacao-pendencia-rapida="">Todas</button>
+                        <button type="button" class="contact-uf-filter-chip formalizacao-quick-filter-chip" data-formalizacao-pendencia-rapida="condicao-suspensiva">Com condição suspensiva</button>
+                        <button type="button" class="contact-uf-filter-chip formalizacao-quick-filter-chip" data-formalizacao-pendencia-rapida="com-pendencia">Com pendência</button>
+                        <button type="button" class="contact-uf-filter-chip formalizacao-quick-filter-chip" data-formalizacao-pendencia-rapida="aptas">Aptas à celebração</button>
                     </div>
                 </section>
 
@@ -3883,6 +3957,8 @@ async function carregarLogoParaPDF() {
                             <label class="visible-filter-title" for="filtroFormalizacaoPendencia">Pendência</label>
                             <select id="filtroFormalizacaoPendencia" class="form-select">
                                 <option value="">Todas</option>
+                                <option value="condicao-suspensiva">Com condição suspensiva</option>
+                                <option value="com-pendencia">Com pendência</option>
                                 <option value="alerta-critico">Com alerta crítico</option>
                                 <option value="condicao">Condição suspensiva pendente</option>
                                 <option value="financeiro">Divergência financeira</option>
@@ -4174,7 +4250,7 @@ async function carregarLogoParaPDF() {
                             <p class="section-eyebrow mb-1">Condição suspensiva</p>
                             <h2>Ato normativo da ouvidoria própria/autônoma</h2>
                         </div>
-                        <span class="profor-alert-badge profor-alert-${condicao.resolvida ? 'success' : 'danger'}">${escapeHtml(condicao.situacao)}</span>
+                        ${renderizarBadgeCondicaoSuspensivaFormalizacao(proposta)}
                     </div>
                     <div class="formalizacao-info-grid">
                         ${renderizarCampoFormalizacao('Exige condição suspensiva?', 'Sim', 'fa-landmark')}
@@ -6548,7 +6624,7 @@ async function carregarLogoParaPDF() {
                                                                 attributes: `data-parametros-toggle-editor="${escapeHtml(editorId)}" aria-label="Editar ${escapeHtml(item.parametro)}"`
                                                             })}
                                                         </span>
-                                                        <small>${escapeHtml(textoResumo)}</small>
+                                                        ${renderizarBadgeDiagnostico(textoResumo)}
                                                         ${renderizarEditorParametroMinimo(resposta, item, statusAtualBanco)}
                                                     </div>
                                                 </div>
@@ -6780,16 +6856,30 @@ async function carregarLogoParaPDF() {
             };
         }
 
+        function obterParametroMaisAusenteDiagnostico(respostas = []) {
+            const contagem = new Map();
+
+            respostas.forEach((resposta) => {
+                (resposta.parametrosMinimos || []).forEach((item) => {
+                    const status = statusParametroMinimoParaTela(item.statusNormalizado || item.statusOperacional || item.respostaUf || '');
+                    if (!['Pendente', 'Déficit'].includes(status) && !status.startsWith('Falta +')) return;
+                    const chave = item.parametroCurto || item.parametro || '';
+                    if (!chave) return;
+                    contagem.set(chave, (contagem.get(chave) || 0) + 1);
+                });
+            });
+
+            const [parametro, quantidade] = Array.from(contagem.entries()).sort((a, b) => b[1] - a[1])[0] || [];
+            return parametro ? `${parametro} (${quantidade})` : 'Sem predominância';
+        }
+
         function renderizarVisaoGeralParametrosDiagnostico(dados, respostasFiltradas) {
             const resumo = montarResumoGeralParametrosDiagnostico(respostasFiltradas);
             const cards = [
-                ['Registros filtrados', resumo.totalRespostas],
-                ['UFs validadas', resumo.ufsDiagnosticadas],
-                ['Conformidade média', `${resumo.conformidadePercentual}%`],
-                ['Conformes', resumo.conformes],
-                ['Parciais', resumo.parcialmenteConformes],
-                ['Não conformes', resumo.naoConformes],
-                ['Déficit material', resumo.deficitAparelhamento]
+                ['UFs completas', respostasFiltradas.filter((resposta) => (resposta.resumoParametrosMinimos?.pendencias || 0) === 0 && (resposta.resumoParametrosMinimos?.itensParaValidar || 0) === 0).length],
+                ['UFs com pendência', respostasFiltradas.filter((resposta) => (resposta.resumoParametrosMinimos?.pendencias || 0) > 0).length],
+                ['UFs com validação pendente', respostasFiltradas.filter((resposta) => (resposta.resumoParametrosMinimos?.itensParaValidar || 0) > 0).length],
+                ['Parâmetro mais ausente', obterParametroMaisAusenteDiagnostico(respostasFiltradas)]
             ];
 
             return `
@@ -6797,7 +6887,7 @@ async function carregarLogoParaPDF() {
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">Visão geral</p>
-                            <h2>Panorama dos parâmetros mínimos</h2>
+                            <h2>Panorama do checklist nacional</h2>
                         </div>
                         <small class="text-muted">${escapeHtml(String(dados.resumo.totalRespostas || 0))} registro(s) na base</small>
                     </div>
@@ -6809,6 +6899,33 @@ async function carregarLogoParaPDF() {
                             </div>
                         `).join('')}
                     </div>
+                    <div class="table-responsive mt-3">
+                        <table class="table table-sm table-hover w-100 app-data-table diagnostico-table">
+                            <thead>
+                                <tr>
+                                    <th>UF</th>
+                                    <th>Checklist</th>
+                                    <th class="text-center">Pendências</th>
+                                    <th class="text-center">Validar</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${respostasFiltradas.map((resposta) => {
+                                    const resumoUf = resposta.resumoParametrosMinimos || {};
+                                    return `
+                                        <tr>
+                                            <td data-label="UF"><strong>${escapeHtml(resposta.uf || '-')}</strong></td>
+                                            <td data-label="Checklist">${escapeHtml(`${resumoUf.parametrosAtendidos || 0}/${resumoUf.total || 0} parâmetros atendidos`)}</td>
+                                            <td data-label="Pendências" class="text-center">${escapeHtml(String(resumoUf.pendencias || 0))}</td>
+                                            <td data-label="Validar" class="text-center">${escapeHtml(String(resumoUf.itensParaValidar || 0))}</td>
+                                            <td data-label="Status">${renderizarBadgeDiagnostico(resposta.statusGeralParametrosMinimos)}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="diagnostico-general-callout">
                         <i class="fas fa-filter" aria-hidden="true"></i>
                             <span>Selecione uma UF nos botões acima para abrir os parâmetros mínimos validados daquela ouvidoria.</span>
@@ -6819,29 +6936,37 @@ async function carregarLogoParaPDF() {
 
         function renderizarResumoConformidadeDiagnostico(resposta) {
             const resumo = resposta.resumoParametrosMinimos || {};
-            const cards = [
-                ['Parâmetros atendidos', resumo.parametrosAtendidos || 0],
-                ['Pendências', resumo.pendencias || 0],
-                ['Déficit material', resumo.deficitMaterial || 0],
-                ['Itens para validar', resumo.itensParaValidar || 0],
-                ['Status geral', resumo.statusGeral || 'Não informado']
-            ];
+            const total = resumo.total || 0;
+            const atendidos = resumo.parametrosAtendidos || 0;
+            const pendencias = resumo.pendencias || 0;
+            const validar = resumo.itensParaValidar || 0;
+            const resumoObjetivo = `${atendidos}/${total} parâmetros atendidos`;
 
             return `
                 <section class="diagnostico-block" aria-label="Resumo de conformidade">
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">Resumo da UF</p>
-                            <h2>Indicadores</h2>
+                            <h2>Checklist objetivo</h2>
                         </div>
                     </div>
                     <div class="diagnostico-summary-grid">
-                        ${cards.map(([rotulo, valor]) => `
-                            <div class="diagnostico-summary-card">
-                                <span>${escapeHtml(rotulo)}</span>
-                                <strong>${escapeHtml(String(valor))}</strong>
-                            </div>
-                        `).join('')}
+                        <div class="diagnostico-summary-card diagnostico-summary-card-highlight">
+                            <span>Resumo</span>
+                            <strong>${escapeHtml(resumoObjetivo)}</strong>
+                        </div>
+                        <div class="diagnostico-summary-card">
+                            <span>Pendências</span>
+                            <strong>${escapeHtml(String(pendencias))}</strong>
+                        </div>
+                        <div class="diagnostico-summary-card">
+                            <span>Validar</span>
+                            <strong>${escapeHtml(String(validar))}</strong>
+                        </div>
+                        <div class="diagnostico-summary-card">
+                            <span>Status geral</span>
+                            <strong>${escapeHtml(String(resumo.statusGeral || 'Não informado'))}</strong>
+                        </div>
                     </div>
                 </section>
             `;
