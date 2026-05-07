@@ -1,200 +1,6 @@
 {
-  "configuracao": {
-    "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx",
-    "abasPlanilhaIgnoradas": [
-      "Geral"
-    ],
-    "classificacaoPlanilhaConvenios": "OUVIDORIA"
-  },
-  "regioes": {
-    "NORTE": [
-      "AC",
-      "AP",
-      "AM",
-      "PA",
-      "RO",
-      "RR",
-      "TO"
-    ],
-    "NORDESTE": [
-      "AL",
-      "BA",
-      "CE",
-      "MA",
-      "PB",
-      "PE",
-      "PI",
-      "RN",
-      "SE"
-    ],
-    "CENTRO-OESTE": [
-      "DF",
-      "GO",
-      "MT",
-      "MS"
-    ],
-    "SUDESTE": [
-      "ES",
-      "MG",
-      "RJ",
-      "SP"
-    ],
-    "SUL": [
-      "PR",
-      "RS",
-      "SC"
-    ]
-  },
-  "nomesEstados": {
-    "AC": "Acre",
-    "AL": "Alagoas",
-    "AP": "Amapá",
-    "AM": "Amazonas",
-    "BA": "Bahia",
-    "CE": "Ceará",
-    "DF": "Distrito Federal",
-    "ES": "Espírito Santo",
-    "GO": "Goiás",
-    "MA": "Maranhão",
-    "MT": "Mato Grosso",
-    "MS": "Mato Grosso do Sul",
-    "MG": "Minas Gerais",
-    "PA": "Pará",
-    "PB": "Paraíba",
-    "PR": "Paraná",
-    "PE": "Pernambuco",
-    "PI": "Piauí",
-    "RJ": "Rio de Janeiro",
-    "RN": "Rio Grande do Norte",
-    "RS": "Rio Grande do Sul",
-    "RO": "Rondônia",
-    "RR": "Roraima",
-    "SC": "Santa Catarina",
-    "SP": "São Paulo",
-    "SE": "Sergipe",
-    "TO": "Tocantins"
-  },
-  "imagensBandeiras": {
-    "AC": "./frontend/assets/flags/ac.svg",
-    "AL": "./frontend/assets/flags/al.svg",
-    "AP": "./frontend/assets/flags/ap.svg?v=20260505-2",
-    "AM": "./frontend/assets/flags/am.svg?v=20260505-2",
-    "BA": "./frontend/assets/flags/ba.svg?v=20260505-2",
-    "CE": "./frontend/assets/flags/ce.svg?v=20260505-2",
-    "DF": "./frontend/assets/flags/df.svg?v=20260505-2",
-    "ES": "./frontend/assets/flags/es.svg?v=20260505-2",
-    "GO": "./frontend/assets/flags/go.svg?v=20260505-2",
-    "MA": "./frontend/assets/flags/ma.svg?v=20260505-4",
-    "MT": "./frontend/assets/flags/mt.svg?v=20260505-4",
-    "MS": "./frontend/assets/flags/ms.svg?v=20260505-4",
-    "MG": "./frontend/assets/flags/mg.svg?v=20260505-2",
-    "PA": "./frontend/assets/flags/pa.svg?v=20260505-2",
-    "PB": "./frontend/assets/flags/pb.svg?v=20260505-4",
-    "PR": "./frontend/assets/flags/pr.svg?v=20260505-4",
-    "PE": "./frontend/assets/flags/pe.svg?v=20260505-2",
-    "PI": "./frontend/assets/flags/pi.svg?v=20260505-4",
-    "RJ": "./frontend/assets/flags/rj.svg?v=20260505-4",
-    "RN": "./frontend/assets/flags/rn.svg?v=20260505-2",
-    "RS": "./frontend/assets/flags/rs.svg?v=20260505-2",
-    "RO": "./frontend/assets/flags/ro.svg?v=20260505-4",
-    "RR": "./frontend/assets/flags/rr.svg?v=20260505-2",
-    "SC": "./frontend/assets/flags/sc.svg?v=20260505-4",
-    "SP": "./frontend/assets/flags/sp.svg?v=20260505-4",
-    "SE": "./frontend/assets/flags/se.svg?v=20260505-2",
-    "TO": "./frontend/assets/flags/to.svg?v=20260505-4"
-  },
-  "infoConvenios": {
-    "MT": {
-      "numero": "937698",
-      "ano": "2022",
-      "sei": "08016024910202234",
-      "vencimento": "07/04/2027"
-    },
-    "GO": {
-      "numero": "937216",
-      "ano": "2022",
-      "sei": "08016024915202267",
-      "vencimento": "07/04/2027"
-    },
-    "PR": {
-      "numero": "937871",
-      "ano": "2022",
-      "sei": "08016025090202206",
-      "vencimento": "07/04/2027"
-    },
-    "AM": {
-      "numero": "937592",
-      "ano": "2022",
-      "sei": "08016024901202243",
-      "vencimento": "07/04/2027"
-    },
-    "AC": {
-      "numero": "937782",
-      "ano": "2022",
-      "sei": "08016024899202211",
-      "vencimento": "07/04/2027"
-    },
-    "MS": {
-      "numero": "937265",
-      "ano": "2022",
-      "sei": "08016025017202226",
-      "vencimento": "07/04/2027"
-    },
-    "SP": {
-      "numero": "938128",
-      "ano": "2022",
-      "sei": "08016025062202281",
-      "vencimento": "31/12/2027"
-    },
-    "MA": {
-      "numero": "938277",
-      "ano": "2022",
-      "sei": "08016024893202235",
-      "vencimento": "07/04/2027"
-    },
-    "PB": {
-      "numero": "937818",
-      "ano": "2022",
-      "sei": "08016024920202270",
-      "vencimento": "07/04/2027"
-    },
-    "PI": {
-      "numero": "937780",
-      "ano": "2022",
-      "sei": "08016024995202251",
-      "vencimento": "07/04/2027"
-    },
-    "RO": {
-      "numero": "937917",
-      "ano": "2022",
-      "sei": "08016024924202258",
-      "vencimento": "07/04/2027"
-    },
-    "TO": {
-      "numero": "937468",
-      "ano": "2022",
-      "sei": "08016024985202215",
-      "vencimento": "07/04/2027"
-    },
-    "RJ": {
-      "numero": "937817",
-      "ano": "2022",
-      "sei": "08016024874202217",
-      "vencimento": "07/04/2027"
-    },
-    "AL": {
-      "numero": "937221",
-      "ano": "2022",
-      "sei": "08016025053202290",
-      "vencimento": "07/04/2027"
-    },
-    "SC": {
-      "numero": "937783",
-      "ano": "2022",
-      "sei": "08016025010202212",
-      "vencimento": "07/04/2027"
-    }
-  },
+  "publicadoEm": "2026-05-07T19:00:37.416Z",
+  "fonteDadosBase": "dados consolidados da Home local",
   "dadosBase": [
     {
       "uf": "AC",
@@ -12627,9 +12433,28 @@
       ]
     }
   },
-  "metadadosPublicacao": {
-    "publicadoEm": "2026-05-07T20:10:19.117Z",
-    "fonteDadosBase": "dados consolidados da Home local",
-    "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx"
+  "resumoEsperado": {
+    "totalFomento": 6028180.9,
+    "totalConvenios": 1669823.9,
+    "totalFaf": 1757357,
+    "totalDoacoes": 2601000,
+    "ufsConvenios": [
+      "AC",
+      "AL",
+      "AM",
+      "GO",
+      "MA",
+      "MS",
+      "MT",
+      "PB",
+      "PI",
+      "PR",
+      "RJ",
+      "RO",
+      "SC",
+      "SP",
+      "TO"
+    ],
+    "quantidadeUfsConvenios": 15
   }
 }
