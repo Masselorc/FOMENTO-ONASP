@@ -4654,6 +4654,8 @@ body.modo-publicacao-estatica [data-orcamento-remover-novo] {
 
 body.modo-publicacao-estatica [data-requer-backend="true"] {
     cursor: not-allowed;
+    opacity: 0.55;
+    pointer-events: none;
 }
 
 .diagnostic-metric-grid {
