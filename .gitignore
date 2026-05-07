@@ -4,3 +4,4 @@ node_modules/
 backend/data/onasp.sqlite
 backend/data/onasp.sqlite-*
 backend/data/backups/
+backend/logs/

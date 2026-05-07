@@ -1,5 +1,6 @@
 const fs = require("fs");
 const http = require("http");
+const os = require("os");
 const path = require("path");
 const url = require("url");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env"), quiet: true });
@@ -126,6 +127,28 @@ function enviarArquivoEstatico(req, res, pathname) {
     });
     res.end(conteudo);
   });
+}
+
+function obterUrlsRede(porta) {
+  return Object.values(os.networkInterfaces())
+    .flat()
+    .filter((item) => item && item.family === "IPv4" && !item.internal)
+    .map((item) => `http://${item.address}:${porta}/index.html`);
+}
+
+function exibirMensagemServidor() {
+  console.log("Aplicação ONASP disponível em:");
+  console.log(`- Local: http://localhost:${port}/index.html`);
+
+  if (host === "0.0.0.0" || host === "::") {
+    const urlsRede = obterUrlsRede(port);
+    if (urlsRede.length) {
+      urlsRede.forEach((endereco) => console.log(`- Rede: ${endereco}`));
+      return;
+    }
+  }
+
+  console.log(`- Host configurado: http://${host}:${port}/index.html`);
 }
 
 async function rotearApi(req, res, pathname) {
@@ -276,6 +299,4 @@ const server = http.createServer((req, res) => {
   enviarArquivoEstatico(req, res, pathname);
 });
 
-server.listen(port, host, () => {
-  console.log(`Aplicação ONASP disponível em http://${host}:${port}/index.html`);
-});
+server.listen(port, host, exibirMensagemServidor);

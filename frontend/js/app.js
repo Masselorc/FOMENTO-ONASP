@@ -4556,6 +4556,24 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        function renderizarCabecalhoColunasOrcamento() {
+            return `
+                <tr class="budget-column-row">
+                    <th scope="col"><div class="budget-header-cell"><i class="fas fa-box" aria-hidden="true"></i> <span>Item</span></div></th>
+                    <th scope="col" title="Modalidade / Natureza"><div class="budget-header-cell"><i class="fas fa-tags" aria-hidden="true"></i> <span>Mod./Nat.</span></div></th>
+                    <th scope="col" title="Abrangência / Quantidade"><div class="budget-header-cell header-abrangencia"><i class="fas fa-layer-group" aria-hidden="true"></i> <span>Abr./Qtd.</span></div></th>
+                    <th scope="col" title="Valor previsto"><div class="budget-header-cell"><i class="fas fa-coins" aria-hidden="true"></i> <span>Previsto</span></div></th>
+                    <th scope="col" title="Valor em execução"><div class="budget-header-cell"><i class="fas fa-hourglass-half" aria-hidden="true"></i> <span>Execução</span></div></th>
+                    <th scope="col" title="Classificação gerencial"><div class="budget-header-cell"><i class="fas fa-boxes-stacked" aria-hidden="true"></i> <span>Classif.</span></div></th>
+                    <th scope="col" title="Valor empenhado"><div class="budget-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Emp.</span></div></th>
+                    <th scope="col" title="Valor executado"><div class="budget-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Exec.</span></div></th>
+                    <th scope="col"><div class="budget-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
+                    <th scope="col" title="Observação"><div class="budget-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Obs.</span></div></th>
+                    <th scope="col"><div class="budget-header-cell"><i class="fas fa-cogs" aria-hidden="true"></i> <span>Ações</span></div></th>
+                </tr>
+            `;
+        }
+
         function renderizarPainelEdicaoOrcamento(item, colspan = 8) {
             if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
 
@@ -4732,6 +4750,7 @@ async function carregarLogoParaPDF() {
                             </div>
                         </td>
                     </tr>
+                    ${renderizarCabecalhoColunasOrcamento()}
                     ${linhas}
                 `;
             }).join('');
@@ -5306,21 +5325,19 @@ async function carregarLogoParaPDF() {
                     </div>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover w-100 app-data-table budget-data-table budget-main-table">
-                            <thead>
-                                <tr>
-                                    <th><div class="budget-header-cell"><i class="fas fa-box" aria-hidden="true"></i> <span>Item</span></div></th>
-                                    <th title="Modalidade / Natureza"><div class="budget-header-cell"><i class="fas fa-tags" aria-hidden="true"></i> <span>Mod./Nat.</span></div></th>
-                                    <th title="Abrangência / Quantidade"><div class="budget-header-cell header-abrangencia"><i class="fas fa-layer-group" aria-hidden="true"></i> <span>Abr./Qtd.</span></div></th>
-                                    <th title="Valor previsto"><div class="budget-header-cell"><i class="fas fa-coins" aria-hidden="true"></i> <span>Previsto</span></div></th>
-                                    <th title="Valor em execução"><div class="budget-header-cell"><i class="fas fa-hourglass-half" aria-hidden="true"></i> <span>Execução</span></div></th>
-                                    <th title="Classificação gerencial"><div class="budget-header-cell"><i class="fas fa-boxes-stacked" aria-hidden="true"></i> <span>Classif.</span></div></th>
-                                    <th title="Valor empenhado"><div class="budget-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Emp.</span></div></th>
-                                    <th title="Valor executado"><div class="budget-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Exec.</span></div></th>
-                                    <th><div class="budget-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
-                                    <th title="Observação"><div class="budget-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Obs.</span></div></th>
-                                    <th><div class="budget-header-cell"><i class="fas fa-cogs" aria-hidden="true"></i> <span>Ações</span></div></th>
-                                </tr>
-                            </thead>
+                            <colgroup>
+                                <col class="budget-col-item">
+                                <col class="budget-col-modalidade">
+                                <col class="budget-col-abrangencia">
+                                <col class="budget-col-previsto">
+                                <col class="budget-col-execucao">
+                                <col class="budget-col-classificacao">
+                                <col class="budget-col-empenhado">
+                                <col class="budget-col-executado">
+                                <col class="budget-col-status">
+                                <col class="budget-col-observacao">
+                                <col class="budget-col-acoes">
+                            </colgroup>
                             <tbody id="budget-table-body"></tbody>
                         </table>
                     </div>

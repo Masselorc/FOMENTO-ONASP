@@ -1347,6 +1347,32 @@ table.dataTable thead td,
     table-layout: fixed;
 }
 
+.budget-main-table .budget-col-item {
+    width: 22%;
+}
+
+.budget-main-table .budget-col-modalidade,
+.budget-main-table .budget-col-abrangencia,
+.budget-main-table .budget-col-empenhado,
+.budget-main-table .budget-col-executado,
+.budget-main-table .budget-col-acoes {
+    width: 7%;
+}
+
+.budget-main-table .budget-col-previsto,
+.budget-main-table .budget-col-status,
+.budget-main-table .budget-col-observacao {
+    width: 8%;
+}
+
+.budget-main-table .budget-col-execucao {
+    width: 9%;
+}
+
+.budget-main-table .budget-col-classificacao {
+    width: 10%;
+}
+
 .budget-data-table thead th {
     background: #eef3f8 !important;
     border-bottom: 1px solid var(--color-border-strong) !important;
@@ -1356,6 +1382,20 @@ table.dataTable thead td,
     font-weight: 700 !important;
     letter-spacing: 0;
     line-height: 1.1;
+    padding: 0.45rem 0.2rem !important;
+    text-align: center !important;
+    text-transform: uppercase;
+    vertical-align: middle !important;
+    white-space: normal !important;
+}
+
+.budget-column-row > th {
+    background: #eef3f8 !important;
+    border-bottom: 1px solid var(--color-border-strong) !important;
+    border-top: 1px solid rgba(23, 74, 124, 0.18);
+    color: var(--color-primary-strong) !important;
+    font-size: 0.7rem;
+    font-weight: 700 !important;
     padding: 0.45rem 0.2rem !important;
     text-align: center !important;
     text-transform: uppercase;
@@ -3507,16 +3547,16 @@ table.dataTable thead td,
         display: none;
     }
 
+    .budget-column-row {
+        display: none !important;
+    }
+
     .budget-data-table tbody td {
         min-width: 0;
     }
 
     .budget-data-table tbody td::before {
         flex-basis: 38%;
-    }
-
-    .budget-column-row {
-        display: none !important;
     }
 
     .budget-data-table tbody td[data-label="Item"] {
