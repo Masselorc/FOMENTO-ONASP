@@ -3515,6 +3515,7 @@ async function carregarLogoParaPDF() {
                 if (campo.dataset.formalizacaoEventoRegistrado === '1') return;
                 campo.dataset.formalizacaoEventoRegistrado = '1';
                 campo.addEventListener('change', () => {
+                    atualizarClasseStatusFormalizacaoSelect(campo);
                     registrarAlteracaoFormalizacao(
                         campo.dataset.formalizacaoStatusUf,
                         campo.dataset.formalizacaoStatusEtapa,
@@ -3594,6 +3595,45 @@ async function carregarLogoParaPDF() {
         }
 
         const STATUS_FORMALIZACAO_EDICAO = ['PENDENTE', 'EM ANDAMENTO', 'CONCLUÍDO', 'COM PENDÊNCIA', 'NÃO SE APLICA', 'VALIDAR'];
+        const STATUS_FORMALIZACAO_LABELS = {
+            PENDENTE: 'Pendente',
+            'EM ANDAMENTO': 'Em andamento',
+            CONCLUÍDO: 'Concluído',
+            'COM PENDÊNCIA': 'Com pendência',
+            'NÃO SE APLICA': 'Não se aplica',
+            VALIDAR: 'Validar'
+        };
+        const STATUS_FORMALIZACAO_SELECT_CLASSES = {
+            PENDENTE: 'warning',
+            'EM ANDAMENTO': 'primary',
+            CONCLUÍDO: 'success',
+            'COM PENDÊNCIA': 'danger',
+            'NÃO SE APLICA': 'secondary',
+            VALIDAR: 'info'
+        };
+
+        function obterRotuloStatusFormalizacao(status) {
+            return STATUS_FORMALIZACAO_LABELS[status] || status;
+        }
+
+        function obterClasseStatusFormalizacaoSelect(status) {
+            return STATUS_FORMALIZACAO_SELECT_CLASSES[status] || 'secondary';
+        }
+
+        function atualizarClasseStatusFormalizacaoSelect(elemento) {
+            if (!elemento) return;
+            const valor = String(elemento.value || 'PENDENTE');
+            const classeVisual = obterClasseStatusFormalizacaoSelect(valor);
+            elemento.classList.remove(
+                'formalizacao-status-select-success',
+                'formalizacao-status-select-warning',
+                'formalizacao-status-select-primary',
+                'formalizacao-status-select-danger',
+                'formalizacao-status-select-secondary',
+                'formalizacao-status-select-info'
+            );
+            elemento.classList.add('formalizacao-status-select', `formalizacao-status-select-${classeVisual}`);
+        }
 
         function obterQuantidadeAlteracoesFormalizacao(uf = '') {
             if (uf) return Object.keys(formalizacaoAlteracoesPendentes[uf] || {}).length;
@@ -3737,13 +3777,13 @@ async function carregarLogoParaPDF() {
             return `
                 <div class="d-flex flex-column gap-2">
                     <select
-                        class="form-select form-select-sm"
+                        class="form-select form-select-sm formalizacao-status-select formalizacao-status-select-${obterClasseStatusFormalizacaoSelect(statusAtual)}"
                         data-formalizacao-status-uf="${escapeHtml(proposta.uf)}"
                         data-formalizacao-status-etapa="${escapeHtml(etapa.key)}"
                         data-formalizacao-status-original="${escapeHtml(etapa.status || 'PENDENTE')}"
                     >
                         ${STATUS_FORMALIZACAO_EDICAO.map((status) => `
-                            <option value="${escapeHtml(status)}" ${statusAtual === status ? 'selected' : ''}>${escapeHtml(status)}</option>
+                            <option value="${escapeHtml(status)}" ${statusAtual === status ? 'selected' : ''}>${escapeHtml(obterRotuloStatusFormalizacao(status))}</option>
                         `).join('')}
                     </select>
                     <input

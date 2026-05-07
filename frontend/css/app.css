@@ -2930,6 +2930,49 @@ table.dataTable thead td,
     min-width: 0;
 }
 
+.formalizacao-status-select {
+    border-width: 1px;
+    font-weight: 700;
+    min-height: 42px;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease, color 0.16s ease;
+}
+
+.formalizacao-status-select-success {
+    background: var(--color-success-soft, #e8f6ee);
+    border-color: rgba(22, 131, 74, 0.35);
+    color: #11633a;
+}
+
+.formalizacao-status-select-warning {
+    background: var(--color-warning-soft, #fff3e3);
+    border-color: rgba(179, 90, 0, 0.35);
+    color: #7a3e00;
+}
+
+.formalizacao-status-select-primary {
+    background: var(--color-primary-soft, #e8f1fb);
+    border-color: rgba(35, 100, 170, 0.35);
+    color: #123f6c;
+}
+
+.formalizacao-status-select-danger {
+    background: var(--color-danger-soft, #fee4e2);
+    border-color: rgba(180, 35, 24, 0.32);
+    color: #8f1c14;
+}
+
+.formalizacao-status-select-secondary {
+    background: #f1f5f9;
+    border-color: var(--color-border);
+    color: #475569;
+}
+
+.formalizacao-status-select-info {
+    background: var(--color-info-soft, #f1ebff);
+    border-color: rgba(109, 63, 181, 0.34);
+    color: #472579;
+}
+
 .formalizacao-edit-actions {
     justify-content: flex-end;
     max-width: 100%;
