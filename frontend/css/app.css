@@ -4485,6 +4485,39 @@ table.dataTable thead td,
     padding: 0.65rem 0.75rem;
 }
 
+.system-status-panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-panel);
+    padding: 1rem;
+}
+
+.system-status-table {
+    min-width: 760px;
+}
+
+.system-status-alert-list {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.system-status-alert-item {
+    align-items: center;
+    background: #fffdf7;
+    border: 1px solid rgba(255, 193, 7, 0.28);
+    border-left: 4px solid #ffc107;
+    border-radius: 10px;
+    color: var(--color-text);
+    display: flex;
+    gap: 0.65rem;
+    padding: 0.8rem 0.9rem;
+}
+
+.system-status-alert-item i {
+    color: #8a6500;
+}
+
 .app-status-badge {
     align-items: center;
     border-radius: 999px;

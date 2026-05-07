@@ -61,6 +61,9 @@ let orcamentoNovosProcessos = [];
 let orcamentoProcessosInativos = new Set();
 let erroCarregamentoOrcamento = null;
 const errosCarregamentoView = {};
+let resumoPublicacaoSistemaCache = null;
+const APP_CACHE_VERSION = '20260507-04';
+const ANALYTICS_CACHE_VERSION = '20260428-2';
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -302,6 +305,56 @@ function renderErrorState({
             ${mensagemErro ? `<small class="d-block mt-2 text-muted">${mensagemErro}</small>` : ''}
         </div>
     `;
+}
+
+function renderSystemModeBadge(modo, rotulo = '') {
+    if (modo === 'estatico') {
+        return `
+            <span class="app-status-badge app-status-badge-warning">
+                <i class="fas fa-lock" aria-hidden="true"></i>
+                <span>${escapeHtml(rotulo || 'Publicação estática')}</span>
+            </span>
+        `;
+    }
+
+    if (modo === 'api') {
+        return `
+            <span class="app-status-badge app-status-badge-success">
+                <i class="fas fa-check-circle" aria-hidden="true"></i>
+                <span>${escapeHtml(rotulo || 'Local')}</span>
+            </span>
+        `;
+    }
+
+    return `
+        <span class="app-status-badge app-status-badge-secondary">
+            <i class="fas fa-circle-info" aria-hidden="true"></i>
+            <span>${escapeHtml(rotulo || 'Não identificado')}</span>
+        </span>
+    `;
+}
+
+async function carregarResumoPublicacaoSistema() {
+    if (resumoPublicacaoSistemaCache) return resumoPublicacaoSistemaCache;
+
+    try {
+        const resposta = await fetch(`frontend/data/publicados/resumo-publicacao.json?v=${APP_CACHE_VERSION}`, {
+            cache: 'no-store'
+        });
+
+        if (!resposta.ok) {
+            throw new Error(`HTTP ${resposta.status}`);
+        }
+
+        resumoPublicacaoSistemaCache = await resposta.json();
+        return resumoPublicacaoSistemaCache;
+    } catch (error) {
+        resumoPublicacaoSistemaCache = {
+            indisponivel: true,
+            mensagem: `Resumo de publicação não disponível. ${error.message}`
+        };
+        return resumoPublicacaoSistemaCache;
+    }
 }
 
 function dadosPaginaEmModoEstatico(chave) {
@@ -751,7 +804,8 @@ async function carregarLogoParaPDF() {
                 formalizacao: 'view-formalizacao-profor',
                 'formalizacao-detalhe': 'view-formalizacao-profor-detalhe',
                 'diagnostico-ouvidorias': 'view-diagnostico-ouvidorias',
-                contatos: 'view-contatos'
+                contatos: 'view-contatos',
+                'status-sistema': 'view-status-sistema'
             };
             const view = document.getElementById(ids[viewName]);
             if (!view) return;
@@ -766,6 +820,257 @@ async function carregarLogoParaPDF() {
                 error
             });
             view.style.display = 'block';
+            aplicarModoSomenteLeitura();
+        }
+
+        function formatarDataStatusSistema(valor) {
+            if (!valor) return 'Não disponível';
+            const data = new Date(valor);
+            return Number.isNaN(data.getTime()) ? String(valor) : data.toLocaleString('pt-BR');
+        }
+
+        function obterModoContatosStatusSistema() {
+            if (estaEmModoPublicacaoEstatica()) {
+                return { modo: 'estatico', rotulo: 'Publicação estática' };
+            }
+
+            const dadosContatos = obterDadosContatos();
+            if (dadosContatos?.disponivel) {
+                return { modo: 'api', rotulo: 'Local' };
+            }
+
+            return { modo: 'api', rotulo: 'Local / indisponível' };
+        }
+
+        function montarAlertasStatusSistema({ dadosOrcamento, dadosFormalizacao, dadosDiagnostico, dadosContatos, resumoPublicacao }) {
+            const alertas = [];
+
+            if (estaEmModoPublicacaoEstatica()) {
+                alertas.push('A aplicação está em modo publicação estática: ações de edição permanecem bloqueadas.');
+            }
+
+            if (!dadosOrcamento?.itens?.length) {
+                alertas.push('Orçamento 2026 sem itens carregados.');
+            }
+
+            if (!dadosFormalizacao?.propostas?.length) {
+                alertas.push('Formalização PROFOR sem propostas carregadas.');
+            }
+
+            if (!dadosDiagnostico?.respostas?.length) {
+                alertas.push('Parâmetros Mínimos sem registros carregados.');
+            }
+
+            if (!dadosContatos?.disponivel) {
+                alertas.push('Contatos UFs indisponíveis ou não carregados.');
+            }
+
+            if (resumoPublicacao?.indisponivel) {
+                alertas.push('Resumo de publicação não disponível.');
+            }
+
+            return alertas;
+        }
+
+        async function renderStatusSistemaView() {
+            const container = document.getElementById('view-status-sistema');
+            if (!container) return;
+
+            container.style.display = 'block';
+
+            const [dadosOrcamento, dadosFormalizacao, dadosDiagnostico, dadosContatos, resumoPublicacao] = await Promise.all([
+                obterDadosOrcamento() || carregarDadosOrcamento().catch(() => null),
+                obterDadosFormalizacaoProfor() || carregarDadosFormalizacaoProfor().catch(() => null),
+                obterDadosDiagnosticoOuvidorias() || carregarDadosDiagnosticoOuvidorias().catch(() => null),
+                obterDadosContatos() || carregarDadosContatos().catch(() => null),
+                carregarResumoPublicacaoSistema()
+            ]);
+
+            const modoAplicacao = estaEmModoPublicacaoEstatica() ? 'estatico' : 'api';
+            const modoContatos = obterModoContatosStatusSistema();
+            const totalRegistrosHome = Array.isArray(catalogoAplicacao?.dadosBase) ? catalogoAplicacao.dadosBase.length : 0;
+            const totalItensOrcamento = Array.isArray(dadosOrcamento?.itens) ? dadosOrcamento.itens.length : 0;
+            const totalPropostasFormalizacao = Array.isArray(dadosFormalizacao?.propostas) ? dadosFormalizacao.propostas.length : 0;
+            const respostasDiagnostico = Array.isArray(dadosDiagnostico?.respostas) ? dadosDiagnostico.respostas : [];
+            const totalUfsDiagnostico = new Set(respostasDiagnostico.map((item) => item.uf).filter(Boolean)).size;
+            const totalContatosUfs = dadosContatos?.disponivel
+                ? new Set([
+                    ...Array.from(dadosContatos?.cadastroPorUf?.keys?.() || []),
+                    ...Array.from(dadosContatos?.pessoasPorUf?.keys?.() || [])
+                ]).size
+                : 0;
+            const alertas = montarAlertasStatusSistema({
+                dadosOrcamento,
+                dadosFormalizacao,
+                dadosDiagnostico,
+                dadosContatos,
+                resumoPublicacao
+            });
+
+            container.innerHTML = `
+                <section class="view-heading">
+                    ${renderActionButton({
+                        type: 'back',
+                        label: 'Voltar ao Painel Geral',
+                        onClick: "toggleView('dashboard')",
+                        variant: 'outline-secondary',
+                        extraClass: 'pdf-hidden'
+                    })}
+                    <div>
+                        <p class="section-eyebrow mb-1">Diagnóstico técnico</p>
+                        <h2>Status do Sistema</h2>
+                    </div>
+                </section>
+
+                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Resumo do ambiente">
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Ambiente',
+                            valor: renderSystemModeBadge(modoAplicacao, modoAplicacao === 'estatico' ? 'Publicação estática' : 'Local'),
+                            descricao: 'Modo geral da aplicação',
+                            icon: 'fa-server',
+                            variant: modoAplicacao === 'estatico' ? 'warning' : 'success'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Cache do front-end',
+                            valor: `<span>${APP_CACHE_VERSION}</span>`,
+                            descricao: `analytics ${ANALYTICS_CACHE_VERSION}`,
+                            icon: 'fa-code-branch',
+                            variant: 'info'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Última publicação',
+                            valor: `<span>${escapeHtml(formatarDataStatusSistema(resumoPublicacao?.publicadoEm))}</span>`,
+                            descricao: resumoPublicacao?.fonte || 'Resumo de publicação não disponível',
+                            icon: 'fa-cloud-arrow-up',
+                            variant: resumoPublicacao?.indisponivel ? 'warning' : 'success'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Alertas ativos',
+                            valor: `<span>${alertas.length}</span>`,
+                            descricao: alertas.length ? 'Pontos para conferir' : 'Nenhum alerta relevante',
+                            icon: 'fa-triangle-exclamation',
+                            variant: alertas.length ? 'warning' : 'success'
+                        })}
+                    </div>
+                </section>
+
+                <section class="system-status-panel mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Modo por página</p>
+                            <h2>Fontes de dados</h2>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm app-data-table system-status-table">
+                            <thead>
+                                <tr>
+                                    <th>Página</th>
+                                    <th>Modo</th>
+                                    <th>Observação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Home</td>
+                                    <td>${renderSystemModeBadge(obterModoDadosOnasp('aplicacao'), obterModoDadosOnasp('aplicacao') === 'estatico' ? 'Publicação estática' : 'Local')}</td>
+                                    <td>Catálogo e dados-base da aplicação</td>
+                                </tr>
+                                <tr>
+                                    <td>Orçamento 2026</td>
+                                    <td>${renderSystemModeBadge(obterModoDadosOnasp('orcamento2026'), obterModoDadosOnasp('orcamento2026') === 'estatico' ? 'Publicação estática' : 'Local')}</td>
+                                    <td>${totalItensOrcamento} item(ns) carregado(s)</td>
+                                </tr>
+                                <tr>
+                                    <td>Formalização PROFOR</td>
+                                    <td>${renderSystemModeBadge(obterModoDadosOnasp('formalizacaoProfor'), obterModoDadosOnasp('formalizacaoProfor') === 'estatico' ? 'Publicação estática' : 'Local')}</td>
+                                    <td>${totalPropostasFormalizacao} proposta(s)/UF(s)</td>
+                                </tr>
+                                <tr>
+                                    <td>Parâmetros Mínimos</td>
+                                    <td>${renderSystemModeBadge(obterModoDadosOnasp('parametrosMinimos'), obterModoDadosOnasp('parametrosMinimos') === 'estatico' ? 'Publicação estática' : 'Local')}</td>
+                                    <td>${respostasDiagnostico.length} registro(s) e ${totalUfsDiagnostico} UF(s)</td>
+                                </tr>
+                                <tr>
+                                    <td>Contatos</td>
+                                    <td>${renderSystemModeBadge(modoContatos.modo, modoContatos.rotulo)}</td>
+                                    <td>${dadosContatos?.disponivel ? `${totalContatosUfs} UF(s) com contatos` : 'Indisponível'}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Dados carregados">
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Home',
+                            valor: `<span>${totalRegistrosHome}</span>`,
+                            descricao: 'Registros da base principal',
+                            icon: 'fa-home',
+                            variant: totalRegistrosHome ? 'success' : 'warning'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Orçamento',
+                            valor: `<span>${totalItensOrcamento}</span>`,
+                            descricao: 'Itens orçamentários',
+                            icon: 'fa-wallet',
+                            variant: totalItensOrcamento ? 'success' : 'warning'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Formalização',
+                            valor: `<span>${totalPropostasFormalizacao}</span>`,
+                            descricao: 'UFs/propostas carregadas',
+                            icon: 'fa-file-signature',
+                            variant: totalPropostasFormalizacao ? 'success' : 'warning'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Parâmetros',
+                            valor: `<span>${respostasDiagnostico.length}</span>`,
+                            descricao: `${totalUfsDiagnostico} UF(s) com diagnóstico`,
+                            icon: 'fa-clipboard-check',
+                            variant: respostasDiagnostico.length ? 'success' : 'warning'
+                        })}
+                    </div>
+                </section>
+
+                <section class="system-status-panel mb-5">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Alertas úteis</p>
+                            <h2>Validação rápida</h2>
+                        </div>
+                    </div>
+                    ${alertas.length ? `
+                        <div class="system-status-alert-list">
+                            ${alertas.map((alerta) => `
+                                <div class="system-status-alert-item">
+                                    <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+                                    <span>${escapeHtml(alerta)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : renderEmptyState({
+                        titulo: 'Nenhum alerta relevante no momento.',
+                        descricao: 'Os dados principais e a publicação estão disponíveis para consulta.',
+                        icon: 'fa-circle-check'
+                    })}
+                </section>
+            `;
+
             aplicarModoSomenteLeitura();
         }
 
@@ -788,9 +1093,10 @@ async function carregarLogoParaPDF() {
             const podeAbrirContatos = viewName === 'contatos' && obterDadosContatos();
             const podeAbrirDiagnosticoOuvidorias = viewName === 'diagnostico-ouvidorias' && obterDadosDiagnosticoOuvidorias();
             const podeAbrirFormalizacao = ['formalizacao', 'formalizacao-detalhe'].includes(viewName);
+            const podeAbrirStatusSistema = viewName === 'status-sistema';
             const podeAbrirComDadosEstaticos = ['faf2021', 'faf2021-detalhe', 'doacoes2023', 'doacoes2023-detalhe'].includes(viewName);
 
-            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirContatos && !podeAbrirDiagnosticoOuvidorias && !podeAbrirFormalizacao && !podeAbrirComDadosEstaticos) {
+            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirContatos && !podeAbrirDiagnosticoOuvidorias && !podeAbrirFormalizacao && !podeAbrirStatusSistema && !podeAbrirComDadosEstaticos) {
                 mostrarAlertaCarregamentoPlanilha(
                     'Dados financeiros indisponiveis: carregue uma planilha valida antes de acessar detalhes ou exportacoes.',
                     true,
@@ -813,6 +1119,7 @@ async function carregarLogoParaPDF() {
             const viewContatos = document.getElementById('view-contatos');
             const viewDiagnosticoOuvidorias = document.getElementById('view-diagnostico-ouvidorias');
             const viewFormalizacaoDetalhe = document.getElementById('view-formalizacao-profor-detalhe');
+            const viewStatusSistema = document.getElementById('view-status-sistema');
             if (viewProfor) viewProfor.style.display = 'none';
             if (viewProforDetalhe) viewProforDetalhe.style.display = 'none';
             if (viewFaf) viewFaf.style.display = 'none';
@@ -824,6 +1131,7 @@ async function carregarLogoParaPDF() {
             if (viewContatos) viewContatos.style.display = 'none';
             if (viewDiagnosticoOuvidorias) viewDiagnosticoOuvidorias.style.display = 'none';
             if (viewFormalizacaoDetalhe) viewFormalizacaoDetalhe.style.display = 'none';
+            if (viewStatusSistema) viewStatusSistema.style.display = 'none';
 
             if (viewName === 'detalhamento') {
                 renderDetailsView();
@@ -872,6 +1180,8 @@ async function carregarLogoParaPDF() {
                 } else {
                     renderFormalizacaoProforDetalheView();
                 }
+            } else if (viewName === 'status-sistema') {
+                await renderStatusSistemaView();
             } else {
                 document.getElementById('view-dashboard').style.display = 'block';
             }
@@ -9014,4 +9324,5 @@ window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;
 window.abrirOrcamento = () => toggleView('orcamento');
 window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
 window.abrirDiagnosticoOuvidorias = () => toggleView('diagnostico-ouvidorias');
+window.abrirStatusSistema = () => toggleView('status-sistema');
 window.aplicarFiltroUF = aplicarFiltroUF;
