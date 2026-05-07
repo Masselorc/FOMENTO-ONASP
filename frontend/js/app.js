@@ -35,6 +35,7 @@ import {
 import {
     renderActionButton,
     renderKpiCard,
+    renderStatusBadge,
     renderSystemModeBadge
 } from './core/ui-components.js?v=20260507-05';
 import {
@@ -3397,6 +3398,16 @@ async function carregarLogoParaPDF() {
             return formalizacaoEditoresAbertos.has(String(uf));
         }
 
+        function rerenderFormalizacaoContextoAtual() {
+            const viewAtual = document.body.dataset.currentView || 'formalizacao';
+            if (viewAtual === 'formalizacao-detalhe') {
+                renderFormalizacaoProforDetalheView();
+                return;
+            }
+
+            renderFormalizacaoProforView();
+        }
+
         function abrirEditorFormalizacao(uf) {
             if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
@@ -3404,7 +3415,7 @@ async function carregarLogoParaPDF() {
             }
 
             formalizacaoEditoresAbertos.add(String(uf));
-            renderFormalizacaoProforView();
+            rerenderFormalizacaoContextoAtual();
         }
 
         function cancelarEdicaoFormalizacao(uf) {
@@ -3414,7 +3425,7 @@ async function carregarLogoParaPDF() {
         function cancelarEdicaoFormalizacaoUf(uf) {
             delete formalizacaoAlteracoesPendentes[uf];
             formalizacaoEditoresAbertos.delete(String(uf));
-            renderFormalizacaoProforView();
+            rerenderFormalizacaoContextoAtual();
         }
 
         function registrarAlteracaoFormalizacao(uf, etapa, campo, valorOriginal, novoValor) {
@@ -3443,7 +3454,7 @@ async function carregarLogoParaPDF() {
                 formalizacaoAlteracoesPendentes[uf][etapa] = proximo;
             }
 
-            renderFormalizacaoProforView();
+            rerenderFormalizacaoContextoAtual();
         }
 
         function salvarAlteracoesFormalizacao(uf = '') {
@@ -3548,6 +3559,38 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        function renderizarResumoEdicaoFormalizacao(proposta) {
+            const observacaoVisivel = obterObservacaoFormalizacaoVisivel(proposta.observacoes);
+            const falaBr = proposta.falaBr?.previsto ? 'Previsto no cronograma' : 'Pendente no cronograma';
+
+            return `
+                <div class="formalizacao-edit-meta">
+                    <div class="formalizacao-edit-meta-item">
+                        <span>Status geral atual</span>
+                        ${renderStatusBadge(proposta.situacaoGeral || 'Pendente')}
+                    </div>
+                    <div class="formalizacao-edit-meta-item">
+                        <span>Condição suspensiva</span>
+                        ${proposta.condicaoSuspensiva?.exige
+                            ? renderizarBadgeCondicaoSuspensivaFormalizacao(proposta)
+                            : '<span class="app-status-badge app-status-badge-secondary"><i class="fas fa-ban" aria-hidden="true"></i><span>Não se aplica</span></span>'}
+                    </div>
+                    <div class="formalizacao-edit-meta-item">
+                        <span>Fala.BR</span>
+                        <strong>${escapeHtml(falaBr)}</strong>
+                    </div>
+                    <div class="formalizacao-edit-meta-item formalizacao-edit-meta-item-wide">
+                        <span>Observação consolidada</span>
+                        <strong>${escapeHtml(observacaoVisivel || 'Sem observação consolidada.')}</strong>
+                    </div>
+                    <div class="formalizacao-edit-meta-item formalizacao-edit-meta-item-wide">
+                        <span>Escopo do salvamento</span>
+                        <strong>No modelo atual, esta tela salva status e observação por etapa da formalização.</strong>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderizarPainelEdicaoFormalizacaoUf(proposta, colspan = 9) {
             if (dadosPaginaEmModoEstatico('formalizacaoProfor')) return '';
             if (!formalizacaoItemEmEdicao(proposta.uf)) return '';
@@ -3556,11 +3599,12 @@ async function carregarLogoParaPDF() {
             const alteracoesUf = obterQuantidadeAlteracoesFormalizacao(proposta.uf);
 
             const painelHtml = `
-                <div class="budget-edit-panel">
+                <div class="budget-edit-panel formalizacao-edit-panel" data-requer-backend="true">
                     <div class="budget-edit-panel-header">
                         <strong>Editar acompanhamento da Formalização - ${escapeHtml(proposta.uf)}</strong>
                         <span>As alterações desta UF ficam pendentes até clicar em Salvar alterações.</span>
                     </div>
+                    ${renderizarResumoEdicaoFormalizacao(proposta)}
                     <div class="budget-edit-grid formalizacao-edit-grid">
                         ${etapas.map((etapa) => `
                             <label>
@@ -3775,7 +3819,7 @@ async function carregarLogoParaPDF() {
                 }
                 modal.hide();
                 await carregarDadosFormalizacaoProfor(true);
-                renderFormalizacaoProforView();
+                rerenderFormalizacaoContextoAtual();
                 alert(obterMensagemSalvamento(payload));
             } catch (error) {
                 alert(`Não foi possível salvar: ${error.message}`);
@@ -4410,8 +4454,22 @@ async function carregarLogoParaPDF() {
                                 </div>
                             </div>
                         </div>
-                        <div class="profor-alert-list">${proposta.alertas.length ? proposta.alertas.slice(0, 8).map(renderizarBadgeAlertaFormalizacao).join('') : '<span class="profor-alert-badge profor-alert-success">Sem alerta</span>'}</div>
+                        <div class="formalizacao-detail-actions">
+                            <div class="profor-alert-list">${proposta.alertas.length ? proposta.alertas.slice(0, 8).map(renderizarBadgeAlertaFormalizacao).join('') : '<span class="profor-alert-badge profor-alert-success">Sem alerta</span>'}</div>
+                            ${!dadosPaginaEmModoEstatico('formalizacaoProfor') ? renderActionButton({
+                                type: formalizacaoItemEmEdicao(proposta.uf) ? 'success' : 'edit',
+                                label: formalizacaoItemEmEdicao(proposta.uf) ? 'Fechar edição' : 'Editar',
+                                variant: formalizacaoItemEmEdicao(proposta.uf) ? 'primary' : 'outline-primary',
+                                backend: true,
+                                title: formalizacaoItemEmEdicao(proposta.uf)
+                                    ? `Fechar edição de ${proposta.uf}`
+                                    : `Editar acompanhamento de ${proposta.uf}`,
+                                attributes: `data-formalizacao-toggle-editor="${escapeHtml(proposta.uf)}" aria-pressed="${formalizacaoItemEmEdicao(proposta.uf) ? 'true' : 'false'}"`
+                            }) : ''}
+                        </div>
                     </section>
+
+                    ${renderizarPainelEdicaoFormalizacaoUf(proposta, 1)}
 
                     <section class="row my-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Indicadores da proposta">
                         ${renderizarKpiDetalheProfor('Valor de Repasse', formatMoney(proposta.valorRepasse), 'Regra PROFOR/ONASP', proposta.validacoes.valorRepasseOk ? '' : 'kpi-card-warning', 'fa-building-columns')}
@@ -4462,6 +4520,8 @@ async function carregarLogoParaPDF() {
                     ${renderizarContatosInstitucionaisFormalizacao(proposta)}
                 </div>
             `;
+            registrarEventosBotoesEdicaoFormalizacao(dados);
+            registrarEventosCamposEdicaoFormalizacao();
             aplicarModoSomenteLeitura();
         }
 
@@ -9065,4 +9125,7 @@ window.abrirOrcamento = () => toggleView('orcamento');
 window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
 window.abrirDiagnosticoOuvidorias = () => toggleView('diagnostico-ouvidorias');
 window.abrirStatusSistema = () => toggleView('status-sistema');
+window.abrirEditorFormalizacao = abrirEditorFormalizacao;
+window.cancelarEdicaoFormalizacao = cancelarEdicaoFormalizacao;
+window.salvarAlteracoesFormalizacao = salvarAlteracoesFormalizacao;
 window.aplicarFiltroUF = aplicarFiltroUF;
