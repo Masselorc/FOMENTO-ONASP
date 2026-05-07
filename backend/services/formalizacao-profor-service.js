@@ -10,6 +10,7 @@ const PAGINA = "formalizacao-profor";
 const PLANILHA_FORMALIZACAO = path.join(__dirname, "..", "..", "Planilhas", "Planilha_Formalizacao_PROFOR_2026.xlsx");
 
 const UFS_FORMALIZACAO_PROFOR = ["AM", "AP", "BA", "CE", "DF", "ES", "GO", "MG", "PA", "PE", "RN", "RR", "RS", "SE"];
+const UFS_CONDICAO_SUSPENSIVA_PROFOR = new Set(["PA", "RR", "RS", "SE"]);
 const VALOR_REPASSE_PROFOR = 200000;
 const STATUS_PERMITIDOS = ["PENDENTE", "EM ANDAMENTO", "CONCLUÍDO", "COM PENDÊNCIA", "NÃO SE APLICA", "VALIDAR"];
 const ETAPAS_FORMALIZACAO = [
@@ -79,6 +80,18 @@ function observacaoEhPlaceholderFormalizacao(valor) {
 function limparObservacaoFormalizacao(valor) {
   const texto = String(valor ?? "").replace(/\s+/g, " ").trim();
   return observacaoEhPlaceholderFormalizacao(texto) ? "" : texto;
+}
+
+function montarCondicaoSuspensivaFormalizacao(uf) {
+  const exige = UFS_CONDICAO_SUSPENSIVA_PROFOR.has(uf);
+  return {
+    exige,
+    atoEnviado: false,
+    atoPublicado: false,
+    pendente: exige,
+    resolvida: !exige,
+    situacao: exige ? "Pendente de ato normativo publicado" : "Não se aplica"
+  };
 }
 
 function statusInicialPorEtapa(statusGeral) {
@@ -220,7 +233,7 @@ function montarProposta(uf, linhas) {
     progressoDocumentosProjeto: { total: 0, enviados: 0, percentual: progresso, completo: progresso === 100 },
     progressoDocumentosFormalizacao: { total: 0, enviados: 0, percentual: progresso, completo: progresso === 100 },
     plano: { total: VALOR_REPASSE_PROFOR, quantidadeItens: 0, diferenca: 0, fechaComValorGlobal: true, itensInelegiveis: [], itens: [], porCategoria: [], porNatureza: [], porFonte: [] },
-    condicaoSuspensiva: { exige: false, atoEnviado: false, atoPublicado: false, pendente: false, resolvida: true, situacao: "Não se aplica" },
+    condicaoSuspensiva: montarCondicaoSuspensivaFormalizacao(uf),
     falaBr: { previsto: true, forma: "", observacao: "" },
     validacoes: { ufElegivel: true, valorRepasseOk: true, valorGlobalOk: true },
     progressoGeral: progresso,
@@ -252,7 +265,7 @@ function montarResumo(propostas) {
     totalContrapartida: 0,
     aptasCelebracao: propostas.filter((proposta) => proposta.aptaCelebracao).length,
     planosCompativeis: propostas.length,
-    condicoesPendentes: 0,
+    condicoesPendentes: propostas.filter((proposta) => proposta.condicaoSuspensiva.exige && proposta.condicaoSuspensiva.pendente).length,
     falaBrPendentes: 0,
     alertasCriticos: alertas.filter((alerta) => alerta.severidade === "critico").length,
     propostasComAlertaCritico: propostas.filter((proposta) => proposta.alertas.some((alerta) => alerta.severidade === "critico")).length,
@@ -290,7 +303,7 @@ function listarFormalizacaoProfor() {
     disponivel: true,
     aba: "formalizacao_profor",
     ufsAutorizadas: [...UFS_FORMALIZACAO_PROFOR],
-    ufsCondicaoSuspensiva: [],
+    ufsCondicaoSuspensiva: [...UFS_CONDICAO_SUSPENSIVA_PROFOR],
     valorRepassePadrao: VALOR_REPASSE_PROFOR,
     etapas: ETAPAS_FORMALIZACAO,
     statusPermitidos: STATUS_PERMITIDOS,

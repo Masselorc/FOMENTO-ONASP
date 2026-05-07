@@ -1,0 +1,5 @@
+
+> start
+> node backend/server.js
+
+Aplicação ONASP disponível em http://0.0.0.0:8790/index.html

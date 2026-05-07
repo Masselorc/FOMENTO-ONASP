@@ -596,10 +596,15 @@ function linhaParaItem(linha) {
   const valorEstimadoPesquisaPreco = Number(linha.valor_estimado_pesquisa_preco) || 0;
   const processoAutuado = Number(linha.processo_autuado) === 1;
   const compoeOrcamento = Number(linha.compoe_orcamento) === 1;
+  const statusNormalizado = normalizarStatusOrcamento(linha.status);
   const classificacaoGerencial = normalizarClassificacaoGerencial(
     linha.classificacao_gerencial || classificarGerencialmenteItemOrcamento(linha)
   );
-  const valorEmExecucaoConsiderado = compoeOrcamento ? valorEstimadoPesquisaPreco : 0;
+  const deveConsiderarEmExecucao = compoeOrcamento
+    && processoAutuado
+    && !statusNormalizado.includes("CANCELADO")
+    && !statusNormalizado.includes("SUSPENSO");
+  const valorEmExecucaoConsiderado = deveConsiderarEmExecucao ? valorEstimadoPesquisaPreco : 0;
   const saldoAparelhamento = classificacaoGerencial === "APARELHAMENTO"
     ? Math.max(0, arredondarMoeda(valorPrevisto - valorEmExecucaoConsiderado))
     : 0;
@@ -625,7 +630,7 @@ function linhaParaItem(linha) {
     processoAutuado,
     processoAutuadoNumero: processoAutuado ? 1 : 0,
     processoSei: linha.processo_sei || "",
-    status: linha.status || "PLANEJADO",
+    status: normalizarStatusOrcamento(linha.status || "PLANEJADO"),
     observacao: linha.observacao || "",
     compoeOrcamento,
     compoeOrcamentoNumero: compoeOrcamento ? 1 : 0,

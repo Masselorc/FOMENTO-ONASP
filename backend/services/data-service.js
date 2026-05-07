@@ -53,6 +53,11 @@ const TODAS_UFS_BRASIL = [
     'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
 ];
 
+// ATENÇÃO:
+// A tela principal de Parâmetros Mínimos usa apenas `PARAMETROS_MINIMOS_DIAGNOSTICO`.
+// A lista `PARAMETROS_DIAGNOSTICO_ONASP` é legado/apoio analítico e não deve ser
+// usada para renderizar a página principal.
+//
 // O checklist abaixo é propositalmente fechado: só contém parâmetros previstos
 // no manual normativo informado e ainda será filtrado pelas colunas realmente
 // existentes em Diagnostico.xlsx. Assim evitamos extrapolação normativa.
@@ -2106,16 +2111,13 @@ function montarPropostasFormalizacao(workbook, contatosFormalizacao = criarConta
         };
         const contatosPessoas = contatosFormalizacao.pessoasPorUf.get(uf) || [];
         const contatosDisponiveis = contatosFormalizacao.disponivel && contatosFormalizacao.cadastroPorUf.has(uf);
-        const condicaoPendenteRaw = obterCelulaFormalizacao(linha, painel, ['Condição Suspensiva Pendente?']);
         const exigeCondicao = UFS_CONDICAO_SUSPENSIVA_PROFOR.has(uf)
             || valorEhSim(obterCelulaFormalizacao(linha, painel, ['Exige Ato Normativo?', 'Ato normativo exigido?']));
         const atoEnviado = valorEhSim(obterCelulaFormalizacao(linha, painel, ['Ato Normativo Enviado?', 'Ato normativo enviado?']));
         const atoPublicadoRaw = obterCelulaFormalizacao(linha, painel, ['Ato Normativo Publicado?', 'Ato normativo publicado?']);
-        const condicaoPendente = exigeCondicao
-            ? (textoPossuiValor(condicaoPendenteRaw) ? valorEhSim(condicaoPendenteRaw) : !valorEhSim(atoPublicadoRaw))
-            : false;
-        const atoPublicado = valorEhSim(atoPublicadoRaw) || (exigeCondicao && atoEnviado && !condicaoPendente);
-        const condicaoResolvida = !exigeCondicao || (!condicaoPendente && (atoPublicado || atoEnviado));
+        const atoPublicado = valorEhSim(atoPublicadoRaw);
+        const condicaoPendente = exigeCondicao ? !atoPublicado : false;
+        const condicaoResolvida = !exigeCondicao || atoPublicado;
 
         const proposta = {
             idProposta,
@@ -2182,8 +2184,8 @@ function montarPropostasFormalizacao(workbook, contatosFormalizacao = criarConta
                     : condicaoResolvida
                         ? 'Resolvido'
                         : atoEnviado
-                            ? 'Enviado, aguardando análise'
-                            : 'Pendente'
+                            ? 'Enviado, aguardando publicação'
+                            : 'Pendente de ato normativo publicado'
             },
             falaBr: {
                 previsto: valorEhSim(obterCelulaFormalizacao(linha, painel, ['FalaBR_Previsto', 'Fala.BR previsto no cronograma?', 'FalaBR Previsto'])),

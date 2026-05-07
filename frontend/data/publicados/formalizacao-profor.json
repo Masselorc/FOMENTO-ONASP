@@ -18,7 +18,12 @@
     "RS",
     "SE"
   ],
-  "ufsCondicaoSuspensiva": [],
+  "ufsCondicaoSuspensiva": [
+    "PA",
+    "RR",
+    "RS",
+    "SE"
+  ],
   "valorRepassePadrao": 200000,
   "etapas": [
     {
@@ -2017,12 +2022,12 @@
         "porFonte": []
       },
       "condicaoSuspensiva": {
-        "exige": false,
+        "exige": true,
         "atoEnviado": false,
         "atoPublicado": false,
-        "pendente": false,
-        "resolvida": true,
-        "situacao": "Não se aplica"
+        "pendente": true,
+        "resolvida": false,
+        "situacao": "Pendente de ato normativo publicado"
       },
       "falaBr": {
         "previsto": true,
@@ -2725,12 +2730,12 @@
         "porFonte": []
       },
       "condicaoSuspensiva": {
-        "exige": false,
+        "exige": true,
         "atoEnviado": false,
         "atoPublicado": false,
-        "pendente": false,
-        "resolvida": true,
-        "situacao": "Não se aplica"
+        "pendente": true,
+        "resolvida": false,
+        "situacao": "Pendente de ato normativo publicado"
       },
       "falaBr": {
         "previsto": true,
@@ -2959,12 +2964,12 @@
         "porFonte": []
       },
       "condicaoSuspensiva": {
-        "exige": false,
+        "exige": true,
         "atoEnviado": false,
         "atoPublicado": false,
-        "pendente": false,
-        "resolvida": true,
-        "situacao": "Não se aplica"
+        "pendente": true,
+        "resolvida": false,
+        "situacao": "Pendente de ato normativo publicado"
       },
       "falaBr": {
         "previsto": true,
@@ -3193,12 +3198,12 @@
         "porFonte": []
       },
       "condicaoSuspensiva": {
-        "exige": false,
+        "exige": true,
         "atoEnviado": false,
         "atoPublicado": false,
-        "pendente": false,
-        "resolvida": true,
-        "situacao": "Não se aplica"
+        "pendente": true,
+        "resolvida": false,
+        "situacao": "Pendente de ato normativo publicado"
       },
       "falaBr": {
         "previsto": true,
@@ -3412,7 +3417,7 @@
     "totalContrapartida": 0,
     "aptasCelebracao": 2,
     "planosCompativeis": 14,
-    "condicoesPendentes": 0,
+    "condicoesPendentes": 4,
     "falaBrPendentes": 0,
     "alertasCriticos": 2,
     "propostasComAlertaCritico": 2,
