@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260507-03';
+} from '../../backend/services/data-service.js?v=20260507-04';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -4090,6 +4090,42 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        function normalizarClassificacaoGerencialOrcamento(valor) {
+            const texto = normalizarBusca(valor).replace(/\s+/g, '_');
+            if (['aparelhamento', 'sim', 's', '1', 'true'].includes(texto)) return 'APARELHAMENTO';
+            return 'NAO_APARELHAMENTO';
+        }
+
+        function itemEhAparelhamentoOrcamento(item) {
+            return normalizarClassificacaoGerencialOrcamento(item?.classificacaoGerencial) === 'APARELHAMENTO'
+                || item?.ehAparelhamento === true;
+        }
+
+        function calcularResumoAparelhamentoFrontend(itens) {
+            const itensAparelhamento = itens.filter((item) => (
+                itemEhAparelhamentoOrcamento(item)
+                && item.compoeOrcamento !== false
+                && item.ativo !== false
+            ));
+            const previstoAparelhamento = itensAparelhamento.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0);
+            const emExecucaoAparelhamento = itensAparelhamento.reduce((total, item) => total + (Number(item.valorEmExecucaoConsiderado ?? item.valorEstimadoPesquisaPreco) || 0), 0);
+            const pendentesPesquisaPreco = itensAparelhamento.filter((item) => {
+                const status = normalizarBusca(item.status);
+                return normalizarBooleanOrcamento(item.processoAutuado)
+                    && (Number(item.valorEstimadoPesquisaPreco) || 0) <= 0
+                    && !status.includes('cancelado')
+                    && !status.includes('suspenso');
+            });
+
+            return {
+                previstoAparelhamento,
+                emExecucaoAparelhamento,
+                saldoAparelhamento: previstoAparelhamento - emExecucaoAparelhamento,
+                quantidadeItensAparelhamento: itensAparelhamento.length,
+                quantidadePendentesPesquisaPreco: pendentesPesquisaPreco.length
+            };
+        }
+
         function itemUsaRastreioProfor(item) {
             const tipoRastreio = normalizarBusca(item.tipoRastreio);
             return tipoRastreio.includes('profor')
@@ -4131,6 +4167,8 @@ async function carregarLogoParaPDF() {
                     item.status,
                     item.processoSei,
                     item.valorEstimadoPesquisaPreco,
+                    item.classificacaoGerencial,
+                    item.ehAparelhamento ? 'Aparelhamento' : 'Não aparelhamento',
                     item.observacao,
                     item.proforAutuacao,
                     item.proforParecerTecnico,
@@ -4192,6 +4230,18 @@ async function carregarLogoParaPDF() {
                     ? 'budget-status-planned'
                     : 'budget-status-default';
             return `<span class="budget-status ${classe}">${escapeHtml(status || 'Não informado')}</span>`;
+        }
+
+        function renderizarClassificacaoGerencialOrcamento(classificacao, saldoAparelhamento = 0) {
+            const ehAparelhamento = normalizarClassificacaoGerencialOrcamento(classificacao) === 'APARELHAMENTO';
+            return `
+                <div class="budget-classification-cell">
+                    <span class="budget-classification-badge budget-classification-${ehAparelhamento ? 'equipment' : 'other'}">
+                        ${ehAparelhamento ? 'Aparelhamento' : 'Não aparelhamento'}
+                    </span>
+                    ${ehAparelhamento ? `<span class="budget-classification-balance">Saldo: ${formatMoney(saldoAparelhamento)}</span>` : ''}
+                </div>
+            `;
         }
 
         function renderizarLinksOrcamento(item) {
@@ -4432,7 +4482,7 @@ async function carregarLogoParaPDF() {
 
             return `
                 <tr class="budget-tracking-row pdf-hidden" id="${escapeHtml(idRastreio)}">
-                    <td colspan="10" class="budget-tracking-cell">
+                    <td colspan="11" class="budget-tracking-cell">
                         <div class="budget-tracking-panel" aria-label="Rastreio processual de ${escapeHtml(item.descricao)}">
                             <div class="budget-tracking-header">
                                 <div>
@@ -4545,6 +4595,10 @@ async function carregarLogoParaPDF() {
                                     <span>Status</span>
                                     ${renderizarCampoOrcamento(item, 'status')}
                                 </label>
+                                <label>
+                                    <span>Classificação gerencial</span>
+                                    ${renderizarCampoOrcamento(item, 'classificacao_gerencial')}
+                                </label>
                                 <label class="budget-edit-grid-wide">
                                     <span>Observação</span>
                                     ${renderizarCampoOrcamento(item, 'observacao')}
@@ -4589,7 +4643,7 @@ async function carregarLogoParaPDF() {
             if (!grupos.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="10" class="text-center text-muted py-4">
+                        <td colspan="11" class="text-center text-muted py-4">
                             Nenhum item orçamentário foi encontrado para os filtros selecionados.
                         </td>
                     </tr>
@@ -4608,6 +4662,10 @@ async function carregarLogoParaPDF() {
                     const valorEstimado = obterValorPendenteOrcamento(item, 'valor_estimado_pesquisa_preco');
                     const valorEmpenhado = obterValorPendenteOrcamento(item, 'valor_empenhado');
                     const valorExecutado = obterValorPendenteOrcamento(item, 'valor_executado');
+                    const classificacaoGerencial = normalizarClassificacaoGerencialOrcamento(obterValorPendenteOrcamento(item, 'classificacao_gerencial'));
+                    const saldoAparelhamento = classificacaoGerencial === 'APARELHAMENTO'
+                        ? Math.max(0, (Number(item.valorPrevisto ?? item.valorTotal) || 0) - (Number(valorEstimado) || 0))
+                        : 0;
                     const processoSei = obterValorPendenteOrcamento(item, 'processo_sei') || item.processoSei;
                     const status = obterValorPendenteOrcamento(item, 'status');
                     const observacao = obterValorPendenteOrcamento(item, 'observacao');
@@ -4638,6 +4696,9 @@ async function carregarLogoParaPDF() {
                                 <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} budget-execution-badge">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
                             </div>
                         </td>
+                        <td data-label="Classificação" class="text-center align-middle">
+                            ${renderizarClassificacaoGerencialOrcamento(classificacaoGerencial, saldoAparelhamento)}
+                        </td>
                         <td data-label="Empenhado" class="text-end font-monospace align-middle">${formatMoney(Number(valorEmpenhado) || 0)}</td>
                         <td data-label="Executado" class="text-end font-monospace align-middle">${formatMoney(Number(valorExecutado) || 0)}</td>
                         <td data-label="Status" class="text-center align-middle">
@@ -4651,14 +4712,14 @@ async function carregarLogoParaPDF() {
                                 ${renderizarLinksOrcamento(item)}
                                 ${renderizarBotaoEdicaoOrcamento(item.id)}
                             </div>
-                        </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 10)}
+                        </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 11)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
                 `;
                 }).join('');
 
                 return `
                     <tr class="budget-group-row">
-                        <td colspan="10">
+                        <td colspan="11">
                             <div class="budget-group-heading">
                                 <div>
                                     <span class="budget-group-label">Frente</span>
@@ -5069,6 +5130,7 @@ async function carregarLogoParaPDF() {
             const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
             const saldoPlanejado = resumo.saldoPlanejado ?? ((resumo.totalOrcamento || resumo.totalGeral || 0) - valorEmExecucao);
             const processosAutuados = resumo.processosAutuados || 0;
+            const resumoAparelhamento = budgetData.resumoAparelhamento || calcularResumoAparelhamentoFrontend(itensOrcamento);
 
             container.innerHTML = `
                 <section class="dashboard-intro budget-intro">
@@ -5119,6 +5181,47 @@ async function carregarLogoParaPDF() {
                             <div class="kpi-title"><i class="fas fa-vault" aria-hidden="true"></i>Saldo planejado</div>
                             <div class="kpi-value text-money">${formatMoney(saldoPlanejado)}</div>
                             <div class="kpi-desc">${processosAutuados} processo(s) autuado(s)</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="budget-equipment-section mb-4" aria-label="Indicadores de aparelhamento">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Leitura gerencial</p>
+                            <h2>Aparelhamento</h2>
+                        </div>
+                    </div>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
+                        <div class="col">
+                            <div class="card kpi-card kpi-card-success">
+                                <div class="kpi-title"><i class="fas fa-boxes-stacked" aria-hidden="true"></i>Previsto em aparelhamento</div>
+                                <div class="kpi-value text-money text-success">${formatMoney(resumoAparelhamento.previstoAparelhamento || 0)}</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card kpi-card kpi-card-warning">
+                                <div class="kpi-title"><i class="fas fa-hourglass-half" aria-hidden="true"></i>Em execução em aparelhamento</div>
+                                <div class="kpi-value text-money text-warning">${formatMoney(resumoAparelhamento.emExecucaoAparelhamento || 0)}</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card kpi-card">
+                                <div class="kpi-title"><i class="fas fa-vault" aria-hidden="true"></i>Saldo de aparelhamento</div>
+                                <div class="kpi-value text-money">${formatMoney(resumoAparelhamento.saldoAparelhamento || 0)}</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card kpi-card kpi-card-info">
+                                <div class="kpi-title"><i class="fas fa-list-check" aria-hidden="true"></i>Itens de aparelhamento</div>
+                                <div class="kpi-value text-info">${resumoAparelhamento.quantidadeItensAparelhamento || 0}</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card kpi-card kpi-card-warning">
+                                <div class="kpi-title"><i class="fas fa-tags" aria-hidden="true"></i>Pendentes de pesquisa</div>
+                                <div class="kpi-value text-warning">${resumoAparelhamento.quantidadePendentesPesquisaPreco || 0}</div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -5210,6 +5313,7 @@ async function carregarLogoParaPDF() {
                                     <th title="Abrangência / Quantidade"><div class="budget-header-cell header-abrangencia"><i class="fas fa-layer-group" aria-hidden="true"></i> <span>Abr./Qtd.</span></div></th>
                                     <th title="Valor previsto"><div class="budget-header-cell"><i class="fas fa-coins" aria-hidden="true"></i> <span>Previsto</span></div></th>
                                     <th title="Valor em execução"><div class="budget-header-cell"><i class="fas fa-hourglass-half" aria-hidden="true"></i> <span>Execução</span></div></th>
+                                    <th title="Classificação gerencial"><div class="budget-header-cell"><i class="fas fa-boxes-stacked" aria-hidden="true"></i> <span>Classif.</span></div></th>
                                     <th title="Valor empenhado"><div class="budget-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Emp.</span></div></th>
                                     <th title="Valor executado"><div class="budget-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Exec.</span></div></th>
                                     <th><div class="budget-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
@@ -6406,6 +6510,7 @@ async function carregarLogoParaPDF() {
                 processo_sei: item.processoSei,
                 status: item.status,
                 observacao: item.observacao,
+                classificacao_gerencial: item.classificacaoGerencial || (item.ehAparelhamento ? 'APARELHAMENTO' : 'NAO_APARELHAMENTO'),
                 descricao: item.descricao,
                 categoria: item.categoria || item.frente,
                 natureza: item.natureza,
@@ -6419,11 +6524,15 @@ async function carregarLogoParaPDF() {
                 ? parseNumeroMonetarioFrontend(valorOriginal)
                 : campo === 'processo_autuado'
                     ? normalizarBooleanOrcamento(valorOriginal)
+                    : campo === 'classificacao_gerencial'
+                        ? normalizarClassificacaoGerencialOrcamento(valorOriginal)
                     : String(valorOriginal ?? '');
             const novoNormalizado = campo.startsWith('valor_')
                 ? parseNumeroMonetarioFrontend(novoValor)
                 : campo === 'processo_autuado'
                     ? normalizarBooleanOrcamento(novoValor)
+                    : campo === 'classificacao_gerencial'
+                        ? normalizarClassificacaoGerencialOrcamento(novoValor)
                     : String(novoValor ?? '').trim();
 
             if (!orcamentoAlteracoesPendentes[id]) {
@@ -6484,6 +6593,7 @@ async function carregarLogoParaPDF() {
                 }
                 if (campo.startsWith('valor_')) return formatMoney(Number(valor) || 0);
                 if (campo === 'status') return renderizarStatusOrcamento(valor);
+                if (campo === 'classificacao_gerencial') return renderizarClassificacaoGerencialOrcamento(valor, item.saldoAparelhamento || 0);
                 return escapeHtml(valor || '-');
             }
 
@@ -6502,6 +6612,17 @@ async function carregarLogoParaPDF() {
                 return `
                     <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${escapeHtml(valorOriginal)}">
                         ${STATUS_ORCAMENTO_EDICAO.map((status) => `<option value="${escapeHtml(status)}" ${valor === status ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}
+                    </select>
+                `;
+            }
+
+            if (campo === 'classificacao_gerencial') {
+                const classificacao = normalizarClassificacaoGerencialOrcamento(valor);
+                const classificacaoOriginal = normalizarClassificacaoGerencialOrcamento(valorOriginal);
+                return `
+                    <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${escapeHtml(classificacaoOriginal)}">
+                        <option value="APARELHAMENTO" ${classificacao === 'APARELHAMENTO' ? 'selected' : ''}>Aparelhamento</option>
+                        <option value="NAO_APARELHAMENTO" ${classificacao !== 'APARELHAMENTO' ? 'selected' : ''}>Não aparelhamento</option>
                     </select>
                 `;
             }
