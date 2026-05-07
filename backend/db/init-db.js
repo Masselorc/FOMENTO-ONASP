@@ -34,7 +34,6 @@ function inicializarBanco() {
       valor_executado REAL DEFAULT 0,
       status TEXT,
       observacao TEXT,
-      classificacao_gerencial TEXT DEFAULT 'NAO_APARELHAMENTO',
       atualizado_em TEXT
     );
 
@@ -58,7 +57,6 @@ function inicializarBanco() {
   garantirColuna("orcamento_2026", "processo_sei", "TEXT");
   garantirColuna("orcamento_2026", "compoe_orcamento", "INTEGER DEFAULT 1");
   garantirColuna("orcamento_2026", "ativo", "INTEGER DEFAULT 1");
-  garantirColuna("orcamento_2026", "classificacao_gerencial", "TEXT DEFAULT 'NAO_APARELHAMENTO'");
   garantirColunasOrcamentoRastreio();
 }
 

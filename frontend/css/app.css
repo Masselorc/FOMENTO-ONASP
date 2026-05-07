@@ -1391,52 +1391,41 @@ table.dataTable thead td,
 
 .budget-main-table th:first-child,
 .budget-main-table td[data-label="Item"] {
-    width: 22%;
+    width: 24%;
 }
 
 .budget-main-table th:nth-child(2),
 .budget-main-table td[data-label="Modalidade/Natureza"] {
-    width: 7%;
+    width: 8%;
 }
 
 .budget-main-table th:nth-child(3),
 .budget-main-table td[data-label="Abrangência/Qtd."] {
-    width: 7%;
+    width: 8%;
 }
 
 .budget-main-table th:nth-child(4),
-.budget-main-table td[data-label="Valor previsto"] {
+.budget-main-table td[data-label="Valor previsto"],
+.budget-main-table th:nth-child(6),
+.budget-main-table td[data-label="Empenhado"],
+.budget-main-table th:nth-child(7),
+.budget-main-table td[data-label="Executado"],
+.budget-main-table th:nth-child(8),
+.budget-main-table td[data-label="Status"] {
     width: 8%;
 }
 
 .budget-main-table th:nth-child(5),
 .budget-main-table td[data-label="Em execução"] {
-    width: 9%;
-}
-
-.budget-main-table th:nth-child(6),
-.budget-main-table td[data-label="Classificação"] {
     width: 10%;
 }
 
-.budget-main-table th:nth-child(7),
-.budget-main-table td[data-label="Empenhado"],
-.budget-main-table th:nth-child(8),
-.budget-main-table td[data-label="Executado"] {
-    width: 7%;
-}
-
-.budget-main-table th:nth-child(9),
-.budget-main-table td[data-label="Status"] {
-    width: 8%;
-}
-
-.budget-main-table th:nth-child(10) {
-    width: 8%;
+.budget-main-table th:nth-child(9) {
+    width: 12%;
 }
 
 .budget-main-table td[data-label="Observação"] {
-    width: 8%;
+    width: 12%;
     color: var(--color-muted);
     font-size: 0.78rem;
     overflow: hidden;
@@ -1445,9 +1434,9 @@ table.dataTable thead td,
     max-width: 0;
 }
 
-.budget-main-table th:nth-child(11),
+.budget-main-table th:nth-child(10),
 .budget-main-table td[data-label="Ações"] {
-    width: 7%;
+    width: 8%;
     text-align: center !important;
     vertical-align: middle !important;
 }
@@ -1611,47 +1600,6 @@ table.dataTable thead td,
     line-height: 1 !important;
     padding: 0.18rem 0.35rem !important;
     white-space: nowrap !important;
-}
-
-.budget-classification-cell {
-    align-items: center;
-    display: grid;
-    gap: 0.18rem;
-    justify-items: center;
-    line-height: 1.15;
-    min-width: 0;
-}
-
-.budget-classification-badge {
-    border-radius: 999px;
-    display: inline-flex;
-    font-size: 0.6rem;
-    font-weight: 800;
-    justify-content: center;
-    max-width: 100%;
-    min-height: 22px;
-    padding: 0.22rem 0.42rem;
-    text-align: center;
-    text-transform: uppercase;
-    white-space: normal;
-}
-
-.budget-classification-equipment {
-    background: var(--color-primary-soft);
-    color: var(--color-primary-strong);
-}
-
-.budget-classification-other {
-    background: #eef2f7;
-    color: var(--color-muted);
-}
-
-.budget-classification-balance {
-    color: var(--color-muted);
-    display: block;
-    font-size: 0.66rem;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
 }
 
 .budget-action-buttons,
