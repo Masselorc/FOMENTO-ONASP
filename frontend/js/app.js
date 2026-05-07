@@ -148,6 +148,29 @@ const STATUS_UI = {
     }
 };
 
+const VIEW_ERROR_MESSAGES = {
+    orcamento: {
+        titulo: 'Não foi possível carregar Orçamento 2026.',
+        detalhe: 'Verifique se o servidor local está ativo ou se o arquivo orcamento-2026.json foi publicado.'
+    },
+    formalizacao: {
+        titulo: 'Não foi possível carregar Formalização PROFOR.',
+        detalhe: 'Verifique a API local ou o arquivo formalizacao-profor.json.'
+    },
+    'formalizacao-detalhe': {
+        titulo: 'Não foi possível carregar o detalhe da Formalização PROFOR.',
+        detalhe: 'Verifique os dados da UF selecionada.'
+    },
+    'diagnostico-ouvidorias': {
+        titulo: 'Não foi possível carregar Parâmetros Mínimos.',
+        detalhe: 'Verifique a base local ou o arquivo parametros-minimos.json.'
+    },
+    contatos: {
+        titulo: 'Não foi possível carregar Contatos UFs.',
+        detalhe: 'Verifique a origem dos dados de contatos.'
+    }
+};
+
 function normalizarChaveStatusUi(status) {
     const texto = String(status || '')
         .normalize('NFD')
@@ -307,7 +330,7 @@ function aplicarModoSomenteLeitura() {
 }
 
 function obterMensagemSalvamento(payload) {
-    return payload?.message || 'Alterações salvas com sucesso.';
+    return payload?.message || 'Alterações salvas com sucesso. Dados públicos atualizados.';
 }
 
 function fecharMenuLateral() {
@@ -696,10 +719,10 @@ async function carregarLogoParaPDF() {
         // Alterna entre as views principais sem recarregar a página. A view de
         // orçamento é carregada sob demanda porque depende de uma planilha extra.
         function obterMensagemCarregamentoView(viewName) {
-            if (viewName === 'orcamento' && !obterDadosOrcamento()) return 'Carregando orçamento 2026...';
-            if (['formalizacao', 'formalizacao-detalhe'].includes(viewName) && !obterDadosFormalizacaoProfor()) return 'Carregando formalização PROFOR/ONASP...';
+            if (viewName === 'orcamento' && !obterDadosOrcamento()) return 'Carregando Orçamento 2026...';
+            if (['formalizacao', 'formalizacao-detalhe'].includes(viewName) && !obterDadosFormalizacaoProfor()) return 'Carregando Formalização PROFOR...';
             if (viewName === 'diagnostico-ouvidorias' && !obterDadosDiagnosticoOuvidorias()) return 'Carregando Parâmetros Mínimos...';
-            if (viewName === 'contatos' && (!obterDadosContatos() || !obterDadosContatos().disponivel)) return 'Carregando contatos...';
+            if (viewName === 'contatos' && (!obterDadosContatos() || !obterDadosContatos().disponivel)) return 'Carregando Contatos UFs...';
             return '';
         }
 
@@ -732,17 +755,14 @@ async function carregarLogoParaPDF() {
             };
             const view = document.getElementById(ids[viewName]);
             if (!view) return;
-            const detalhes = {
-                orcamento: 'Verifique se o servidor local está ativo ou se o JSON publicado foi gerado.',
-                formalizacao: 'Verifique se a base local foi carregada ou se o JSON publicado está disponível.',
-                'formalizacao-detalhe': 'Verifique se os dados da formalização foram carregados corretamente.',
-                'diagnostico-ouvidorias': 'Verifique se o diagnóstico foi carregado ou se os dados publicados estão disponíveis.',
-                contatos: 'Verifique se a planilha de contatos foi carregada ou se os dados publicados estão disponíveis.'
+            const config = VIEW_ERROR_MESSAGES[viewName] || {
+                titulo: 'Não foi possível carregar esta página.',
+                detalhe: 'Tente recarregar a aplicação ou verificar a origem dos dados.'
             };
 
             view.innerHTML = renderErrorState({
-                titulo: 'Não foi possível carregar esta página.',
-                detalhe: detalhes[viewName] || '',
+                titulo: config.titulo,
+                detalhe: config.detalhe,
                 error
             });
             view.style.display = 'block';
@@ -3052,7 +3072,11 @@ async function carregarLogoParaPDF() {
             if (cardGrid) {
                 cardGrid.innerHTML = propostas.length
                     ? propostas.map(renderizarCartaoFormalizacao).join('')
-                    : '<div class="formalizacao-empty-state"><i class="fas fa-search" aria-hidden="true"></i><span>Nenhuma proposta encontrada para os filtros selecionados.</span></div>';
+                    : renderEmptyState({
+                        titulo: 'Nenhuma proposta encontrada.',
+                        descricao: 'Ajuste os filtros aplicados para localizar outras UFs ou registros.',
+                        icon: 'fa-search'
+                    });
             }
 
             if (!tbody) return;
@@ -3115,7 +3139,13 @@ async function carregarLogoParaPDF() {
                 `;
             }).join('') : `
                 <tr>
-                    <td colspan="9" class="text-center text-muted py-4">Nenhuma proposta encontrada para os filtros selecionados.</td>
+                    <td colspan="9" class="py-4">
+                        ${renderEmptyState({
+                            titulo: 'Nenhuma proposta encontrada.',
+                            descricao: 'Ajuste os filtros aplicados para localizar outras UFs ou registros.',
+                            icon: 'fa-search'
+                        })}
+                    </td>
                 </tr>
             `;
 
@@ -3677,13 +3707,22 @@ async function carregarLogoParaPDF() {
             container.style.display = 'block';
             const dados = obterDadosFormalizacaoProfor();
             if (!dados) {
-                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados de formalização indisponíveis.</div>';
+                container.innerHTML = renderErrorState({
+                    titulo: VIEW_ERROR_MESSAGES.formalizacao.titulo,
+                    detalhe: VIEW_ERROR_MESSAGES.formalizacao.detalhe
+                });
+                aplicarModoSomenteLeitura();
                 return;
             }
 
             const propostas = Array.isArray(dados.propostas) ? dados.propostas : [];
             if (propostas.length === 0) {
-                container.innerHTML = '<div class="alert alert-warning m-4">Nenhuma proposta de formalização disponível para exibição.</div>';
+                container.innerHTML = renderEmptyState({
+                    titulo: 'Nenhuma proposta de formalização disponível.',
+                    descricao: 'Verifique se os dados da base PROFOR foram carregados ou publicados corretamente.',
+                    icon: 'fa-file-signature'
+                });
+                aplicarModoSomenteLeitura();
                 return;
             }
 
@@ -4179,8 +4218,12 @@ async function carregarLogoParaPDF() {
             const propostas = Array.isArray(dados?.propostas) ? dados.propostas : [];
             const proposta = propostas.find((item) => item.uf === formalizacaoUfAtual || item.idProposta === formalizacaoUfAtual);
             if (!dados || !proposta) {
-                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Proposta de formalização não localizada.</div>';
+                container.innerHTML = renderErrorState({
+                    titulo: VIEW_ERROR_MESSAGES['formalizacao-detalhe'].titulo,
+                    detalhe: VIEW_ERROR_MESSAGES['formalizacao-detalhe'].detalhe
+                });
                 container.style.display = 'block';
+                aplicarModoSomenteLeitura();
                 return;
             }
 
@@ -4911,8 +4954,12 @@ async function carregarLogoParaPDF() {
             if (!grupos.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="11" class="text-center text-muted py-4">
-                            Nenhum item orçamentário foi encontrado para os filtros selecionados.
+                        <td colspan="11" class="py-4">
+                            ${renderEmptyState({
+                                titulo: 'Nenhum item orçamentário encontrado.',
+                                descricao: 'Ajuste os filtros aplicados ou verifique se os dados foram carregados corretamente.',
+                                icon: 'fa-wallet'
+                            })}
                         </td>
                     </tr>
                 `;
@@ -5396,13 +5443,11 @@ async function carregarLogoParaPDF() {
 
             const budgetData = obterDadosOrcamento();
             if (!budgetData) {
-                const mensagemErro = erroCarregamentoOrcamento?.message || 'Erro desconhecido ao carregar os dados.';
-                container.innerHTML = `
-                    <div class="alert alert-danger m-4">
-                        <strong>Orçamento 2026 não pôde ser carregado.</strong><br>
-                        ${escapeHtml(mensagemErro)}
-                    </div>
-                `;
+                container.innerHTML = renderErrorState({
+                    titulo: VIEW_ERROR_MESSAGES.orcamento.titulo,
+                    detalhe: VIEW_ERROR_MESSAGES.orcamento.detalhe,
+                    error: erroCarregamentoOrcamento
+                });
                 container.style.display = 'block';
                 aplicarModoSomenteLeitura();
                 return;
@@ -5410,11 +5455,11 @@ async function carregarLogoParaPDF() {
 
             const itensOrcamento = Array.isArray(budgetData?.itens) ? budgetData.itens : [];
             if (itensOrcamento.length === 0) {
-                container.innerHTML = `
-                    <div class="alert alert-warning m-4">
-                        Nenhum item orçamentário disponível para exibição.
-                    </div>
-                `;
+                container.innerHTML = renderEmptyState({
+                    titulo: 'Nenhum item orçamentário disponível.',
+                    descricao: 'Verifique se os dados foram carregados ou publicados corretamente.',
+                    icon: 'fa-wallet'
+                });
                 container.style.display = 'block';
                 aplicarModoSomenteLeitura();
                 return;
@@ -7304,10 +7349,13 @@ async function carregarLogoParaPDF() {
                             <h2>Parâmetros Mínimos</h2>
                         </div>
                     </section>
-                    <div class="alert alert-warning">
-                        Nenhum dado de parâmetros mínimos está disponível para exibição.
-                    </div>
+                    ${renderEmptyState({
+                        titulo: 'Nenhum dado de parâmetros mínimos disponível.',
+                        descricao: 'Verifique a base local ou o arquivo parametros-minimos.json.',
+                        icon: 'fa-clipboard-check'
+                    })}
                 `;
+                aplicarModoSomenteLeitura();
                 return;
             }
 
@@ -7376,9 +7424,11 @@ async function carregarLogoParaPDF() {
                 ` : !deveExibirDetalheUf ? `
                     ${renderizarVisaoGeralParametrosDiagnostico(dados, respostasFiltradas)}
                 ` : `
-                    <div class="diagnostico-empty-state diagnostico-empty-large">
-                        Nenhuma resposta válida foi localizada na planilha para os filtros atuais.
-                    </div>
+                    ${renderEmptyState({
+                        titulo: 'Nenhuma resposta válida encontrada.',
+                        descricao: 'Ajuste os filtros aplicados ou verifique se a planilha contém dados para a UF selecionada.',
+                        icon: 'fa-magnifying-glass'
+                    })}
                 `}
             `;
 
@@ -7462,12 +7512,13 @@ async function carregarLogoParaPDF() {
                             <h2>Contatos das Unidades Federativas</h2>
                         </div>
                     </section>
-                    <div class="alert alert-warning">
-                        Os dados de contatos não foram carregados. Verifique a planilha
-                        <strong>Planilhas/Contatos.xlsx</strong> e as abas
-                        <strong>Contatos_UF</strong> e <strong>Contatos_Pessoas</strong>.
-                    </div>
+                    ${renderEmptyState({
+                        titulo: 'Dados de contatos indisponíveis.',
+                        descricao: 'Verifique a planilha Planilhas/Contatos.xlsx e as abas Contatos_UF e Contatos_Pessoas.',
+                        icon: 'fa-address-book'
+                    })}
                 `;
+                aplicarModoSomenteLeitura();
                 return;
             }
 
@@ -7527,12 +7578,19 @@ async function carregarLogoParaPDF() {
                 <section class="contacts-accordion" id="contacts-accordion">
                     ${grupos.length
                         ? grupos.map((grupo, index) => renderGrupoContatoUf(grupo, index)).join('')
-                        : '<div class="alert alert-info">Nenhum contato encontrado na planilha.</div>'
+                        : renderEmptyState({
+                            titulo: 'Nenhum contato encontrado.',
+                            descricao: 'Verifique se a planilha de contatos contém registros válidos.',
+                            icon: 'fa-address-book'
+                        })
                     }
                 </section>
-                <div class="formalizacao-empty-state d-none" id="contacts-filter-empty">
-                    <i class="fas fa-search" aria-hidden="true"></i>
-                    <span>Nenhum contato localizado para o filtro selecionado.</span>
+                <div class="d-none" id="contacts-filter-empty">
+                    ${renderEmptyState({
+                        titulo: 'Nenhum contato localizado.',
+                        descricao: 'Ajuste o texto da busca ou os filtros de UF para ampliar os resultados.',
+                        icon: 'fa-search'
+                    })}
                 </div>
             `;
 
@@ -7677,11 +7735,11 @@ async function carregarLogoParaPDF() {
                 ));
 
             if (!entradas.length) {
-                return `
-                    <div class="contact-empty">
-                        Nenhum dado institucional específico informado para esta UF.
-                    </div>
-                `;
+                return renderEmptyState({
+                    titulo: 'Sem dados institucionais específicos.',
+                    descricao: 'Esta UF não possui dados institucionais complementares registrados.',
+                    icon: 'fa-building'
+                });
             }
 
             return `
@@ -7704,9 +7762,11 @@ async function carregarLogoParaPDF() {
                 return `
                     <div class="contact-section">
                         <h4>Contatos nominais</h4>
-                        <div class="contact-empty">
-                            Nenhum contato nominal informado.
-                        </div>
+                        ${renderEmptyState({
+                            titulo: 'Nenhum contato nominal informado.',
+                            descricao: 'Esta UF ainda não possui nomes de referência cadastrados.',
+                            icon: 'fa-user-group'
+                        })}
                     </div>
                 `;
             }
