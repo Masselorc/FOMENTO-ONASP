@@ -2293,7 +2293,7 @@ table.dataTable thead td,
 /* ==========================================================================
    Formalização PROFOR/ONASP 2026
    --------------------------------------------------------------------------
-   A planilha é tratada como banco de dados; estes estilos organizam a leitura
+   Estes estilos organizam a leitura operacional dos dados da aplicação.
    operacional gerada pela aplicação: cards por UF, alertas, trilha e tabelas.
    ========================================================================== */
 .formalizacao-intro {
@@ -2794,13 +2794,26 @@ table.dataTable thead td,
     position: relative;
 }
 
+.formalizacao-timeline::before {
+    background: #d9e2ee;
+    content: "";
+    height: 3px;
+    left: 5%;
+    position: absolute;
+    right: 5%;
+    top: 22px;
+    z-index: 0;
+}
+
 .formalizacao-step {
     align-items: center;
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
     min-width: 88px;
+    position: relative;
     text-align: center;
+    z-index: 1;
 }
 
 .formalizacao-step-marker {
@@ -2812,7 +2825,9 @@ table.dataTable thead td,
     display: inline-flex;
     height: 42px;
     justify-content: center;
+    position: relative;
     width: 42px;
+    z-index: 2;
 }
 
 .formalizacao-step-concluida .formalizacao-step-marker {
@@ -3793,6 +3808,16 @@ table.dataTable thead td,
         gap: 0.75rem;
         grid-template-columns: 1fr;
         overflow-x: visible;
+        padding-left: 0;
+    }
+
+    .formalizacao-timeline::before {
+        bottom: 18px;
+        height: auto;
+        left: 21px;
+        right: auto;
+        top: 18px;
+        width: 3px;
     }
 
     .formalizacao-step {

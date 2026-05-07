@@ -15,7 +15,7 @@ const JSON_PUBLICADOS_URLS = {
     orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url)
 };
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260506-14';
+const VERSAO_DADOS = '20260507-03';
 const PORTA_API_ONASP = '8010';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
@@ -3467,6 +3467,15 @@ async function carregarJsonPublicado(url, mensagemErro) {
     return resposta.json();
 }
 
+async function carregarJsonPublicadoPorChave(chave, mensagemErro = null) {
+    const url = JSON_PUBLICADOS_URLS[chave];
+    if (!url) {
+        throw new Error(`JSON publicado nao configurado para: ${chave}`);
+    }
+
+    return carregarJsonPublicado(url, mensagemErro || `Falha ao carregar JSON publicado ${chave}`);
+}
+
 function normalizarDadosOrcamentoPublicado(dados) {
     const itens = Array.isArray(dados?.itens)
         ? dados.itens
@@ -3491,6 +3500,211 @@ function normalizarDadosOrcamentoPublicado(dados) {
             naturezas: obterValoresUnicosOrcamento(itens, 'natureza'),
             modalidades: obterValoresUnicosOrcamento(itens, 'modalidade')
         }
+    };
+}
+
+const MAPA_IDS_PARAMETROS_PUBLICADOS = {
+    atoNormativoEspecifico: 'ato_normativo',
+    ouvidorFormalmenteDesignado: 'ouvidor_designado',
+    dedicacaoEquipe: 'dedicacao_equipe',
+    salaAmbienteReservado: 'sala_reservada',
+    computadoresNotebooks: 'computadores_notebooks',
+    impressoraMultifuncional: 'impressora_multifuncional',
+    scanner: 'scanner',
+    mobiliarioEstacoesTrabalho: 'mobiliario_estacoes',
+    armariosArquivosChave: 'armarios_arquivos',
+    emailInstitucional: 'email_institucional',
+    linhaTelefonica: 'linha_telefonica',
+    canalEletronicoRegistro: 'canal_eletronico',
+    falaBr: 'falabr',
+    enderecoPostal: 'endereco_postal',
+    fluxoInternoTratamento: 'fluxo_interno'
+};
+
+function textoTemReferenciaTecnica(valor) {
+    return /\bSQLite\b|\bSQL\b|backend\/data|onasp\.sqlite/i.test(String(valor || ''));
+}
+
+function respostaEhApenasStatus(valor) {
+    const texto = normalizarTexto(valor).replace(/\s+/g, ' ');
+    return ['TEM', 'NAO TEM', 'PARCIAL', 'VALIDAR', 'NAO INFORMADO', 'DEFICIT'].includes(texto)
+        || /^FALTA\s*\+\s*\d+$/.test(texto);
+}
+
+function textoPublicoValido(valor) {
+    const texto = limparTexto(valor);
+    return texto && !textoTemReferenciaTecnica(texto) && !respostaEhApenasStatus(texto);
+}
+
+function obterIdParametroNormalizado(item = {}) {
+    const id = item.idParametro || item.id || item.key || '';
+    return MAPA_IDS_PARAMETROS_PUBLICADOS[id] || id;
+}
+
+function obterConfigParametroPublicado(item = {}) {
+    const id = obterIdParametroNormalizado(item);
+    return PARAMETROS_MINIMOS_DIAGNOSTICO.find((config) => (
+        config.id === id
+        || normalizarTexto(config.nome) === normalizarTexto(item.parametro || item.parametroCurto)
+    )) || null;
+}
+
+function criarIndiceReferenciaParametros(dadosReferencia) {
+    const respostas = Array.isArray(dadosReferencia?.respostas) ? dadosReferencia.respostas : [];
+    const indice = new Map();
+
+    respostas.forEach((resposta) => {
+        (resposta.parametrosMinimos || []).forEach((item) => {
+            const chave = `${resposta.uf || resposta.idResposta}::${obterIdParametroNormalizado(item)}`;
+            indice.set(chave, item);
+        });
+    });
+
+    return indice;
+}
+
+function obterPerguntasParametroPublicado(config, item = {}, referencia = {}) {
+    const perguntasReferencia = Array.isArray(referencia.perguntasDiagnostico) ? referencia.perguntasDiagnostico : [];
+    const perguntasAtuais = Array.isArray(item.perguntasDiagnostico) ? item.perguntasDiagnostico : [];
+    const perguntasConfig = config?.tipo === 'quantitativo'
+        ? [...(config.atual || []), ...(config.ideal || [])]
+        : config?.perguntas || [];
+
+    const candidatas = perguntasReferencia.length ? perguntasReferencia : (perguntasAtuais.length ? perguntasAtuais : perguntasConfig);
+    return candidatas.filter((pergunta) => pergunta && !textoTemReferenciaTecnica(pergunta));
+}
+
+function obterValidacaoParametroPublicado(config, status, item = {}, referencia = {}) {
+    if (referencia.validacaoOnasp && !textoTemReferenciaTecnica(referencia.validacaoOnasp)) return referencia.validacaoOnasp;
+    if (item.validacaoOnasp && !textoTemReferenciaTecnica(item.validacaoOnasp)) return item.validacaoOnasp;
+    if (!config?.requerValidacao) return 'Não se aplica';
+    if (status === 'Tem') return 'Validado';
+    if (status === 'Validar') return 'Pendente';
+    return 'Não validado';
+}
+
+function obterRespostaOriginalParametroPublicado(item = {}, referencia = {}, status = '') {
+    const candidatas = [
+        referencia.respostaUf,
+        referencia.respostaOriginal,
+        item.respostaUf,
+        item.respostaOriginal
+    ];
+    const encontrada = candidatas.find(textoPublicoValido);
+    return encontrada || `Resultado consolidado: ${status || 'Não informado'}`;
+}
+
+function normalizarItemParametroPublicado(item = {}, referencia = {}) {
+    const config = obterConfigParametroPublicado(referencia) || obterConfigParametroPublicado(item);
+    const status = item.statusNormalizado || item.statusOperacional || referencia.statusNormalizado || referencia.statusOperacional || 'Não informado';
+    const tipo = item.tipo || referencia.tipo || config?.tipo || 'qualitativo';
+    const perguntasDiagnostico = obterPerguntasParametroPublicado(config, item, referencia);
+    const respostaOriginal = obterRespostaOriginalParametroPublicado(item, referencia, status);
+
+    return {
+        ...referencia,
+        ...item,
+        idParametro: item.idParametro || referencia.idParametro || MAPA_IDS_PARAMETROS_PUBLICADOS[config?.id] || config?.id,
+        trilha: item.trilha || item.eixo || referencia.trilha || referencia.eixo || config?.trilha || '',
+        eixo: item.eixo || item.trilha || referencia.eixo || referencia.trilha || config?.trilha || '',
+        parametro: item.parametro || referencia.parametro || config?.nome || '',
+        parametroCurto: item.parametroCurto || referencia.parametroCurto || config?.nome || '',
+        tipo,
+        fundamentoIn: textoTemReferenciaTecnica(item.fundamentoIn) || !item.fundamentoIn
+            ? (referencia.fundamentoIn && !textoTemReferenciaTecnica(referencia.fundamentoIn) ? referencia.fundamentoIn : config?.fundamentoIn || 'Referência normativa ONASP')
+            : item.fundamentoIn,
+        perguntasDiagnostico,
+        respostaUf: respostaOriginal,
+        respostaOriginal,
+        statusOperacional: status,
+        statusNormalizado: status,
+        validacaoOnasp: obterValidacaoParametroPublicado(config, status, item, referencia)
+    };
+}
+
+function normalizarRespostaParametrosPublicado(resposta = {}, indiceReferencia) {
+    const parametros = Array.isArray(resposta.parametrosMinimos) ? resposta.parametrosMinimos : [];
+    const parametrosMinimos = parametros.map((item) => {
+        const chave = `${resposta.uf || resposta.idResposta}::${obterIdParametroNormalizado(item)}`;
+        return normalizarItemParametroPublicado(item, indiceReferencia.get(chave) || {});
+    });
+
+    return {
+        ...resposta,
+        arquivoOrigem: textoTemReferenciaTecnica(resposta.arquivoOrigem) ? 'Dados consolidados ONASP' : resposta.arquivoOrigem,
+        dataResposta: textoTemReferenciaTecnica(resposta.dataResposta) ? 'Dados consolidados ONASP' : resposta.dataResposta,
+        parametrosMinimos
+    };
+}
+
+function normalizarDadosParametrosMinimosPublicado(dados, dadosReferencia = null) {
+    const respostas = Array.isArray(dados?.respostas)
+        ? dados.respostas
+        : Array.isArray(dados?.ufs)
+            ? dados.ufs
+            : Array.isArray(dados)
+                ? dados
+                : [];
+
+    if (respostas.length === 0) {
+        throw new Error('Dados de parâmetros mínimos carregados, mas nenhuma resposta foi encontrada.');
+    }
+
+    const base = Array.isArray(dados) ? {} : (dados || {});
+    const diagnostico = base.diagnostico || {};
+    const indiceReferencia = criarIndiceReferenciaParametros(dadosReferencia);
+    const respostasNormalizadas = respostas.map((resposta) => normalizarRespostaParametrosPublicado(resposta, indiceReferencia));
+
+    return {
+        ...base,
+        arquivo: textoTemReferenciaTecnica(base.arquivo) ? 'Dados consolidados ONASP' : base.arquivo,
+        disponivel: true,
+        erro: base.erro || '',
+        respostas: respostasNormalizadas,
+        parametrosDisponiveis: Array.isArray(base.parametrosDisponiveis)
+            ? base.parametrosDisponiveis
+            : PARAMETROS_MINIMOS_DIAGNOSTICO,
+        resumo: montarResumoGeralDiagnosticoOuvidorias(respostasNormalizadas),
+        diagnostico: {
+            colunasDisponiveis: Array.isArray(diagnostico.colunasDisponiveis) ? diagnostico.colunasDisponiveis : [],
+            perguntasDisponiveis: Array.isArray(diagnostico.perguntasDisponiveis)
+                ? diagnostico.perguntasDisponiveis
+                : PARAMETROS_MINIMOS_DIAGNOSTICO.map((config) => config.nome),
+            respostasDescartadasPorDuplicidade: diagnostico.respostasDescartadasPorDuplicidade || 0,
+            aviso: diagnostico.aviso || ''
+        }
+    };
+}
+
+function normalizarDadosFormalizacaoPublicado(dados) {
+    const propostas = Array.isArray(dados?.propostas)
+        ? dados.propostas
+        : Array.isArray(dados?.registros)
+            ? dados.registros
+            : Array.isArray(dados)
+                ? dados
+                : [];
+
+    if (propostas.length === 0) {
+        throw new Error('Dados de formalização carregados, mas nenhuma proposta foi encontrada.');
+    }
+
+    const base = Array.isArray(dados) ? {} : (dados || {});
+
+    return {
+        ...base,
+        disponivel: true,
+        propostas,
+        etapas: Array.isArray(base.etapas) ? base.etapas : [],
+        ufsAutorizadas: Array.isArray(base.ufsAutorizadas)
+            ? base.ufsAutorizadas
+            : [...UFS_FORMALIZACAO_PROFOR],
+        ufsCondicaoSuspensiva: Array.isArray(base.ufsCondicaoSuspensiva)
+            ? base.ufsCondicaoSuspensiva
+            : Array.from(UFS_CONDICAO_SUSPENSIVA_PROFOR),
+        valorRepassePadrao: Number(base.valorRepassePadrao) || VALOR_REPASSE_PROFOR,
+        diagnostico: base.diagnostico || {},
+        resumo: base.resumo || montarResumoFormalizacao(propostas)
     };
 }
 
@@ -3521,7 +3735,7 @@ async function carregarConveniosDaPlanilha(catalogoAplicacao) {
     return extrairDadosFinanceirosDoWorkbook(workbook, catalogoAplicacao);
 }
 
-// Carrega o banco orçamentário 2026. A estrutura esperada é:
+// Carrega a base orçamentária 2026. A estrutura esperada é:
 // - Base_Dados: cadastro financeiro dos itens;
 // - Processos_Normais: andamento dos itens comuns;
 // - Andamento_CONV_PROFOR: andamento especial do PROFOR.
@@ -3935,40 +4149,46 @@ export async function carregarDadosDiagnosticoOuvidorias(forcarRecarregamento = 
         return dadosDiagnosticoOuvidoriasCache;
     }
 
-    try {
-        try {
-            const resultado = await carregarComFallback(
-                '/api/parametros-minimos',
-                JSON_PUBLICADOS_URLS.parametrosMinimos,
-                'parametrosMinimos'
-            );
-            dadosDiagnosticoOuvidoriasCache = resultado.dados;
-            return dadosDiagnosticoOuvidoriasCache;
-        } catch (fallbackError) {
-            console.warn('API e dados estaticos de parametros minimos indisponiveis; usando fallback da planilha de parametros minimos.', fallbackError);
-        }
-
-        if (window.location.protocol === 'file:') {
-            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de parametros minimos.');
-        }
-
-        let dadosDiagnostico = null;
-        try {
-            const workbookDiagnostico = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_DIAGNOSTICO, 'Planilha de diagnostico');
-            dadosDiagnostico = extrairContextoDiagnosticoOuvidoriasDoWorkbook(workbookDiagnostico);
-        } catch (errorDiagnostico) {
-            dadosDiagnostico = criarDiagnosticoOuvidoriasVazio(errorDiagnostico.message, ARQUIVO_PLANILHA_DIAGNOSTICO);
-            console.warn(`Diagnostico historico indisponivel para parametros minimos: ${errorDiagnostico.message}`);
-        }
-
-        const workbookParametros = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_PARAMETROS_MINIMOS, 'Planilha de parametros minimos');
-        dadosDiagnosticoOuvidoriasCache = extrairParametrosMinimosValidacaoDoWorkbook(workbookParametros, dadosDiagnostico);
-        return dadosDiagnosticoOuvidoriasCache;
-    } catch (error) {
-        dadosDiagnosticoOuvidoriasCache = criarDiagnosticoOuvidoriasVazio(error.message, ARQUIVO_PLANILHA_PARAMETROS_MINIMOS);
-        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_PARAMETROS_MINIMOS}:`, error);
+    if (estaRodandoNoGitHubPages()) {
+        const dados = await carregarJsonPublicadoPorChave(
+            'parametrosMinimos',
+            'Falha ao carregar parâmetros mínimos publicados'
+        );
+        dadosDiagnosticoOuvidoriasCache = normalizarDadosParametrosMinimosPublicado(dados);
+        registrarModoDadosOnasp('parametrosMinimos', 'estatico');
         return dadosDiagnosticoOuvidoriasCache;
     }
+
+    try {
+        const { resposta, payload } = await fetchJsonApiOnasp('/api/parametros-minimos');
+        if (!resposta.ok) {
+            throw new Error(payload?.message || `API de parâmetros mínimos respondeu HTTP ${resposta.status}.`);
+        }
+
+        let dadosPublicadosReferencia = null;
+        try {
+            dadosPublicadosReferencia = await carregarJsonPublicadoPorChave(
+                'parametrosMinimos',
+                'Falha ao carregar referência publicada de parâmetros mínimos'
+            );
+        } catch (errorReferencia) {
+            console.warn('Não foi possível carregar a referência publicada de parâmetros mínimos.', errorReferencia);
+        }
+
+        dadosDiagnosticoOuvidoriasCache = normalizarDadosParametrosMinimosPublicado(payload, dadosPublicadosReferencia);
+        registrarModoDadosOnasp('parametrosMinimos', 'api');
+        return dadosDiagnosticoOuvidoriasCache;
+    } catch (errorApi) {
+        console.warn('API local de parâmetros mínimos indisponível. Tentando JSON publicado.', errorApi);
+    }
+
+    const dados = await carregarJsonPublicadoPorChave(
+        'parametrosMinimos',
+        'Falha ao carregar fallback publicado de parâmetros mínimos'
+    );
+    dadosDiagnosticoOuvidoriasCache = normalizarDadosParametrosMinimosPublicado(dados);
+    registrarModoDadosOnasp('parametrosMinimos', 'estatico');
+    return dadosDiagnosticoOuvidoriasCache;
 }
 
 export async function carregarDadosFormalizacaoProfor(forcarRecarregamento = false) {
@@ -3980,36 +4200,36 @@ export async function carregarDadosFormalizacaoProfor(forcarRecarregamento = fal
         return dadosFormalizacaoProforCache;
     }
 
-    try {
-        try {
-            const resultado = await carregarComFallback(
-                '/api/formalizacao-profor',
-                JSON_PUBLICADOS_URLS.formalizacaoProfor,
-                'formalizacaoProfor'
-            );
-            dadosFormalizacaoProforCache = resultado.dados;
-            return dadosFormalizacaoProforCache;
-        } catch (fallbackError) {
-            console.warn('API e dados estaticos de formalizacao PROFOR indisponiveis; usando fallback da planilha.', fallbackError);
-        }
-
-        if (window.location.protocol === 'file:') {
-            throw new Error('Abra a aplicacao por um servidor local para carregar a planilha de formalizacao.');
-        }
-
-        const workbook = await carregarWorkbookPorCaminho(ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR, 'Planilha de formalizacao');
-        let contatosFormalizacao = await carregarDadosContatos();
-        if (!contatosFormalizacao) {
-            contatosFormalizacao = criarContatosFormalizacaoVazios('Planilha de contatos não carregada.');
-        }
-
-        dadosFormalizacaoProforCache = extrairFormalizacaoProforDoWorkbook(workbook, contatosFormalizacao);
+    if (estaRodandoNoGitHubPages()) {
+        const dados = await carregarJsonPublicadoPorChave(
+            'formalizacaoProfor',
+            'Falha ao carregar formalização PROFOR publicada'
+        );
+        dadosFormalizacaoProforCache = normalizarDadosFormalizacaoPublicado(dados);
+        registrarModoDadosOnasp('formalizacaoProfor', 'estatico');
         return dadosFormalizacaoProforCache;
-    } catch (error) {
-        dadosFormalizacaoProforCache = null;
-        console.error(`Erro ao ler e processar ${ARQUIVO_PLANILHA_FORMALIZACAO_PROFOR}:`, error);
-        return null;
     }
+
+    try {
+        const { resposta, payload } = await fetchJsonApiOnasp('/api/formalizacao-profor');
+        if (!resposta.ok) {
+            throw new Error(payload?.message || `API de formalização PROFOR respondeu HTTP ${resposta.status}.`);
+        }
+
+        dadosFormalizacaoProforCache = normalizarDadosFormalizacaoPublicado(payload);
+        registrarModoDadosOnasp('formalizacaoProfor', 'api');
+        return dadosFormalizacaoProforCache;
+    } catch (errorApi) {
+        console.warn('API local de formalização PROFOR indisponível. Tentando JSON publicado.', errorApi);
+    }
+
+    const dados = await carregarJsonPublicadoPorChave(
+        'formalizacaoProfor',
+        'Falha ao carregar fallback publicado de formalização PROFOR'
+    );
+    dadosFormalizacaoProforCache = normalizarDadosFormalizacaoPublicado(dados);
+    registrarModoDadosOnasp('formalizacaoProfor', 'estatico');
+    return dadosFormalizacaoProforCache;
 }
 
 export async function carregarCatalogoAplicacao() {

@@ -1,6 +1,9 @@
 const db = require("./database");
 const { inicializarBanco } = require("./init-db");
-const { importarParametrosMinimos } = require("../scripts/importar-parametros-minimos");
+const {
+  importarParametrosMinimos,
+  atualizarRespostasOriginaisParametrosMinimos
+} = require("../scripts/importar-parametros-minimos");
 const { inicializarFormalizacaoProfor } = require("../services/formalizacao-profor-service");
 const { inicializarOrcamento2026 } = require("../services/orcamento-2026-service");
 
@@ -11,6 +14,7 @@ function prepararBanco() {
   if (total === 0) {
     importarParametrosMinimos();
   }
+  atualizarRespostasOriginaisParametrosMinimos();
 
   inicializarFormalizacaoProfor();
   inicializarOrcamento2026();

@@ -56,6 +56,7 @@ function obterFalta(config, statusTela, deficit) {
 
 function obterProvidencia(config, statusTela, deficit) {
   if (statusTela === "Tem") return "Não se aplica";
+  if (config.providencias?.[statusTela]) return config.providencias[statusTela];
   if (statusTela === "Não tem") return `Providenciar ${config.label.toLowerCase()}`;
   if (statusTela === "Parcial") return `Adequar/complementar ${config.label.toLowerCase()}`;
   if (statusTela === "Validar") return `Validar/comprovar ${config.label.toLowerCase()}`;
@@ -66,6 +67,33 @@ function obterProvidencia(config, statusTela, deficit) {
   }
 
   return `Verificar ${config.label.toLowerCase()}`;
+}
+
+function obterPerguntasDiagnostico(config) {
+  if (Array.isArray(config.perguntas) && config.perguntas.length) return config.perguntas;
+  if (config.tipo === "quantitativo") return [...(config.atual || []), ...(config.ideal || [])];
+  return [config.label];
+}
+
+function montarRespostaUf(linha, config, statusTela, atualDeclarado, idealDeclarado) {
+  if (linha.resposta_original && String(linha.resposta_original).trim()) {
+    return String(linha.resposta_original).trim();
+  }
+
+  if (config.tipo === "quantitativo") {
+    const atual = atualDeclarado === null || atualDeclarado === undefined ? "Não informado" : atualDeclarado;
+    const ideal = idealDeclarado === null || idealDeclarado === undefined ? "Não informado" : idealDeclarado;
+    return `Atual: ${atual} | Ideal: ${ideal}`;
+  }
+
+  return `Resultado consolidado: ${statusTela}`;
+}
+
+function obterValidacaoOnasp(config, statusTela) {
+  if (!config.requerValidacao) return "Não se aplica";
+  if (statusTela === "Tem") return "Validado";
+  if (statusTela === "Validar") return "Pendente";
+  return "Não validado";
 }
 
 function montarResumoParametros(parametros) {
@@ -103,7 +131,7 @@ function montarResposta(uf, linhas) {
       : null;
 
     return {
-      arquivoOrigem: "backend/data/onasp.sqlite",
+      arquivoOrigem: "Dados consolidados ONASP",
       uf,
       idResposta: uf,
       idParametro: config.key,
@@ -112,10 +140,10 @@ function montarResposta(uf, linhas) {
       parametro: config.label,
       parametroCurto: config.label,
       tipo: config.tipo === "quantitativo" ? "quantitativo" : "qualitativo",
-      fundamentoIn: "SQLite ONASP",
-      perguntasDiagnostico: [`SQLite: ${config.key}`],
-      respostaUf: statusBanco,
-      respostaOriginal: statusBanco,
+      fundamentoIn: config.fundamentoIn || "Referência normativa ONASP",
+      perguntasDiagnostico: obterPerguntasDiagnostico(config),
+      respostaUf: montarRespostaUf(linha, config, statusTela, atualDeclarado, idealDeclarado),
+      respostaOriginal: montarRespostaUf(linha, config, statusTela, atualDeclarado, idealDeclarado),
       statusOperacional: statusTela,
       statusNormalizado: statusTela,
       faltaObjetiva: obterFalta(config, statusTela, deficit),
@@ -123,19 +151,19 @@ function montarResposta(uf, linhas) {
       atualDeclarado,
       idealDeclarado,
       deficit,
-      validacaoOnasp: "SQLite",
+      validacaoOnasp: obterValidacaoOnasp(config, statusTela),
       prioridade: statusTela === "Tem" ? "Média" : "Alta"
     };
   });
   const resumoParametrosMinimos = montarResumoParametros(parametrosMinimos);
 
   return {
-    arquivoOrigem: "backend/data/onasp.sqlite",
+    arquivoOrigem: "Dados consolidados ONASP",
     idResposta: uf,
     codigoValidacao: uf,
     uf,
     unidadeDiagnosticada: `Ouvidoria de Serviços Penais - ${uf}`,
-    dataResposta: "SQLite ONASP",
+    dataResposta: "Dados consolidados ONASP",
     statusGeral: resumoParametrosMinimos.statusGeral,
     statusGeralParametrosMinimos: resumoParametrosMinimos.statusGeral,
     resumoParametrosMinimos,
@@ -176,14 +204,14 @@ function montarResumoGeral(respostas) {
       statusGerais: ["Tem", "Parcial", "Validar"],
       eixos: ["Institucionalização", "Pessoas", "Estrutura", "Canais", "Fluxo"],
       statusParametros: ["Tem", "Parcial", "Não tem", "Validar", "Não informado", "Déficit", "Falta +X"],
-      validacoesOnasp: ["SQLite"]
+      validacoesOnasp: ["Validado", "Pendente", "Não validado", "Não se aplica"]
     }
   };
 }
 
 function listarParametrosMinimos() {
   const linhas = db.prepare(`
-    SELECT uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em
+    SELECT uf, parametro, status, quantidade_atual, quantidade_ideal, resposta_original, atualizado_em
     FROM parametros_minimos
     ORDER BY uf, parametro
   `).all();
@@ -197,7 +225,7 @@ function listarParametrosMinimos() {
   const respostas = Array.from(porUf.entries()).map(([uf, itens]) => montarResposta(uf, itens));
 
   return {
-    arquivo: "backend/data/onasp.sqlite",
+    arquivo: "Dados consolidados ONASP",
     disponivel: true,
     erro: "",
     aba: "parametros_minimos",

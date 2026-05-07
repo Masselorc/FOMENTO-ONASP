@@ -50,6 +50,7 @@ function inicializarBanco() {
 
   garantirColuna("parametros_minimos", "quantidade_atual", "REAL");
   garantirColuna("parametros_minimos", "quantidade_ideal", "REAL");
+  garantirColuna("parametros_minimos", "resposta_original", "TEXT");
   garantirColuna("orcamento_2026", "valor_estimado_pesquisa_preco", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "valor_empenhado", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "processo_autuado", "INTEGER DEFAULT 0");

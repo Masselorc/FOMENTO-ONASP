@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260506-14';
+} from '../../backend/services/data-service.js?v=20260507-03';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -53,13 +53,14 @@ let diagnosticoUfAtual = '';
 let parametrosMinimosModoEdicao = false;
 let parametrosMinimosAlteracoesPendentes = {};
 let parametrosMinimosEditorAtivo = null;
-let formalizacaoModoEdicao = false;
+let formalizacaoEditoresAbertos = new Set();
 let formalizacaoAlteracoesPendentes = {};
 let orcamentoAlteracoesPendentes = {};
 let orcamentoEditoresAbertos = new Set();
 let orcamentoNovosProcessos = [];
 let orcamentoProcessosInativos = new Set();
 let erroCarregamentoOrcamento = null;
+const errosCarregamentoView = {};
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -508,49 +509,67 @@ async function carregarLogoParaPDF() {
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
         // Alterna entre as views principais sem recarregar a página. A view de
         // orçamento é carregada sob demanda porque depende de uma planilha extra.
-        async function toggleView(viewName) {
+        function obterMensagemCarregamentoView(viewName) {
+            if (viewName === 'orcamento' && !obterDadosOrcamento()) return 'Carregando orçamento 2026...';
+            if (['formalizacao', 'formalizacao-detalhe'].includes(viewName) && !obterDadosFormalizacaoProfor()) return 'Carregando formalização PROFOR/ONASP...';
+            if (viewName === 'diagnostico-ouvidorias' && !obterDadosDiagnosticoOuvidorias()) return 'Carregando Parâmetros Mínimos...';
+            if (viewName === 'contatos' && (!obterDadosContatos() || !obterDadosContatos().disponivel)) return 'Carregando contatos...';
+            return '';
+        }
+
+        async function garantirDadosDaView(viewName) {
             if (viewName === 'orcamento' && !obterDadosOrcamento()) {
-                showLoading('Carregando orçamento 2026...');
-                try {
-                    await carregarDadosOrcamento();
-                    erroCarregamentoOrcamento = null;
-                } catch (error) {
-                    erroCarregamentoOrcamento = error;
-                    console.error('Falha ao carregar Orçamento 2026:', error);
-                } finally {
-                    hideLoading();
-                }
+                await carregarDadosOrcamento();
+                erroCarregamentoOrcamento = null;
             }
 
             if (['formalizacao', 'formalizacao-detalhe'].includes(viewName) && !obterDadosFormalizacaoProfor()) {
-                showLoading('Carregando formalização PROFOR/ONASP...');
-                try {
-                    await carregarDadosFormalizacaoProfor();
-                } finally {
-                    hideLoading();
-                }
-            }
-
-            if (viewName === 'contatos' && (!obterDadosContatos() || !obterDadosContatos().disponivel)) {
-                showLoading('Carregando contatos...');
-                try {
-                    await carregarDadosContatos();
-                } catch (error) {
-                    console.error('Falha ao carregar contatos:', error);
-                } finally {
-                    hideLoading();
-                }
+                await carregarDadosFormalizacaoProfor();
             }
 
             if (viewName === 'diagnostico-ouvidorias' && !obterDadosDiagnosticoOuvidorias()) {
-                showLoading('Carregando Parâmetros Mínimos...');
-                try {
-                    await carregarDadosDiagnosticoOuvidorias();
-                } catch (error) {
-                    console.error('Falha ao carregar Parâmetros Mínimos:', error);
-                } finally {
-                    hideLoading();
-                }
+                await carregarDadosDiagnosticoOuvidorias();
+            }
+
+            if (viewName === 'contatos' && (!obterDadosContatos() || !obterDadosContatos().disponivel)) {
+                await carregarDadosContatos();
+            }
+        }
+
+        function renderizarErroView(viewName, error) {
+            const ids = {
+                orcamento: 'view-orcamento',
+                formalizacao: 'view-formalizacao-profor',
+                'formalizacao-detalhe': 'view-formalizacao-profor-detalhe',
+                'diagnostico-ouvidorias': 'view-diagnostico-ouvidorias',
+                contatos: 'view-contatos'
+            };
+            const view = document.getElementById(ids[viewName]);
+            if (!view) return;
+
+            view.innerHTML = `
+                <div class="alert alert-danger m-4">
+                    <strong>Não foi possível carregar esta página.</strong><br>
+                    ${escapeHtml(error?.message || 'Erro desconhecido.')}
+                </div>
+            `;
+            view.style.display = 'block';
+            aplicarModoSomenteLeitura();
+        }
+
+        async function toggleView(viewName) {
+            const mensagemCarregamento = obterMensagemCarregamentoView(viewName);
+            if (mensagemCarregamento) showLoading(mensagemCarregamento);
+
+            try {
+                await garantirDadosDaView(viewName);
+                delete errosCarregamentoView[viewName];
+            } catch (error) {
+                errosCarregamentoView[viewName] = error;
+                if (viewName === 'orcamento') erroCarregamentoOrcamento = error;
+                console.error(`Falha ao carregar ${viewName}:`, error);
+            } finally {
+                if (mensagemCarregamento) hideLoading();
             }
 
             const podeAbrirOrcamento = viewName === 'orcamento' && obterDadosOrcamento();
@@ -612,15 +631,35 @@ async function carregarLogoParaPDF() {
             } else if (viewName === 'doacoes2023-detalhe') {
                 if (viewDoacoesDetalhe) viewDoacoesDetalhe.style.display = 'block';
             } else if (viewName === 'orcamento') {
-                renderOrcamentoView();
+                if (errosCarregamentoView[viewName]) {
+                    renderizarErroView(viewName, errosCarregamentoView[viewName]);
+                } else {
+                    renderOrcamentoView();
+                }
             } else if (viewName === 'contatos') {
-                renderContatosView();
+                if (errosCarregamentoView[viewName]) {
+                    renderizarErroView(viewName, errosCarregamentoView[viewName]);
+                } else {
+                    renderContatosView();
+                }
             } else if (viewName === 'diagnostico-ouvidorias') {
-                renderDiagnosticoOuvidoriasView();
+                if (errosCarregamentoView[viewName]) {
+                    renderizarErroView(viewName, errosCarregamentoView[viewName]);
+                } else {
+                    renderDiagnosticoOuvidoriasView();
+                }
             } else if (viewName === 'formalizacao') {
-                renderFormalizacaoProforView();
+                if (errosCarregamentoView[viewName]) {
+                    renderizarErroView(viewName, errosCarregamentoView[viewName]);
+                } else {
+                    renderFormalizacaoProforView();
+                }
             } else if (viewName === 'formalizacao-detalhe') {
-                renderFormalizacaoProforDetalheView();
+                if (errosCarregamentoView[viewName]) {
+                    renderizarErroView(viewName, errosCarregamentoView[viewName]);
+                } else {
+                    renderFormalizacaoProforDetalheView();
+                }
             } else {
                 document.getElementById('view-dashboard').style.display = 'block';
             }
@@ -2847,11 +2886,25 @@ async function carregarLogoParaPDF() {
                         <td data-label="Alertas" class="align-middle">
                             <div class="profor-alert-list">${proposta.alertas.length ? proposta.alertas.slice(0, 4).map(renderizarBadgeAlertaFormalizacao).join('') : '<span class="profor-alert-badge profor-alert-success">Sem alerta</span>'}</div>
                         </td>
+                        <td data-label="Ações" class="align-middle text-center">
+                            <div class="budget-row-actions justify-content-center">
+                                ${renderizarBotaoEdicaoFormalizacao(proposta.uf)}
+                                ${formalizacaoItemEmEdicao(proposta.uf) ? `
+                                <button type="button" class="btn btn-sm btn-primary budget-row-action" data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}" title="Salvar alterações" ${obterQuantidadeAlteracoesFormalizacao(proposta.uf) ? '' : 'disabled'}>
+                                    <i class="fas fa-save" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary budget-row-action" data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}" title="Cancelar edição">
+                                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                                </button>
+                                ` : ''}
+                            </div>
+                        </td>
                     </tr>
+                    ${renderizarPainelEdicaoFormalizacaoUf(proposta, 9)}
                 `;
             }).join('') : `
                 <tr>
-                    <td colspan="8" class="text-center text-muted py-4">Nenhuma proposta encontrada para os filtros selecionados.</td>
+                    <td colspan="9" class="text-center text-muted py-4">Nenhuma proposta encontrada para os filtros selecionados.</td>
                 </tr>
             `;
 
@@ -2874,6 +2927,74 @@ async function carregarLogoParaPDF() {
                     const deveAbrir = painel.classList.contains('d-none');
                     painel.classList.toggle('d-none', !deveAbrir);
                     botao.setAttribute('aria-expanded', String(deveAbrir));
+                });
+            });
+
+            registrarEventosBotoesEdicaoFormalizacao(dados);
+            registrarEventosCamposEdicaoFormalizacao();
+        }
+
+        function registrarEventosBotoesEdicaoFormalizacao(dados) {
+            document.querySelectorAll('[data-formalizacao-toggle-editor]').forEach((botao) => {
+                if (botao.dataset.formalizacaoEventoRegistrado === '1') return;
+                botao.dataset.formalizacaoEventoRegistrado = '1';
+                botao.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const uf = botao.dataset.formalizacaoToggleEditor;
+                    if (formalizacaoEditoresAbertos.has(uf)) {
+                        formalizacaoEditoresAbertos.delete(uf);
+                    } else {
+                        formalizacaoEditoresAbertos.add(uf);
+                    }
+                    renderFormalizacaoProforView();
+                });
+            });
+
+            document.querySelectorAll('[data-formalizacao-salvar-linha]').forEach((botao) => {
+                if (botao.dataset.formalizacaoEventoRegistrado === '1') return;
+                botao.dataset.formalizacaoEventoRegistrado = '1';
+                botao.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    abrirModalSenhaFormalizacao(dados, botao.dataset.formalizacaoSalvarLinha);
+                });
+            });
+
+            document.querySelectorAll('[data-formalizacao-cancelar-linha]').forEach((botao) => {
+                if (botao.dataset.formalizacaoEventoRegistrado === '1') return;
+                botao.dataset.formalizacaoEventoRegistrado = '1';
+                botao.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    cancelarEdicaoFormalizacaoUf(botao.dataset.formalizacaoCancelarLinha);
+                });
+            });
+        }
+
+        function registrarEventosCamposEdicaoFormalizacao() {
+            document.querySelectorAll('[data-formalizacao-status-uf]').forEach((campo) => {
+                if (campo.dataset.formalizacaoEventoRegistrado === '1') return;
+                campo.dataset.formalizacaoEventoRegistrado = '1';
+                campo.addEventListener('change', () => {
+                    registrarAlteracaoFormalizacao(
+                        campo.dataset.formalizacaoStatusUf,
+                        campo.dataset.formalizacaoStatusEtapa,
+                        'status',
+                        campo.dataset.formalizacaoStatusOriginal,
+                        campo.value
+                    );
+                });
+            });
+
+            document.querySelectorAll('[data-formalizacao-observacao-uf]').forEach((campo) => {
+                if (campo.dataset.formalizacaoEventoRegistrado === '1') return;
+                campo.dataset.formalizacaoEventoRegistrado = '1';
+                campo.addEventListener('change', () => {
+                    registrarAlteracaoFormalizacao(
+                        campo.dataset.formalizacaoObservacaoUf,
+                        campo.dataset.formalizacaoObservacaoEtapa,
+                        'observacao',
+                        campo.dataset.formalizacaoObservacaoOriginal,
+                        campo.value
+                    );
                 });
             });
         }
@@ -2901,19 +3022,6 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
-            document.getElementById('btnEditarFormalizacao')?.addEventListener('click', () => {
-                formalizacaoModoEdicao = true;
-                renderFormalizacaoProforView();
-            });
-
-            document.getElementById('btnCancelarFormalizacao')?.addEventListener('click', () => {
-                formalizacaoModoEdicao = false;
-                formalizacaoAlteracoesPendentes = {};
-                renderFormalizacaoProforView();
-            });
-
-            document.getElementById('btnSalvarFormalizacao')?.addEventListener('click', () => abrirModalSenhaFormalizacao(dados));
-
             document.getElementById('btnHistoricoFormalizacao')?.addEventListener('click', abrirHistoricoFormalizacao);
 
             document.getElementById('btnExportarFormalizacao')?.addEventListener('click', () => {
@@ -2924,40 +3032,34 @@ async function carregarLogoParaPDF() {
                 window.location.href = obterUrlApiOnasp('/api/formalizacao-profor/exportar');
             });
 
-            document.querySelectorAll('[data-formalizacao-status-uf]').forEach((campo) => {
-                campo.addEventListener('change', () => {
-                    registrarAlteracaoFormalizacao(
-                        campo.dataset.formalizacaoStatusUf,
-                        campo.dataset.formalizacaoStatusEtapa,
-                        'status',
-                        campo.dataset.formalizacaoStatusOriginal,
-                        campo.value
-                    );
-                });
-            });
-
-            document.querySelectorAll('[data-formalizacao-observacao-uf]').forEach((campo) => {
-                campo.addEventListener('input', () => {
-                    registrarAlteracaoFormalizacao(
-                        campo.dataset.formalizacaoObservacaoUf,
-                        campo.dataset.formalizacaoObservacaoEtapa,
-                        'observacao',
-                        campo.dataset.formalizacaoObservacaoOriginal,
-                        campo.value
-                    );
-                });
-            });
+            registrarEventosCamposEdicaoFormalizacao();
         }
 
         const STATUS_FORMALIZACAO_EDICAO = ['PENDENTE', 'EM ANDAMENTO', 'CONCLUÍDO', 'COM PENDÊNCIA', 'NÃO SE APLICA', 'VALIDAR'];
 
-        function obterQuantidadeAlteracoesFormalizacao() {
+        function obterQuantidadeAlteracoesFormalizacao(uf = '') {
+            if (uf) return Object.keys(formalizacaoAlteracoesPendentes[uf] || {}).length;
             return Object.values(formalizacaoAlteracoesPendentes)
                 .reduce((total, etapas) => total + Object.keys(etapas || {}).length, 0);
         }
 
         function obterAlteracaoFormalizacao(uf, etapa) {
             return formalizacaoAlteracoesPendentes[uf]?.[etapa] || null;
+        }
+
+        function obterAlteracoesFormalizacaoPorUf(uf) {
+            const alteracoes = formalizacaoAlteracoesPendentes[uf] || {};
+            return Object.keys(alteracoes).length ? { [uf]: alteracoes } : {};
+        }
+
+        function formalizacaoItemEmEdicao(uf) {
+            return formalizacaoEditoresAbertos.has(String(uf));
+        }
+
+        function cancelarEdicaoFormalizacaoUf(uf) {
+            delete formalizacaoAlteracoesPendentes[uf];
+            formalizacaoEditoresAbertos.delete(String(uf));
+            renderFormalizacaoProforView();
         }
 
         function registrarAlteracaoFormalizacao(uf, etapa, campo, valorOriginal, novoValor) {
@@ -2992,8 +3094,8 @@ async function carregarLogoParaPDF() {
         function renderizarAcoesFormalizacao() {
             const modoEstatico = dadosPaginaEmModoEstatico('formalizacaoProfor');
             const totalAlteracoes = obterQuantidadeAlteracoesFormalizacao();
-            if (modoEstatico && formalizacaoModoEdicao) {
-                formalizacaoModoEdicao = false;
+            if (modoEstatico) {
+                formalizacaoEditoresAbertos = new Set();
                 formalizacaoAlteracoesPendentes = {};
             }
 
@@ -3003,20 +3105,13 @@ async function carregarLogoParaPDF() {
                         <p class="section-eyebrow mb-1">Atualização</p>
                         <h2>Formalização PROFOR</h2>
                         ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
+                        ${modoEstatico
+                            ? '<small class="text-muted">Dados carregados dos JSONs publicados.</small>'
+                            : totalAlteracoes
+                                ? `<small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas UFs.</small>`
+                                : '<small class="text-muted">Edite cada UF pelo botão no fim da linha.</small>'}
                     </div>
                     <div class="diagnostico-action-buttons">
-                        <button type="button" class="btn btn-outline-primary btn-icon-text" id="btnEditarFormalizacao" data-requer-backend="true" ${modoEstatico || formalizacaoModoEdicao ? 'disabled' : ''}>
-                            <i class="fas fa-pen" aria-hidden="true"></i>
-                            <span>Editar</span>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-icon-text" id="btnSalvarFormalizacao" data-requer-backend="true" ${!modoEstatico && totalAlteracoes ? '' : 'disabled'}>
-                            <i class="fas fa-save" aria-hidden="true"></i>
-                            <span>Salvar alterações</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-icon-text" id="btnCancelarFormalizacao" data-requer-backend="true" ${!modoEstatico && (totalAlteracoes || formalizacaoModoEdicao) ? '' : 'disabled'}>
-                            <i class="fas fa-xmark" aria-hidden="true"></i>
-                            <span>Cancelar alterações</span>
-                        </button>
                         <button type="button" class="btn btn-outline-success btn-icon-text" id="btnExportarFormalizacao" data-requer-backend="true" ${modoEstatico ? 'disabled' : ''}>
                             <i class="fas fa-file-excel" aria-hidden="true"></i>
                             <span>Exportar Excel</span>
@@ -3026,7 +3121,6 @@ async function carregarLogoParaPDF() {
                             <span>Histórico</span>
                         </button>
                     </div>
-                    <small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s)</small>
                 </section>
             `;
         }
@@ -3034,9 +3128,9 @@ async function carregarLogoParaPDF() {
         function renderizarControleEtapaFormalizacao(proposta, etapa) {
             const pendente = obterAlteracaoFormalizacao(proposta.uf, etapa.key);
             const statusAtual = pendente?.status ?? etapa.status ?? 'PENDENTE';
-            const observacaoAtual = pendente?.observacao ?? etapa.observacao ?? '';
+            const observacaoAtual = obterObservacaoFormalizacaoVisivel(pendente?.observacao ?? etapa.observacao ?? '');
 
-            if (!formalizacaoModoEdicao) {
+            if (!formalizacaoItemEmEdicao(proposta.uf)) {
                 return `
                     <div class="d-flex flex-column gap-1">
                         <span class="budget-status">${escapeHtml(statusAtual)}</span>
@@ -3060,13 +3154,71 @@ async function carregarLogoParaPDF() {
                     <input
                         type="text"
                         class="form-control form-control-sm"
-                        value="${escapeHtml(observacaoAtual)}"
+                        value="${escapeHtml(pendente?.observacao ?? etapa.observacao ?? '')}"
                         placeholder="Observação curta"
                         data-formalizacao-observacao-uf="${escapeHtml(proposta.uf)}"
                         data-formalizacao-observacao-etapa="${escapeHtml(etapa.key)}"
                         data-formalizacao-observacao-original="${escapeHtml(etapa.observacao || '')}"
                     >
                 </div>
+            `;
+        }
+
+        function renderizarBotaoEdicaoFormalizacao(uf) {
+            if (dadosPaginaEmModoEstatico('formalizacaoProfor')) return '';
+
+            const id = String(uf);
+            const ativo = formalizacaoItemEmEdicao(id);
+            return `
+                <button
+                    type="button"
+                    class="btn btn-sm ${ativo ? 'btn-primary' : 'btn-outline-primary'} budget-row-action budget-row-action-edit"
+                    data-formalizacao-toggle-editor="${escapeHtml(id)}"
+                    title="${ativo ? 'Fechar edição desta UF' : 'Editar esta UF'}"
+                    aria-pressed="${ativo ? 'true' : 'false'}"
+                >
+                    <i class="fas ${ativo ? 'fa-check' : 'fa-pen'}" aria-hidden="true"></i>
+                    <span class="visually-hidden">${ativo ? 'Fechar edição' : 'Editar'}</span>
+                </button>
+            `;
+        }
+
+        function renderizarPainelEdicaoFormalizacaoUf(proposta, colspan = 9) {
+            if (dadosPaginaEmModoEstatico('formalizacaoProfor')) return '';
+            if (!formalizacaoItemEmEdicao(proposta.uf)) return '';
+
+            const etapas = proposta.etapasFormalizacao || [];
+            const alteracoesUf = obterQuantidadeAlteracoesFormalizacao(proposta.uf);
+
+            return `
+                <tr class="budget-edit-row pdf-hidden">
+                    <td colspan="${colspan}">
+                        <div class="budget-edit-panel">
+                            <div class="budget-edit-panel-header">
+                                <strong>Editar andamento - ${escapeHtml(proposta.uf)}</strong>
+                                <span>As alterações desta UF ficam pendentes até clicar em Salvar.</span>
+                            </div>
+                            <div class="budget-edit-grid formalizacao-edit-grid">
+                                ${etapas.map((etapa) => `
+                                    <label>
+                                        <span>${escapeHtml(etapa.label)}</span>
+                                        ${renderizarControleEtapaFormalizacao(proposta, etapa)}
+                                    </label>
+                                `).join('')}
+                            </div>
+                            <div class="budget-edit-panel-actions">
+                                <button type="button" class="btn btn-sm btn-primary btn-icon-text" data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}" ${alteracoesUf ? '' : 'disabled'}>
+                                    <i class="fas fa-save" aria-hidden="true"></i>
+                                    <span>Salvar</span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-text" data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}">
+                                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                                    <span>Cancelar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
             `;
         }
 
@@ -3078,37 +3230,62 @@ async function carregarLogoParaPDF() {
             if (!etapas.length || !propostas.length) return '';
 
             return `
-                <section class="table-container mb-4">
-                    <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">${modoEstatico ? 'Publicação' : 'SQLite'}</p>
-                            <h2>${modoEstatico ? 'Andamento publicado por UF' : 'Andamento editável por UF'}</h2>
-                        </div>
-                        <small class="text-muted">${modoEstatico ? 'Dados somente leitura' : 'As mudanças ficam pendentes até o botão Salvar alterações'}</small>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover w-100 app-data-table formalizacao-data-table">
-                            <thead>
-                                <tr>
-                                    <th>UF</th>
-                                    ${etapas.map((etapa) => `<th>${escapeHtml(etapa.label)}</th>`).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${propostas.map((proposta) => `
+                <section class="table-container mb-5 formalizacao-advanced-panel">
+                    <details>
+                        <summary class="section-header compact">
+                            <div>
+                                <p class="section-eyebrow mb-1">${modoEstatico ? 'Publicação' : 'Modo local'}</p>
+                                <h2>Modo avançado / matriz por etapa</h2>
+                            </div>
+                            <small class="text-muted">${modoEstatico ? 'Dados somente leitura' : 'As mudanças ficam pendentes até o botão Salvar alterações'}</small>
+                        </summary>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-sm table-hover w-100 app-data-table formalizacao-data-table">
+                                <thead>
                                     <tr>
-                                        <td data-label="UF"><strong>${escapeHtml(proposta.uf)}</strong></td>
-                                        ${etapas.map((etapaConfig) => {
-                                            const etapa = proposta.etapasFormalizacao?.find((item) => item.key === etapaConfig.key) || etapaConfig;
-                                            return `<td data-label="${escapeHtml(etapaConfig.label)}">${renderizarControleEtapaFormalizacao(proposta, etapa)}</td>`;
-                                        }).join('')}
+                                        <th>UF</th>
+                                        ${etapas.map((etapa) => `<th>${escapeHtml(etapa.label)}</th>`).join('')}
+                                        <th class="text-center">Ações</th>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    ${propostas.map((proposta) => `
+                                        <tr>
+                                            <td data-label="UF"><strong>${escapeHtml(proposta.uf)}</strong></td>
+                                            ${etapas.map((etapaConfig) => {
+                                                const etapa = proposta.etapasFormalizacao?.find((item) => item.key === etapaConfig.key) || etapaConfig;
+                                                return `<td data-label="${escapeHtml(etapaConfig.label)}">${renderizarControleEtapaFormalizacao(proposta, etapa)}</td>`;
+                                            }).join('')}
+                                            <td data-label="Ações" class="text-center">
+                                                <div class="budget-row-actions justify-content-center">
+                                                    ${renderizarBotaoEdicaoFormalizacao(proposta.uf)}
+                                                    ${formalizacaoItemEmEdicao(proposta.uf) ? `
+                                                    <button type="button" class="btn btn-sm btn-primary budget-row-action" data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}" title="Salvar alterações" ${obterQuantidadeAlteracoesFormalizacao(proposta.uf) ? '' : 'disabled'}>
+                                                        <i class="fas fa-save" aria-hidden="true"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary budget-row-action" data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}" title="Cancelar edição">
+                                                        <i class="fas fa-xmark" aria-hidden="true"></i>
+                                                    </button>
+                                                    ` : ''}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
                 </section>
             `;
+        }
+
+        function obterObservacaoFormalizacaoVisivel(texto = '') {
+            const valor = String(texto || '').trim();
+            if (!valor) return '';
+            if (normalizarBusca(valor).includes('preenchimento simulado para modelagem')) {
+                return '';
+            }
+            return valor;
         }
 
         function removerModalOnasp(id) {
@@ -3119,18 +3296,19 @@ async function carregarLogoParaPDF() {
             }
         }
 
-        function abrirModalSenhaFormalizacao(dados) {
+        function abrirModalSenhaFormalizacao(dados, ufEscopo = '') {
             if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
 
-            const totalAlteracoes = obterQuantidadeAlteracoesFormalizacao();
+            const totalAlteracoes = obterQuantidadeAlteracoesFormalizacao(ufEscopo);
             if (!totalAlteracoes) {
                 alert('Não há alterações para salvar.');
                 return;
             }
 
+            const detalheEscopo = ufEscopo ? ` da UF ${escapeHtml(ufEscopo)}` : '';
             removerModalOnasp('modalSenhaFormalizacao');
             document.body.insertAdjacentHTML('beforeend', `
                 <div class="modal fade" id="modalSenhaFormalizacao" tabindex="-1" aria-hidden="true">
@@ -3141,7 +3319,7 @@ async function carregarLogoParaPDF() {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Você está prestes a salvar ${totalAlteracoes} alteração(ões) na Formalização PROFOR.</p>
+                                <p>Você está prestes a salvar ${totalAlteracoes} alteração(ões)${detalheEscopo} na Formalização PROFOR.</p>
                                 <label class="form-label" for="senhaFormalizacao">Senha de confirmação</label>
                                 <input type="password" class="form-control" id="senhaFormalizacao" autocomplete="current-password">
                             </div>
@@ -3158,15 +3336,19 @@ async function carregarLogoParaPDF() {
             const modal = new window.bootstrap.Modal(modalElement);
             modal.show();
             document.getElementById('confirmarSalvarFormalizacao')?.addEventListener('click', async () => {
-                await salvarFormalizacaoComSenha(document.getElementById('senhaFormalizacao')?.value || '', modal);
+                await salvarFormalizacaoComSenha(document.getElementById('senhaFormalizacao')?.value || '', modal, ufEscopo);
             });
         }
 
-        async function salvarFormalizacaoComSenha(password, modal) {
+        async function salvarFormalizacaoComSenha(password, modal, ufEscopo = '') {
             if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
+
+            const changes = ufEscopo
+                ? obterAlteracoesFormalizacaoPorUf(ufEscopo)
+                : formalizacaoAlteracoesPendentes;
 
             try {
                 const { resposta, payload } = await fetchJsonApiOnasp('/api/formalizacao-profor/salvar', {
@@ -3174,7 +3356,7 @@ async function carregarLogoParaPDF() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         password,
-                        changes: formalizacaoAlteracoesPendentes
+                        changes
                     })
                 });
 
@@ -3183,8 +3365,13 @@ async function carregarLogoParaPDF() {
                     return;
                 }
 
-                formalizacaoAlteracoesPendentes = {};
-                formalizacaoModoEdicao = false;
+                if (ufEscopo) {
+                    delete formalizacaoAlteracoesPendentes[ufEscopo];
+                    formalizacaoEditoresAbertos.delete(String(ufEscopo));
+                } else {
+                    formalizacaoAlteracoesPendentes = {};
+                    formalizacaoEditoresAbertos = new Set();
+                }
                 modal.hide();
                 await carregarDadosFormalizacaoProfor(true);
                 renderFormalizacaoProforView();
@@ -3245,18 +3432,29 @@ async function carregarLogoParaPDF() {
             container.style.display = 'block';
             const dados = obterDadosFormalizacaoProfor();
             if (!dados) {
-                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados de formalização indisponíveis. Verifique se o arquivo <strong>Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx</strong> está disponível e abra a aplicação por servidor local.</div>';
+                container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados de formalização indisponíveis.</div>';
                 return;
             }
 
-            const resumo = dados.resumo;
-            const opcoesUf = resumo.filtros.ufs.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(uf)}</option>`).join('');
+            const propostas = Array.isArray(dados.propostas) ? dados.propostas : [];
+            if (propostas.length === 0) {
+                container.innerHTML = '<div class="alert alert-warning m-4">Nenhuma proposta de formalização disponível para exibição.</div>';
+                return;
+            }
+
+            const resumo = dados.resumo || {};
+            const filtrosResumo = resumo.filtros || {};
+            const ufsFiltro = Array.isArray(filtrosResumo.ufs) && filtrosResumo.ufs.length
+                ? filtrosResumo.ufs
+                : propostas.map((proposta) => proposta.uf).filter(Boolean).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+            const statusFiltro = Array.isArray(filtrosResumo.status) ? filtrosResumo.status : [];
+            const opcoesUf = ufsFiltro.map((uf) => `<option value="${escapeHtml(uf)}">${escapeHtml(uf)}</option>`).join('');
             const opcoesRegiao = ORDEM_REGIOES
-                .filter((regiao) => (catalogoAplicacao.regioes?.[regiao] || []).some((uf) => resumo.filtros.ufs.includes(uf)))
+                .filter((regiao) => (catalogoAplicacao.regioes?.[regiao] || []).some((uf) => ufsFiltro.includes(uf)))
                 .map((regiao) => `<option value="${escapeHtml(regiao)}">${escapeHtml(regiao)}</option>`)
                 .join('');
-            const opcoesStatus = resumo.filtros.status.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join('');
-            const atalhosUf = renderizarAtalhosUfFormalizacao(dados.ufsAutorizadas || resumo.filtros.ufs);
+            const opcoesStatus = statusFiltro.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join('');
+            const atalhosUf = renderizarAtalhosUfFormalizacao(dados.ufsAutorizadas || ufsFiltro);
 
             container.innerHTML = `
                 <section class="dashboard-intro formalizacao-intro">
@@ -3389,8 +3587,6 @@ async function carregarLogoParaPDF() {
 
                 <section class="budget-insight-grid formalizacao-insight-grid mb-4" id="formalizacao-selected-summary" aria-label="Resumo da seleção"></section>
 
-                ${renderizarPainelEdicaoFormalizacao(dados)}
-
                 <section class="formalizacao-alert-panel mb-4">
                     <div class="section-header compact">
                         <div>
@@ -3423,12 +3619,15 @@ async function carregarLogoParaPDF() {
                                     <th class="text-center">Plano</th>
                                     <th class="text-center">Cond. suspensiva</th>
                                     <th>Alertas</th>
+                                    <th class="text-center">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="formalizacao-table-body"></tbody>
                         </table>
                     </div>
                 </section>
+
+                ${renderizarPainelEdicaoFormalizacao(dados)}
             `;
 
             registrarEventosFormalizacao(dados);
@@ -3732,7 +3931,8 @@ async function carregarLogoParaPDF() {
             const dados = obterDadosFormalizacaoProfor();
             if (!container) return;
 
-            const proposta = dados?.propostas.find((item) => item.uf === formalizacaoUfAtual || item.idProposta === formalizacaoUfAtual);
+            const propostas = Array.isArray(dados?.propostas) ? dados.propostas : [];
+            const proposta = propostas.find((item) => item.uf === formalizacaoUfAtual || item.idProposta === formalizacaoUfAtual);
             if (!dados || !proposta) {
                 container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Proposta de formalização não localizada.</div>';
                 container.style.display = 'block';
@@ -3814,7 +4014,7 @@ async function carregarLogoParaPDF() {
                                 </div>
                             `).join('') : '<div class="formalizacao-empty-state"><i class="fas fa-circle-check" aria-hidden="true"></i><span>Nenhum alerta calculado para esta UF.</span></div>'}
                         </div>
-                        ${proposta.observacoes ? `<p class="formalizacao-observation">${escapeHtml(proposta.observacoes)}</p>` : ''}
+                        ${obterObservacaoFormalizacaoVisivel(proposta.observacoes) ? `<p class="formalizacao-observation">${escapeHtml(obterObservacaoFormalizacaoVisivel(proposta.observacoes))}</p>` : ''}
                     </section>
 
                     ${renderizarCadastroInstitucionalFormalizacao(proposta)}
@@ -5693,7 +5893,7 @@ async function carregarLogoParaPDF() {
                                 class="form-select form-select-sm"
                                 data-parametros-quantidade-registro="${escapeHtml(resposta.idResposta)}"
                                 data-parametros-quantidade-campo="${escapeHtml(item.idParametro)}"
-                                data-parametros-quantidade-original="${escapeHtml(item.respostaUf || item.status)}"
+                                data-parametros-quantidade-original="${escapeHtml(item.status)}"
                                 data-parametros-quantidade-atual-original="${escapeHtml(String(item.atualDeclarado ?? ''))}"
                                 data-parametros-quantidade-ideal="${escapeHtml(String(ideal))}"
                             >
@@ -5717,7 +5917,7 @@ async function carregarLogoParaPDF() {
                                 class="diagnostico-status-choice ${normalizarStatusParametroMinimoFrontend(statusAtual) === opcao.valor ? 'active' : ''}"
                                 data-parametros-opcao-registro="${escapeHtml(resposta.idResposta)}"
                                 data-parametros-opcao-campo="${escapeHtml(item.idParametro)}"
-                                data-parametros-opcao-original="${escapeHtml(item.respostaUf || item.status)}"
+                                data-parametros-opcao-original="${escapeHtml(item.status)}"
                                 data-parametros-opcao-valor="${escapeHtml(opcao.valor)}"
                             >
                                 ${escapeHtml(opcao.rotulo)}
@@ -5751,7 +5951,8 @@ async function carregarLogoParaPDF() {
                 providencia: item.providenciaObjetiva,
                 fundamentoIn: item.fundamentoIn,
                 perguntasDiagnostico: item.perguntasDiagnostico || [],
-                respostaUf: item.respostaOriginal || item.respostaUf,
+                respostaUf: item.statusNormalizado || item.statusOperacional,
+                respostaOriginal: item.respostaOriginal || item.respostaUf,
                 prioridade: item.prioridade,
                 validacaoOnasp: item.validacaoOnasp,
                 atualDeclarado: item.atualDeclarado,
@@ -5791,7 +5992,7 @@ async function carregarLogoParaPDF() {
                                     <h3>${escapeHtml(trilha)}</h3>
                                     <div class="diagnostico-trail-items">
                                         ${itensTrilha.map((item) => {
-                                            const statusAtualBanco = obterValorPendenteParametroMinimo(resposta.idResposta, item.idParametro, item.respostaUf || item.status);
+                                            const statusAtualBanco = obterValorPendenteParametroMinimo(resposta.idResposta, item.idParametro, item.status);
                                             const statusAtualTela = statusParametroMinimoParaTela(statusAtualBanco);
                                             const editorId = `${resposta.idResposta}::${item.idParametro}`;
                                             const textoResumo = statusAtualTela;
@@ -5944,7 +6145,12 @@ async function carregarLogoParaPDF() {
                         <small class="text-muted">${itens.length} item(ns)</small>
                     </div>
                     <div class="diagnostico-operational-list">
-                        ${itens.map((item) => `
+                        ${itens.map((item) => {
+                            const ehQuantitativo = item.tipo === 'quantitativo';
+                            const valorAtual = ehQuantitativo ? formatarNumeroDiagnostico(item.atualDeclarado) : 'Não se aplica';
+                            const valorIdeal = ehQuantitativo ? formatarNumeroDiagnostico(item.idealDeclarado) : 'Não se aplica';
+
+                            return `
                             <details class="diagnostico-operational-item diagnostico-operational-${obterClasseStatusDiagnostico(item.status)}">
                                 <summary>
                                     <span class="diagnostico-operational-main">
@@ -5962,12 +6168,13 @@ async function carregarLogoParaPDF() {
                                     <div><span>Resultado normalizado</span><strong>${escapeHtml(item.status || 'Não informado')}</strong></div>
                                     <div><span>Providência sugerida</span><strong>${escapeHtml(item.providencia || 'Não se aplica')}</strong></div>
                                     <div><span>Validação ONASP</span><strong>${escapeHtml(item.validacaoOnasp || 'Não se aplica')}</strong></div>
-                                    <div><span>Atual</span><strong>${escapeHtml(formatarNumeroDiagnostico(item.atualDeclarado))}</strong></div>
-                                    <div><span>Ideal</span><strong>${escapeHtml(formatarNumeroDiagnostico(item.idealDeclarado))}</strong></div>
+                                    <div><span>Atual</span><strong>${escapeHtml(valorAtual)}</strong></div>
+                                    <div><span>Ideal</span><strong>${escapeHtml(valorIdeal)}</strong></div>
                                 </div>
-                                <p class="diagnostico-original-response">${escapeHtml(item.respostaUf || 'Resposta original não informada')}</p>
+                                <p class="diagnostico-original-response">${escapeHtml(item.respostaOriginal || item.respostaUf || 'Resposta original não informada')}</p>
                             </details>
-                        `).join('')}
+                        `;
+                        }).join('')}
                     </div>
                 </section>
             `;
@@ -6614,7 +6821,8 @@ async function carregarLogoParaPDF() {
 
             container.style.display = 'block';
 
-            if (!dados || !dados.disponivel) {
+            const respostas = Array.isArray(dados?.respostas) ? dados.respostas : [];
+            if (!dados || !dados.disponivel || respostas.length === 0) {
                 container.innerHTML = `
                     <section class="view-heading">
                         <button type="button" class="btn btn-outline-secondary btn-icon-text pdf-hidden" onclick="toggleView('dashboard')">
@@ -6627,8 +6835,7 @@ async function carregarLogoParaPDF() {
                         </div>
                     </section>
                     <div class="alert alert-warning">
-                        Os dados de parâmetros mínimos não foram carregados. Verifique a planilha
-                        <strong>Planilhas/Parametros_Minimos.xlsx</strong> e abra a aplicação por servidor local.
+                        Nenhum dado de parâmetros mínimos está disponível para exibição.
                     </div>
                 `;
                 return;
@@ -6644,7 +6851,7 @@ async function carregarLogoParaPDF() {
                 deficit: ''
             } : obterFiltrosDiagnosticoOuvidorias();
             if (limparFiltros) diagnosticoUfAtual = '';
-            const respostasFiltradas = aplicarFiltrosDiagnosticoOuvidorias(dados.respostas, filtrosAtuais);
+            const respostasFiltradas = aplicarFiltrosDiagnosticoOuvidorias(respostas, filtrosAtuais);
             const deveExibirDetalheUf = Boolean(filtrosAtuais.uf);
 
             if (!deveExibirDetalheUf) {

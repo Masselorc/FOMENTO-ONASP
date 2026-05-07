@@ -98,7 +98,7 @@ async function publicarAposSalvamento(resultado) {
         success: false,
         message: error.message || "Erro ao atualizar dados publicos."
       },
-      message: "Alterações salvas no SQLite, mas houve falha ao atualizar os dados públicos."
+      message: "Alterações salvas localmente, mas houve falha ao atualizar os dados públicos."
     };
   }
 }
@@ -276,5 +276,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Aplicação ONASP com SQLite disponível em http://localhost:${port}/index.html`);
+  console.log(`Aplicação ONASP disponível em http://localhost:${port}/index.html`);
 });

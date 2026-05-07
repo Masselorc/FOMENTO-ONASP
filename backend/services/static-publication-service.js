@@ -65,7 +65,7 @@ async function publicarDadosEstaticos() {
   escreverJsonAtomico("orcamento-2026.json", orcamento2026Publico);
   escreverJsonAtomico("resumo-publicacao.json", {
     publicadoEm,
-    fonte: "SQLite local",
+    fonte: "Dados locais ONASP",
     arquivos: [
       "aplicacao.json",
       "dashboard-geral.json",

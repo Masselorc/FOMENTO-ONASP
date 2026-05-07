@@ -72,6 +72,15 @@ function textoCelula(linha, indice, fallback = "") {
   return texto || fallback;
 }
 
+function observacaoEhPlaceholderFormalizacao(valor) {
+  return normalizarTexto(valor).includes("PREENCHIMENTO SIMULADO PARA MODELAGEM");
+}
+
+function limparObservacaoFormalizacao(valor) {
+  const texto = String(valor ?? "").replace(/\s+/g, " ").trim();
+  return observacaoEhPlaceholderFormalizacao(texto) ? "" : texto;
+}
+
 function statusInicialPorEtapa(statusGeral) {
   const status = normalizarTexto(statusGeral);
   const projetoAprovado = status.includes("PROJETO APROVADO") || status.includes("FORMALIZACAO") || status.includes("CELEBR");
@@ -108,7 +117,7 @@ function obterRegistrosIniciaisDaPlanilha() {
     if (!UFS_FORMALIZACAO_PROFOR.includes(uf)) return;
 
     const statusGeral = textoCelula(linha, colStatus, "Pendente");
-    const observacao = textoCelula(linha, colObservacao);
+    const observacao = limparObservacaoFormalizacao(textoCelula(linha, colObservacao));
     const porEtapa = statusInicialPorEtapa(statusGeral);
 
     ETAPAS_FORMALIZACAO.forEach((etapa) => {
@@ -171,10 +180,11 @@ function montarProposta(uf, linhas) {
   const porEtapa = new Map(linhas.map((linha) => [linha.etapa, linha]));
   const etapas = ETAPAS_FORMALIZACAO.map((etapa) => {
     const linha = porEtapa.get(etapa.key) || {};
+    const observacao = limparObservacaoFormalizacao(linha.observacao);
     return {
       ...etapa,
       status: normalizarStatusFormalizacao(linha.status),
-      observacao: linha.observacao || "",
+      observacao,
       atualizadoEm: linha.atualizado_em || ""
     };
   });
@@ -224,7 +234,7 @@ function montarProposta(uf, linhas) {
       status: item.status,
       observacao: item.observacao
     })),
-    situacaoPlano: "Plano de trabalho monitorado no SQLite",
+    situacaoPlano: "Plano de trabalho monitorado pela aplicação",
     aptaCelebracao: etapas.find((item) => item.key === "celebracao")?.status === "CONCLUÍDO",
     etapasFormalizacao: etapas
   };
@@ -264,7 +274,10 @@ function listarFormalizacaoProfor() {
     SELECT uf, etapa, status, observacao, atualizado_em
     FROM formalizacao_profor
     ORDER BY uf, etapa
-  `).all();
+  `).all().map((linha) => ({
+    ...linha,
+    observacao: limparObservacaoFormalizacao(linha.observacao)
+  }));
   const porUf = new Map();
   linhas.forEach((linha) => {
     if (!porUf.has(linha.uf)) porUf.set(linha.uf, []);
@@ -273,7 +286,7 @@ function listarFormalizacaoProfor() {
   const propostas = UFS_FORMALIZACAO_PROFOR.map((uf) => montarProposta(uf, porUf.get(uf) || []));
 
   return {
-    arquivo: "backend/data/onasp.sqlite",
+    arquivo: "Dados consolidados ONASP",
     disponivel: true,
     aba: "formalizacao_profor",
     ufsAutorizadas: [...UFS_FORMALIZACAO_PROFOR],
@@ -323,7 +336,7 @@ function validarPayloadAlteracoes(changes) {
         uf: ufNormalizada,
         etapa,
         status,
-        observacao: String(payload?.observacao ?? "").trim()
+        observacao: limparObservacaoFormalizacao(payload?.observacao)
       });
     });
   });

@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const XLSX = require("xlsx");
 const db = require("../db/database");
 const { inicializarBanco } = require("../db/init-db");
@@ -30,6 +31,10 @@ function normalizarUf(valor) {
   return match ? match[1] : "";
 }
 
+function limparTexto(valor) {
+  return String(valor ?? "").replace(/\s+/g, " ").trim();
+}
+
 function converterNumero(valor) {
   if (valor === null || valor === undefined || String(valor).trim() === "") return null;
   if (typeof valor === "number") return Number.isFinite(valor) ? valor : null;
@@ -37,6 +42,17 @@ function converterNumero(valor) {
   const texto = String(valor).replace(/[^\d,.-]/g, "").replace(/\.(?=\d{3}(?:\D|$))/g, "").replace(",", ".");
   const numero = Number(texto);
   return Number.isFinite(numero) ? numero : null;
+}
+
+function obterTextoPorAliases(linha, tabela, aliases) {
+  const lista = Array.isArray(aliases) ? aliases : [aliases];
+  for (const alias of lista) {
+    const indice = tabela.indice(alias);
+    const texto = indice >= 0 ? limparTexto(linha[indice]) : "";
+    if (texto) return texto;
+  }
+
+  return "";
 }
 
 function converterDataParaTimestamp(valor) {
@@ -87,8 +103,22 @@ function montarTabelaDiagnostico(workbook) {
   return null;
 }
 
-function carregarQuantitativosDiagnostico() {
-  if (!require("fs").existsSync(caminhoDiagnostico)) return new Map();
+function montarRespostaOriginalDiagnostico(linha, tabela, parametro) {
+  const perguntas = parametro.tipo === "quantitativo"
+    ? [...(parametro.atual || []), ...(parametro.ideal || [])]
+    : parametro.perguntas || [];
+
+  return perguntas
+    .map((pergunta) => {
+      const texto = obterTextoPorAliases(linha, tabela, pergunta);
+      return texto ? `${pergunta}: ${texto}` : null;
+    })
+    .filter(Boolean)
+    .join(" | ");
+}
+
+function carregarContextoDiagnosticoParametros() {
+  if (!fs.existsSync(caminhoDiagnostico)) return new Map();
 
   const workbook = XLSX.readFile(caminhoDiagnostico, { raw: true, cellDates: true });
   const tabela = montarTabelaDiagnostico(workbook);
@@ -126,23 +156,55 @@ function carregarQuantitativosDiagnostico() {
     selecionadas.push([uf, maisRecente]);
   });
 
-  const quantitativos = new Map();
+  const contextoPorUf = new Map();
   selecionadas.forEach(([codigo, resposta]) => {
     const porParametro = {};
-    PARAMETROS_MINIMOS.filter((parametro) => parametro.tipo === "quantitativo").forEach((parametro) => {
+    PARAMETROS_MINIMOS.forEach((parametro) => {
       const colAtual = tabela.indice(parametro.atual || []);
       const colIdeal = tabela.indice(parametro.ideal || []);
       porParametro[parametro.key] = {
         atual: colAtual >= 0 ? converterNumero(resposta.linha[colAtual]) : null,
-        ideal: colIdeal >= 0 ? converterNumero(resposta.linha[colIdeal]) : null
+        ideal: colIdeal >= 0 ? converterNumero(resposta.linha[colIdeal]) : null,
+        respostaOriginal: montarRespostaOriginalDiagnostico(resposta.linha, tabela, parametro)
       };
     });
-    quantitativos.set(codigo, porParametro);
-    if (codigo === "ES_1") quantitativos.set("ES", porParametro);
-    if (!codigo.includes("_")) quantitativos.set(resposta.uf, porParametro);
+    contextoPorUf.set(codigo, porParametro);
+    if (codigo === "ES_1") contextoPorUf.set("ES", porParametro);
+    if (!codigo.includes("_")) contextoPorUf.set(resposta.uf, porParametro);
   });
 
-  return quantitativos;
+  return contextoPorUf;
+}
+
+function atualizarRespostasOriginaisParametrosMinimos() {
+  inicializarBanco();
+
+  const contextoDiagnostico = carregarContextoDiagnosticoParametros();
+  if (contextoDiagnostico.size === 0) {
+    return { atualizados: 0, disponivel: false };
+  }
+
+  const update = db.prepare(`
+    UPDATE parametros_minimos
+    SET resposta_original = ?
+    WHERE uf = ? AND parametro = ?
+  `);
+
+  let atualizados = 0;
+  const transaction = db.transaction(() => {
+    contextoDiagnostico.forEach((porParametro, uf) => {
+      PARAMETROS_MINIMOS.forEach((parametro) => {
+        const respostaOriginal = limparTexto(porParametro[parametro.key]?.respostaOriginal);
+        if (!respostaOriginal) return;
+        const resultado = update.run(respostaOriginal, uf, parametro.key);
+        atualizados += resultado.changes;
+      });
+    });
+  });
+
+  transaction();
+
+  return { atualizados, disponivel: true };
 }
 
 function importarParametrosMinimos() {
@@ -150,7 +212,7 @@ function importarParametrosMinimos() {
 
   const workbook = XLSX.readFile(caminhoPlanilha, { raw: true });
   const sheet = workbook.Sheets.VALIDACAO;
-  const quantitativosDiagnostico = carregarQuantitativosDiagnostico();
+  const contextoDiagnostico = carregarContextoDiagnosticoParametros();
 
   if (!sheet) {
     throw new Error("A planilha Planilhas/Parametros_Minimos.xlsx precisa conter a aba VALIDACAO.");
@@ -158,12 +220,13 @@ function importarParametrosMinimos() {
 
   const linhas = XLSX.utils.sheet_to_json(sheet, { defval: "" });
   const upsert = db.prepare(`
-    INSERT INTO parametros_minimos (uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO parametros_minimos (uf, parametro, status, quantidade_atual, quantidade_ideal, resposta_original, atualizado_em)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(uf, parametro) DO UPDATE SET
       status = excluded.status,
       quantidade_atual = excluded.quantidade_atual,
       quantidade_ideal = excluded.quantidade_ideal,
+      resposta_original = COALESCE(NULLIF(excluded.resposta_original, ''), parametros_minimos.resposta_original),
       atualizado_em = excluded.atualizado_em
   `);
   const importadoEm = new Date().toISOString();
@@ -174,15 +237,14 @@ function importarParametrosMinimos() {
 
       PARAMETROS_MINIMOS.forEach((parametro) => {
         const status = normalizarStatusParametroMinimo(linha[parametro.label]);
-        const quantitativo = parametro.tipo === "quantitativo"
-          ? quantitativosDiagnostico.get(uf)?.[parametro.key] || {}
-          : {};
+        const contexto = contextoDiagnostico.get(uf)?.[parametro.key] || {};
         upsert.run(
           uf,
           parametro.key,
           status,
-          quantitativo.atual ?? null,
-          quantitativo.ideal ?? null,
+          contexto.atual ?? null,
+          contexto.ideal ?? null,
+          contexto.respostaOriginal || "",
           importadoEm
         );
       });
@@ -203,5 +265,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  importarParametrosMinimos
+  importarParametrosMinimos,
+  atualizarRespostasOriginaisParametrosMinimos
 };

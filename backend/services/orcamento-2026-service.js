@@ -618,7 +618,7 @@ function listarOrcamento2026() {
   const outrosProcessos = itens.filter((item) => !item.compoeOrcamento);
 
   return {
-    arquivo: "backend/data/onasp.sqlite",
+    arquivo: "Dados consolidados ONASP",
     disponivel: true,
     aba: "orcamento_2026",
     itens: itensOficiais,
