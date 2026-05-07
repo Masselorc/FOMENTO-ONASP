@@ -3155,7 +3155,7 @@ async function carregarLogoParaPDF() {
             const emEdicao = formalizacaoItemEmEdicao(proposta.uf);
 
             return `
-                <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''}">
+                <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''} ${emEdicao ? 'formalizacao-card-editing' : ''}">
                     <div class="formalizacao-card-header">
                         <div class="formalizacao-card-title-row">
                             ${renderizarBandeiraCardFormalizacao(proposta)}
@@ -3833,7 +3833,7 @@ async function carregarLogoParaPDF() {
                             </label>
                         `).join('')}
                     </div>
-                        <div class="budget-edit-panel-actions">
+                        <div class="budget-edit-panel-actions formalizacao-edit-actions">
                             ${renderActionButton({
                                 type: 'save',
                                 label: 'Salvar alterações',

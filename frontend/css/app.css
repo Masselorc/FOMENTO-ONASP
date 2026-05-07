@@ -2556,7 +2556,12 @@ table.dataTable thead td,
     box-shadow: var(--shadow-card);
     display: grid;
     gap: 0.85rem;
+    min-width: 0;
     padding: 1rem;
+}
+
+.formalizacao-card-editing {
+    grid-column: 1 / -1;
 }
 
 .formalizacao-card:hover {
@@ -2905,6 +2910,29 @@ table.dataTable thead td,
 
 .formalizacao-edit-panel {
     border-left: 4px solid rgba(26, 91, 157, 0.28);
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.formalizacao-edit-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    max-width: 100%;
+}
+
+.formalizacao-edit-grid > label {
+    min-width: 0;
+}
+
+.formalizacao-edit-panel input,
+.formalizacao-edit-panel select,
+.formalizacao-edit-panel textarea {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.formalizacao-edit-actions {
+    justify-content: flex-end;
+    max-width: 100%;
 }
 
 .formalizacao-edit-meta {
@@ -4043,6 +4071,22 @@ table.dataTable thead td,
     .formalizacao-detail-alert {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .formalizacao-card-editing {
+        grid-column: auto;
+    }
+
+    .formalizacao-edit-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .formalizacao-edit-actions {
+        justify-content: flex-start;
+    }
+
+    .formalizacao-edit-actions .btn {
+        flex: 1 1 180px;
     }
 
     .formalizacao-open-button {
