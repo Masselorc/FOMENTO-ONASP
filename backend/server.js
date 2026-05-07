@@ -2,7 +2,6 @@ const fs = require("fs");
 const http = require("http");
 const os = require("os");
 const path = require("path");
-const url = require("url");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env"), quiet: true });
 
 const { prepararBanco } = require("./db/preparar-banco");
@@ -278,7 +277,7 @@ async function rotearApi(req, res, pathname) {
 prepararBanco();
 
 const server = http.createServer((req, res) => {
-  const parsed = url.parse(req.url);
+  const parsed = new URL(req.url, `http://${req.headers.host || "localhost"}`);
   const pathname = decodeURIComponent(parsed.pathname || "/");
 
   if (pathname.startsWith("/api/")) {

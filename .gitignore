@@ -5,3 +5,4 @@ backend/data/onasp.sqlite
 backend/data/onasp.sqlite-*
 backend/data/backups/
 backend/logs/
+*.log
