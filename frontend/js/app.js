@@ -2868,6 +2868,7 @@ async function carregarLogoParaPDF() {
             const condicao = proposta.condicaoSuspensiva.exige
                 ? proposta.condicaoSuspensiva.situacao
                 : 'Não se aplica';
+            const emEdicao = formalizacaoItemEmEdicao(proposta.uf);
 
             return `
                 <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''}">
@@ -2906,14 +2907,25 @@ async function carregarLogoParaPDF() {
                         ${renderizarChecklistCardFormalizacao(proposta, 'projeto', 'Docs do projeto', proposta.documentosProjeto, proposta.progressoDocumentosProjeto)}
                         ${renderizarChecklistCardFormalizacao(proposta, 'formalizacao', 'Docs da formalização', proposta.documentosFormalizacao, proposta.progressoDocumentosFormalizacao)}
                     </div>
-                    ${renderActionButton({
-                        type: 'info',
-                        label: 'Abrir UF',
-                        variant: 'outline-primary',
-                        extraClass: 'formalizacao-open-button',
-                        title: `Abrir detalhamento de ${proposta.uf}`,
-                        attributes: `data-formalizacao-uf="${escapeHtml(proposta.uf)}"`
-                    })}
+                    <div class="budget-row-actions justify-content-between flex-wrap gap-2">
+                        ${renderActionButton({
+                            type: 'info',
+                            label: 'Ver detalhe',
+                            variant: 'outline-primary',
+                            extraClass: 'formalizacao-open-button',
+                            title: `Abrir detalhamento de ${proposta.uf}`,
+                            attributes: `data-formalizacao-uf="${escapeHtml(proposta.uf)}"`
+                        })}
+                        ${!dadosPaginaEmModoEstatico('formalizacaoProfor') ? renderActionButton({
+                            type: emEdicao ? 'success' : 'edit',
+                            label: emEdicao ? 'Fechar edição' : 'Editar',
+                            variant: emEdicao ? 'primary' : 'outline-primary',
+                            backend: true,
+                            title: emEdicao ? `Fechar edição de ${proposta.uf}` : `Editar acompanhamento de ${proposta.uf}`,
+                            attributes: `data-formalizacao-toggle-editor="${escapeHtml(proposta.uf)}"`
+                        }) : ''}
+                    </div>
+                    ${renderizarPainelEdicaoFormalizacaoUf(proposta, 1)}
                 </article>
             `;
         }
@@ -3185,7 +3197,8 @@ async function carregarLogoParaPDF() {
                     if (formalizacaoEditoresAbertos.has(uf)) {
                         formalizacaoEditoresAbertos.delete(uf);
                     } else {
-                        formalizacaoEditoresAbertos.add(uf);
+                        abrirEditorFormalizacao(uf);
+                        return;
                     }
                     renderFormalizacaoProforView();
                 });
@@ -3196,7 +3209,7 @@ async function carregarLogoParaPDF() {
                 botao.dataset.formalizacaoEventoRegistrado = '1';
                 botao.addEventListener('click', (event) => {
                     event.stopPropagation();
-                    abrirModalSenhaFormalizacao(dados, botao.dataset.formalizacaoSalvarLinha);
+                    salvarAlteracoesFormalizacao(botao.dataset.formalizacaoSalvarLinha);
                 });
             });
 
@@ -3205,7 +3218,7 @@ async function carregarLogoParaPDF() {
                 botao.dataset.formalizacaoEventoRegistrado = '1';
                 botao.addEventListener('click', (event) => {
                     event.stopPropagation();
-                    cancelarEdicaoFormalizacaoUf(botao.dataset.formalizacaoCancelarLinha);
+                    cancelarEdicaoFormalizacao(botao.dataset.formalizacaoCancelarLinha);
                 });
             });
         }
@@ -3297,6 +3310,20 @@ async function carregarLogoParaPDF() {
             return formalizacaoEditoresAbertos.has(String(uf));
         }
 
+        function abrirEditorFormalizacao(uf) {
+            if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            formalizacaoEditoresAbertos.add(String(uf));
+            renderFormalizacaoProforView();
+        }
+
+        function cancelarEdicaoFormalizacao(uf) {
+            cancelarEdicaoFormalizacaoUf(uf);
+        }
+
         function cancelarEdicaoFormalizacaoUf(uf) {
             delete formalizacaoAlteracoesPendentes[uf];
             formalizacaoEditoresAbertos.delete(String(uf));
@@ -3330,6 +3357,11 @@ async function carregarLogoParaPDF() {
             }
 
             renderFormalizacaoProforView();
+        }
+
+        function salvarAlteracoesFormalizacao(uf = '') {
+            const dados = obterDadosFormalizacaoProfor();
+            abrirModalSenhaFormalizacao(dados, uf);
         }
 
         function renderizarAcoesFormalizacao() {
@@ -3423,7 +3455,6 @@ async function carregarLogoParaPDF() {
                 label: ativo ? 'Fechar edição' : 'Editar',
                 variant: ativo ? 'primary' : 'outline-primary',
                 backend: true,
-                iconOnly: true,
                 title: ativo ? 'Fechar edição desta UF' : 'Editar esta UF',
                 extraClass: 'budget-row-action budget-row-action-edit',
                 attributes: `data-formalizacao-toggle-editor="${escapeHtml(id)}" aria-pressed="${ativo ? 'true' : 'false'}"`
@@ -3437,40 +3468,48 @@ async function carregarLogoParaPDF() {
             const etapas = proposta.etapasFormalizacao || [];
             const alteracoesUf = obterQuantidadeAlteracoesFormalizacao(proposta.uf);
 
+            const painelHtml = `
+                <div class="budget-edit-panel">
+                    <div class="budget-edit-panel-header">
+                        <strong>Editar acompanhamento da Formalização - ${escapeHtml(proposta.uf)}</strong>
+                        <span>As alterações desta UF ficam pendentes até clicar em Salvar alterações.</span>
+                    </div>
+                    <div class="budget-edit-grid formalizacao-edit-grid">
+                        ${etapas.map((etapa) => `
+                            <label>
+                                <span>${escapeHtml(etapa.label)}</span>
+                                ${renderizarControleEtapaFormalizacao(proposta, etapa)}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="budget-edit-panel-actions">
+                        ${renderActionButton({
+                            type: 'save',
+                            label: 'Salvar alterações',
+                            variant: 'primary',
+                            backend: true,
+                            disabled: !alteracoesUf,
+                            attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                        })}
+                        ${renderActionButton({
+                            type: 'cancel',
+                            label: 'Cancelar',
+                            variant: 'outline-secondary',
+                            backend: true,
+                            attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                        })}
+                    </div>
+                </div>
+            `;
+
+            if (colspan === 1) {
+                return `<div class="pdf-hidden mt-3" data-requer-backend="true">${painelHtml}</div>`;
+            }
+
             return `
                 <tr class="budget-edit-row pdf-hidden">
                     <td colspan="${colspan}">
-                        <div class="budget-edit-panel">
-                            <div class="budget-edit-panel-header">
-                                <strong>Editar andamento - ${escapeHtml(proposta.uf)}</strong>
-                                <span>As alterações desta UF ficam pendentes até clicar em Salvar.</span>
-                            </div>
-                            <div class="budget-edit-grid formalizacao-edit-grid">
-                                ${etapas.map((etapa) => `
-                                    <label>
-                                        <span>${escapeHtml(etapa.label)}</span>
-                                        ${renderizarControleEtapaFormalizacao(proposta, etapa)}
-                                    </label>
-                                `).join('')}
-                            </div>
-                            <div class="budget-edit-panel-actions">
-                                ${renderActionButton({
-                                    type: 'save',
-                                    label: 'Salvar',
-                                    variant: 'primary',
-                                    backend: true,
-                                    disabled: !alteracoesUf,
-                                    attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
-                                })}
-                                ${renderActionButton({
-                                    type: 'cancel',
-                                    label: 'Cancelar',
-                                    variant: 'outline-secondary',
-                                    backend: true,
-                                    attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
-                                })}
-                            </div>
-                        </div>
+                        ${painelHtml}
                     </td>
                 </tr>
             `;
