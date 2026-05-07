@@ -473,6 +473,10 @@ async function exportarRelatorioEstadoSelecionado(uf) {
     await exportarRelatorioPDF();
 }
 
+// ========================================================================
+// NAVEGACAO
+// ========================================================================
+
 function atualizarNavegacao(viewName = 'dashboard') {
     const viewAtiva = viewName === 'estado-detalhe'
         ? 'detalhamento'
@@ -517,6 +521,10 @@ function atualizarNavegacao(viewName = 'dashboard') {
     alternarPastaRepassesFunpen(VIEWS_REPASSES_FUNPEN.has(viewName));
 }
 
+// ========================================================================
+// LOADING / ALERTAS
+// ========================================================================
+
 function showLoading(mensagem = 'Processando...') {
     const overlay = document.getElementById('loading-overlay');
     const msgEl = document.getElementById('loading-message');
@@ -530,50 +538,12 @@ function hideLoading() {
 }
 
 async function carregarLogoParaPDF() {
-            return carregarLogoLocalParaPDF();
-            const logoImg = document.getElementById('img-logo-senappen');
-            const urlOficial = 'https://www.gov.br/senappen/pt-br/centrais-de-conteudo/download-logos/senappen-marca-final_prancheta-1-copia-4-1.png/@@images/image';
-            
-            // Sistema de Cascata: 3 serviços diferentes para garantir o bypass do bloqueio CORS do gerador de PDF
-            const proxies = [
-                'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(urlOficial),
-                'https://corsproxy.io/?' + encodeURIComponent(urlOficial),
-                'https://api.allorigins.win/raw?url=' + encodeURIComponent(urlOficial)
-            ];
+    return carregarLogoLocalParaPDF();
+}
 
-            let sucesso = false;
-
-            for (const proxyUrl of proxies) {
-                try {
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    
-                    const blob = await response.blob();
-                    
-                    // Converte para Base64
-                    const base64data = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(blob);
-                    });
-
-                    // Aplica a imagem segura no HTML
-                    logoImg.src = base64data;
-                    sucesso = true;
-                    console.log("Logo convertida para PDF com sucesso via: " + proxyUrl.split('/')[2]);
-                    break; // Se funcionou, sai do loop imediatamente
-                } catch (error) {
-                    console.warn("Serviço de conversão falhou, tentando o próximo...");
-                }
-            }
-
-            // Fallback de último recurso
-            if (!sucesso) {
-                console.error("Todos os conversores falharam devido a bloqueios de rede. A logo pode não aparecer no PDF.");
-                logoImg.src = urlOficial; 
-            }
-        }
+// ========================================================================
+// CARREGAMENTO DE DADOS
+// ========================================================================
 
         const LOGO_SENAPPEN_LOCAL = './frontend/assets/senappen-logo.png';
 
@@ -1192,7 +1162,9 @@ async function carregarLogoParaPDF() {
             window.scrollTo(0, 0);
         }
 
-        // --- DASHBOARD PRINCIPAL ---
+        // ========================================================================
+        // DASHBOARD
+        // ========================================================================
         function initDashboard(data) {
             if (chartInstancia) chartInstancia.destroy();
             if (tabelaInstancia) {
@@ -1217,7 +1189,9 @@ async function carregarLogoParaPDF() {
             atualizarCardsDinamicos();
         }
 
-        // --- DETALHAMENTO POR ESTADO ---
+        // ========================================================================
+        // DETALHAMENTO
+        // ========================================================================
         function renderDetailsView() {
             const container = document.getElementById('container-estados');
             container.innerHTML = ''; 
@@ -2988,7 +2962,9 @@ async function carregarLogoParaPDF() {
             toggleView('doacoes2023-detalhe');
         }
 
-        // --- MÓDULO DE FORMALIZAÇÃO PROFOR/ONASP 2026 ---
+        // ========================================================================
+        // FORMALIZACAO PROFOR
+        // ========================================================================
         function obterClasseAlertaFormalizacao(severidade) {
             if (severidade === 'critico') return 'danger';
             if (severidade === 'moderado') return 'warning';
@@ -6200,6 +6176,10 @@ async function carregarLogoParaPDF() {
 
         // Exporta o relatório a partir do HTML renderizado. Elementos marcados
         // como pdf-hidden são ocultados por CSS durante a captura.
+        // ========================================================================
+        // EXPORTACOES
+        // ========================================================================
+
         async function exportarOrcamentoPDF() {
             let budgetData = obterDadosOrcamento();
             if (!budgetData) {
@@ -6541,7 +6521,9 @@ async function carregarLogoParaPDF() {
             }
         }
 
-        // --- MÓDULO DE DIAGNÓSTICO E CONFORMIDADE DAS OUVIDORIAS ---
+        // ========================================================================
+        // PARAMETROS MINIMOS
+        // ========================================================================
         function obterFiltrosDiagnosticoOuvidorias() {
             return {
                 uf: diagnosticoUfAtual || '',
@@ -7344,6 +7326,10 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        // ========================================================================
+        // ORCAMENTO 2026
+        // ========================================================================
+
         const STATUS_ORCAMENTO_EDICAO = ['PLANEJADO', 'PROCESSO AUTUADO', 'EM PESQUISA DE PREÇOS', 'EM EXECUÇÃO', 'EXECUTADO', 'SUSPENSO', 'CANCELADO', 'VALIDAR'];
 
         function parseNumeroMonetarioFrontend(valor) {
@@ -7953,7 +7939,9 @@ async function carregarLogoParaPDF() {
             aplicarModoSomenteLeitura();
         }
 
-        // --- MÓDULO DE CONTATOS UFS ---
+        // ========================================================================
+        // CONTATOS
+        // ========================================================================
         function exportarContatos() {
             const dadosContatos = obterDadosContatos();
             if (!dadosContatos || (!dadosContatos.cadastroPorUf.size && !dadosContatos.pessoasPorUf.size)) {
