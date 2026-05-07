@@ -4563,8 +4563,9 @@ async function carregarLogoParaPDF() {
             const ehAparelhamento = normalizarClassificacaoGerencialOrcamento(classificacao) === 'APARELHAMENTO';
             return `
                 <div class="budget-classification-cell">
-                    <span class="budget-classification-badge budget-classification-${ehAparelhamento ? 'equipment' : 'other'}">
-                        ${ehAparelhamento ? 'Aparelhamento' : 'Não aparelhamento'}
+                    <span class="app-status-badge ${ehAparelhamento ? 'app-status-badge-success' : 'app-status-badge-secondary'} budget-classification-badge">
+                        <i class="fas ${ehAparelhamento ? 'fa-boxes-stacked' : 'fa-ban'}" aria-hidden="true"></i>
+                        <span>${ehAparelhamento ? 'Aparelhamento' : 'Não aparelhamento'}</span>
                     </span>
                     ${ehAparelhamento ? `<span class="budget-classification-balance">Saldo: ${formatMoney(saldoAparelhamento)}</span>` : ''}
                 </div>
@@ -5512,6 +5513,17 @@ async function carregarLogoParaPDF() {
             const saldoPlanejado = resumo.saldoPlanejado ?? ((resumo.totalOrcamento || resumo.totalGeral || 0) - valorEmExecucao);
             const processosAutuados = resumo.processosAutuados || 0;
             const resumoAparelhamento = budgetData.resumoAparelhamento || calcularResumoAparelhamentoFrontend(itensOrcamento);
+            const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
+            const percentualEmExecucao = totalOrcamento > 0 ? valorEmExecucao / totalOrcamento : 0;
+            const saldoAparelhamento = Number(resumoAparelhamento.saldoAparelhamento || 0);
+            const notaSaldoAparelhamento = saldoAparelhamento > 0
+                ? `
+                    <div class="budget-management-note budget-management-note-info">
+                        <strong>Saldo gerencial de aparelhamento disponível:</strong> ${formatMoney(saldoAparelhamento)}.
+                        <span>Saldo gerencial calculado pela diferença entre previsto e valor em execução.</span>
+                    </div>
+                `
+                : '';
 
             container.innerHTML = `
                 <section class="dashboard-intro budget-intro">
@@ -5528,83 +5540,114 @@ async function carregarLogoParaPDF() {
 
                 ${renderizarAcoesOrcamento()}
 
-                <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores orçamentários">
-                    <div class="col">
-                        <div class="card kpi-card kpi-card-success">
-                            <div class="kpi-title"><i class="fas fa-wallet" aria-hidden="true"></i>Total do orçamento</div>
-                            <div class="kpi-value text-money text-success">${formatMoney(resumo.totalOrcamento ?? resumo.totalGeral)}</div>
-                            <div class="kpi-desc">Orçamento oficial ONASP</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card kpi-card kpi-card-warning">
-                            <div class="kpi-title"><i class="fas fa-hourglass-half" aria-hidden="true"></i>Valor em Execução</div>
-                            <div class="kpi-value text-money text-warning">${formatMoney(valorEmExecucao)}</div>
-                            <div class="kpi-desc">Soma das pesquisas de preço cadastradas</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card kpi-card kpi-card-info">
-                            <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Valor empenhado</div>
-                            <div class="kpi-value text-money text-info">${formatMoney(valorEmpenhado)}</div>
-                            <div class="kpi-desc">Soma das notas de empenho emitidas</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card kpi-card kpi-card-success">
-                            <div class="kpi-title"><i class="fas fa-money-check-alt" aria-hidden="true"></i>Valor executado</div>
-                            <div class="kpi-value text-money text-success">${formatMoney(valorExecutado)}</div>
-                            <div class="kpi-desc">Soma das ordens bancárias realizadas</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="card kpi-card">
-                            <div class="kpi-title"><i class="fas fa-vault" aria-hidden="true"></i>Saldo planejado</div>
-                            <div class="kpi-value text-money">${formatMoney(saldoPlanejado)}</div>
-                            <div class="kpi-desc">${processosAutuados} processo(s) autuado(s)</div>
+                <section class="budget-summary-section mb-4" aria-label="Seção Orçamento 2026">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Seção 1</p>
+                            <h2>Orçamento 2026</h2>
                         </div>
                     </div>
                 </section>
+                <section class="row mb-2 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores orçamentários">
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Total do orçamento',
+                            valor: `<span class="text-money text-success">${formatMoney(totalOrcamento)}</span>`,
+                            descricao: 'Orçamento oficial ONASP',
+                            icon: 'fa-wallet',
+                            variant: 'success'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Valor em execução',
+                            valor: `<span class="text-money text-warning">${formatMoney(valorEmExecucao)}</span>`,
+                            descricao: 'Base gerencial das pesquisas de preço',
+                            icon: 'fa-hourglass-half',
+                            variant: 'warning'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Saldo planejado',
+                            valor: `<span class="text-money">${formatMoney(saldoPlanejado)}</span>`,
+                            descricao: `${processosAutuados} processo(s) autuado(s)`,
+                            icon: 'fa-vault'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Processos autuados',
+                            valor: `<span>${processosAutuados}</span>`,
+                            descricao: 'Itens com autuação registrada',
+                            icon: 'fa-folder-open',
+                            variant: 'info'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Percentual em execução',
+                            valor: `<span>${formatPercent(percentualEmExecucao)}</span>`,
+                            descricao: 'Valor em execução / orçamento total',
+                            icon: 'fa-chart-line',
+                            variant: 'info'
+                        })}
+                    </div>
+                </section>
+                <div class="budget-management-note mb-4">
+                    Considera processos autuados com valor de pesquisa de preço informado, excluídos itens cancelados ou suspensos.
+                </div>
 
                 <section class="budget-equipment-section mb-4" aria-label="Indicadores de aparelhamento">
                     <div class="section-header compact">
                         <div>
-                            <p class="section-eyebrow mb-1">Leitura gerencial</p>
+                            <p class="section-eyebrow mb-1">Seção 2</p>
                             <h2>Aparelhamento</h2>
                         </div>
                     </div>
                     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
                         <div class="col">
-                            <div class="card kpi-card kpi-card-success">
-                                <div class="kpi-title"><i class="fas fa-boxes-stacked" aria-hidden="true"></i>Previsto em aparelhamento</div>
-                                <div class="kpi-value text-money text-success">${formatMoney(resumoAparelhamento.previstoAparelhamento || 0)}</div>
-                            </div>
+                            ${renderKpiCard({
+                                titulo: 'Previsto em aparelhamento',
+                                valor: `<span class="text-money text-success">${formatMoney(resumoAparelhamento.previstoAparelhamento || 0)}</span>`,
+                                icon: 'fa-boxes-stacked',
+                                variant: 'success'
+                            })}
                         </div>
                         <div class="col">
-                            <div class="card kpi-card kpi-card-warning">
-                                <div class="kpi-title"><i class="fas fa-hourglass-half" aria-hidden="true"></i>Em execução em aparelhamento</div>
-                                <div class="kpi-value text-money text-warning">${formatMoney(resumoAparelhamento.emExecucaoAparelhamento || 0)}</div>
-                            </div>
+                            ${renderKpiCard({
+                                titulo: 'Em execução em aparelhamento',
+                                valor: `<span class="text-money text-warning">${formatMoney(resumoAparelhamento.emExecucaoAparelhamento || 0)}</span>`,
+                                icon: 'fa-hourglass-half',
+                                variant: 'warning'
+                            })}
                         </div>
                         <div class="col">
-                            <div class="card kpi-card">
-                                <div class="kpi-title"><i class="fas fa-vault" aria-hidden="true"></i>Saldo de aparelhamento</div>
-                                <div class="kpi-value text-money">${formatMoney(resumoAparelhamento.saldoAparelhamento || 0)}</div>
-                            </div>
+                            ${renderKpiCard({
+                                titulo: 'Saldo de aparelhamento',
+                                valor: `<span class="text-money">${formatMoney(resumoAparelhamento.saldoAparelhamento || 0)}</span>`,
+                                descricao: 'Leitura gerencial do bloco classificado',
+                                icon: 'fa-vault'
+                            })}
                         </div>
                         <div class="col">
-                            <div class="card kpi-card kpi-card-info">
-                                <div class="kpi-title"><i class="fas fa-list-check" aria-hidden="true"></i>Itens de aparelhamento</div>
-                                <div class="kpi-value text-info">${resumoAparelhamento.quantidadeItensAparelhamento || 0}</div>
-                            </div>
+                            ${renderKpiCard({
+                                titulo: 'Itens de aparelhamento',
+                                valor: `<span class="text-info">${resumoAparelhamento.quantidadeItensAparelhamento || 0}</span>`,
+                                icon: 'fa-list-check',
+                                variant: 'info'
+                            })}
                         </div>
                         <div class="col">
-                            <div class="card kpi-card kpi-card-warning">
-                                <div class="kpi-title"><i class="fas fa-tags" aria-hidden="true"></i>Pendentes de pesquisa</div>
-                                <div class="kpi-value text-warning">${resumoAparelhamento.quantidadePendentesPesquisaPreco || 0}</div>
-                            </div>
+                            ${renderKpiCard({
+                                titulo: 'Pendentes de pesquisa',
+                                valor: `<span class="text-warning">${resumoAparelhamento.quantidadePendentesPesquisaPreco || 0}</span>`,
+                                icon: 'fa-tags',
+                                variant: 'warning'
+                            })}
                         </div>
                     </div>
+                    ${notaSaldoAparelhamento}
                 </section>
 
                 <section class="filter-section mb-4" aria-label="Filtros da tabela de orçamento">

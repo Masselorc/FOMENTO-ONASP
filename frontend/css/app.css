@@ -1308,6 +1308,33 @@ table.dataTable thead td,
     margin-top: 0.25rem;
 }
 
+.budget-summary-section {
+    margin-bottom: 0.75rem;
+}
+
+.budget-management-note {
+    background: linear-gradient(135deg, rgba(23, 74, 124, 0.06), rgba(23, 74, 124, 0.02));
+    border: 1px solid rgba(23, 74, 124, 0.14);
+    border-radius: 14px;
+    color: var(--color-text-muted, #5f6f82);
+    font-size: 0.84rem;
+    line-height: 1.45;
+    padding: 0.85rem 1rem;
+}
+
+.budget-management-note strong {
+    color: var(--color-primary-strong);
+}
+
+.budget-management-note span {
+    display: block;
+    margin-top: 0.18rem;
+}
+
+.budget-management-note-info {
+    margin-top: 1rem;
+}
+
 .budget-insight-grid {
     display: grid;
     gap: 1rem;
@@ -1357,20 +1384,19 @@ table.dataTable thead td,
 }
 
 .budget-main-table .budget-col-item {
-    width: 22%;
+    width: 21%;
 }
 
 .budget-main-table .budget-col-modalidade,
 .budget-main-table .budget-col-abrangencia,
 .budget-main-table .budget-col-empenhado,
 .budget-main-table .budget-col-executado,
-.budget-main-table .budget-col-acoes {
+.budget-main-table .budget-col-observacao {
     width: 7%;
 }
 
 .budget-main-table .budget-col-previsto,
-.budget-main-table .budget-col-status,
-.budget-main-table .budget-col-observacao {
+.budget-main-table .budget-col-status {
     width: 8%;
 }
 
@@ -1379,7 +1405,11 @@ table.dataTable thead td,
 }
 
 .budget-main-table .budget-col-classificacao {
-    width: 10%;
+    width: 11%;
+}
+
+.budget-main-table .budget-col-acoes {
+    width: 8%;
 }
 
 .budget-data-table thead th {
@@ -1674,14 +1704,14 @@ table.dataTable thead td,
 .budget-classification-badge {
     border-radius: 999px;
     display: inline-flex;
-    font-size: 0.6rem;
+    font-size: 0.66rem;
     font-weight: 800;
+    gap: 0.3rem;
     justify-content: center;
     max-width: 100%;
-    min-height: 22px;
-    padding: 0.22rem 0.42rem;
+    min-height: 24px;
+    padding: 0.28rem 0.5rem;
     text-align: center;
-    text-transform: uppercase;
     white-space: normal;
 }
 
@@ -1701,6 +1731,10 @@ table.dataTable thead td,
     font-size: 0.66rem;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+}
+
+.budget-main-table td[data-label="Ações"] .budget-row-actions {
+    flex-wrap: nowrap;
 }
 
 .budget-action-buttons,
