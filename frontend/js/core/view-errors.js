@@ -32,6 +32,10 @@ export const VIEW_ERROR_MESSAGES = {
     contatos: {
         titulo: 'Não foi possível carregar Contatos UFs.',
         detalhe: 'Verifique a origem dos dados de contatos.'
+    },
+    'status-sistema': {
+        titulo: 'Não foi possível carregar Status do Sistema.',
+        detalhe: 'Verifique se os dados locais ou os arquivos publicados estão disponíveis.'
     }
 };
 
