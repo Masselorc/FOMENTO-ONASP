@@ -6211,7 +6211,7 @@ async function carregarLogoParaPDF() {
         async function exportarOrcamentoPDF() {
             let budgetData = obterDadosOrcamento();
             if (!budgetData) {
-                showLoading('Carregando orçamento 2026...');
+                showLoading('Carregando Orçamento 2026...');
                 try {
                     budgetData = await carregarDadosOrcamento();
                 } finally {
