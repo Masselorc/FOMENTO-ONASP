@@ -37,7 +37,8 @@ const CAMPOS_EDITAVEIS = new Set([
   "processo_autuado",
   "processo_sei",
   "status",
-  "observacao"
+  "observacao",
+  "classificacao_gerencial"
 ]);
 
 const COLUNAS_ORCAMENTO = [
@@ -57,6 +58,7 @@ const COLUNAS_ORCAMENTO = [
   "status",
   "observacao",
   "compoe_orcamento",
+  "classificacao_gerencial",
   "ativo",
   "tipo_rastreio",
   "abrangencia",
@@ -135,6 +137,7 @@ const MAPA_CAMEL = {
   processo_sei: "processoSei",
   processo_autuado: "processoAutuadoNumero",
   compoe_orcamento: "compoeOrcamentoNumero",
+  classificacao_gerencial: "classificacaoGerencial",
   link_processo_sei: "linkProcessoSei",
   data_processo_sei: "dataProcessoSei",
   demanda_formalizada: "demandaFormalizada",
@@ -223,6 +226,46 @@ function normalizarStatusOrcamento(status) {
   if (texto.includes("CANCEL")) return "CANCELADO";
   if (texto.includes("VALID")) return "VALIDAR";
   return "PLANEJADO";
+}
+
+function normalizarClassificacaoGerencial(valor) {
+  const texto = normalizarTexto(valor).replace(/\s+/g, "_");
+
+  if (
+    texto === "APARELHAMENTO"
+    || texto === "SIM"
+    || texto === "S"
+    || texto === "1"
+    || texto === "TRUE"
+  ) {
+    return "APARELHAMENTO";
+  }
+
+  if (
+    texto === "NAO_APARELHAMENTO"
+    || texto === "NAO"
+    || texto === "N"
+    || texto === "0"
+    || texto === "FALSE"
+  ) {
+    return "NAO_APARELHAMENTO";
+  }
+
+  return "NAO_APARELHAMENTO";
+}
+
+function classificarGerencialmenteItemOrcamento(item) {
+  const id = normalizarTexto(item?.id);
+  const idsAparelhamento = new Set([
+    "APON-001",
+    "APON-002",
+    "APON-003",
+    "APON-004",
+    "APON-005",
+    "CONV-001"
+  ]);
+
+  return idsAparelhamento.has(id) ? "APARELHAMENTO" : "NAO_APARELHAMENTO";
 }
 
 function converterNumero(valor) {
@@ -446,6 +489,7 @@ function obterRegistrosIniciaisDaPlanilha() {
       status,
       observacao: "",
       compoe_orcamento: 1,
+      classificacao_gerencial: classificarGerencialmenteItemOrcamento({ id, descricao }),
       ativo: 1,
       tipo_rastreio: tipoRastreio,
       abrangencia: textoCelula(linha, colAbrangencia),
@@ -459,6 +503,10 @@ function obterRegistrosIniciaisDaPlanilha() {
 
 function preencherColunas(item) {
   return COLUNAS_ORCAMENTO.reduce((acc, coluna) => {
+    if (coluna === "classificacao_gerencial") {
+      acc[coluna] = normalizarClassificacaoGerencial(item[coluna]);
+      return acc;
+    }
     acc[coluna] = item[coluna] ?? (coluna.startsWith("valor_") || ["processo_autuado", "compoe_orcamento", "ativo"].includes(coluna) ? 0 : "");
     return acc;
   }, {});
@@ -514,8 +562,33 @@ function executarBackfillOrcamento() {
   })(registros);
 }
 
+function executarBackfillClassificacaoGerencial() {
+  const linhas = db.prepare("SELECT id, classificacao_gerencial FROM orcamento_2026").all();
+  if (!linhas.length) return;
+
+  const update = db.prepare(`
+    UPDATE orcamento_2026
+    SET classificacao_gerencial = ?, atualizado_em = ?
+    WHERE id = ?
+  `);
+  const updatedAt = new Date().toISOString();
+
+  db.transaction((items) => {
+    items.forEach((linha) => {
+      const classificacaoAtual = normalizarClassificacaoGerencial(linha.classificacao_gerencial);
+      const classificacaoAutomatica = classificarGerencialmenteItemOrcamento({ id: linha.id });
+      const deveAtualizar = !linha.classificacao_gerencial || classificacaoAtual === "NAO_APARELHAMENTO";
+
+      if (deveAtualizar && classificacaoAutomatica === "APARELHAMENTO") {
+        update.run(classificacaoAutomatica, updatedAt, linha.id);
+      }
+    });
+  })(linhas);
+}
+
 function inicializarOrcamento2026() {
   executarBackfillOrcamento();
+  executarBackfillClassificacaoGerencial();
 }
 
 function linhaParaItem(linha) {
@@ -523,6 +596,13 @@ function linhaParaItem(linha) {
   const valorEstimadoPesquisaPreco = Number(linha.valor_estimado_pesquisa_preco) || 0;
   const processoAutuado = Number(linha.processo_autuado) === 1;
   const compoeOrcamento = Number(linha.compoe_orcamento) === 1;
+  const classificacaoGerencial = normalizarClassificacaoGerencial(
+    linha.classificacao_gerencial || classificarGerencialmenteItemOrcamento(linha)
+  );
+  const valorEmExecucaoConsiderado = compoeOrcamento ? valorEstimadoPesquisaPreco : 0;
+  const saldoAparelhamento = classificacaoGerencial === "APARELHAMENTO"
+    ? Math.max(0, arredondarMoeda(valorPrevisto - valorEmExecucaoConsiderado))
+    : 0;
   const item = {
     id: linha.id,
     categoria: linha.categoria || "",
@@ -549,8 +629,11 @@ function linhaParaItem(linha) {
     observacao: linha.observacao || "",
     compoeOrcamento,
     compoeOrcamentoNumero: compoeOrcamento ? 1 : 0,
+    classificacaoGerencial,
+    ehAparelhamento: classificacaoGerencial === "APARELHAMENTO",
     ativo: Number(linha.ativo) === 1,
-    valorEmExecucaoConsiderado: compoeOrcamento ? valorEstimadoPesquisaPreco : 0,
+    valorEmExecucaoConsiderado,
+    saldoAparelhamento,
     atualizadoEm: linha.atualizado_em || ""
   };
 
@@ -601,6 +684,42 @@ function montarResumo(itensOficiais) {
   };
 }
 
+function calcularResumoAparelhamento(itens) {
+  const itensAparelhamento = itens.filter((item) => (
+    item.ativo
+    && item.compoeOrcamento
+    && item.classificacaoGerencial === "APARELHAMENTO"
+  ));
+
+  const previstoAparelhamento = arredondarMoeda(
+    itensAparelhamento.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0)
+  );
+  const emExecucaoAparelhamento = arredondarMoeda(
+    itensAparelhamento.reduce((total, item) => total + (Number(item.valorEmExecucaoConsiderado) || 0), 0)
+  );
+  const saldoAparelhamento = arredondarMoeda(previstoAparelhamento - emExecucaoAparelhamento);
+  const pendentesPesquisaPreco = itensAparelhamento.filter((item) => {
+    const status = normalizarTexto(item.status);
+    return Boolean(item.processoAutuado)
+      && (Number(item.valorEstimadoPesquisaPreco) || 0) <= 0
+      && !status.includes("CANCELADO")
+      && !status.includes("SUSPENSO");
+  });
+
+  return {
+    previstoAparelhamento,
+    emExecucaoAparelhamento,
+    saldoAparelhamento,
+    quantidadeItensAparelhamento: itensAparelhamento.length,
+    quantidadePendentesPesquisaPreco: pendentesPesquisaPreco.length,
+    itensPendentesPesquisaPreco: pendentesPesquisaPreco.map((item) => ({
+      id: item.id,
+      descricao: item.descricao,
+      processoSei: item.processoSei || ""
+    }))
+  };
+}
+
 function valoresUnicos(itens, chave) {
   return Array.from(new Set(itens.map((item) => item[chave]).filter(Boolean))).sort((a, b) => a.localeCompare(b, "pt-BR"));
 }
@@ -626,6 +745,7 @@ function listarOrcamento2026() {
     outrosProcessos,
     statusPermitidos: STATUS_ORCAMENTO,
     resumo: montarResumo(itensOficiais),
+    resumoAparelhamento: calcularResumoAparelhamento(itensOficiais),
     filtros: {
       frentes: valoresUnicos(itensOficiais, "frente"),
       status: valoresUnicos(itensOficiais, "status"),
@@ -641,6 +761,7 @@ function valorParaBanco(campo, valor) {
   }
   if (campo === "processo_autuado") return valor ? 1 : 0;
   if (campo === "status") return normalizarStatusOrcamento(valor);
+  if (campo === "classificacao_gerencial") return normalizarClassificacaoGerencial(valor);
   return String(valor ?? "").trim();
 }
 
@@ -676,6 +797,7 @@ function validarNovos(novos) {
       processo_sei: limparTexto(item.processo_sei),
       status: normalizarStatusOrcamento(item.status || "PLANEJADO"),
       observacao: limparTexto(item.observacao),
+      classificacao_gerencial: "NAO_APARELHAMENTO",
       compoe_orcamento: 0,
       ativo: 1
     });

@@ -31,7 +31,8 @@ const {
 const { publicarDadosEstaticos } = require("./services/static-publication-service");
 
 const rootDir = path.join(__dirname, "..");
-const port = Number(process.env.PORT || 8010);
+const host = process.env.HOST || "0.0.0.0";
+const port = Number(process.env.PORT || 8790);
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -275,6 +276,6 @@ const server = http.createServer((req, res) => {
   enviarArquivoEstatico(req, res, pathname);
 });
 
-server.listen(port, () => {
-  console.log(`Aplicação ONASP disponível em http://localhost:${port}/index.html`);
+server.listen(port, host, () => {
+  console.log(`Aplicação ONASP disponível em http://${host}:${port}/index.html`);
 });

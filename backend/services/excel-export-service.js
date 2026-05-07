@@ -85,6 +85,9 @@ function exportarOrcamento2026Excel() {
     "Link Processo SEI": item.linkProcessoSei,
     "Data Processo SEI": item.dataProcessoSei,
     "Valor em execução considerado": item.valorEstimadoPesquisaPreco,
+    "Classificação gerencial": item.classificacaoGerencial === "APARELHAMENTO" ? "Aparelhamento" : "Não aparelhamento",
+    "É aparelhamento": item.ehAparelhamento ? "Sim" : "Não",
+    "Saldo de aparelhamento": item.saldoAparelhamento || 0,
     "DFD/Demanda": item.demandaFormalizada,
     "ETP/Especificação": item.estudoTecnico,
     "Termo de Referência": item.termoReferencia,
@@ -102,6 +105,9 @@ function exportarOrcamento2026Excel() {
     "Valor empenhado": item.valorEmpenhado,
     "Valor executado": item.valorExecutado,
     "Processo autuado": item.processoAutuado ? "Sim" : "Não",
+    "Classificação gerencial": "Não aparelhamento",
+    "É aparelhamento": "Não",
+    "Saldo de aparelhamento": 0,
     Status: item.status,
     "Observação": item.observacao
   }));
@@ -117,4 +123,3 @@ module.exports = {
   exportarFormalizacaoProforExcel,
   exportarOrcamento2026Excel
 };
-
