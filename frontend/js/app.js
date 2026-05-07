@@ -3402,28 +3402,30 @@ async function carregarLogoParaPDF() {
                         <td data-label="Ações" class="align-middle text-center">
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarBotaoEdicaoFormalizacao(proposta.uf)}
-                                ${formalizacaoItemEmEdicao(proposta.uf) ? `
-                                ${renderActionButton({
-                                    type: 'save',
-                                    label: 'Salvar alterações',
-                                    variant: 'primary',
-                                    backend: true,
-                                    disabled: !obterQuantidadeAlteracoesFormalizacao(proposta.uf),
-                                    title: 'Salvar alterações',
-                                    iconOnly: true,
-                                    extraClass: 'budget-row-action',
-                                    attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
-                                })}
-                                ${renderActionButton({
-                                    type: 'cancel',
-                                    label: 'Cancelar edição',
-                                    variant: 'outline-secondary',
-                                    backend: true,
-                                    title: 'Cancelar edição',
-                                    iconOnly: true,
-                                    extraClass: 'budget-row-action',
-                                    attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
-                                })}
+                        ${formalizacaoItemEmEdicao(proposta.uf) ? `
+                        ${renderActionButton({
+                            type: 'save',
+                            label: 'Salvar alterações',
+                            variant: 'primary',
+                            backend: true,
+                            disabled: !obterQuantidadeAlteracoesFormalizacao(proposta.uf),
+                            onClick: `salvarAlteracoesFormalizacao('${escapeHtml(proposta.uf)}')`,
+                            title: 'Salvar alterações',
+                            iconOnly: true,
+                            extraClass: 'budget-row-action',
+                            attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                        })}
+                        ${renderActionButton({
+                            type: 'cancel',
+                            label: 'Cancelar edição',
+                            variant: 'outline-secondary',
+                            backend: true,
+                            onClick: `cancelarEdicaoFormalizacao('${escapeHtml(proposta.uf)}')`,
+                            title: 'Cancelar edição',
+                            iconOnly: true,
+                            extraClass: 'budget-row-action',
+                            attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                        })}
                                 ` : ''}
                             </div>
                         </td>
@@ -3823,23 +3825,25 @@ async function carregarLogoParaPDF() {
                             </label>
                         `).join('')}
                     </div>
-                    <div class="budget-edit-panel-actions">
-                        ${renderActionButton({
-                            type: 'save',
-                            label: 'Salvar alterações',
-                            variant: 'primary',
-                            backend: true,
-                            disabled: !alteracoesUf,
-                            attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
-                        })}
-                        ${renderActionButton({
-                            type: 'cancel',
-                            label: 'Cancelar',
-                            variant: 'outline-secondary',
-                            backend: true,
-                            attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
-                        })}
-                    </div>
+                        <div class="budget-edit-panel-actions">
+                            ${renderActionButton({
+                                type: 'save',
+                                label: 'Salvar alterações',
+                                variant: 'primary',
+                                backend: true,
+                                disabled: !alteracoesUf,
+                                onClick: `salvarAlteracoesFormalizacao('${escapeHtml(proposta.uf)}')`,
+                                attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                            })}
+                            ${renderActionButton({
+                                type: 'cancel',
+                                label: 'Cancelar',
+                                variant: 'outline-secondary',
+                                backend: true,
+                                onClick: `cancelarEdicaoFormalizacao('${escapeHtml(proposta.uf)}')`,
+                                attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                            })}
+                        </div>
                 </div>
             `;
 
@@ -4643,10 +4647,12 @@ async function carregarLogoParaPDF() {
             container.style.display = 'block';
             container.innerHTML = `
                 <div class="report-actions pdf-hidden">
-                    <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('formalizacao')">
-                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
-                        <span>Voltar para Formalização</span>
-                    </button>
+                    ${renderActionButton({
+                        type: 'back',
+                        label: 'Voltar para Formalização',
+                        onClick: "toggleView('formalizacao')",
+                        variant: 'outline-secondary'
+                    })}
                 </div>
 
                 <div class="report-content profor-detail-content formalizacao-detail-content">
