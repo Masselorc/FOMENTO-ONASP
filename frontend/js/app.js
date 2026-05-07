@@ -3772,6 +3772,10 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarResumoEdicaoFormalizacao(proposta) {
+            // Nota: Os campos de condição suspensiva, Fala.BR e observação geral (observacoes)
+            // não foram adicionados como inputs editáveis porque o endpoint atual do backend
+            // (/api/formalizacao-profor/salvar) não suporta salvá-los no payload.
+            // A edição da Formalização é baseada estritamente nas etapas (status/observação) existentes.
             const observacaoVisivel = obterObservacaoFormalizacaoVisivel(proposta.observacoes);
             const falaBr = proposta.falaBr?.previsto ? 'Previsto no cronograma' : 'Pendente no cronograma';
 
@@ -3788,7 +3792,7 @@ async function carregarLogoParaPDF() {
                             : '<span class="app-status-badge app-status-badge-secondary"><i class="fas fa-ban" aria-hidden="true"></i><span>Não se aplica</span></span>'}
                     </div>
                     <div class="formalizacao-edit-meta-item">
-                        <span>Fala.BR</span>
+                        <span>Situação do Fala.BR</span>
                         <strong>${escapeHtml(falaBr)}</strong>
                     </div>
                     <div class="formalizacao-edit-meta-item formalizacao-edit-meta-item-wide">
@@ -3796,8 +3800,8 @@ async function carregarLogoParaPDF() {
                         <strong>${escapeHtml(observacaoVisivel || 'Sem observação consolidada.')}</strong>
                     </div>
                     <div class="formalizacao-edit-meta-item formalizacao-edit-meta-item-wide">
-                        <span>Escopo do salvamento</span>
-                        <strong>No modelo atual, esta tela salva status e observação por etapa da formalização.</strong>
+                        <span>Aviso sobre o escopo de edição</span>
+                        <strong>No modelo atual, esta tela salva exclusivamente o status e a observação de cada etapa.</strong>
                     </div>
                 </div>
             `;
