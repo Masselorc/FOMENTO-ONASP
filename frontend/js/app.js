@@ -4949,14 +4949,29 @@ async function carregarLogoParaPDF() {
             return `<span class="budget-status ${classe}">${escapeHtml(status || 'Não informado')}</span>`;
         }
 
+        function renderClassificacaoOrcamentoBadge(item) {
+            if (normalizarClassificacaoGerencialOrcamento(item?.classificacaoGerencial) === 'APARELHAMENTO') {
+                return `
+                    <span class="app-status-badge app-status-badge-success budget-classification-badge">
+                        <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
+                        <span>Aparelhamento</span>
+                    </span>
+                `;
+            }
+
+            return `
+                <span class="app-status-badge app-status-badge-secondary budget-classification-badge">
+                    <i class="fas fa-ban" aria-hidden="true"></i>
+                    <span>Não aparelhamento</span>
+                </span>
+            `;
+        }
+
         function renderizarClassificacaoGerencialOrcamento(classificacao, saldoAparelhamento = 0) {
             const ehAparelhamento = normalizarClassificacaoGerencialOrcamento(classificacao) === 'APARELHAMENTO';
             return `
                 <div class="budget-classification-cell">
-                    <span class="app-status-badge ${ehAparelhamento ? 'app-status-badge-success' : 'app-status-badge-secondary'} budget-classification-badge">
-                        <i class="fas ${ehAparelhamento ? 'fa-boxes-stacked' : 'fa-ban'}" aria-hidden="true"></i>
-                        <span>${ehAparelhamento ? 'Aparelhamento' : 'Não aparelhamento'}</span>
-                    </span>
+                    ${renderClassificacaoOrcamentoBadge({ classificacaoGerencial: classificacao })}
                     ${ehAparelhamento ? `<span class="budget-classification-balance">Saldo: ${formatMoney(saldoAparelhamento)}</span>` : ''}
                 </div>
             `;
