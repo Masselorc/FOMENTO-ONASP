@@ -13,6 +13,7 @@ const UFS_FORMALIZACAO_PROFOR = ["AM", "AP", "BA", "CE", "DF", "ES", "GO", "MG",
 const UFS_CONDICAO_SUSPENSIVA_PROFOR = new Set(["PA", "RR", "RS", "SE"]);
 const VALOR_REPASSE_PROFOR = 200000;
 const STATUS_PERMITIDOS = ["PENDENTE", "EM ANDAMENTO", "CONCLUÍDO", "COM PENDÊNCIA", "NÃO SE APLICA", "VALIDAR"];
+const STATUS_PERMITIDOS_NORMALIZADOS = new Set(STATUS_PERMITIDOS.map(normalizarTexto));
 const ETAPAS_FORMALIZACAO = [
   { key: "propostaCadastrada", label: "Proposta cadastrada" },
   { key: "planoTrabalho", label: "Plano de trabalho" },
@@ -46,6 +47,10 @@ function normalizarStatusFormalizacao(status) {
   };
 
   return mapa[texto] || "PENDENTE";
+}
+
+function statusFormalizacaoEhPermitido(status) {
+  return STATUS_PERMITIDOS_NORMALIZADOS.has(normalizarTexto(status).replace(/\s+/g, " "));
 }
 
 function obterLinhasPlanilha(caminho, nomeAba) {
@@ -343,8 +348,8 @@ function validarPayloadAlteracoes(changes) {
 
     Object.entries(campos).forEach(([etapa, payload]) => {
       if (!etapasPermitidas.has(etapa)) throw new Error(`Etapa não permitida: ${etapa}`);
+      if (!statusFormalizacaoEhPermitido(payload?.status)) throw new Error(`Status inválido para ${etapa}: ${payload?.status}`);
       const status = normalizarStatusFormalizacao(payload?.status);
-      if (!STATUS_PERMITIDOS.includes(status)) throw new Error(`Status inválido para ${etapa}: ${payload?.status}`);
       atualizacoes.push({
         uf: ufNormalizada,
         etapa,

@@ -32,9 +32,14 @@ import {
     calculateStateMetrics,
     processarDadosAgregados
 } from '../../backend/services/analytics.js?v=20260428-2';
+import {
+    MENSAGEM_MODO_PUBLICACAO,
+    aplicarModoSomenteLeitura,
+    dadosPaginaEmModoEstatico
+} from './core/static-mode.js?v=20260507-05';
 
 // ========================================================================
-// 1. CONFIGURACOES E ESTADO
+// CONFIGURACOES E ESTADO
 // ========================================================================
 
 let dadosFaf = [];
@@ -62,8 +67,32 @@ let orcamentoProcessosInativos = new Set();
 let erroCarregamentoOrcamento = null;
 const errosCarregamentoView = {};
 let resumoPublicacaoSistemaCache = null;
-const APP_CACHE_VERSION = '20260507-04';
+const APP_CACHE_VERSION = '20260507-05';
 const ANALYTICS_CACHE_VERSION = '20260428-2';
+// Mantém o idioma do DataTables local para evitar CORS e dependência externa em ambiente restrito ou no GitHub Pages.
+const DATATABLES_LANGUAGE_PT_BR = {
+    decimal: ',',
+    thousands: '.',
+    emptyTable: 'Nenhum registro encontrado',
+    info: 'Mostrando _START_ até _END_ de _TOTAL_ registros',
+    infoEmpty: 'Mostrando 0 até 0 de 0 registros',
+    infoFiltered: '(filtrado de _MAX_ registros no total)',
+    lengthMenu: 'Mostrar _MENU_ registros',
+    loadingRecords: 'Carregando...',
+    processing: 'Processando...',
+    search: 'Pesquisar:',
+    zeroRecords: 'Nenhum registro encontrado',
+    paginate: {
+        first: 'Primeiro',
+        last: 'Último',
+        next: 'Próximo',
+        previous: 'Anterior'
+    },
+    aria: {
+        sortAscending: ': ativar para ordenar a coluna em ordem crescente',
+        sortDescending: ': ativar para ordenar a coluna em ordem decrescente'
+    }
+};
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -86,7 +115,6 @@ const TODAS_UFS_BRASIL = [
     "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
 ];
 const UFS_SEM_OUVIDORIA_ESPECIFICA = ["PA", "RO", "RR", "RS", "SC", "SE", "TO"];
-const MENSAGEM_MODO_PUBLICACAO = 'Modo publicação: dados somente leitura. Para editar, execute a aplicação localmente.';
 let catalogoAplicacao = {
     configuracao: {},
     regioes: {},
@@ -97,7 +125,7 @@ let catalogoAplicacao = {
 };
 
 // ========================================================================
-// UI HELPERS - componentes visuais padronizados
+// UI HELPERS
 // ========================================================================
 
 const UI_ICONS = {
@@ -119,36 +147,12 @@ const UI_ICONS = {
 };
 
 const STATUS_UI = {
-    CONCLUIDO: {
-        label: 'Concluído',
-        classe: 'success',
-        icon: 'fa-check-circle'
-    },
-    PENDENTE: {
-        label: 'Pendente',
-        classe: 'warning',
-        icon: 'fa-clock'
-    },
-    EM_ANDAMENTO: {
-        label: 'Em andamento',
-        classe: 'primary',
-        icon: 'fa-spinner'
-    },
-    VALIDAR: {
-        label: 'Validar',
-        classe: 'info',
-        icon: 'fa-circle-question'
-    },
-    CRITICO: {
-        label: 'Crítico',
-        classe: 'danger',
-        icon: 'fa-triangle-exclamation'
-    },
-    NAO_APLICA: {
-        label: 'Não se aplica',
-        classe: 'secondary',
-        icon: 'fa-ban'
-    }
+    CONCLUIDO: { label: 'Concluído', classe: 'success', icon: 'fa-check-circle' },
+    PENDENTE: { label: 'Pendente', classe: 'warning', icon: 'fa-clock' },
+    EM_ANDAMENTO: { label: 'Em andamento', classe: 'primary', icon: 'fa-spinner' },
+    VALIDAR: { label: 'Validar', classe: 'info', icon: 'fa-circle-question' },
+    CRITICO: { label: 'Crítico', classe: 'danger', icon: 'fa-triangle-exclamation' },
+    NAO_APLICA: { label: 'Não se aplica', classe: 'secondary', icon: 'fa-ban' }
 };
 
 const VIEW_ERROR_MESSAGES = {
@@ -171,15 +175,23 @@ const VIEW_ERROR_MESSAGES = {
     contatos: {
         titulo: 'Não foi possível carregar Contatos UFs.',
         detalhe: 'Verifique a origem dos dados de contatos.'
+    },
+    'status-sistema': {
+        titulo: 'Não foi possível carregar Status do Sistema.',
+        detalhe: 'Verifique se os dados locais ou os arquivos publicados estão disponíveis.'
     }
 };
 
-function normalizarChaveStatusUi(status) {
-    const texto = String(status || '')
+function normalizarTexto(valor) {
+    return String(valor ?? '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .trim()
         .toUpperCase();
+}
+
+function normalizarChaveStatusUi(status) {
+    const texto = normalizarTexto(status || '');
 
     if (texto.includes('CONCLUID')) return 'CONCLUIDO';
     if (texto.includes('ANDAMENTO')) return 'EM_ANDAMENTO';
@@ -223,7 +235,7 @@ function renderActionButton({
     const backendAttr = backend ? 'data-requer-backend="true"' : '';
     const disabledAttr = disabled ? 'disabled aria-disabled="true"' : '';
     const titleAttr = title ? `title="${escapeHtml(title)}"` : '';
-    const onClickAttr = onClick ? `onclick="${escapeHtml(onClick)}"` : '';
+    const onClickAttr = onClick ? `onclick="${onClick}"` : '';
     const idAttr = id ? `id="${escapeHtml(id)}"` : '';
     const labelHtml = iconOnly
         ? `<span class="visually-hidden">${escapeHtml(label)}</span>`
@@ -272,6 +284,10 @@ function renderPublicationNotice() {
             <span>${escapeHtml(MENSAGEM_MODO_PUBLICACAO)}</span>
         </div>
     `;
+}
+
+function renderizarAvisoModoPublicacao() {
+    return renderPublicationNotice();
 }
 
 function renderEmptyState({
@@ -355,31 +371,6 @@ async function carregarResumoPublicacaoSistema() {
         };
         return resumoPublicacaoSistemaCache;
     }
-}
-
-function dadosPaginaEmModoEstatico(chave) {
-    return obterModoDadosOnasp(chave) === 'estatico';
-}
-
-function renderizarAvisoModoPublicacao() {
-    return renderPublicationNotice();
-}
-
-function aplicarModoSomenteLeitura() {
-    document.body.classList.toggle('modo-publicacao-estatica', estaEmModoPublicacaoEstatica());
-
-    if (!estaEmModoPublicacaoEstatica()) return;
-
-    document
-        .querySelectorAll('[data-requer-backend="true"]')
-        .forEach((elemento) => {
-            elemento.setAttribute('disabled', 'disabled');
-            elemento.setAttribute('aria-disabled', 'true');
-            elemento.classList.add('disabled');
-            if (!elemento.title) {
-                elemento.title = 'Disponível apenas no modo local.';
-            }
-        });
 }
 
 function obterMensagemSalvamento(payload) {
@@ -3188,7 +3179,7 @@ async function carregarLogoParaPDF() {
             const emEdicao = formalizacaoItemEmEdicao(proposta.uf);
 
             return `
-                <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''}">
+                <article class="formalizacao-card ${alertasCriticos ? 'formalizacao-card-risk' : ''} ${emEdicao ? 'formalizacao-card-editing' : ''}">
                     <div class="formalizacao-card-header">
                         <div class="formalizacao-card-title-row">
                             ${renderizarBandeiraCardFormalizacao(proposta)}
@@ -3439,28 +3430,30 @@ async function carregarLogoParaPDF() {
                         <td data-label="Ações" class="align-middle text-center">
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarBotaoEdicaoFormalizacao(proposta.uf)}
-                                ${formalizacaoItemEmEdicao(proposta.uf) ? `
-                                ${renderActionButton({
-                                    type: 'save',
-                                    label: 'Salvar alterações',
-                                    variant: 'primary',
-                                    backend: true,
-                                    disabled: !obterQuantidadeAlteracoesFormalizacao(proposta.uf),
-                                    title: 'Salvar alterações',
-                                    iconOnly: true,
-                                    extraClass: 'budget-row-action',
-                                    attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
-                                })}
-                                ${renderActionButton({
-                                    type: 'cancel',
-                                    label: 'Cancelar edição',
-                                    variant: 'outline-secondary',
-                                    backend: true,
-                                    title: 'Cancelar edição',
-                                    iconOnly: true,
-                                    extraClass: 'budget-row-action',
-                                    attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
-                                })}
+                        ${formalizacaoItemEmEdicao(proposta.uf) ? `
+                        ${renderActionButton({
+                            type: 'save',
+                            label: 'Salvar alterações',
+                            variant: 'primary',
+                            backend: true,
+                            disabled: !obterQuantidadeAlteracoesFormalizacao(proposta.uf),
+                            onClick: `salvarAlteracoesFormalizacao('${escapeHtml(proposta.uf)}')`,
+                            title: 'Salvar alterações',
+                            iconOnly: true,
+                            extraClass: 'budget-row-action',
+                            attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                        })}
+                        ${renderActionButton({
+                            type: 'cancel',
+                            label: 'Cancelar edição',
+                            variant: 'outline-secondary',
+                            backend: true,
+                            onClick: `cancelarEdicaoFormalizacao('${escapeHtml(proposta.uf)}')`,
+                            title: 'Cancelar edição',
+                            iconOnly: true,
+                            extraClass: 'budget-row-action',
+                            attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                        })}
                                 ` : ''}
                             </div>
                         </td>
@@ -3546,6 +3539,7 @@ async function carregarLogoParaPDF() {
                 if (campo.dataset.formalizacaoEventoRegistrado === '1') return;
                 campo.dataset.formalizacaoEventoRegistrado = '1';
                 campo.addEventListener('change', () => {
+                    atualizarClasseStatusFormalizacaoSelect(campo);
                     registrarAlteracaoFormalizacao(
                         campo.dataset.formalizacaoStatusUf,
                         campo.dataset.formalizacaoStatusEtapa,
@@ -3625,6 +3619,45 @@ async function carregarLogoParaPDF() {
         }
 
         const STATUS_FORMALIZACAO_EDICAO = ['PENDENTE', 'EM ANDAMENTO', 'CONCLUÍDO', 'COM PENDÊNCIA', 'NÃO SE APLICA', 'VALIDAR'];
+        const STATUS_FORMALIZACAO_LABELS = {
+            PENDENTE: 'Pendente',
+            'EM ANDAMENTO': 'Em andamento',
+            CONCLUÍDO: 'Concluído',
+            'COM PENDÊNCIA': 'Com pendência',
+            'NÃO SE APLICA': 'Não se aplica',
+            VALIDAR: 'Validar'
+        };
+        const STATUS_FORMALIZACAO_SELECT_CLASSES = {
+            PENDENTE: 'warning',
+            'EM ANDAMENTO': 'primary',
+            CONCLUÍDO: 'success',
+            'COM PENDÊNCIA': 'danger',
+            'NÃO SE APLICA': 'secondary',
+            VALIDAR: 'info'
+        };
+
+        function obterRotuloStatusFormalizacao(status) {
+            return STATUS_FORMALIZACAO_LABELS[status] || status;
+        }
+
+        function obterClasseStatusFormalizacaoSelect(status) {
+            return STATUS_FORMALIZACAO_SELECT_CLASSES[status] || 'secondary';
+        }
+
+        function atualizarClasseStatusFormalizacaoSelect(elemento) {
+            if (!elemento) return;
+            const valor = String(elemento.value || 'PENDENTE');
+            const classeVisual = obterClasseStatusFormalizacaoSelect(valor);
+            elemento.classList.remove(
+                'formalizacao-status-select-success',
+                'formalizacao-status-select-warning',
+                'formalizacao-status-select-primary',
+                'formalizacao-status-select-danger',
+                'formalizacao-status-select-secondary',
+                'formalizacao-status-select-info'
+            );
+            elemento.classList.add('formalizacao-status-select', `formalizacao-status-select-${classeVisual}`);
+        }
 
         function obterQuantidadeAlteracoesFormalizacao(uf = '') {
             if (uf) return Object.keys(formalizacaoAlteracoesPendentes[uf] || {}).length;
@@ -3645,6 +3678,16 @@ async function carregarLogoParaPDF() {
             return formalizacaoEditoresAbertos.has(String(uf));
         }
 
+        function rerenderFormalizacaoContextoAtual() {
+            const viewAtual = document.body.dataset.currentView || 'formalizacao';
+            if (viewAtual === 'formalizacao-detalhe') {
+                renderFormalizacaoProforDetalheView();
+                return;
+            }
+
+            renderFormalizacaoProforView();
+        }
+
         function abrirEditorFormalizacao(uf) {
             if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
@@ -3652,7 +3695,7 @@ async function carregarLogoParaPDF() {
             }
 
             formalizacaoEditoresAbertos.add(String(uf));
-            renderFormalizacaoProforView();
+            rerenderFormalizacaoContextoAtual();
         }
 
         function cancelarEdicaoFormalizacao(uf) {
@@ -3662,7 +3705,7 @@ async function carregarLogoParaPDF() {
         function cancelarEdicaoFormalizacaoUf(uf) {
             delete formalizacaoAlteracoesPendentes[uf];
             formalizacaoEditoresAbertos.delete(String(uf));
-            renderFormalizacaoProforView();
+            rerenderFormalizacaoContextoAtual();
         }
 
         function registrarAlteracaoFormalizacao(uf, etapa, campo, valorOriginal, novoValor) {
@@ -3691,7 +3734,7 @@ async function carregarLogoParaPDF() {
                 formalizacaoAlteracoesPendentes[uf][etapa] = proximo;
             }
 
-            renderFormalizacaoProforView();
+            rerenderFormalizacaoContextoAtual();
         }
 
         function salvarAlteracoesFormalizacao(uf = '') {
@@ -3758,13 +3801,13 @@ async function carregarLogoParaPDF() {
             return `
                 <div class="d-flex flex-column gap-2">
                     <select
-                        class="form-select form-select-sm"
+                        class="form-select form-select-sm formalizacao-status-select formalizacao-status-select-${obterClasseStatusFormalizacaoSelect(statusAtual)}"
                         data-formalizacao-status-uf="${escapeHtml(proposta.uf)}"
                         data-formalizacao-status-etapa="${escapeHtml(etapa.key)}"
                         data-formalizacao-status-original="${escapeHtml(etapa.status || 'PENDENTE')}"
                     >
                         ${STATUS_FORMALIZACAO_EDICAO.map((status) => `
-                            <option value="${escapeHtml(status)}" ${statusAtual === status ? 'selected' : ''}>${escapeHtml(status)}</option>
+                            <option value="${escapeHtml(status)}" ${statusAtual === status ? 'selected' : ''}>${escapeHtml(obterRotuloStatusFormalizacao(status))}</option>
                         `).join('')}
                     </select>
                     <input
@@ -3796,6 +3839,42 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        function renderizarResumoEdicaoFormalizacao(proposta) {
+            // Nota: Os campos de condição suspensiva, Fala.BR e observação geral (observacoes)
+            // não foram adicionados como inputs editáveis porque o endpoint atual do backend
+            // (/api/formalizacao-profor/salvar) não suporta salvá-los no payload.
+            // A edição da Formalização é baseada estritamente nas etapas (status/observação) existentes.
+            const observacaoVisivel = obterObservacaoFormalizacaoVisivel(proposta.observacoes);
+            const falaBr = proposta.falaBr?.previsto ? 'Previsto no cronograma' : 'Pendente no cronograma';
+
+            return `
+                <div class="formalizacao-edit-meta">
+                    <div class="formalizacao-edit-meta-item">
+                        <span>Status geral atual</span>
+                        ${renderStatusBadge(proposta.situacaoGeral || 'Pendente')}
+                    </div>
+                    <div class="formalizacao-edit-meta-item">
+                        <span>Condição suspensiva</span>
+                        ${proposta.condicaoSuspensiva?.exige
+                            ? renderizarBadgeCondicaoSuspensivaFormalizacao(proposta)
+                            : '<span class="app-status-badge app-status-badge-secondary"><i class="fas fa-ban" aria-hidden="true"></i><span>Não se aplica</span></span>'}
+                    </div>
+                    <div class="formalizacao-edit-meta-item">
+                        <span>Situação do Fala.BR</span>
+                        <strong>${escapeHtml(falaBr)}</strong>
+                    </div>
+                    <div class="formalizacao-edit-meta-item formalizacao-edit-meta-item-wide">
+                        <span>Observação consolidada</span>
+                        <strong>${escapeHtml(observacaoVisivel || 'Sem observação consolidada.')}</strong>
+                    </div>
+                    <div class="formalizacao-edit-meta-item formalizacao-edit-meta-item-wide">
+                        <span>Aviso sobre o escopo de edição</span>
+                        <strong>No modelo atual, esta tela salva exclusivamente o status e a observação de cada etapa.</strong>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderizarPainelEdicaoFormalizacaoUf(proposta, colspan = 9) {
             if (dadosPaginaEmModoEstatico('formalizacaoProfor')) return '';
             if (!formalizacaoItemEmEdicao(proposta.uf)) return '';
@@ -3804,11 +3883,12 @@ async function carregarLogoParaPDF() {
             const alteracoesUf = obterQuantidadeAlteracoesFormalizacao(proposta.uf);
 
             const painelHtml = `
-                <div class="budget-edit-panel">
+                <div class="budget-edit-panel formalizacao-edit-panel" data-requer-backend="true">
                     <div class="budget-edit-panel-header">
                         <strong>Editar acompanhamento da Formalização - ${escapeHtml(proposta.uf)}</strong>
                         <span>As alterações desta UF ficam pendentes até clicar em Salvar alterações.</span>
                     </div>
+                    ${renderizarResumoEdicaoFormalizacao(proposta)}
                     <div class="budget-edit-grid formalizacao-edit-grid">
                         ${etapas.map((etapa) => `
                             <label>
@@ -3817,23 +3897,25 @@ async function carregarLogoParaPDF() {
                             </label>
                         `).join('')}
                     </div>
-                    <div class="budget-edit-panel-actions">
-                        ${renderActionButton({
-                            type: 'save',
-                            label: 'Salvar alterações',
-                            variant: 'primary',
-                            backend: true,
-                            disabled: !alteracoesUf,
-                            attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
-                        })}
-                        ${renderActionButton({
-                            type: 'cancel',
-                            label: 'Cancelar',
-                            variant: 'outline-secondary',
-                            backend: true,
-                            attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
-                        })}
-                    </div>
+                        <div class="budget-edit-panel-actions formalizacao-edit-actions">
+                            ${renderActionButton({
+                                type: 'save',
+                                label: 'Salvar alterações',
+                                variant: 'primary',
+                                backend: true,
+                                disabled: !alteracoesUf,
+                                onClick: `salvarAlteracoesFormalizacao('${escapeHtml(proposta.uf)}')`,
+                                attributes: `data-formalizacao-salvar-linha="${escapeHtml(proposta.uf)}"`
+                            })}
+                            ${renderActionButton({
+                                type: 'cancel',
+                                label: 'Cancelar',
+                                variant: 'outline-secondary',
+                                backend: true,
+                                onClick: `cancelarEdicaoFormalizacao('${escapeHtml(proposta.uf)}')`,
+                                attributes: `data-formalizacao-cancelar-linha="${escapeHtml(proposta.uf)}"`
+                            })}
+                        </div>
                 </div>
             `;
 
@@ -4023,7 +4105,7 @@ async function carregarLogoParaPDF() {
                 }
                 modal.hide();
                 await carregarDadosFormalizacaoProfor(true);
-                renderFormalizacaoProforView();
+                rerenderFormalizacaoContextoAtual();
                 alert(obterMensagemSalvamento(payload));
             } catch (error) {
                 alert(`Não foi possível salvar: ${error.message}`);
@@ -4637,10 +4719,12 @@ async function carregarLogoParaPDF() {
             container.style.display = 'block';
             container.innerHTML = `
                 <div class="report-actions pdf-hidden">
-                    <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('formalizacao')">
-                        <i class="fas fa-arrow-left" aria-hidden="true"></i>
-                        <span>Voltar para Formalização</span>
-                    </button>
+                    ${renderActionButton({
+                        type: 'back',
+                        label: 'Voltar para Formalização',
+                        onClick: "toggleView('formalizacao')",
+                        variant: 'outline-secondary'
+                    })}
                 </div>
 
                 <div class="report-content profor-detail-content formalizacao-detail-content">
@@ -4658,8 +4742,22 @@ async function carregarLogoParaPDF() {
                                 </div>
                             </div>
                         </div>
-                        <div class="profor-alert-list">${proposta.alertas.length ? proposta.alertas.slice(0, 8).map(renderizarBadgeAlertaFormalizacao).join('') : '<span class="profor-alert-badge profor-alert-success">Sem alerta</span>'}</div>
+                        <div class="formalizacao-detail-actions">
+                            <div class="profor-alert-list">${proposta.alertas.length ? proposta.alertas.slice(0, 8).map(renderizarBadgeAlertaFormalizacao).join('') : '<span class="profor-alert-badge profor-alert-success">Sem alerta</span>'}</div>
+                            ${!dadosPaginaEmModoEstatico('formalizacaoProfor') ? renderActionButton({
+                                type: formalizacaoItemEmEdicao(proposta.uf) ? 'success' : 'edit',
+                                label: formalizacaoItemEmEdicao(proposta.uf) ? 'Fechar edição' : 'Editar',
+                                variant: formalizacaoItemEmEdicao(proposta.uf) ? 'primary' : 'outline-primary',
+                                backend: true,
+                                title: formalizacaoItemEmEdicao(proposta.uf)
+                                    ? `Fechar edição de ${proposta.uf}`
+                                    : `Editar acompanhamento de ${proposta.uf}`,
+                                attributes: `data-formalizacao-toggle-editor="${escapeHtml(proposta.uf)}" aria-pressed="${formalizacaoItemEmEdicao(proposta.uf) ? 'true' : 'false'}"`
+                            }) : ''}
+                        </div>
                     </section>
+
+                    ${renderizarPainelEdicaoFormalizacaoUf(proposta, 1)}
 
                     <section class="row my-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Indicadores da proposta">
                         ${renderizarKpiDetalheProfor('Valor de Repasse', formatMoney(proposta.valorRepasse), 'Regra PROFOR/ONASP', proposta.validacoes.valorRepasseOk ? '' : 'kpi-card-warning', 'fa-building-columns')}
@@ -4710,6 +4808,8 @@ async function carregarLogoParaPDF() {
                     ${renderizarContatosInstitucionaisFormalizacao(proposta)}
                 </div>
             `;
+            registrarEventosBotoesEdicaoFormalizacao(dados);
+            registrarEventosCamposEdicaoFormalizacao();
             aplicarModoSomenteLeitura();
         }
 
@@ -4921,14 +5021,29 @@ async function carregarLogoParaPDF() {
             return `<span class="budget-status ${classe}">${escapeHtml(status || 'Não informado')}</span>`;
         }
 
+        function renderClassificacaoOrcamentoBadge(item) {
+            if (normalizarClassificacaoGerencialOrcamento(item?.classificacaoGerencial) === 'APARELHAMENTO') {
+                return `
+                    <span class="app-status-badge app-status-badge-success budget-classification-badge">
+                        <i class="fas fa-boxes-stacked" aria-hidden="true"></i>
+                        <span>Aparelhamento</span>
+                    </span>
+                `;
+            }
+
+            return `
+                <span class="app-status-badge app-status-badge-secondary budget-classification-badge">
+                    <i class="fas fa-ban" aria-hidden="true"></i>
+                    <span>Não aparelhamento</span>
+                </span>
+            `;
+        }
+
         function renderizarClassificacaoGerencialOrcamento(classificacao, saldoAparelhamento = 0) {
             const ehAparelhamento = normalizarClassificacaoGerencialOrcamento(classificacao) === 'APARELHAMENTO';
             return `
                 <div class="budget-classification-cell">
-                    <span class="app-status-badge ${ehAparelhamento ? 'app-status-badge-success' : 'app-status-badge-secondary'} budget-classification-badge">
-                        <i class="fas ${ehAparelhamento ? 'fa-boxes-stacked' : 'fa-ban'}" aria-hidden="true"></i>
-                        <span>${ehAparelhamento ? 'Aparelhamento' : 'Não aparelhamento'}</span>
-                    </span>
+                    ${renderClassificacaoOrcamentoBadge({ classificacaoGerencial: classificacao })}
                     ${ehAparelhamento ? `<span class="budget-classification-balance">Saldo: ${formatMoney(saldoAparelhamento)}</span>` : ''}
                 </div>
             `;
@@ -6183,7 +6298,7 @@ async function carregarLogoParaPDF() {
         async function exportarOrcamentoPDF() {
             let budgetData = obterDadosOrcamento();
             if (!budgetData) {
-                showLoading('Carregando orçamento 2026...');
+                showLoading('Carregando Orçamento 2026...');
                 try {
                     budgetData = await carregarDadosOrcamento();
                 } finally {
@@ -8935,7 +9050,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
             });
 
             tabelaInstancia = $('#tabelaItens').DataTable({
-                language: { url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json" },
+                language: DATATABLES_LANGUAGE_PT_BR,
                 destroy: true, 
             autoWidth: false,
             paging: true, 
@@ -9313,4 +9428,7 @@ window.abrirOrcamento = () => toggleView('orcamento');
 window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
 window.abrirDiagnosticoOuvidorias = () => toggleView('diagnostico-ouvidorias');
 window.abrirStatusSistema = () => toggleView('status-sistema');
+window.abrirEditorFormalizacao = abrirEditorFormalizacao;
+window.cancelarEdicaoFormalizacao = cancelarEdicaoFormalizacao;
+window.salvarAlteracoesFormalizacao = salvarAlteracoesFormalizacao;
 window.aplicarFiltroUF = aplicarFiltroUF;

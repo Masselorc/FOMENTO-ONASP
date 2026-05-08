@@ -2556,7 +2556,12 @@ table.dataTable thead td,
     box-shadow: var(--shadow-card);
     display: grid;
     gap: 0.85rem;
+    min-width: 0;
     padding: 1rem;
+}
+
+.formalizacao-card-editing {
+    grid-column: 1 / -1;
 }
 
 .formalizacao-card:hover {
@@ -2894,6 +2899,118 @@ table.dataTable thead td,
 
 .formalizacao-card-actions .btn-icon-text {
     gap: 0.4rem;
+}
+
+.formalizacao-detail-actions {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.formalizacao-edit-panel {
+    border-left: 4px solid rgba(26, 91, 157, 0.28);
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.formalizacao-edit-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    max-width: 100%;
+}
+
+.formalizacao-edit-grid > label {
+    min-width: 0;
+}
+
+.formalizacao-edit-panel input,
+.formalizacao-edit-panel select,
+.formalizacao-edit-panel textarea {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.formalizacao-status-select {
+    border-width: 1px;
+    font-weight: 700;
+    min-height: 42px;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease, color 0.16s ease;
+}
+
+.formalizacao-status-select-success {
+    background: var(--color-success-soft, #e8f6ee);
+    border-color: rgba(22, 131, 74, 0.35);
+    color: #11633a;
+}
+
+.formalizacao-status-select-warning {
+    background: var(--color-warning-soft, #fff3e3);
+    border-color: rgba(179, 90, 0, 0.35);
+    color: #7a3e00;
+}
+
+.formalizacao-status-select-primary {
+    background: var(--color-primary-soft, #e8f1fb);
+    border-color: rgba(35, 100, 170, 0.35);
+    color: #123f6c;
+}
+
+.formalizacao-status-select-danger {
+    background: var(--color-danger-soft, #fee4e2);
+    border-color: rgba(180, 35, 24, 0.32);
+    color: #8f1c14;
+}
+
+.formalizacao-status-select-secondary {
+    background: #f1f5f9;
+    border-color: var(--color-border);
+    color: #475569;
+}
+
+.formalizacao-status-select-info {
+    background: var(--color-info-soft, #f1ebff);
+    border-color: rgba(109, 63, 181, 0.34);
+    color: #472579;
+}
+
+.formalizacao-edit-actions {
+    justify-content: flex-end;
+    max-width: 100%;
+}
+
+.formalizacao-edit-meta {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    margin-bottom: 1rem;
+}
+
+.formalizacao-edit-meta-item {
+    background: rgba(244, 248, 252, 0.92);
+    border: 1px solid rgba(26, 91, 157, 0.14);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.85rem 0.95rem;
+}
+
+.formalizacao-edit-meta-item span {
+    color: var(--color-primary-muted);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.formalizacao-edit-meta-item strong {
+    color: var(--color-primary-strong);
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
+.formalizacao-edit-meta-item-wide {
+    grid-column: 1 / -1;
 }
 
 .formalizacao-data-table {
@@ -3999,6 +4116,22 @@ table.dataTable thead td,
         flex-direction: column;
     }
 
+    .formalizacao-card-editing {
+        grid-column: auto;
+    }
+
+    .formalizacao-edit-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .formalizacao-edit-actions {
+        justify-content: flex-start;
+    }
+
+    .formalizacao-edit-actions .btn {
+        flex: 1 1 180px;
+    }
+
     .formalizacao-open-button {
         justify-self: stretch;
         width: 100%;
@@ -4608,6 +4741,8 @@ body.modo-publicacao-estatica [data-orcamento-remover-novo] {
 
 body.modo-publicacao-estatica [data-requer-backend="true"] {
     cursor: not-allowed;
+    opacity: 0.55;
+    pointer-events: none;
 }
 
 .diagnostic-metric-grid {
@@ -5331,5 +5466,35 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
     .diagnostico-operational-item summary,
     .diagnostico-audit-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Contém as tabelas do Orçamento em notebook/tablet para evitar overflow horizontal global sem mexer nos cálculos ou na ordem das colunas. */
+@media (max-width: 1199.98px) {
+    #view-orcamento .budget-main-table,
+    #view-orcamento .budget-data-table {
+        min-width: 0 !important;
+        table-layout: fixed !important;
+        width: 100% !important;
+    }
+
+    #view-orcamento .budget-main-table col,
+    #view-orcamento .budget-main-table colgroup,
+    #view-orcamento .budget-data-table col,
+    #view-orcamento .budget-data-table colgroup {
+        width: auto !important;
+    }
+
+    #view-orcamento .table-responsive {
+        max-width: 100%;
+    }
+
+    #view-orcamento .budget-group-heading,
+    #view-orcamento .budget-group-metrics,
+    #view-orcamento .budget-filter-grid,
+    #view-orcamento .budget-insight-grid,
+    #view-orcamento .budget-action-buttons,
+    #view-orcamento .budget-row-actions {
+        min-width: 0;
     }
 }

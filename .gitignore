@@ -6,3 +6,9 @@ backend/data/onasp.sqlite-*
 backend/data/backups/
 backend/logs/
 *.log
+_codex_backup_*/
+_codex_backup*/
+*_backup_*/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
