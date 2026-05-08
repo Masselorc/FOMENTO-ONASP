@@ -5468,3 +5468,33 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
         grid-template-columns: 1fr;
     }
 }
+
+/* Contém as tabelas do Orçamento em notebook/tablet para evitar overflow horizontal global sem mexer nos cálculos ou na ordem das colunas. */
+@media (max-width: 1199.98px) {
+    #view-orcamento .budget-main-table,
+    #view-orcamento .budget-data-table {
+        min-width: 0 !important;
+        table-layout: fixed !important;
+        width: 100% !important;
+    }
+
+    #view-orcamento .budget-main-table col,
+    #view-orcamento .budget-main-table colgroup,
+    #view-orcamento .budget-data-table col,
+    #view-orcamento .budget-data-table colgroup {
+        width: auto !important;
+    }
+
+    #view-orcamento .table-responsive {
+        max-width: 100%;
+    }
+
+    #view-orcamento .budget-group-heading,
+    #view-orcamento .budget-group-metrics,
+    #view-orcamento .budget-filter-grid,
+    #view-orcamento .budget-insight-grid,
+    #view-orcamento .budget-action-buttons,
+    #view-orcamento .budget-row-actions {
+        min-width: 0;
+    }
+}

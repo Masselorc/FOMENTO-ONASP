@@ -69,6 +69,30 @@ const errosCarregamentoView = {};
 let resumoPublicacaoSistemaCache = null;
 const APP_CACHE_VERSION = '20260507-05';
 const ANALYTICS_CACHE_VERSION = '20260428-2';
+// Mantém o idioma do DataTables local para evitar CORS e dependência externa em ambiente restrito ou no GitHub Pages.
+const DATATABLES_LANGUAGE_PT_BR = {
+    decimal: ',',
+    thousands: '.',
+    emptyTable: 'Nenhum registro encontrado',
+    info: 'Mostrando _START_ até _END_ de _TOTAL_ registros',
+    infoEmpty: 'Mostrando 0 até 0 de 0 registros',
+    infoFiltered: '(filtrado de _MAX_ registros no total)',
+    lengthMenu: 'Mostrar _MENU_ registros',
+    loadingRecords: 'Carregando...',
+    processing: 'Processando...',
+    search: 'Pesquisar:',
+    zeroRecords: 'Nenhum registro encontrado',
+    paginate: {
+        first: 'Primeiro',
+        last: 'Último',
+        next: 'Próximo',
+        previous: 'Anterior'
+    },
+    aria: {
+        sortAscending: ': ativar para ordenar a coluna em ordem crescente',
+        sortDescending: ': ativar para ordenar a coluna em ordem decrescente'
+    }
+};
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
@@ -9026,7 +9050,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
             });
 
             tabelaInstancia = $('#tabelaItens').DataTable({
-                language: { url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json" },
+                language: DATATABLES_LANGUAGE_PT_BR,
                 destroy: true, 
             autoWidth: false,
             paging: true, 
