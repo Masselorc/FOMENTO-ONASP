@@ -1,6 +1,13 @@
 .codex-temp/
 node_modules/
 .env
+.env.local
+.env.*.local
+
+# Memória local do projeto / Vault Obsidian
+memoria/
+
+# Ambientes e dados locais
 backend/data/onasp.sqlite
 backend/data/onasp.sqlite-*
 backend/data/backups/
@@ -10,5 +17,7 @@ _codex_backup_*/
 _codex_backup*/
 *_backup_*/
 *.sqlite
+*.sqlite3
+*.db
 *.sqlite-shm
 *.sqlite-wal
