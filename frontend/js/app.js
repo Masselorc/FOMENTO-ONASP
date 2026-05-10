@@ -60,6 +60,8 @@ let parametrosMinimosAlteracoesPendentes = {};
 let parametrosMinimosEditorAtivo = null;
 let formalizacaoEditoresAbertos = new Set();
 let formalizacaoAlteracoesPendentes = {};
+let contatosMapaIndiceUf = {};
+let contatosMapaUfAtual = '';
 let orcamentoAlteracoesPendentes = {};
 let orcamentoEditoresAbertos = new Set();
 let orcamentoNovosProcessos = [];
@@ -96,6 +98,57 @@ const DATATABLES_LANGUAGE_PT_BR = {
 
 // Ordem fixa usada em filtros, exportações e seleção de UFs.
 const ORDEM_REGIOES = ["NORTE", "NORDESTE", "CENTRO-OESTE", "SUDESTE", "SUL"];
+// Metadados visuais do mapa de contatos; os dados oficiais continuam vindo da base consolidada da aplicação.
+const CONTATOS_MAPA_UFS = {
+    AC: { nome: 'Acre', regiao: 'Norte', x: 14.37, y: 38.35 },
+    AL: { nome: 'Alagoas', regiao: 'Nordeste', x: 89.38, y: 39.05 },
+    AP: { nome: 'Amapá', regiao: 'Norte', x: 55.37, y: 13.61 },
+    AM: { nome: 'Amazonas', regiao: 'Norte', x: 27.27, y: 26.60 },
+    BA: { nome: 'Bahia', regiao: 'Nordeste', x: 78.08, y: 45.91 },
+    CE: { nome: 'Ceará', regiao: 'Nordeste', x: 82.75, y: 28.78 },
+    DF: { nome: 'Distrito Federal', regiao: 'Centro-Oeste', x: 64.61, y: 53.59 },
+    ES: { nome: 'Espírito Santo', regiao: 'Sudeste', x: 80.40, y: 62.39 },
+    GO: { nome: 'Goiás', regiao: 'Centro-Oeste', x: 60.56, y: 54.19 },
+    MA: { nome: 'Maranhão', regiao: 'Nordeste', x: 70.17, y: 28.75 },
+    MT: { nome: 'Mato Grosso', regiao: 'Centro-Oeste', x: 46.63, y: 47.01 },
+    MS: { nome: 'Mato Grosso do Sul', regiao: 'Centro-Oeste', x: 49.00, y: 64.14 },
+    MG: { nome: 'Minas Gerais', regiao: 'Sudeste', x: 71.53, y: 59.79 },
+    PA: { nome: 'Pará', regiao: 'Norte', x: 52.92, y: 26.21 },
+    PB: { nome: 'Paraíba', regiao: 'Nordeste', x: 88.91, y: 33.49 },
+    PR: { nome: 'Paraná', regiao: 'Sul', x: 56.15, y: 74.13 },
+    PE: { nome: 'Pernambuco', regiao: 'Nordeste', x: 86.31, y: 36.29 },
+    PI: { nome: 'Piauí', regiao: 'Nordeste', x: 75.31, y: 34.10 },
+    RJ: { nome: 'Rio de Janeiro', regiao: 'Sudeste', x: 75.99, y: 68.46 },
+    RN: { nome: 'Rio Grande do Norte', regiao: 'Nordeste', x: 89.27, y: 30.51 },
+    RO: { nome: 'Rondônia', regiao: 'Norte', x: 31.28, y: 42.28 },
+    RR: { nome: 'Roraima', regiao: 'Norte', x: 34.50, y: 12.13 },
+    RS: { nome: 'Rio Grande do Sul', regiao: 'Sul', x: 52.39, y: 85.91 },
+    SC: { nome: 'Santa Catarina', regiao: 'Sul', x: 58.69, y: 80.19 },
+    SE: { nome: 'Sergipe', regiao: 'Nordeste', x: 87.56, y: 41.52 },
+    SP: { nome: 'São Paulo', regiao: 'Sudeste', x: 62.54, y: 68.63 },
+    TO: { nome: 'Tocantins', regiao: 'Norte', x: 63.44, y: 40.51 }
+};
+const CONTATOS_MAPA_REGION_CLASSES = {
+    Norte: 'is-norte',
+    Nordeste: 'is-nordeste',
+    'Centro-Oeste': 'is-centro-oeste',
+    Sudeste: 'is-sudeste',
+    Sul: 'is-sul'
+};
+const CONTATOS_MAPA_DESTAQUES = {
+    CE: { variante: 'callout', labelX: -26, labelY: -16, z: 5 },
+    RN: { variante: 'callout', labelX: 31, labelY: -12, z: 9 },
+    PB: { variante: 'callout', labelX: 31, labelY: 12, z: 8 },
+    PE: { variante: 'callout', labelX: -38, labelY: -30, z: 10 },
+    PI: { variante: 'callout', labelX: -22, labelY: 24, z: 6 },
+    AL: { variante: 'callout', labelX: 32, labelY: 8, z: 7 },
+    SE: { variante: 'callout', labelX: 30, labelY: 30, z: 6 },
+    DF: { variante: 'callout', labelX: 34, labelY: -20, z: 6 },
+    ES: { variante: 'callout', labelX: 25, labelY: -8, z: 5 },
+    RJ: { variante: 'callout', labelX: 25, labelY: 12, z: 5 },
+    PR: { variante: 'callout', labelX: -25, labelY: -4, z: 5 },
+    SC: { variante: 'callout', labelX: 25, labelY: 8, z: 5 }
+};
 const VIEWS_REPASSES_FUNPEN = new Set([
     'detalhamento',
     'estado-detalhe',
@@ -8146,6 +8199,7 @@ async function carregarLogoParaPDF() {
             const contatosPessoas = dadosContatos.pessoasPorUf ? Array.from(dadosContatos.pessoasPorUf.values()).flat() : [];
 
             const grupos = montarGruposContatosPorUf(contatosUf, contatosPessoas);
+            contatosMapaIndiceUf = obterIndiceContatosPorUf();
 
             container.innerHTML = `
                 <section class="view-heading">
@@ -8161,6 +8215,44 @@ async function carregarLogoParaPDF() {
                         <i class="fas fa-file-csv" aria-hidden="true"></i>
                         <span>Exportar CSV</span>
                     </button>
+                </section>
+
+                <section class="contatos-map-section" aria-labelledby="contatos-mapa-title">
+                    <div class="contatos-section-head">
+                        <p class="subpage-kicker">Rede de Ouvidorias</p>
+                        <h2 id="contatos-mapa-title">Mapa interativo de contatos por UF</h2>
+                        <p>Selecione uma unidade da federação no mapa ou na lista para visualizar os contatos cadastrados na base oficial da aplicação.</p>
+                    </div>
+
+                    <div class="contatos-map-toolbar">
+                        <div class="contatos-map-picker">
+                            <label for="contatos-uf-select">Ir direto para uma unidade da federação</label>
+                            <select id="contatos-uf-select" name="contatos-uf-select">
+                                <option value="">Selecione uma UF</option>
+                            </select>
+                        </div>
+                        <p class="contatos-map-source">Fonte: base de contatos consolidada na aplicação ONASP.</p>
+                    </div>
+
+                    <div class="contatos-map-layout">
+                        <div class="contatos-map-shell">
+                            <div class="contatos-map-legend" aria-hidden="true">
+                                <span class="legend-norte">Norte</span>
+                                <span class="legend-nordeste">Nordeste</span>
+                                <span class="legend-centro-oeste">Centro-Oeste</span>
+                                <span class="legend-sudeste">Sudeste</span>
+                                <span class="legend-sul">Sul</span>
+                            </div>
+                            <div id="contatos-map-grid" class="contatos-map-grid" role="group" aria-label="Mapa interativo do Brasil por unidade da federação"></div>
+                        </div>
+
+                        <article id="contatos-uf-panel" class="contatos-uf-panel" aria-live="polite">
+                            <div class="contatos-state-head">
+                                <h3>Selecione uma UF</h3>
+                            </div>
+                            <p>O painel lateral exibe o órgão gestor, o responsável informado, os canais de contato e as observações da UF selecionada.</p>
+                        </article>
+                    </div>
                 </section>
 
                 <section class="contacts-toolbar panel-section mb-3">
@@ -8214,8 +8306,237 @@ async function carregarLogoParaPDF() {
                 </div>
             `;
 
+            configurarEventosMapaContatos();
             configurarFiltroContatos();
             configurarCopiasHtmlOficioSei();
+        }
+
+        // Monta o índice por UF a partir da base oficial de contatos para evitar duplicidade de dados no frontend.
+        function obterIndiceContatosPorUf() {
+            const dadosContatos = obterDadosContatos();
+            const indice = {};
+
+            TODAS_UFS_BRASIL.forEach((uf) => {
+                indice[uf] = {
+                    uf,
+                    nomeEstado: CONTATOS_MAPA_UFS[uf]?.nome || catalogoAplicacao.nomesEstados?.[uf] || uf,
+                    regiao: CONTATOS_MAPA_UFS[uf]?.regiao || '',
+                    dadosUf: {},
+                    pessoas: []
+                };
+            });
+
+            const cadastroPorUf = dadosContatos?.cadastroPorUf instanceof Map ? dadosContatos.cadastroPorUf : new Map();
+            const pessoasPorUf = dadosContatos?.pessoasPorUf instanceof Map ? dadosContatos.pessoasPorUf : new Map();
+
+            TODAS_UFS_BRASIL.forEach((uf) => {
+                if (cadastroPorUf.has(uf)) {
+                    indice[uf].dadosUf = { ...(cadastroPorUf.get(uf) || {}), uf };
+                }
+
+                if (pessoasPorUf.has(uf)) {
+                    indice[uf].pessoas = Array.isArray(pessoasPorUf.get(uf)) ? [...pessoasPorUf.get(uf)] : [];
+                }
+            });
+
+            return indice;
+        }
+
+        function obterValorContato(contato, chaves) {
+            for (const chave of chaves) {
+                const valor = contato?.[chave];
+                if (valor !== undefined && valor !== null && String(valor).trim()) {
+                    return String(valor).trim();
+                }
+            }
+
+            return 'Não informado';
+        }
+
+        // Usa o primeiro e-mail válido para evitar links mailto quebrados quando a célula traz mais de um endereço.
+        function obterPrimeiroEmailContato(valor) {
+            const texto = String(valor || '').trim();
+            const encontrado = texto.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi);
+            return encontrado?.[0] || texto;
+        }
+
+        function renderizarCampoContatoMapa(rotulo, valor, tipo = 'texto') {
+            const texto = valor && String(valor).trim() ? String(valor).trim() : 'Não informado';
+            const conteudo = tipo === 'email' && texto !== 'Não informado'
+                ? `<a href="mailto:${escapeHtml(obterPrimeiroEmailContato(texto))}">${escapeHtml(texto)}</a>`
+                : escapeHtml(texto);
+
+            return `
+                <div class="contatos-state-field">
+                    <dt>${escapeHtml(rotulo)}</dt>
+                    <dd>${conteudo}</dd>
+                </div>
+            `;
+        }
+
+        function renderizarPainelContatoUf(uf) {
+            const painel = document.getElementById('contatos-uf-panel');
+            if (!painel) return;
+
+            if (!uf || !CONTATOS_MAPA_UFS[uf]) {
+                painel.innerHTML = `
+                    <div class="contatos-state-head">
+                        <h3>Selecione uma UF</h3>
+                    </div>
+                    <p>O painel lateral exibe o órgão gestor, o responsável informado, os canais de contato e as observações da UF selecionada.</p>
+                `;
+                return;
+            }
+
+            const dados = contatosMapaIndiceUf[uf] || {};
+            const cadastro = dados.dadosUf || {};
+            const pessoas = Array.isArray(dados.pessoas) ? dados.pessoas : [];
+            const pessoaPrincipal = pessoas.find((pessoa) => (
+                String(pessoa?.nome || '').trim()
+                || String(pessoa?.email || '').trim()
+                || String(pessoa?.telefone || '').trim()
+            )) || pessoas[0] || {};
+
+            const regiao = dados.regiao || CONTATOS_MAPA_UFS[uf]?.regiao || '';
+            const orgao = obterValorContato(cadastro, ['orgao', 'Órgão_Entidade', 'Órgão Entidade', 'Orgao Entidade']);
+            const responsavel = obterValorContato(cadastro, ['nomeTitular', 'nomeDestinatario', 'chefeGabinete']) !== 'Não informado'
+                ? obterValorContato(cadastro, ['nomeTitular', 'nomeDestinatario', 'chefeGabinete'])
+                : obterValorContato(pessoaPrincipal, ['nome', 'Nome', 'contato', 'Contato']);
+            const email = obterValorContato(cadastro, ['emailInstitucional', 'emailTitular', 'emailGabinete', 'emailDestinatario']) !== 'Não informado'
+                ? obterValorContato(cadastro, ['emailInstitucional', 'emailTitular', 'emailGabinete', 'emailDestinatario'])
+                : obterValorContato(pessoaPrincipal, ['email', 'Email']);
+            const telefone = obterValorContato(cadastro, ['telefoneInstitucional', 'telefoneTitular', 'contatoChefe', 'contatoSecretaria', 'ramaisGabinete']) !== 'Não informado'
+                ? obterValorContato(cadastro, ['telefoneInstitucional', 'telefoneTitular', 'contatoChefe', 'contatoSecretaria', 'ramaisGabinete'])
+                : obterValorContato(pessoaPrincipal, ['telefone', 'Telefone', 'celular', 'Celular']);
+            const whatsapp = obterValorContato(cadastro, ['whatsapp', 'celularTitular', 'telefoneCelularDestinatario']) !== 'Não informado'
+                ? obterValorContato(cadastro, ['whatsapp', 'celularTitular', 'telefoneCelularDestinatario'])
+                : obterValorContato(pessoaPrincipal, ['whatsapp', 'telefone', 'celular']);
+            const endereco = obterValorContato(cadastro, ['endereco', 'enderecoDestinatario', 'Endereço', 'Endereco']);
+            const falaBr = obterValorContato(cadastro, ['falaBr', 'usoFalaBr', 'uso_do_fala_br']);
+            const observacoes = obterValorContato(cadastro, ['observacoes', 'Observações', 'Observacao']);
+
+            painel.innerHTML = `
+                <div class="contatos-state-head">
+                    <h3>${escapeHtml(cadastro.estado || CONTATOS_MAPA_UFS[uf]?.nome || uf)}</h3>
+                    <span class="contatos-region-chip ${escapeHtml(CONTATOS_MAPA_REGION_CLASSES[regiao] || '')}">${escapeHtml(regiao || 'Não informado')}</span>
+                </div>
+                <p class="contatos-state-orgao">${escapeHtml(orgao)}</p>
+                <p class="contatos-state-meta">${escapeHtml(String(pessoas.length))} contato${pessoas.length === 1 ? '' : 's'} cadastrado${pessoas.length === 1 ? '' : 's'} nesta UF.</p>
+                <dl class="contatos-state-details">
+                    ${renderizarCampoContatoMapa('UF', uf)}
+                    ${renderizarCampoContatoMapa('Estado', cadastro.estado || CONTATOS_MAPA_UFS[uf]?.nome || uf)}
+                    ${renderizarCampoContatoMapa('Região', regiao || 'Não informado')}
+                    ${renderizarCampoContatoMapa('Órgão gestor', orgao)}
+                    ${renderizarCampoContatoMapa('Responsável / Ouvidor', responsavel)}
+                    ${renderizarCampoContatoMapa('E-mail', email, 'email')}
+                    ${renderizarCampoContatoMapa('Telefone', telefone)}
+                    ${renderizarCampoContatoMapa('WhatsApp', whatsapp)}
+                    ${renderizarCampoContatoMapa('Endereço', endereco)}
+                    ${renderizarCampoContatoMapa('Fala.BR', falaBr)}
+                    ${renderizarCampoContatoMapa('Observações', observacoes)}
+                </dl>
+                ${pessoas.length ? `
+                    <div class="contatos-state-contacts">
+                        ${renderPessoasContato(pessoas)}
+                    </div>
+                ` : `
+                    <p class="contatos-state-note">Nenhum contato nominal foi encontrado para esta UF.</p>
+                `}
+            `;
+        }
+
+        // Replica o painel interativo do protótipo com marcadores posicionados no fundo SVG local.
+        function renderizarMarcadoresMapaContatos() {
+            const grid = document.getElementById('contatos-map-grid');
+            if (!grid) return;
+
+            grid.innerHTML = TODAS_UFS_BRASIL.map((uf) => {
+                const dadosVisuais = CONTATOS_MAPA_UFS[uf];
+                if (!dadosVisuais) return '';
+
+                const destaque = CONTATOS_MAPA_DESTAQUES[uf] || {};
+                const classes = [
+                    'contatos-map-button',
+                    CONTATOS_MAPA_REGION_CLASSES[dadosVisuais.regiao] || ''
+                ].filter(Boolean).join(' ');
+                const ativo = contatosMapaUfAtual === uf;
+                const isCallout = destaque.variante === 'callout';
+                const atributosExtras = isCallout
+                    ? `style="--x: ${dadosVisuais.x}%; --y: ${dadosVisuais.y}%; --label-x: ${destaque.labelX}px; --label-y: ${destaque.labelY}px; --marker-z: ${destaque.z}; --line-length: ${Math.max(Math.hypot(destaque.labelX, destaque.labelY) - 16, 8).toFixed(1)}px; --line-angle: ${Math.atan2(destaque.labelY, destaque.labelX) * 180 / Math.PI}deg;"`
+                    : `style="--x: ${dadosVisuais.x}%; --y: ${dadosVisuais.y}%;"`
+
+                return `
+                    <button
+                        type="button"
+                        class="${classes} ${isCallout ? 'is-callout' : ''}"
+                        data-uf="${escapeHtml(uf)}"
+                        aria-label="Selecionar ${escapeHtml(dadosVisuais.nome)}"
+                        aria-pressed="${ativo ? 'true' : 'false'}"
+                        ${atributosExtras}
+                    >
+                        ${isCallout ? '<span class="contatos-map-marker-line" aria-hidden="true"></span>' : ''}
+                        <span class="contatos-map-marker-pin" aria-hidden="true"></span>
+                        <span class="contatos-map-marker-code" aria-hidden="true">${escapeHtml(uf)}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selecionarUfContatoMapa(uf) {
+            const ufNormalizada = String(uf || '').trim().toUpperCase();
+            contatosMapaUfAtual = CONTATOS_MAPA_UFS[ufNormalizada] ? ufNormalizada : '';
+
+            if (!contatosMapaUfAtual) {
+                renderizarPainelContatoUf('');
+            } else {
+                renderizarPainelContatoUf(contatosMapaUfAtual);
+            }
+
+            const select = document.getElementById('contatos-uf-select');
+            if (select && select.value !== contatosMapaUfAtual) {
+                select.value = contatosMapaUfAtual;
+            }
+
+            document.querySelectorAll('.contatos-map-button').forEach((button) => {
+                const isActive = button.dataset.uf === contatosMapaUfAtual;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+        }
+
+        function configurarEventosMapaContatos() {
+            const select = document.getElementById('contatos-uf-select');
+            const grid = document.getElementById('contatos-map-grid');
+
+            if (!select || !grid) return;
+
+            renderizarMarcadoresMapaContatos();
+
+            const opcoesUf = TODAS_UFS_BRASIL.map((uf) => {
+                const meta = CONTATOS_MAPA_UFS[uf];
+                return `<option value="${escapeHtml(uf)}">${escapeHtml(uf)} - ${escapeHtml(meta?.nome || uf)}</option>`;
+            }).join('');
+            select.innerHTML = `<option value="">Selecione uma UF</option>${opcoesUf}`;
+
+            const ufsComDados = TODAS_UFS_BRASIL.filter((uf) => {
+                const entrada = contatosMapaIndiceUf[uf];
+                return Boolean(entrada && ((entrada.dadosUf && Object.keys(entrada.dadosUf).length) || (entrada.pessoas && entrada.pessoas.length)));
+            });
+            const ufInicial = contatosMapaUfAtual && CONTATOS_MAPA_UFS[contatosMapaUfAtual]
+                ? contatosMapaUfAtual
+                : (ufsComDados[0] || TODAS_UFS_BRASIL[0] || '');
+
+            select.addEventListener('change', (event) => {
+                selecionarUfContatoMapa(event.target.value);
+            });
+
+            grid.addEventListener('click', (event) => {
+                const botao = event.target.closest('.contatos-map-button');
+                if (!botao) return;
+                selecionarUfContatoMapa(botao.dataset.uf);
+            });
+
+            selecionarUfContatoMapa(ufInicial);
         }
 
         function montarGruposContatosPorUf(contatosUf, contatosPessoas) {
