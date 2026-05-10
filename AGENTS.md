@@ -8,6 +8,17 @@ Antes de qualquer alteração no projeto, leia:
 
 A pasta `memoria/` contém a memória local do projeto, mantida em Markdown e usada também como vault do Obsidian.
 
+## Ausência da memória local
+
+Se a pasta `memoria/` ou o arquivo `memoria/INDEX.md` não existir no ambiente atual, não inventar seu conteúdo.
+
+Nesse caso:
+
+- informar que a memória local não está disponível;
+- prosseguir apenas com a análise dos arquivos reais do repositório;
+- não criar a pasta `memoria/` automaticamente sem solicitação expressa;
+- não tentar versionar arquivos da memória local.
+
 ## Regras de trabalho
 
 - Analisar a estrutura existente antes de propor ou aplicar código.

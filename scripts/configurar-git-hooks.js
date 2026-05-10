@@ -10,7 +10,41 @@ if (!fs.existsSync(hooksDir)) {
 }
 
 const hookContent = `#!/bin/sh
-echo "Publicando dados estaticos antes do commit..."
+STAGED_FILES=$(git diff --cached --name-only)
+
+if [ "$SKIP_PUBLICAR_DADOS" = "1" ]; then
+  echo "SKIP_PUBLICAR_DADOS=1 definido. Publicacao de dados estaticos ignorada."
+  exit 0
+fi
+
+if [ -z "$STAGED_FILES" ]; then
+  echo "Nenhum arquivo staged encontrado. Publicacao de dados estaticos nao e necessaria."
+  exit 0
+fi
+
+NEEDS_PUBLICAR=0
+
+while IFS= read -r FILE; do
+  case "$FILE" in
+    AGENTS.md|.gitignore|README.md|*.md|docs/*|memoria/*|scripts/configurar-git-hooks.js)
+      ;;
+    backend/*|Planilhas/*|scripts/*|package.json|package-lock.json|frontend/data/*)
+      NEEDS_PUBLICAR=1
+      break
+      ;;
+    *)
+      ;;
+  esac
+done <<EOF
+$STAGED_FILES
+EOF
+
+if [ "$NEEDS_PUBLICAR" -ne 1 ]; then
+  echo "Arquivos staged nao exigem publicacao de dados estaticos. Commit liberado."
+  exit 0
+fi
+
+echo "Alteracoes que podem afetar dados publicados detectadas. Executando npm run publicar:dados..."
 npm run publicar:dados
 STATUS=$?
 
@@ -19,8 +53,13 @@ if [ $STATUS -ne 0 ]; then
   exit $STATUS
 fi
 
-git add frontend/data/publicados/*.json
-echo "Dados estaticos atualizados e adicionados ao commit."
+if ls frontend/data/publicados/*.json >/dev/null 2>&1; then
+  git add frontend/data/publicados/*.json
+  echo "Dados publicados adicionados ao commit."
+else
+  echo "Publicacao concluida, mas nenhum arquivo frontend/data/publicados/*.json foi encontrado para adicionar."
+fi
+
 exit 0
 `;
 
