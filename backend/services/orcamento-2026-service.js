@@ -23,7 +23,7 @@ const STATUS_ORCAMENTO = [
   "VALIDAR"
 ];
 
-const CAMPOS_EDITAVEIS = new Set([
+const CAMPOS_EDITAVEIS_BASE = [
   "categoria",
   "descricao",
   "acao_orcamentaria",
@@ -39,6 +39,68 @@ const CAMPOS_EDITAVEIS = new Set([
   "status",
   "observacao",
   "classificacao_gerencial"
+];
+
+const CAMPOS_EDITAVEIS_RASTREIO = [
+  "link_processo_sei",
+  "data_processo_sei",
+  "demanda_formalizada",
+  "link_demanda_formalizada",
+  "data_demanda_formalizada",
+  "estudo_tecnico",
+  "link_estudo_tecnico",
+  "data_estudo_tecnico",
+  "termo_referencia",
+  "link_termo_referencia",
+  "data_termo_referencia",
+  "pesquisa_precos",
+  "link_pesquisa_precos",
+  "data_pesquisa_precos",
+  "autorizacao_autoridade",
+  "link_autorizacao_autoridade",
+  "data_autorizacao_autoridade",
+  "parecer_juridico",
+  "link_parecer_juridico",
+  "data_parecer_juridico",
+  "empenho",
+  "link_empenho",
+  "data_empenho",
+  "contrato",
+  "link_contrato",
+  "data_contratacao",
+  "ordem_servico",
+  "link_ordem_servico",
+  "data_ordem_servico",
+  "data_entrega",
+  "ordem_bancaria",
+  "link_ordem_bancaria",
+  "data_ordem_bancaria",
+  "profor_autuacao",
+  "link_profor_autuacao",
+  "data_profor_autuacao",
+  "profor_parecer_tecnico",
+  "link_profor_parecer_tecnico",
+  "data_profor_parecer_tecnico",
+  "profor_minuta_edital",
+  "link_profor_minuta_edital",
+  "data_profor_minuta_edital",
+  "profor_ddo_cgof",
+  "link_profor_ddo_cgof",
+  "data_profor_ddo_cgof",
+  "profor_abertura_programa",
+  "link_profor_abertura_programa",
+  "data_profor_abertura_programa",
+  "profor_parecer_conjur",
+  "link_profor_parecer_conjur",
+  "data_profor_parecer_conjur",
+  "profor_publicacao_gabsec",
+  "link_profor_publicacao_gabsec",
+  "data_profor_publicacao_gabsec"
+];
+
+const CAMPOS_EDITAVEIS = new Set([
+  ...CAMPOS_EDITAVEIS_BASE,
+  ...CAMPOS_EDITAVEIS_RASTREIO
 ]);
 
 const COLUNAS_ORCAMENTO = [

@@ -4896,6 +4896,67 @@ async function carregarLogoParaPDF() {
             { chave: 'publicacao-gabsec', rotulo: 'Publicação (GABSEC)', icone: 'fa-newspaper', valorCampo: 'proforPublicacaoGabsec', linkCampo: 'linkProforPublicacaoGabsec', dataCampo: 'dataProforPublicacaoGabsec' }
         ];
 
+        const CAMPOS_EDICAO_RASTREIO_PROCESSO = [
+            { campo: 'processo_sei', rotulo: 'Processo SEI' },
+            { campo: 'link_processo_sei', rotulo: 'Link do Processo SEI' },
+            { campo: 'data_processo_sei', rotulo: 'Data do Processo SEI' },
+            { campo: 'demanda_formalizada', rotulo: 'Demanda formalizada' },
+            { campo: 'link_demanda_formalizada', rotulo: 'Link da demanda formalizada' },
+            { campo: 'data_demanda_formalizada', rotulo: 'Data da demanda formalizada' },
+            { campo: 'estudo_tecnico', rotulo: 'Estudo técnico' },
+            { campo: 'link_estudo_tecnico', rotulo: 'Link do estudo técnico' },
+            { campo: 'data_estudo_tecnico', rotulo: 'Data do estudo técnico' },
+            { campo: 'termo_referencia', rotulo: 'Termo de Referência' },
+            { campo: 'link_termo_referencia', rotulo: 'Link do Termo de Referência' },
+            { campo: 'data_termo_referencia', rotulo: 'Data do Termo de Referência' },
+            { campo: 'pesquisa_precos', rotulo: 'Pesquisa de preços' },
+            { campo: 'link_pesquisa_precos', rotulo: 'Link da pesquisa de preços' },
+            { campo: 'data_pesquisa_precos', rotulo: 'Data da pesquisa de preços' },
+            { campo: 'autorizacao_autoridade', rotulo: 'Autorização da autoridade' },
+            { campo: 'link_autorizacao_autoridade', rotulo: 'Link da autorização da autoridade' },
+            { campo: 'data_autorizacao_autoridade', rotulo: 'Data da autorização da autoridade' },
+            { campo: 'parecer_juridico', rotulo: 'Parecer jurídico' },
+            { campo: 'link_parecer_juridico', rotulo: 'Link do parecer jurídico' },
+            { campo: 'data_parecer_juridico', rotulo: 'Data do parecer jurídico' },
+            { campo: 'empenho', rotulo: 'Empenho' },
+            { campo: 'link_empenho', rotulo: 'Link do empenho' },
+            { campo: 'data_empenho', rotulo: 'Data do empenho' },
+            { campo: 'contrato', rotulo: 'Contrato' },
+            { campo: 'link_contrato', rotulo: 'Link do contrato' },
+            { campo: 'data_contratacao', rotulo: 'Data da contratação' },
+            { campo: 'ordem_servico', rotulo: 'Ordem de Serviço' },
+            { campo: 'link_ordem_servico', rotulo: 'Link da Ordem de Serviço' },
+            { campo: 'data_ordem_servico', rotulo: 'Data da Ordem de Serviço' },
+            { campo: 'data_entrega', rotulo: 'Data da entrega' },
+            { campo: 'ordem_bancaria', rotulo: 'Ordem bancária' },
+            { campo: 'link_ordem_bancaria', rotulo: 'Link da ordem bancária' },
+            { campo: 'data_ordem_bancaria', rotulo: 'Data da ordem bancária' }
+        ];
+
+        const CAMPOS_EDICAO_RASTREIO_PROFOR = [
+            { campo: 'profor_autuacao', rotulo: 'Autuação PROFOR' },
+            { campo: 'link_profor_autuacao', rotulo: 'Link da autuação PROFOR' },
+            { campo: 'data_profor_autuacao', rotulo: 'Data da autuação PROFOR' },
+            { campo: 'profor_parecer_tecnico', rotulo: 'Parecer técnico PROFOR' },
+            { campo: 'link_profor_parecer_tecnico', rotulo: 'Link do parecer técnico PROFOR' },
+            { campo: 'data_profor_parecer_tecnico', rotulo: 'Data do parecer técnico PROFOR' },
+            { campo: 'profor_minuta_edital', rotulo: 'Minuta de edital PROFOR' },
+            { campo: 'link_profor_minuta_edital', rotulo: 'Link da minuta de edital PROFOR' },
+            { campo: 'data_profor_minuta_edital', rotulo: 'Data da minuta de edital PROFOR' },
+            { campo: 'profor_ddo_cgof', rotulo: 'DDO (CGOF) PROFOR' },
+            { campo: 'link_profor_ddo_cgof', rotulo: 'Link do DDO (CGOF) PROFOR' },
+            { campo: 'data_profor_ddo_cgof', rotulo: 'Data do DDO (CGOF) PROFOR' },
+            { campo: 'profor_abertura_programa', rotulo: 'Abertura de programa PROFOR' },
+            { campo: 'link_profor_abertura_programa', rotulo: 'Link da abertura de programa PROFOR' },
+            { campo: 'data_profor_abertura_programa', rotulo: 'Data da abertura de programa PROFOR' },
+            { campo: 'profor_parecer_conjur', rotulo: 'Parecer jurídico PROFOR' },
+            { campo: 'link_profor_parecer_conjur', rotulo: 'Link do parecer jurídico PROFOR' },
+            { campo: 'data_profor_parecer_conjur', rotulo: 'Data do parecer jurídico PROFOR' },
+            { campo: 'profor_publicacao_gabsec', rotulo: 'Publicação GABSEC PROFOR' },
+            { campo: 'link_profor_publicacao_gabsec', rotulo: 'Link da publicação GABSEC PROFOR' },
+            { campo: 'data_profor_publicacao_gabsec', rotulo: 'Data da publicação GABSEC PROFOR' }
+        ];
+
         function obterTotalResumoOrcamento(resumos, nome) {
             const chave = normalizarBusca(nome);
             return resumos?.find((item) => normalizarBusca(item.nome) === chave)?.total || 0;
@@ -5343,13 +5404,23 @@ async function carregarLogoParaPDF() {
                     <td colspan="11" class="budget-tracking-cell">
                         <div class="budget-tracking-panel" aria-label="Rastreio processual de ${escapeHtml(item.descricao)}">
                             <div class="budget-tracking-header">
-                                <div>
+                                <div class="budget-tracking-header-copy">
                                     <span class="budget-tracking-eyebrow">Andamento processual</span>
                                     <strong>${escapeHtml(etapaAtual.rotulo)}</strong>
                                 </div>
-                                <div class="budget-tracking-status">
-                                    <span>Status informado</span>
-                                    <strong>${escapeHtml(item.status || 'Não informado')}</strong>
+                                <div class="budget-tracking-header-right">
+                                    <div class="budget-tracking-status">
+                                        <span>Status informado</span>
+                                        <strong>${escapeHtml(item.status || 'Não informado')}</strong>
+                                    </div>
+                                    ${renderizarBotaoEdicaoOrcamento(item.id, {
+                                        labelEditar: 'Editar andamentos',
+                                        labelFechar: 'Fechar edição',
+                                        titleEditar: 'Editar andamentos processuais',
+                                        titleFechar: 'Fechar edição dos andamentos',
+                                        iconOnly: false,
+                                        extraClass: 'budget-tracking-edit-button'
+                                    })}
                                 </div>
                             </div>
                             <ol class="budget-tracking-timeline" style="--budget-tracking-steps: ${etapas.length};">
@@ -5395,19 +5466,24 @@ async function carregarLogoParaPDF() {
             return ['1', 'true', 'sim', 's'].includes(texto);
         }
 
-        function renderizarBotaoEdicaoOrcamento(itemId) {
+        function renderizarBotaoEdicaoOrcamento(itemId, opcoes = {}) {
             if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
 
             const id = String(itemId);
             const ativo = orcamentoItemEmEdicao(id);
+            const labelEditar = opcoes.labelEditar || 'Editar';
+            const labelFechar = opcoes.labelFechar || 'Fechar edição';
+            const titleEditar = opcoes.titleEditar || 'Editar este item';
+            const titleFechar = opcoes.titleFechar || 'Fechar edição deste item';
+            const extraClass = ['budget-row-action', opcoes.extraClass || ''].filter(Boolean).join(' ');
             return renderActionButton({
                 type: ativo ? 'success' : 'edit',
-                label: ativo ? 'Fechar edição' : 'Editar',
+                label: ativo ? labelFechar : labelEditar,
                 variant: ativo ? 'primary' : 'outline-primary',
                 backend: true,
-                iconOnly: true,
-                title: ativo ? 'Fechar edição deste item' : 'Editar este item',
-                extraClass: 'budget-row-action budget-row-action-edit',
+                iconOnly: opcoes.iconOnly ?? true,
+                title: ativo ? titleFechar : titleEditar,
+                extraClass,
                 attributes: `data-orcamento-toggle-editor="${escapeHtml(id)}" aria-pressed="${ativo ? 'true' : 'false'}"`
             });
         }
@@ -5435,6 +5511,9 @@ async function carregarLogoParaPDF() {
 
             const itemId = String(item.id);
             if (!orcamentoItemEmEdicao(itemId)) return '';
+            const usaRastreioProfor = itemUsaRastreioProfor(item);
+            const camposRastreio = usaRastreioProfor ? CAMPOS_EDICAO_RASTREIO_PROFOR : CAMPOS_EDICAO_RASTREIO_PROCESSO;
+            const tituloRastreio = usaRastreioProfor ? 'Andamentos PROFOR' : 'Andamentos processuais';
 
             return `
                 <tr class="budget-edit-row pdf-hidden">
@@ -5478,6 +5557,7 @@ async function carregarLogoParaPDF() {
                                     ${renderizarCampoOrcamento(item, 'observacao')}
                                 </label>
                             </div>
+                            ${itemPodeExibirRastreioOrcamento(item) ? renderizarSecaoEdicaoRastreioOrcamento(item, tituloRastreio, camposRastreio) : ''}
                             <div class="budget-edit-panel-actions">
                                 ${renderActionButton({
                                     type: 'save',
@@ -5952,6 +6032,30 @@ async function carregarLogoParaPDF() {
             } catch (error) {
                 alert(`Não foi possível salvar: ${error.message}`);
             }
+        }
+
+        function renderizarCamposEdicaoRastreioOrcamento(item, campos) {
+            return campos.map(({ campo, rotulo, tipo = 'text' }) => `
+                <label>
+                    <span>${escapeHtml(rotulo)}</span>
+                    ${renderizarCampoOrcamento(item, campo, tipo)}
+                </label>
+            `).join('');
+        }
+
+        function renderizarSecaoEdicaoRastreioOrcamento(item, titulo, campos) {
+            if (!campos.length) return '';
+
+            return `
+                <section class="budget-edit-section">
+                    <div class="budget-edit-section-header">
+                        <strong>${escapeHtml(titulo)}</strong>
+                    </div>
+                    <div class="budget-edit-grid budget-edit-grid-tracking">
+                        ${renderizarCamposEdicaoRastreioOrcamento(item, campos)}
+                    </div>
+                </section>
+            `;
         }
 
         async function abrirHistoricoOrcamento() {
@@ -7550,7 +7654,12 @@ async function carregarLogoParaPDF() {
                 natureza: item.natureza,
                 valor_executado: item.valorExecutado
             };
-            return mapa[campo] ?? fallback;
+            if (Object.prototype.hasOwnProperty.call(mapa, campo)) {
+                return mapa[campo] ?? fallback;
+            }
+
+            const campoCamel = String(campo || '').replace(/_([a-z])/g, (_, letra) => letra.toUpperCase());
+            return item[campoCamel] ?? fallback;
         }
 
         function registrarAlteracaoOrcamento(id, campo, valorOriginal, novoValor) {
