@@ -4,8 +4,20 @@ node_modules/
 .env.local
 .env.*.local
 
-# Memória local do projeto / Vault Obsidian
-memoria/
+# Memória versionada parcialmente
+# Versionar notas Markdown e dados tratados não sensíveis.
+# Não versionar arquivos locais do Obsidian, fontes brutas ou anexos pesados/sensíveis.
+memoria/.obsidian/
+memoria/.trash/
+memoria/99_FONTES_BRUTAS/
+memoria/**/*.pdf
+memoria/**/*.xlsx
+memoria/**/*.xls
+memoria/**/*.docx
+memoria/**/*.png
+memoria/**/*.jpg
+memoria/**/*.jpeg
+memoria/**/*.webp
 
 # Ambientes e dados locais
 backend/data/onasp.sqlite
