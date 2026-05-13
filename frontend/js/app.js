@@ -5442,7 +5442,6 @@ async function carregarLogoParaPDF() {
                 <div class="budget-link-list budget-action-buttons">
                     ${links.map((link) => `
                         <a class="budget-link-button btn btn-outline-secondary"
-                           style="border-color: rgba(23, 74, 124, 0.2);"
                            href="${escapeHtml(link.url)}"
                            target="_blank"
                            rel="noopener noreferrer"

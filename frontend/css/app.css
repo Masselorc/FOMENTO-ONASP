@@ -1519,6 +1519,7 @@ table.dataTable thead td,
     color: var(--color-muted);
     font-size: 0.78rem;
     overflow: hidden;
+    text-align: center !important;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 0;
@@ -1677,7 +1678,7 @@ table.dataTable thead td,
 }
 
 .budget-execution-cell {
-    align-items: flex-end;
+    align-items: center;
     display: flex;
     flex-direction: column;
     gap: 3px;
