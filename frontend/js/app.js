@@ -5671,11 +5671,11 @@ async function carregarLogoParaPDF() {
                                         <strong>${escapeHtml(item.status || 'Não informado')}</strong>
                                     </div>
                                     ${renderizarBotaoEdicaoOrcamento(item.id, {
-                                        labelEditar: 'Editar andamentos',
+                                        labelEditar: 'Editar andamento processual',
                                         labelFechar: 'Fechar edição',
                                         titleEditar: 'Editar andamentos processuais',
                                         titleFechar: 'Fechar edição dos andamentos',
-                                        iconOnly: false,
+                                        iconOnly: true,
                                         extraClass: 'budget-tracking-edit-button'
                                     })}
                                 </div>
