@@ -19,6 +19,7 @@ const {
 } = require("./services/formalizacao-profor-service");
 const {
   listarOrcamento2026,
+  criarProcessoVinculadoOrcamento2026,
   salvarOrcamento2026,
   listarHistoricoOrcamento2026,
   inicializarOrcamento2026
@@ -242,6 +243,14 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/orcamento-2026/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = salvarOrcamento2026(payload);
+      const resposta = await publicarAposSalvamento(resultado);
+      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/orcamento-2026/processos-vinculados/criar") {
+      const payload = await lerJsonBody(req);
+      const resultado = criarProcessoVinculadoOrcamento2026(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;

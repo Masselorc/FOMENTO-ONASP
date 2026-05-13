@@ -356,6 +356,114 @@ function arredondarMoeda(valor) {
   return Math.round((Number(valor) + Number.EPSILON) * 100) / 100;
 }
 
+function converterNumeroEstrito(valor) {
+  if (typeof valor === "number") return Number.isFinite(valor) ? valor : Number.NaN;
+  const texto = String(valor ?? "").trim();
+  if (!texto) return Number.NaN;
+  const normalizado = texto.replace(/\s+/g, "").replace(/^R\$/i, "");
+  if (normalizado.includes(",") && normalizado.includes(".")) {
+    return Number.parseFloat(normalizado.replace(/\./g, "").replace(",", "."));
+  }
+  if (normalizado.includes(",")) return Number.parseFloat(normalizado.replace(",", "."));
+  return Number.parseFloat(normalizado);
+}
+
+function obterTextoOpcional(payload, ...nomes) {
+  for (const nome of nomes) {
+    const valor = limparTexto(payload?.[nome]);
+    if (valor) return valor;
+  }
+  return "";
+}
+
+function normalizarStatusParaCriacao(status) {
+  const texto = normalizarTexto(status).replace(/\s+/g, " ");
+  if (!texto) {
+    return { status: "PLANEJADO", valido: true, informado: false };
+  }
+
+  const mapa = {
+    PLANEJADO: "PLANEJADO",
+    "PROCESSO AUTUADO": "PROCESSO AUTUADO",
+    "EM PESQUISA DE PRECOS": "EM PESQUISA DE PREÇOS",
+    "EM EXECUCAO": "EM EXECUÇÃO",
+    EXECUTADO: "EXECUTADO",
+    SUSPENSO: "SUSPENSO",
+    CANCELADO: "CANCELADO",
+    VALIDAR: "VALIDAR"
+  };
+
+  if (mapa[texto]) return { status: mapa[texto], valido: true, informado: true };
+  if (texto.includes("EXECUCAO")) return { status: "EM EXECUÇÃO", valido: true, informado: true };
+  if (texto.includes("AUTUADO") || texto.includes("PROCESSO")) return { status: "PROCESSO AUTUADO", valido: true, informado: true };
+  if (texto.includes("PESQUISA")) return { status: "EM PESQUISA DE PREÇOS", valido: true, informado: true };
+  if (texto.includes("EXECUTADO")) return { status: "EXECUTADO", valido: true, informado: true };
+  if (texto.includes("SUSPENS")) return { status: "SUSPENSO", valido: true, informado: true };
+  if (texto.includes("CANCEL")) return { status: "CANCELADO", valido: true, informado: true };
+  if (texto.includes("VALID")) return { status: "VALIDAR", valido: true, informado: true };
+
+  return { status: "PLANEJADO", valido: false, informado: true };
+}
+
+function normalizarTipoRastreioParaCriacao(tipoRastreio) {
+  const texto = normalizarTexto(tipoRastreio).replace(/\s+/g, " ");
+  if (!texto) {
+    return { tipoRastreio: "PROCESSO NORMAL", valido: true, informado: false };
+  }
+
+  if (texto === "PROCESSO NORMAL") {
+    return { tipoRastreio: "PROCESSO NORMAL", valido: true, informado: true };
+  }
+
+  if (texto === "CONVENIO / PROFOR" || texto === "CONVÊNIO / PROFOR" || texto === "PROFOR / CONVENIO" || texto === "PROFOR / CONVÊNIO") {
+    return { tipoRastreio: "CONVÊNIO / PROFOR", valido: true, informado: true };
+  }
+
+  return { tipoRastreio: "PROCESSO NORMAL", valido: false, informado: true };
+}
+
+function sanitizarIdProcesso(id) {
+  return limparTexto(id)
+    .replace(/\s+/g, "-")
+    .replace(/[^A-Za-z0-9._-]/g, "")
+    .toUpperCase();
+}
+
+function gerarIdProcessoVinculado(processoPaiId, registros) {
+  const base = sanitizarIdProcesso(processoPaiId);
+  if (!base) return "";
+
+  const usados = new Set(
+    (Array.isArray(registros) ? registros : [])
+      .map((registro) => String(registro?.id || "").trim().toUpperCase())
+      .filter(Boolean)
+  );
+
+  let sequencial = 1;
+  while (sequencial < 10_000) {
+    const candidato = `${base}-F${String(sequencial).padStart(2, "0")}`;
+    if (!usados.has(candidato.toUpperCase())) return candidato;
+    sequencial += 1;
+  }
+
+  return "";
+}
+
+function calcularSaldoBasicoParaVinculo(processoPai, registros) {
+  const filhosAtivos = (Array.isArray(registros) ? registros : []).filter((registro) => (
+    String(registro?.processo_pai_id || "").trim() === String(processoPai?.id || "").trim()
+    && Number(registro?.ativo) === 1
+  ));
+
+  const totalFilhos = filhosAtivos.reduce((total, registro) => total + (Number(registro?.valor_previsto) || 0), 0);
+  const totalPai = Number(processoPai?.valor_previsto) || 0;
+  const empenhadoPai = Number(processoPai?.valor_empenhado) || 0;
+  const executadoPai = Number(processoPai?.valor_executado) || 0;
+
+  // Saldo básico considera filhos já criados; movimentações entre processos serão tratadas em etapa própria.
+  return arredondarMoeda(totalPai - empenhadoPai - executadoPai - totalFilhos);
+}
+
 function formatarDataPlanilha(valor) {
   if (valor === null || valor === undefined || valor === "") return "";
   if (valor instanceof Date && !Number.isNaN(valor.getTime())) {
@@ -853,6 +961,142 @@ function listarOrcamento2026() {
   };
 }
 
+function criarProcessoVinculadoOrcamento2026(payload = {}) {
+  const senha = payload.password ?? payload.senha;
+  if (!validarSenhaEdicao(senha)) {
+    return { success: false, message: "Senha inválida. Alterações não foram salvas." };
+  }
+
+  const processoPaiId = limparTexto(payload.processoPaiId ?? payload.processo_pai_id);
+  if (!processoPaiId) {
+    return { success: false, message: "processoPaiId é obrigatório." };
+  }
+
+  const descricao = limparTexto(payload.descricao);
+  if (!descricao) {
+    return { success: false, message: "Descrição é obrigatória." };
+  }
+
+  const valorAlocadoBruto = converterNumeroEstrito(payload.valorAlocado ?? payload.valor_alocado);
+  if (!Number.isFinite(valorAlocadoBruto) || valorAlocadoBruto <= 0) {
+    return { success: false, message: "valorAlocado deve ser um número maior que zero." };
+  }
+  const valorAlocado = arredondarMoeda(valorAlocadoBruto);
+
+  const validacaoStatus = normalizarStatusParaCriacao(payload.status);
+  if (validacaoStatus.informado && !validacaoStatus.valido) {
+    return { success: false, message: "Status inválido." };
+  }
+
+  const validacaoTipoRastreio = normalizarTipoRastreioParaCriacao(payload.tipoRastreio ?? payload.tipo_rastreio);
+  if (validacaoTipoRastreio.informado && !validacaoTipoRastreio.valido) {
+    return { success: false, message: "tipoRastreio inválido." };
+  }
+
+  inicializarOrcamento2026();
+  const registros = db.prepare("SELECT * FROM orcamento_2026").all();
+  const processoPaiIdComparavel = processoPaiId.toUpperCase();
+  const processoPai = registros.find((registro) => String(registro.id || "").trim().toUpperCase() === processoPaiIdComparavel);
+
+  if (!processoPai) {
+    return { success: false, message: "Processo pai não localizado." };
+  }
+
+  if (Number(processoPai.ativo) !== 1) {
+    return { success: false, message: "Processo pai está inativo." };
+  }
+
+  if (normalizarTexto(processoPai.tipo_processo || "PRINCIPAL") === "VINCULADO") {
+    return { success: false, message: "Processo pai já é vinculado. Use um processo principal." };
+  }
+
+  const saldoBasicoDisponivel = calcularSaldoBasicoParaVinculo(processoPai, registros);
+  if (valorAlocado > saldoBasicoDisponivel) {
+    return {
+      success: false,
+      message: "Valor alocado excede o saldo básico disponível do processo pai."
+    };
+  }
+
+  const idFilho = gerarIdProcessoVinculado(processoPai.id, registros);
+  if (!idFilho) {
+    return { success: false, message: "Não foi possível gerar um ID válido para o processo vinculado." };
+  }
+  if (registros.some((registro) => String(registro.id || "").trim().toUpperCase() === idFilho.toUpperCase())) {
+    return { success: false, message: "ID de processo vinculado já existe." };
+  }
+
+  const processoSei = obterTextoOpcional(payload, "processoSei", "processo_sei");
+  const linkProcessoSei = obterTextoOpcional(payload, "linkProcessoSei", "link_processo_sei");
+  const dataProcessoSei = obterTextoOpcional(payload, "dataProcessoSei", "data_processo_sei");
+  const observacao = obterTextoOpcional(payload, "observacao");
+
+  const filhosAtivos = registros.filter((registro) => (
+    String(registro?.processo_pai_id || "").trim().toUpperCase() === String(processoPai.id || "").trim().toUpperCase()
+    && Number(registro?.ativo) === 1
+  ));
+  const ordemExibicao = filhosAtivos.reduce((maximo, registro) => {
+    const ordem = Number(registro?.ordem_exibicao);
+    return Number.isFinite(ordem) && ordem > maximo ? ordem : maximo;
+  }, 0) + 1;
+  const agora = new Date().toISOString();
+
+  const item = preencherColunas({
+    id: idFilho,
+    categoria: limparTexto(processoPai.categoria),
+    descricao,
+    acao_orcamentaria: obterTextoOpcional(payload, "acaoOrcamentaria", "acao_orcamentaria") || limparTexto(processoPai.acao_orcamentaria),
+    plano_orcamentario: obterTextoOpcional(payload, "planoOrcamentario", "plano_orcamentario") || limparTexto(processoPai.plano_orcamentario),
+    natureza: obterTextoOpcional(payload, "natureza") || limparTexto(processoPai.natureza),
+    valor_previsto: valorAlocado,
+    valor_disponibilizado: 0,
+    valor_empenhado: 0,
+    valor_executado: 0,
+    valor_estimado_pesquisa_preco: 0,
+    processo_autuado: processoSei ? 1 : 0,
+    processo_sei: processoSei,
+    status: validacaoStatus.status,
+    observacao,
+    compoe_orcamento: 0,
+    classificacao_gerencial: normalizarClassificacaoGerencial(processoPai.classificacao_gerencial),
+    ativo: 1,
+    tipo_rastreio: validacaoTipoRastreio.tipoRastreio,
+    processo_pai_id: processoPai.id,
+    tipo_processo: "VINCULADO",
+    origem_recurso_id: processoPai.id,
+    ordem_exibicao: ordemExibicao,
+    valor_alocado_origem: valorAlocado,
+    link_processo_sei: linkProcessoSei,
+    data_processo_sei: dataProcessoSei
+  });
+
+  const backupPath = criarBackupBanco(PAGINA);
+  const insertNovo = db.prepare(`
+    INSERT INTO orcamento_2026 (${COLUNAS_ORCAMENTO.join(", ")}, atualizado_em)
+    VALUES (${COLUNAS_ORCAMENTO.map(() => "?").join(", ")}, ?)
+  `);
+
+  db.transaction(() => {
+    insertNovo.run(...COLUNAS_ORCAMENTO.map((coluna) => item[coluna]), agora);
+    // Filhos não compõem o total global; apenas detalham a execução do envelope do processo pai.
+    registrarHistorico(db, {
+      pagina: PAGINA,
+      registro: item.id,
+      campo: "processo_vinculado",
+      valorAnterior: "",
+      valorNovo: `pai=${processoPai.id}; valor=${valorAlocado.toFixed(2)}`
+    });
+  })();
+
+  return {
+    success: true,
+    message: "Processo vinculado criado com sucesso.",
+    updatedAt: agora,
+    backupPath,
+    item
+  };
+}
+
 function valorParaBanco(campo, valor) {
   if (["valor_previsto", "valor_disponibilizado", "valor_empenhado", "valor_executado", "valor_estimado_pesquisa_preco"].includes(campo)) {
     return arredondarMoeda(converterNumero(valor));
@@ -993,6 +1237,7 @@ module.exports = {
   STATUS_ORCAMENTO,
   inicializarOrcamento2026,
   listarOrcamento2026,
+  criarProcessoVinculadoOrcamento2026,
   salvarOrcamento2026,
   listarHistoricoOrcamento2026
 };
