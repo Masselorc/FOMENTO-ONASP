@@ -338,3 +338,17 @@
 - Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026 expõe ações de divisão e alocação sem erro crítico"`, `npm run validar:agente`.
 - Resultado: validações passaram; o teste específico abriu a view Orçamento 2026, confirmou a tabela principal, validou as colunas pedidas, abriu e fechou os modais quando os botões estavam presentes e não persistiu dados reais.
 - Próxima etapa recomendada: ampliar a cobertura E2E gradualmente para outros fluxos críticos da aplicação, mantendo a mesma regra de bloqueio de escrita.
+
+## 13/05/2026 - Etapa 10 — publicação estática controlada e conferência do modo publicado
+
+- Data: 13/05/2026.
+- Objetivo: executar a publicação estática dos dados após as mudanças do Orçamento 2026, conferir o diff dos JSONs publicados e validar que a SPA continua abrindo com os dados publicados.
+- Comando de publicação executado: `npm run publicar:dados`.
+- JSONs alterados no diff real: `frontend/data/publicados/aplicacao.json`, `frontend/data/publicados/dashboard-geral.json`, `frontend/data/publicados/resumo-publicacao.json`.
+- Observação operacional: `frontend/data/publicados/orcamento-2026.json` foi tocado pela publicação, mas o conteúdo permaneceu idêntico ao HEAD; após a conferência, foi restaurado para evitar churn semântico.
+- Síntese do diff: apenas `publicadoEm` foi atualizado nos JSONs alterados; não houve alteração de código, backend, banco, rotas, tests ou hooks; a publicação permaneceu consistente com os dados já consolidados do Orçamento 2026.
+- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `git diff --check`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"`.
+- Resultado: validações aprovadas; a SPA carregou; a view Orçamento 2026 abriu; a tabela apareceu; `Valor previsto` e `Ações` permaneceram visíveis; não houve erro crítico de console nas validações E2E já existentes.
+- Houve alteração de código: não.
+- Próxima etapa recomendada: revisar se novos commits futuros exigem republicação ou se o modo publicado permanece estável sem churn adicional.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` se a publicação precisar ser desfeita após commit enviado.
