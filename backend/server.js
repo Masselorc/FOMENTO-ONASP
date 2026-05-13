@@ -24,6 +24,10 @@ const {
   inicializarOrcamento2026
 } = require("./services/orcamento-2026-service");
 const {
+  listarFaf2021,
+  salvarExecucaoFaf2021
+} = require("./services/faf-2021-service");
+const {
   exportarParametrosMinimosExcel,
   exportarFormalizacaoProforExcel,
   exportarOrcamento2026Excel
@@ -262,6 +266,19 @@ async function rotearApi(req, res, pathname) {
         "Content-Length": buffer.length
       });
       res.end(buffer);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/faf2021") {
+      enviarJson(res, 200, listarFaf2021());
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/faf2021/salvar") {
+      const payload = await lerJsonBody(req);
+      const resultado = salvarExecucaoFaf2021(payload);
+      const resposta = await publicarAposSalvamento(resultado);
+      enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
     }
 

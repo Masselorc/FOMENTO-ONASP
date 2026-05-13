@@ -1818,6 +1818,24 @@ table.dataTable thead td,
     margin-top: 0.85rem;
 }
 
+#view-faf-2021 .faf2021-row-action,
+#view-faf-2021-detalhe .faf2021-row-action {
+    align-items: center;
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    line-height: 1;
+    min-width: 2rem;
+    padding: 0;
+    width: 2rem;
+}
+
+#view-faf-2021 .faf2021-actions-cell,
+#view-faf-2021-detalhe .faf2021-actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
 .budget-edit-panel-header strong {
     color: var(--color-primary-strong);
     font-size: 0.92rem;

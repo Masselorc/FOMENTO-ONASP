@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260507-04';
+} from '../../backend/services/data-service.js?v=20260513-01';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -69,6 +69,7 @@ let orcamentoProcessosInativos = new Set();
 let erroCarregamentoOrcamento = null;
 const errosCarregamentoView = {};
 let resumoPublicacaoSistemaCache = null;
+let faf2021UfDetalheAtual = '';
 const APP_CACHE_VERSION = '20260507-05';
 const ANALYTICS_CACHE_VERSION = '20260428-2';
 // Mantém o idioma do DataTables local para evitar CORS e dependência externa em ambiente restrito ou no GitHub Pages.
@@ -2387,6 +2388,19 @@ async function carregarLogoParaPDF() {
             return catalogoAplicacao.nomesEstados?.[uf] || uf;
         }
 
+        async function carregarDadosFaf2021Editaveis(forcarRecarregamento = false) {
+            if (forcarRecarregamento) {
+                try {
+                    catalogoAplicacao = await carregarCatalogoAplicacao(true);
+                    dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
+                } catch (error) {
+                    console.warn('Falha ao recarregar os dados base da aplicação após salvar FAF 2021.', error);
+                }
+            }
+
+            return obterDadosFaf2021();
+        }
+
         function obterIndiceRegiaoFunpen(uf) {
             const regiao = ORDEM_REGIOES.find((nomeRegiao) => (
                 (catalogoAplicacao.regioes?.[nomeRegiao] || []).includes(uf)
@@ -2558,6 +2572,211 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        function validarValorExecutadoFaf2021(valor) {
+            if (typeof valor === 'number' && Number.isFinite(valor)) {
+                if (valor < 0) throw new Error('Valor executado não pode ser negativo.');
+                return valor;
+            }
+
+            const texto = String(valor ?? '').trim();
+            if (!texto) {
+                throw new Error('Valor executado é obrigatório.');
+            }
+
+            const normalizado = texto.replace(/^R\$/i, '').replace(/\s+/g, '');
+            const numero = normalizado.includes(',') && normalizado.includes('.')
+                ? Number.parseFloat(normalizado.replace(/\./g, '').replace(',', '.'))
+                : normalizado.includes(',')
+                    ? Number.parseFloat(normalizado.replace(',', '.'))
+                    : Number.parseFloat(normalizado);
+
+            if (!Number.isFinite(numero)) {
+                throw new Error('Valor executado inválido.');
+            }
+
+            if (numero < 0) {
+                throw new Error('Valor executado não pode ser negativo.');
+            }
+
+            return numero;
+        }
+
+        function renderizarBotaoEdicaoFaf2021(item) {
+            return renderActionButton({
+                type: 'edit',
+                label: 'Editar execução',
+                variant: 'outline-primary',
+                size: 'sm',
+                backend: true,
+                iconOnly: true,
+                title: 'Editar execução do item',
+                extraClass: 'faf2021-row-action',
+                attributes: `data-faf2021-editar-item="${escapeHtml(item.itemId)}"`
+            });
+        }
+
+        function renderizarEditorExecucaoFaf2021(item) {
+            return `
+                <div class="modal fade" id="modalFaf2021Execucao" tabindex="-1" aria-hidden="true" data-faf2021-item-id="${escapeHtml(item.itemId)}">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div>
+                                    <p class="section-eyebrow mb-1">FAF 2021</p>
+                                    <h5 class="modal-title">Editar execução</h5>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="faf2021-editor-summary">
+                                    <div><span>UF</span><strong>${escapeHtml(item.uf || '-')}</strong></div>
+                                    <div><span>Objeto</span><strong>${escapeHtml(item.objeto || '-')}</strong></div>
+                                    <div><span>Quantidade</span><strong>${formatarQuantidadeProfor(item.quantidade)}</strong></div>
+                                    <div><span>Valor unitário</span><strong>${formatMoney(item.valorUnitario)}</strong></div>
+                                    <div><span>Valor total</span><strong>${formatMoney(item.valorTotal)}</strong></div>
+                                    <div><span>Executado atual</span><strong>${formatMoney(item.valorExecutado)}</strong></div>
+                                    <div><span>Instrumento</span><strong>${escapeHtml(item.instrumento || '-')}</strong></div>
+                                    <div><span>Atualizado em</span><strong>${escapeHtml(item.atualizadoEm || '-')}</strong></div>
+                                </div>
+
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="faf2021ValorExecutado">Novo valor executado</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="faf2021ValorExecutado"
+                                            min="0"
+                                            step="0.01"
+                                            inputmode="decimal"
+                                            value="${escapeHtml(String(item.valorExecutado ?? 0))}"
+                                        >
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="faf2021SenhaEdicao">Senha de confirmação</label>
+                                        <input
+                                            type="password"
+                                            class="form-control"
+                                            id="faf2021SenhaEdicao"
+                                            autocomplete="current-password"
+                                        >
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label" for="faf2021ObservacaoExecucao">Observação da execução</label>
+                                        <textarea class="form-control" id="faf2021ObservacaoExecucao" rows="3" maxlength="1000" placeholder="Observação opcional">${escapeHtml(item.observacaoExecucao || '')}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                ${renderActionButton({
+                                    id: 'faf2021SalvarExecucao',
+                                    type: 'save',
+                                    label: 'Salvar',
+                                    variant: 'primary',
+                                    backend: true
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function fecharEditorExecucaoFaf2021() {
+            removerModalOnasp('modalFaf2021Execucao');
+        }
+
+        function obterItemFaf2021PorId(itemId) {
+            const dados = obterDadosFaf2021();
+            return (dados?.itens || []).find((item) => String(item.itemId) === String(itemId)) || null;
+        }
+
+        function abrirEditorExecucaoFaf2021(itemId) {
+            if (dadosPaginaEmModoEstatico('faf2021') || dadosPaginaEmModoEstatico('faf2021-detalhe')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            const item = obterItemFaf2021PorId(itemId);
+            if (!item) {
+                alert('Item FAF 2021 não localizado.');
+                return;
+            }
+
+            fecharEditorExecucaoFaf2021();
+            document.body.insertAdjacentHTML('beforeend', renderizarEditorExecucaoFaf2021(item));
+
+            const modalElement = document.getElementById('modalFaf2021Execucao');
+            const modal = new window.bootstrap.Modal(modalElement);
+            modal.show();
+
+            document.getElementById('faf2021SalvarExecucao')?.addEventListener('click', async () => {
+                await salvarExecucaoFaf2021(item.itemId, modal);
+            });
+        }
+
+        async function salvarExecucaoFaf2021(itemId, modal = null) {
+            if (dadosPaginaEmModoEstatico('faf2021') || dadosPaginaEmModoEstatico('faf2021-detalhe')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            const item = obterItemFaf2021PorId(itemId);
+            if (!item) {
+                alert('Item FAF 2021 não localizado.');
+                return;
+            }
+
+            let valorExecutado;
+            let observacaoExecucao = '';
+
+            try {
+                valorExecutado = validarValorExecutadoFaf2021(document.getElementById('faf2021ValorExecutado')?.value);
+                observacaoExecucao = String(document.getElementById('faf2021ObservacaoExecucao')?.value || '').trim();
+                if (/<[^>]+>/.test(observacaoExecucao)) {
+                    throw new Error('Observação não pode conter HTML.');
+                }
+            } catch (error) {
+                alert(error.message);
+                return;
+            }
+
+            const password = document.getElementById('faf2021SenhaEdicao')?.value || '';
+
+            try {
+                const { resposta, payload } = await fetchJsonApiOnasp('/api/faf2021/salvar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        password,
+                        itemId: item.itemId,
+                        uf: item.uf,
+                        objeto: item.objeto,
+                        valorExecutado,
+                        observacaoExecucao
+                    })
+                });
+
+                if (!resposta.ok || !payload.success) {
+                    alert(payload.message || 'Não foi possível salvar.');
+                    return;
+                }
+
+                if (modal) modal.hide();
+                fecharEditorExecucaoFaf2021();
+                await carregarDadosFaf2021Editaveis(true);
+                if (faf2021UfDetalheAtual) {
+                    abrirDetalheFaf2021(faf2021UfDetalheAtual);
+                } else {
+                    renderFaf2021View();
+                }
+                alert(obterMensagemSalvamento(payload));
+            } catch (error) {
+                alert(`Não foi possível salvar: ${error.message}`);
+            }
+        }
+
         function atualizarTabelaFaf2021(dados) {
             const tbody = document.getElementById('faf-table-body');
             if (!tbody) return;
@@ -2567,7 +2786,7 @@ async function carregarLogoParaPDF() {
             renderizarResumoFiltroFunpen('faf-selected-summary', resumo, 'faf');
 
             if (itensOrdenados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Nenhum item FAF 2021 localizado para os filtros selecionados.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted py-4">Nenhum item FAF 2021 localizado para os filtros selecionados.</td></tr>';
                 return;
             }
 
@@ -2575,7 +2794,7 @@ async function carregarLogoParaPDF() {
                 const saldo = Number(item.saldo) || 0;
                 const percentual = Number(item.percentualExecucao) || 0;
                 return `
-                    <tr class="profor-row" tabindex="0" data-faf-uf="${escapeHtml(item.uf)}">
+                    <tr class="profor-row" tabindex="0" data-faf-uf="${escapeHtml(item.uf)}" data-faf2021-item-id="${escapeHtml(item.itemId)}">
                         <td data-label="UF" class="align-middle"><span class="badge badge-uf">${escapeHtml(item.uf)}</span></td>
                         <td data-label="Objeto" class="align-middle"><span class="truncate-text">${escapeHtml(item.objeto)}</span></td>
                         <td data-label="Qtd." class="text-center align-middle">${formatarQuantidadeProfor(item.quantidade)}</td>
@@ -2590,6 +2809,9 @@ async function carregarLogoParaPDF() {
                             </div>
                         </td>
                         <td data-label="Sinais" class="align-middle"><div class="profor-alert-list">${renderizarBadgesFaf(item)}</div></td>
+                        <td data-label="Ações" class="text-center align-middle faf2021-actions-cell">
+                            ${renderizarBotaoEdicaoFaf2021(item)}
+                        </td>
                     </tr>
                 `;
             }).join('');
@@ -2612,10 +2834,24 @@ async function carregarLogoParaPDF() {
             });
             const tbody = document.getElementById('faf-table-body');
             tbody?.addEventListener('click', (event) => {
+                const botaoEdicao = event.target.closest('[data-faf2021-editar-item]');
+                if (botaoEdicao) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    abrirEditorExecucaoFaf2021(botaoEdicao.dataset.faf2021EditarItem);
+                    return;
+                }
                 const row = event.target.closest('[data-faf-uf]');
                 if (row) abrirDetalheFaf2021(row.dataset.fafUf);
             });
             tbody?.addEventListener('keydown', (event) => {
+                const botaoEdicao = event.target.closest('[data-faf2021-editar-item]');
+                if (botaoEdicao) {
+                    if (event.key !== 'Enter' && event.key !== ' ') return;
+                    event.preventDefault();
+                    abrirEditorExecucaoFaf2021(botaoEdicao.dataset.faf2021EditarItem);
+                    return;
+                }
                 if (event.key !== 'Enter' && event.key !== ' ') return;
                 const row = event.target.closest('[data-faf-uf]');
                 if (!row) return;
@@ -2628,6 +2864,7 @@ async function carregarLogoParaPDF() {
             const container = document.getElementById('view-faf-2021');
             if (!container) return;
             container.style.display = 'block';
+            faf2021UfDetalheAtual = '';
             const dados = obterDadosFaf2021();
             if (!dados || !dados.itens?.length) {
                 container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados do FAF 2021 indisponíveis.</div>';
@@ -2710,7 +2947,7 @@ async function carregarLogoParaPDF() {
                                 <tr>
                                     <th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit.</th>
                                     <th class="text-end">Previsto</th><th class="text-end">Executado</th><th class="text-end">Saldo</th>
-                                    <th class="text-center">%</th><th>Sinais de gestão</th>
+                                    <th class="text-center">%</th><th>Sinais de gestão</th><th class="text-center">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="faf-table-body"></tbody>
@@ -2731,9 +2968,11 @@ async function carregarLogoParaPDF() {
             }
             const itens = dados.itens.filter((item) => item.uf === uf);
             if (!itens.length) {
+                faf2021UfDetalheAtual = '';
                 toggleView('faf2021');
                 return;
             }
+            faf2021UfDetalheAtual = uf;
             const resumo = calcularResumoItensFunpen(itens);
             const nomeEstado = obterNomeEstadoFunpen(uf);
             container.innerHTML = `
@@ -2770,7 +3009,7 @@ async function carregarLogoParaPDF() {
                                     <tr>
                                         <th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit.</th>
                                         <th class="text-end">Previsto</th><th class="text-end">Executado</th><th class="text-end">Saldo</th>
-                                        <th class="text-center">%</th><th>Sinais</th>
+                                        <th class="text-center">%</th><th>Sinais</th><th class="text-center">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -2791,6 +3030,9 @@ async function carregarLogoParaPDF() {
                                                     </div>
                                                 </td>
                                                 <td data-label="Sinais"><div class="profor-alert-list">${renderizarBadgesFaf(item)}</div></td>
+                                                <td data-label="Ações" class="text-center align-middle faf2021-actions-cell">
+                                                    ${renderizarBotaoEdicaoFaf2021(item)}
+                                                </td>
                                             </tr>
                                         `;
                                     }).join('')}
@@ -2800,6 +3042,21 @@ async function carregarLogoParaPDF() {
                     </section>
                 </div>
             `;
+            const tabelaDetalhe = container.querySelector('tbody');
+            tabelaDetalhe?.addEventListener('click', (event) => {
+                const botaoEdicao = event.target.closest('[data-faf2021-editar-item]');
+                if (!botaoEdicao) return;
+                event.preventDefault();
+                event.stopPropagation();
+                abrirEditorExecucaoFaf2021(botaoEdicao.dataset.faf2021EditarItem);
+            });
+            tabelaDetalhe?.addEventListener('keydown', (event) => {
+                const botaoEdicao = event.target.closest('[data-faf2021-editar-item]');
+                if (!botaoEdicao) return;
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                abrirEditorExecucaoFaf2021(botaoEdicao.dataset.faf2021EditarItem);
+            });
             toggleView('faf2021-detalhe');
         }
 
@@ -9858,6 +10115,9 @@ window.abrirOrcamento = () => toggleView('orcamento');
 window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
 window.abrirDiagnosticoOuvidorias = () => toggleView('diagnostico-ouvidorias');
 window.abrirStatusSistema = () => toggleView('status-sistema');
+window.abrirEditorExecucaoFaf2021 = abrirEditorExecucaoFaf2021;
+window.fecharEditorExecucaoFaf2021 = fecharEditorExecucaoFaf2021;
+window.salvarExecucaoFaf2021 = salvarExecucaoFaf2021;
 window.abrirEditorFormalizacao = abrirEditorFormalizacao;
 window.cancelarEdicaoFormalizacao = cancelarEdicaoFormalizacao;
 window.salvarAlteracoesFormalizacao = salvarAlteracoesFormalizacao;

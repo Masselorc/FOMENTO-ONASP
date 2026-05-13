@@ -15,7 +15,7 @@ const JSON_PUBLICADOS_URLS = {
     orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url)
 };
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
-const VERSAO_DADOS = '20260507-04';
+const VERSAO_DADOS = '20260513-01';
 const PORTA_API_ONASP = '8790';
 const ABA_RESUMO_CONVENIOS = 'Geral';
 const ARQUIVO_PLANILHA_ORCAMENTO = 'Planilhas/orcamento_onasp.xlsx';
@@ -515,6 +515,8 @@ function normalizarItemBaseFomento(item, catalogoAplicacao) {
     const uf = normalizarTexto(item.uf);
 
     return {
+        itemId: item.itemId || '',
+        indiceDadosBase: Number.isInteger(item.indiceDadosBase) ? item.indiceDadosBase : null,
         uf,
         nomeEstado: obterNomeEstadoCatalogo(catalogoAplicacao, uf),
         instrumento: limparTexto(item.instrumento),
@@ -523,6 +525,8 @@ function normalizarItemBaseFomento(item, catalogoAplicacao) {
         valorUnitario: arredondarMoeda(converterNumeroPlanilha(item.valorUnitario)),
         valorTotal,
         valorExecutado,
+        observacaoExecucao: limparTexto(item.observacaoExecucao || item.observacao_execucao || ''),
+        atualizadoEm: limparTexto(item.atualizadoEm || item.atualizado_em || ''),
         saldo: arredondarMoeda(valorTotal - valorExecutado),
         percentualExecucao: valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0
     };
@@ -546,6 +550,11 @@ function montarResumoItensFomento(itens) {
 
 function montarDadosFaf2021(catalogoAplicacao) {
     const itens = (catalogoAplicacao?.dadosBase || [])
+        .map((item, indiceDadosBase) => ({
+            ...item,
+            indiceDadosBase,
+            itemId: `faf2021_idx_${indiceDadosBase}`
+        }))
         .filter((item) => normalizarTexto(item.instrumento) === 'FAF 2021')
         .map((item) => normalizarItemBaseFomento(item, catalogoAplicacao));
 
@@ -4234,7 +4243,14 @@ export async function carregarDadosFormalizacaoProfor(forcarRecarregamento = fal
     return dadosFormalizacaoProforCache;
 }
 
-export async function carregarCatalogoAplicacao() {
+export async function carregarCatalogoAplicacao(forcarRecarregamento = false) {
+    if (forcarRecarregamento) {
+        catalogoAplicacaoCache = null;
+        dadosProfor2022Cache = null;
+        dadosFaf2021Cache = null;
+        dadosDoacoes2023Cache = null;
+    }
+
     if (catalogoAplicacaoCache) {
         return catalogoAplicacaoCache;
     }
