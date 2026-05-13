@@ -1862,20 +1862,6 @@ table.dataTable thead td,
     font-size: 0.68rem;
 }
 
-.budget-linked-parent-previsto-detail {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.68rem;
-    font-weight: 400;
-    gap: 0.1rem;
-    margin-top: 0.2rem;
-}
-
-.budget-linked-parent-previsto-detail span {
-    color: var(--color-muted);
-    white-space: nowrap;
-}
-
 @media (max-width: 767.98px) {
     .budget-linked-summary {
         flex-direction: column;

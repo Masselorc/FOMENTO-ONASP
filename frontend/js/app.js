@@ -6307,8 +6307,9 @@ async function carregarLogoParaPDF() {
                             <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
                         </td>
                         <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">
-                            ${formatMoney(item.valorPrevisto ?? item.valorTotal)}
-                            ${resumoVinculosItem ? `<div class="budget-linked-parent-previsto-detail"><span>Distr.: ${formatMoney(resumoVinculosItem.valorDistribuido)}</span><span${(Number(item.valorPrevisto ?? item.valorTotal) || 0) - resumoVinculosItem.valorDistribuido < 0 ? ' class="text-danger"' : ''}>Saldo: ${formatMoney((Number(item.valorPrevisto ?? item.valorTotal) || 0) - resumoVinculosItem.valorDistribuido)}</span></div>` : ''}
+                            ${formatMoney(resumoVinculosItem
+                                ? (Number(item.valorPrevisto ?? item.valorTotal) || 0) - resumoVinculosItem.valorDistribuido
+                                : (item.valorPrevisto ?? item.valorTotal))}
                         </td>
                         <td data-label="Em execução" class="align-middle">
                             <div class="budget-execution-cell">
