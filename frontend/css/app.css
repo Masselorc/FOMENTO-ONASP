@@ -2267,19 +2267,7 @@ table.dataTable thead td,
 }
 
 .budget-link-button {
-    align-items: center;
-    background: #ffffff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    color: var(--color-primary);
-    display: inline-flex;
-    font-size: 0.7rem;
-    font-weight: 800;
-    gap: 0.22rem;
-    min-height: 28px;
-    padding: 0.15rem 0.35rem;
     text-decoration: none;
-    white-space: nowrap;
 }
 
 .budget-main-table thead th,
