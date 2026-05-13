@@ -328,3 +328,13 @@
 - Arquivos NÃO alterados: backend, banco, `frontend/data/publicados/*.json`.
 - Risco de regressão: baixo; todas as novas funções são aditivas e as alterações em funções existentes restringem-se a chamadas de `carregarMovimentacoesOrcamento2026()` e inserção de botão no template HTML.
 - Rollback: `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 13/05/2026 - Etapa 9 — teste E2E do Orçamento 2026 sem persistir dados
+
+- Data: 13/05/2026.
+- Objetivo: criar cobertura E2E específica para a tela Orçamento 2026, validando carregamento da view, presença da tabela principal, visibilidade das colunas "Valor previsto" e "Ações" e abertura/fechamento seguro dos modais "Dividir recurso" e "Alocar saldo" sem escrita real.
+- Teste criado: `tests/e2e/app.spec.js` ganhou `orcamento 2026 expõe ações de divisão e alocação sem erro crítico`.
+- Regra de bloqueio: o teste bloqueia as rotas `POST /api/orcamento-2026/processos-vinculados/criar`, `POST /api/orcamento-2026/saldos/alocar` e `POST /api/orcamento-2026/salvar`; se alguma for acionada, o teste falha.
+- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026 expõe ações de divisão e alocação sem erro crítico"`, `npm run validar:agente`.
+- Resultado: validações passaram; o teste específico abriu a view Orçamento 2026, confirmou a tabela principal, validou as colunas pedidas, abriu e fechou os modais quando os botões estavam presentes e não persistiu dados reais.
+- Próxima etapa recomendada: ampliar a cobertura E2E gradualmente para outros fluxos críticos da aplicação, mantendo a mesma regra de bloqueio de escrita.
