@@ -1,8 +1,13 @@
 .codex-temp/
 node_modules/
 .env
+.env.*
+!.env.example
 .env.local
 .env.*.local
+playwright-report/
+test-results/
+blob-report/
 
 # Memória versionada parcialmente
 # Versionar notas Markdown e dados tratados não sensíveis.
@@ -14,6 +19,12 @@ memoria/**/*.pdf
 memoria/**/*.xlsx
 memoria/**/*.xls
 memoria/**/*.docx
+memoria/**/*.doc
+memoria/**/*.pptx
+memoria/**/*.ppt
+memoria/**/*.zip
+memoria/**/*.rar
+memoria/**/*.7z
 memoria/**/*.png
 memoria/**/*.jpg
 memoria/**/*.jpeg

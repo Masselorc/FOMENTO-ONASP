@@ -4,11 +4,17 @@
     "init-db": "node backend/db/init-db.js",
     "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js",
     "publicar:dados": "node backend/scripts/publicar-dados-estaticos.js",
-    "setup:hooks": "node scripts/configurar-git-hooks.js"
+    "setup:hooks": "node scripts/configurar-git-hooks.js",
+    "validar:json": "node scripts/validar-json-publicados.js",
+    "validar:syntax": "node --check scripts/validar-json-publicados.js && node --check playwright.config.js && node --check tests/e2e/app.spec.js",
+    "validar:agente": "npm run validar:json && npm run validar:syntax && npx playwright test"
   },
   "dependencies": {
     "better-sqlite3": "^12.9.0",
     "dotenv": "^17.4.2",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
   }
 }
