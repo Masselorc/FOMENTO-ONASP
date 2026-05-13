@@ -52,6 +52,12 @@ function inicializarBanco() {
   garantirColuna("parametros_minimos", "quantidade_atual", "REAL");
   garantirColuna("parametros_minimos", "quantidade_ideal", "REAL");
   garantirColuna("parametros_minimos", "resposta_original", "TEXT");
+  // Campos usados para vincular processos filhos ao envelope orcamentario principal sem duplicar o total do orcamento.
+  garantirColuna("orcamento_2026", "processo_pai_id", "TEXT");
+  garantirColuna("orcamento_2026", "tipo_processo", "TEXT DEFAULT 'PRINCIPAL'");
+  garantirColuna("orcamento_2026", "origem_recurso_id", "TEXT");
+  garantirColuna("orcamento_2026", "ordem_exibicao", "INTEGER");
+  garantirColuna("orcamento_2026", "valor_alocado_origem", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "valor_estimado_pesquisa_preco", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "valor_empenhado", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "processo_autuado", "INTEGER DEFAULT 0");
@@ -60,6 +66,7 @@ function inicializarBanco() {
   garantirColuna("orcamento_2026", "ativo", "INTEGER DEFAULT 1");
   garantirColuna("orcamento_2026", "classificacao_gerencial", "TEXT DEFAULT 'NAO_APARELHAMENTO'");
   garantirColunasOrcamentoRastreio();
+  garantirTabelaMovimentacoesOrcamento2026();
 }
 
 function garantirColunasOrcamentoRastreio() {
@@ -124,6 +131,23 @@ function garantirColunasOrcamentoRastreio() {
     ["link_profor_publicacao_gabsec", "TEXT"],
     ["data_profor_publicacao_gabsec", "TEXT"]
   ].forEach(([coluna, definicao]) => garantirColuna("orcamento_2026", coluna, definicao));
+}
+
+function garantirTabelaMovimentacoesOrcamento2026() {
+  // Registra deslocamentos de saldo entre processos, preservando trilha de auditoria sem sobrescrever o valor original.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS orcamento_2026_movimentacoes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tipo TEXT NOT NULL,
+      origem_id TEXT,
+      destino_id TEXT,
+      valor REAL NOT NULL DEFAULT 0,
+      justificativa TEXT,
+      criado_em TEXT NOT NULL,
+      criado_por TEXT,
+      ativo INTEGER DEFAULT 1
+    );
+  `);
 }
 
 function garantirColuna(tabela, coluna, definicao) {
