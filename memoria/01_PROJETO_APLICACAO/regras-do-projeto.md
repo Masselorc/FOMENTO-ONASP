@@ -2,143 +2,143 @@
 
 ## Finalidade
 
-Este arquivo registra regras operacionais especificas do projeto FOMENTO-ONASP. Ele complementa o `AGENTS.md` e o `memoria/INDEX.md`, sem substitui-los.
+Este arquivo registra regras operacionais específicas do projeto FOMENTO-ONASP. Ele complementa o `AGENTS.md` e o `memoria/INDEX.md`, sem substituí-los.
 
-Use este arquivo para orientar alteracoes tecnicas, revisoes, validacoes e tarefas com IA/Codex. Ele nao deve conter documentos brutos, dados sigilosos, credenciais, anexos ou regras de negocio inventadas.
+Use este arquivo para orientar alterações técnicas, revisões, validações e tarefas com IA/Codex. Ele não deve conter documentos brutos, dados sigilosos, credenciais, anexos ou regras de negócio inventadas.
 
 ## Arquitetura operacional
 
 O projeto combina:
 
 - backend local em Node, com ponto principal em `backend/server.js`;
-- servicos de leitura, normalizacao, persistencia, historico, exportacao e publicacao em `backend/services/`;
-- banco SQLite local em `backend/data/onasp.sqlite`, nao versionavel;
+- serviços de leitura, normalização, persistência, histórico, exportação e publicação em `backend/services/`;
+- banco SQLite local em `backend/data/onasp.sqlite`, não versionável;
 - frontend SPA com arquivo principal em `frontend/js/app.js` e estilos em `frontend/css/app.css`;
-- JSONs publicos em `frontend/data/publicados/`, usados no modo estatico/GitHub Pages;
+- JSONs públicos em `frontend/data/publicados/`, usados no modo estático/GitHub Pages;
 - planilhas e bases de origem em `Planilhas/`, usadas no fluxo local de dados.
 
-Antes de alterar qualquer comportamento, confira a camada diretamente afetada e o impacto nas demais: frontend, backend, servicos, banco, publicacao estatica e memoria.
+Antes de alterar qualquer comportamento, confira a camada diretamente afetada e o impacto nas demais: frontend, backend, serviços, banco, publicação estática e memória.
 
-## Modos de execucao
+## Modos de execução
 
 ### Modo local/API
 
-- E o modo editavel do projeto.
+- É o modo editável do projeto.
 - Usa backend local, rotas de API e banco SQLite.
-- Pode executar importacoes, persistencias e publicacao de JSONs quando a tarefa exigir.
-- Validacoes devem considerar console do navegador, logs do backend, resposta das APIs e integridade do banco quando houver impacto.
+- Pode executar importações, persistências e publicação de JSONs quando a tarefa exigir.
+- Validações devem considerar console do navegador, logs do backend, resposta das APIs e integridade do banco quando houver impacto.
 
-### Modo estatico/GitHub Pages
+### Modo estático/GitHub Pages
 
-- E modo somente leitura.
+- É modo somente leitura.
 - Usa os arquivos em `frontend/data/publicados/`.
-- Nao deve depender de backend local, banco SQLite ou rotas de escrita.
-- Controles que dependem do backend devem permanecer bloqueados ou identificados de forma compativel com o modo estatico, inclusive quando houver uso de `data-requer-backend="true"` e `static-mode.js`.
-- Qualquer alteracao deve preservar a leitura dos JSONs publicados e evitar quebrar a publicacao estatica.
+- Não deve depender de backend local, banco SQLite ou rotas de escrita.
+- Controles que dependem do backend devem permanecer bloqueados ou identificados de forma compatível com o modo estático, inclusive quando houver uso de `data-requer-backend="true"` e `static-mode.js`.
+- Qualquer alteração deve preservar a leitura dos JSONs publicados e evitar quebrar a publicação estática.
 
 ## Regras para frontend
 
 - Preservar a arquitetura da SPA e os pontos de entrada existentes.
-- Nao reescrever fluxos inteiros para resolver ajustes localizados.
-- Nao renomear rotas, views, IDs, classes estruturais ou chaves internas sem buscar referencias.
-- Manter diferenca entre nome visivel da pagina e identificador tecnico interno quando isso ja existir no projeto.
-- Evitar mudancas cosmeticas fora do escopo da tarefa.
-- Em paginas criticas, preferir seletores estaveis para teste, como `data-testid`, quando a tarefa permitir.
-- Preservar responsividade, acessibilidade basica e leitura em modo estatico.
+- Não reescrever fluxos inteiros para resolver ajustes localizados.
+- Não renomear rotas, views, IDs, classes estruturais ou chaves internas sem buscar referências.
+- Manter diferença entre nome visível da página e identificador técnico interno quando isso já existir no projeto.
+- Evitar mudanças cosméticas fora do escopo da tarefa.
+- Em páginas críticas, preferir seletores estáveis para teste, como `data-testid`, quando a tarefa permitir.
+- Preservar responsividade, acessibilidade básica e leitura em modo estático.
 
 ## Regras para backend
 
-- Nao alterar `backend/server.js`, rotas ou endpoints sem necessidade clara e evidencia no codigo.
-- Antes de remover rota, parametro, campo de payload ou resposta, buscar referencias no frontend, servicos e testes.
-- Nao introduzir novo backend, framework ou camada paralela.
-- Validar entradas, erros e respostas de API quando a tarefa tocar rotas ou persistencia.
-- Preservar compatibilidade com os fluxos de importacao, salvamento e publicacao ja existentes.
+- Não alterar `backend/server.js`, rotas ou endpoints sem necessidade clara e evidência no código.
+- Antes de remover rota, parâmetro, campo de payload ou resposta, buscar referências no frontend, serviços e testes.
+- Não introduzir novo backend, framework ou camada paralela.
+- Validar entradas, erros e respostas de API quando a tarefa tocar rotas ou persistência.
+- Preservar compatibilidade com os fluxos de importação, salvamento e publicação já existentes.
 
 ## Regras para banco de dados
 
-- `backend/data/onasp.sqlite` e demais arquivos SQLite locais nao devem ser versionados.
-- Nao executar alteracoes destrutivas sem backup, criterio de validacao e rollback.
-- Nao inventar tabelas, colunas, campos, chaves ou migrations.
+- `backend/data/onasp.sqlite` e demais arquivos SQLite locais não devem ser versionados.
+- Não executar alterações destrutivas sem backup, critério de validação e rollback.
+- Não inventar tabelas, colunas, campos, chaves ou migrations.
 - Quando uma tarefa depender do banco, validar com os scripts e rotas existentes antes de concluir.
-- Evitar tocar em `backend/db/` se a tarefa for apenas documental, visual ou de publicacao estatica.
+- Evitar tocar em `backend/db/` se a tarefa for apenas documental, visual ou de publicação estática.
 
-## Regras para servicos
+## Regras para serviços
 
-- `backend/services/` concentra logicas de leitura, normalizacao, persistencia, historico, exportacao e publicacao.
-- Antes de alterar um servico, identificar quem o chama: rotas, scripts, frontend, publicacao ou importadores.
-- Nao remover funcao, campo, normalizacao ou compatibilidade sem verificar referencias.
-- Mudancas em servicos que alimentam JSONs publicados devem considerar tambem o modo estatico.
-- Evitar duplicar regra de negocio no frontend quando ela ja estiver consolidada em servico.
+- `backend/services/` concentra lógicas de leitura, normalização, persistência, histórico, exportação e publicação.
+- Antes de alterar um serviço, identificar quem o chama: rotas, scripts, frontend, publicação ou importadores.
+- Não remover função, campo, normalização ou compatibilidade sem verificar referências.
+- Mudanças em serviços que alimentam JSONs publicados devem considerar também o modo estático.
+- Evitar duplicar regra de negócio no frontend quando ela já estiver consolidada em serviço.
 
 ## Regras para dados e planilhas
 
-- Planilhas e bases de origem devem ser tratadas como fontes, nao como texto livre.
-- Nao inventar UFs, processos, valores, metricas, percentuais, datas ou situacoes.
-- Qualquer metrica deve ser calculada a partir de fonte existente ou dado retornado pelo sistema.
-- Nao versionar planilhas, PDFs, DOCX, logs, backups, anexos pesados ou documentos sensiveis na memoria.
-- Se houver divergencia entre dado publicado e origem local, registrar a evidencia antes de corrigir.
+- Planilhas e bases de origem devem ser tratadas como fontes, não como texto livre.
+- Não inventar UFs, processos, valores, métricas, percentuais, datas ou situações.
+- Qualquer métrica deve ser calculada a partir de fonte existente ou dado retornado pelo sistema.
+- Não versionar planilhas, PDFs, DOCX, logs, backups, anexos pesados ou documentos sensíveis na memória.
+- Se houver divergência entre dado publicado e origem local, registrar a evidência antes de corrigir.
 
 ## Regras para JSONs publicados
 
-- `frontend/data/publicados/` e a base do modo estatico/GitHub Pages.
-- Nao alterar JSON publicado manualmente sem justificativa explicita.
-- Preferir gerar publicacao pelos comandos existentes quando a tarefa for de dados.
-- Nao rodar `npm run publicar:dados` em tarefas documentais, cosmeticas, de teste ou de infraestrutura sem necessidade clara.
+- `frontend/data/publicados/` é a base do modo estático/GitHub Pages.
+- Não alterar JSON publicado manualmente sem justificativa explícita.
+- Preferir gerar publicação pelos comandos existentes quando a tarefa for de dados.
+- Não rodar `npm run publicar:dados` em tarefas documentais, cosméticas, de teste ou de infraestrutura sem necessidade clara.
 - Evitar churn de timestamp em `frontend/data/publicados/*.json`.
 - Quando o hook de commit puder republicar dados indevidamente, usar `SKIP_PUBLICAR_DADOS=1` conforme o fluxo registrado do projeto.
-- Toda mudanca em JSON publicado deve ser revisada para confirmar que nao alterou regra de negocio ou dado financeiro por acidente.
+- Toda mudança em JSON publicado deve ser revisada para confirmar que não alterou regra de negócio ou dado financeiro por acidente.
 
-## Regras para seguranca e sigilo
+## Regras para segurança e sigilo
 
-- Nao versionar credenciais, tokens, `.env`, bancos SQLite, logs, backups, planilhas brutas ou anexos sensiveis.
-- Nao copiar documentos SEI integrais, PDFs, DOCX, XLSX, imagens ou bases brutas para `memoria/`.
-- A memoria deve conter apenas Markdown tratado, sintetico, operacional e nao sensivel.
-- Em dados pessoais ou administrativos, aplicar minima exposicao e evitar exemplos com informacao real desnecessaria.
-- Nao publicar no frontend informacao que dependa de sigilo, autenticacao ou contexto interno.
+- Não versionar credenciais, tokens, `.env`, bancos SQLite, logs, backups, planilhas brutas ou anexos sensíveis.
+- Não copiar documentos SEI integrais, PDFs, DOCX, XLSX, imagens ou bases brutas para `memoria/`.
+- A memória deve conter apenas Markdown tratado, sintético, operacional e não sensível.
+- Em dados pessoais ou administrativos, aplicar mínima exposição e evitar exemplos com informação real desnecessária.
+- Não publicar no frontend informação que dependa de sigilo, autenticação ou contexto interno.
 
-## Regras para alteracoes com IA/Codex
+## Regras para alterações com IA/Codex
 
 - Tratar modelos de IA como executores controlados.
-- Ler `AGENTS.md`, `memoria/INDEX.md`, os arquivos de memoria indicados e os arquivos reais afetados antes de editar.
-- Fazer patches pequenos, rastreaveis, testaveis e reversiveis.
-- Nao criar dependencia nova sem justificar necessidade, alternativa nativa, impacto e risco de manutencao.
-- Nao inventar arquitetura, endpoint, schema, arquivo, valor, fundamento normativo ou pendencia.
-- Interromper e relatar quando o contexto for insuficiente para uma mudanca segura.
+- Ler `AGENTS.md`, `memoria/INDEX.md`, os arquivos de memória indicados e os arquivos reais afetados antes de editar.
+- Fazer patches pequenos, rastreáveis, testáveis e reversíveis.
+- Não criar dependência nova sem justificar necessidade, alternativa nativa, impacto e risco de manutenção.
+- Não inventar arquitetura, endpoint, schema, arquivo, valor, fundamento normativo ou pendência.
+- Interromper e relatar quando o contexto for insuficiente para uma mudança segura.
 
-## Regras para testes e validacao
+## Regras para testes e validação
 
-- Para tarefa documental, usar validacoes de diff e Markdown; nao rodar testes de aplicacao sem necessidade.
-- Para JavaScript alterado, usar `node --check` quando aplicavel.
-- Para dados publicados, usar `npm run validar:json` e conferir se nao houve churn indevido.
-- Para validacao agentic, usar `npm run validar:syntax` e `npm run validar:agente` quando a tarefa tocar scripts ou testes.
-- Para backend/API, validar com `npm start`, logs do backend e chamadas reais de API quando necessario.
-- Para frontend, validar abertura da pagina, console do navegador, responsividade e fluxo principal afetado.
-- Sempre revisar `git diff --check` antes de finalizar alteracoes versionaveis.
+- Para tarefa documental, usar validações de diff e Markdown; não rodar testes de aplicação sem necessidade.
+- Para JavaScript alterado, usar `node --check` quando aplicável.
+- Para dados publicados, usar `npm run validar:json` e conferir se não houve churn indevido.
+- Para validação agentic, usar `npm run validar:syntax` e `npm run validar:agente` quando a tarefa tocar scripts ou testes.
+- Para backend/API, validar com `npm start`, logs do backend e chamadas reais de API quando necessário.
+- Para frontend, validar abertura da página, console do navegador, responsividade e fluxo principal afetado.
+- Sempre revisar `git diff --check` antes de finalizar alterações versionáveis.
 
 ## Regras para Git, commit, PR e rollback
 
 - Antes de commitar, conferir `git status`, `git diff --name-only`, `git diff --check` e arquivos staged.
 - Adicionar ao commit apenas arquivos do escopo.
-- Mensagens devem seguir `tipo(escopo): descricao curta`.
-- Nao usar `git reset --hard`, force push ou limpeza destrutiva sem pedido explicito.
-- Para commits que nao tratem de dados publicados, evitar republicacao automatica indevida com `SKIP_PUBLICAR_DADOS=1`, quando aplicavel.
-- Todo fechamento deve permitir rollback claro, preferencialmente por reversao dos arquivos alterados ou `git revert <hash>` quando ja houver commit publicado.
+- Mensagens devem seguir `tipo(escopo): descrição curta`.
+- Não usar `git reset --hard`, force push ou limpeza destrutiva sem pedido explícito.
+- Para commits que não tratem de dados publicados, evitar republicação automática indevida com `SKIP_PUBLICAR_DADOS=1`, quando aplicável.
+- Todo fechamento deve permitir rollback claro, preferencialmente por reversão dos arquivos alterados ou `git revert <hash>` quando já houver commit publicado.
 
-## Regras para atualizacao da memoria
+## Regras para atualização da memória
 
-- Atualizar `memoria/00_DIARIO_DE_BORDO/diario-atual.md` quando a tarefa alterar comportamento, fluxo, validacao, arquitetura, publicacao ou decisao relevante.
-- Atualizar `memoria/01_PROJETO_APLICACAO/pendencias.md` quando houver nova pendencia evidenciada ou conclusao de item registrado.
-- Nao criar arquivo tematico novo sem solicitacao expressa.
-- Diferenciar pendencia documental, risco tecnico, erro real e melhoria opcional.
-- Nao registrar no diario dados sensiveis, anexos brutos ou conteudo institucional integral.
+- Atualizar `memoria/00_DIARIO_DE_BORDO/diario-atual.md` quando a tarefa alterar comportamento, fluxo, validação, arquitetura, publicação ou decisão relevante.
+- Atualizar `memoria/01_PROJETO_APLICACAO/pendencias.md` quando houver nova pendência evidenciada ou conclusão de item registrado.
+- Não criar arquivo temático novo sem solicitação expressa.
+- Diferenciar pendência documental, risco técnico, erro real e melhoria opcional.
+- Não registrar no diário dados sensíveis, anexos brutos ou conteúdo institucional integral.
 
-## Criterios de aceite antes de concluir tarefa
+## Critérios de aceite antes de concluir tarefa
 
-- O escopo alterado corresponde ao pedido do usuario.
-- Nao houve alteracao indevida em backend, frontend, banco, planilhas ou JSONs publicados.
-- O modo local/API e o modo estatico continuam preservados quando a tarefa puder afeta-los.
-- Dados, metricas, UFs, valores, processos e fundamentos nao foram inventados.
-- As validacoes apropriadas ao tipo de tarefa foram executadas ou a impossibilidade foi registrada.
-- O diff esta limpo, restrito e sem erro de whitespace.
-- A memoria e o diario foram atualizados quando necessario.
-- Ha rollback objetivo para desfazer a alteracao.
+- O escopo alterado corresponde ao pedido do usuário.
+- Não houve alteração indevida em backend, frontend, banco, planilhas ou JSONs publicados.
+- O modo local/API e o modo estático continuam preservados quando a tarefa puder afetá-los.
+- Dados, métricas, UFs, valores, processos e fundamentos não foram inventados.
+- As validações apropriadas ao tipo de tarefa foram executadas ou a impossibilidade foi registrada.
+- O diff está limpo, restrito e sem erro de whitespace.
+- A memória e o diário foram atualizados quando necessário.
+- Há rollback objetivo para desfazer a alteração.
