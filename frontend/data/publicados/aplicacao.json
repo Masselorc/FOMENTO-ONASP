@@ -1363,8 +1363,10 @@
       "quantidade": 1,
       "valorUnitario": 1298,
       "valorTotal": 1298,
-      "valorExecutado": 0,
-      "instrumento": "FAF 2021"
+      "valorExecutado": 1077,
+      "instrumento": "FAF 2021",
+      "observacaoExecucao": "Anexo FUNDO A FUNDO 2021 CAPITAL (26881121)",
+      "atualizadoEm": "2026-05-13T17:10:55.306Z"
     },
     {
       "uf": "SP",
@@ -12628,7 +12630,7 @@
     }
   },
   "metadadosPublicacao": {
-    "publicadoEm": "2026-05-12T19:35:46.512Z",
+    "publicadoEm": "2026-05-13T17:14:49.274Z",
     "fonteDadosBase": "dados consolidados da Home local",
     "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx"
   }
