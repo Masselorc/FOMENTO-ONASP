@@ -1919,10 +1919,6 @@ table.dataTable thead td,
     min-width: 0;
 }
 
-.budget-tracking-edit-button {
-    min-height: 2.2rem;
-}
-
 .budget-tracking-eyebrow,
 .budget-tracking-status span {
     color: var(--color-muted);

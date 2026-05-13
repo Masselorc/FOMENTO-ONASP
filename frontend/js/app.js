@@ -5670,14 +5670,6 @@ async function carregarLogoParaPDF() {
                                         <span>Status informado</span>
                                         <strong>${escapeHtml(item.status || 'Não informado')}</strong>
                                     </div>
-                                    ${renderizarBotaoEdicaoOrcamento(item.id, {
-                                        labelEditar: 'Editar andamento processual',
-                                        labelFechar: 'Fechar edição',
-                                        titleEditar: 'Editar andamentos processuais',
-                                        titleFechar: 'Fechar edição dos andamentos',
-                                        iconOnly: true,
-                                        extraClass: 'budget-tracking-edit-button'
-                                    })}
                                 </div>
                             </div>
                             <ol class="budget-tracking-timeline" style="--budget-tracking-steps: ${etapas.length};">

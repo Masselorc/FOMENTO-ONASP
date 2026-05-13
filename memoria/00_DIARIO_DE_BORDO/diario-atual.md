@@ -116,14 +116,14 @@
 - Risco de regressão: baixo; a mudança ficou restrita à exposição de dados no serviço do orçamento.
 - Rollback: antes do commit, `git checkout -- backend/services/orcamento-2026-service.js memoria/00_DIARIO_DE_BORDO/diario-atual.md`; após commit, `git revert <hash_do_commit>` e `git push origin HEAD`.
 
-## 13/05/2026 - Botao de edicao do Orçamento 2026
+## 13/05/2026 - Botao duplicado do Orçamento 2026
 
 - Data: 13/05/2026.
-- Objetivo: corrigir o botão de editar andamento na tela Orçamento 2026 para não quebrar em duas linhas.
-- Ajuste aplicado: o botão do painel de rastreio passou a ser renderizado como `iconOnly`, preservando o rótulo acessível oculto e mantendo o título de ajuda.
-- Arquivos alterados: `frontend/js/app.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
-- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, verificação visual da estrutura do renderizador no código.
-- Resultado: o botão fica compacto na interface, sem alterar o comportamento de abrir/fechar a edição do andamento.
-- Próxima etapa recomendada: manter a Etapa 3 no Orçamento 2026 sem expandir a alteração visual para outros botões da tela.
-- Risco de regressão: baixo; a mudança ficou restrita ao botão de edição do rastreio processual.
-- Rollback: antes do commit, `git checkout -- frontend/js/app.js memoria/00_DIARIO_DE_BORDO/diario-atual.md`; após commit, `git revert <hash_do_commit>` e `git push origin HEAD`.
+- Objetivo: remover o botão duplicado de edição exibido no cabeçalho do andamento processual da tela Orçamento 2026.
+- Ajuste aplicado: o cabeçalho do rastreio passou a exibir apenas o status informado; o botão duplicado foi removido, preservando o botão principal da linha.
+- Arquivos alterados: `frontend/js/app.js`, `frontend/css/app.css`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, verificação no navegador com `trackingButtons = 0` e `lineButtons = 10`.
+- Resultado: o botão duplicado deixou de aparecer quando o processo é expandido, sem alterar a edição principal do orçamento.
+- Próxima etapa recomendada: seguir a Etapa 3 do Orçamento 2026 sem reintroduzir ação duplicada no cabeçalho do rastreio.
+- Risco de regressão: baixo; a mudança ficou restrita à remoção de um controle redundante.
+- Rollback: antes do commit, `git checkout -- frontend/js/app.js frontend/css/app.css memoria/00_DIARIO_DE_BORDO/diario-atual.md`; após commit, `git revert <hash_do_commit>` e `git push origin HEAD`.
