@@ -364,3 +364,15 @@
 - Resultado: documentação criada com linguagem objetiva e operacional; nenhuma alteração em código, backend, banco, JSON publicado ou hooks.
 - Próxima etapa recomendada: manter a documentação alinhada sempre que a operação do Orçamento 2026 sofrer mudança funcional relevante.
 - Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` caso o commit precise ser desfeito após envio.
+
+## 13/05/2026 - Fluxo de dados da aplicação
+
+- Branch atual: `main`.
+- Tarefa executada: preenchimento de `memoria/08_ROTAS_BANCO_API/fluxo-dados.md` com o fluxo real de dados do projeto.
+- Arquivos alterados: `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: documentadas as fontes locais, planilhas, banco SQLite, serviços backend, rotas locais de API, frontend SPA, publicação estática, JSONs publicados, diferenças entre modo local/API e modo estático/GitHub Pages, fluxos por área funcional, exportações, validações e riscos de alteração de dados.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/08_ROTAS_BANCO_API/fluxo-dados.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: documentação preparada sem alteração de código, backend, banco, scripts, testes, planilhas ou JSONs publicados.
+- Pendências: detalhar futuramente endpoints, payloads e respostas em `memoria/08_ROTAS_BANCO_API/rotas.md`; detalhar tabelas, colunas e constraints em `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização caso o fluxo de dados mude sem atualização da memória.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
