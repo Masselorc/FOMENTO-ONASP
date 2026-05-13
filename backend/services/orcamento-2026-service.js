@@ -120,6 +120,11 @@ const COLUNAS_ORCAMENTO = [
   "status",
   "observacao",
   "compoe_orcamento",
+  "processo_pai_id",
+  "tipo_processo",
+  "origem_recurso_id",
+  "ordem_exibicao",
+  "valor_alocado_origem",
   "classificacao_gerencial",
   "ativo",
   "tipo_rastreio",
@@ -199,6 +204,11 @@ const MAPA_CAMEL = {
   processo_sei: "processoSei",
   processo_autuado: "processoAutuadoNumero",
   compoe_orcamento: "compoeOrcamentoNumero",
+  processo_pai_id: "processoPaiId",
+  tipo_processo: "tipoProcesso",
+  origem_recurso_id: "origemRecursoId",
+  ordem_exibicao: "ordemExibicao",
+  valor_alocado_origem: "valorAlocadoOrigem",
   classificacao_gerencial: "classificacaoGerencial",
   link_processo_sei: "linkProcessoSei",
   data_processo_sei: "dataProcessoSei",
@@ -569,6 +579,18 @@ function preencherColunas(item) {
       acc[coluna] = normalizarClassificacaoGerencial(item[coluna]);
       return acc;
     }
+    if (coluna === "tipo_processo") {
+      acc[coluna] = item[coluna] || "PRINCIPAL";
+      return acc;
+    }
+    if (coluna === "valor_alocado_origem") {
+      acc[coluna] = Number(item[coluna]) || 0;
+      return acc;
+    }
+    if (coluna === "ordem_exibicao") {
+      acc[coluna] = item[coluna] ?? null;
+      return acc;
+    }
     acc[coluna] = item[coluna] ?? (coluna.startsWith("valor_") || ["processo_autuado", "compoe_orcamento", "ativo"].includes(coluna) ? 0 : "");
     return acc;
   }, {});
@@ -707,6 +729,15 @@ function linhaParaItem(linha) {
   Object.entries(MAPA_CAMEL).forEach(([coluna, propriedade]) => {
     if (item[propriedade] === undefined) item[propriedade] = linha[coluna] ?? "";
   });
+
+  // Campos de vínculo expostos na API; as regras de criação e saldo serão implementadas em etapas posteriores.
+  item.processoPaiId = linha.processo_pai_id || "";
+  item.tipoProcesso = linha.tipo_processo || "PRINCIPAL";
+  item.origemRecursoId = linha.origem_recurso_id || "";
+  item.ordemExibicao = linha.ordem_exibicao === "" || linha.ordem_exibicao === null || linha.ordem_exibicao === undefined
+    ? null
+    : Number(linha.ordem_exibicao);
+  item.valorAlocadoOrigem = Number(linha.valor_alocado_origem) || 0;
 
   return item;
 }
