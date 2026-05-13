@@ -352,3 +352,15 @@
 - Houve alteração de código: não.
 - Próxima etapa recomendada: revisar se novos commits futuros exigem republicação ou se o modo publicado permanece estável sem churn adicional.
 - Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` se a publicação precisar ser desfeita após commit enviado.
+
+## 13/05/2026 - Etapa 11 — documentação do fluxo operacional do Orçamento 2026
+
+- Data: 13/05/2026.
+- Objetivo: documentar, em formato operacional e institucional, o fluxo da tela Orçamento 2026 após as últimas implementações de divisão de recurso, alocação de saldo, consolidação visual e teste E2E sem persistência.
+- Documento criado: `memoria/01_PROJETO_APLICACAO/orcamento-2026-fluxo-operacional.md`.
+- Principais tópicos documentados: processo principal, processo vinculado, divisão de recurso, alocação de saldo, envelope original, envelope visual ajustado, valores recebido/cedido/vinculado, saldo transferível, cuidados com publicação estática e testes recomendados.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/orcamento-2026-fluxo-operacional.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `git diff --check`.
+- Resultado: documentação criada com linguagem objetiva e operacional; nenhuma alteração em código, backend, banco, JSON publicado ou hooks.
+- Próxima etapa recomendada: manter a documentação alinhada sempre que a operação do Orçamento 2026 sofrer mudança funcional relevante.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` caso o commit precise ser desfeito após envio.
