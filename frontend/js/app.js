@@ -5824,36 +5824,77 @@ async function carregarLogoParaPDF() {
         function renderizarFilhosVinculadosOrcamento(filhos) {
             if (!filhos.length) return '';
             return filhos.map((filho) => {
-                const processoSei = filho.processoSei || '';
-                const status = filho.status || '';
+                const filhoId = String(filho.id);
+                const podeExibirRastreio = itemPodeExibirRastreioOrcamento(filho);
+                const rastreioAberto = podeExibirRastreio && orcamentoItensRastreioAbertos.has(filhoId);
+                const idRastreio = obterIdRastreioOrcamento(filho);
+                const quantidadeUnidade = [filho.quantidade, filho.unidade].filter(Boolean).join(' ');
+                const processoAutuado = normalizarBooleanOrcamento(obterValorPendenteOrcamento(filho, 'processo_autuado'));
+                const valorEstimado = obterValorPendenteOrcamento(filho, 'valor_estimado_pesquisa_preco');
+                const valorEmpenhado = obterValorPendenteOrcamento(filho, 'valor_empenhado');
+                const valorExecutado = obterValorPendenteOrcamento(filho, 'valor_executado');
+                const classificacaoGerencial = normalizarClassificacaoGerencialOrcamento(obterValorPendenteOrcamento(filho, 'classificacao_gerencial'));
+                const saldoAparelhamento = classificacaoGerencial === 'APARELHAMENTO'
+                    ? Math.max(0, (Number(filho.valorPrevisto ?? filho.valorTotal) || 0) - (Number(valorEstimado) || 0))
+                    : 0;
+                const processoSei = obterValorPendenteOrcamento(filho, 'processo_sei') || filho.processoSei;
+                const status = obterValorPendenteOrcamento(filho, 'status');
+                const observacao = obterValorPendenteOrcamento(filho, 'observacao');
                 const valorPrevisto = Number(filho.valorPrevisto ?? filho.valorTotal) || 0;
+
                 return `
-                    <tr class="budget-linked-child-row">
-                        <td colspan="11" class="budget-linked-child-cell">
-                            <div class="budget-linked-child-card">
-                                <div class="budget-linked-child-header">
-                                    <span class="budget-linked-badge">
-                                        <i class="fas fa-code-branch" aria-hidden="true"></i>
-                                        Processo vinculado
-                                    </span>
-                                    <span class="budget-linked-origin">Origem: ${escapeHtml(filho.processoPaiId || '-')}</span>
-                                </div>
-                                <div class="budget-linked-child-body">
-                                    <div>
-                                        <div class="budget-linked-child-desc">${escapeHtml(filho.descricao)}</div>
-                                        ${processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(processoSei)}</div>` : ''}
-                                    </div>
-                                    <div class="budget-linked-child-meta">
-                                        <span class="budget-linked-child-valor">Valor alocado: <strong class="font-monospace">${formatMoney(valorPrevisto)}</strong></span>
-                                        ${renderizarStatusOrcamento(status)}
-                                    </div>
-                                    <div class="budget-linked-child-actions">
-                                        ${renderizarBotaoEdicaoOrcamento(filho.id)}
-                                    </div>
-                                </div>
+                    <tr class="budget-item-row budget-linked-child-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
+                        <td data-label="Item" class="align-middle budget-item-cell budget-linked-child-item">
+                            <div class="budget-linked-child-prefix">
+                                <span class="budget-linked-badge">
+                                    <i class="fas fa-code-branch" aria-hidden="true"></i>
+                                    Processo vinculado
+                                </span>
+                                <span class="budget-linked-origin">Origem: ${escapeHtml(filho.processoPaiId || '-')}</span>
+                            </div>
+                            ${podeExibirRastreio ? `
+                                <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(filhoId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
+                                    <span>${escapeHtml(filho.descricao)}</span>
+                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                </button>
+                            ` : `<div class="budget-item-title budget-item-title-static">${escapeHtml(filho.descricao)}</div>`}
+                            ${processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(processoSei)}</div>` : ''}
+                        </td>
+                        <td data-label="Modalidade/Natureza" class="align-middle">
+                            <strong class="d-block">${escapeHtml(filho.modalidade || '-')}</strong>
+                            <span class="text-muted small">${escapeHtml(filho.natureza || '-')}</span>
+                        </td>
+                        <td data-label="Abrangência/Qtd." class="text-center align-middle">
+                            <strong class="d-block">${escapeHtml(filho.abrangencia || '-')}</strong>
+                            <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
+                        </td>
+                        <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(valorPrevisto)}</td>
+                        <td data-label="Em execução" class="align-middle">
+                            <div class="budget-execution-cell">
+                                <span class="font-monospace fw-bold text-money">${formatMoney(Number(valorEstimado) || 0)}</span>
+                                <span class="profor-alert-badge profor-alert-${processoAutuado ? 'success' : 'warning'} budget-execution-badge">${processoAutuado ? 'Autuado' : 'Não autuado'}</span>
+                            </div>
+                        </td>
+                        <td data-label="Classificação" class="text-center align-middle">
+                            ${renderizarClassificacaoGerencialOrcamento(classificacaoGerencial, saldoAparelhamento)}
+                        </td>
+                        <td data-label="Empenhado" class="text-end font-monospace align-middle">${formatMoney(Number(valorEmpenhado) || 0)}</td>
+                        <td data-label="Executado" class="text-end font-monospace align-middle">${formatMoney(Number(valorExecutado) || 0)}</td>
+                        <td data-label="Status" class="text-center align-middle">
+                            ${renderizarStatusOrcamento(status)}
+                        </td>
+                        <td data-label="Observação" class="align-middle" title="${escapeHtml(observacao)}">
+                            <div class="budget-row-note">${escapeHtml(observacao) || '-'}</div>
+                        </td>
+                        <td data-label="Ações" class="text-center align-middle">
+                            <div class="budget-row-actions justify-content-center">
+                                ${renderizarLinksOrcamento(filho)}
+                                ${renderizarBotaoEdicaoOrcamento(filho.id)}
                             </div>
                         </td>
                     </tr>
+                    ${renderizarPainelEdicaoOrcamento(filho, 11)}
+                    ${rastreioAberto ? renderizarRastreioOrcamento(filho) : ''}
                 `;
             }).join('');
         }
@@ -5868,6 +5909,7 @@ async function carregarLogoParaPDF() {
                 variant: 'outline-primary',
                 backend: true,
                 title: 'Dividir recurso',
+                iconOnly: true,
                 extraClass: 'budget-split-button budget-row-action',
                 attributes: `data-orcamento-dividir-recurso="${escapeHtml(item.id)}"`
             });
@@ -6240,6 +6282,9 @@ async function carregarLogoParaPDF() {
                     const status = obterValorPendenteOrcamento(item, 'status');
                     const observacao = obterValorPendenteOrcamento(item, 'observacao');
                     const filhosVinculados = obterFilhosVinculadosOrcamento(item.id, budgetData);
+                    const resumoVinculosItem = filhosVinculados.length
+                        ? calcularResumoVinculosOrcamento(item, filhosVinculados)
+                        : null;
 
                     return `
                     <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
@@ -6261,7 +6306,10 @@ async function carregarLogoParaPDF() {
                             <strong class="d-block">${escapeHtml(item.abrangencia || '-')}</strong>
                             <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
                         </td>
-                        <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(item.valorPrevisto ?? item.valorTotal)}</td>
+                        <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">
+                            ${formatMoney(item.valorPrevisto ?? item.valorTotal)}
+                            ${resumoVinculosItem ? `<div class="budget-linked-parent-previsto-detail"><span>Distr.: ${formatMoney(resumoVinculosItem.valorDistribuido)}</span><span${(Number(item.valorPrevisto ?? item.valorTotal) || 0) - resumoVinculosItem.valorDistribuido < 0 ? ' class="text-danger"' : ''}>Saldo: ${formatMoney((Number(item.valorPrevisto ?? item.valorTotal) || 0) - resumoVinculosItem.valorDistribuido)}</span></div>` : ''}
+                        </td>
                         <td data-label="Em execução" class="align-middle">
                             <div class="budget-execution-cell">
                                 <span class="font-monospace fw-bold text-money">${formatMoney(Number(valorEstimado) || 0)}</span>
