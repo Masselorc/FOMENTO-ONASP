@@ -5782,29 +5782,46 @@ async function carregarLogoParaPDF() {
             return Math.max(0, valorPrevisto - valorEmpenhado - valorExecutado - totalFilhos);
         }
 
-        // O cálculo visual antecipa o saldo para UX; o backend continua sendo a fonte de verdade.
-        function calcularSaldoTransferivelVisualOrcamento(item, budgetData, movimentacoes) {
-            if (!item) return 0;
+        // Consolida apenas a leitura visual do envelope; o valor original permanece preservado no banco.
+        function calcularResumoSaldoVisualOrcamento(item, budgetData, movimentacoes) {
+            if (!item) {
+                return {
+                    valorOriginal: 0, valorRecebidoPorAlocacao: 0, valorCedidoPorAlocacao: 0,
+                    valorDistribuidoParaFilhos: 0, envelopeVisualAjustado: 0,
+                    valorEmpenhado: 0, valorExecutado: 0, saldoTransferivelEstimado: 0,
+                    temMovimentacao: false, temFilhos: false, temAlerta: false
+                };
+            }
             const id = String(item.id || '').trim();
             const lista = Array.isArray(movimentacoes) ? movimentacoes : [];
-            const valorRecebido = lista
+            const valorRecebidoPorAlocacao = lista
                 .filter((m) => String(m.destinoId || '').trim() === id)
                 .reduce((t, m) => t + (Number(m.valor) || 0), 0);
-            const valorCedido = lista
+            const valorCedidoPorAlocacao = lista
                 .filter((m) => String(m.origemId || '').trim() === id)
                 .reduce((t, m) => t + (Number(m.valor) || 0), 0);
             const itens = obterTodosItensOrcamentoParaDivisao(budgetData);
             const valorDistribuidoParaFilhos = itens
                 .filter((r) => normalizarBusca(r?.processoPaiId) === normalizarBusca(id) && r.ativo !== false)
                 .reduce((t, r) => t + (Number(r.valorPrevisto) || 0), 0);
-            return Math.max(0, (
-                (Number(item.valorPrevisto ?? item.valorTotal) || 0)
-                + valorRecebido
-                - valorCedido
-                - (Number(item.valorEmpenhado) || 0)
-                - (Number(item.valorExecutado) || 0)
-                - valorDistribuidoParaFilhos
-            ));
+            const valorOriginal = Number(item.valorPrevisto ?? item.valorTotal) || 0;
+            const valorEmpenhado = Number(item.valorEmpenhado) || 0;
+            const valorExecutado = Number(item.valorExecutado) || 0;
+            const envelopeVisualAjustado = valorOriginal + valorRecebidoPorAlocacao - valorCedidoPorAlocacao - valorDistribuidoParaFilhos;
+            const saldoTransferivelEstimado = envelopeVisualAjustado - valorEmpenhado - valorExecutado;
+            return {
+                valorOriginal, valorRecebidoPorAlocacao, valorCedidoPorAlocacao,
+                valorDistribuidoParaFilhos, envelopeVisualAjustado, valorEmpenhado, valorExecutado,
+                saldoTransferivelEstimado,
+                temMovimentacao: valorRecebidoPorAlocacao > 0 || valorCedidoPorAlocacao > 0,
+                temFilhos: valorDistribuidoParaFilhos > 0,
+                temAlerta: envelopeVisualAjustado < 0 || saldoTransferivelEstimado < 0
+            };
+        }
+
+        // O cálculo visual antecipa o saldo para UX; o backend continua sendo a fonte de verdade.
+        function calcularSaldoTransferivelVisualOrcamento(item, budgetData, movimentacoes) {
+            return Math.max(0, calcularResumoSaldoVisualOrcamento(item, budgetData, movimentacoes).saldoTransferivelEstimado);
         }
 
         async function carregarMovimentacoesOrcamento2026() {
@@ -5819,6 +5836,25 @@ async function carregarLogoParaPDF() {
             } catch {
                 orcamentoMovimentacoes = [];
             }
+        }
+
+        function renderizarDetalheEnvelopeOrcamento(resumo) {
+            if (!resumo || (!resumo.temMovimentacao && !resumo.temFilhos && !resumo.temAlerta)) return '';
+            const partes = [];
+            if (resumo.valorOriginal !== resumo.envelopeVisualAjustado) {
+                partes.push(`<span class="budget-balance-detail-item">Orig. ${formatMoney(resumo.valorOriginal)}</span>`);
+            }
+            if (resumo.valorRecebidoPorAlocacao > 0) {
+                partes.push(`<span class="budget-balance-detail-item budget-balance-detail-positive">Rec. ${formatMoney(resumo.valorRecebidoPorAlocacao)}</span>`);
+            }
+            if (resumo.valorCedidoPorAlocacao > 0) {
+                partes.push(`<span class="budget-balance-detail-item budget-balance-detail-negative">Ced. ${formatMoney(resumo.valorCedidoPorAlocacao)}</span>`);
+            }
+            if (resumo.valorDistribuidoParaFilhos > 0) {
+                partes.push(`<span class="budget-balance-detail-item">Vinc. ${formatMoney(resumo.valorDistribuidoParaFilhos)}</span>`);
+            }
+            if (!partes.length && !resumo.temAlerta) return '';
+            return `<div class="budget-balance-detail${resumo.temAlerta ? ' budget-balance-alert' : ''}">${partes.join('')}</div>`;
         }
 
         function renderizarBadgeProcessoVinculadoOrcamento(item) {
@@ -5866,8 +5902,9 @@ async function carregarLogoParaPDF() {
             `;
         }
 
-        function renderizarFilhosVinculadosOrcamento(filhos) {
+        function renderizarFilhosVinculadosOrcamento(filhos, budgetData) {
             if (!filhos.length) return '';
+            const dadosBudget = budgetData || obterDadosOrcamento();
             return filhos.map((filho) => {
                 const filhoId = String(filho.id);
                 const podeExibirRastreio = itemPodeExibirRastreioOrcamento(filho);
@@ -5885,7 +5922,7 @@ async function carregarLogoParaPDF() {
                 const processoSei = obterValorPendenteOrcamento(filho, 'processo_sei') || filho.processoSei;
                 const status = obterValorPendenteOrcamento(filho, 'status');
                 const observacao = obterValorPendenteOrcamento(filho, 'observacao');
-                const valorPrevisto = Number(filho.valorPrevisto ?? filho.valorTotal) || 0;
+                const resumoSaldoFilho = calcularResumoSaldoVisualOrcamento(filho, dadosBudget, orcamentoMovimentacoes);
 
                 return `
                     <tr class="budget-item-row budget-linked-child-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
@@ -5912,7 +5949,10 @@ async function carregarLogoParaPDF() {
                             <strong class="d-block">${escapeHtml(filho.abrangencia || '-')}</strong>
                             <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
                         </td>
-                        <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">${formatMoney(valorPrevisto)}</td>
+                        <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">
+                            ${formatMoney(resumoSaldoFilho.envelopeVisualAjustado)}
+                            ${renderizarDetalheEnvelopeOrcamento(resumoSaldoFilho)}
+                        </td>
                         <td data-label="Em execução" class="align-middle">
                             <div class="budget-execution-cell">
                                 <span class="font-monospace fw-bold text-money">${formatMoney(Number(valorEstimado) || 0)}</span>
@@ -5933,7 +5973,7 @@ async function carregarLogoParaPDF() {
                         <td data-label="Ações" class="text-center align-middle">
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(filho)}
-                                ${renderizarBotaoAlocarSaldoOrcamento(filho)}
+                                ${renderizarBotaoAlocarSaldoOrcamento(filho, resumoSaldoFilho)}
                                 ${renderizarBotaoEdicaoOrcamento(filho.id)}
                             </div>
                         </td>
@@ -5960,14 +6000,14 @@ async function carregarLogoParaPDF() {
             });
         }
 
-        function itemPodeAlocarSaldoOrcamento(item) {
-            return Boolean(item)
-                && item.ativo !== false
-                && !dadosPaginaEmModoEstatico('orcamento2026');
+        function itemPodeAlocarSaldoOrcamento(item, saldoTransferivelEstimado) {
+            if (!Boolean(item) || item.ativo === false || dadosPaginaEmModoEstatico('orcamento2026')) return false;
+            if (saldoTransferivelEstimado !== undefined && saldoTransferivelEstimado <= 0) return false;
+            return true;
         }
 
-        function renderizarBotaoAlocarSaldoOrcamento(item) {
-            if (!itemPodeAlocarSaldoOrcamento(item)) return '';
+        function renderizarBotaoAlocarSaldoOrcamento(item, resumoSaldo) {
+            if (!itemPodeAlocarSaldoOrcamento(item, resumoSaldo?.saldoTransferivelEstimado)) return '';
 
             return renderActionButton({
                 type: 'allocate',
@@ -5990,25 +6030,17 @@ async function carregarLogoParaPDF() {
                 && normalizarTexto(dest.categoria || dest.frente || '') === categoriaOrigem
             ));
 
-            const valorPrevisto = Number(item.valorPrevisto ?? item.valorTotal) || 0;
-            const valorEmpenhado = Number(item.valorEmpenhado) || 0;
-            const valorExecutado = Number(item.valorExecutado) || 0;
-            const valorRecebido = movimentacoes
-                .filter((m) => String(m.destinoId || '') === String(item.id))
-                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
-            const valorCedido = movimentacoes
-                .filter((m) => String(m.origemId || '') === String(item.id))
-                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
-            const itens = obterTodosItensOrcamentoParaDivisao({ itens: todosItens, outrosProcessos: [] });
-            const valorDistribuidoFilhos = itens
-                .filter((r) => normalizarBusca(r?.processoPaiId) === normalizarBusca(item.id) && r.ativo !== false)
-                .reduce((t, r) => t + (Number(r.valorPrevisto) || 0), 0);
+            const resumoSaldo = calcularResumoSaldoVisualOrcamento(item, { itens: todosItens, outrosProcessos: [] }, movimentacoes);
+            const { valorOriginal, valorRecebidoPorAlocacao: valorRecebido, valorCedidoPorAlocacao: valorCedido,
+                    valorDistribuidoParaFilhos: valorDistribuidoFilhos, envelopeVisualAjustado,
+                    valorEmpenhado, valorExecutado } = resumoSaldo;
 
             const historicoItem = movimentacoes
                 .filter((m) => String(m.origemId || '') === String(item.id) || String(m.destinoId || '') === String(item.id))
                 .slice(0, 5);
 
-            const saldoClasse = saldoTransferivel > 0 ? 'text-success' : 'text-danger';
+            const saldoFinalModal = resumoSaldo.saldoTransferivelEstimado;
+            const saldoClasse = saldoFinalModal > 0 ? 'text-success' : saldoFinalModal < 0 ? 'text-danger' : 'text-muted';
 
             return `
                 <div class="modal fade budget-allocation-modal" id="modalAlocarSaldoOrcamento" tabindex="-1" aria-hidden="true">
@@ -6032,20 +6064,8 @@ async function carregarLogoParaPDF() {
                                         <strong>${escapeHtml(item.frente || item.categoria || '-')}</strong>
                                     </div>
                                     <div class="budget-split-summary-item">
-                                        <span>Valor previsto</span>
-                                        <strong>${formatMoney(valorPrevisto)}</strong>
-                                    </div>
-                                    <div class="budget-split-summary-item">
-                                        <span>Valor empenhado</span>
-                                        <strong>${formatMoney(valorEmpenhado)}</strong>
-                                    </div>
-                                    <div class="budget-split-summary-item">
-                                        <span>Valor executado</span>
-                                        <strong>${formatMoney(valorExecutado)}</strong>
-                                    </div>
-                                    <div class="budget-split-summary-item">
-                                        <span>Distribuído para vinculados</span>
-                                        <strong>${formatMoney(valorDistribuidoFilhos)}</strong>
+                                        <span>Valor original</span>
+                                        <strong>${formatMoney(valorOriginal)}</strong>
                                     </div>
                                     <div class="budget-split-summary-item">
                                         <span>Recebido por alocações</span>
@@ -6055,9 +6075,25 @@ async function carregarLogoParaPDF() {
                                         <span>Cedido por alocações</span>
                                         <strong class="text-warning">${formatMoney(valorCedido)}</strong>
                                     </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Distribuído para vinculados</span>
+                                        <strong>${formatMoney(valorDistribuidoFilhos)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Envelope ajustado</span>
+                                        <strong class="${envelopeVisualAjustado < 0 ? 'text-danger' : ''}">${formatMoney(envelopeVisualAjustado)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor empenhado</span>
+                                        <strong>${formatMoney(valorEmpenhado)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor executado</span>
+                                        <strong>${formatMoney(valorExecutado)}</strong>
+                                    </div>
                                     <div class="budget-split-summary-item budget-split-summary-item-wide">
                                         <span>Saldo transferível estimado</span>
-                                        <strong class="${saldoClasse}">${formatMoney(saldoTransferivel)}</strong>
+                                        <strong class="${saldoClasse}">${formatMoney(saldoFinalModal)}</strong>
                                     </div>
                                 </div>
 
@@ -6084,11 +6120,10 @@ async function carregarLogoParaPDF() {
                                             <label class="form-label" for="budgetAllocDestino">Processo de destino <span class="text-danger">*</span></label>
                                             <select class="form-select" id="budgetAllocDestino" required>
                                                 <option value="">Selecione o processo de destino...</option>
-                                                ${destinos.map((dest) => `
-                                                    <option value="${escapeHtml(dest.id)}">
-                                                        ${escapeHtml(dest.id)} — ${escapeHtml(dest.descricao || '-')} (${formatMoney(Number(dest.valorPrevisto ?? dest.valorTotal) || 0)})
-                                                    </option>
-                                                `).join('')}
+                                                ${destinos.map((dest) => {
+                                                    const envDest = calcularResumoSaldoVisualOrcamento(dest, { itens: todosItens, outrosProcessos: [] }, movimentacoes).envelopeVisualAjustado;
+                                                    return `<option value="${escapeHtml(dest.id)}">${escapeHtml(dest.id)} — ${escapeHtml(dest.descricao || '-')} (ajust.: ${formatMoney(envDest)})</option>`;
+                                                }).join('')}
                                             </select>
                                             ${destinos.length === 0 ? '<div class="form-text text-warning">Nenhum processo elegível na mesma categoria.</div>' : ''}
                                         </div>
@@ -6613,6 +6648,7 @@ async function carregarLogoParaPDF() {
                     const resumoVinculosItem = filhosVinculados.length
                         ? calcularResumoVinculosOrcamento(item, filhosVinculados)
                         : null;
+                    const resumoSaldoItem = calcularResumoSaldoVisualOrcamento(item, budgetData, orcamentoMovimentacoes);
 
                     return `
                     <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
@@ -6635,9 +6671,8 @@ async function carregarLogoParaPDF() {
                             <span class="text-muted small">${escapeHtml(quantidadeUnidade || '-')}</span>
                         </td>
                         <td data-label="Valor previsto" class="text-end font-monospace align-middle fw-bold text-primary">
-                            ${formatMoney(resumoVinculosItem
-                                ? (Number(item.valorPrevisto ?? item.valorTotal) || 0) - resumoVinculosItem.valorDistribuido
-                                : (item.valorPrevisto ?? item.valorTotal))}
+                            ${formatMoney(resumoSaldoItem.envelopeVisualAjustado)}
+                            ${renderizarDetalheEnvelopeOrcamento(resumoSaldoItem)}
                         </td>
                         <td data-label="Em execução" class="align-middle">
                             <div class="budget-execution-cell">
@@ -6660,12 +6695,12 @@ async function carregarLogoParaPDF() {
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(item)}
                                 ${renderizarBotaoDividirRecursoOrcamento(item)}
-                                ${renderizarBotaoAlocarSaldoOrcamento(item)}
+                                ${renderizarBotaoAlocarSaldoOrcamento(item, resumoSaldoItem)}
                                 ${renderizarBotaoEdicaoOrcamento(item.id)}
                             </div>
                         </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 11)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
-                    ${renderizarFilhosVinculadosOrcamento(filhosVinculados)}
+                    ${renderizarFilhosVinculadosOrcamento(filhosVinculados, budgetData)}
                 `;
                 }).join('');
 

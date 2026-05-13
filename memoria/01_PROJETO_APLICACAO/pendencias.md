@@ -67,6 +67,7 @@ Quando houver novo item, registrar a página, rota, serviço ou arquivo afetado,
 - Hook de publicação foi saneado para respeitar `SKIP_PUBLICAR_DADOS=1` e reduzir churn indevido de JSONs publicados.
 - Versionamento seletivo da memória foi orientado para preservar Markdown tratado e ignorar fontes brutas, anexos sensíveis e artefatos locais.
 - Etapa 7 (13/05/2026): botão e modal "Alocar saldo" implementados no frontend do Orçamento 2026 — `frontend/js/app.js` e `frontend/css/app.css`; consumo da rota `POST /api/orcamento-2026/saldos/alocar` e `GET /api/orcamento-2026/movimentacoes`; sem alteração de backend, banco ou JSONs publicados.
+- Etapa 8 (13/05/2026): helper `calcularResumoSaldoVisualOrcamento` criado; envelope visual ajustado e detalhe discreto (Orig./Rec./Ced./Vinc.) exibidos na coluna "Valor previsto" do pai e filho; botão "Alocar saldo" oculto quando saldo transferível estimado ≤ 0; modal atualizado para usar helper; sem alteração de backend, banco ou JSONs publicados.
 
 ## Histórico resumido
 

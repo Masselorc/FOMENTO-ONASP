@@ -1979,6 +1979,34 @@ table.dataTable thead td,
     padding: 0.12rem 0.4rem;
 }
 
+/* Envelope visual ajustado — detalhe discreto na coluna Valor previsto */
+.budget-balance-detail {
+    color: var(--color-muted);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.7rem;
+    font-weight: 400;
+    gap: 0.2rem 0.4rem;
+    justify-content: flex-end;
+    margin-top: 0.2rem;
+}
+
+.budget-balance-detail-item {
+    white-space: nowrap;
+}
+
+.budget-balance-detail-positive {
+    color: #198754;
+}
+
+.budget-balance-detail-negative {
+    color: #e67700;
+}
+
+.budget-balance-alert {
+    color: #dc3545;
+}
+
 .budget-row-action-edit {
     border-radius: var(--radius-sm);
     height: 28px;
