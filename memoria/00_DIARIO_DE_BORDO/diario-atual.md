@@ -388,3 +388,15 @@
 - Pendências: detalhar schema, tabelas, colunas, tipos, chaves e constraints em `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
 - Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização se novas rotas forem adicionadas ou alteradas sem atualização da memória.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 13/05/2026 - Schema do banco local
+
+- Branch atual: `main`.
+- Tarefa executada: preenchimento de `memoria/08_ROTAS_BANCO_API/schema-banco.md` com o schema real do SQLite local.
+- Arquivos alterados: `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: documentados o banco `backend/data/onasp.sqlite`, os arquivos responsáveis pela abertura e evolução do schema, as tabelas `parametros_minimos`, `formalizacao_profor`, `orcamento_2026`, `orcamento_2026_movimentacoes` e `historico_alteracoes`, colunas, tipos declarados, constraints explícitas, evolução incremental por `garantirColuna`, relações operacionais com serviços/rotas e dados fora do SQLite.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/08_ROTAS_BANCO_API/schema-banco.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: documentação preparada sem abrir ou alterar o SQLite, sem rodar `npm run init-db`, sem publicação, sem alteração de código, scripts, testes, planilhas ou JSONs publicados.
+- Pendências: manter `schema-banco.md` atualizado se houver nova tabela, coluna, constraint, regra de histórico, movimentação orçamentária ou rota de escrita.
+- Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização se o schema evoluir sem atualização da memória.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
