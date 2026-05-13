@@ -412,3 +412,15 @@
 - Pendências: manter o histórico atualizado quando houver novo erro real, correção validada, risco recorrente ou prática reutilizável.
 - Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de classificar como erro real algo que seja apenas prevenção ou boa prática.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 13/05/2026 - Checklist de validação
+
+- Branch atual: `main`.
+- Tarefa executada: preenchimento de `memoria/10_TESTES/checklist-validacao.md` com checklist operacional por tipo de tarefa.
+- Arquivos alterados: `memoria/10_TESTES/checklist-validacao.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: documentadas validações iniciais de workspace, documentação, frontend, backend/API, rotas, banco SQLite, dados/planilhas, JSONs publicados, publicação estática/GitHub Pages, áreas funcionais, testes automatizados, acessibilidade, segurança/sigilo, Git, commit, sync e rollback.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/10_TESTES/checklist-validacao.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: documentação preparada sem alteração de código, backend, frontend, banco, scripts, testes, planilhas ou JSONs publicados; nenhum teste de aplicação foi executado nesta tarefa documental.
+- Pendências: manter o checklist atualizado quando surgirem novos scripts, testes, rotas, regras de publicação, práticas de segurança ou riscos recorrentes.
+- Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização caso comandos ou automações mudem sem atualização da memória.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
