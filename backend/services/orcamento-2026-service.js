@@ -1233,11 +1233,165 @@ function listarHistoricoOrcamento2026() {
   `).all(PAGINA);
 }
 
+function obterMovimentacoesAtivasOrcamento2026() {
+  return db.prepare(`
+    SELECT * FROM orcamento_2026_movimentacoes WHERE ativo = 1
+  `).all();
+}
+
+// Saldo transferível considera alocações recebidas, alocações cedidas, execução, empenho e filhos vinculados.
+function calcularSaldoTransferivelOrcamento2026(item, registros, movimentacoes) {
+  const id = String(item.id || "").trim();
+  const alocacoes = Array.isArray(movimentacoes) ? movimentacoes : [];
+
+  const valorRecebido = alocacoes
+    .filter((m) => String(m.destino_id || "").trim() === id)
+    .reduce((t, m) => t + (Number(m.valor) || 0), 0);
+
+  const valorCedido = alocacoes
+    .filter((m) => String(m.origem_id || "").trim() === id)
+    .reduce((t, m) => t + (Number(m.valor) || 0), 0);
+
+  const filhosAtivos = (Array.isArray(registros) ? registros : []).filter((r) => (
+    String(r?.processo_pai_id || "").trim() === id
+    && Number(r?.ativo) === 1
+  ));
+  const valorDistribuidoParaFilhos = filhosAtivos.reduce((t, r) => t + (Number(r?.valor_previsto) || 0), 0);
+
+  return arredondarMoeda(
+    (Number(item.valor_previsto) || 0)
+    + valorRecebido
+    - valorCedido
+    - (Number(item.valor_empenhado) || 0)
+    - (Number(item.valor_executado) || 0)
+    - valorDistribuidoParaFilhos
+  );
+}
+
+// Alocações não alteram o valor original dos processos; a movimentação preserva rastreabilidade.
+function alocarSaldoOrcamento2026(payload = {}) {
+  const senha = payload.password ?? payload.senha;
+  if (!validarSenhaEdicao(senha)) {
+    return { success: false, message: "Senha inválida. Alterações não foram salvas." };
+  }
+
+  const origemId = limparTexto(payload.origemId ?? payload.origem_id);
+  if (!origemId) {
+    return { success: false, message: "origemId é obrigatório." };
+  }
+
+  const destinoId = limparTexto(payload.destinoId ?? payload.destino_id);
+  if (!destinoId) {
+    return { success: false, message: "destinoId é obrigatório." };
+  }
+
+  if (origemId.toUpperCase() === destinoId.toUpperCase()) {
+    return { success: false, message: "Origem e destino não podem ser o mesmo processo." };
+  }
+
+  const valorBruto = converterNumeroEstrito(payload.valor);
+  if (!Number.isFinite(valorBruto) || valorBruto <= 0) {
+    return { success: false, message: "Valor deve ser um número maior que zero." };
+  }
+  const valor = arredondarMoeda(valorBruto);
+
+  const justificativa = limparTexto(payload.justificativa);
+  if (!justificativa) {
+    return { success: false, message: "Justificativa é obrigatória para rastreabilidade." };
+  }
+
+  inicializarOrcamento2026();
+  const registros = db.prepare("SELECT * FROM orcamento_2026").all();
+
+  const origem = registros.find((r) => String(r.id || "").trim().toUpperCase() === origemId.toUpperCase());
+  if (!origem) {
+    return { success: false, message: "Processo de origem não localizado." };
+  }
+  if (Number(origem.ativo) !== 1) {
+    return { success: false, message: "Processo de origem está inativo." };
+  }
+
+  const destino = registros.find((r) => String(r.id || "").trim().toUpperCase() === destinoId.toUpperCase());
+  if (!destino) {
+    return { success: false, message: "Processo de destino não localizado." };
+  }
+  if (Number(destino.ativo) !== 1) {
+    return { success: false, message: "Processo de destino está inativo." };
+  }
+
+  const categoriaOrigem = normalizarTexto(origem.categoria || "");
+  const categoriaDestino = normalizarTexto(destino.categoria || "");
+  if (categoriaOrigem !== categoriaDestino) {
+    return { success: false, message: "Origem e destino pertencem a categorias diferentes. Alocação não permitida." };
+  }
+
+  const movimentacoes = obterMovimentacoesAtivasOrcamento2026();
+  const saldoTransferivel = calcularSaldoTransferivelOrcamento2026(origem, registros, movimentacoes);
+  if (valor > saldoTransferivel) {
+    return {
+      success: false,
+      message: `Valor (${valor.toFixed(2)}) excede o saldo transferível da origem (${saldoTransferivel.toFixed(2)}).`
+    };
+  }
+
+  const agora = new Date().toISOString();
+  const criadoPor = limparTexto(payload.criadoPor ?? payload.criado_por) || "";
+  const backupPath = criarBackupBanco(PAGINA);
+
+  const inserir = db.prepare(`
+    INSERT INTO orcamento_2026_movimentacoes
+      (tipo, origem_id, destino_id, valor, justificativa, criado_em, criado_por, ativo)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+  `);
+
+  let movimentacaoId;
+  db.transaction(() => {
+    const result = inserir.run("ALOCACAO_SALDO", origem.id, destino.id, valor, justificativa, agora, criadoPor);
+    movimentacaoId = result.lastInsertRowid;
+    registrarHistorico(db, {
+      pagina: PAGINA,
+      registro: origem.id,
+      campo: "alocacao_saldo",
+      valorAnterior: "",
+      valorNovo: `origem=${origem.id}; destino=${destino.id}; valor=${valor.toFixed(2)}`
+    });
+  })();
+
+  return {
+    success: true,
+    message: "Saldo alocado com sucesso.",
+    backupPath,
+    movimentacao: {
+      id: movimentacaoId,
+      tipo: "ALOCACAO_SALDO",
+      origemId: origem.id,
+      destinoId: destino.id,
+      valor,
+      justificativa,
+      criadoEm: agora
+    }
+  };
+}
+
+function listarMovimentacoesOrcamento2026() {
+  return db.prepare(`
+    SELECT id, tipo,
+           origem_id AS origemId, destino_id AS destinoId,
+           valor, justificativa,
+           criado_em AS criadoEm, criado_por AS criadoPor, ativo
+    FROM orcamento_2026_movimentacoes
+    ORDER BY id DESC
+    LIMIT 500
+  `).all();
+}
+
 module.exports = {
   STATUS_ORCAMENTO,
   inicializarOrcamento2026,
   listarOrcamento2026,
   criarProcessoVinculadoOrcamento2026,
+  alocarSaldoOrcamento2026,
+  listarMovimentacoesOrcamento2026,
   salvarOrcamento2026,
   listarHistoricoOrcamento2026
 };

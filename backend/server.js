@@ -20,6 +20,8 @@ const {
 const {
   listarOrcamento2026,
   criarProcessoVinculadoOrcamento2026,
+  alocarSaldoOrcamento2026,
+  listarMovimentacoesOrcamento2026,
   salvarOrcamento2026,
   listarHistoricoOrcamento2026,
   inicializarOrcamento2026
@@ -253,6 +255,22 @@ async function rotearApi(req, res, pathname) {
       const resultado = criarProcessoVinculadoOrcamento2026(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/orcamento-2026/saldos/alocar") {
+      const payload = await lerJsonBody(req);
+      const resultado = alocarSaldoOrcamento2026(payload);
+      const resposta = await publicarAposSalvamento(resultado);
+      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/orcamento-2026/movimentacoes") {
+      enviarJson(res, 200, {
+        success: true,
+        movimentacoes: listarMovimentacoesOrcamento2026()
+      });
       return;
     }
 
