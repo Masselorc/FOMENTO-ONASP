@@ -5849,7 +5849,6 @@ async function carregarLogoParaPDF() {
                                     <i class="fas fa-code-branch" aria-hidden="true"></i>
                                     Processo vinculado
                                 </span>
-                                <span class="budget-linked-origin">Origem: ${escapeHtml(filho.processoPaiId || '-')}</span>
                             </div>
                             ${podeExibirRastreio ? `
                                 <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(filhoId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">

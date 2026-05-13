@@ -1858,11 +1858,6 @@ table.dataTable thead td,
     padding: 0.15rem 0.45rem;
 }
 
-.budget-linked-origin {
-    color: var(--color-muted);
-    font-size: 0.68rem;
-}
-
 @media (max-width: 767.98px) {
     .budget-linked-summary {
         flex-direction: column;
