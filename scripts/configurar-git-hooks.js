@@ -13,7 +13,7 @@ const hookContent = `#!/bin/sh
 STAGED_FILES=$(git diff --cached --name-only)
 
 if [ "$SKIP_PUBLICAR_DADOS" = "1" ]; then
-  echo "SKIP_PUBLICAR_DADOS=1 definido. Publicacao de dados estaticos ignorada."
+  echo "SKIP_PUBLICAR_DADOS=1 detectado. Publicacao de dados ignorada neste commit."
   exit 0
 fi
 
@@ -26,11 +26,11 @@ NEEDS_PUBLICAR=0
 
 while IFS= read -r FILE; do
   case "$FILE" in
-    AGENTS.md|.gitignore|README.md|*.md|docs/*|memoria/*|scripts/configurar-git-hooks.js)
-      ;;
-    backend/*|Planilhas/*|scripts/*|package.json|package-lock.json|frontend/data/*)
+    backend/data/aplicacao.json|Planilhas/*|backend/services/static-publication-service.js|backend/services/dashboard-publication-service.js|backend/services/orcamento-2026-service.js|backend/services/formalizacao-profor-service.js|backend/services/parametros-minimos-service.js|backend/scripts/publicar-dados-estaticos.js)
       NEEDS_PUBLICAR=1
       break
+      ;;
+    AGENTS.md|.gitignore|README.md|*.md|docs/*|memoria/*|scripts/configurar-git-hooks.js|scripts/validar-*.js|package.json|package-lock.json|playwright.config.js|tests/*)
       ;;
     *)
       ;;
@@ -40,7 +40,7 @@ $STAGED_FILES
 EOF
 
 if [ "$NEEDS_PUBLICAR" -ne 1 ]; then
-  echo "Arquivos staged nao exigem publicacao de dados estaticos. Commit liberado."
+  echo "Nenhuma fonte de dados publicada foi alterada. Publicacao automatica ignorada."
   exit 0
 fi
 
