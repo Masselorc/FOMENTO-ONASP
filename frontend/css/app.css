@@ -1146,6 +1146,10 @@ input:focus-visible,
 }
 
 .table-container {
+    overflow: hidden;
+}
+
+#view-orcamento .table-container {
     overflow-x: auto;
 }
 
