@@ -1765,6 +1765,99 @@ table.dataTable thead td,
     width: 28px;
 }
 
+#view-orcamento .budget-split-button {
+    gap: 0.35rem;
+    min-width: auto !important;
+    padding: 0 0.55rem !important;
+    white-space: nowrap;
+    width: auto !important;
+}
+
+#view-orcamento .budget-split-button i {
+    font-size: 0.78rem;
+}
+
+.budget-other-description {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.budget-linked-process-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.budget-linked-process-badge {
+    align-items: center;
+    background: rgba(13, 110, 253, 0.12);
+    border-radius: 999px;
+    color: var(--color-primary);
+    display: inline-flex;
+    gap: 0.35rem;
+    line-height: 1;
+    padding: 0.16rem 0.5rem;
+    width: fit-content;
+}
+
+.budget-linked-process-badge i {
+    font-size: 0.72rem;
+}
+
+.budget-linked-process-origin {
+    color: var(--color-muted);
+    font-size: 0.7rem;
+    line-height: 1.15;
+}
+
+.budget-split-modal .modal-body {
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.budget-split-summary {
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.budget-split-summary-item {
+    background: rgba(23, 74, 124, 0.04);
+    border: 1px solid rgba(23, 74, 124, 0.12);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.55rem 0.7rem;
+}
+
+.budget-split-summary-item-wide {
+    grid-column: 1 / -1;
+}
+
+.budget-split-summary-item span {
+    color: var(--color-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.budget-split-summary-item strong {
+    color: var(--color-primary-strong);
+    font-size: 0.9rem;
+}
+
+.budget-split-form-fields .form-label {
+    color: var(--color-primary-strong);
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.budget-split-form-fields .form-control,
+.budget-split-form-fields .form-select {
+    font-size: 0.9rem;
+}
+
 .budget-row-action-edit {
     border-radius: var(--radius-sm);
     height: 28px;

@@ -66,6 +66,7 @@ let orcamentoAlteracoesPendentes = {};
 let orcamentoEditoresAbertos = new Set();
 let orcamentoNovosProcessos = [];
 let orcamentoProcessosInativos = new Set();
+let orcamentoDivisaoRecursoEmAndamento = false;
 let erroCarregamentoOrcamento = null;
 const errosCarregamentoView = {};
 let resumoPublicacaoSistemaCache = null;
@@ -184,6 +185,7 @@ let catalogoAplicacao = {
 
 const UI_ICONS = {
     edit: 'fa-pen-to-square',
+    split: 'fa-code-branch',
     save: 'fa-floppy-disk',
     cancel: 'fa-xmark',
     history: 'fa-clock-rotate-left',
@@ -5737,6 +5739,292 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        function itemEhProcessoVinculadoOrcamento(item) {
+            return normalizarBusca(item?.tipoProcesso) === 'vinculado';
+        }
+
+        function itemPodeDividirRecursoOrcamento(item) {
+            return Boolean(item)
+                && item.ativo !== false
+                && item.compoeOrcamento !== false
+                && !itemEhProcessoVinculadoOrcamento(item);
+        }
+
+        function obterTodosItensOrcamentoParaDivisao(budgetData) {
+            return [
+                ...(budgetData?.itens || []),
+                ...(budgetData?.outrosProcessos || [])
+            ];
+        }
+
+        function calcularSaldoBasicoDisponivelOrcamento(item, budgetData = obterDadosOrcamento()) {
+            if (!item) return 0;
+
+            const itens = obterTodosItensOrcamentoParaDivisao(budgetData);
+            const totalFilhos = itens
+                .filter((registro) => (
+                    normalizarBusca(registro?.processoPaiId) === normalizarBusca(item.id)
+                    && itemEhProcessoVinculadoOrcamento(registro)
+                    && registro.ativo !== false
+                ))
+                .reduce((total, registro) => total + (Number(registro.valorPrevisto) || 0), 0);
+
+            const valorPrevisto = Number(item.valorPrevisto ?? item.valorTotal) || 0;
+            const valorEmpenhado = Number(item.valorEmpenhado) || 0;
+            const valorExecutado = Number(item.valorExecutado) || 0;
+
+            return Math.max(0, valorPrevisto - valorEmpenhado - valorExecutado - totalFilhos);
+        }
+
+        function renderizarBadgeProcessoVinculadoOrcamento(item) {
+            if (!itemEhProcessoVinculadoOrcamento(item)) return '';
+
+            return `
+                <div class="budget-linked-process-info">
+                    <span class="budget-linked-process-badge">
+                        <i class="fas fa-code-branch" aria-hidden="true"></i>
+                        <span>Processo vinculado</span>
+                    </span>
+                    <div class="budget-linked-process-origin">Origem: ${escapeHtml(item.processoPaiId || '-')}</div>
+                </div>
+            `;
+        }
+
+        function renderizarBotaoDividirRecursoOrcamento(item) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+            if (!itemPodeDividirRecursoOrcamento(item)) return '';
+
+            return renderActionButton({
+                type: 'split',
+                label: 'Dividir recurso',
+                variant: 'outline-primary',
+                backend: true,
+                title: 'Dividir recurso',
+                extraClass: 'budget-split-button budget-row-action',
+                attributes: `data-orcamento-dividir-recurso="${escapeHtml(item.id)}"`
+            });
+        }
+
+        function renderizarModalDividirRecursoOrcamento(item, saldoBasicoDisponivel) {
+            const saldoTexto = formatMoney(saldoBasicoDisponivel);
+            const statusPadrao = 'PLANEJADO';
+
+            return `
+                <div class="modal fade budget-split-modal" id="modalDividirRecursoOrcamento" tabindex="-1" aria-hidden="true" data-orcamento-pai-id="${escapeHtml(item.id)}">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content budget-split-modal-content">
+                            <div class="modal-header">
+                                <div>
+                                    <p class="section-eyebrow mb-1">Orçamento 2026</p>
+                                    <h5 class="modal-title">Dividir recurso</h5>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body budget-split-form">
+                                <div class="budget-split-summary">
+                                    <div class="budget-split-summary-item">
+                                        <span>Processo pai</span>
+                                        <strong>${escapeHtml(item.id || '-')}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Descrição do processo pai</span>
+                                        <strong>${escapeHtml(item.descricao || '-')}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Frente / categoria</span>
+                                        <strong>${escapeHtml(item.frente || item.categoria || '-')}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor previsto do pai</span>
+                                        <strong>${formatMoney(Number(item.valorPrevisto ?? item.valorTotal) || 0)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor empenhado</span>
+                                        <strong>${formatMoney(Number(item.valorEmpenhado) || 0)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor executado</span>
+                                        <strong>${formatMoney(Number(item.valorExecutado) || 0)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item budget-split-summary-item-wide">
+                                        <span>Saldo básico disponível</span>
+                                        <strong class="${saldoBasicoDisponivel < 0 ? 'text-danger' : 'text-success'}">${saldoTexto}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="budget-linked-process-preview mt-3">
+                                    ${renderizarBadgeProcessoVinculadoOrcamento(item)}
+                                </div>
+
+                                <form class="budget-split-form-fields mt-3" id="formDividirRecursoOrcamento" novalidate>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label" for="budgetSplitDescricao">Descrição do novo processo vinculado</label>
+                                            <input type="text" class="form-control" id="budgetSplitDescricao" maxlength="255" required placeholder="Ex.: Contratação de serviços gráficos - etapa 2">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="budgetSplitValorAlocado">Valor alocado</label>
+                                            <input type="text" class="form-control" id="budgetSplitValorAlocado" inputmode="decimal" placeholder="0,00" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="budgetSplitStatus">Status</label>
+                                            <select class="form-select" id="budgetSplitStatus">
+                                                ${STATUS_ORCAMENTO_EDICAO.map((status) => `<option value="${escapeHtml(status)}" ${status === statusPadrao ? 'selected' : ''}>${escapeHtml(status)}</option>`).join('')}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="budgetSplitProcessoSei">Processo SEI</label>
+                                            <input type="text" class="form-control" id="budgetSplitProcessoSei" maxlength="120" placeholder="Opcional">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="budgetSplitDataProcessoSei">Data do Processo SEI</label>
+                                            <input type="text" class="form-control" id="budgetSplitDataProcessoSei" maxlength="20" placeholder="DD/MM/AAAA">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="budgetSplitLinkProcessoSei">Link do Processo SEI</label>
+                                            <input type="url" class="form-control" id="budgetSplitLinkProcessoSei" maxlength="500" placeholder="https://...">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="budgetSplitObservacao">Observação</label>
+                                            <textarea class="form-control" id="budgetSplitObservacao" rows="3" maxlength="1000" placeholder="Observação opcional"></textarea>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="budgetSplitPassword">Senha de confirmação</label>
+                                            <input type="password" class="form-control" id="budgetSplitPassword" autocomplete="current-password" required>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                ${renderActionButton({
+                                    id: 'btnSalvarDivisaoRecursoOrcamento',
+                                    type: 'save',
+                                    label: 'Salvar divisão',
+                                    variant: 'primary',
+                                    backend: true,
+                                    disabled: orcamentoDivisaoRecursoEmAndamento,
+                                    attributes: 'data-orcamento-salvar-divisao="1"'
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function abrirModalDividirRecursoOrcamento(itemId) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            const budgetData = obterDadosOrcamento();
+            const todosItens = obterTodosItensOrcamentoParaDivisao(budgetData);
+            const item = todosItens.find((registro) => String(registro.id) === String(itemId));
+
+            if (!item || !itemPodeDividirRecursoOrcamento(item)) {
+                alert('Não foi possível localizar um processo principal elegível para divisão.');
+                return;
+            }
+
+            const saldoBasicoDisponivel = calcularSaldoBasicoDisponivelOrcamento(item, budgetData);
+            removerModalOnasp('modalDividirRecursoOrcamento');
+            document.body.insertAdjacentHTML('beforeend', renderizarModalDividirRecursoOrcamento(item, saldoBasicoDisponivel));
+
+            const modalElement = document.getElementById('modalDividirRecursoOrcamento');
+            const modal = new window.bootstrap.Modal(modalElement);
+            const form = document.getElementById('formDividirRecursoOrcamento');
+            const campoDescricao = document.getElementById('budgetSplitDescricao');
+            const campoValor = document.getElementById('budgetSplitValorAlocado');
+            const campoStatus = document.getElementById('budgetSplitStatus');
+            const campoPassword = document.getElementById('budgetSplitPassword');
+            const campoProcessoSei = document.getElementById('budgetSplitProcessoSei');
+            const campoLinkProcessoSei = document.getElementById('budgetSplitLinkProcessoSei');
+            const campoDataProcessoSei = document.getElementById('budgetSplitDataProcessoSei');
+            const campoObservacao = document.getElementById('budgetSplitObservacao');
+            const botaoSalvar = document.getElementById('btnSalvarDivisaoRecursoOrcamento');
+
+            modal.show();
+            campoDescricao?.focus();
+
+            const limparValidacao = (campo) => {
+                if (campo) campo.setCustomValidity('');
+            };
+
+            campoValor?.addEventListener('input', () => limparValidacao(campoValor));
+            campoDescricao?.addEventListener('input', () => limparValidacao(campoDescricao));
+            campoPassword?.addEventListener('input', () => limparValidacao(campoPassword));
+
+            botaoSalvar?.addEventListener('click', async () => {
+                if (orcamentoDivisaoRecursoEmAndamento) return;
+
+                if (!form?.reportValidity()) return;
+
+                const descricao = String(campoDescricao?.value || '').trim();
+                const valorAlocado = parseNumeroMonetarioFrontend(campoValor?.value || '');
+                const saldoBasico = Number.isFinite(saldoBasicoDisponivel) ? saldoBasicoDisponivel : null;
+
+                if (!descricao) {
+                    campoDescricao?.setCustomValidity('Informe a descrição do novo processo vinculado.');
+                    campoDescricao?.reportValidity();
+                    return;
+                }
+
+                if (!Number.isFinite(valorAlocado) || valorAlocado <= 0) {
+                    campoValor?.setCustomValidity('Informe um valor maior que zero.');
+                    campoValor?.reportValidity();
+                    return;
+                }
+
+                if (saldoBasico !== null && valorAlocado > saldoBasico) {
+                    campoValor?.setCustomValidity('O valor alocado excede o saldo básico disponível.');
+                    campoValor?.reportValidity();
+                    return;
+                }
+
+                orcamentoDivisaoRecursoEmAndamento = true;
+                botaoSalvar.disabled = true;
+                botaoSalvar.setAttribute('aria-disabled', 'true');
+
+                try {
+                    // A divisão cria processo vinculado sem compor novamente o total global do orçamento.
+                    // O backend valida saldo e impede duplicidade orçamentária; o front-end apenas antecipa erros de preenchimento.
+                    const { resposta, payload } = await fetchJsonApiOnasp('/api/orcamento-2026/processos-vinculados/criar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            password: String(campoPassword?.value || '').trim(),
+                            processoPaiId: String(item.id),
+                            descricao,
+                            valorAlocado,
+                            processoSei: String(campoProcessoSei?.value || '').trim(),
+                            linkProcessoSei: String(campoLinkProcessoSei?.value || '').trim(),
+                            dataProcessoSei: String(campoDataProcessoSei?.value || '').trim(),
+                            status: String(campoStatus?.value || 'PLANEJADO').trim(),
+                            observacao: String(campoObservacao?.value || '').trim()
+                        })
+                    });
+
+                    if (!resposta.ok || !payload.success) {
+                        alert(payload.message || 'Não foi possível dividir o recurso.');
+                        return;
+                    }
+
+                    modal.hide();
+                    await carregarDadosOrcamento(true);
+                    renderOrcamentoView();
+                    alert(payload.message || 'Processo vinculado criado com sucesso.');
+                } catch (error) {
+                    alert(`Não foi possível dividir o recurso: ${error.message}`);
+                } finally {
+                    orcamentoDivisaoRecursoEmAndamento = false;
+                    botaoSalvar.disabled = false;
+                    botaoSalvar.removeAttribute('aria-disabled');
+                }
+            });
+        }
+
         function renderizarCabecalhoColunasOrcamento() {
             return `
                 <tr class="budget-column-row">
@@ -5924,6 +6212,7 @@ async function carregarLogoParaPDF() {
                         <td data-label="Ações" class="text-center align-middle">
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(item)}
+                                ${renderizarBotaoDividirRecursoOrcamento(item)}
                                 ${renderizarBotaoEdicaoOrcamento(item.id)}
                             </div>
                         </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 11)}
@@ -6048,6 +6337,10 @@ async function carregarLogoParaPDF() {
                 });
             });
 
+            document.querySelectorAll('[data-orcamento-dividir-recurso]').forEach((botao) => {
+                botao.addEventListener('click', () => abrirModalDividirRecursoOrcamento(botao.dataset.orcamentoDividirRecurso));
+            });
+
             document.querySelectorAll('[data-orcamento-inativar]').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     if (!window.confirm('Inativar este processo de interesse? A alteração só será aplicada ao salvar.')) return;
@@ -6076,9 +6369,15 @@ async function carregarLogoParaPDF() {
                 .filter((item) => !orcamentoProcessosInativos.has(String(item.id)));
             const linhasExistentes = outrosProcessos.map((item) => {
                 const editando = orcamentoItemEmEdicao(item.id);
+                const linkedBadge = renderizarBadgeProcessoVinculadoOrcamento(item);
                 return `
                 <tr>
-                    <td data-label="Descrição">${renderizarCampoOutrosOrcamento(item, 'descricao')}</td>
+                    <td data-label="Descrição">
+                        <div class="budget-other-description">
+                            ${renderizarCampoOutrosOrcamento(item, 'descricao')}
+                            ${linkedBadge}
+                        </div>
+                    </td>
                     <td data-label="Processo SEI">${renderizarCampoOutrosOrcamento(item, 'processo_sei')}</td>
                     <td data-label="Valor estimado" class="text-end font-monospace">${renderizarCampoOutrosOrcamento(item, 'valor_estimado_pesquisa_preco', 'number')}</td>
                     <td data-label="Processo autuado" class="text-center">${renderizarCampoOutrosOrcamento(item, 'processo_autuado')}</td>
