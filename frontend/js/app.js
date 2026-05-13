@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260513-01';
+} from '../../backend/services/data-service.js?v=20260513-02';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -67,6 +67,8 @@ let orcamentoEditoresAbertos = new Set();
 let orcamentoNovosProcessos = [];
 let orcamentoProcessosInativos = new Set();
 let orcamentoDivisaoRecursoEmAndamento = false;
+let orcamentoMovimentacoes = [];
+let orcamentoAlocacaoEmAndamento = false;
 let erroCarregamentoOrcamento = null;
 const errosCarregamentoView = {};
 let resumoPublicacaoSistemaCache = null;
@@ -199,7 +201,8 @@ const UI_ICONS = {
     lock: 'fa-lock',
     search: 'fa-magnifying-glass',
     filter: 'fa-filter',
-    refresh: 'fa-rotate-right'
+    refresh: 'fa-rotate-right',
+    allocate: 'fa-right-left'
 };
 
 const STATUS_UI = {
@@ -800,6 +803,10 @@ async function carregarLogoParaPDF() {
             if (viewName === 'orcamento' && !obterDadosOrcamento()) {
                 await carregarDadosOrcamento();
                 erroCarregamentoOrcamento = null;
+            }
+
+            if (viewName === 'orcamento') {
+                await carregarMovimentacoesOrcamento2026();
             }
 
             if (['formalizacao', 'formalizacao-detalhe'].includes(viewName) && !obterDadosFormalizacaoProfor()) {
@@ -5775,6 +5782,45 @@ async function carregarLogoParaPDF() {
             return Math.max(0, valorPrevisto - valorEmpenhado - valorExecutado - totalFilhos);
         }
 
+        // O cálculo visual antecipa o saldo para UX; o backend continua sendo a fonte de verdade.
+        function calcularSaldoTransferivelVisualOrcamento(item, budgetData, movimentacoes) {
+            if (!item) return 0;
+            const id = String(item.id || '').trim();
+            const lista = Array.isArray(movimentacoes) ? movimentacoes : [];
+            const valorRecebido = lista
+                .filter((m) => String(m.destinoId || '').trim() === id)
+                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
+            const valorCedido = lista
+                .filter((m) => String(m.origemId || '').trim() === id)
+                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
+            const itens = obterTodosItensOrcamentoParaDivisao(budgetData);
+            const valorDistribuidoParaFilhos = itens
+                .filter((r) => normalizarBusca(r?.processoPaiId) === normalizarBusca(id) && r.ativo !== false)
+                .reduce((t, r) => t + (Number(r.valorPrevisto) || 0), 0);
+            return Math.max(0, (
+                (Number(item.valorPrevisto ?? item.valorTotal) || 0)
+                + valorRecebido
+                - valorCedido
+                - (Number(item.valorEmpenhado) || 0)
+                - (Number(item.valorExecutado) || 0)
+                - valorDistribuidoParaFilhos
+            ));
+        }
+
+        async function carregarMovimentacoesOrcamento2026() {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                orcamentoMovimentacoes = [];
+                return;
+            }
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/orcamento-2026/movimentacoes');
+                // A alocação é registrada como movimentação, sem alterar o valor original dos processos.
+                orcamentoMovimentacoes = Array.isArray(payload?.movimentacoes) ? payload.movimentacoes : [];
+            } catch {
+                orcamentoMovimentacoes = [];
+            }
+        }
+
         function renderizarBadgeProcessoVinculadoOrcamento(item) {
             if (!itemEhProcessoVinculadoOrcamento(item)) return '';
 
@@ -5887,6 +5933,7 @@ async function carregarLogoParaPDF() {
                         <td data-label="Ações" class="text-center align-middle">
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(filho)}
+                                ${renderizarBotaoAlocarSaldoOrcamento(filho)}
                                 ${renderizarBotaoEdicaoOrcamento(filho.id)}
                             </div>
                         </td>
@@ -5910,6 +5957,282 @@ async function carregarLogoParaPDF() {
                 iconOnly: true,
                 extraClass: 'budget-split-button budget-row-action',
                 attributes: `data-orcamento-dividir-recurso="${escapeHtml(item.id)}"`
+            });
+        }
+
+        function itemPodeAlocarSaldoOrcamento(item) {
+            return Boolean(item)
+                && item.ativo !== false
+                && !dadosPaginaEmModoEstatico('orcamento2026');
+        }
+
+        function renderizarBotaoAlocarSaldoOrcamento(item) {
+            if (!itemPodeAlocarSaldoOrcamento(item)) return '';
+
+            return renderActionButton({
+                type: 'allocate',
+                label: 'Alocar saldo',
+                variant: 'outline-primary',
+                backend: true,
+                title: 'Alocar saldo',
+                iconOnly: true,
+                extraClass: 'budget-allocate-button budget-row-action',
+                attributes: `data-orcamento-alocar-saldo="${escapeHtml(item.id)}"`
+            });
+        }
+
+        function renderizarModalAlocarSaldoOrcamento(item, todosItens, movimentacoes, saldoTransferivel) {
+            const categoriaOrigem = normalizarTexto(item.categoria || item.frente || '');
+
+            const destinos = todosItens.filter((dest) => (
+                String(dest.id) !== String(item.id)
+                && dest.ativo !== false
+                && normalizarTexto(dest.categoria || dest.frente || '') === categoriaOrigem
+            ));
+
+            const valorPrevisto = Number(item.valorPrevisto ?? item.valorTotal) || 0;
+            const valorEmpenhado = Number(item.valorEmpenhado) || 0;
+            const valorExecutado = Number(item.valorExecutado) || 0;
+            const valorRecebido = movimentacoes
+                .filter((m) => String(m.destinoId || '') === String(item.id))
+                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
+            const valorCedido = movimentacoes
+                .filter((m) => String(m.origemId || '') === String(item.id))
+                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
+            const itens = obterTodosItensOrcamentoParaDivisao({ itens: todosItens, outrosProcessos: [] });
+            const valorDistribuidoFilhos = itens
+                .filter((r) => normalizarBusca(r?.processoPaiId) === normalizarBusca(item.id) && r.ativo !== false)
+                .reduce((t, r) => t + (Number(r.valorPrevisto) || 0), 0);
+
+            const historicoItem = movimentacoes
+                .filter((m) => String(m.origemId || '') === String(item.id) || String(m.destinoId || '') === String(item.id))
+                .slice(0, 5);
+
+            const saldoClasse = saldoTransferivel > 0 ? 'text-success' : 'text-danger';
+
+            return `
+                <div class="modal fade budget-allocation-modal" id="modalAlocarSaldoOrcamento" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div>
+                                    <p class="section-eyebrow mb-1">Orçamento 2026</p>
+                                    <h5 class="modal-title">Alocar saldo</h5>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="budget-allocation-summary">
+                                    <div class="budget-split-summary-item">
+                                        <span>Processo de origem</span>
+                                        <strong>${escapeHtml(item.id || '-')}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Frente / categoria</span>
+                                        <strong>${escapeHtml(item.frente || item.categoria || '-')}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor previsto</span>
+                                        <strong>${formatMoney(valorPrevisto)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor empenhado</span>
+                                        <strong>${formatMoney(valorEmpenhado)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Valor executado</span>
+                                        <strong>${formatMoney(valorExecutado)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Distribuído para vinculados</span>
+                                        <strong>${formatMoney(valorDistribuidoFilhos)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Recebido por alocações</span>
+                                        <strong class="text-success">${formatMoney(valorRecebido)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item">
+                                        <span>Cedido por alocações</span>
+                                        <strong class="text-warning">${formatMoney(valorCedido)}</strong>
+                                    </div>
+                                    <div class="budget-split-summary-item budget-split-summary-item-wide">
+                                        <span>Saldo transferível estimado</span>
+                                        <strong class="${saldoClasse}">${formatMoney(saldoTransferivel)}</strong>
+                                    </div>
+                                </div>
+
+                                ${historicoItem.length ? `
+                                    <div class="budget-allocation-history mt-3">
+                                        <div class="budget-allocation-history-title">Últimas movimentações deste processo</div>
+                                        ${historicoItem.map((m) => `
+                                            <div class="budget-allocation-history-item">
+                                                <span class="budget-allocation-badge">${m.origemId === item.id ? 'Cedido' : 'Recebido'}</span>
+                                                ${m.origemId === item.id
+                                                    ? `→ <strong>${escapeHtml(m.destinoId || '-')}</strong>`
+                                                    : `← <strong>${escapeHtml(m.origemId || '-')}</strong>`}
+                                                <strong class="font-monospace">${formatMoney(Number(m.valor) || 0)}</strong>
+                                                <span class="text-muted">${escapeHtml(m.justificativa || '')}</span>
+                                                <span class="text-muted">${m.criadoEm ? new Date(m.criadoEm).toLocaleString('pt-BR') : ''}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+
+                                <form class="budget-allocation-form-fields mt-3" id="formAlocarSaldoOrcamento" novalidate>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label" for="budgetAllocDestino">Processo de destino <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="budgetAllocDestino" required>
+                                                <option value="">Selecione o processo de destino...</option>
+                                                ${destinos.map((dest) => `
+                                                    <option value="${escapeHtml(dest.id)}">
+                                                        ${escapeHtml(dest.id)} — ${escapeHtml(dest.descricao || '-')} (${formatMoney(Number(dest.valorPrevisto ?? dest.valorTotal) || 0)})
+                                                    </option>
+                                                `).join('')}
+                                            </select>
+                                            ${destinos.length === 0 ? '<div class="form-text text-warning">Nenhum processo elegível na mesma categoria.</div>' : ''}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="budgetAllocValor">Valor a alocar <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="budgetAllocValor" inputmode="decimal" placeholder="0,00" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="budgetAllocJustificativa">Justificativa <span class="text-danger">*</span></label>
+                                            <textarea class="form-control" id="budgetAllocJustificativa" rows="3" maxlength="500" placeholder="Descreva o motivo da realocação de saldo" required></textarea>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="budgetAllocPassword">Senha de confirmação <span class="text-danger">*</span></label>
+                                            <input type="password" class="form-control" id="budgetAllocPassword" autocomplete="current-password" required>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                ${renderActionButton({
+                                    id: 'btnConfirmarAlocacaoSaldoOrcamento',
+                                    type: 'save',
+                                    label: 'Confirmar alocação',
+                                    variant: 'primary',
+                                    backend: true,
+                                    disabled: orcamentoAlocacaoEmAndamento
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function abrirModalAlocarSaldoOrcamento(itemId) {
+            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            const budgetData = obterDadosOrcamento();
+            const todosItens = obterTodosItensOrcamentoParaDivisao(budgetData);
+            const item = todosItens.find((registro) => String(registro.id) === String(itemId));
+
+            if (!item || !itemPodeAlocarSaldoOrcamento(item)) {
+                alert('Não foi possível localizar um processo elegível para alocação de saldo.');
+                return;
+            }
+
+            // O backend valida o saldo real; o front-end calcula apenas uma estimativa para orientar o usuário.
+            const saldoTransferivel = calcularSaldoTransferivelVisualOrcamento(item, budgetData, orcamentoMovimentacoes);
+
+            removerModalOnasp('modalAlocarSaldoOrcamento');
+            document.body.insertAdjacentHTML('beforeend', renderizarModalAlocarSaldoOrcamento(
+                item, todosItens, orcamentoMovimentacoes, saldoTransferivel
+            ));
+
+            const modalElement = document.getElementById('modalAlocarSaldoOrcamento');
+            const modal = new window.bootstrap.Modal(modalElement);
+            const form = document.getElementById('formAlocarSaldoOrcamento');
+            const campoDestino = document.getElementById('budgetAllocDestino');
+            const campoValor = document.getElementById('budgetAllocValor');
+            const campoJustificativa = document.getElementById('budgetAllocJustificativa');
+            const campoPassword = document.getElementById('budgetAllocPassword');
+            const botaoConfirmar = document.getElementById('btnConfirmarAlocacaoSaldoOrcamento');
+
+            modal.show();
+            campoDestino?.focus();
+
+            const limparValidacao = (campo) => { if (campo) campo.setCustomValidity(''); };
+            campoDestino?.addEventListener('change', () => limparValidacao(campoDestino));
+            campoValor?.addEventListener('input', () => limparValidacao(campoValor));
+            campoJustificativa?.addEventListener('input', () => limparValidacao(campoJustificativa));
+            campoPassword?.addEventListener('input', () => limparValidacao(campoPassword));
+
+            botaoConfirmar?.addEventListener('click', async () => {
+                if (orcamentoAlocacaoEmAndamento) return;
+
+                const destinoId = String(campoDestino?.value || '').trim();
+                const valor = parseNumeroMonetarioFrontend(campoValor?.value || '');
+                const justificativa = String(campoJustificativa?.value || '').trim();
+                const password = String(campoPassword?.value || '').trim();
+
+                if (!destinoId) {
+                    campoDestino?.setCustomValidity('Selecione o processo de destino.');
+                    campoDestino?.reportValidity();
+                    return;
+                }
+
+                if (!Number.isFinite(valor) || valor <= 0) {
+                    campoValor?.setCustomValidity('Informe um valor maior que zero.');
+                    campoValor?.reportValidity();
+                    return;
+                }
+
+                if (Number.isFinite(saldoTransferivel) && valor > saldoTransferivel) {
+                    campoValor?.setCustomValidity('O valor excede o saldo transferível estimado.');
+                    campoValor?.reportValidity();
+                    return;
+                }
+
+                if (!justificativa) {
+                    campoJustificativa?.setCustomValidity('Informe a justificativa da alocação.');
+                    campoJustificativa?.reportValidity();
+                    return;
+                }
+
+                if (!password) {
+                    campoPassword?.setCustomValidity('Informe a senha de confirmação.');
+                    campoPassword?.reportValidity();
+                    return;
+                }
+
+                orcamentoAlocacaoEmAndamento = true;
+                botaoConfirmar.disabled = true;
+                botaoConfirmar.setAttribute('aria-disabled', 'true');
+
+                try {
+                    const { resposta, payload } = await fetchJsonApiOnasp('/api/orcamento-2026/saldos/alocar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password, origemId: String(item.id), destinoId, valor, justificativa })
+                    });
+
+                    if (!resposta.ok || !payload.success) {
+                        alert(payload.message || 'Não foi possível alocar o saldo.');
+                        return;
+                    }
+
+                    modal.hide();
+                    await carregarDadosOrcamento(true);
+                    await carregarMovimentacoesOrcamento2026();
+                    renderOrcamentoView();
+                    alert(payload.message || 'Saldo alocado com sucesso.');
+                } catch (error) {
+                    alert(`Não foi possível alocar o saldo: ${error.message}`);
+                } finally {
+                    orcamentoAlocacaoEmAndamento = false;
+                    if (botaoConfirmar) {
+                        botaoConfirmar.disabled = false;
+                        botaoConfirmar.removeAttribute('aria-disabled');
+                    }
+                }
             });
         }
 
@@ -6121,6 +6444,7 @@ async function carregarLogoParaPDF() {
 
                     modal.hide();
                     await carregarDadosOrcamento(true);
+                    await carregarMovimentacoesOrcamento2026();
                     renderOrcamentoView();
                     alert(payload.message || 'Processo vinculado criado com sucesso.');
                 } catch (error) {
@@ -6336,6 +6660,7 @@ async function carregarLogoParaPDF() {
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(item)}
                                 ${renderizarBotaoDividirRecursoOrcamento(item)}
+                                ${renderizarBotaoAlocarSaldoOrcamento(item)}
                                 ${renderizarBotaoEdicaoOrcamento(item.id)}
                             </div>
                         </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 11)}
@@ -6463,6 +6788,10 @@ async function carregarLogoParaPDF() {
 
             document.querySelectorAll('[data-orcamento-dividir-recurso]').forEach((botao) => {
                 botao.addEventListener('click', () => abrirModalDividirRecursoOrcamento(botao.dataset.orcamentoDividirRecurso));
+            });
+
+            document.querySelectorAll('[data-orcamento-alocar-saldo]').forEach((botao) => {
+                botao.addEventListener('click', () => abrirModalAlocarSaldoOrcamento(botao.dataset.orcamentoAlocarSaldo));
             });
 
             document.querySelectorAll('[data-orcamento-inativar]').forEach((botao) => {
@@ -6700,6 +7029,7 @@ async function carregarLogoParaPDF() {
                 }
                 modal.hide();
                 await carregarDadosOrcamento(true);
+                await carregarMovimentacoesOrcamento2026();
                 renderOrcamentoView();
                 alert(obterMensagemSalvamento(payload));
             } catch (error) {

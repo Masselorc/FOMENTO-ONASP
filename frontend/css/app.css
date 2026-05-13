@@ -1916,6 +1916,69 @@ table.dataTable thead td,
     font-size: 0.9rem;
 }
 
+/* Alocar saldo — botão e modal */
+#view-orcamento .budget-allocate-button i {
+    font-size: 0.78rem;
+}
+
+.budget-allocation-modal .modal-body {
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.budget-allocation-summary {
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.budget-allocation-form-fields .form-label {
+    color: var(--color-primary-strong);
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.budget-allocation-form-fields .form-control,
+.budget-allocation-form-fields .form-select {
+    font-size: 0.9rem;
+}
+
+.budget-allocation-history {
+    border-left: 2px solid rgba(13, 110, 253, 0.2);
+    font-size: 0.8rem;
+    padding-left: 0.75rem;
+}
+
+.budget-allocation-history-title {
+    color: var(--color-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+}
+
+.budget-allocation-history-item {
+    border-top: 1px solid rgba(23, 74, 124, 0.08);
+    color: var(--color-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    padding: 0.3rem 0;
+}
+
+.budget-allocation-badge {
+    align-items: center;
+    background: rgba(23, 74, 124, 0.08);
+    border-radius: 999px;
+    color: var(--color-primary);
+    display: inline-flex;
+    font-size: 0.68rem;
+    font-weight: 600;
+    gap: 0.25rem;
+    padding: 0.12rem 0.4rem;
+}
+
 .budget-row-action-edit {
     border-radius: var(--radius-sm);
     height: 28px;
