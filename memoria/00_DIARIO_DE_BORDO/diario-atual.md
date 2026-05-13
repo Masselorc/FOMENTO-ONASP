@@ -400,3 +400,15 @@
 - Pendências: manter `schema-banco.md` atualizado se houver nova tabela, coluna, constraint, regra de histórico, movimentação orçamentária ou rota de escrita.
 - Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização se o schema evoluir sem atualização da memória.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 13/05/2026 - Erros, Correções e Boas Práticas
+
+- Branch atual: `main`.
+- Tarefa executada: preenchimento de `memoria/09_ERROS_E_CORRECOES/historico-erros.md` como base operacional reutilizável de erros, correções, riscos, boas práticas e lições exportáveis.
+- Arquivos alterados: `memoria/09_ERROS_E_CORRECOES/historico-erros.md`, `memoria/INDEX.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: registrados erros reais já evidenciados, como churn de `publicadoEm`, publicação automática indevida pelo hook, problemas corrigidos no fluxo do Orçamento 2026 e padrões preventivos para JSONs publicados, SQLite local, modo local/API versus estático, documentação, validação agentic, comentários de código e rollback.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/09_ERROS_E_CORRECOES/historico-erros.md memoria/INDEX.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: documentação preparada sem alteração de código, backend, frontend, banco, scripts, testes, planilhas ou JSONs publicados.
+- Pendências: manter o histórico atualizado quando houver novo erro real, correção validada, risco recorrente ou prática reutilizável.
+- Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de classificar como erro real algo que seja apenas prevenção ou boa prática.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

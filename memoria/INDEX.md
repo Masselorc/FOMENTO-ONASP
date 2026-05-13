@@ -36,7 +36,7 @@ Arquivos temáticos existentes nesta árvore:
 - `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`
 - `memoria/08_ROTAS_BANCO_API/rotas.md`
 - `memoria/08_ROTAS_BANCO_API/schema-banco.md`
-- `memoria/09_ERROS_E_CORRECOES/historico-erros.md`
+- `memoria/09_ERROS_E_CORRECOES/historico-erros.md` — base de erros reais, correções aplicadas, riscos recorrentes, boas práticas e lições exportáveis.
 - `memoria/10_TESTES/checklist-validacao.md`
 - `memoria/11_PROMPTS_CODEX/prompt-padrao.md`
 
@@ -55,7 +55,7 @@ Arquivos ou pastas planejados para evolução futura:
 - `06_UFS_OUVIDORIAS`
 - `07_DADOS_E_PLANILHAS_TRATADAS`
 - `08_ROTAS_BANCO_API`
-- `09_ERROS_E_CORRECOES`
+- `09_ERROS_E_CORRECOES` — Erros, Correções e Boas Práticas
 - `10_TESTES`
 - `11_PROMPTS_CODEX`
 - `12_ADR`, quando existir
@@ -95,7 +95,7 @@ Alteração geral de código:
 
 Correção de bug:
 
-- Ler `memoria/09_ERROS_E_CORRECOES/historico-erros.md`, quando existir.
+- Ler `memoria/09_ERROS_E_CORRECOES/historico-erros.md`, quando existir, para consultar erros reais, correções aplicadas, riscos recorrentes, boas práticas e lições exportáveis.
 - Ler `memoria/01_PROJETO_APLICACAO/pendencias.md`, quando existir.
 - Reproduzir o comportamento ou localizar a evidência no código antes de corrigir.
 
