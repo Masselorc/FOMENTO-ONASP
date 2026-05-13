@@ -5790,6 +5790,74 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        // Filhos vinculados são renderizados junto ao pai para evitar dupla contagem visual no orçamento.
+        function obterFilhosVinculadosOrcamento(paiId, budgetData) {
+            return obterTodosItensOrcamentoParaDivisao(budgetData)
+                .filter((f) => normalizarBusca(f?.processoPaiId) === normalizarBusca(paiId)
+                    && itemEhProcessoVinculadoOrcamento(f)
+                    && f.ativo !== false);
+        }
+
+        // O valor do pai permanece como envelope original; o saldo exibido desconta apenas a distribuição para filhos.
+        function calcularResumoVinculosOrcamento(pai, filhos) {
+            const valorDistribuido = filhos.reduce((t, f) => t + (Number(f.valorPrevisto) || 0), 0);
+            const saldoBasicoRestante = (Number(pai.valorPrevisto ?? pai.valorTotal) || 0)
+                - (Number(pai.valorEmpenhado) || 0)
+                - (Number(pai.valorExecutado) || 0)
+                - valorDistribuido;
+            return { valorDistribuido, saldoBasicoRestante };
+        }
+
+        function renderizarResumoVinculosNoPaiOrcamento(pai, filhos) {
+            if (!filhos.length) return '';
+            const { valorDistribuido, saldoBasicoRestante } = calcularResumoVinculosOrcamento(pai, filhos);
+            const alertaClasse = saldoBasicoRestante < 0 ? ' budget-linked-summary-alert' : '';
+            return `
+                <div class="budget-linked-summary${alertaClasse}">
+                    <span class="budget-linked-summary-item">Vinculado: <strong>${filhos.length}</strong></span>
+                    <span class="budget-linked-summary-item">Distribuído: <strong class="font-monospace">${formatMoney(valorDistribuido)}</strong></span>
+                    <span class="budget-linked-summary-item">Saldo básico: <strong class="font-monospace${saldoBasicoRestante < 0 ? ' text-danger' : ''}">${formatMoney(saldoBasicoRestante)}</strong></span>
+                </div>
+            `;
+        }
+
+        function renderizarFilhosVinculadosOrcamento(filhos) {
+            if (!filhos.length) return '';
+            return filhos.map((filho) => {
+                const processoSei = filho.processoSei || '';
+                const status = filho.status || '';
+                const valorPrevisto = Number(filho.valorPrevisto ?? filho.valorTotal) || 0;
+                return `
+                    <tr class="budget-linked-child-row">
+                        <td colspan="11" class="budget-linked-child-cell">
+                            <div class="budget-linked-child-card">
+                                <div class="budget-linked-child-header">
+                                    <span class="budget-linked-badge">
+                                        <i class="fas fa-code-branch" aria-hidden="true"></i>
+                                        Processo vinculado
+                                    </span>
+                                    <span class="budget-linked-origin">Origem: ${escapeHtml(filho.processoPaiId || '-')}</span>
+                                </div>
+                                <div class="budget-linked-child-body">
+                                    <div>
+                                        <div class="budget-linked-child-desc">${escapeHtml(filho.descricao)}</div>
+                                        ${processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(processoSei)}</div>` : ''}
+                                    </div>
+                                    <div class="budget-linked-child-meta">
+                                        <span class="budget-linked-child-valor">Valor alocado: <strong class="font-monospace">${formatMoney(valorPrevisto)}</strong></span>
+                                        ${renderizarStatusOrcamento(status)}
+                                    </div>
+                                    <div class="budget-linked-child-actions">
+                                        ${renderizarBotaoEdicaoOrcamento(filho.id)}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
         function renderizarBotaoDividirRecursoOrcamento(item) {
             if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
             if (!itemPodeDividirRecursoOrcamento(item)) return '';
@@ -6171,6 +6239,7 @@ async function carregarLogoParaPDF() {
                     const processoSei = obterValorPendenteOrcamento(item, 'processo_sei') || item.processoSei;
                     const status = obterValorPendenteOrcamento(item, 'status');
                     const observacao = obterValorPendenteOrcamento(item, 'observacao');
+                    const filhosVinculados = obterFilhosVinculadosOrcamento(item.id, budgetData);
 
                     return `
                     <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
@@ -6182,6 +6251,7 @@ async function carregarLogoParaPDF() {
                                 </button>
                             ` : `<div class="budget-item-title budget-item-title-static">${escapeHtml(item.descricao)}</div>`}
                             ${item.processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(item.processoSei)}</div>` : ''}
+                            ${renderizarResumoVinculosNoPaiOrcamento(item, filhosVinculados)}
                         </td>
                         <td data-label="Modalidade/Natureza" class="align-middle">
                             <strong class="d-block">${escapeHtml(item.modalidade || '-')}</strong>
@@ -6217,6 +6287,7 @@ async function carregarLogoParaPDF() {
                             </div>
                         </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 11)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
+                    ${renderizarFilhosVinculadosOrcamento(filhosVinculados)}
                 `;
                 }).join('');
 
@@ -6366,7 +6437,8 @@ async function carregarLogoParaPDF() {
             if (!tbody) return;
 
             const outrosProcessos = (budgetData.outrosProcessos || [])
-                .filter((item) => !orcamentoProcessosInativos.has(String(item.id)));
+                .filter((item) => !orcamentoProcessosInativos.has(String(item.id)))
+                .filter((item) => !itemEhProcessoVinculadoOrcamento(item)); // Filhos vinculados aparecem junto ao pai na tabela principal
             const linhasExistentes = outrosProcessos.map((item) => {
                 const editando = orcamentoItemEmEdicao(item.id);
                 const linkedBadge = renderizarBadgeProcessoVinculadoOrcamento(item);
