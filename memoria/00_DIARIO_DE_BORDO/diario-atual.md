@@ -376,3 +376,15 @@
 - Pendências: detalhar futuramente endpoints, payloads e respostas em `memoria/08_ROTAS_BANCO_API/rotas.md`; detalhar tabelas, colunas e constraints em `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
 - Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização caso o fluxo de dados mude sem atualização da memória.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 13/05/2026 - Rotas da API local
+
+- Branch atual: `main`.
+- Tarefa executada: preenchimento de `memoria/08_ROTAS_BANCO_API/rotas.md` com as rotas reais da API local.
+- Arquivos alterados: `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: documentadas as rotas confirmadas em `backend/server.js`, os métodos HTTP, serviços chamados, payloads confirmados, respostas, efeitos colaterais, publicação estática por rota, exportações Excel, entrega de arquivos estáticos, relação com frontend, relação com banco/serviços e rotas não confirmadas.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/08_ROTAS_BANCO_API/rotas.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: documentação preparada sem alteração de código, backend, banco, scripts, testes, planilhas ou JSONs publicados.
+- Pendências: detalhar schema, tabelas, colunas, tipos, chaves e constraints em `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização se novas rotas forem adicionadas ou alteradas sem atualização da memória.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
