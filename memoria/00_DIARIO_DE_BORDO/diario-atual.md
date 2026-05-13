@@ -424,3 +424,15 @@
 - Pendências: manter o checklist atualizado quando surgirem novos scripts, testes, rotas, regras de publicação, práticas de segurança ou riscos recorrentes.
 - Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de desatualização caso comandos ou automações mudem sem atualização da memória.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 13/05/2026 - Saneamento da trilha de prompts
+
+- Branch atual: `main`.
+- Tarefa executada: remoção do arquivo vazio de prompt padrão da trilha operacional da memória.
+- Arquivos alterados/removidos: `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/09_ERROS_E_CORRECOES/historico-erros.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md` e remoção do arquivo vazio de prompt padrão.
+- Motivo da remoção: decisão operacional do usuário de manter instruções para Codex/IA fora do repositório, elaboradas externamente na versão web do ChatGPT.
+- Validações executadas: `git status --short`, conferência de arquivo vazio, `git diff --name-only`, `git diff -- memoria/INDEX.md memoria/01_PROJETO_APLICACAO/pendencias.md memoria/09_ERROS_E_CORRECOES/historico-erros.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`, busca de referências residuais na memória.
+- Resultado: trilha operacional saneada, índice sem orientação para consultar o arquivo removido, pendência ativa correspondente eliminada e referência residual em `historico-erros.md` substituída por referência ao checklist de validação, sem alteração de código, backend, frontend, banco, scripts, testes, planilhas ou JSONs publicados.
+- Pendências: nenhuma pendência nova criada nesta tarefa.
+- Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de referência residual contraditória na memória.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

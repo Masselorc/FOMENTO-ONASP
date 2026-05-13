@@ -625,7 +625,7 @@ Critério operacional: se não houver evidência concreta, registrar como risco,
 
 **Aplicável a futuras aplicações:** sim.
 
-**Arquivos relacionados:** `AGENTS.md`, `memoria/INDEX.md`, `memoria/11_PROMPTS_CODEX/prompt-padrao.md` quando estiver preenchido.
+**Arquivos relacionados:** `AGENTS.md`, `memoria/INDEX.md`, `memoria/10_TESTES/checklist-validacao.md`.
 
 **Validações recomendadas:** revisão de escopo antes do patch e revisão do diff antes do commit.
 

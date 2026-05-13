@@ -38,11 +38,12 @@ Arquivos temáticos existentes nesta árvore:
 - `memoria/08_ROTAS_BANCO_API/schema-banco.md`
 - `memoria/09_ERROS_E_CORRECOES/historico-erros.md` — base de erros reais, correções aplicadas, riscos recorrentes, boas práticas e lições exportáveis.
 - `memoria/10_TESTES/checklist-validacao.md`
-- `memoria/11_PROMPTS_CODEX/prompt-padrao.md`
 
 Arquivos ou pastas planejados para evolução futura:
 
 - `memoria/12_ADR/`, quando existir.
+
+Nota operacional: instruções e prompts para Codex/IA são elaborados externamente na versão web do ChatGPT, não como arquivo de memória deste repositório.
 
 ## Estrutura planejada
 
@@ -57,7 +58,6 @@ Arquivos ou pastas planejados para evolução futura:
 - `08_ROTAS_BANCO_API`
 - `09_ERROS_E_CORRECOES` — Erros, Correções e Boas Práticas
 - `10_TESTES`
-- `11_PROMPTS_CODEX`
 - `12_ADR`, quando existir
 
 ## Mapa técnico atual
@@ -175,12 +175,6 @@ PROFOR, convênios e formalização de instrumentos:
 - Ler `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`, quando existir.
 - Ler dados e serviços reais relacionados ao fluxo.
 - Preservar distinção entre planejamento, formalização, execução e publicação.
-
-Prompts para Codex ou ordens de serviço técnica:
-
-- Ler `memoria/11_PROMPTS_CODEX/prompt-padrao.md`, quando existir.
-- Produzir instruções com tarefa, contexto, arquivos-alvo, restrições, entrega esperada, critérios de aceite, testes, risco de regressão e rollback.
-- Tratar modelos pequenos como executores controlados, não como arquitetos livres.
 
 ## Modelo de diário de bordo
 

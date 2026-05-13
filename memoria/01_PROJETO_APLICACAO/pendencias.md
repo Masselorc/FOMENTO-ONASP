@@ -29,7 +29,6 @@ Use esta seção apenas para bloqueios reais evidenciados, como indisponibilidad
 - Preencher ou consolidar `memoria/08_ROTAS_BANCO_API/schema-banco.md` com schema real do banco, quando validado no projeto.
 - Preencher ou consolidar `memoria/09_ERROS_E_CORRECOES/historico-erros.md` com erros corrigidos e respectivas evidências.
 - Preencher ou consolidar `memoria/10_TESTES/checklist-validacao.md` com checklist operacional por tipo de tarefa.
-- Preencher ou consolidar `memoria/11_PROMPTS_CODEX/prompt-padrao.md` com modelo de ordem de serviço técnica para IA.
 - Avaliar futura criação de ADRs em `memoria/12_ADR/` quando houver decisões arquiteturais relevantes.
 
 ## Pendências técnicas da aplicação
@@ -66,6 +65,7 @@ Quando houver novo item, registrar a página, rota, serviço ou arquivo afetado,
 - Script `validar:setup` foi adicionado para instalar Chromium do Playwright quando necessário.
 - Hook de publicação foi saneado para respeitar `SKIP_PUBLICAR_DADOS=1` e reduzir churn indevido de JSONs publicados.
 - Versionamento seletivo da memória foi orientado para preservar Markdown tratado e ignorar fontes brutas, anexos sensíveis e artefatos locais.
+- A etapa de documento local para instruções de IA foi retirada da trilha operacional da memória por decisão do usuário; esse material será elaborado externamente no ChatGPT web.
 - Etapa 7 (13/05/2026): botão e modal "Alocar saldo" implementados no frontend do Orçamento 2026 — `frontend/js/app.js` e `frontend/css/app.css`; consumo da rota `POST /api/orcamento-2026/saldos/alocar` e `GET /api/orcamento-2026/movimentacoes`; sem alteração de backend, banco ou JSONs publicados.
 - Etapa 8 (13/05/2026): helper `calcularResumoSaldoVisualOrcamento` criado; envelope visual ajustado e detalhe discreto (Orig./Rec./Ced./Vinc.) exibidos na coluna "Valor previsto" do pai e filho; botão "Alocar saldo" oculto quando saldo transferível estimado ≤ 0; modal atualizado para usar helper; sem alteração de backend, banco ou JSONs publicados.
 
