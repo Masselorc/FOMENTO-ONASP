@@ -6235,7 +6235,13 @@ async function carregarLogoParaPDF() {
             const itensFiltrados = filtrarItensOrcamento(budgetData);
             const resumoSelecao = calcularResumoItensOrcamento(itensFiltrados);
 
-            const idsFiltrados = new Set(itensFiltrados.map((item) => String(item.id)));
+            const idsFilhosVinculados = obterTodosItensOrcamentoParaDivisao(budgetData)
+                .filter(itemEhProcessoVinculadoOrcamento)
+                .map((item) => String(item.id));
+            const idsFiltrados = new Set([
+                ...itensFiltrados.map((item) => String(item.id)),
+                ...idsFilhosVinculados
+            ]);
             orcamentoItensRastreioAbertos = new Set(
                 Array.from(orcamentoItensRastreioAbertos).filter((itemId) => idsFiltrados.has(itemId))
             );
