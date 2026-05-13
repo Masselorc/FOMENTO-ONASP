@@ -5,6 +5,7 @@
     "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js",
     "publicar:dados": "node backend/scripts/publicar-dados-estaticos.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
+    "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",
     "validar:syntax": "node --check scripts/validar-json-publicados.js && node --check playwright.config.js && node --check tests/e2e/app.spec.js",
     "validar:agente": "npm run validar:json && npm run validar:syntax && npx playwright test"
