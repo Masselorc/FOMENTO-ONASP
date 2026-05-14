@@ -504,3 +504,17 @@
 - Próximo passo: diagnóstico de performance da tela Orçamento 2026 no modo publicado.
 - Risco de regressão: baixo a médio; alteração de dados publicados pode gerar churn de metadados e totais derivados.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Otimização de renderização do Orçamento 2026
+
+- Branch atual: `main`.
+- Tarefa executada: otimização incremental da renderização da tela Orçamento 2026 para reduzir varreduras repetidas de itens e movimentações no modo publicado.
+- Arquivos alterados: `frontend/js/app.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Problema identificado: a tabela do Orçamento 2026 fazia cálculos visuais repetidos por linha, com filtros sucessivos sobre todos os itens e movimentações.
+- Causa provável: ausência de contexto de renderização compartilhado, levando a reprocessamento redundante de filhos vinculados, resumo de saldo e movimentações para cada linha e modal.
+- Otimização aplicada: criação de um contexto de renderização com `Map` para filhos por pai, movimentações por item e cache de resumo visual, reutilizado na tabela principal e no modal de alocação.
+- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"`, `node --check frontend/js/app.js`, `git diff --check`, medição local no navegador com `toggleView('orcamento')` e verificação de console sem erros.
+- Resultado: a tela continuou funcional, com 22 linhas renderizadas no teste local e carregamento observado em aproximadamente 1,1 s na medição automatizada.
+- Riscos remanescentes: baixo a médio; ganhos dependem do volume de itens e movimentações, mas a mudança removeu o custo mais óbvio de varredura repetida.
+- Próxima etapa recomendada: validar percepção de carregamento em uma sessão interativa do navegador local e, se necessário, considerar otimização adicional apenas após medir gargalos reais.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

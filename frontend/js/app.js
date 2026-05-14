@@ -5763,6 +5763,58 @@ async function carregarLogoParaPDF() {
             ];
         }
 
+        // Contexto de renderização evita varreduras repetidas de itens e movimentações em cada linha.
+        function prepararContextoRenderizacaoOrcamento(budgetData, movimentacoes = orcamentoMovimentacoes) {
+            const itens = obterTodosItensOrcamentoParaDivisao(budgetData);
+            const contexto = {
+                itens,
+                filhosPorPai: new Map(),
+                movimentacoesRecebidasPorId: new Map(),
+                movimentacoesCedidasPorId: new Map(),
+                valorFilhosPorPai: new Map(),
+                resumoSaldoPorId: new Map()
+            };
+
+            itens.forEach((item) => {
+                const itemId = normalizarBusca(item?.id);
+                const paiId = normalizarBusca(item?.processoPaiId);
+                const valorPrevisto = Number(item?.valorPrevisto) || 0;
+
+                if (paiId && itemEhProcessoVinculadoOrcamento(item) && item.ativo !== false) {
+                    if (!contexto.filhosPorPai.has(paiId)) {
+                        contexto.filhosPorPai.set(paiId, []);
+                    }
+                    contexto.filhosPorPai.get(paiId).push(item);
+                    contexto.valorFilhosPorPai.set(paiId, (contexto.valorFilhosPorPai.get(paiId) || 0) + valorPrevisto);
+                }
+
+                if (itemId) {
+                    contexto.resumoSaldoPorId.set(itemId, null);
+                }
+            });
+
+            (Array.isArray(movimentacoes) ? movimentacoes : []).forEach((movimentacao) => {
+                const destinoId = normalizarBusca(movimentacao?.destinoId);
+                const origemId = normalizarBusca(movimentacao?.origemId);
+                const valor = Number(movimentacao?.valor) || 0;
+
+                if (destinoId) {
+                    contexto.movimentacoesRecebidasPorId.set(
+                        destinoId,
+                        (contexto.movimentacoesRecebidasPorId.get(destinoId) || 0) + valor
+                    );
+                }
+                if (origemId) {
+                    contexto.movimentacoesCedidasPorId.set(
+                        origemId,
+                        (contexto.movimentacoesCedidasPorId.get(origemId) || 0) + valor
+                    );
+                }
+            });
+
+            return contexto;
+        }
+
         function calcularSaldoBasicoDisponivelOrcamento(item, budgetData = obterDadosOrcamento()) {
             if (!item) return 0;
 
@@ -5783,7 +5835,7 @@ async function carregarLogoParaPDF() {
         }
 
         // Consolida apenas a leitura visual do envelope; o valor original permanece preservado no banco.
-        function calcularResumoSaldoVisualOrcamento(item, budgetData, movimentacoes) {
+        function calcularResumoSaldoVisualOrcamento(item, budgetData, movimentacoes, contextoRenderizacao = null) {
             if (!item) {
                 return {
                     valorOriginal: 0, valorRecebidoPorAlocacao: 0, valorCedidoPorAlocacao: 0,
@@ -5792,24 +5844,21 @@ async function carregarLogoParaPDF() {
                     temMovimentacao: false, temFilhos: false, temAlerta: false
                 };
             }
-            const id = String(item.id || '').trim();
-            const lista = Array.isArray(movimentacoes) ? movimentacoes : [];
-            const valorRecebidoPorAlocacao = lista
-                .filter((m) => String(m.destinoId || '').trim() === id)
-                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
-            const valorCedidoPorAlocacao = lista
-                .filter((m) => String(m.origemId || '').trim() === id)
-                .reduce((t, m) => t + (Number(m.valor) || 0), 0);
-            const itens = obterTodosItensOrcamentoParaDivisao(budgetData);
-            const valorDistribuidoParaFilhos = itens
-                .filter((r) => normalizarBusca(r?.processoPaiId) === normalizarBusca(id) && r.ativo !== false)
-                .reduce((t, r) => t + (Number(r.valorPrevisto) || 0), 0);
+            const contexto = contextoRenderizacao?.itens ? contextoRenderizacao : prepararContextoRenderizacaoOrcamento(budgetData, movimentacoes);
+            const id = normalizarBusca(item.id);
+            const resumoCache = contexto.resumoSaldoPorId.get(id);
+            if (resumoCache) {
+                return resumoCache;
+            }
+            const valorRecebidoPorAlocacao = contexto.movimentacoesRecebidasPorId.get(id) || 0;
+            const valorCedidoPorAlocacao = contexto.movimentacoesCedidasPorId.get(id) || 0;
+            const valorDistribuidoParaFilhos = contexto.valorFilhosPorPai.get(id) || 0;
             const valorOriginal = Number(item.valorPrevisto ?? item.valorTotal) || 0;
             const valorEmpenhado = Number(item.valorEmpenhado) || 0;
             const valorExecutado = Number(item.valorExecutado) || 0;
             const envelopeVisualAjustado = valorOriginal + valorRecebidoPorAlocacao - valorCedidoPorAlocacao - valorDistribuidoParaFilhos;
             const saldoTransferivelEstimado = envelopeVisualAjustado - valorEmpenhado - valorExecutado;
-            return {
+            const resumo = {
                 valorOriginal, valorRecebidoPorAlocacao, valorCedidoPorAlocacao,
                 valorDistribuidoParaFilhos, envelopeVisualAjustado, valorEmpenhado, valorExecutado,
                 saldoTransferivelEstimado,
@@ -5817,6 +5866,9 @@ async function carregarLogoParaPDF() {
                 temFilhos: valorDistribuidoParaFilhos > 0,
                 temAlerta: envelopeVisualAjustado < 0 || saldoTransferivelEstimado < 0
             };
+
+            contexto.resumoSaldoPorId.set(id, resumo);
+            return resumo;
         }
 
         // O cálculo visual antecipa o saldo para UX; o backend continua sendo a fonte de verdade.
@@ -5872,11 +5924,9 @@ async function carregarLogoParaPDF() {
         }
 
         // Filhos vinculados são renderizados junto ao pai para evitar dupla contagem visual no orçamento.
-        function obterFilhosVinculadosOrcamento(paiId, budgetData) {
-            return obterTodosItensOrcamentoParaDivisao(budgetData)
-                .filter((f) => normalizarBusca(f?.processoPaiId) === normalizarBusca(paiId)
-                    && itemEhProcessoVinculadoOrcamento(f)
-                    && f.ativo !== false);
+        function obterFilhosVinculadosOrcamento(paiId, budgetData, contextoRenderizacao = null) {
+            const contexto = contextoRenderizacao?.itens ? contextoRenderizacao : prepararContextoRenderizacaoOrcamento(budgetData);
+            return contexto.filhosPorPai.get(normalizarBusca(paiId)) || [];
         }
 
         // O valor do pai permanece como envelope original; o saldo exibido desconta apenas a distribuição para filhos.
@@ -5902,9 +5952,10 @@ async function carregarLogoParaPDF() {
             `;
         }
 
-        function renderizarFilhosVinculadosOrcamento(filhos, budgetData) {
+        function renderizarFilhosVinculadosOrcamento(filhos, budgetData, contextoRenderizacao = null) {
             if (!filhos.length) return '';
             const dadosBudget = budgetData || obterDadosOrcamento();
+            const contexto = contextoRenderizacao?.itens ? contextoRenderizacao : prepararContextoRenderizacaoOrcamento(dadosBudget, orcamentoMovimentacoes);
             return filhos.map((filho) => {
                 const filhoId = String(filho.id);
                 const podeExibirRastreio = itemPodeExibirRastreioOrcamento(filho);
@@ -5922,7 +5973,7 @@ async function carregarLogoParaPDF() {
                 const processoSei = obterValorPendenteOrcamento(filho, 'processo_sei') || filho.processoSei;
                 const status = obterValorPendenteOrcamento(filho, 'status');
                 const observacao = obterValorPendenteOrcamento(filho, 'observacao');
-                const resumoSaldoFilho = calcularResumoSaldoVisualOrcamento(filho, dadosBudget, orcamentoMovimentacoes);
+                const resumoSaldoFilho = calcularResumoSaldoVisualOrcamento(filho, dadosBudget, orcamentoMovimentacoes, contexto);
 
                 return `
                     <tr class="budget-item-row budget-linked-child-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
@@ -6021,8 +6072,9 @@ async function carregarLogoParaPDF() {
             });
         }
 
-        function renderizarModalAlocarSaldoOrcamento(item, todosItens, movimentacoes, saldoTransferivel) {
+        function renderizarModalAlocarSaldoOrcamento(item, todosItens, movimentacoes, saldoTransferivel, contextoRenderizacao = null) {
             const categoriaOrigem = normalizarTexto(item.categoria || item.frente || '');
+            const contexto = contextoRenderizacao?.itens ? contextoRenderizacao : prepararContextoRenderizacaoOrcamento({ itens: todosItens, outrosProcessos: [] }, movimentacoes);
 
             const destinos = todosItens.filter((dest) => (
                 String(dest.id) !== String(item.id)
@@ -6030,7 +6082,7 @@ async function carregarLogoParaPDF() {
                 && normalizarTexto(dest.categoria || dest.frente || '') === categoriaOrigem
             ));
 
-            const resumoSaldo = calcularResumoSaldoVisualOrcamento(item, { itens: todosItens, outrosProcessos: [] }, movimentacoes);
+            const resumoSaldo = calcularResumoSaldoVisualOrcamento(item, { itens: todosItens, outrosProcessos: [] }, movimentacoes, contexto);
             const { valorOriginal, valorRecebidoPorAlocacao: valorRecebido, valorCedidoPorAlocacao: valorCedido,
                     valorDistribuidoParaFilhos: valorDistribuidoFilhos, envelopeVisualAjustado,
                     valorEmpenhado, valorExecutado } = resumoSaldo;
@@ -6121,7 +6173,7 @@ async function carregarLogoParaPDF() {
                                             <select class="form-select" id="budgetAllocDestino" required>
                                                 <option value="">Selecione o processo de destino...</option>
                                                 ${destinos.map((dest) => {
-                                                    const envDest = calcularResumoSaldoVisualOrcamento(dest, { itens: todosItens, outrosProcessos: [] }, movimentacoes).envelopeVisualAjustado;
+                                                    const envDest = calcularResumoSaldoVisualOrcamento(dest, { itens: todosItens, outrosProcessos: [] }, movimentacoes, contexto).envelopeVisualAjustado;
                                                     return `<option value="${escapeHtml(dest.id)}">${escapeHtml(dest.id)} — ${escapeHtml(dest.descricao || '-')} (ajust.: ${formatMoney(envDest)})</option>`;
                                                 }).join('')}
                                             </select>
@@ -6178,8 +6230,9 @@ async function carregarLogoParaPDF() {
             const saldoTransferivel = calcularSaldoTransferivelVisualOrcamento(item, budgetData, orcamentoMovimentacoes);
 
             removerModalOnasp('modalAlocarSaldoOrcamento');
+            const contextoRenderizacao = prepararContextoRenderizacaoOrcamento(budgetData, orcamentoMovimentacoes);
             document.body.insertAdjacentHTML('beforeend', renderizarModalAlocarSaldoOrcamento(
-                item, todosItens, orcamentoMovimentacoes, saldoTransferivel
+                item, todosItens, orcamentoMovimentacoes, saldoTransferivel, contextoRenderizacao
             ));
 
             const modalElement = document.getElementById('modalAlocarSaldoOrcamento');
@@ -6590,12 +6643,13 @@ async function carregarLogoParaPDF() {
         function atualizarTabelaOrcamento(budgetData) {
             const tbody = document.getElementById('budget-table-body');
             if (!tbody) return;
+            const contextoRenderizacao = prepararContextoRenderizacaoOrcamento(budgetData, orcamentoMovimentacoes);
 
             const itensFiltrados = filtrarItensOrcamento(budgetData);
             const resumoSelecao = calcularResumoItensOrcamento(itensFiltrados);
 
-            const idsFilhosVinculados = obterTodosItensOrcamentoParaDivisao(budgetData)
-                .filter(itemEhProcessoVinculadoOrcamento)
+            const idsFilhosVinculados = Array.from(contextoRenderizacao.filhosPorPai.values())
+                .flat()
                 .map((item) => String(item.id));
             const idsFiltrados = new Set([
                 ...itensFiltrados.map((item) => String(item.id)),
@@ -6644,11 +6698,11 @@ async function carregarLogoParaPDF() {
                     const processoSei = obterValorPendenteOrcamento(item, 'processo_sei') || item.processoSei;
                     const status = obterValorPendenteOrcamento(item, 'status');
                     const observacao = obterValorPendenteOrcamento(item, 'observacao');
-                    const filhosVinculados = obterFilhosVinculadosOrcamento(item.id, budgetData);
+                    const filhosVinculados = obterFilhosVinculadosOrcamento(item.id, budgetData, contextoRenderizacao);
                     const resumoVinculosItem = filhosVinculados.length
                         ? calcularResumoVinculosOrcamento(item, filhosVinculados)
                         : null;
-                    const resumoSaldoItem = calcularResumoSaldoVisualOrcamento(item, budgetData, orcamentoMovimentacoes);
+                    const resumoSaldoItem = calcularResumoSaldoVisualOrcamento(item, budgetData, orcamentoMovimentacoes, contextoRenderizacao);
 
                     return `
                     <tr class="budget-item-row ${rastreioAberto ? 'budget-item-row-open' : ''}">
@@ -6700,7 +6754,7 @@ async function carregarLogoParaPDF() {
                             </div>
                         </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 11)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
-                    ${renderizarFilhosVinculadosOrcamento(filhosVinculados, budgetData)}
+                    ${renderizarFilhosVinculadosOrcamento(filhosVinculados, budgetData, contextoRenderizacao)}
                 `;
                 }).join('');
 
