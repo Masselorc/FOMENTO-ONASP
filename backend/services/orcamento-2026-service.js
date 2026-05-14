@@ -300,6 +300,11 @@ function normalizarStatusOrcamento(status) {
   return "PLANEJADO";
 }
 
+function statusIndicaProcessoAutuado(status) {
+  const normalizado = normalizarStatusOrcamento(status);
+  return normalizado !== "PLANEJADO" && normalizado !== "VALIDAR";
+}
+
 function normalizarClassificacaoGerencial(valor) {
   const texto = normalizarTexto(valor).replace(/\s+/g, "_");
 
@@ -786,9 +791,11 @@ function inicializarOrcamento2026() {
 function linhaParaItem(linha) {
   const valorPrevisto = Number(linha.valor_previsto) || 0;
   const valorEstimadoPesquisaPreco = Number(linha.valor_estimado_pesquisa_preco) || 0;
-  const processoAutuado = Number(linha.processo_autuado) === 1;
   const compoeOrcamento = Number(linha.compoe_orcamento) === 1;
   const statusNormalizado = normalizarStatusOrcamento(linha.status);
+  // O badge e os totais seguem o estágio salvo quando o campo bruto ainda não
+  // foi sincronizado com a coluna `processo_autuado`.
+  const processoAutuado = Number(linha.processo_autuado) === 1 || statusIndicaProcessoAutuado(statusNormalizado);
   const classificacaoGerencial = normalizarClassificacaoGerencial(
     linha.classificacao_gerencial || classificarGerencialmenteItemOrcamento(linha)
   );
