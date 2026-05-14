@@ -12,7 +12,6 @@ blob-report/
 # Memória versionada parcialmente
 # Versionar notas Markdown e dados tratados não sensíveis.
 # Não versionar arquivos locais do Obsidian, fontes brutas ou anexos pesados/sensíveis.
-fontes-brutas/
 memoria/.obsidian/
 memoria/.trash/
 memoria/99_FONTES_BRUTAS/

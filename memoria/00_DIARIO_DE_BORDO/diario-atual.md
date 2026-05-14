@@ -450,3 +450,16 @@
 - Pendências: iniciar o primeiro fichamento Markdown tratado quando a próxima fonte institucional for disponibilizada.
 - Risco de regressão: baixo; alteração exclusivamente documental e organizacional.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Curadoria sem fontes brutas
+
+- Branch atual: `main`.
+- Tarefa executada: ajuste da política documental para remover a lógica operacional de `fontes-brutas/` e manter apenas fichamentos técnicos e Markdown tratado no fluxo versionado.
+- Arquivos alterados: `.gitignore`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: a memória passa a tratar somente a camada de fichamentos técnicos e Markdown tratado; a estrutura de documentos brutos deixa de compor o fluxo operacional do repositório.
+- Decisão registrada: documentos originais permanecem nas origens externas ou institucionais; o repositório versiona apenas a camada tratada e rastreável.
+- Validações executadas: registrar os comandos efetivamente executados.
+- Resultado: política simplificada, `.gitignore` sem regra de `fontes-brutas/` e memória alinhada à nova decisão.
+- Pendências: iniciar a padronização dos modelos de fichamento técnico.
+- Risco de regressão: baixo; alteração documental e organizacional.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

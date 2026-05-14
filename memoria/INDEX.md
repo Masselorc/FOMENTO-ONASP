@@ -56,11 +56,11 @@ Nota operacional: instruções e prompts para Codex/IA são elaborados extername
 
 ## Curadoria de fontes
 
-A memória do projeto utiliza Markdown tratado como camada principal de trabalho. Documentos brutos devem permanecer fora do GitHub ou em pasta local ignorada, salvo exceção expressa, justificada e registrada no diário de bordo.
+A memória do projeto utiliza fichamentos técnicos e Markdown tratado como camada principal de trabalho.
 
 Antes de consolidar memória institucional, normativa, Pena Justa, PROFOR, UFs ou dados, devem ser produzidos fichamentos, extratos normativos, notas de leitura técnica, dicionários de dados ou notas metodológicas nas respectivas pastas `fontes-tratadas/`.
 
-O documento original deve permanecer rastreável. O Markdown tratado não substitui o original para citação formal, conferência literal, fundamento jurídico, dado sensível ou validação de versão.
+O documento original deve permanecer rastreável a partir do fichamento. O Markdown tratado não substitui o original para citação formal, conferência literal, fundamento jurídico, dado sensível ou validação de versão.
 
 ## Estrutura planejada
 
