@@ -43,7 +43,24 @@ Arquivos ou pastas planejados para evolução futura:
 
 - `memoria/12_ADR/`, quando existir.
 
+Pastas de fontes tratadas criadas:
+
+- `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/`
+- `memoria/03_NORMATIVOS/fontes-tratadas/`
+- `memoria/04_PENA_JUSTA/fontes-tratadas/`
+- `memoria/05_PROFOR_CONVENIOS/fontes-tratadas/`
+- `memoria/06_UFS_OUVIDORIAS/fontes-tratadas/`
+- `memoria/07_DADOS_E_PLANILHAS_TRATADAS/fontes-tratadas/`
+
 Nota operacional: instruções e prompts para Codex/IA são elaborados externamente na versão web do ChatGPT, não como arquivo de memória deste repositório.
+
+## Curadoria de fontes
+
+A memória do projeto utiliza Markdown tratado como camada principal de trabalho. Documentos brutos devem permanecer fora do GitHub ou em pasta local ignorada, salvo exceção expressa, justificada e registrada no diário de bordo.
+
+Antes de consolidar memória institucional, normativa, Pena Justa, PROFOR, UFs ou dados, devem ser produzidos fichamentos, extratos normativos, notas de leitura técnica, dicionários de dados ou notas metodológicas nas respectivas pastas `fontes-tratadas/`.
+
+O documento original deve permanecer rastreável. O Markdown tratado não substitui o original para citação formal, conferência literal, fundamento jurídico, dado sensível ou validação de versão.
 
 ## Estrutura planejada
 

@@ -436,3 +436,17 @@
 - Pendências: nenhuma pendência nova criada nesta tarefa.
 - Risco de regressão: baixo; alteração exclusivamente documental, com risco principal de referência residual contraditória na memória.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Curadoria de fontes tratadas
+
+- Branch atual: `main`.
+- Tarefa executada: registro da política de curadoria de fontes tratadas e criação das subpastas `fontes-tratadas/` para futura consolidação documental.
+- Arquivos alterados: `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `.gitignore`.
+- Pastas criadas: `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/`, `memoria/03_NORMATIVOS/fontes-tratadas/`, `memoria/04_PENA_JUSTA/fontes-tratadas/`, `memoria/05_PROFOR_CONVENIOS/fontes-tratadas/`, `memoria/06_UFS_OUVIDORIAS/fontes-tratadas/`, `memoria/07_DADOS_E_PLANILHAS_TRATADAS/fontes-tratadas/`.
+- Resumo: formalizada a cadeia documental `documento original → fichamento Markdown tratado → memória consolidada → uso em minuta/análise`; documentos brutos ficam fora da memória como fonte primária; Markdown tratado passa a ser a camada versionada principal.
+- Decisões registradas: `fontes-brutas/` foi incluída no `.gitignore`; documentos públicos e normativos podem ser versionados excepcionalmente com justificativa; documentos internos, sensíveis, SEI, planilhas brutas e anexos institucionais não devem ser versionados como regra.
+- Validações executadas: `git status --short`, leitura de `AGENTS.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `.gitignore`, `git diff --name-only`, `git diff -- memoria/INDEX.md memoria/01_PROJETO_APLICACAO/regras-do-projeto.md memoria/00_DIARIO_DE_BORDO/diario-atual.md .gitignore`, `git diff --check`, `Get-ChildItem -Recurse -Filter .gitkeep memoria | Where-Object { $_.FullName -like "*fontes-tratadas*" }`, `rg "fontes-brutas" .gitignore`.
+- Resultado: política registrada, estrutura documental criada e pasta `fontes-brutas/` ignorada pelo Git.
+- Pendências: iniciar o primeiro fichamento Markdown tratado quando a próxima fonte institucional for disponibilizada.
+- Risco de regressão: baixo; alteração exclusivamente documental e organizacional.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

@@ -96,6 +96,45 @@ Antes de alterar qualquer comportamento, confira a camada diretamente afetada e 
 - Em dados pessoais ou administrativos, aplicar mínima exposição e evitar exemplos com informação real desnecessária.
 - Não publicar no frontend informação que dependa de sigilo, autenticação ou contexto interno.
 
+## Curadoria de fontes, documentos brutos e Markdown tratado
+
+O projeto adota a seguinte cadeia de trabalho documental:
+
+```text
+documento original → fichamento Markdown tratado → memória consolidada → uso em minuta/análise
+```
+
+A memória versionada do repositório deve priorizar arquivos Markdown tratados, sintéticos, rastreáveis e úteis para manutenção, análise institucional, elaboração de minutas, revisão técnica e uso por IA.
+
+Documentos brutos, como PDFs, DOCX, XLSX, imagens, anexos SEI, bases originais, planilhas completas, logs e arquivos sensíveis, não devem ser copiados para a pasta `memoria/` como fonte primária de trabalho.
+
+A pasta local `fontes-brutas/`, quando usada, deve permanecer ignorada pelo Git. Ela pode existir dentro do diretório local do projeto apenas como acervo de conferência, auditoria e preservação dos documentos originais.
+
+Documentos públicos e normativos podem ser versionados excepcionalmente, desde que haja justificativa, utilidade clara, ausência de restrição de acesso, avaliação de sensibilidade e registro no diário de bordo. Documentos internos, sensíveis, SEI, planilhas brutas, anexos institucionais e bases com dados pessoais ou administrativos não devem ser versionados como regra.
+
+Cada Markdown tratado deve identificar a fonte original e registrar, quando aplicável:
+
+- nome do documento original;
+- tipo de documento;
+- origem;
+- data ou versão;
+- processo SEI, se houver;
+- localização do original;
+- escopo de leitura;
+- partes analisadas;
+- partes não analisadas;
+- risco de incompletude;
+- limites de uso;
+- necessidade de conferência no original;
+- relação com ONASP, PROFOR, Pena Justa, normativos, UFs ou dados;
+- forma recomendada de uso em futuras minutas, análises ou consolidações.
+
+O Markdown tratado não substitui o documento original. Para citação formal, fundamento jurídico, artigo, inciso, transcrição literal, dado sensível, informação orçamentária ou conferência de validade, o documento original deve ser consultado.
+
+Antes de consolidar arquivos institucionais, normativos, Pena Justa, PROFOR, UFs ou dados, deve-se produzir fichamentos, extratos normativos, notas de leitura técnica, dicionários de dados ou notas metodológicas a partir das fontes originais.
+
+A IA do VS Code/Codex não deve preencher pastas institucionais vazias por inferência. Ela deve consolidar arquivos finais apenas com base em Markdown tratado, documentos já anexados, fontes reais indicadas ou instrução expressa do usuário.
+
 ## Regras para alterações com IA/Codex
 
 - Tratar modelos de IA como executores controlados.
