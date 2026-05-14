@@ -69,6 +69,9 @@ let orcamentoProcessosInativos = new Set();
 let orcamentoDivisaoRecursoEmAndamento = false;
 let orcamentoMovimentacoes = [];
 let orcamentoAlocacaoEmAndamento = false;
+let orcamentoRenderizacaoSequencia = 0;
+let orcamentoOutrosProcessosExpandido = false;
+let orcamentoEventosDelegadosConfigurados = false;
 let erroCarregamentoOrcamento = null;
 const errosCarregamentoView = {};
 let resumoPublicacaoSistemaCache = null;
@@ -1099,6 +1102,50 @@ async function carregarLogoParaPDF() {
         }
 
         async function toggleView(viewName) {
+            if (viewName === 'orcamento' && !obterDadosOrcamento()) {
+                document.getElementById('view-dashboard').style.display = 'none';
+                document.getElementById('view-detalhamento').style.display = 'none';
+                document.getElementById('view-estado-detalhe').style.display = 'none';
+                const viewProfor = document.getElementById('view-profor-2022');
+                const viewProforDetalhe = document.getElementById('view-profor-convenio-detalhe');
+                const viewFaf = document.getElementById('view-faf-2021');
+                const viewFafDetalhe = document.getElementById('view-faf-2021-detalhe');
+                const viewDoacoes = document.getElementById('view-doacoes-2023');
+                const viewDoacoesDetalhe = document.getElementById('view-doacoes-2023-detalhe');
+                const viewOrcamento = document.getElementById('view-orcamento');
+                const viewFormalizacao = document.getElementById('view-formalizacao-profor');
+                const viewContatos = document.getElementById('view-contatos');
+                const viewDiagnosticoOuvidorias = document.getElementById('view-diagnostico-ouvidorias');
+                const viewFormalizacaoDetalhe = document.getElementById('view-formalizacao-profor-detalhe');
+                const viewStatusSistema = document.getElementById('view-status-sistema');
+                if (viewProfor) viewProfor.style.display = 'none';
+                if (viewProforDetalhe) viewProforDetalhe.style.display = 'none';
+                if (viewFaf) viewFaf.style.display = 'none';
+                if (viewFafDetalhe) viewFafDetalhe.style.display = 'none';
+                if (viewDoacoes) viewDoacoes.style.display = 'none';
+                if (viewDoacoesDetalhe) viewDoacoesDetalhe.style.display = 'none';
+                if (viewOrcamento) viewOrcamento.style.display = 'none';
+                if (viewFormalizacao) viewFormalizacao.style.display = 'none';
+                if (viewContatos) viewContatos.style.display = 'none';
+                if (viewDiagnosticoOuvidorias) viewDiagnosticoOuvidorias.style.display = 'none';
+                if (viewFormalizacaoDetalhe) viewFormalizacaoDetalhe.style.display = 'none';
+                if (viewStatusSistema) viewStatusSistema.style.display = 'none';
+
+                renderOrcamentoViewSkeleton();
+
+                try {
+                    await garantirDadosDaView(viewName);
+                    delete errosCarregamentoView[viewName];
+                    renderOrcamentoView();
+                } catch (error) {
+                    errosCarregamentoView[viewName] = error;
+                    erroCarregamentoOrcamento = error;
+                    console.error(`Falha ao carregar ${viewName}:`, error);
+                    renderizarErroView(viewName, error);
+                }
+                return;
+            }
+
             const mensagemCarregamento = obterMensagemCarregamentoView(viewName);
             if (mensagemCarregamento) showLoading(mensagemCarregamento);
 
@@ -6783,133 +6830,172 @@ async function carregarLogoParaPDF() {
             atualizarTabelaOutrosOrcamento(budgetData);
         }
 
-        function registrarEventosCamposOrcamento(budgetData) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
-                aplicarModoSomenteLeitura();
-                return;
-            }
+        function configurarDelegacaoEventosOrcamento() {
+            if (orcamentoEventosDelegadosConfigurados) return;
+            orcamentoEventosDelegadosConfigurados = true;
 
-            document.querySelectorAll('[data-orcamento-toggle-editor]').forEach((botao) => {
-                botao.addEventListener('click', () => {
-                    const itemId = String(botao.dataset.orcamentoToggleEditor);
+            const resolverEscopoOrcamento = (alvo) => alvo?.closest('#view-orcamento');
+
+            document.addEventListener('click', (event) => {
+                const alvo = event.target.closest([
+                    '[data-orcamento-toggle-editor]',
+                    '[data-orcamento-salvar-linha]',
+                    '[data-orcamento-cancelar-linha]',
+                    '[data-orcamento-dividir-recurso]',
+                    '[data-orcamento-alocar-saldo]',
+                    '[data-orcamento-inativar]',
+                    '[data-orcamento-remover-novo]',
+                    '[data-orcamento-salvar-novo]'
+                ].join(','));
+
+                if (!alvo || !resolverEscopoOrcamento(alvo)) return;
+
+                if (alvo.matches('[data-orcamento-toggle-editor]')) {
+                    const itemId = String(alvo.dataset.orcamentoToggleEditor);
                     if (orcamentoEditoresAbertos.has(itemId)) {
                         orcamentoEditoresAbertos.delete(itemId);
                     } else {
                         orcamentoEditoresAbertos.add(itemId);
                     }
                     renderOrcamentoView();
-                });
-            });
+                    return;
+                }
 
-            document.querySelectorAll('[data-orcamento-salvar-linha]').forEach((botao) => {
-                botao.addEventListener('click', () => abrirModalSenhaOrcamento(botao.dataset.orcamentoSalvarLinha));
-            });
+                if (alvo.matches('[data-orcamento-salvar-linha]')) {
+                    abrirModalSenhaOrcamento(alvo.dataset.orcamentoSalvarLinha);
+                    return;
+                }
 
-            document.querySelectorAll('[data-orcamento-cancelar-linha]').forEach((botao) => {
-                botao.addEventListener('click', () => {
-                    cancelarEdicaoLinhaOrcamento(botao.dataset.orcamentoCancelarLinha);
-                });
-            });
+                if (alvo.matches('[data-orcamento-cancelar-linha]')) {
+                    cancelarEdicaoLinhaOrcamento(alvo.dataset.orcamentoCancelarLinha);
+                    return;
+                }
 
-            document.querySelectorAll('.budget-edit-control').forEach((campo) => {
-                campo.addEventListener('change', () => {
-                    registrarAlteracaoOrcamento(
-                        campo.dataset.orcamentoId,
-                        campo.dataset.orcamentoCampo,
-                        campo.dataset.orcamentoOriginal,
-                        campo.dataset.orcamentoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
-                    );
+                if (alvo.matches('[data-orcamento-dividir-recurso]')) {
+                    abrirModalDividirRecursoOrcamento(alvo.dataset.orcamentoDividirRecurso);
+                    return;
+                }
+
+                if (alvo.matches('[data-orcamento-alocar-saldo]')) {
+                    abrirModalAlocarSaldoOrcamento(alvo.dataset.orcamentoAlocarSaldo);
+                    return;
+                }
+
+                if (alvo.matches('[data-orcamento-inativar]')) {
+                    if (!window.confirm('Inativar este processo de interesse? A alteração só será aplicada ao salvar.')) return;
+                    orcamentoProcessosInativos.add(alvo.dataset.orcamentoInativar);
                     renderOrcamentoView();
-                });
-            });
-        }
+                    return;
+                }
 
-        function registrarEventosOutrosProcessosOrcamento(budgetData) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
-                aplicarModoSomenteLeitura();
-                return;
-            }
-
-            document.querySelectorAll('#budget-other-table-body [data-orcamento-toggle-editor]').forEach((botao) => {
-                botao.addEventListener('click', () => {
-                    const itemId = String(botao.dataset.orcamentoToggleEditor);
-                    if (orcamentoEditoresAbertos.has(itemId)) {
-                        orcamentoEditoresAbertos.delete(itemId);
-                    } else {
-                        orcamentoEditoresAbertos.add(itemId);
-                    }
+                if (alvo.matches('[data-orcamento-remover-novo]')) {
+                    orcamentoNovosProcessos = orcamentoNovosProcessos.filter((item) => item.tempId !== alvo.dataset.orcamentoRemoverNovo);
                     renderOrcamentoView();
-                });
+                    return;
+                }
+
+                if (alvo.matches('[data-orcamento-salvar-novo]')) {
+                    abrirModalSenhaOrcamento(alvo.dataset.orcamentoSalvarNovo);
+                }
             });
 
-            document.querySelectorAll('#budget-other-table-body [data-orcamento-salvar-linha]').forEach((botao) => {
-                botao.addEventListener('click', () => abrirModalSenhaOrcamento(botao.dataset.orcamentoSalvarLinha));
-            });
+            document.addEventListener('change', (event) => {
+                const campo = event.target.closest('.budget-edit-control, .budget-other-edit-control, .budget-new-control');
+                if (!campo || !resolverEscopoOrcamento(campo)) return;
 
-            document.querySelectorAll('#budget-other-table-body [data-orcamento-cancelar-linha]').forEach((botao) => {
-                botao.addEventListener('click', () => {
-                    cancelarEdicaoLinhaOrcamento(botao.dataset.orcamentoCancelarLinha);
-                });
-            });
-
-            document.querySelectorAll('.budget-other-edit-control').forEach((campo) => {
-                campo.addEventListener('change', () => {
-                    registrarAlteracaoOrcamento(
-                        campo.dataset.orcamentoId,
-                        campo.dataset.orcamentoCampo,
-                        campo.dataset.orcamentoOriginal,
-                        campo.dataset.orcamentoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
-                    );
-                    renderOrcamentoView();
-                });
-            });
-
-            document.querySelectorAll('.budget-new-control').forEach((campo) => {
-                campo.addEventListener('change', () => {
+                if (campo.matches('.budget-new-control')) {
                     atualizarNovoProcessoOrcamento(
                         campo.dataset.orcamentoNovoId,
                         campo.dataset.orcamentoNovoCampo,
                         campo.dataset.orcamentoNovoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
                     );
                     renderOrcamentoView();
-                });
-            });
+                    return;
+                }
 
-            document.querySelectorAll('[data-orcamento-dividir-recurso]').forEach((botao) => {
-                botao.addEventListener('click', () => abrirModalDividirRecursoOrcamento(botao.dataset.orcamentoDividirRecurso));
-            });
-
-            document.querySelectorAll('[data-orcamento-alocar-saldo]').forEach((botao) => {
-                botao.addEventListener('click', () => abrirModalAlocarSaldoOrcamento(botao.dataset.orcamentoAlocarSaldo));
-            });
-
-            document.querySelectorAll('[data-orcamento-inativar]').forEach((botao) => {
-                botao.addEventListener('click', () => {
-                    if (!window.confirm('Inativar este processo de interesse? A alteração só será aplicada ao salvar.')) return;
-                    orcamentoProcessosInativos.add(botao.dataset.orcamentoInativar);
-                    renderOrcamentoView();
-                });
-            });
-
-            document.querySelectorAll('[data-orcamento-remover-novo]').forEach((botao) => {
-                botao.addEventListener('click', () => {
-                    orcamentoNovosProcessos = orcamentoNovosProcessos.filter((item) => item.tempId !== botao.dataset.orcamentoRemoverNovo);
-                    renderOrcamentoView();
-                });
-            });
-
-            document.querySelectorAll('[data-orcamento-salvar-novo]').forEach((botao) => {
-                botao.addEventListener('click', () => abrirModalSenhaOrcamento(botao.dataset.orcamentoSalvarNovo));
+                registrarAlteracaoOrcamento(
+                    campo.dataset.orcamentoId,
+                    campo.dataset.orcamentoCampo,
+                    campo.dataset.orcamentoOriginal,
+                    campo.dataset.orcamentoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
+                );
+                renderOrcamentoView();
             });
         }
 
+        function registrarEventosCamposOrcamento() {
+            configurarDelegacaoEventosOrcamento();
+        }
+
+        function registrarEventosOutrosProcessosOrcamento(budgetData) {
+            configurarDelegacaoEventosOrcamento();
+            const detalhes = document.getElementById('budget-other-details');
+            if (!detalhes) return;
+
+            detalhes.addEventListener('toggle', () => {
+                orcamentoOutrosProcessosExpandido = detalhes.open;
+                if (detalhes.open) {
+                    atualizarTabelaOutrosOrcamento(budgetData);
+                }
+            });
+        }
+
+        function renderizarPainelOutrosProcessosOrcamento(budgetData) {
+            const outrosProcessos = (budgetData.outrosProcessos || [])
+                .filter((item) => !orcamentoProcessosInativos.has(String(item.id)))
+                .filter((item) => !itemEhProcessoVinculadoOrcamento(item));
+            const quantidade = outrosProcessos.length;
+
+            return `
+                <details class="budget-other-details" id="budget-other-details"${orcamentoOutrosProcessosExpandido ? ' open' : ''}>
+                    <summary class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Carregamento sob demanda</p>
+                            <h2>Mostrar ou ocultar a tabela de outros processos</h2>
+                        </div>
+                        <small class="text-muted">${quantidade} processo(s) disponível(is).</small>
+                    </summary>
+                    <div id="budget-other-content" class="budget-other-content mt-3">
+                        ${orcamentoOutrosProcessosExpandido
+                            ? '<div class="budget-other-loading text-muted small">Carregando outros processos...</div>'
+                            : '<div class="budget-other-placeholder text-muted small">A tabela de outros processos é carregada apenas quando esta seção é aberta.</div>'}
+                    </div>
+                </details>
+            `;
+        }
+
         function atualizarTabelaOutrosOrcamento(budgetData) {
-            const tbody = document.getElementById('budget-other-table-body');
-            if (!tbody) return;
+            const details = document.getElementById('budget-other-details');
+            const content = document.getElementById('budget-other-content');
+            if (!details || !content || !details.open) return;
 
             const outrosProcessos = (budgetData.outrosProcessos || [])
                 .filter((item) => !orcamentoProcessosInativos.has(String(item.id)))
                 .filter((item) => !itemEhProcessoVinculadoOrcamento(item)); // Filhos vinculados aparecem junto ao pai na tabela principal
+            if (!document.getElementById('budget-other-table-body')) {
+                content.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover w-100 app-data-table budget-data-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-align-left" aria-hidden="true"></i> Descrição</th>
+                                    <th><i class="fas fa-folder-open" aria-hidden="true"></i> Processo SEI</th>
+                                    <th class="text-end"><i class="fas fa-coins" aria-hidden="true"></i> Valor estimado</th>
+                                    <th class="text-center"><i class="fas fa-file-signature" aria-hidden="true"></i> Processo autuado</th>
+                                    <th><i class="fas fa-info-circle" aria-hidden="true"></i> Status</th>
+                                    <th><i class="fas fa-comment-dots" aria-hidden="true"></i> Observação</th>
+                                    <th class="text-end"><i class="fas fa-cogs" aria-hidden="true"></i> Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="budget-other-table-body"></tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            const tbody = document.getElementById('budget-other-table-body');
+            if (!tbody) return;
+
             const linhasExistentes = outrosProcessos.map((item) => {
                 const editando = orcamentoItemEmEdicao(item.id);
                 const linkedBadge = renderizarBadgeProcessoVinculadoOrcamento(item);
@@ -7231,6 +7317,8 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
+            const sequenciaRenderizacao = ++orcamentoRenderizacaoSequencia;
+
             const resumo = budgetData.resumo || {};
             const filtros = budgetData.filtros || { status: [], naturezas: [], modalidades: [] };
             const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
@@ -7466,11 +7554,17 @@ async function carregarLogoParaPDF() {
                                 <col class="budget-col-empenhado">
                                 <col class="budget-col-executado">
                                 <col class="budget-col-status">
-                                <col class="budget-col-observacao">
-                                <col class="budget-col-acoes">
-                            </colgroup>
-                            <tbody id="budget-table-body"></tbody>
-                        </table>
+                            <col class="budget-col-observacao">
+                            <col class="budget-col-acoes">
+                        </colgroup>
+                        <tbody id="budget-table-body">
+                            <tr>
+                                <td colspan="11" class="py-4 text-center text-muted">
+                                    Carregando itens do orçamento...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     </div>
                 </section>
 
@@ -7490,26 +7584,17 @@ async function carregarLogoParaPDF() {
                             extraClass: 'pdf-hidden'
                         })}
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover w-100 app-data-table budget-data-table">
-                            <thead>
-                                <tr>
-                                    <th><i class="fas fa-align-left" aria-hidden="true"></i> Descrição</th>
-                                    <th><i class="fas fa-folder-open" aria-hidden="true"></i> Processo SEI</th>
-                                    <th class="text-end"><i class="fas fa-coins" aria-hidden="true"></i> Valor estimado</th>
-                                    <th class="text-center"><i class="fas fa-file-signature" aria-hidden="true"></i> Processo autuado</th>
-                                    <th><i class="fas fa-info-circle" aria-hidden="true"></i> Status</th>
-                                    <th><i class="fas fa-comment-dots" aria-hidden="true"></i> Observação</th>
-                                    <th class="text-end"><i class="fas fa-cogs" aria-hidden="true"></i> Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="budget-other-table-body"></tbody>
-                        </table>
-                    </div>
+                    ${renderizarPainelOutrosProcessosOrcamento(budgetData)}
                 </section>
             `;
 
-            const atualizar = () => atualizarTabelaOrcamento(budgetData);
+            const atualizar = () => {
+                atualizarTabelaOrcamento(budgetData);
+                if (orcamentoOutrosProcessosExpandido) {
+                    atualizarTabelaOutrosOrcamento(budgetData);
+                }
+            };
+            const atualizarDebounced = debounceOnasp(atualizar, 180);
             if (!dadosPaginaEmModoEstatico('orcamento2026')) {
                 document.getElementById('btnExportarOrcamentoExcel')?.addEventListener('click', () => {
                     if (obterQuantidadeAlteracoesOrcamento()) {
@@ -7521,7 +7606,14 @@ async function carregarLogoParaPDF() {
                 document.getElementById('btnHistoricoOrcamento')?.addEventListener('click', abrirHistoricoOrcamento);
                 document.getElementById('btnAdicionarOutroProcesso')?.addEventListener('click', adicionarNovoProcessoOrcamento);
             }
-            document.getElementById('filtroOrcamentoBusca')?.addEventListener('input', atualizar);
+            document.getElementById('budget-other-details')?.addEventListener('toggle', () => {
+                const detalhes = document.getElementById('budget-other-details');
+                orcamentoOutrosProcessosExpandido = Boolean(detalhes?.open);
+                if (orcamentoOutrosProcessosExpandido) {
+                    atualizarTabelaOutrosOrcamento(budgetData);
+                }
+            });
+            document.getElementById('filtroOrcamentoBusca')?.addEventListener('input', atualizarDebounced);
             document.querySelectorAll('.budget-filter-control').forEach((controle) => {
                 controle.addEventListener('change', atualizar);
             });
@@ -7533,8 +7625,105 @@ async function carregarLogoParaPDF() {
                 atualizar();
             });
 
-            atualizar();
             container.style.display = 'block';
+            aplicarModoSomenteLeitura();
+
+            requestAnimationFrame(() => {
+                if (sequenciaRenderizacao !== orcamentoRenderizacaoSequencia) return;
+                atualizarTabelaOrcamento(budgetData);
+                if (orcamentoOutrosProcessosExpandido) {
+                    requestAnimationFrame(() => {
+                        if (sequenciaRenderizacao !== orcamentoRenderizacaoSequencia) return;
+                        atualizarTabelaOutrosOrcamento(budgetData);
+                    });
+                }
+            });
+        }
+
+        function renderOrcamentoViewSkeleton() {
+            const container = document.getElementById('view-orcamento');
+            if (!container) return;
+
+            configurarDelegacaoEventosOrcamento();
+            container.style.display = 'block';
+            container.innerHTML = `
+                <section class="dashboard-intro budget-intro">
+                    <div>
+                        <p class="section-eyebrow mb-1">Planejamento anual</p>
+                        <h2>Planejamento Orçamentário 2026</h2>
+                    </div>
+                    <div class="intro-badges" aria-label="Resumo da base de orçamento">
+                        <span><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Carregando orçamento...</span>
+                    </div>
+                </section>
+
+                <div class="budget-management-note mb-4">
+                    Carregando dados do orçamento. A tabela principal será exibida assim que a base estiver pronta.
+                </div>
+
+                <section class="budget-insight-grid budget-insight-grid-four mb-4" aria-label="Resumo da seleção orçamentária">
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Valor Filtrado</div>
+                            <div class="kpi-value text-money">...</div>
+                        </div>
+                    </div>
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Atualmente em execução</div>
+                            <div class="kpi-value text-money text-warning">...</div>
+                        </div>
+                    </div>
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Valor Empenhado</div>
+                            <div class="kpi-value text-money text-info">...</div>
+                        </div>
+                    </div>
+                    <div class="card kpi-card dynamic-card budget-insight-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Valor Executado</div>
+                            <div class="kpi-value text-money text-success">...</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div>
+                            <h2>Itens do Orçamento 2026</h2>
+                            <p class="section-eyebrow mb-0">Carregando itens...</p>
+                        </div>
+                    </div>
+                    <div class="budget-loading-state py-4 text-center text-muted">
+                        <i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>
+                        Preparando a tabela principal...
+                    </div>
+                </section>
+
+                <section class="table-container mb-5">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Processos relacionados</p>
+                            <h2>Outros processos de interesse da Ouvidoria</h2>
+                        </div>
+                        ${renderActionButton({
+                            id: 'btnAdicionarOutroProcesso',
+                            type: 'add',
+                            label: 'Adicionar processo',
+                            variant: 'outline-primary',
+                            backend: true,
+                            disabled: true,
+                            extraClass: 'pdf-hidden'
+                        })}
+                    </div>
+                    <div class="budget-loading-state py-4 text-center text-muted">
+                        <i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>
+                        A tabela de outros processos será carregada sob demanda.
+                    </div>
+                </section>
+            `;
+
             aplicarModoSomenteLeitura();
         }
 
@@ -10399,6 +10588,14 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
             .replace(/[\u0300-\u036f]/g, '')
             .toLowerCase()
             .trim();
+
+        const debounceOnasp = (fn, delay = 180) => {
+            let timeoutId = null;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = window.setTimeout(() => fn(...args), delay);
+            };
+        };
 
         const formatMoney = (val) => val ? val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'R$ 0,00';
         const formatPercent = (val) => val ? val.toFixed(1).replace('.', ',') + '%' : '0,0%';

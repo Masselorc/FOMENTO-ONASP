@@ -518,3 +518,18 @@
 - Riscos remanescentes: baixo a médio; ganhos dependem do volume de itens e movimentações, mas a mudança removeu o custo mais óbvio de varredura repetida.
 - Próxima etapa recomendada: validar percepção de carregamento em uma sessão interativa do navegador local e, se necessário, considerar otimização adicional apenas após medir gargalos reais.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Carregamento percebido do Orçamento 2026
+
+- Branch atual: `main`.
+- Tarefa executada: medição do gargalo real e otimização do carregamento percebido da tela Orçamento 2026.
+- Arquivos alterados: `frontend/js/app.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Problema relatado: a tela Orçamento 2026 ainda parecia lenta no uso real, mesmo após a otimização do contexto de renderização.
+- Causa provável: o shell da view só aparecia depois do carregamento dos dados e da montagem completa da interface; além disso, a tabela “Outros processos” e os listeners de edição eram reanexados em cada render.
+- Medições feitas: antes da alteração, o shell da view aparecia em cerca de 3,6 s; após o ajuste, o shell apareceu em cerca de 0,9 s e a tabela principal ficou pronta em cerca de 0,9 s também. O teste automatizado mostrou 12 linhas na tabela principal e a seção de outros processos abriu sob demanda com 1 linha de tabela.
+- Correções aplicadas: skeleton inicial para Orçamento 2026 enquanto a base carrega, renderização progressiva da tabela principal, carregamento sob demanda de “Outros processos”, debounce no filtro de busca e delegação de eventos no documento para evitar reanexação de listeners por render.
+- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"`, `node --check frontend/js/app.js`, `git diff --check` e checagem manual automatizada de busca, modal de divisão e abertura da seção de outros processos.
+- Resultado: a navegação do Orçamento 2026 ficou perceptivelmente mais rápida, sem regressão funcional; os modais de divisão e alocação continuaram abrindo, a busca respondeu sem travar e não houve erros no console.
+- Riscos remanescentes: baixo a médio; o gargalo pode mudar de perfil conforme o volume de dados crescer, mas a renderização inicial já deixou de concentrar o maior custo visível.
+- Próxima etapa recomendada: observar o uso real em navegador local e medir novamente apenas se surgir novo gargalo.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
