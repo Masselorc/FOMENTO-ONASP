@@ -39,6 +39,26 @@ const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
 const UFS_FORMALIZACAO_PROFOR = ['AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MG', 'PA', 'PE', 'RN', 'RR', 'RS', 'SE'];
 const UFS_CONDICAO_SUSPENSIVA_PROFOR = new Set(['PA', 'RR', 'RS', 'SE']);
 const VALOR_REPASSE_PROFOR = 200000;
+function debugPerfOnaspAtivo() {
+    if (typeof window === 'undefined' || typeof URLSearchParams === 'undefined') {
+        return false;
+    }
+
+    try {
+        return new URLSearchParams(window.location.search).has('debugPerf');
+    } catch {
+        return false;
+    }
+}
+
+function registrarPerfOnasp(etapa, detalhes = {}) {
+    if (!debugPerfOnaspAtivo() || typeof console === 'undefined') {
+        return;
+    }
+
+    console.info(`[perf:onasp] ${etapa}`, detalhes);
+}
+
 const STATUS_CHECKLIST_DIAGNOSTICO = {
     CONFORME: 'Conforme',
     PARCIAL: 'Parcialmente conforme',
@@ -3411,13 +3431,18 @@ export function obterUrlApiOnasp(caminho) {
 
 export async function fetchJsonApiOnasp(caminho, opcoes = {}) {
     let ultimoErro = null;
+    const debugPerf = debugPerfOnaspAtivo();
 
     for (const base of obterBasesApiOnasp()) {
         try {
+            const inicioFetch = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
             const resposta = await fetch(`${base}${caminho}`, {
                 cache: 'no-store',
                 ...opcoes
             });
+            const tempoFetch = debugPerf && typeof performance !== 'undefined'
+                ? Number((performance.now() - inicioFetch).toFixed(2))
+                : null;
             const tipoConteudo = resposta.headers.get('content-type') || '';
 
             if (!tipoConteudo.includes('application/json')) {
@@ -3425,9 +3450,21 @@ export async function fetchJsonApiOnasp(caminho, opcoes = {}) {
                 throw new Error(`A API respondeu conteúdo não JSON em ${base || 'mesma origem'}: ${trecho || tipoConteudo || 'sem conteúdo'}`);
             }
 
+            const inicioParse = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
+            const payload = await resposta.json();
+            const tempoParse = debugPerf && typeof performance !== 'undefined'
+                ? Number((performance.now() - inicioParse).toFixed(2))
+                : null;
+            registrarPerfOnasp('fetchJsonApiOnasp', {
+                caminho,
+                base,
+                status: resposta.status,
+                tempoFetchMs: tempoFetch,
+                tempoParseMs: tempoParse
+            });
             return {
                 resposta,
-                payload: await resposta.json(),
+                payload,
                 base
             };
         } catch (error) {
@@ -3469,13 +3506,29 @@ export async function carregarComFallback(apiUrl, staticUrl, chaveFonte = '') {
 
 async function carregarJsonPublicado(url, mensagemErro) {
     const urlComVersao = aplicarVersaoDados(new URL(url.href || url));
+    const debugPerf = debugPerfOnaspAtivo();
+    const inicioFetch = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
     const resposta = await fetch(urlComVersao, { cache: 'no-store' });
+    const tempoFetch = debugPerf && typeof performance !== 'undefined'
+        ? Number((performance.now() - inicioFetch).toFixed(2))
+        : null;
 
     if (!resposta.ok) {
         throw new Error(`${mensagemErro}: HTTP ${resposta.status}`);
     }
 
-    return resposta.json();
+    const inicioParse = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
+    const dados = await resposta.json();
+    const tempoParse = debugPerf && typeof performance !== 'undefined'
+        ? Number((performance.now() - inicioParse).toFixed(2))
+        : null;
+    registrarPerfOnasp('carregarJsonPublicado', {
+        arquivo: urlComVersao.pathname,
+        status: resposta.status,
+        tempoFetchMs: tempoFetch,
+        tempoParseMs: tempoParse
+    });
+    return dados;
 }
 
 async function carregarJsonPublicadoPorChave(chave, mensagemErro = null) {
@@ -4092,6 +4145,7 @@ async function carregarPlanilhaOrcamento() {
 }
 
 export async function carregarDadosOrcamento(forcarRecarregamento = false) {
+    const debugPerf = debugPerfOnaspAtivo();
     if (forcarRecarregamento) {
         dadosOrcamentoCache = null;
     }
@@ -4101,16 +4155,26 @@ export async function carregarDadosOrcamento(forcarRecarregamento = false) {
     }
 
     if (estaRodandoNoGitHubPages()) {
+        const inicioTotal = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
         const dados = await carregarJsonPublicado(
             JSON_PUBLICADOS_URLS.orcamento2026,
             'Falha ao carregar orçamento publicado'
         );
         dadosOrcamentoCache = normalizarDadosOrcamentoPublicado(dados);
         registrarModoDadosOnasp('orcamento2026', 'estatico');
+        registrarPerfOnasp('carregarDadosOrcamento', {
+            modo: 'estatico',
+            totalItens: dadosOrcamentoCache?.itens?.length || 0,
+            totalProcessos: Array.isArray(dadosOrcamentoCache?.outrosProcessos) ? dadosOrcamentoCache.outrosProcessos.length : 0,
+            tempoTotalMs: debugPerf && typeof performance !== 'undefined'
+                ? Number((performance.now() - inicioTotal).toFixed(2))
+                : null
+        });
         return dadosOrcamentoCache;
     }
 
     try {
+        const inicioApi = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
         const { resposta, payload } = await fetchJsonApiOnasp('/api/orcamento-2026');
         if (!resposta.ok) {
             throw new Error(`API local do orçamento respondeu HTTP ${resposta.status}.`);
@@ -4118,17 +4182,34 @@ export async function carregarDadosOrcamento(forcarRecarregamento = false) {
 
         dadosOrcamentoCache = normalizarDadosOrcamentoPublicado(payload);
         registrarModoDadosOnasp('orcamento2026', 'api');
+        registrarPerfOnasp('carregarDadosOrcamento', {
+            modo: 'api',
+            totalItens: dadosOrcamentoCache?.itens?.length || 0,
+            totalProcessos: Array.isArray(dadosOrcamentoCache?.outrosProcessos) ? dadosOrcamentoCache.outrosProcessos.length : 0,
+            tempoTotalMs: debugPerf && typeof performance !== 'undefined'
+                ? Number((performance.now() - inicioApi).toFixed(2))
+                : null
+        });
         return dadosOrcamentoCache;
     } catch (errorApi) {
         console.warn('API local do orçamento indisponivel. Tentando JSON publicado.', errorApi);
     }
 
+    const inicioFallback = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
     const dados = await carregarJsonPublicado(
         JSON_PUBLICADOS_URLS.orcamento2026,
         'Falha ao carregar fallback publicado do orçamento'
     );
     dadosOrcamentoCache = normalizarDadosOrcamentoPublicado(dados);
     registrarModoDadosOnasp('orcamento2026', 'estatico');
+    registrarPerfOnasp('carregarDadosOrcamento', {
+        modo: 'fallback-estatico',
+        totalItens: dadosOrcamentoCache?.itens?.length || 0,
+        totalProcessos: Array.isArray(dadosOrcamentoCache?.outrosProcessos) ? dadosOrcamentoCache.outrosProcessos.length : 0,
+        tempoTotalMs: debugPerf && typeof performance !== 'undefined'
+            ? Number((performance.now() - inicioFallback).toFixed(2))
+            : null
+    });
     return dadosOrcamentoCache;
 }
 
@@ -4244,6 +4325,7 @@ export async function carregarDadosFormalizacaoProfor(forcarRecarregamento = fal
 }
 
 export async function carregarCatalogoAplicacao(forcarRecarregamento = false) {
+    const debugPerf = debugPerfOnaspAtivo();
     if (forcarRecarregamento) {
         catalogoAplicacaoCache = null;
         dadosProfor2022Cache = null;
@@ -4256,9 +4338,11 @@ export async function carregarCatalogoAplicacao(forcarRecarregamento = false) {
     }
 
     const falhas = [];
+    const inicioCatalogo = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
 
     for (const fonte of obterFontesCatalogoAplicacao()) {
         try {
+            const inicioFonte = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
             const resposta = await fetch(fonte.url, { cache: 'no-store' });
             if (!resposta.ok) {
                 falhas.push(`${fonte.rotulo}: HTTP ${resposta.status}`);
@@ -4270,6 +4354,17 @@ export async function carregarCatalogoAplicacao(forcarRecarregamento = false) {
             dadosProfor2022Cache = catalogoAplicacaoCache.dadosProfor2022 || null;
             dadosFaf2021Cache = montarDadosFaf2021(catalogoAplicacaoCache);
             dadosDoacoes2023Cache = montarDadosDoacoes2023(catalogoAplicacaoCache);
+            registrarPerfOnasp('carregarCatalogoAplicacao', {
+                fonte: fonte.rotulo,
+                modo: fonte.modo,
+                tempoFonteMs: debugPerf && typeof performance !== 'undefined'
+                    ? Number((performance.now() - inicioFonte).toFixed(2))
+                    : null,
+                tempoTotalMs: debugPerf && typeof performance !== 'undefined'
+                    ? Number((performance.now() - inicioCatalogo).toFixed(2))
+                    : null,
+                temDadosBase: Array.isArray(catalogoAplicacaoCache?.dadosBase)
+            });
             return catalogoAplicacaoCache;
         } catch (error) {
             falhas.push(`${fonte.rotulo}: ${error.message}`);
@@ -4281,12 +4376,22 @@ export async function carregarCatalogoAplicacao(forcarRecarregamento = false) {
 }
 
 export async function carregarDadosAplicacao(catalogoAplicacao = null) {
+    const debugPerf = debugPerfOnaspAtivo();
+    const inicioAplicacao = debugPerf && typeof performance !== 'undefined' ? performance.now() : 0;
     const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
     const dadosBase = Array.isArray(catalogo?.dadosBase) ? catalogo.dadosBase : [];
 
     if (estaRodandoNoGitHubPages() && dadosBase.length > 0) {
         console.warn('GitHub Pages detectado: usando dadosBase publicado imediatamente.');
         registrarModoDadosOnasp('aplicacao', 'estatico');
+        registrarPerfOnasp('carregarDadosAplicacao', {
+            modo: 'estatico',
+            origem: 'dadosBase',
+            totalItens: dadosBase.length,
+            tempoTotalMs: debugPerf && typeof performance !== 'undefined'
+                ? Number((performance.now() - inicioAplicacao).toFixed(2))
+                : null
+        });
         return dadosBase;
     }
 
@@ -4295,6 +4400,14 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
         console.log(`Convenios carregados da planilha: ${dadosConvenio.length} itens.`);
         const dadosMontados = montarDadosComConvenios(catalogo, dadosConvenio);
         if (Array.isArray(dadosMontados) && dadosMontados.length > 0) {
+            registrarPerfOnasp('carregarDadosAplicacao', {
+                modo: 'api',
+                origem: 'planilha',
+                totalItens: dadosMontados.length,
+                tempoTotalMs: debugPerf && typeof performance !== 'undefined'
+                    ? Number((performance.now() - inicioAplicacao).toFixed(2))
+                    : null
+            });
             return dadosMontados;
         }
     } catch (error) {
@@ -4304,6 +4417,14 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     if (dadosBase.length > 0) {
         console.warn('Usando dadosBase estatico do catalogo da aplicacao.');
         registrarModoDadosOnasp('aplicacao', 'estatico');
+        registrarPerfOnasp('carregarDadosAplicacao', {
+            modo: 'estatico',
+            origem: 'dadosBase',
+            totalItens: dadosBase.length,
+            tempoTotalMs: debugPerf && typeof performance !== 'undefined'
+                ? Number((performance.now() - inicioAplicacao).toFixed(2))
+                : null
+        });
         return dadosBase;
     }
 

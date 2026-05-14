@@ -533,3 +533,18 @@
 - Riscos remanescentes: baixo a médio; o gargalo pode mudar de perfil conforme o volume de dados crescer, mas a renderização inicial já deixou de concentrar o maior custo visível.
 - Próxima etapa recomendada: observar o uso real em navegador local e medir novamente apenas se surgir novo gargalo.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Medição do carregamento real do Orçamento 2026
+
+- Branch atual: `main`.
+- Tarefa executada: instrumentação controlada e medição objetiva do carregamento real da tela Orçamento 2026 com `debugPerf=1`.
+- Arquivos alterados: `backend/services/data-service.js`, `frontend/js/app.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Tamanhos dos JSONs: `frontend/data/publicados/aplicacao.json` (391.262 bytes), `frontend/data/publicados/orcamento-2026.json` (77.160 bytes), `frontend/data/publicados/dashboard-geral.json` (386.644 bytes) e `frontend/data/publicados/resumo-publicacao.json` (859 bytes).
+- Medições realizadas: `carregarCatalogoAplicacao` levou cerca de 3,9 ms; `carregarDadosAplicacao` levou cerca de 100,3 ms; `carregarDadosOrcamento` levou cerca de 75,2 ms; `renderOrcamentoView:container.innerHTML` levou cerca de 1,9 ms; `atualizarTabelaOrcamento` levou cerca de 4,2 ms; a abertura do orçamento após o boot ficou em torno de 78 ms na medição local.
+- Gargalo identificado: o caminho do Orçamento 2026 em si não é o principal gargalo local; o custo maior observado está no bootstrap da aplicação e no carregamento da base da Home/convênios, não na montagem da tabela do orçamento.
+- Patch aplicado: instrumentação controlada por `?debugPerf=1` em `data-service.js` e `app.js` para registrar tempos de fetch, parse, bootstrap e render sem alterar regra de negócio.
+- Validações executadas: `node --check frontend/js/app.js`, `node --check backend/services/data-service.js`, `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"`, `git diff --check` e medição automatizada em navegador headless com `debugPerf=1`.
+- Resultado: o orçamento abriu rápido na medição local; não houve regressão funcional e os logs mostraram que o custo do orçamento ficou baixo em comparação ao bootstrap da aplicação.
+- Riscos remanescentes: baixo a médio; em ambiente mais lento, o gargalo pode migrar para o bootstrap inicial ou para a base da Home.
+- Próxima etapa recomendada: se a percepção de lentidão continuar no uso real, medir especificamente o bootstrap inicial da SPA antes de mexer em novos fluxos.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

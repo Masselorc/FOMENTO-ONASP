@@ -74,10 +74,36 @@ let orcamentoOutrosProcessosExpandido = false;
 let orcamentoEventosDelegadosConfigurados = false;
 let erroCarregamentoOrcamento = null;
 const errosCarregamentoView = {};
+const DEBUG_PERF_ONASP = (() => {
+    if (typeof window === 'undefined' || typeof URLSearchParams === 'undefined') {
+        return false;
+    }
+
+    try {
+        return new URLSearchParams(window.location.search).has('debugPerf');
+    } catch {
+        return false;
+    }
+})();
 let resumoPublicacaoSistemaCache = null;
 let faf2021UfDetalheAtual = '';
 const APP_CACHE_VERSION = '20260507-05';
 const ANALYTICS_CACHE_VERSION = '20260428-2';
+
+function registrarPerfOrcamento(etapa, inicio, detalhes = {}) {
+    if (!DEBUG_PERF_ONASP || typeof console === 'undefined' || typeof performance === 'undefined') {
+        return;
+    }
+
+    const duracaoMs = typeof inicio === 'number'
+        ? Number((performance.now() - inicio).toFixed(2))
+        : null;
+    console.info(`[perf:orcamento] ${etapa}`, {
+        duracaoMs,
+        ...detalhes
+    });
+}
+
 // Mantém o idioma do DataTables local para evitar CORS e dependência externa em ambiente restrito ou no GitHub Pages.
 const DATATABLES_LANGUAGE_PT_BR = {
     decimal: ',',
@@ -804,12 +830,22 @@ async function carregarLogoParaPDF() {
 
         async function garantirDadosDaView(viewName) {
             if (viewName === 'orcamento' && !obterDadosOrcamento()) {
+                const inicioOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
                 await carregarDadosOrcamento();
+                registrarPerfOrcamento('garantirDadosDaView:carregarDadosOrcamento', inicioOrcamento, {
+                    viewName,
+                    cacheExiste: Boolean(obterDadosOrcamento())
+                });
                 erroCarregamentoOrcamento = null;
             }
 
             if (viewName === 'orcamento') {
+                const inicioMovimentacoes = DEBUG_PERF_ONASP ? performance.now() : 0;
                 await carregarMovimentacoesOrcamento2026();
+                registrarPerfOrcamento('garantirDadosDaView:carregarMovimentacoesOrcamento2026', inicioMovimentacoes, {
+                    viewName,
+                    movimentacoes: orcamentoMovimentacoes.length
+                });
             }
 
             if (['formalizacao', 'formalizacao-detalhe'].includes(viewName) && !obterDadosFormalizacaoProfor()) {
@@ -1103,6 +1139,7 @@ async function carregarLogoParaPDF() {
 
         async function toggleView(viewName) {
             if (viewName === 'orcamento' && !obterDadosOrcamento()) {
+                const inicioToggleOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
                 document.getElementById('view-dashboard').style.display = 'none';
                 document.getElementById('view-detalhamento').style.display = 'none';
                 document.getElementById('view-estado-detalhe').style.display = 'none';
@@ -1132,11 +1169,21 @@ async function carregarLogoParaPDF() {
                 if (viewStatusSistema) viewStatusSistema.style.display = 'none';
 
                 renderOrcamentoViewSkeleton();
+                registrarPerfOrcamento('toggleView:orcamento skeleton', inicioToggleOrcamento);
 
                 try {
+                    const inicioDadosOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
                     await garantirDadosDaView(viewName);
+                    registrarPerfOrcamento('toggleView:orcamento dados', inicioDadosOrcamento, {
+                        viewName,
+                        temDados: Boolean(obterDadosOrcamento())
+                    });
                     delete errosCarregamentoView[viewName];
+                    const inicioRenderOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
                     renderOrcamentoView();
+                    registrarPerfOrcamento('toggleView:orcamento render', inicioRenderOrcamento, {
+                        viewName
+                    });
                 } catch (error) {
                     errosCarregamentoView[viewName] = error;
                     erroCarregamentoOrcamento = error;
@@ -5929,9 +5976,13 @@ async function carregarLogoParaPDF() {
                 return;
             }
             try {
+                const inicioMovimentacoes = DEBUG_PERF_ONASP ? performance.now() : 0;
                 const { payload } = await fetchJsonApiOnasp('/api/orcamento-2026/movimentacoes');
                 // A alocação é registrada como movimentação, sem alterar o valor original dos processos.
                 orcamentoMovimentacoes = Array.isArray(payload?.movimentacoes) ? payload.movimentacoes : [];
+                registrarPerfOrcamento('carregarMovimentacoesOrcamento2026', inicioMovimentacoes, {
+                    totalMovimentacoes: orcamentoMovimentacoes.length
+                });
             } catch {
                 orcamentoMovimentacoes = [];
             }
@@ -6688,6 +6739,7 @@ async function carregarLogoParaPDF() {
         // Recria o corpo da tabela a cada filtro ou expansão. Como o volume é
         // pequeno, isso reduz estado manual e evita inconsistência visual.
         function atualizarTabelaOrcamento(budgetData) {
+            const inicioAtualizacao = DEBUG_PERF_ONASP ? performance.now() : 0;
             const tbody = document.getElementById('budget-table-body');
             if (!tbody) return;
             const contextoRenderizacao = prepararContextoRenderizacaoOrcamento(budgetData, orcamentoMovimentacoes);
@@ -6828,6 +6880,11 @@ async function carregarLogoParaPDF() {
             registrarEventosRastreioOrcamento(tbody, budgetData);
             registrarEventosCamposOrcamento(budgetData);
             atualizarTabelaOutrosOrcamento(budgetData);
+            registrarPerfOrcamento('atualizarTabelaOrcamento', inicioAtualizacao, {
+                linhasFiltradas: itensFiltrados.length,
+                grupos: grupos.length,
+                linhasRenderizadas: grupos.reduce((total, grupo) => total + grupo.itens.length, 0)
+            });
         }
 
         function configurarDelegacaoEventosOrcamento() {
@@ -6965,6 +7022,7 @@ async function carregarLogoParaPDF() {
         }
 
         function atualizarTabelaOutrosOrcamento(budgetData) {
+            const inicioAtualizacaoOutros = DEBUG_PERF_ONASP ? performance.now() : 0;
             const details = document.getElementById('budget-other-details');
             const content = document.getElementById('budget-other-content');
             if (!details || !content || !details.open) return;
@@ -7060,6 +7118,9 @@ async function carregarLogoParaPDF() {
             `;
 
             registrarEventosOutrosProcessosOrcamento(budgetData);
+            registrarPerfOrcamento('atualizarTabelaOutrosOrcamento', inicioAtualizacaoOutros, {
+                linhasOutros: outrosProcessos.length
+            });
         }
 
         function renderizarCampoOutrosOrcamento(item, campo, tipo = 'text') {
@@ -7282,6 +7343,7 @@ async function carregarLogoParaPDF() {
         function renderOrcamentoView() {
             const container = document.getElementById('view-orcamento');
             if (!container) return;
+            const inicioRenderOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
 
             container.style.display = 'block';
             container.innerHTML = '';
@@ -7326,6 +7388,7 @@ async function carregarLogoParaPDF() {
             const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
             const saldoPlanejado = resumo.saldoPlanejado ?? ((resumo.totalOrcamento || resumo.totalGeral || 0) - valorEmExecucao);
             const processosAutuados = resumo.processosAutuados || 0;
+            const inicioResumoAparelhamento = DEBUG_PERF_ONASP ? performance.now() : 0;
             const resumoAparelhamento = budgetData.resumoAparelhamento || calcularResumoAparelhamentoFrontend(itensOrcamento);
             const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
             const percentualEmExecucao = totalOrcamento > 0 ? valorEmExecucao / totalOrcamento : 0;
@@ -7587,6 +7650,14 @@ async function carregarLogoParaPDF() {
                     ${renderizarPainelOutrosProcessosOrcamento(budgetData)}
                 </section>
             `;
+            registrarPerfOrcamento('renderOrcamentoView:resumoAparelhamento', inicioResumoAparelhamento, {
+                itens: itensOrcamento.length,
+                calculadoLocalmente: !budgetData.resumoAparelhamento
+            });
+            registrarPerfOrcamento('renderOrcamentoView:container.innerHTML', inicioRenderOrcamento, {
+                itens: itensOrcamento.length,
+                outrosProcessos: Array.isArray(budgetData.outrosProcessos) ? budgetData.outrosProcessos.length : 0
+            });
 
             const atualizar = () => {
                 atualizarTabelaOrcamento(budgetData);
@@ -7630,11 +7701,19 @@ async function carregarLogoParaPDF() {
 
             requestAnimationFrame(() => {
                 if (sequenciaRenderizacao !== orcamentoRenderizacaoSequencia) return;
+                const inicioTabela = DEBUG_PERF_ONASP ? performance.now() : 0;
                 atualizarTabelaOrcamento(budgetData);
+                registrarPerfOrcamento('renderOrcamentoView:atualizarTabelaOrcamento', inicioTabela, {
+                    linhasPrincipais: Array.isArray(budgetData?.itens) ? budgetData.itens.length : 0
+                });
                 if (orcamentoOutrosProcessosExpandido) {
                     requestAnimationFrame(() => {
                         if (sequenciaRenderizacao !== orcamentoRenderizacaoSequencia) return;
+                        const inicioOutros = DEBUG_PERF_ONASP ? performance.now() : 0;
                         atualizarTabelaOutrosOrcamento(budgetData);
+                        registrarPerfOrcamento('renderOrcamentoView:atualizarTabelaOutros', inicioOutros, {
+                            linhasOutros: Array.isArray(budgetData?.outrosProcessos) ? budgetData.outrosProcessos.length : 0
+                        });
                     });
                 }
             });
