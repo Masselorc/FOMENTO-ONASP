@@ -5911,7 +5911,7 @@ async function carregarLogoParaPDF() {
                 const rastreioAberto = podeExibirRastreio && orcamentoItensRastreioAbertos.has(filhoId);
                 const idRastreio = obterIdRastreioOrcamento(filho);
                 const quantidadeUnidade = [filho.quantidade, filho.unidade].filter(Boolean).join(' ');
-                const processoAutuado = normalizarBooleanOrcamento(obterValorPendenteOrcamento(filho, 'processo_autuado'));
+                const processoAutuado = calcularProcessoAutuadoVisualOrcamento(filho);
                 const valorEstimado = obterValorPendenteOrcamento(filho, 'valor_estimado_pesquisa_preco');
                 const valorEmpenhado = obterValorPendenteOrcamento(filho, 'valor_empenhado');
                 const valorExecutado = obterValorPendenteOrcamento(filho, 'valor_executado');
@@ -6633,7 +6633,7 @@ async function carregarLogoParaPDF() {
                     const rastreioAberto = podeExibirRastreio && orcamentoItensRastreioAbertos.has(itemId);
                     const idRastreio = obterIdRastreioOrcamento(item);
                     const quantidadeUnidade = [item.quantidade, item.unidade].filter(Boolean).join(' ');
-                    const processoAutuado = normalizarBooleanOrcamento(obterValorPendenteOrcamento(item, 'processo_autuado'));
+                    const processoAutuado = calcularProcessoAutuadoVisualOrcamento(item);
                     const valorEstimado = obterValorPendenteOrcamento(item, 'valor_estimado_pesquisa_preco');
                     const valorEmpenhado = obterValorPendenteOrcamento(item, 'valor_empenhado');
                     const valorExecutado = obterValorPendenteOrcamento(item, 'valor_executado');
@@ -8641,6 +8641,27 @@ async function carregarLogoParaPDF() {
         // ========================================================================
 
         const STATUS_ORCAMENTO_EDICAO = ['PLANEJADO', 'PROCESSO AUTUADO', 'EM PESQUISA DE PREÇOS', 'EM EXECUÇÃO', 'EXECUTADO', 'SUSPENSO', 'CANCELADO', 'VALIDAR'];
+        const STATUS_ORCAMENTO_AUTUACAO_VISUAL = new Set([
+            'processo autuado',
+            'em pesquisa de precos',
+            'em execucao',
+            'executado',
+            'suspenso',
+            'cancelado'
+        ]);
+
+        function statusIndicaProcessoAutuadoOrcamento(status) {
+            return STATUS_ORCAMENTO_AUTUACAO_VISUAL.has(normalizarBusca(status));
+        }
+
+        function calcularProcessoAutuadoVisualOrcamento(item, pendencias = orcamentoAlteracoesPendentes[String(item?.id ?? '')] || {}) {
+            if (statusIndicaProcessoAutuadoOrcamento(pendencias.status)) return true;
+            if (pendencias.processo_autuado !== undefined) return normalizarBooleanOrcamento(pendencias.processo_autuado);
+            if (statusIndicaProcessoAutuadoOrcamento(item?.status)) return true;
+            const processoAutuadoItem = item?.processoAutuado ?? item?.processo_autuado;
+            if (processoAutuadoItem !== undefined) return normalizarBooleanOrcamento(processoAutuadoItem);
+            return false;
+        }
 
         function parseNumeroMonetarioFrontend(valor) {
             if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
@@ -8776,11 +8797,13 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarCampoOrcamento(item, campo, tipo = 'text') {
-            const valor = obterValorPendenteOrcamento(item, campo);
+            const valor = campo === 'processo_autuado'
+                ? calcularProcessoAutuadoVisualOrcamento(item)
+                : obterValorPendenteOrcamento(item, campo);
             const valorOriginal = obterValorOriginalOrcamento(item, campo);
             if (!orcamentoItemEmEdicao(item.id)) {
                 if (campo === 'processo_autuado') {
-                    const autuado = normalizarBooleanOrcamento(valor);
+                    const autuado = calcularProcessoAutuadoVisualOrcamento(item);
                     return `<span class="profor-alert-badge profor-alert-${autuado ? 'success' : 'warning'}">${autuado ? 'Sim' : 'Não'}</span>`;
                 }
                 if (campo.startsWith('valor_')) return formatMoney(Number(valor) || 0);
@@ -8790,7 +8813,7 @@ async function carregarLogoParaPDF() {
             }
 
             if (campo === 'processo_autuado') {
-                const autuado = normalizarBooleanOrcamento(valor);
+                const autuado = calcularProcessoAutuadoVisualOrcamento(item);
                 const autuadoOriginal = normalizarBooleanOrcamento(valorOriginal);
                 return `
                     <select class="form-select form-select-sm budget-edit-control" data-orcamento-id="${escapeHtml(item.id)}" data-orcamento-campo="${campo}" data-orcamento-original="${autuadoOriginal ? '1' : ''}">
@@ -8848,6 +8871,7 @@ async function carregarLogoParaPDF() {
 
         function renderizarLinhaNovoProcessoOrcamento(item) {
             if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+            const processoAutuado = calcularProcessoAutuadoVisualOrcamento(item);
 
             return `
                 <tr>
@@ -8857,7 +8881,7 @@ async function carregarLogoParaPDF() {
                     <td>
                         <select class="form-select form-select-sm budget-new-control" data-orcamento-novo-id="${escapeHtml(item.tempId)}" data-orcamento-novo-campo="processo_autuado">
                             <option value="">Não</option>
-                            <option value="1" ${item.processo_autuado ? 'selected' : ''}>Sim</option>
+                            <option value="1" ${processoAutuado ? 'selected' : ''}>Sim</option>
                         </select>
                     </td>
                     <td>

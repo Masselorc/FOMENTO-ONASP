@@ -305,6 +305,33 @@ function statusIndicaProcessoAutuado(status) {
   return normalizado !== "PLANEJADO" && normalizado !== "VALIDAR";
 }
 
+function sincronizarStatusEProcessoAutuado(status, processoAutuado) {
+  const statusNormalizado = normalizarStatusOrcamento(status);
+  const processoAutuadoNormalizado = Number(processoAutuado) === 1 ? 1 : 0;
+
+  if (statusIndicaProcessoAutuado(statusNormalizado)) {
+    return {
+      status: statusNormalizado,
+      processo_autuado: 1
+    };
+  }
+
+  if (
+    processoAutuadoNormalizado === 1
+    && (statusNormalizado === "PLANEJADO" || statusNormalizado === "VALIDAR")
+  ) {
+    return {
+      status: "PROCESSO AUTUADO",
+      processo_autuado: 1
+    };
+  }
+
+  return {
+    status: statusNormalizado,
+    processo_autuado: processoAutuadoNormalizado
+  };
+}
+
 function normalizarClassificacaoGerencial(valor) {
   const texto = normalizarTexto(valor).replace(/\s+/g, "_");
 
@@ -669,9 +696,7 @@ function obterRegistrosIniciaisDaPlanilha() {
       valor_empenhado: 0,
       valor_executado: arredondarMoeda(converterNumero(linha[colValorExecutado])),
       valor_estimado_pesquisa_preco: 0,
-      processo_autuado: processoSei ? 1 : 0,
       processo_sei: processoSei,
-      status,
       observacao: "",
       compoe_orcamento: 1,
       classificacao_gerencial: classificarGerencialmenteItemOrcamento({ id, descricao }),
@@ -681,7 +706,8 @@ function obterRegistrosIniciaisDaPlanilha() {
       quantidade: textoCelula(linha, colQuantidade),
       unidade: textoCelula(linha, colUnidade),
       valor_unitario: arredondarMoeda(converterNumero(linha[colValorUnitario])),
-      ...(dadosRastreio || {})
+      ...(dadosRastreio || {}),
+      ...sincronizarStatusEProcessoAutuado(status, processoSei ? 1 : 0)
     });
   }).filter(Boolean);
 }
@@ -759,6 +785,30 @@ function executarBackfillOrcamento() {
   })(registros);
 }
 
+function executarBackfillAutuacaoPorStatus() {
+  const linhas = db.prepare(`
+    SELECT id, status, processo_autuado
+    FROM orcamento_2026
+    WHERE ativo = 1
+  `).all();
+  if (!linhas.length) return;
+
+  const update = db.prepare(`
+    UPDATE orcamento_2026
+    SET processo_autuado = 1, atualizado_em = ?
+    WHERE id = ?
+  `);
+  const updatedAt = new Date().toISOString();
+
+  db.transaction((items) => {
+    items.forEach((linha) => {
+      if (statusIndicaProcessoAutuado(linha.status) && Number(linha.processo_autuado) !== 1) {
+        update.run(updatedAt, linha.id);
+      }
+    });
+  })(linhas);
+}
+
 function executarBackfillClassificacaoGerencial() {
   const linhas = db.prepare("SELECT id, classificacao_gerencial FROM orcamento_2026").all();
   if (!linhas.length) return;
@@ -785,6 +835,7 @@ function executarBackfillClassificacaoGerencial() {
 
 function inicializarOrcamento2026() {
   executarBackfillOrcamento();
+  executarBackfillAutuacaoPorStatus();
   executarBackfillClassificacaoGerencial();
 }
 
@@ -1048,6 +1099,8 @@ function criarProcessoVinculadoOrcamento2026(payload = {}) {
   }, 0) + 1;
   const agora = new Date().toISOString();
 
+  const sincronizado = sincronizarStatusEProcessoAutuado(validacaoStatus.status, processoSei ? 1 : 0);
+
   const item = preencherColunas({
     id: idFilho,
     categoria: limparTexto(processoPai.categoria),
@@ -1060,9 +1113,9 @@ function criarProcessoVinculadoOrcamento2026(payload = {}) {
     valor_empenhado: 0,
     valor_executado: 0,
     valor_estimado_pesquisa_preco: 0,
-    processo_autuado: processoSei ? 1 : 0,
+    processo_autuado: sincronizado.processo_autuado,
     processo_sei: processoSei,
-    status: validacaoStatus.status,
+    status: sincronizado.status,
     observacao,
     compoe_orcamento: 0,
     classificacao_gerencial: normalizarClassificacaoGerencial(processoPai.classificacao_gerencial),
@@ -1136,15 +1189,17 @@ function validarNovos(novos) {
   if (!Array.isArray(novos)) return [];
   return novos.map((item, index) => {
     const id = limparTexto(item.id) || `OUT-${Date.now()}-${index + 1}`;
+    const processoAutuadoInformado = valorParaBanco("processo_autuado", item.processo_autuado);
+    const sincronizado = sincronizarStatusEProcessoAutuado(item.status || "PLANEJADO", processoAutuadoInformado);
     return preencherColunas({
       id,
       categoria: limparTexto(item.categoria) || "Outros processos de interesse da Ouvidoria",
       descricao: limparTexto(item.descricao) || "Novo processo",
       natureza: limparTexto(item.natureza),
       valor_estimado_pesquisa_preco: valorParaBanco("valor_estimado_pesquisa_preco", item.valor_estimado_pesquisa_preco),
-      processo_autuado: valorParaBanco("processo_autuado", item.processo_autuado),
+      processo_autuado: sincronizado.processo_autuado,
       processo_sei: limparTexto(item.processo_sei),
-      status: normalizarStatusOrcamento(item.status || "PLANEJADO"),
+      status: sincronizado.status,
       observacao: limparTexto(item.observacao),
       classificacao_gerencial: "NAO_APARELHAMENTO",
       compoe_orcamento: 0,
@@ -1181,6 +1236,14 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
     VALUES (${COLUNAS_ORCAMENTO.map(() => "?").join(", ")}, ?)
   `);
   const inativar = db.prepare("UPDATE orcamento_2026 SET ativo = 0, atualizado_em = ? WHERE id = ?");
+  const alteracoesPorItem = new Map();
+
+  alteracoes.forEach((item) => {
+    if (!alteracoesPorItem.has(item.id)) {
+      alteracoesPorItem.set(item.id, {});
+    }
+    alteracoesPorItem.get(item.id)[item.campo] = item.valor;
+  });
 
   db.transaction(() => {
     novosItens.forEach((item) => {
@@ -1194,16 +1257,38 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
       });
     });
 
-    alteracoes.forEach((item) => {
-      const atual = selectAtual.get(item.id);
-      if (!atual) throw new Error(`Item não localizado: ${item.id}`);
-      db.prepare(`UPDATE orcamento_2026 SET ${item.campo} = ?, atualizado_em = ? WHERE id = ?`).run(item.valor, updatedAt, item.id);
-      registrarHistorico(db, {
-        pagina: PAGINA,
-        registro: item.id,
-        campo: item.campo,
-        valorAnterior: obterValorAtual(atual, item.campo),
-        valorNovo: item.valor
+    alteracoesPorItem.forEach((camposAlterados, id) => {
+      const atual = selectAtual.get(id);
+      if (!atual) throw new Error(`Item não localizado: ${id}`);
+
+      const sincronizado = sincronizarStatusEProcessoAutuado(
+        Object.prototype.hasOwnProperty.call(camposAlterados, "status") ? camposAlterados.status : atual.status,
+        Object.prototype.hasOwnProperty.call(camposAlterados, "processo_autuado") ? camposAlterados.processo_autuado : atual.processo_autuado
+      );
+
+      const atualizacoes = {
+        ...camposAlterados,
+        status: sincronizado.status,
+        processo_autuado: sincronizado.processo_autuado
+      };
+
+      const camposEfetivos = Object.entries(atualizacoes).filter(([campo, valor]) => (
+        String(obterValorAtual(atual, campo)) !== String(valor)
+      ));
+
+      if (!camposEfetivos.length) return;
+
+      db.prepare(`UPDATE orcamento_2026 SET ${camposEfetivos.map(([campo]) => `${campo} = ?`).join(", ")}, atualizado_em = ? WHERE id = ?`)
+        .run(...camposEfetivos.map(([, valor]) => valor), updatedAt, id);
+
+      camposEfetivos.forEach(([campo, valorNovo]) => {
+        registrarHistorico(db, {
+          pagina: PAGINA,
+          registro: id,
+          campo,
+          valorAnterior: obterValorAtual(atual, campo),
+          valorNovo
+        });
       });
     });
 

@@ -477,3 +477,17 @@
 - Pendências: iniciar o primeiro fichamento documental, preferencialmente `COMPETÊNCIAS-ONASP.txt`.
 - Risco de regressão: baixo; alteração documental e organizacional.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Sincronização status e autuação no Orçamento 2026
+
+- Branch atual: `main`.
+- Tarefa executada: correção da sincronização entre `status` e `processo_autuado` no Orçamento 2026, com ajuste de persistência, backfill aditivo e sincronização visual no front-end.
+- Arquivos alterados: `backend/services/orcamento-2026-service.js`, `frontend/js/app.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Problema identificado: o item `CAMP-001` ficava com `status = PROCESSO AUTUADO`, mas `processo_autuado = 0`, mantendo a badge “Não autuado” na coluna “Em execução”.
+- Causa raiz: a leitura já inferia autuação em alguns pontos, mas a persistência e a renderização pendente ainda podiam divergir entre `status` e `processo_autuado`.
+- Regra registrada: status autuado ou etapa posterior força `processo_autuado = 1`; o front-end passa a considerar status pendente/persistido e processo autuado pendente/persistido na badge e no painel.
+- Validações executadas: `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `git diff --check`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"`, e checagem direta por node do item `CAMP-001`.
+- Resultado: correção validada; `CAMP-001` retorna `status = PROCESSO AUTUADO`, `processoAutuado = true` e `processoAutuadoNumero = 1`.
+- Pendências: nenhuma pendência objetiva na correção; se necessário, a publicação estática será tratada em etapa separada.
+- Risco de regressão: baixo a médio; alteração funcional pequena, mas sensível ao fluxo de edição, persistência e leitura da tabela do orçamento.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
