@@ -607,3 +607,17 @@
 - Pendências: consolidar `pena-justa-e-ouvidorias.md`, `visao-geral-profor.md` e `index-normativos.md`, conforme decisão posterior.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Consolidação Pena Justa e ouvidorias
+
+- Branch atual: `main`.
+- Tarefa executada: consolidação do arquivo `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md` com base nos fichamentos técnicos já tratados.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`, `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/competencias-onasp.fichamento.md`, `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/historia-onasp.fichamento.md`, `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/plano-anual-onasp.fichamento.md`, `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/relatorio-gestao-2025.fichamento.md`, `memoria/03_NORMATIVOS/fontes-tratadas/instrucao-normativa-parametros-ouvidorias.extrato.md`, `memoria/03_NORMATIVOS/fontes-tratadas/lei-13460-2017-ouvidorias.extrato.md`, `memoria/04_PENA_JUSTA/fontes-tratadas/plano-pena-justa.nota-tecnica.md`, `memoria/05_PROFOR_CONVENIOS/fontes-tratadas/parecer-profor-onasp.nota-tecnica.md`.
+- Arquivos alterados: `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: consolidada a relação entre Plano Pena Justa, ONASP, ouvidorias de serviços penais, IN nº 75/2026, indicadores `2.4.2.1.1.1` e `2.4.2.1.2.1`, PROFOR, RENOSPEN, canais de denúncia, transparência e controle social.
+- Decisão registrada: a consolidação usa apenas fichamentos técnicos e arquivos consolidados já tratados, sem consulta direta aos documentos originais nesta etapa.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: arquivo consolidado criado/atualizado e pronto para uso como memória operacional do recorte Pena Justa/ouvidorias.
+- Pendências: consolidar `visao-geral-profor.md` e `index-normativos.md`, conforme decisão posterior.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
