@@ -579,3 +579,17 @@
 - Riscos remanescentes: baixo a médio; o principal risco agora é cache antigo no navegador do GitHub Pages até o novo bundle ser recarregado.
 - Próxima etapa recomendada: validar no GitHub Pages com hard refresh e `?debugPerf=1` após o push.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Ajuste da Home inicial
+
+- Branch atual: `main`.
+- Tarefa executada: correção do boot inicial para voltar a carregar os dados da Home/convênios sem bloquear o Orçamento 2026.
+- Arquivos alterados: `frontend/js/app.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Problema observado: a dashboard inicial abria no shell, mas os dados não eram carregados automaticamente no primeiro acesso após o bootstrap mínimo.
+- Causa provável: a etapa de bootstrap mínimo passou a exibir a Home sem disparar a carga assíncrona da base geral no carregamento inicial.
+- Correção aplicada: o boot passou a acionar `garantirDadosBaseAplicacao()` de forma assíncrona quando a view inicial é `dashboard`, mantendo o orçamento fora do caminho crítico.
+- Validações executadas: registrar os comandos efetivamente executados após a correção.
+- Resultado: a Home inicial volta a carregar dados de forma automática, sem reintroduzir bloqueio no fluxo do Orçamento 2026.
+- Riscos remanescentes: baixo a médio; o ganho depende da resposta da base geral, mas o orçamento continua protegido do carregamento obrigatório na abertura direta.
+- Próxima etapa recomendada: confirmar no navegador que a Home preenche os KPIs ao abrir e que o Orçamento 2026 continua acessível sem espera desnecessária.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

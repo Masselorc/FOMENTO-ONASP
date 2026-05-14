@@ -818,6 +818,15 @@ async function carregarLogoParaPDF() {
             registrarPerfOrcamento('bootstrap:minimo', inicioBootstrapMinimo, {
                 viewInicial: document.body.dataset.currentView || 'dashboard'
             });
+
+            requestAnimationFrame(() => {
+                const viewInicial = document.body.dataset.currentView || 'dashboard';
+                if (viewInicial === 'dashboard') {
+                    garantirDadosBaseAplicacao().catch((error) => {
+                        console.error('Falha ao carregar a base inicial da dashboard:', error);
+                    });
+                }
+            });
         });
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
