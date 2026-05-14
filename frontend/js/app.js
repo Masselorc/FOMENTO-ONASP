@@ -25,7 +25,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260513-02';
+} from '../../backend/services/data-service.js?v=20260514-03';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -90,6 +90,11 @@ let resumoPublicacaoSistemaCache = null;
 let faf2021UfDetalheAtual = '';
 const APP_CACHE_VERSION = '20260507-05';
 const ANALYTICS_CACHE_VERSION = '20260428-2';
+const TEMPO_MAXIMO_CARREGAMENTO_ORCAMENTO_MS = 15000;
+
+function orcamentoEmModoPublicacaoEstatico() {
+    return obterModoDadosOnasp('orcamento2026') === 'estatico';
+}
 
 function registrarPerfOrcamento(etapa, inicio, detalhes = {}) {
     if (!DEBUG_PERF_ONASP || typeof console === 'undefined' || typeof performance === 'undefined') {
@@ -102,6 +107,25 @@ function registrarPerfOrcamento(etapa, inicio, detalhes = {}) {
     console.info(`[perf:orcamento] ${etapa}`, {
         duracaoMs,
         ...detalhes
+    });
+}
+
+function executarComTimeoutOnasp(promise, ms, mensagem) {
+    return new Promise((resolve, reject) => {
+        const timeoutId = window.setTimeout(() => {
+            reject(new Error(mensagem));
+        }, ms);
+
+        Promise.resolve(promise).then(
+            (resultado) => {
+                window.clearTimeout(timeoutId);
+                resolve(resultado);
+            },
+            (error) => {
+                window.clearTimeout(timeoutId);
+                reject(error);
+            }
+        );
     });
 }
 
@@ -814,7 +838,11 @@ async function carregarLogoParaPDF() {
 
             if (viewName === 'orcamento' && !obterDadosOrcamento()) {
                 const inicioOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
-                await carregarDadosOrcamento();
+                await executarComTimeoutOnasp(
+                    carregarDadosOrcamento(),
+                    TEMPO_MAXIMO_CARREGAMENTO_ORCAMENTO_MS,
+                    'O carregamento do Orçamento 2026 excedeu o tempo limite.'
+                );
                 registrarPerfOrcamento('garantirDadosDaView:carregarDadosOrcamento', inicioOrcamento, {
                     viewName,
                     cacheExiste: Boolean(obterDadosOrcamento())
@@ -824,7 +852,11 @@ async function carregarLogoParaPDF() {
 
             if (viewName === 'orcamento') {
                 const inicioMovimentacoes = DEBUG_PERF_ONASP ? performance.now() : 0;
-                await carregarMovimentacoesOrcamento2026();
+                await executarComTimeoutOnasp(
+                    carregarMovimentacoesOrcamento2026(),
+                    TEMPO_MAXIMO_CARREGAMENTO_ORCAMENTO_MS,
+                    'O carregamento das movimentações do Orçamento 2026 excedeu o tempo limite.'
+                );
                 registrarPerfOrcamento('garantirDadosDaView:carregarMovimentacoesOrcamento2026', inicioMovimentacoes, {
                     viewName,
                     movimentacoes: orcamentoMovimentacoes.length
@@ -1169,7 +1201,7 @@ async function carregarLogoParaPDF() {
         }
 
         async function toggleView(viewName) {
-            if (viewName === 'orcamento' && !obterDadosOrcamento()) {
+            if (viewName === 'orcamento') {
                 const inicioToggleOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
                 document.getElementById('view-dashboard').style.display = 'none';
                 document.getElementById('view-detalhamento').style.display = 'none';
@@ -5849,7 +5881,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarBotaoEdicaoOrcamento(itemId, opcoes = {}) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+            if (orcamentoEmModoPublicacaoEstatico()) return '';
 
             const id = String(itemId);
             const ativo = orcamentoItemEmEdicao(id);
@@ -6002,12 +6034,16 @@ async function carregarLogoParaPDF() {
         }
 
         async function carregarMovimentacoesOrcamento2026() {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+            const inicioMovimentacoes = DEBUG_PERF_ONASP ? performance.now() : 0;
+            if (orcamentoEmModoPublicacaoEstatico()) {
                 orcamentoMovimentacoes = [];
+                registrarPerfOrcamento('carregarMovimentacoesOrcamento2026', inicioMovimentacoes, {
+                    modo: 'estatico',
+                    totalMovimentacoes: 0
+                });
                 return;
             }
             try {
-                const inicioMovimentacoes = DEBUG_PERF_ONASP ? performance.now() : 0;
                 const { payload } = await fetchJsonApiOnasp('/api/orcamento-2026/movimentacoes');
                 // A alocação é registrada como movimentação, sem alterar o valor original dos processos.
                 orcamentoMovimentacoes = Array.isArray(payload?.movimentacoes) ? payload.movimentacoes : [];
@@ -6165,7 +6201,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarBotaoDividirRecursoOrcamento(item) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+            if (orcamentoEmModoPublicacaoEstatico()) return '';
             if (!itemPodeDividirRecursoOrcamento(item)) return '';
 
             return renderActionButton({
@@ -6181,7 +6217,7 @@ async function carregarLogoParaPDF() {
         }
 
         function itemPodeAlocarSaldoOrcamento(item, saldoTransferivelEstimado) {
-            if (!Boolean(item) || item.ativo === false || dadosPaginaEmModoEstatico('orcamento2026')) return false;
+            if (!Boolean(item) || item.ativo === false || orcamentoEmModoPublicacaoEstatico()) return false;
             if (saldoTransferivelEstimado !== undefined && saldoTransferivelEstimado <= 0) return false;
             return true;
         }
@@ -6341,7 +6377,7 @@ async function carregarLogoParaPDF() {
         }
 
         async function abrirModalAlocarSaldoOrcamento(itemId) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+            if (orcamentoEmModoPublicacaoEstatico()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
@@ -6562,7 +6598,7 @@ async function carregarLogoParaPDF() {
         }
 
         function abrirModalDividirRecursoOrcamento(itemId) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+            if (orcamentoEmModoPublicacaoEstatico()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
@@ -6693,7 +6729,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarPainelEdicaoOrcamento(item, colspan = 8) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+            if (orcamentoEmModoPublicacaoEstatico()) return '';
 
             const itemId = String(item.id);
             if (!orcamentoItemEmEdicao(itemId)) return '';
@@ -7167,7 +7203,7 @@ async function carregarLogoParaPDF() {
         }
 
         function adicionarNovoProcessoOrcamento() {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+            if (orcamentoEmModoPublicacaoEstatico()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
@@ -7194,7 +7230,7 @@ async function carregarLogoParaPDF() {
         }
 
         function abrirModalSenhaOrcamento(escopoId = null) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+            if (orcamentoEmModoPublicacaoEstatico()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
@@ -7243,7 +7279,7 @@ async function carregarLogoParaPDF() {
         }
 
         async function salvarOrcamentoComSenha(password, modal, escopoId = null) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+            if (orcamentoEmModoPublicacaoEstatico()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
@@ -7379,7 +7415,7 @@ async function carregarLogoParaPDF() {
             container.style.display = 'block';
             container.innerHTML = '';
             orcamentoItensRastreioAbertos = new Set();
-            if (dadosPaginaEmModoEstatico('orcamento2026')) {
+            if (orcamentoEmModoPublicacaoEstatico()) {
                 orcamentoAlteracoesPendentes = {};
                 orcamentoEditoresAbertos = new Set();
                 orcamentoNovosProcessos = [];
@@ -7674,7 +7710,7 @@ async function carregarLogoParaPDF() {
                             label: 'Adicionar processo',
                             variant: 'outline-primary',
                             backend: true,
-                            disabled: dadosPaginaEmModoEstatico('orcamento2026'),
+                            disabled: orcamentoEmModoPublicacaoEstatico(),
                             extraClass: 'pdf-hidden'
                         })}
                     </div>
@@ -7697,7 +7733,7 @@ async function carregarLogoParaPDF() {
                 }
             };
             const atualizarDebounced = debounceOnasp(atualizar, 180);
-            if (!dadosPaginaEmModoEstatico('orcamento2026')) {
+            if (!orcamentoEmModoPublicacaoEstatico()) {
                 document.getElementById('btnExportarOrcamentoExcel')?.addEventListener('click', () => {
                     if (obterQuantidadeAlteracoesOrcamento()) {
                         alert('Existem alterações não salvas. Salve antes de exportar para que o Excel reflita os dados atualizados.');
@@ -9105,7 +9141,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarAcoesOrcamento() {
-            const modoEstatico = dadosPaginaEmModoEstatico('orcamento2026');
+            const modoEstatico = orcamentoEmModoPublicacaoEstatico();
             const totalAlteracoes = obterQuantidadeAlteracoesOrcamento();
 
             return `
@@ -9223,7 +9259,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarLinhaNovoProcessoOrcamento(item) {
-            if (dadosPaginaEmModoEstatico('orcamento2026')) return '';
+            if (orcamentoEmModoPublicacaoEstatico()) return '';
             const processoAutuado = calcularProcessoAutuadoVisualOrcamento(item);
 
             return `

@@ -79,6 +79,8 @@ test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico",
 
   const viewOrcamento = page.locator("#view-orcamento");
   await expect(viewOrcamento).toBeVisible();
+  await expect(viewOrcamento.locator(".budget-loading-state")).toHaveCount(0, { timeout: 10000 });
+  await expect(viewOrcamento.locator(".app-error-state")).toHaveCount(0);
   await expect(viewOrcamento.locator("table.budget-main-table")).toBeVisible();
   await expect(viewOrcamento.locator("#budget-table-body tr").first()).toBeVisible();
   await expect(viewOrcamento.locator('th[title="Valor previsto"]').first()).toBeVisible();
