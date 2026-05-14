@@ -73,6 +73,7 @@ let orcamentoRenderizacaoSequencia = 0;
 let orcamentoOutrosProcessosExpandido = false;
 let orcamentoEventosDelegadosConfigurados = false;
 let erroCarregamentoOrcamento = null;
+let baseAplicacaoCarregamentoPromise = null;
 const errosCarregamentoView = {};
 const DEBUG_PERF_ONASP = (() => {
     if (typeof window === 'undefined' || typeof URLSearchParams === 'undefined') {
@@ -788,33 +789,11 @@ async function carregarLogoParaPDF() {
             }
 
             atualizarNavegacao('dashboard');
-
-            try {
-                catalogoAplicacao = await carregarCatalogoAplicacao();
-            } catch (error) {
-                console.error('Falha ao carregar a configuracao estatica da aplicacao:', error);
-                mostrarAlertaCarregamentoPlanilha(
-                    `Os dados estaticos nao puderam ser carregados. ${error.message}`
-                );
-                return;
-            }
-
-            let dadosAplicacaoCarregados = false;
-
-            try {
-                dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
-                configurarEstadoDadosValidados(true);
-                ocultarAlertaCarregamentoPlanilha();
-                dadosAplicacaoCarregados = true;
-            } catch (error) {
-                console.error('Falha ao carregar convenios da planilha:', error);
-                bloquearDadosFinanceiros(error);
-            }
-
-            if (dadosAplicacaoCarregados) {
-                initDashboard(dadosFaf);
-                aplicarModoSomenteLeitura();
-            }
+            document.getElementById('view-dashboard').style.display = 'block';
+            const inicioBootstrapMinimo = DEBUG_PERF_ONASP ? performance.now() : 0;
+            registrarPerfOrcamento('bootstrap:minimo', inicioBootstrapMinimo, {
+                viewInicial: document.body.dataset.currentView || 'dashboard'
+            });
         });
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
@@ -829,6 +808,10 @@ async function carregarLogoParaPDF() {
         }
 
         async function garantirDadosDaView(viewName) {
+            if (['dashboard', 'detalhamento', 'estado-detalhe', 'profor2022', 'profor-convenio-detalhe', 'faf2021', 'faf2021-detalhe', 'doacoes2023', 'doacoes2023-detalhe'].includes(viewName)) {
+                await garantirDadosBaseAplicacao();
+            }
+
             if (viewName === 'orcamento' && !obterDadosOrcamento()) {
                 const inicioOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
                 await carregarDadosOrcamento();
@@ -859,6 +842,54 @@ async function carregarLogoParaPDF() {
             if (viewName === 'contatos' && (!obterDadosContatos() || !obterDadosContatos().disponivel)) {
                 await carregarDadosContatos();
             }
+        }
+
+        async function garantirDadosBaseAplicacao() {
+            if (baseAplicacaoCarregamentoPromise) {
+                return baseAplicacaoCarregamentoPromise;
+            }
+
+            const catalogoAplicacaoCarregado = Boolean(catalogoAplicacao?.dadosBase?.length)
+                && Boolean(catalogoAplicacao?.configuracao?.arquivoPlanilhaConvenios);
+            if (catalogoAplicacaoCarregado && Array.isArray(dadosFaf) && dadosFaf.length && dadosFinanceirosValidados) {
+                return { catalogoAplicacao, dadosFaf };
+            }
+
+            const inicioBase = DEBUG_PERF_ONASP ? performance.now() : 0;
+            baseAplicacaoCarregamentoPromise = (async () => {
+                if (!catalogoAplicacaoCarregado) {
+                    catalogoAplicacao = await carregarCatalogoAplicacao();
+                }
+
+                if (!Array.isArray(dadosFaf) || !dadosFaf.length || !dadosFinanceirosValidados) {
+                    dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
+                    configurarEstadoDadosValidados(true);
+                    ocultarAlertaCarregamentoPlanilha();
+                    initDashboard(dadosFaf);
+                    renderDetailsView();
+                }
+
+                if (document.body.dataset.currentView === 'profor2022') {
+                    renderProfor2022View();
+                } else if (document.body.dataset.currentView === 'profor-convenio-detalhe' && proforConvenioAtual) {
+                    abrirDetalheConvenioProfor(proforConvenioAtual, proforFiltroAreaAtual);
+                }
+
+                aplicarModoSomenteLeitura();
+                registrarPerfOrcamento('garantirDadosBaseAplicacao', inicioBase, {
+                    totalRegistros: Array.isArray(dadosFaf) ? dadosFaf.length : 0,
+                    catalogoCarregado: Boolean(catalogoAplicacao)
+                });
+                return { catalogoAplicacao, dadosFaf };
+            })().catch((error) => {
+                console.error('Falha ao carregar a base geral da aplicacao:', error);
+                bloquearDadosFinanceiros(error);
+                return null;
+            }).finally(() => {
+                baseAplicacaoCarregamentoPromise = null;
+            });
+
+            return baseAplicacaoCarregamentoPromise;
         }
 
         function renderizarErroView(viewName, error) {

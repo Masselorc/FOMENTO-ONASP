@@ -548,3 +548,19 @@
 - Riscos remanescentes: baixo a médio; em ambiente mais lento, o gargalo pode migrar para o bootstrap inicial ou para a base da Home.
 - Próxima etapa recomendada: se a percepção de lentidão continuar no uso real, medir especificamente o bootstrap inicial da SPA antes de mexer em novos fluxos.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Lazy bootstrap da SPA e Home sob demanda
+
+- Branch atual: `main`.
+- Tarefa executada: ajuste do bootstrap mínimo da SPA para deixar a Home/convênios sob demanda e não bloquear o Orçamento 2026.
+- Arquivos alterados: `frontend/js/app.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Problema tratado: a Home/convênios entrava no caminho crítico do boot e fazia o Orçamento 2026 parecer dependente da base geral, mesmo quando a view pedida era outra.
+- Diagnóstico do bootstrap: o app iniciava com o shell da dashboard, mas o carregamento da base geral podia ocupar o caminho de abertura; agora a base geral é pedida apenas quando a dashboard ou outras views dependentes são acionadas.
+- Funções alteradas: `garantirDadosBaseAplicacao`, `garantirDadosDaView` e o bootstrap de `DOMContentLoaded`.
+- Views afetadas: dashboard, detalhamento, estado-detalhe, PROFOR 2022, detalhamento de convênio, FAF 2021, Doações 2023 e Orçamento 2026.
+- Medições antes/depois: o Orçamento 2026 continuou abrindo em poucos milissegundos após o bootstrap; a dashboard voltou a carregar dados quando solicitada, com valor final exibido em teste manual automatizado.
+- Validações executadas: `node --check frontend/js/app.js`, `node --check backend/services/data-service.js`, `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"`, `git diff --check` e smoke manual automatizado alternando entre Orçamento 2026 e dashboard.
+- Resultado: o bootstrap ficou mais leve; o orçamento não dependeu da Home para abrir, e a dashboard continuou funcionando quando aberta explicitamente.
+- Riscos remanescentes: baixo a médio; a dashboard inicial exibe apenas o shell até ser acionada, então o próximo ajuste, se necessário, é melhorar a mensagem visual de carregamento da Home.
+- Próxima etapa recomendada: observar a percepção do usuário na abertura inicial e decidir se vale inserir um indicador visual discreto para a Home carregando sob demanda.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
