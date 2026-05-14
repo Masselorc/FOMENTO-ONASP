@@ -574,7 +574,7 @@
 - Causa provável: bundle antigo em cache no GitHub Pages, import da `data-service.js` com versão defasada e await do carregamento do orçamento sem failsafe explícito.
 - Versão nova do cache-busting: `index.html` passou a carregar `./frontend/js/app.js?v=20260514-03` e `frontend/js/app.js` passou a importar `../../backend/services/data-service.js?v=20260514-03`.
 - Timeout/failsafe criado: o carregamento do Orçamento 2026 passou a usar timeout operacional de 15 s para evitar skeleton indefinido e mostrar erro de operação se houver travamento.
-- Validações executadas: registrar os comandos efetivamente executados após a correção.
+- Validações executadas: `node --check frontend/js/app.js`, `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"` e smoke local na Home inicial.
 - Resultado: o Orçamento 2026 deixa de depender de uma espera indefinida no skeleton e o teste E2E foi reforçado para falhar se a mensagem de preparação persistir.
 - Riscos remanescentes: baixo a médio; o principal risco agora é cache antigo no navegador do GitHub Pages até o novo bundle ser recarregado.
 - Próxima etapa recomendada: validar no GitHub Pages com hard refresh e `?debugPerf=1` após o push.
