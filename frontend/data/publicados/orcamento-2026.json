@@ -566,11 +566,11 @@
       "valorDisponibilizado": 0,
       "valorEmpenhado": 0,
       "valorExecutado": 0,
-      "valorEstimadoPesquisaPreco": 300000,
+      "valorEstimadoPesquisaPreco": 275584,
       "processoAutuado": false,
       "processoAutuadoNumero": 0,
       "processoSei": "08016.010712/2026-17",
-      "status": "PLANEJADO",
+      "status": "PROCESSO AUTUADO",
       "observacao": "",
       "compoeOrcamento": true,
       "compoeOrcamentoNumero": 1,
@@ -579,7 +579,7 @@
       "ativo": true,
       "valorEmExecucaoConsiderado": 0,
       "saldoAparelhamento": 0,
-      "atualizadoEm": "2026-05-13T20:03:49.547Z",
+      "atualizadoEm": "2026-05-14T18:06:30.381Z",
       "tipoRastreio": "PROCESSO NORMAL",
       "processoPaiId": "",
       "tipoProcesso": "PRINCIPAL",
@@ -1478,11 +1478,11 @@
       "valorDisponibilizado": 0,
       "valorEmpenhado": 0,
       "valorExecutado": 0,
-      "valorEstimadoPesquisaPreco": 300000,
+      "valorEstimadoPesquisaPreco": 275584,
       "processoAutuado": false,
       "processoAutuadoNumero": 0,
       "processoSei": "08016.010712/2026-17",
-      "status": "PLANEJADO",
+      "status": "PROCESSO AUTUADO",
       "observacao": "",
       "compoeOrcamento": true,
       "compoeOrcamentoNumero": 1,
@@ -1491,7 +1491,7 @@
       "ativo": true,
       "valorEmExecucaoConsiderado": 0,
       "saldoAparelhamento": 0,
-      "atualizadoEm": "2026-05-13T20:03:49.547Z",
+      "atualizadoEm": "2026-05-14T18:06:30.381Z",
       "tipoRastreio": "PROCESSO NORMAL",
       "processoPaiId": "",
       "tipoProcesso": "PRINCIPAL",
@@ -2040,8 +2040,13 @@
       },
       {
         "nome": "PLANEJADO",
-        "itens": 4,
-        "total": 1376125
+        "itens": 3,
+        "total": 1076125
+      },
+      {
+        "nome": "PROCESSO AUTUADO",
+        "itens": 1,
+        "total": 300000
       }
     ],
     "porNatureza": [
@@ -2140,7 +2145,8 @@
     ],
     "status": [
       "EM EXECUÇÃO",
-      "PLANEJADO"
+      "PLANEJADO",
+      "PROCESSO AUTUADO"
     ],
     "naturezas": [
       "Capital",
