@@ -491,3 +491,16 @@
 - Pendências: nenhuma pendência objetiva na correção; se necessário, a publicação estática será tratada em etapa separada.
 - Risco de regressão: baixo a médio; alteração funcional pequena, mas sensível ao fluxo de edição, persistência e leitura da tabela do orçamento.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Publicação estática da autuação do Orçamento 2026
+
+- Branch atual: `main`.
+- Tarefa executada: republicação dos JSONs publicados após a correção de autuação do Orçamento 2026.
+- JSONs alterados: `frontend/data/publicados/aplicacao.json`, `frontend/data/publicados/dashboard-geral.json`, `frontend/data/publicados/orcamento-2026.json`, `frontend/data/publicados/resumo-publicacao.json`.
+- Confirmação da autuação publicada: o item `CAMP-001` passou a constar em `frontend/data/publicados/orcamento-2026.json` com `status = "PROCESSO AUTUADO"`, `processoAutuado = true` e `processoAutuadoNumero = 1`.
+- Resumo: a publicação estática foi regenerada com a correção funcional já estabilizada, sem alteração de código nesta fase.
+- Validações executadas: `npm run publicar:dados`, `git status --short`, `git diff --stat`, `git diff -- frontend/data/publicados/`, `npm run validar:json`, `npm run validar:syntax`, `npm run validar:agente`, `npx playwright test tests/e2e/app.spec.js -g "orcamento 2026"`, `git diff --check`.
+- Resultado: JSONs publicados atualizados e validados; o modo publicado passou a refletir a autuação corrigida.
+- Próximo passo: diagnóstico de performance da tela Orçamento 2026 no modo publicado.
+- Risco de regressão: baixo a médio; alteração de dados publicados pode gerar churn de metadados e totais derivados.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
