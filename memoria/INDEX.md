@@ -62,6 +62,20 @@ Antes de consolidar memória institucional, normativa, Pena Justa, PROFOR, UFs o
 
 O documento original deve permanecer rastreável a partir do fichamento. O Markdown tratado não substitui o original para citação formal, conferência literal, fundamento jurídico, dado sensível ou validação de versão.
 
+## Modelos de fichamento técnico
+
+A pasta `memoria/00_MODELOS/` reúne os modelos oficiais de fichamento técnico usados na curadoria documental do projeto.
+
+Modelos disponíveis:
+
+- `memoria/00_MODELOS/modelo-fichamento-institucional.md`
+- `memoria/00_MODELOS/modelo-extrato-normativo.md`
+- `memoria/00_MODELOS/modelo-nota-leitura-tecnica.md`
+- `memoria/00_MODELOS/modelo-dicionario-dados.md`
+- `memoria/00_MODELOS/modelo-nota-metodologica-base.md`
+
+Esses modelos devem orientar a produção dos Markdown tratados nas pastas `fontes-tratadas/`.
+
 ## Estrutura planejada
 
 - `00_DIARIO_DE_BORDO`

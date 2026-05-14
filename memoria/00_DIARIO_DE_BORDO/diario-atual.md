@@ -463,3 +463,17 @@
 - Pendências: iniciar a padronização dos modelos de fichamento técnico.
 - Risco de regressão: baixo; alteração documental e organizacional.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 14/05/2026 - Modelos de fichamento técnico
+
+- Branch atual: `main`.
+- Tarefa executada: criação da pasta `memoria/00_MODELOS/` com os modelos oficiais de fichamento técnico da curadoria documental.
+- Arquivos criados: `modelo-fichamento-institucional.md`, `modelo-extrato-normativo.md`, `modelo-nota-leitura-tecnica.md`, `modelo-dicionario-dados.md`, `modelo-nota-metodologica-base.md`.
+- Arquivos alterados: `memoria/INDEX.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: versionados os modelos de fichamento institucional, extrato normativo comentado, nota de leitura técnica, dicionário de dados e nota metodológica da base, para orientar a produção dos futuros Markdown tratados.
+- Decisão registrada: fichamentos técnicos passam a seguir modelos próprios conforme a natureza do documento ou base.
+- Validações executadas: registrar os comandos efetivamente executados.
+- Resultado: modelos criados e referenciados no índice da memória.
+- Pendências: iniciar o primeiro fichamento documental, preferencialmente `COMPETÊNCIAS-ONASP.txt`.
+- Risco de regressão: baixo; alteração documental e organizacional.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
