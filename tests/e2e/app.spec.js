@@ -193,6 +193,52 @@ test("parâmetros mínimos faz fallback para JSON publicado quando API local fal
   expect(falhasNaoEsperadas).toEqual([]);
 });
 
+test("renderiza campos livres como texto seguro sem executar XSS", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  const PAYLOAD_XSS = '<img src=x onerror="window.__xssExecutado = true">';
+  const PAYLOAD_LINK_XSS = "javascript:window.__xssExecutado = true";
+
+  await page.addInitScript(() => {
+    window.__xssExecutado = false;
+  });
+
+  await page.route("**/api/orcamento-2026", async (route) => {
+    const respostaOriginal = await route.fetch();
+    const payload = await respostaOriginal.json();
+
+    if (Array.isArray(payload?.itens) && payload.itens.length) {
+      payload.itens[0].observacao = PAYLOAD_XSS;
+      payload.itens[0].descricao = PAYLOAD_XSS;
+      payload.itens[0].processoSei = PAYLOAD_LINK_XSS;
+    }
+
+    await route.fulfill({
+      response: respostaOriginal,
+      json: payload
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("orcamento"));
+
+  const viewOrcamento = page.locator("#view-orcamento");
+  await expect(viewOrcamento).toBeVisible();
+  await expect(viewOrcamento.locator(".app-error-state")).toHaveCount(0);
+  await expect(viewOrcamento.locator("table.budget-main-table")).toBeVisible();
+  await expect(viewOrcamento.getByText(PAYLOAD_XSS).first()).toBeVisible();
+
+  await expect(viewOrcamento.locator('img[src="x"]')).toHaveCount(0);
+  await expect(viewOrcamento.locator("script")).toHaveCount(0);
+  await expect(viewOrcamento.locator('a[href^="javascript:"]')).toHaveCount(0);
+  await expect.poll(async () => page.evaluate(() => window.__xssExecutado)).toBe(false);
+
+  expect(falhasCriticas).toEqual([]);
+});
+
 test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);

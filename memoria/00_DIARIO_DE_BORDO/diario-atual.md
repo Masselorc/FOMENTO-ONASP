@@ -735,3 +735,14 @@
 - Resultado: validações aprovadas e 5 testes E2E passados, sem escrita real e sem alterações em JSON publicado.
 - Risco de regressão: baixo; principal risco é variação de mensagem de console para 503 em ambientes/browsers diferentes.
 - Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 14:21:33
+- Objetivo: criar E2E de renderização segura contra XSS em campo livre sem alterar produção.
+- Teste criado: "renderiza campos livres como texto seguro sem executar XSS".
+- View escolhida: Orçamento 2026 (estrutura conhecida no E2E e campo livre de observação/descrição).
+- Campo/payload testado: observacao, descricao e processoSei com payload <img src=x onerror="window.__xssExecutado = true"> e javascript:window.__xssExecutado = true.
+- Estratégia de mock: interceptação temporária de GET **/api/orcamento-2026 com
+oute.fetch() + mutação em memória do payload retornado.
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- tests/e2e/app.spec.js.
+- Resultado: 6 testes E2E aprovados; payload renderizado como texto inofensivo, sem execução JavaScript.
+- Risco de regressão: baixo; depende da continuidade do escaping em renderizadores de campos livres.
+- Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
