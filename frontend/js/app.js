@@ -5830,14 +5830,14 @@ async function carregarLogoParaPDF() {
 
         // Renderiza uma linha extra abaixo do item da tabela. Essa linha só entra
         // no DOM quando o item está expandido, permitindo múltiplas trilhas.
-        function renderizarRastreioOrcamento(item) {
+        function renderizarRastreioOrcamento(item, colspan = 11) {
             const etapas = obterEtapasRastreioOrcamento(item);
             const etapaAtual = etapas.find((etapa) => etapa.estado === 'atual') || etapas[0];
             const idRastreio = obterIdRastreioOrcamento(item);
 
             return `
                 <tr class="budget-tracking-row pdf-hidden" id="${escapeHtml(idRastreio)}">
-                    <td colspan="11" class="budget-tracking-cell">
+                    <td colspan="${colspan}" class="budget-tracking-cell">
                         <div class="budget-tracking-panel" aria-label="Rastreio processual de ${escapeHtml(item.descricao)}">
                             <div class="budget-tracking-header">
                                 <div class="budget-tracking-header-copy">
@@ -5870,14 +5870,18 @@ async function carregarLogoParaPDF() {
             `;
         }
 
-        function registrarEventosRastreioOrcamento(tbody, budgetData) {
-            tbody.querySelectorAll('.budget-tracking-toggle').forEach((botao) => {
+        function registrarEventosRastreioOrcamento(container, budgetData, aoAlternar = null) {
+            container.querySelectorAll('.budget-tracking-toggle').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     const itemId = botao.dataset.budgetItemId;
                     if (orcamentoItensRastreioAbertos.has(itemId)) {
                         orcamentoItensRastreioAbertos.delete(itemId);
                     } else {
                         orcamentoItensRastreioAbertos.add(itemId);
+                    }
+                    if (typeof aoAlternar === 'function') {
+                        aoAlternar();
+                        return;
                     }
                     atualizarTabelaOrcamento(budgetData);
                 });
@@ -7116,13 +7120,23 @@ async function carregarLogoParaPDF() {
             if (!tbody) return;
 
             const linhasExistentes = outrosProcessos.map((item) => {
+                const itemId = String(item.id);
                 const editando = orcamentoItemEmEdicao(item.id);
                 const linkedBadge = renderizarBadgeProcessoVinculadoOrcamento(item);
+                const podeExibirRastreio = itemPodeExibirRastreioOrcamento(item);
+                const rastreioAberto = podeExibirRastreio && orcamentoItensRastreioAbertos.has(itemId);
+                const idRastreio = obterIdRastreioOrcamento(item);
+                const descricao = escapeHtml(obterValorPendenteOrcamento(item, 'descricao') || item.descricao || '-');
                 return `
-                <tr>
+                <tr class="${rastreioAberto ? 'budget-item-row-open' : ''}">
                     <td data-label="Descrição">
                         <div class="budget-other-description">
-                            ${renderizarCampoOutrosOrcamento(item, 'descricao')}
+                            ${podeExibirRastreio ? `
+                                <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
+                                    <span>${descricao}</span>
+                                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                </button>
+                            ` : `<div class="budget-item-title budget-item-title-static">${descricao}</div>`}
                             ${linkedBadge}
                         </div>
                     </td>
@@ -7170,6 +7184,8 @@ async function carregarLogoParaPDF() {
                         </div>
                     </td>
                 </tr>
+                ${renderizarPainelEdicaoOrcamento(item, 7)}
+                ${rastreioAberto ? renderizarRastreioOrcamento(item, 7) : ''}
             `;
             });
             const linhasNovas = orcamentoNovosProcessos.map(renderizarLinhaNovoProcessoOrcamento);
@@ -7178,6 +7194,9 @@ async function carregarLogoParaPDF() {
                 <tr><td colspan="7" class="text-center text-muted py-4">Nenhum processo adicional cadastrado.</td></tr>
             `;
 
+            registrarEventosRastreioOrcamento(tbody, budgetData, () => {
+                atualizarTabelaOutrosOrcamento(budgetData);
+            });
             registrarEventosOutrosProcessosOrcamento(budgetData);
             registrarPerfOrcamento('atualizarTabelaOutrosOrcamento', inicioAtualizacaoOutros, {
                 linhasOutros: outrosProcessos.length

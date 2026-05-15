@@ -621,3 +621,13 @@
 - Pendências: consolidar `visao-geral-profor.md` e `index-normativos.md`, conforme decisão posterior.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 15/05/2026 - Trilha de andamento em Outros processos do Orçamento 2026
+
+- Branch atual: `main`.
+- Tarefa executada: inclusão da visualização/edição de trilha de andamento para processos existentes da seção `Outros processos de interesse da Ouvidoria`.
+- Arquivo alterado: `frontend/js/app.js`.
+- Correção aplicada: reaproveitamento de `renderizarRastreioOrcamento`, `renderizarPainelEdicaoOrcamento` e estado `orcamentoItensRastreioAbertos` também na tabela de outros processos, com ajuste de `colspan=7` e renderização da trilha abaixo da linha do processo.
+- Comportamento preservado: processos novos temporários (`novo-*`) continuam sem trilha antes de salvar; após persistência passam a usar o mesmo fluxo de rastreio dos demais itens.
+- Validações executadas: `npm run validar:syntax`, `npm run validar:json`, `npm run validar:agente` e smoke local automatizado da view Orçamento 2026 para toggle de trilha/painel de edição em outros processos.
+- Resultado: processos existentes em outros processos passaram a exibir botão de trilha e painel de edição com campos de andamento processual.
