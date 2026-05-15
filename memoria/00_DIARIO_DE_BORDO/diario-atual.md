@@ -645,3 +645,17 @@
 - Pendências: consolidar `index-normativos.md` e `INDEX_UFS.md`, conforme decisão posterior.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 15/05/2026 - Consolidação do índice normativo
+
+- Branch atual: `main`.
+- Tarefa executada: consolidação do arquivo `memoria/03_NORMATIVOS/index-normativos.md` com base nos fichamentos técnicos e consolidações já tratados.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`, `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md`, `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`, `memoria/03_NORMATIVOS/fontes-tratadas/instrucao-normativa-parametros-ouvidorias.extrato.md`, `memoria/03_NORMATIVOS/fontes-tratadas/lei-13460-2017-ouvidorias.extrato.md`, `memoria/04_PENA_JUSTA/fontes-tratadas/plano-pena-justa.nota-tecnica.md`, `memoria/05_PROFOR_CONVENIOS/fontes-tratadas/parecer-profor-onasp.nota-tecnica.md`.
+- Arquivos alterados: `memoria/03_NORMATIVOS/index-normativos.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: consolidado o índice normativo da memória ONASP, diferenciando normativos tratados, ignorados por decisão operacional e citados sem extrato próprio.
+- Decisão registrada: a consolidação usa apenas fichamentos técnicos e arquivos consolidados já tratados, sem consulta direta aos documentos originais nesta etapa.
+- Validações executadas: registrar os comandos efetivamente executados.
+- Resultado: arquivo consolidado criado/atualizado e pronto para uso como mapa normativo operacional.
+- Pendências: avaliar futuramente se será necessário extrair Portaria MSP nº 199/2018, Portaria SENAPPEN nº 327/2024 e Portarias Conjuntas MGI/MF/CGU nº 28/2024 e nº 33/2023.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
