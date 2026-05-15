@@ -22,6 +22,10 @@ Use esta seção apenas para bloqueios reais evidenciados, como indisponibilidad
 
 ## Pendências de memória e documentação
 
+Pendências documentais obrigatórias deste ciclo: nenhuma.
+
+Pendências futuras não críticas:
+
 - Preencher ou consolidar `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md` com a arquitetura real do projeto.
 - Preencher ou consolidar `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md` com decisões já evidenciadas.
 - Preencher ou consolidar `memoria/08_ROTAS_BANCO_API/fluxo-dados.md` com o fluxo entre planilhas, banco, API, frontend e publicação estática.
@@ -30,6 +34,10 @@ Use esta seção apenas para bloqueios reais evidenciados, como indisponibilidad
 - Preencher ou consolidar `memoria/09_ERROS_E_CORRECOES/historico-erros.md` com erros corrigidos e respectivas evidências.
 - Preencher ou consolidar `memoria/10_TESTES/checklist-validacao.md` com checklist operacional por tipo de tarefa.
 - Avaliar futura criação de ADRs em `memoria/12_ADR/` quando houver decisões arquiteturais relevantes.
+- Criar matriz de evidências por UF quando houver necessidade de ampliação do diagnóstico operacional.
+- Criar checklist de condição suspensiva por UF se houver decisão posterior de detalhamento.
+- Tratar atos normativos estaduais por UF quando houver demanda específica e fontes tratadas suficientes.
+- Tratar normativos complementares ignorados por decisão operacional apenas se houver nova decisão de curadoria.
 
 ## Pendências técnicas da aplicação
 
@@ -66,6 +74,12 @@ Quando houver novo item, registrar a página, rota, serviço ou arquivo afetado,
 - Hook de publicação foi saneado para respeitar `SKIP_PUBLICAR_DADOS=1` e reduzir churn indevido de JSONs publicados.
 - Versionamento seletivo da memória foi orientado para preservar Markdown tratado e ignorar fontes brutas, anexos sensíveis e artefatos locais.
 - A etapa de documento local para instruções de IA foi retirada da trilha operacional da memória por decisão do usuário; esse material será elaborado externamente no ChatGPT web.
+- `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md` foi consolidado como referência institucional operacional.
+- `memoria/03_NORMATIVOS/index-normativos.md` foi consolidado como mapa normativo operacional.
+- `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md` foi consolidado como memória operacional do recorte Pena Justa/ouvidorias.
+- `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md` foi consolidado como visão geral operacional do PROFOR/ONASP.
+- `memoria/06_UFS_OUVIDORIAS/INDEX_UFS.md` foi consolidado como índice operacional das UFs.
+- `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md` foi consolidado como checklist operacional dos parâmetros mínimos das ouvidorias.
 - Etapa 7 (13/05/2026): botão e modal "Alocar saldo" implementados no frontend do Orçamento 2026 — `frontend/js/app.js` e `frontend/css/app.css`; consumo da rota `POST /api/orcamento-2026/saldos/alocar` e `GET /api/orcamento-2026/movimentacoes`; sem alteração de backend, banco ou JSONs publicados.
 - Etapa 8 (13/05/2026): helper `calcularResumoSaldoVisualOrcamento` criado; envelope visual ajustado e detalhe discreto (Orig./Rec./Ced./Vinc.) exibidos na coluna "Valor previsto" do pai e filho; botão "Alocar saldo" oculto quando saldo transferível estimado ≤ 0; modal atualizado para usar helper; sem alteração de backend, banco ou JSONs publicados.
 

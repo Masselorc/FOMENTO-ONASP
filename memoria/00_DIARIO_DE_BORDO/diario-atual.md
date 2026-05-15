@@ -687,3 +687,23 @@
 - Pendências: criar futuramente matriz por UF, base de evidências por UF e checklist de condição suspensiva, conforme decisão posterior.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 15/05/2026 - Fechamento do ciclo de curadoria documental ONASP
+
+- Branch atual: `main`.
+- Tarefa executada: fechamento do ciclo de curadoria documental institucional, normativa, Pena Justa, PROFOR e UFs.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`, `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md`, `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`, `memoria/03_NORMATIVOS/index-normativos.md`, `memoria/06_UFS_OUVIDORIAS/INDEX_UFS.md`, `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md`.
+- Arquivos alterados: `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: atualizado o índice da memória, saneadas pendências documentais e registrado o encerramento do modo curto de consolidação documental.
+- Consolidados existentes ao final do ciclo:
+  - `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`
+  - `memoria/03_NORMATIVOS/index-normativos.md`
+  - `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md`
+  - `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`
+  - `memoria/06_UFS_OUVIDORIAS/INDEX_UFS.md`
+  - `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md`
+- Decisão registrada: o ciclo foi encerrado no modo curto; bases futuras por UF, checklist de condição suspensiva e novos fichamentos normativos ficam como opcionais e dependem de decisão posterior.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/INDEX.md memoria/01_PROJETO_APLICACAO/pendencias.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: memória documental consolidada, navegável e sem pendências obrigatórias imediatas deste ciclo.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.

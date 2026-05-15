@@ -19,6 +19,15 @@ Base inicial existente:
 - `memoria/INDEX.md`
 - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
 
+Arquivos consolidados operacionais já disponíveis:
+
+- `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`
+- `memoria/03_NORMATIVOS/index-normativos.md`
+- `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md`
+- `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`
+- `memoria/06_UFS_OUVIDORIAS/INDEX_UFS.md`
+- `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md`
+
 Arquivos temáticos existentes nesta árvore:
 
 - `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`
@@ -32,6 +41,7 @@ Arquivos temáticos existentes nesta árvore:
 - `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md`
 - `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`
 - `memoria/06_UFS_OUVIDORIAS/INDEX_UFS.md`
+- `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md`
 - `memoria/07_DADOS_E_PLANILHAS_TRATADAS/dicionario-de-dados.md`
 - `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`
 - `memoria/08_ROTAS_BANCO_API/rotas.md`
@@ -61,6 +71,8 @@ A memória do projeto utiliza fichamentos técnicos e Markdown tratado como cama
 Antes de consolidar memória institucional, normativa, Pena Justa, PROFOR, UFs ou dados, devem ser produzidos fichamentos, extratos normativos, notas de leitura técnica, dicionários de dados ou notas metodológicas nas respectivas pastas `fontes-tratadas/`.
 
 O documento original deve permanecer rastreável a partir do fichamento. O Markdown tratado não substitui o original para citação formal, conferência literal, fundamento jurídico, dado sensível ou validação de versão.
+
+Os arquivos consolidados listados acima formam a camada operacional da memória e devem ser usados como ponto de partida para análises, minutas e despachos.
 
 ## Modelos de fichamento técnico
 
