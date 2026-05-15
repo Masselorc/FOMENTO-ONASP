@@ -716,3 +716,13 @@
 - Resultado: validações e E2E aprovados (2 passed), sem alteração em JSON publicado ou arquivos de banco.
 - Risco de regressão: baixo; principal risco é bloquear futuras escritas legítimas de teste sem inclusão explícita em permitir.
 - Rollback: git restore tests/e2e/app.spec.js (ou incluir memoria/00_DIARIO_DE_BORDO/diario-atual.md se necessário).
+- Data: 2026-05-15 14:11:38
+- Objetivo: corrigir divergência de instância do data-service e validar modo estático/somente leitura no E2E.
+- Causa diagnosticada: import com querystring divergente entre app.js e static-mode.js criava instâncias diferentes de módulo ESM, quebrando leitura do estado estático.
+- Arquivo de produção alterado: frontend/js/core/static-mode.js
+- Arquivo de teste alterado: tests/e2e/app.spec.js
+- Teste criado: "modo estático mantém a aplicação somente leitura e bloqueia escrita real".
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- frontend/js/core/static-mode.js; git diff -- tests/e2e/app.spec.js.
+- Resultado: validações aprovadas (3 testes E2E passados), com bloqueio de escrita real mantido.
+- Risco de regressão: baixo; principal risco é depender da mensagem de erro 503 esperada no navegador durante fallback controlado.
+- Rollback: git restore frontend/js/core/static-mode.js tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md

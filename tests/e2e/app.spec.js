@@ -87,6 +87,54 @@ test("carrega a SPA e acessa paginas principais sem erro critico", async ({ page
   expect(falhasCriticas).toEqual([]);
 });
 
+test("modo estático mantém a aplicação somente leitura e bloqueia escrita real", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  await page.route("**/api/orcamento-2026", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "API local do orçamento indisponível no teste E2E." })
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+
+  await page.evaluate(() => window.toggleView("orcamento"));
+
+  const viewOrcamento = page.locator("#view-orcamento");
+  await expect(viewOrcamento).toBeVisible();
+  await expect(viewOrcamento.locator(".budget-loading-state")).toHaveCount(0, { timeout: 10000 });
+  await expect(viewOrcamento.locator(".app-error-state")).toHaveCount(0);
+  await expect(page.locator("body")).toHaveClass(/modo-publicacao-estatica/);
+
+  const controlesBackend = viewOrcamento.locator('[data-requer-backend="true"]');
+  const totalControles = await controlesBackend.count();
+  expect(totalControles).toBeGreaterThan(0);
+
+  const estados = await controlesBackend.evaluateAll((elementos) =>
+    elementos.map((elemento) => ({
+      disabledAttr: elemento.getAttribute("disabled"),
+      ariaDisabled: elemento.getAttribute("aria-disabled"),
+      possuiClasseDisabled: elemento.classList.contains("disabled")
+    }))
+  );
+
+  for (const estado of estados) {
+    expect(estado.disabledAttr).toBe("disabled");
+    expect(estado.ariaDisabled).toBe("true");
+    expect(estado.possuiClasseDisabled).toBe(true);
+  }
+
+  const falhasNaoEsperadas = falhasCriticas.filter((falha) => (
+    !falha.includes("console.error: Failed to load resource: the server responded with a status of 503")
+  ));
+  expect(falhasNaoEsperadas).toEqual([]);
+});
+
 test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);

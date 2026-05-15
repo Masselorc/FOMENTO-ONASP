@@ -5,7 +5,7 @@
 import {
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../../backend/services/data-service.js?v=20260507-04';
+} from '../../../backend/services/data-service.js?v=20260514-03';
 import { renderPublicationNotice } from './ui-components.js?v=20260507-05';
 
 export const MENSAGEM_MODO_PUBLICACAO = 'Modo publicação: dados somente leitura. Para editar, execute a aplicação localmente.';
