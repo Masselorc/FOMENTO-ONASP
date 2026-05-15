@@ -780,3 +780,11 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: validação de sintaxe passou para 24 arquivos; validações JSON e agente aprovadas com 11 testes E2E passados.
 - Risco de regressão: baixo; impacto restrito ao pipeline de validação local.
 - Rollback: git restore package.json scripts/validar-syntax.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 15:00:54
+- Objetivo: reforçar contrato público mínimo dos JSONs publicados no validador sem alterar dados publicados.
+- Regras novas: raiz objeto; publicadoEm string não vazia quando existir; varredura de strings para padrões HTML perigosos; arrays/objetos mínimos por arquivo; não-vazio para dados críticos; validação de UF (incluindo sufixo técnico UF_n); validação condicional de campos monetários não negativos no orçamento; validação de referências em resumo-publicacao.
+- JSONs cobertos: aplicacao.json, dashboard-geral.json, parametros-minimos.json, formalizacao-profor.json, orcamento-2026.json, resumo-publicacao.json.
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- scripts/validar-json-publicados.js.
+- Resultado: validações aprovadas, incluindo 11 testes E2E.
+- Risco de regressão: baixo; principal risco é endurecimento futuro em dataset excepcional sem ajuste de regra mínima.
+- Rollback: git restore scripts/validar-json-publicados.js memoria/00_DIARIO_DE_BORDO/diario-atual.md

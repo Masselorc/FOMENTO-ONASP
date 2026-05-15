@@ -13,24 +13,266 @@ const arquivosEsperados = [
   "resumo-publicacao.json"
 ];
 
-function validarJSONArquivo(caminhoArquivo, regras) {
-  const conteudo = fs.readFileSync(caminhoArquivo, "utf8");
-  const dados = JSON.parse(conteudo);
+const UFS_VALIDAS = new Set([
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS",
+  "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC",
+  "SP", "SE", "TO"
+]);
 
-  for (const regra of regras) {
-    const valor = dados?.[regra.chave];
-    const ehValido = regra.tipo === "array"
-      ? Array.isArray(valor)
-      : regra.tipo === "object"
-        ? Boolean(valor) && typeof valor === "object" && !Array.isArray(valor)
-        : typeof valor === regra.tipo;
+const CAMPOS_MONETARIOS_ORCAMENTO = [
+  "valor_previsto",
+  "valor_disponibilizado",
+  "valor_empenhado",
+  "valor_executado",
+  "valor_estimado_pesquisa_preco",
+  "valorPrevisto",
+  "valorDisponibilizado",
+  "valorEmpenhado",
+  "valorExecutado",
+  "valorEstimadoPesquisaPreco"
+];
 
-    if (!ehValido) {
-      throw new Error(`Campo invalido ou ausente: ${regra.chave} (${regra.tipo})`);
-    }
+function ehObjetoPlano(valor) {
+  return Boolean(valor) && typeof valor === "object" && !Array.isArray(valor);
+}
+
+function adicionarErro(erros, arquivo, mensagem) {
+  erros.push(`${arquivo}: ${mensagem}`);
+}
+
+function validarArray(dados, chave, arquivo, erros, { obrigatorio = true, naoVazio = false } = {}) {
+  const valor = dados?.[chave];
+
+  if (!obrigatorio && valor === undefined) return null;
+  if (!Array.isArray(valor)) {
+    adicionarErro(erros, arquivo, `campo ${chave} deve ser array`);
+    return null;
+  }
+  if (naoVazio && valor.length === 0) {
+    adicionarErro(erros, arquivo, `campo ${chave} nao pode ser vazio`);
   }
 
-  return dados;
+  return valor;
+}
+
+function validarObjeto(dados, chave, arquivo, erros, { obrigatorio = true } = {}) {
+  const valor = dados?.[chave];
+
+  if (!obrigatorio && valor === undefined) return null;
+  if (!ehObjetoPlano(valor)) {
+    adicionarErro(erros, arquivo, `campo ${chave} deve ser objeto`);
+    return null;
+  }
+
+  return valor;
+}
+
+function validarPublicadoEmSeExistir(dados, arquivo, erros) {
+  if (dados?.publicadoEm !== undefined && (typeof dados.publicadoEm !== "string" || dados.publicadoEm.trim() === "")) {
+    adicionarErro(erros, arquivo, "campo publicadoEm deve ser string nao vazia quando existir");
+  }
+}
+
+function validarUfSeExistir(valor, arquivo, caminho, erros) {
+  if (valor === undefined || valor === null || valor === "") return;
+  if (typeof valor !== "string") {
+    adicionarErro(erros, arquivo, `${caminho} deve ser string de UF`);
+    return;
+  }
+  const ufCompleta = valor.trim().toUpperCase();
+  const uf = ufCompleta.split("_")[0];
+  if (!UFS_VALIDAS.has(uf)) {
+    adicionarErro(erros, arquivo, `${caminho} possui UF invalida: ${valor}`);
+  }
+}
+
+function validarNumeroNaoNegativoSeExistir(valor, arquivo, caminho, erros) {
+  if (valor === undefined || valor === null || valor === "") return;
+
+  let numero = valor;
+  if (typeof valor === "string") {
+    numero = Number(valor);
+  }
+
+  if (!Number.isFinite(numero)) {
+    adicionarErro(erros, arquivo, `${caminho} deve ser numero finito quando preenchido`);
+    return;
+  }
+
+  if (numero < 0) {
+    adicionarErro(erros, arquivo, `${caminho} nao pode ser negativo`);
+  }
+}
+
+function validarStringsSemHtmlPerigoso(valor, arquivo, caminho, erros) {
+  if (typeof valor === "string") {
+    const texto = valor.toLowerCase();
+    if (
+      texto.includes("<script") ||
+      texto.includes("onerror=") ||
+      texto.includes("onload=") ||
+      texto.includes("javascript:")
+    ) {
+      adicionarErro(erros, arquivo, `texto potencialmente perigoso em ${caminho}`);
+    }
+    return;
+  }
+
+  if (Array.isArray(valor)) {
+    valor.forEach((item, index) => validarStringsSemHtmlPerigoso(item, arquivo, `${caminho}[${index}]`, erros));
+    return;
+  }
+
+  if (ehObjetoPlano(valor)) {
+    Object.entries(valor).forEach(([chave, item]) => {
+      const proximoCaminho = caminho ? `${caminho}.${chave}` : chave;
+      validarStringsSemHtmlPerigoso(item, arquivo, proximoCaminho, erros);
+    });
+  }
+}
+
+function validarRegrasGerais(dados, arquivo, erros) {
+  if (!ehObjetoPlano(dados)) {
+    adicionarErro(erros, arquivo, "JSON raiz deve ser objeto");
+    return;
+  }
+
+  validarPublicadoEmSeExistir(dados, arquivo, erros);
+  validarStringsSemHtmlPerigoso(dados, arquivo, "", erros);
+}
+
+function validarAplicacao(dados, arquivo, erros) {
+  const dadosBase = validarArray(dados, "dadosBase", arquivo, erros, { obrigatorio: true, naoVazio: true });
+  if (!dadosBase) return;
+
+  for (let i = 0; i < dadosBase.length; i += 1) {
+    const item = dadosBase[i];
+    if (!ehObjetoPlano(item)) {
+      adicionarErro(erros, arquivo, `dadosBase[${i}] deve ser objeto`);
+      continue;
+    }
+
+    const possuiIdentificador = Boolean(item.uf || item.estado || item.instrumento || item.objeto);
+    if (!possuiIdentificador && Object.keys(item).length === 0) {
+      adicionarErro(erros, arquivo, `dadosBase[${i}] nao pode ser objeto vazio`);
+    }
+
+    validarUfSeExistir(item.uf, arquivo, `dadosBase[${i}].uf`, erros);
+  }
+}
+
+function validarDashboardGeral(dados, arquivo, erros) {
+  const dadosBase = validarArray(dados, "dadosBase", arquivo, erros, { obrigatorio: true, naoVazio: true });
+  if (!dadosBase) return;
+
+  for (let i = 0; i < dadosBase.length; i += 1) {
+    if (!ehObjetoPlano(dadosBase[i])) {
+      adicionarErro(erros, arquivo, `dadosBase[${i}] deve ser objeto`);
+    }
+  }
+}
+
+function validarParametrosMinimos(dados, arquivo, erros) {
+  const respostas = validarArray(dados, "respostas", arquivo, erros, { obrigatorio: true });
+  validarObjeto(dados, "diagnostico", arquivo, erros, { obrigatorio: true });
+  const parametrosDisponiveis = validarArray(dados, "parametrosDisponiveis", arquivo, erros, { obrigatorio: false });
+
+  const temResposta = Array.isArray(respostas) && respostas.length > 0;
+  const temParametros = Array.isArray(parametrosDisponiveis) && parametrosDisponiveis.length > 0;
+  if (!temResposta && !temParametros) {
+    adicionarErro(erros, arquivo, "ao menos um entre respostas e parametrosDisponiveis deve ter dados");
+  }
+
+  if (Array.isArray(respostas)) {
+    respostas.forEach((item, index) => {
+      if (!ehObjetoPlano(item)) {
+        adicionarErro(erros, arquivo, `respostas[${index}] deve ser objeto`);
+        return;
+      }
+      validarUfSeExistir(item.uf, arquivo, `respostas[${index}].uf`, erros);
+    });
+  }
+}
+
+function validarFormalizacaoProfor(dados, arquivo, erros) {
+  const propostas = validarArray(dados, "propostas", arquivo, erros, { obrigatorio: true, naoVazio: true });
+  validarArray(dados, "ufs", arquivo, erros, { obrigatorio: false });
+
+  if (Array.isArray(propostas)) {
+    propostas.forEach((item, index) => {
+      if (!ehObjetoPlano(item)) {
+        adicionarErro(erros, arquivo, `propostas[${index}] deve ser objeto`);
+        return;
+      }
+      validarUfSeExistir(item.uf, arquivo, `propostas[${index}].uf`, erros);
+    });
+  }
+}
+
+function validarOrcamento2026(dados, arquivo, erros) {
+  const itens = validarArray(dados, "itens", arquivo, erros, { obrigatorio: true, naoVazio: true });
+  if (!Array.isArray(itens)) return;
+
+  itens.forEach((item, index) => {
+    if (!ehObjetoPlano(item)) {
+      adicionarErro(erros, arquivo, `itens[${index}] deve ser objeto`);
+      return;
+    }
+
+    validarUfSeExistir(item.uf, arquivo, `itens[${index}].uf`, erros);
+
+    for (const campo of CAMPOS_MONETARIOS_ORCAMENTO) {
+      if (Object.prototype.hasOwnProperty.call(item, campo)) {
+        validarNumeroNaoNegativoSeExistir(item[campo], arquivo, `itens[${index}].${campo}`, erros);
+      }
+    }
+  });
+}
+
+function validarResumoPublicacao(dados, arquivo, erros) {
+  const arquivos = validarArray(dados, "arquivos", arquivo, erros, { obrigatorio: true, naoVazio: true });
+  if (!Array.isArray(arquivos)) return;
+
+  const referencias = new Set();
+
+  arquivos.forEach((item, index) => {
+    if (typeof item === "string") {
+      const valor = item.trim();
+      if (!valor) {
+        adicionarErro(erros, arquivo, `arquivos[${index}] deve ser string nao vazia`);
+      } else {
+        referencias.add(valor);
+      }
+      return;
+    }
+
+    if (!ehObjetoPlano(item)) {
+      adicionarErro(erros, arquivo, `arquivos[${index}] deve ser objeto ou string`);
+      return;
+    }
+
+    const nomeArquivo = item.nomeArquivo || item.arquivo || item.caminho || item.path || item.nome;
+    if (typeof nomeArquivo !== "string" || nomeArquivo.trim() === "") {
+      adicionarErro(erros, arquivo, `arquivos[${index}] deve informar nome/caminho do arquivo`);
+    } else {
+      referencias.add(nomeArquivo.trim());
+    }
+
+    for (const campoData of ["publicadoEm", "geradoEm", "data"]) {
+      if (Object.prototype.hasOwnProperty.call(item, campoData)) {
+        if (typeof item[campoData] !== "string" || item[campoData].trim() === "") {
+          adicionarErro(erros, arquivo, `arquivos[${index}].${campoData} deve ser string nao vazia`);
+        }
+      }
+    }
+  });
+
+  const esperadosSemResumo = arquivosEsperados.filter((nome) => nome !== "resumo-publicacao.json");
+  for (const nome of esperadosSemResumo) {
+    if (!referencias.has(nome)) {
+      adicionarErro(erros, arquivo, `arquivos nao referencia ${nome}`);
+    }
+  }
 }
 
 const erros = [];
@@ -39,57 +281,47 @@ for (const nomeArquivo of arquivosEsperados) {
   const caminhoArquivo = path.join(publicDir, nomeArquivo);
 
   if (!fs.existsSync(caminhoArquivo)) {
-    erros.push(`Arquivo ausente: ${path.relative(rootDir, caminhoArquivo)}`);
+    adicionarErro(erros, nomeArquivo, `arquivo ausente: ${path.relative(rootDir, caminhoArquivo)}`);
     continue;
   }
 
   try {
+    const conteudo = fs.readFileSync(caminhoArquivo, "utf8");
+    const dados = JSON.parse(conteudo);
+
+    validarRegrasGerais(dados, nomeArquivo, erros);
+
     if (nomeArquivo === "aplicacao.json") {
-      validarJSONArquivo(caminhoArquivo, [{ chave: "dadosBase", tipo: "array" }]);
+      validarAplicacao(dados, nomeArquivo, erros);
       continue;
     }
 
     if (nomeArquivo === "dashboard-geral.json") {
-      validarJSONArquivo(caminhoArquivo, [{ chave: "dadosBase", tipo: "array" }]);
+      validarDashboardGeral(dados, nomeArquivo, erros);
       continue;
     }
 
     if (nomeArquivo === "parametros-minimos.json") {
-      const dados = validarJSONArquivo(caminhoArquivo, [
-        { chave: "respostas", tipo: "array" },
-        { chave: "diagnostico", tipo: "object" }
-      ]);
-
-      if (!Array.isArray(dados.parametrosDisponiveis) && !Array.isArray(dados.respostas)) {
-        throw new Error("Estrutura insuficiente em parametros-minimos.json");
-      }
-
+      validarParametrosMinimos(dados, nomeArquivo, erros);
       continue;
     }
 
     if (nomeArquivo === "formalizacao-profor.json") {
-      const dados = validarJSONArquivo(caminhoArquivo, [
-        { chave: "propostas", tipo: "array" }
-      ]);
-
-      if (!Array.isArray(dados.ufs) && !Array.isArray(dados.propostas)) {
-        throw new Error("Estrutura insuficiente em formalizacao-profor.json");
-      }
-
+      validarFormalizacaoProfor(dados, nomeArquivo, erros);
       continue;
     }
 
     if (nomeArquivo === "orcamento-2026.json") {
-      validarJSONArquivo(caminhoArquivo, [{ chave: "itens", tipo: "array" }]);
+      validarOrcamento2026(dados, nomeArquivo, erros);
       continue;
     }
 
     if (nomeArquivo === "resumo-publicacao.json") {
-      validarJSONArquivo(caminhoArquivo, [{ chave: "arquivos", tipo: "array" }]);
+      validarResumoPublicacao(dados, nomeArquivo, erros);
       continue;
     }
   } catch (error) {
-    erros.push(`JSON invalido: ${path.relative(rootDir, caminhoArquivo)} (${error.message})`);
+    adicionarErro(erros, nomeArquivo, `JSON invalido (${error.message})`);
   }
 }
 
