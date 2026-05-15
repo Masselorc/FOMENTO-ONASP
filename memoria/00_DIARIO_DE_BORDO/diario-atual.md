@@ -797,3 +797,11 @@ oute.fetch() + mutação em memória do payload retornado.
 - Backup de teste removido: sim (backend/data/backups/validacao).
 - Risco de regressao: baixo; impacto limitado ao servico de backup, com possivel aumento pontual de latencia no checkpoint.
 - Rollback: git restore backend/services/backup-service.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 15:21:59
+- Objetivo: padronizar tratamento de erros HTTP no backend local sem alterar regra de negocio dos services.
+- Padrao de erro adotado: HttpError para erros 4xx esperados (JSON invalido e payload acima do limite) + helper enviarErroApi para resposta consistente.
+- Status HTTP tratados: 400 (JSON invalido), 413 (corpo acima do limite), 404 (endpoint inexistente mantido), 500 (erro interno com mensagem generica e log tecnico no console).
+- Comandos executados: git status --short; npm run validar:syntax; npm run validar:json; npm run validar:agente; git diff --check; git diff -- backend/server.js.
+- Resultado: validacoes aprovadas, 11 testes E2E passados, sem alteracoes em services/frontend/dados locais.
+- Risco de regressao: baixo; alteracao limitada ao tratamento de erro no servidor e ao parser de corpo JSON.
+- Rollback: git restore backend/server.js memoria/00_DIARIO_DE_BORDO/diario-atual.md

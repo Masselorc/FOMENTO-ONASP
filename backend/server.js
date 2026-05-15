@@ -66,24 +66,74 @@ function enviarJson(res, statusCode, payload) {
   res.end(body);
 }
 
+class HttpError extends Error {
+  constructor(statusCode, message) {
+    super(message);
+    this.name = "HttpError";
+    this.statusCode = statusCode;
+  }
+}
+
+function enviarErroApi(res, error) {
+  const statusCode = Number(error?.statusCode);
+  const ehErroCliente = Number.isInteger(statusCode) && statusCode >= 400 && statusCode < 500;
+
+  if (ehErroCliente) {
+    enviarJson(res, statusCode, {
+      success: false,
+      message: error.message || "Requisicao invalida."
+    });
+    return;
+  }
+
+  console.error("Erro interno na API:", error);
+  enviarJson(res, 500, {
+    success: false,
+    message: "Erro interno no servidor."
+  });
+}
+
 function lerJsonBody(req) {
   return new Promise((resolve, reject) => {
+    const limiteBytes = 1_000_000;
+    let bytesRecebidos = 0;
     let body = "";
+    let finalizado = false;
+
+    function rejeitar(error) {
+      if (finalizado) return;
+      finalizado = true;
+      reject(error);
+    }
+
+    function resolver(payload) {
+      if (finalizado) return;
+      finalizado = true;
+      resolve(payload);
+    }
+
     req.on("data", (chunk) => {
-      body += chunk;
-      if (body.length > 1_000_000) {
-        reject(new Error("Corpo da requisição excedeu o limite."));
+      if (finalizado) return;
+      bytesRecebidos += chunk.length;
+      if (bytesRecebidos > limiteBytes) {
+        rejeitar(new HttpError(413, "Corpo da requisição excedeu o limite."));
         req.destroy();
+        return;
       }
+      body += chunk;
     });
     req.on("end", () => {
+      if (finalizado) return;
       try {
-        resolve(body ? JSON.parse(body) : {});
-      } catch (error) {
-        reject(new Error("JSON inválido."));
+        resolver(body ? JSON.parse(body) : {});
+      } catch {
+        rejeitar(new HttpError(400, "JSON inválido."));
       }
     });
-    req.on("error", reject);
+    req.on("error", (error) => {
+      if (finalizado) return;
+      rejeitar(error);
+    });
   });
 }
 
@@ -311,10 +361,7 @@ async function rotearApi(req, res, pathname) {
 
     enviarJson(res, 404, { success: false, message: "Endpoint não encontrado." });
   } catch (error) {
-    enviarJson(res, 500, {
-      success: false,
-      message: error.message || "Erro interno no servidor."
-    });
+    enviarErroApi(res, error);
   }
 }
 
