@@ -631,3 +631,17 @@
 - Comportamento preservado: processos novos temporários (`novo-*`) continuam sem trilha antes de salvar; após persistência passam a usar o mesmo fluxo de rastreio dos demais itens.
 - Validações executadas: `npm run validar:syntax`, `npm run validar:json`, `npm run validar:agente` e smoke local automatizado da view Orçamento 2026 para toggle de trilha/painel de edição em outros processos.
 - Resultado: processos existentes em outros processos passaram a exibir botão de trilha e painel de edição com campos de andamento processual.
+
+## 15/05/2026 - Consolidação da visão geral do PROFOR/ONASP
+
+- Branch atual: `main`.
+- Tarefa executada: consolidação do arquivo `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md` com base nos fichamentos técnicos e arquivos consolidados já tratados.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`, `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md`, `memoria/05_PROFOR_CONVENIOS/fontes-tratadas/parecer-profor-onasp.nota-tecnica.md`, `memoria/03_NORMATIVOS/fontes-tratadas/instrucao-normativa-parametros-ouvidorias.extrato.md`, `memoria/04_PENA_JUSTA/fontes-tratadas/plano-pena-justa.nota-tecnica.md`, `memoria/03_NORMATIVOS/fontes-tratadas/lei-13460-2017-ouvidorias.extrato.md`, `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/plano-anual-onasp.fichamento.md`, `memoria/02_ONASP_INSTITUCIONAL/fontes-tratadas/relatorio-gestao-2025.fichamento.md`.
+- Arquivos alterados: `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: consolidada a visão geral do PROFOR/ONASP, incluindo finalidade, objeto, UFs contempladas, valores previstos, papel da ONASP como área temática, relação com Pena Justa, IN nº 75/2026, Lei nº 13.460/2017, RENOSPEN, condição suspensiva, riscos, controles e limites de completude.
+- Decisão registrada: a consolidação usa apenas fichamentos técnicos e arquivos consolidados já tratados, sem consulta direta aos documentos originais nesta etapa. Termo de Abertura, Minuta de Edital e Solicitação de Dotação foram ignorados por decisão operacional e registrados como limite de completude.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `git diff --check`.
+- Resultado: arquivo consolidado criado/atualizado e pronto para uso como memória operacional do PROFOR/ONASP.
+- Pendências: consolidar `index-normativos.md` e `INDEX_UFS.md`, conforme decisão posterior.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
