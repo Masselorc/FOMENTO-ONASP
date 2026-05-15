@@ -1,11 +1,17 @@
 const { test, expect } = require("@playwright/test");
 
 const LOCAL_ORIGIN = `http://localhost:${process.env.PORT || 8790}`;
+const METODOS_ESCRITA = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 const paginasPrincipais = [
   { view: "dashboard", selector: "#view-dashboard", menu: 'button[data-view="dashboard"]' },
-  { view: "diagnostico-ouvidorias", selector: "#view-diagnostico-ouvidorias", menu: 'button[data-view="diagnostico-ouvidorias"]' },
+  { view: "detalhamento", selector: "#view-detalhamento", menu: 'button[data-view="detalhamento"]' },
   { view: "formalizacao", selector: "#view-formalizacao-profor", menu: 'button[data-view="formalizacao"]' },
+  { view: "profor2022", selector: "#view-profor-2022", menu: 'button[data-view="profor2022"]' },
+  { view: "faf2021", selector: "#view-faf-2021", menu: 'button[data-view="faf2021"]' },
+  { view: "doacoes2023", selector: "#view-doacoes-2023", menu: 'button[data-view="doacoes2023"]' },
+  { view: "contatos", selector: "#view-contatos", menu: 'button[data-view="contatos"]' },
+  { view: "diagnostico-ouvidorias", selector: "#view-diagnostico-ouvidorias", menu: 'button[data-view="diagnostico-ouvidorias"]' },
   { view: "orcamento", selector: "#view-orcamento", menu: 'button[data-view="orcamento"]' },
   { view: "status-sistema", selector: "#view-status-sistema", menu: 'button[data-view="status-sistema"]' }
 ];
@@ -33,22 +39,36 @@ function registrarFalhasCriticas(page) {
   return falhas;
 }
 
-async function bloquearRotasEscritaOrcamento2026(page) {
-  const rotasBloqueadas = [
-    '**/api/orcamento-2026/processos-vinculados/criar',
-    '**/api/orcamento-2026/saldos/alocar',
-    '**/api/orcamento-2026/salvar'
-  ];
+async function bloquearEscritasReais(page, { permitir = [] } = {}) {
+  await page.route("**/*", async (route) => {
+    const request = route.request();
+    const metodo = request.method().toUpperCase();
 
-  for (const rota of rotasBloqueadas) {
-    await page.route(rota, () => {
-      throw new Error('O teste E2E não deve persistir dados reais no Orçamento 2026.');
+    if (!METODOS_ESCRITA.has(metodo)) {
+      await route.continue();
+      return;
+    }
+
+    const url = request.url();
+    const permitido = permitir.some((regra) => {
+      if (typeof regra === "string") return url.includes(regra);
+      if (regra instanceof RegExp) return regra.test(url);
+      if (typeof regra === "function") return regra(request);
+      return false;
     });
-  }
+
+    if (permitido) {
+      await route.continue();
+      return;
+    }
+
+    throw new Error(`Escrita real bloqueada em teste E2E: ${metodo} ${url}`);
+  });
 }
 
 test("carrega a SPA e acessa paginas principais sem erro critico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
 
   await page.goto("/index.html", { waitUntil: "domcontentloaded" });
 
@@ -69,7 +89,7 @@ test("carrega a SPA e acessa paginas principais sem erro critico", async ({ page
 
 test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
-  await bloquearRotasEscritaOrcamento2026(page);
+  await bloquearEscritasReais(page);
 
   await page.goto("/index.html", { waitUntil: "domcontentloaded" });
   await expect(page.locator("#main-wrapper")).toBeVisible();

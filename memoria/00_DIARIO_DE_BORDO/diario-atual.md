@@ -707,3 +707,12 @@
 - Resultado: memória documental consolidada, navegável e sem pendências obrigatórias imediatas deste ciclo.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+- Data: 2026-05-15 13:56:13
+- Objetivo: P0 incremental de testes E2E para bloquear escrita real indevida e ampliar smoke das views principais.
+- Arquivo alterado: tests/e2e/app.spec.js
+- Helper criado: bloquearEscritasReais(page, { permitir = [] }) com bloqueio global de POST/PUT/PATCH/DELETE por padrão.
+- Views incluídas no smoke test: dashboard, detalhamento, formalizacao, profor2022, faf2021, doacoes2023, contatos, diagnostico-ouvidorias, orcamento, status-sistema.
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- tests/e2e/app.spec.js.
+- Resultado: validações e E2E aprovados (2 passed), sem alteração em JSON publicado ou arquivos de banco.
+- Risco de regressão: baixo; principal risco é bloquear futuras escritas legítimas de teste sem inclusão explícita em permitir.
+- Rollback: git restore tests/e2e/app.spec.js (ou incluir memoria/00_DIARIO_DE_BORDO/diario-atual.md se necessário).
