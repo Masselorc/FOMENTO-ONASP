@@ -788,3 +788,12 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: validações aprovadas, incluindo 11 testes E2E.
 - Risco de regressão: baixo; principal risco é endurecimento futuro em dataset excepcional sem ajuste de regra mínima.
 - Rollback: git restore scripts/validar-json-publicados.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 15:12:22
+- Objetivo: tornar o backup SQLite local consistente com modo WAL sem alterar schema, dados ou regra de negocio.
+- Estrategia adotada: checkpoint WAL (wal_checkpoint FULL) + copia sincrona do arquivo principal, mantendo assinatura sincronade criarBackupBanco.
+- Validacao WAL/checkpoint/backup: checkpoint executado antes da copia; backup validado por existencia e tamanho > 0; teste controlado com pagina "validacao" gerou arquivo e foi removido apos verificacao.
+- Comandos executados: git status --short; npm run validar:syntax; npm run validar:json; npm run validar:agente; node -e "const { criarBackupBanco } = require('./backend/services/backup-service'); console.log(criarBackupBanco('validacao'));"; git status --short; git diff --check; git diff -- backend/services/backup-service.js.
+- Resultado: validacoes aprovadas (incluindo 11 testes E2E), backup gerado com tamanho valido e nenhum artefato de backup rastreado no Git.
+- Backup de teste removido: sim (backend/data/backups/validacao).
+- Risco de regressao: baixo; impacto limitado ao servico de backup, com possivel aumento pontual de latencia no checkpoint.
+- Rollback: git restore backend/services/backup-service.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
