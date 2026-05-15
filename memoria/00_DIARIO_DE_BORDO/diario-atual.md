@@ -815,3 +815,11 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: validacoes obrigatorias aprovadas (incluindo 11 testes E2E), SPA preservada e bloqueio de arquivos sensiveis confirmado com HTTP 403.
 - Risco de regressao: baixo; risco residual concentrado em novos recursos estaticos fora da allowlist exigirem ajuste explicito no servidor.
 - Rollback: git restore backend/server.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 15:53:44
+- Objetivo: reforcar validacoes de entrada em Orçamento 2026 e Parâmetros Mínimos sem alterar regra de negocio, schema ou frontend.
+- Validacoes reforcadas no Orçamento 2026: numeros monetarios agora exigem valor finito e nao negativo; status invalido informado e rejeitado; IDs de changes e inativos sao normalizados/validados; novos itens exigem objeto valido, descricao obrigatoria e bloqueiam campos desconhecidos.
+- Validacoes reforcadas em Parâmetros Mínimos: changes/campos exigem objeto plano; UF obrigatoria e validada contra lista oficial; payload vazio por parametro e rejeitado; erros de validacao retornam success=false com mensagem; reversao de historico valida UF do registro.
+- Comandos executados: git status --short; npm run validar:syntax; npm run validar:json; npm run validar:agente; git diff --check; git diff -- backend/services/orcamento-2026-service.js; git diff -- backend/services/parametros-minimos-service.js.
+- Resultado: validacoes aprovadas (incluindo 11 testes E2E) e alteracoes restritas aos dois services autorizados.
+- Risco de regressao: baixo; risco residual em payload legado com descricao vazia em novos itens do orçamento.
+- Rollback: git restore backend/services/orcamento-2026-service.js backend/services/parametros-minimos-service.js memoria/00_DIARIO_DE_BORDO/diario-atual.md

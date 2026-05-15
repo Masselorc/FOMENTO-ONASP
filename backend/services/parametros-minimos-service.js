@@ -10,6 +10,25 @@ const {
 } = require("./parametros-minimos-config");
 
 const PAGINA = "parametros-minimos";
+const UFS_BRASIL = new Set([
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
+  "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
+  "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+]);
+
+function ehObjetoPlano(valor) {
+  if (!valor || typeof valor !== "object" || Array.isArray(valor)) return false;
+  const proto = Object.getPrototypeOf(valor);
+  return proto === Object.prototype || proto === null;
+}
+
+function normalizarUf(uf) {
+  return String(uf || "").trim().toUpperCase();
+}
+
+function validarUf(uf) {
+  return UFS_BRASIL.has(normalizarUf(uf));
+}
 
 function extrairDeficit(status) {
   const falta = String(status || "").match(/^FALTA \+(\d+)$/);
@@ -247,50 +266,63 @@ function salvarParametrosMinimos({ password, changes }) {
     return { success: false, message: "Senha inválida. Alterações não foram salvas." };
   }
 
-  if (!changes || typeof changes !== "object" || Array.isArray(changes)) {
+  if (!ehObjetoPlano(changes)) {
     return { success: false, message: "Alteração inválida. Nenhuma alteração foi salva." };
   }
 
   const parametrosPermitidos = new Set(PARAMETROS_MINIMOS.map((item) => item.key));
+  const parametrosMap = new Map(PARAMETROS_MINIMOS.map((item) => [item.key, item]));
   const atualizacao = [];
 
-  Object.entries(changes).forEach(([uf, campos]) => {
-    if (!uf || typeof campos !== "object" || Array.isArray(campos)) {
-      throw new Error("Registro de alteração inválido.");
-    }
-
-    Object.entries(campos).forEach(([parametro, payload]) => {
-      if (!parametrosPermitidos.has(parametro)) {
-        throw new Error(`Parâmetro não permitido: ${parametro}`);
+  try {
+    Object.entries(changes).forEach(([uf, campos]) => {
+      const ufNormalizada = normalizarUf(uf);
+      if (!ufNormalizada || !validarUf(ufNormalizada)) {
+        throw new Error(`UF inválida: ${uf}`);
       }
-      const config = PARAMETROS_MINIMOS.find((item) => item.key === parametro);
-      const status = typeof payload === "object" && payload !== null ? payload.status : payload;
-      if (!isStatusParametroMinimo(status)) {
-        throw new Error(`Status inválido para ${parametro}: ${status}`);
+      if (!ehObjetoPlano(campos)) {
+        throw new Error("Registro de alteração inválido.");
       }
 
-      const quantidadeAtual = typeof payload === "object" && payload !== null && payload.quantidadeAtual !== undefined
-        ? Number(payload.quantidadeAtual)
-        : undefined;
-      const quantidadeIdeal = typeof payload === "object" && payload !== null && payload.quantidadeIdeal !== undefined
-        ? Number(payload.quantidadeIdeal)
-        : undefined;
-
-      if (config?.tipo === "quantitativo" && (quantidadeAtual !== undefined || quantidadeIdeal !== undefined)) {
-        if (!Number.isFinite(quantidadeAtual) || quantidadeAtual < 0 || !Number.isFinite(quantidadeIdeal) || quantidadeIdeal < 0) {
-          throw new Error(`Quantidade inválida para ${parametro}.`);
+      Object.entries(campos).forEach(([parametro, payload]) => {
+        if (!parametrosPermitidos.has(parametro)) {
+          throw new Error(`Parâmetro não permitido: ${parametro}`);
         }
-      }
+        if (ehObjetoPlano(payload) && Object.keys(payload).length === 0) {
+          throw new Error(`Payload inválido para ${parametro}.`);
+        }
 
-      atualizacao.push({
-        uf,
-        parametro,
-        status: normalizarStatusParametroMinimo(status),
-        quantidadeAtual,
-        quantidadeIdeal
+        const config = parametrosMap.get(parametro);
+        const status = ehObjetoPlano(payload) ? payload.status : payload;
+        if (!isStatusParametroMinimo(status)) {
+          throw new Error(`Status inválido para ${parametro}: ${status}`);
+        }
+
+        const quantidadeAtual = ehObjetoPlano(payload) && payload.quantidadeAtual !== undefined
+          ? Number(payload.quantidadeAtual)
+          : undefined;
+        const quantidadeIdeal = ehObjetoPlano(payload) && payload.quantidadeIdeal !== undefined
+          ? Number(payload.quantidadeIdeal)
+          : undefined;
+
+        if (config?.tipo === "quantitativo" && (quantidadeAtual !== undefined || quantidadeIdeal !== undefined)) {
+          if (!Number.isFinite(quantidadeAtual) || quantidadeAtual < 0 || !Number.isFinite(quantidadeIdeal) || quantidadeIdeal < 0) {
+            throw new Error(`Quantidade inválida para ${parametro}.`);
+          }
+        }
+
+        atualizacao.push({
+          uf: ufNormalizada,
+          parametro,
+          status: normalizarStatusParametroMinimo(status),
+          quantidadeAtual,
+          quantidadeIdeal
+        });
       });
     });
-  });
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
 
   if (!atualizacao.length) {
     return { success: false, message: "Não há alterações para salvar." };
@@ -387,6 +419,9 @@ function reverterHistoricoParametrosMinimos({ password, historicoId }) {
   const parametrosPermitidos = new Set(PARAMETROS_MINIMOS.map((item) => item.key));
   if (!parametrosPermitidos.has(historico.campo)) {
     return { success: false, message: "Campo do histórico não é mais editável." };
+  }
+  if (!validarUf(historico.registro)) {
+    return { success: false, message: "UF inválida no registro de histórico." };
   }
 
   const valorReversao = extrairValorHistorico(historico.valorAnterior);

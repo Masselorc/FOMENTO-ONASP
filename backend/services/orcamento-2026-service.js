@@ -102,6 +102,29 @@ const CAMPOS_EDITAVEIS = new Set([
   ...CAMPOS_EDITAVEIS_BASE,
   ...CAMPOS_EDITAVEIS_RASTREIO
 ]);
+const CAMPOS_MONETARIOS_ORCAMENTO = new Set([
+  "valor_previsto",
+  "valor_disponibilizado",
+  "valor_empenhado",
+  "valor_executado",
+  "valor_estimado_pesquisa_preco",
+  "valor_unitario",
+  "valor_alocado_origem"
+]);
+const CAMPOS_NOVOS_PERMITIDOS = new Set([
+  "id",
+  "categoria",
+  "descricao",
+  "natureza",
+  "valor_estimado_pesquisa_preco",
+  "valorEstimadoPesquisaPreco",
+  "processo_autuado",
+  "processoAutuado",
+  "processo_sei",
+  "processoSei",
+  "status",
+  "observacao"
+]);
 
 const COLUNAS_ORCAMENTO = [
   "id",
@@ -1158,13 +1181,38 @@ function criarProcessoVinculadoOrcamento2026(payload = {}) {
 }
 
 function valorParaBanco(campo, valor) {
-  if (["valor_previsto", "valor_disponibilizado", "valor_empenhado", "valor_executado", "valor_estimado_pesquisa_preco"].includes(campo)) {
-    return arredondarMoeda(converterNumero(valor));
+  if (ehCampoMonetarioOrcamento(campo)) {
+    return normalizarNumeroNaoNegativoOrcamento(valor, campo);
   }
   if (campo === "processo_autuado") return valor ? 1 : 0;
-  if (campo === "status") return normalizarStatusOrcamento(valor);
+  if (campo === "status") {
+    const validacao = normalizarStatusParaCriacao(valor);
+    if (validacao.informado && !validacao.valido) {
+      throw new Error(`Status inválido: ${valor}`);
+    }
+    return validacao.status;
+  }
   if (campo === "classificacao_gerencial") return normalizarClassificacaoGerencial(valor);
   return String(valor ?? "").trim();
+}
+
+function ehCampoMonetarioOrcamento(campo) {
+  return CAMPOS_MONETARIOS_ORCAMENTO.has(campo);
+}
+
+function normalizarNumeroNaoNegativoOrcamento(valor, campo) {
+  if (valor === null || valor === undefined || String(valor).trim() === "") {
+    return 0;
+  }
+
+  const numero = converterNumeroEstrito(valor);
+  if (!Number.isFinite(numero)) {
+    throw new Error(`Valor inválido para ${campo}.`);
+  }
+  if (numero < 0) {
+    throw new Error(`Valor negativo não permitido para ${campo}.`);
+  }
+  return arredondarMoeda(numero);
 }
 
 function obterValorAtual(row, campo) {
@@ -1175,12 +1223,13 @@ function obterValorAtual(row, campo) {
 function validarAlteracoes(changes) {
   if (!changes || typeof changes !== "object" || Array.isArray(changes)) return [];
   return Object.entries(changes).flatMap(([id, campos]) => {
-    if (!id || !campos || typeof campos !== "object" || Array.isArray(campos)) {
+    const idNormalizado = limparTexto(id);
+    if (!idNormalizado || !campos || typeof campos !== "object" || Array.isArray(campos)) {
       throw new Error("Registro de alteração inválido.");
     }
     return Object.entries(campos).map(([campo, valor]) => {
       if (!CAMPOS_EDITAVEIS.has(campo)) throw new Error(`Campo não permitido: ${campo}`);
-      return { id, campo, valor: valorParaBanco(campo, valor) };
+      return { id: idNormalizado, campo, valor: valorParaBanco(campo, valor) };
     });
   });
 }
@@ -1188,17 +1237,35 @@ function validarAlteracoes(changes) {
 function validarNovos(novos) {
   if (!Array.isArray(novos)) return [];
   return novos.map((item, index) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) {
+      throw new Error("Novo item inválido.");
+    }
+    Object.keys(item).forEach((campo) => {
+      if (!CAMPOS_NOVOS_PERMITIDOS.has(campo)) {
+        throw new Error(`Campo não permitido em novo item: ${campo}`);
+      }
+    });
+
     const id = limparTexto(item.id) || `OUT-${Date.now()}-${index + 1}`;
-    const processoAutuadoInformado = valorParaBanco("processo_autuado", item.processo_autuado);
-    const sincronizado = sincronizarStatusEProcessoAutuado(item.status || "PLANEJADO", processoAutuadoInformado);
+    const descricao = limparTexto(item.descricao);
+    if (!descricao) {
+      throw new Error("Descrição é obrigatória para novo item.");
+    }
+
+    const processoAutuadoInformado = valorParaBanco("processo_autuado", item.processo_autuado ?? item.processoAutuado);
+    const status = valorParaBanco("status", item.status || "PLANEJADO");
+    const sincronizado = sincronizarStatusEProcessoAutuado(status, processoAutuadoInformado);
     return preencherColunas({
       id,
       categoria: limparTexto(item.categoria) || "Outros processos de interesse da Ouvidoria",
-      descricao: limparTexto(item.descricao) || "Novo processo",
+      descricao,
       natureza: limparTexto(item.natureza),
-      valor_estimado_pesquisa_preco: valorParaBanco("valor_estimado_pesquisa_preco", item.valor_estimado_pesquisa_preco),
+      valor_estimado_pesquisa_preco: valorParaBanco(
+        "valor_estimado_pesquisa_preco",
+        item.valor_estimado_pesquisa_preco ?? item.valorEstimadoPesquisaPreco
+      ),
       processo_autuado: sincronizado.processo_autuado,
-      processo_sei: limparTexto(item.processo_sei),
+      processo_sei: limparTexto(item.processo_sei ?? item.processoSei),
       status: sincronizado.status,
       observacao: limparTexto(item.observacao),
       classificacao_gerencial: "NAO_APARELHAMENTO",
@@ -1215,13 +1282,14 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
 
   let alteracoes = [];
   let novosItens = [];
+  let idsInativos = [];
   try {
     alteracoes = validarAlteracoes(changes);
     novosItens = validarNovos(novos);
+    idsInativos = validarInativos(inativos);
   } catch (error) {
     return { success: false, message: error.message };
   }
-  const idsInativos = Array.isArray(inativos) ? inativos.map(String).filter(Boolean) : [];
 
   if (!alteracoes.length && !novosItens.length && !idsInativos.length) {
     return { success: false, message: "Não há alterações para salvar." };
@@ -1312,6 +1380,20 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
     updatedAt,
     backupPath
   };
+}
+
+function validarInativos(inativos) {
+  if (inativos === undefined || inativos === null) return [];
+  if (!Array.isArray(inativos)) {
+    throw new Error("Lista de inativos inválida.");
+  }
+  return inativos.map((id) => {
+    const idNormalizado = limparTexto(id);
+    if (!idNormalizado) {
+      throw new Error("ID inválido na lista de inativos.");
+    }
+    return idNormalizado;
+  });
 }
 
 function listarHistoricoOrcamento2026() {
