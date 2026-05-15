@@ -1241,6 +1241,9 @@ async function carregarLogoParaPDF() {
                 if (viewStatusSistema) viewStatusSistema.style.display = 'none';
 
                 renderOrcamentoViewSkeleton();
+                atualizarNavegacao(viewName);
+                fecharMenuLateral();
+                window.scrollTo(0, 0);
                 registrarPerfOrcamento('toggleView:orcamento skeleton', inicioToggleOrcamento);
 
                 try {
@@ -1261,6 +1264,8 @@ async function carregarLogoParaPDF() {
                     erroCarregamentoOrcamento = error;
                     console.error(`Falha ao carregar ${viewName}:`, error);
                     renderizarErroView(viewName, error);
+                } finally {
+                    aplicarModoSomenteLeitura();
                 }
                 return;
             }
@@ -7062,15 +7067,6 @@ async function carregarLogoParaPDF() {
 
         function registrarEventosOutrosProcessosOrcamento(budgetData) {
             configurarDelegacaoEventosOrcamento();
-            const detalhes = document.getElementById('budget-other-details');
-            if (!detalhes) return;
-
-            detalhes.addEventListener('toggle', () => {
-                orcamentoOutrosProcessosExpandido = detalhes.open;
-                if (detalhes.open) {
-                    atualizarTabelaOutrosOrcamento(budgetData);
-                }
-            });
         }
 
         function renderizarPainelOutrosProcessosOrcamento(budgetData) {
@@ -7080,28 +7076,17 @@ async function carregarLogoParaPDF() {
             const quantidade = outrosProcessos.length;
 
             return `
-                <details class="budget-other-details" id="budget-other-details"${orcamentoOutrosProcessosExpandido ? ' open' : ''}>
-                    <summary class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Carregamento sob demanda</p>
-                            <h2>Mostrar ou ocultar a tabela de outros processos</h2>
-                        </div>
-                        <small class="text-muted">${quantidade} processo(s) disponível(is).</small>
-                    </summary>
-                    <div id="budget-other-content" class="budget-other-content mt-3">
-                        ${orcamentoOutrosProcessosExpandido
-                            ? '<div class="budget-other-loading text-muted small">Carregando outros processos...</div>'
-                            : '<div class="budget-other-placeholder text-muted small">A tabela de outros processos é carregada apenas quando esta seção é aberta.</div>'}
-                    </div>
-                </details>
+                <div class="budget-other-meta text-muted small mb-2">${quantidade} processo(s) disponível(is).</div>
+                <div id="budget-other-content" class="budget-other-content mt-3">
+                    <div class="budget-other-loading text-muted small">Carregando processos relacionados...</div>
+                </div>
             `;
         }
 
         function atualizarTabelaOutrosOrcamento(budgetData) {
             const inicioAtualizacaoOutros = DEBUG_PERF_ONASP ? performance.now() : 0;
-            const details = document.getElementById('budget-other-details');
             const content = document.getElementById('budget-other-content');
-            if (!details || !content || !details.open) return;
+            if (!content) return;
 
             const outrosProcessos = (budgetData.outrosProcessos || [])
                 .filter((item) => !orcamentoProcessosInativos.has(String(item.id)))
@@ -7226,6 +7211,7 @@ async function carregarLogoParaPDF() {
                 status: 'PLANEJADO',
                 observacao: ''
             });
+            orcamentoOutrosProcessosExpandido = true;
             renderOrcamentoView();
         }
 
@@ -7737,9 +7723,7 @@ async function carregarLogoParaPDF() {
 
             const atualizar = () => {
                 atualizarTabelaOrcamento(budgetData);
-                if (orcamentoOutrosProcessosExpandido) {
-                    atualizarTabelaOutrosOrcamento(budgetData);
-                }
+                atualizarTabelaOutrosOrcamento(budgetData);
             };
             const atualizarDebounced = debounceOnasp(atualizar, 180);
             if (!orcamentoEmModoPublicacaoEstatico()) {
@@ -7753,13 +7737,6 @@ async function carregarLogoParaPDF() {
                 document.getElementById('btnHistoricoOrcamento')?.addEventListener('click', abrirHistoricoOrcamento);
                 document.getElementById('btnAdicionarOutroProcesso')?.addEventListener('click', adicionarNovoProcessoOrcamento);
             }
-            document.getElementById('budget-other-details')?.addEventListener('toggle', () => {
-                const detalhes = document.getElementById('budget-other-details');
-                orcamentoOutrosProcessosExpandido = Boolean(detalhes?.open);
-                if (orcamentoOutrosProcessosExpandido) {
-                    atualizarTabelaOutrosOrcamento(budgetData);
-                }
-            });
             document.getElementById('filtroOrcamentoBusca')?.addEventListener('input', atualizarDebounced);
             document.querySelectorAll('.budget-filter-control').forEach((controle) => {
                 controle.addEventListener('change', atualizar);
@@ -7782,16 +7759,14 @@ async function carregarLogoParaPDF() {
                 registrarPerfOrcamento('renderOrcamentoView:atualizarTabelaOrcamento', inicioTabela, {
                     linhasPrincipais: Array.isArray(budgetData?.itens) ? budgetData.itens.length : 0
                 });
-                if (orcamentoOutrosProcessosExpandido) {
-                    requestAnimationFrame(() => {
-                        if (sequenciaRenderizacao !== orcamentoRenderizacaoSequencia) return;
-                        const inicioOutros = DEBUG_PERF_ONASP ? performance.now() : 0;
-                        atualizarTabelaOutrosOrcamento(budgetData);
-                        registrarPerfOrcamento('renderOrcamentoView:atualizarTabelaOutros', inicioOutros, {
-                            linhasOutros: Array.isArray(budgetData?.outrosProcessos) ? budgetData.outrosProcessos.length : 0
-                        });
+                requestAnimationFrame(() => {
+                    if (sequenciaRenderizacao !== orcamentoRenderizacaoSequencia) return;
+                    const inicioOutros = DEBUG_PERF_ONASP ? performance.now() : 0;
+                    atualizarTabelaOutrosOrcamento(budgetData);
+                    registrarPerfOrcamento('renderOrcamentoView:atualizarTabelaOutros', inicioOutros, {
+                        linhasOutros: Array.isArray(budgetData?.outrosProcessos) ? budgetData.outrosProcessos.length : 0
                     });
-                }
+                });
             });
         }
 
