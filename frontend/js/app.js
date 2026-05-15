@@ -581,6 +581,19 @@ async function exportarRelatorioEstadoSelecionado(uf) {
 // NAVEGACAO
 // ========================================================================
 
+function atualizarVisibilidadeBotaoStatusSistema() {
+    const ocultarNoModoEstatico = estaEmModoPublicacaoEstatica();
+    document.querySelectorAll('.app-menu-link[data-view="status-sistema"]').forEach((botao) => {
+        botao.classList.toggle('d-none', ocultarNoModoEstatico);
+        botao.setAttribute('aria-hidden', String(ocultarNoModoEstatico));
+    });
+}
+
+function aplicarModoSomenteLeituraControlada() {
+    aplicarModoSomenteLeitura();
+    atualizarVisibilidadeBotaoStatusSistema();
+}
+
 function atualizarNavegacao(viewName = 'dashboard') {
     const viewAtiva = viewName === 'estado-detalhe'
         ? 'detalhamento'
@@ -622,6 +635,7 @@ function atualizarNavegacao(viewName = 'dashboard') {
         btnDetalhamentoHeader.classList.toggle('d-none', viewName !== 'dashboard');
     }
 
+    atualizarVisibilidadeBotaoStatusSistema();
     alternarPastaRepassesFunpen(VIEWS_REPASSES_FUNPEN.has(viewName));
 }
 
@@ -916,7 +930,7 @@ async function carregarLogoParaPDF() {
                     abrirDetalheConvenioProfor(proforConvenioAtual, proforFiltroAreaAtual);
                 }
 
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 registrarPerfOrcamento('garantirDadosBaseAplicacao', inicioBase, {
                     totalRegistros: Array.isArray(dadosFaf) ? dadosFaf.length : 0,
                     catalogoCarregado: Boolean(catalogoAplicacao)
@@ -955,7 +969,7 @@ async function carregarLogoParaPDF() {
                 error
             });
             view.style.display = 'block';
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
         }
 
         function formatarDataStatusSistema(valor) {
@@ -1206,7 +1220,7 @@ async function carregarLogoParaPDF() {
                 </section>
             `;
 
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
         }
 
         async function toggleView(viewName) {
@@ -1265,7 +1279,7 @@ async function carregarLogoParaPDF() {
                     console.error(`Falha ao carregar ${viewName}:`, error);
                     renderizarErroView(viewName, error);
                 } finally {
-                    aplicarModoSomenteLeitura();
+                    aplicarModoSomenteLeituraControlada();
                 }
                 return;
             }
@@ -1383,7 +1397,7 @@ async function carregarLogoParaPDF() {
 
             atualizarNavegacao(viewName);
             fecharMenuLateral();
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
             window.scrollTo(0, 0);
         }
 
@@ -4091,7 +4105,7 @@ async function carregarLogoParaPDF() {
             });
 
             if (dadosPaginaEmModoEstatico('formalizacaoProfor')) {
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -4657,7 +4671,7 @@ async function carregarLogoParaPDF() {
                     titulo: VIEW_ERROR_MESSAGES.formalizacao.titulo,
                     detalhe: VIEW_ERROR_MESSAGES.formalizacao.detalhe
                 });
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -4668,7 +4682,7 @@ async function carregarLogoParaPDF() {
                     descricao: 'Verifique se os dados da base PROFOR foram carregados ou publicados corretamente.',
                     icon: 'fa-file-signature'
                 });
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -4889,7 +4903,7 @@ async function carregarLogoParaPDF() {
 
             registrarEventosFormalizacao(dados);
             atualizarListaFormalizacao(dados);
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
         }
 
         function abrirDetalheFormalizacaoProfor(uf) {
@@ -5196,7 +5210,7 @@ async function carregarLogoParaPDF() {
                     detalhe: VIEW_ERROR_MESSAGES['formalizacao-detalhe'].detalhe
                 });
                 container.style.display = 'block';
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -5300,7 +5314,7 @@ async function carregarLogoParaPDF() {
             `;
             registrarEventosBotoesEdicaoFormalizacao(dados);
             registrarEventosCamposEdicaoFormalizacao();
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
         }
 
         // --- MÓDULO DE ORÇAMENTO 2026 ---
@@ -7444,7 +7458,7 @@ async function carregarLogoParaPDF() {
                     error: erroCarregamentoOrcamento
                 });
                 container.style.display = 'block';
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -7456,7 +7470,7 @@ async function carregarLogoParaPDF() {
                     icon: 'fa-wallet'
                 });
                 container.style.display = 'block';
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -7769,7 +7783,7 @@ async function carregarLogoParaPDF() {
             });
 
             container.style.display = 'block';
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
 
             requestAnimationFrame(() => {
                 if (sequenciaRenderizacao !== orcamentoRenderizacaoSequencia) return;
@@ -7873,7 +7887,7 @@ async function carregarLogoParaPDF() {
                 </section>
             `;
 
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
         }
 
         // Exporta o relatório a partir do HTML renderizado. Elementos marcados
@@ -9493,7 +9507,7 @@ async function carregarLogoParaPDF() {
             });
 
             if (dadosPaginaEmModoEstatico('parametrosMinimos')) {
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -9589,7 +9603,7 @@ async function carregarLogoParaPDF() {
                         icon: 'fa-clipboard-check'
                     })}
                 `;
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -9667,7 +9681,7 @@ async function carregarLogoParaPDF() {
             `;
 
             registrarEventosDiagnosticoOuvidorias(dados);
-            aplicarModoSomenteLeitura();
+            aplicarModoSomenteLeituraControlada();
         }
 
         // ========================================================================
@@ -9754,7 +9768,7 @@ async function carregarLogoParaPDF() {
                         icon: 'fa-address-book'
                     })}
                 `;
-                aplicarModoSomenteLeitura();
+                aplicarModoSomenteLeituraControlada();
                 return;
             }
 
@@ -11327,3 +11341,4 @@ window.abrirEditorFormalizacao = abrirEditorFormalizacao;
 window.cancelarEdicaoFormalizacao = cancelarEdicaoFormalizacao;
 window.salvarAlteracoesFormalizacao = salvarAlteracoesFormalizacao;
 window.aplicarFiltroUF = aplicarFiltroUF;
+
