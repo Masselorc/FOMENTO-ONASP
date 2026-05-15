@@ -239,6 +239,59 @@ test("renderiza campos livres como texto seguro sem executar XSS", async ({ page
   expect(falhasCriticas).toEqual([]);
 });
 
+test("faf 2021 abre fluxo editável sem persistir dados reais", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("faf2021"));
+
+  const viewFaf = page.locator("#view-faf-2021");
+  await expect(viewFaf).toBeVisible();
+  await expect(viewFaf.locator(".app-error-state")).toHaveCount(0);
+
+  const botaoEdicao = viewFaf.locator("[data-faf2021-editar-item]");
+  await expect(botaoEdicao.first()).toBeVisible();
+  await botaoEdicao.first().click();
+
+  const modalExecucao = page.locator("#modalFaf2021Execucao");
+  await expect(modalExecucao).toBeVisible();
+  await expect(modalExecucao.locator("#faf2021SalvarExecucao")).toBeVisible();
+  await modalExecucao.locator('[data-bs-dismiss="modal"]').first().click();
+  await expect(modalExecucao).toBeHidden();
+
+  expect(falhasCriticas).toEqual([]);
+});
+
+test("formalização PROFOR abre fluxo editável sem persistir dados reais", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("formalizacao"));
+
+  const viewFormalizacao = page.locator("#view-formalizacao-profor");
+  await expect(viewFormalizacao).toBeVisible();
+  await expect(viewFormalizacao.locator(".app-error-state")).toHaveCount(0);
+
+  const botaoEditor = viewFormalizacao.locator("[data-formalizacao-toggle-editor]");
+  await expect(botaoEditor.first()).toBeVisible();
+  await botaoEditor.first().click();
+
+  const botaoCancelar = viewFormalizacao.locator("[data-formalizacao-cancelar-linha]");
+  const botaoSalvar = viewFormalizacao.locator("[data-formalizacao-salvar-linha]");
+  await expect(botaoSalvar.first()).toBeVisible();
+  await expect(botaoCancelar.first()).toBeVisible();
+  await botaoCancelar.first().click();
+  await expect(viewFormalizacao.locator("[data-formalizacao-salvar-linha]")).toHaveCount(0);
+
+  expect(falhasCriticas).toEqual([]);
+});
+
 test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);

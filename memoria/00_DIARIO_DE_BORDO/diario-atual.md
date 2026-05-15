@@ -746,3 +746,12 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: 6 testes E2E aprovados; payload renderizado como texto inofensivo, sem execução JavaScript.
 - Risco de regressão: baixo; depende da continuidade do escaping em renderizadores de campos livres.
 - Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 14:28:04
+- Objetivo: ampliar E2E de fluxos editáveis sem persistência real.
+- Fluxos editáveis cobertos: FAF 2021 (modal de edição de execução) e Formalização PROFOR (editor de linha com cancelar).
+- Seletores usados: [data-faf2021-editar-item], #modalFaf2021Execucao, #faf2021SalvarExecucao, [data-formalizacao-toggle-editor], [data-formalizacao-salvar-linha], [data-formalizacao-cancelar-linha].
+- Lacuna: Parâmetros Mínimos sem [data-parametros-toggle-editor] disponível no estado atual dos dados durante o E2E; fluxo não foi incluído para evitar teste frágil.
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- tests/e2e/app.spec.js.
+- Resultado: 8 testes E2E aprovados, sem persistência de dados e com bloqueio global de escrita ativo.
+- Risco de regressão: baixo; risco residual é variação de disponibilidade de controles editáveis conforme dataset carregado.
+- Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
