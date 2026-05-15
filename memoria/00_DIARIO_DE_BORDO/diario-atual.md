@@ -673,3 +673,17 @@
 - Pendências: criar futuramente matriz de parâmetros mínimos por UF, checklist de condição suspensiva e base de evidências por UF, conforme decisão posterior.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 15/05/2026 - Checklist de parâmetros mínimos das ouvidorias
+
+- Branch atual: `main`.
+- Tarefa executada: criação/consolidação do arquivo `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md` com base nas fontes tratadas e consolidadas já existentes.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/03_NORMATIVOS/index-normativos.md`, `memoria/03_NORMATIVOS/fontes-tratadas/instrucao-normativa-parametros-ouvidorias.extrato.md`, `memoria/03_NORMATIVOS/fontes-tratadas/lei-13460-2017-ouvidorias.extrato.md`, `memoria/04_PENA_JUSTA/pena-justa-e-ouvidorias.md`, `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`, `memoria/06_UFS_OUVIDORIAS/INDEX_UFS.md`, `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`.
+- Arquivos alterados: `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criado checklist operacional dos parâmetros mínimos das ouvidorias de serviços penais, com blocos de verificação, evidências mínimas, escala de avaliação, classificação de maturidade, riscos e limites de uso.
+- Decisão registrada: o checklist não classifica UFs nesta etapa e deve ser aplicado futuramente apenas com evidências documentais por UF.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff -- "memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md"`, `git diff --check`.
+- Resultado: arquivo criado/atualizado e pronto para uso como instrumento de avaliação futura.
+- Pendências: criar futuramente matriz por UF, base de evidências por UF e checklist de condição suspensiva, conforme decisão posterior.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
