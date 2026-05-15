@@ -50,9 +50,38 @@ const mimeTypes = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
-  ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  ".sqlite": "application/octet-stream"
+  ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 };
+
+const CAMINHOS_ESTATICOS_PERMITIDOS = new Set([
+  "index.html",
+  "backend/services/data-service.js",
+  "backend/services/analytics.js",
+  "backend/data/aplicacao.json"
+]);
+const PREFIXOS_ESTATICOS_PERMITIDOS = [
+  "frontend/",
+  "planilhas/"
+];
+const PREFIXOS_ESTATICOS_BLOQUEADOS = [
+  "backend/data/backups/",
+  "backend/db/",
+  "backend/scripts/",
+  "memoria/",
+  "node_modules/",
+  ".git/"
+];
+const ARQUIVOS_ESTATICOS_BLOQUEADOS = new Set([
+  ".env",
+  "package.json",
+  "package-lock.json"
+]);
+const EXTENSOES_ESTATICAS_BLOQUEADAS = [
+  ".sqlite",
+  ".sqlite-wal",
+  ".sqlite-shm",
+  ".log"
+];
 
 function enviarJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
@@ -164,8 +193,15 @@ async function publicarAposSalvamento(resultado) {
 function enviarArquivoEstatico(req, res, pathname) {
   const caminhoRelativo = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
   const caminhoArquivo = path.resolve(rootDir, caminhoRelativo);
+  const relativoRaiz = path.relative(rootDir, caminhoArquivo);
+  const caminhoNormalizado = relativoRaiz.replace(/\\/g, "/").toLowerCase();
 
-  if (!caminhoArquivo.startsWith(rootDir)) {
+  if (relativoRaiz.startsWith("..") || path.isAbsolute(relativoRaiz)) {
+    enviarJson(res, 403, { success: false, message: "Acesso negado." });
+    return;
+  }
+
+  if (!caminhoEstaticoPermitido(caminhoNormalizado)) {
     enviarJson(res, 403, { success: false, message: "Acesso negado." });
     return;
   }
@@ -183,6 +219,42 @@ function enviarArquivoEstatico(req, res, pathname) {
     });
     res.end(conteudo);
   });
+}
+
+function caminhoEstaticoPermitido(caminhoRelativoNormalizado) {
+  if (!caminhoRelativoNormalizado || caminhoRelativoNormalizado.startsWith("../")) {
+    return false;
+  }
+
+  if (ARQUIVOS_ESTATICOS_BLOQUEADOS.has(caminhoRelativoNormalizado)) {
+    return false;
+  }
+
+  for (const sufixo of EXTENSOES_ESTATICAS_BLOQUEADAS) {
+    if (caminhoRelativoNormalizado.endsWith(sufixo)) {
+      return false;
+    }
+  }
+
+  for (const prefixo of PREFIXOS_ESTATICOS_BLOQUEADOS) {
+    if (caminhoRelativoNormalizado.startsWith(prefixo)) {
+      return false;
+    }
+  }
+
+  if (caminhoRelativoNormalizado.startsWith("backend/services/")) {
+    return CAMINHOS_ESTATICOS_PERMITIDOS.has(caminhoRelativoNormalizado);
+  }
+
+  if (caminhoRelativoNormalizado.startsWith("backend/data/")) {
+    return CAMINHOS_ESTATICOS_PERMITIDOS.has(caminhoRelativoNormalizado);
+  }
+
+  if (CAMINHOS_ESTATICOS_PERMITIDOS.has(caminhoRelativoNormalizado)) {
+    return true;
+  }
+
+  return PREFIXOS_ESTATICOS_PERMITIDOS.some((prefixo) => caminhoRelativoNormalizado.startsWith(prefixo));
 }
 
 function obterUrlsRede(porta) {

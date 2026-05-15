@@ -805,3 +805,13 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: validacoes aprovadas, 11 testes E2E passados, sem alteracoes em services/frontend/dados locais.
 - Risco de regressao: baixo; alteracao limitada ao tratamento de erro no servidor e ao parser de corpo JSON.
 - Rollback: git restore backend/server.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 15:28:27
+- Objetivo: manter acesso do servidor na rede local e restringir entrega de arquivos estaticos sensiveis por allowlist.
+- Confirmacao de host 0.0.0.0: mantido em backend/server.js (sem alteracao da estrategia de bind em rede).
+- Confirmacao de acesso pela rede local: verificada de forma indireta pela manutencao do bind em 0.0.0.0 e teste local 127.0.0.1 (teste em outro computador da rede nao executado nesta sessao).
+- Allowlist de caminhos: index.html; frontend/*; Planilhas/*; backend/services/data-service.js; backend/services/analytics.js; backend/data/aplicacao.json.
+- Arquivos sensiveis bloqueados: backend/data/*.sqlite|*.sqlite-wal|*.sqlite-shm, .env, memoria/*, package.json/package-lock.json, backend/data/backups/*, backend/db/*, backend/scripts/*, node_modules/* e .git/*.
+- Comandos executados: git status --short; npm run validar:syntax; npm run validar:json; npm run validar:agente; git diff --check; git diff -- backend/server.js; validacao manual com node backend/server.js + Invoke-WebRequest para caminhos permitidos e sensiveis.
+- Resultado: validacoes obrigatorias aprovadas (incluindo 11 testes E2E), SPA preservada e bloqueio de arquivos sensiveis confirmado com HTTP 403.
+- Risco de regressao: baixo; risco residual concentrado em novos recursos estaticos fora da allowlist exigirem ajuste explicito no servidor.
+- Rollback: git restore backend/server.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
