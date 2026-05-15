@@ -726,3 +726,12 @@
 - Resultado: validações aprovadas (3 testes E2E passados), com bloqueio de escrita real mantido.
 - Risco de regressão: baixo; principal risco é depender da mensagem de erro 503 esperada no navegador durante fallback controlado.
 - Rollback: git restore frontend/js/core/static-mode.js tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 14:17:11
+- Objetivo: ampliar E2E de fallback API local para JSON publicado em Formalização PROFOR e Parâmetros Mínimos.
+- Testes criados: fallback de formalizacao-profor e fallback de parametros-minimos, mantendo teste estático de orçamento.
+- Rotas interceptadas: **/api/formalizacao-profor e **/api/parametros-minimos (503 controlado).
+- Como o fallback foi validado: navegação por toggleView, view visível, ausência de .app-error-state e body em modo-publicacao-estatica.
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- tests/e2e/app.spec.js.
+- Resultado: validações aprovadas e 5 testes E2E passados, sem escrita real e sem alterações em JSON publicado.
+- Risco de regressão: baixo; principal risco é variação de mensagem de console para 503 em ambientes/browsers diferentes.
+- Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md

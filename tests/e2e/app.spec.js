@@ -66,6 +66,12 @@ async function bloquearEscritasReais(page, { permitir = [] } = {}) {
   });
 }
 
+function filtrarFalhasEsperadasDeFallback(falhasCriticas) {
+  return falhasCriticas.filter((falha) => (
+    !falha.includes("console.error: Failed to load resource: the server responded with a status of 503")
+  ));
+}
+
 test("carrega a SPA e acessa paginas principais sem erro critico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);
@@ -129,9 +135,61 @@ test("modo estático mantém a aplicação somente leitura e bloqueia escrita re
     expect(estado.possuiClasseDisabled).toBe(true);
   }
 
-  const falhasNaoEsperadas = falhasCriticas.filter((falha) => (
-    !falha.includes("console.error: Failed to load resource: the server responded with a status of 503")
-  ));
+  const falhasNaoEsperadas = filtrarFalhasEsperadasDeFallback(falhasCriticas);
+  expect(falhasNaoEsperadas).toEqual([]);
+});
+
+test("formalização PROFOR faz fallback para JSON publicado quando API local falha", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  await page.route("**/api/formalizacao-profor", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "API local de formalização indisponível no teste E2E." })
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("formalizacao"));
+
+  const viewFormalizacao = page.locator("#view-formalizacao-profor");
+  await expect(viewFormalizacao).toBeVisible();
+  await expect(viewFormalizacao.locator(".app-error-state")).toHaveCount(0);
+  await expect(page.locator("body")).toHaveClass(/modo-publicacao-estatica/);
+  await expect(viewFormalizacao.getByText(/Formalização PROFOR|Formalização/i).first()).toBeVisible();
+
+  const falhasNaoEsperadas = filtrarFalhasEsperadasDeFallback(falhasCriticas);
+  expect(falhasNaoEsperadas).toEqual([]);
+});
+
+test("parâmetros mínimos faz fallback para JSON publicado quando API local falha", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  await page.route("**/api/parametros-minimos", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "API local de parâmetros mínimos indisponível no teste E2E." })
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("diagnostico-ouvidorias"));
+
+  const viewDiagnostico = page.locator("#view-diagnostico-ouvidorias");
+  await expect(viewDiagnostico).toBeVisible();
+  await expect(viewDiagnostico.locator(".app-error-state")).toHaveCount(0);
+  await expect(page.locator("body")).toHaveClass(/modo-publicacao-estatica/);
+  await expect(viewDiagnostico.getByText(/Parâmetros Mínimos|Diagnóstico/i).first()).toBeVisible();
+
+  const falhasNaoEsperadas = filtrarFalhasEsperadasDeFallback(falhasCriticas);
   expect(falhasNaoEsperadas).toEqual([]);
 });
 
