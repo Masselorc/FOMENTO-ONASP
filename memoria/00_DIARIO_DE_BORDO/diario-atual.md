@@ -764,3 +764,11 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: 9 testes E2E aprovados com bloqueio global de escrita ativo.
 - Risco de regressão: baixo; cobertura é funcional de navegabilidade, não valida layout pixel-perfect.
 - Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 14:39:49
+- Objetivo: adicionar cobertura E2E mínima de acessibilidade básica sem alterar produção.
+- Critérios cobertos: html lang pt-BR, meta viewport, headings principais, nomes acessíveis de botões-chave, foco por teclado, abertura/fechamento do offcanvas com aria-labelledby, título e navegação nomeada, modal FAF com título e botão salvar, e aria-disabled em modo estático.
+- Testes criados: "estrutura básica de acessibilidade permanece válida" e "modo estático mantém controles de backend com aria-disabled".
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- tests/e2e/app.spec.js.
+- Resultado: 11 testes E2E aprovados, sem escrita real e sem alterações em produção.
+- Risco de regressão: baixo; cobertura é de acessibilidade básica/funcional, não auditoria WCAG completa.
+- Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md

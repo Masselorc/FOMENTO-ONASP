@@ -332,6 +332,92 @@ test("views críticas permanecem navegáveis em tablet e mobile", async ({ page 
   expect(falhasCriticas).toEqual([]);
 });
 
+test("estrutura básica de acessibilidade permanece válida", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+
+  await expect(page.locator("html")).toHaveAttribute("lang", "pt-BR");
+  await expect(page.locator('meta[name="viewport"]')).toHaveAttribute("content", /width=device-width/);
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await expect(page.locator("#loading-overlay .visually-hidden")).toContainText("Carregando");
+
+  await expect(page.getByRole("heading", { name: /Painel de Acompanhamento/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Fomento para Ouvidoria/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Ir para Home|Home/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Detalhamento/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Abrir menu lateral/i })).toBeVisible();
+
+  await page.locator("body").click();
+  for (let i = 0; i < 4; i += 1) {
+    await page.keyboard.press("Tab");
+  }
+  const focoFoiParaElementoFocavel = await page.evaluate(() => {
+    const ativo = document.activeElement;
+    if (!ativo) return false;
+    if (ativo === document.body) return false;
+    const tabIndex = Number(ativo.getAttribute("tabindex"));
+    return !Number.isNaN(tabIndex) || ["BUTTON", "A", "INPUT", "SELECT", "TEXTAREA"].includes(ativo.tagName);
+  });
+  expect(focoFoiParaElementoFocavel).toBe(true);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: /Abrir menu lateral/i }).click();
+  const sidebar = page.locator("#app-sidebar");
+  await expect(sidebar).toBeVisible();
+  await expect(sidebar).toHaveAttribute("aria-labelledby", "app-sidebar-title");
+  await expect(page.locator("#app-sidebar-title")).toHaveText("Painel ONASP");
+  await expect(page.getByRole("navigation", { name: /Navegação principal/i })).toBeVisible();
+  await page.getByRole("button", { name: /Fechar menu/i }).click();
+  await expect(sidebar).toBeHidden();
+
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("faf2021"));
+  const viewFaf = page.locator("#view-faf-2021");
+  await expect(viewFaf).toBeVisible();
+  await expect(viewFaf.locator("[data-faf2021-editar-item]").first()).toBeVisible();
+  await viewFaf.locator("[data-faf2021-editar-item]").first().click();
+  const modalFaf = page.locator("#modalFaf2021Execucao");
+  await expect(modalFaf).toBeVisible();
+  await expect(modalFaf.getByRole("heading", { name: /Editar execução/i })).toBeVisible();
+  await expect(modalFaf.getByRole("button", { name: /Salvar/i })).toBeVisible();
+  await modalFaf.locator('[data-bs-dismiss="modal"]').first().click();
+  await expect(modalFaf).toBeHidden();
+
+  expect(falhasCriticas).toEqual([]);
+});
+
+test("modo estático mantém controles de backend com aria-disabled", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  await page.route("**/api/orcamento-2026", async (route) => {
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({ message: "API local do orçamento indisponível no teste E2E." })
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("orcamento"));
+
+  const viewOrcamento = page.locator("#view-orcamento");
+  await expect(viewOrcamento).toBeVisible();
+  await expect(page.locator("body")).toHaveClass(/modo-publicacao-estatica/);
+
+  const controlesBackend = viewOrcamento.locator('[data-requer-backend="true"]');
+  const totalControles = await controlesBackend.count();
+  expect(totalControles).toBeGreaterThan(0);
+  await expect(controlesBackend.first()).toHaveAttribute("aria-disabled", "true");
+
+  const falhasNaoEsperadas = filtrarFalhasEsperadasDeFallback(falhasCriticas);
+  expect(falhasNaoEsperadas).toEqual([]);
+});
+
 test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);
