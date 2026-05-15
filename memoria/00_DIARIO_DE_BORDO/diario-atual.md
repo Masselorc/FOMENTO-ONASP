@@ -772,3 +772,11 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: 11 testes E2E aprovados, sem escrita real e sem alterações em produção.
 - Risco de regressão: baixo; cobertura é de acessibilidade básica/funcional, não auditoria WCAG completa.
 - Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 14:53:39
+- Objetivo: ampliar validação de sintaxe para arquivos críticos de backend, frontend, scripts, testes e configuração.
+- Arquivos incluídos na validação de sintaxe: backend/server.js; backend/db/{database.js,init-db.js,preparar-banco.js}; backend/services/{auth-service.js,parametros-minimos-service.js,formalizacao-profor-service.js,orcamento-2026-service.js,faf-2021-service.js,historico-service.js,backup-service.js,static-publication-service.js,excel-export-service.js,dashboard-publication-service.js,data-service.js,analytics.js}; frontend/js/{app.js,core/static-mode.js,core/ui-components.js,core/view-errors.js}; scripts/{validar-json-publicados.js,configurar-git-hooks.js,validar-syntax.js}; playwright.config.js; tests/e2e/app.spec.js.
+- Estratégia: script auxiliar scripts/validar-syntax.js chamado por validar:syntax no package.json.
+- Comandos executados: git status --short; npm run validar:syntax; npm run validar:json; npm run validar:agente; git diff --check; git diff -- package.json; git diff -- scripts/validar-syntax.js.
+- Resultado: validação de sintaxe passou para 24 arquivos; validações JSON e agente aprovadas com 11 testes E2E passados.
+- Risco de regressão: baixo; impacto restrito ao pipeline de validação local.
+- Rollback: git restore package.json scripts/validar-syntax.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
