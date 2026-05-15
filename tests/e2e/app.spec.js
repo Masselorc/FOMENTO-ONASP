@@ -292,6 +292,46 @@ test("formalização PROFOR abre fluxo editável sem persistir dados reais", asy
   expect(falhasCriticas).toEqual([]);
 });
 
+test("views críticas permanecem navegáveis em tablet e mobile", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+
+  const viewportsResponsivos = [
+    { nome: "tablet", size: { width: 768, height: 1024 } },
+    { nome: "mobile", size: { width: 390, height: 844 } }
+  ];
+
+  const viewsResponsivasCriticas = [
+    { view: "dashboard", selector: "#view-dashboard" },
+    { view: "orcamento", selector: "#view-orcamento" },
+    { view: "formalizacao", selector: "#view-formalizacao-profor" },
+    { view: "diagnostico-ouvidorias", selector: "#view-diagnostico-ouvidorias" },
+    { view: "faf2021", selector: "#view-faf-2021" },
+    { view: "contatos", selector: "#view-contatos" }
+  ];
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await expect(page.locator("#main-wrapper")).toBeVisible();
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+
+  for (const viewport of viewportsResponsivos) {
+    await page.setViewportSize(viewport.size);
+    await expect(page.locator("body")).toBeVisible();
+    await expect(page.locator(".app-menu-link")).toHaveCount(10);
+
+    for (const pagina of viewsResponsivasCriticas) {
+      await page.evaluate((view) => window.toggleView(view), pagina.view);
+      const view = page.locator(pagina.selector);
+      await expect(view).toBeVisible();
+      await expect(view.locator(".app-error-state")).toHaveCount(0);
+      await expect(page.locator(".modal.show")).toHaveCount(0);
+      await expect(page.locator("#loading-overlay:not(.d-none)")).toHaveCount(0);
+    }
+  }
+
+  expect(falhasCriticas).toEqual([]);
+});
+
 test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);

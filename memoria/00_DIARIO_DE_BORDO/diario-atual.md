@@ -755,3 +755,12 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: 8 testes E2E aprovados, sem persistência de dados e com bloqueio global de escrita ativo.
 - Risco de regressão: baixo; risco residual é variação de disponibilidade de controles editáveis conforme dataset carregado.
 - Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 14:32:53
+- Objetivo: adicionar cobertura E2E mínima de responsividade sem alterar produção.
+- Viewports testados: tablet (768x1024) e mobile (390x844).
+- Views cobertas: dashboard, orcamento, formalizacao, diagnostico-ouvidorias, faf2021, contatos.
+- Critérios usados: view visível, ausência de .app-error-state, body visível, sem modal aberto e sem loading overlay preso.
+- Comandos executados: git status --short; npm run validar:json; npm run validar:syntax; npm run validar:agente; git diff --check; git diff -- tests/e2e/app.spec.js.
+- Resultado: 9 testes E2E aprovados com bloqueio global de escrita ativo.
+- Risco de regressão: baixo; cobertura é funcional de navegabilidade, não valida layout pixel-perfect.
+- Rollback: git restore tests/e2e/app.spec.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
