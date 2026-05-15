@@ -823,3 +823,12 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: validacoes aprovadas (incluindo 11 testes E2E) e alteracoes restritas aos dois services autorizados.
 - Risco de regressao: baixo; risco residual em payload legado com descricao vazia em novos itens do orçamento.
 - Rollback: git restore backend/services/orcamento-2026-service.js backend/services/parametros-minimos-service.js memoria/00_DIARIO_DE_BORDO/diario-atual.md
+- Data: 2026-05-15 16:01:49
+- Objetivo: adicionar testes service-level para travar contratos de validacao sem senha real e sem persistencia.
+- Testes service-level criados: tests/services/validacoes-services.test.js com node:test + assert nativo.
+- Funcoes cobertas: salvarOrcamento2026, criarProcessoVinculadoOrcamento2026, alocarSaldoOrcamento2026, salvarParametrosMinimos, reverterHistoricoParametrosMinimos.
+- Lacunas mantidas por seguranca: validacoes internas de payload (monetario/status/UF/changes/novos/inativos) nao foram exercitadas com senha valida para evitar qualquer risco de escrita; etapa futura deve usar isolamento/mocking.
+- Comandos executados: git status --short; npm run validar:syntax; npm run validar:services; npm run validar:json; npm run validar:agente; git diff --check; git diff -- package.json; git diff -- scripts/validar-syntax.js; git diff -- tests/services/validacoes-services.test.js.
+- Resultado: validacoes aprovadas; validar:services com 5 testes passados; Playwright com 11 testes passados.
+- Risco de regressao: baixo; principal risco residual e cobertura parcial de validacao interna por restricao de nao usar senha real.
+- Rollback: git restore package.json scripts/validar-syntax.js memoria/00_DIARIO_DE_BORDO/diario-atual.md && git rm --cached tests/services/validacoes-services.test.js

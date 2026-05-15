@@ -8,7 +8,8 @@
     "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",
     "validar:syntax": "node scripts/validar-syntax.js",
-    "validar:agente": "npm run validar:json && npm run validar:syntax && npx playwright test"
+    "validar:services": "node --test tests/services/*.test.js",
+    "validar:agente": "npm run validar:json && npm run validar:syntax && npm run validar:services && npx playwright test"
   },
   "dependencies": {
     "better-sqlite3": "^12.9.0",

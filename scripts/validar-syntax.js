@@ -24,7 +24,8 @@ const ARQUIVOS = [
   "scripts/validar-json-publicados.js",
   "scripts/configurar-git-hooks.js",
   "playwright.config.js",
-  "tests/e2e/app.spec.js"
+  "tests/e2e/app.spec.js",
+  "tests/services/validacoes-services.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {
