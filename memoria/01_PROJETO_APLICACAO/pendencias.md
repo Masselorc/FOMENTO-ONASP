@@ -27,7 +27,6 @@ Pendências documentais obrigatórias deste ciclo: nenhuma.
 Pendências futuras não críticas:
 
 - Documentar funcionalidades críticas a partir de MD próprio, em ordem sugerida:
-  - orçamento 2026
   - formalização PROFOR
   - publicação estática
   - dashboard geral
@@ -88,6 +87,7 @@ Quando houver novo item, registrar a página, rota, serviço ou arquivo afetado,
 - `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md` foi criado como estrutura inicial da documentação técnica por funcionalidade.
 - `memoria/01_PROJETO_APLICACAO/funcionalidades/_modelo-funcionalidade.md` foi criado como modelo padrão para documentos de funcionalidade.
 - `memoria/01_PROJETO_APLICACAO/funcionalidades/parametros-minimos.md` foi criado como documentação técnica da funcionalidade Parâmetros Mínimos.
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/orcamento-2026.md` foi criado como documentação técnica da funcionalidade Orçamento 2026.
 - Etapa 7 (13/05/2026): botão e modal "Alocar saldo" implementados no frontend do Orçamento 2026 — `frontend/js/app.js` e `frontend/css/app.css`; consumo da rota `POST /api/orcamento-2026/saldos/alocar` e `GET /api/orcamento-2026/movimentacoes`; sem alteração de backend, banco ou JSONs publicados.
 - Etapa 8 (13/05/2026): helper `calcularResumoSaldoVisualOrcamento` criado; envelope visual ajustado e detalhe discreto (Orig./Rec./Ced./Vinc.) exibidos na coluna "Valor previsto" do pai e filho; botão "Alocar saldo" oculto quando saldo transferível estimado ≤ 0; modal atualizado para usar helper; sem alteração de backend, banco ou JSONs publicados.
 

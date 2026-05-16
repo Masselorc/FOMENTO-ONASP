@@ -875,6 +875,21 @@ oute.fetch() + mutação em memória do payload retornado.
 - Risco de regressao: baixo; principal risco residual e cobertura parcial de validacao interna por restricao de nao usar senha real.
 - Rollback: git restore package.json scripts/validar-syntax.js memoria/00_DIARIO_DE_BORDO/diario-atual.md && git rm --cached tests/services/validacoes-services.test.js
 
+## 16/05/2026 - Documentação técnica da funcionalidade Orçamento 2026
+
+- Branch atual: `main`.
+- Tarefa executada: criação do documento técnico `memoria/01_PROJETO_APLICACAO/funcionalidades/orcamento-2026.md`.
+- Arquivos lidos: `AGENTS.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/_modelo-funcionalidade.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/parametros-minimos.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md`, `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md`, `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `memoria/09_ERROS_E_CORRECOES/historico-erros.md`, `memoria/10_TESTES/checklist-validacao.md`, `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`, `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`.
+- Arquivos de código inspecionados: `backend/server.js`, `backend/services/orcamento-2026-service.js`, `backend/db/init-db.js`, `backend/db/preparar-banco.js`, `backend/services/data-service.js`, `backend/services/static-publication-service.js`, `backend/services/excel-export-service.js`, `frontend/js/app.js`, `frontend/css/app.css`, `tests/e2e/app.spec.js`, `tests/services/validacoes-services.test.js`, `scripts/validar-json-publicados.js`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/funcionalidades/orcamento-2026.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criada documentação técnica da funcionalidade Orçamento 2026, com especificação funcional, planejamento técnico, arquivos relacionados, fluxo de dados, validações, riscos, testes e rollback.
+- Decisão registrada: o documento foi preenchido com base em inspeção real da memória e dos arquivos de código relacionados; lacunas não confirmadas foram marcadas como `Não identificado ainda.` ou `Não aplicável.`.
+- Validações executadas: `git status --short`; buscas `rg` pontuais por `orcamento-2026`, `saldo`, `movimentacoes`, `classificacao_gerencial`, `publicacao`, `json publicado`, `Alocar saldo` e `Carregando Orçamento 2026`; leituras pontuais com `Get-Content`; criação do arquivo com `New-Item`; aplicação do patch documental.
+- Resultado: `orcamento-2026.md` criado; demais funcionalidades críticas permanecem para etapas posteriores.
+- Pendências: documentar `formalizacao-profor.md`, `publicacao-estatica.md` e `dashboard-geral.md`.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
 ## 16/05/2026 - Documentação técnica da funcionalidade Parâmetros Mínimos
 
 - Branch atual: `main`.
