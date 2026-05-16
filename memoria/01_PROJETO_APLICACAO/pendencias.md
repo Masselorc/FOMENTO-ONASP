@@ -26,6 +26,16 @@ Pendências documentais obrigatórias deste ciclo: nenhuma.
 
 Pendências futuras não críticas:
 
+- Criar `memoria/00_CONTEXTO_AGENTES/entrada-agente.md` como porta de entrada rápida para agentes.
+- Criar `memoria/01_PROJETO_APLICACAO/funcionalidades/` para centralizar memória técnica por funcionalidade.
+- Criar `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md` para roteamento interno das funcionalidades.
+- Criar `memoria/01_PROJETO_APLICACAO/funcionalidades/_modelo-funcionalidade.md` como template padrão.
+- Documentar funcionalidades críticas a partir de MD próprio, em ordem sugerida:
+  - parâmetros mínimos
+  - orçamento 2026
+  - formalização PROFOR
+  - publicação estática
+  - dashboard geral
 - Preencher ou consolidar `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md` com a arquitetura real do projeto.
 - Preencher ou consolidar `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md` com decisões já evidenciadas.
 - Preencher ou consolidar `memoria/08_ROTAS_BANCO_API/fluxo-dados.md` com o fluxo entre planilhas, banco, API, frontend e publicação estática.

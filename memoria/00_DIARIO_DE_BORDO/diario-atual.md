@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 16/05/2026 - Entrada rápida para agentes
+
+- Branch atual: `main`.
+- Tarefa executada: criação da camada inicial de entrada rápida para agentes em `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Arquivos alterados: `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criada orientação de leitura mínima para agentes, com classificação por tipo de tarefa, roteiro mínimo, cautelas operacionais e política de economia de tokens.
+- Decisão registrada: a memória passa a ter uma porta de entrada rápida para agentes, preservando a camada documental já consolidada.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff --check`.
+- Resultado: entrada rápida criada; integração ampla em `AGENTS.md`, `memoria/INDEX.md` e `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md` fica para etapa posterior.
+- Pendências: criar a pasta `memoria/01_PROJETO_APLICACAO/funcionalidades/`, seu `README.md`, o modelo técnico e os arquivos por funcionalidade crítica.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` após commit publicado.
+
 ## 12/05/2026
 
 - Ajustada a estratégia de versionamento da memória do projeto.
