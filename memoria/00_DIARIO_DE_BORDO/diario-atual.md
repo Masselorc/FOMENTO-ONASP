@@ -874,3 +874,18 @@ oute.fetch() + mutação em memória do payload retornado.
 - Resultado: validacoes aprovadas; validar:services com 5 testes passados; Playwright com 11 testes passados.
 - Risco de regressao: baixo; principal risco residual e cobertura parcial de validacao interna por restricao de nao usar senha real.
 - Rollback: git restore package.json scripts/validar-syntax.js memoria/00_DIARIO_DE_BORDO/diario-atual.md && git rm --cached tests/services/validacoes-services.test.js
+
+## 16/05/2026 - Documentação técnica da funcionalidade Parâmetros Mínimos
+
+- Branch atual: `main`.
+- Tarefa executada: criação do documento técnico `memoria/01_PROJETO_APLICACAO/funcionalidades/parametros-minimos.md`.
+- Arquivos lidos: `AGENTS.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/_modelo-funcionalidade.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md`, `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `memoria/09_ERROS_E_CORRECOES/historico-erros.md`, `memoria/10_TESTES/checklist-validacao.md`, `memoria/06_UFS_OUVIDORIAS/checklist-parametros-minimos.md`, `memoria/06_UFS_OUVIDORIAS/INDEX_UFS.md`, `memoria/03_NORMATIVOS/index-normativos.md`, `memoria/05_PROFOR_CONVENIOS/visao-geral-profor.md`.
+- Arquivos de código inspecionados: `backend/server.js`, `backend/services/parametros-minimos-service.js`, `backend/services/parametros-minimos-config.js`, `backend/services/data-service.js`, `backend/services/excel-export-service.js`, `backend/services/static-publication-service.js`, `backend/db/init-db.js`, `backend/db/preparar-banco.js`, `backend/scripts/importar-parametros-minimos.js`, `frontend/js/app.js`, `frontend/js/core/view-errors.js`, `tests/e2e/app.spec.js`, `tests/services/validacoes-services.test.js`, `scripts/validar-json-publicados.js`, `frontend/data/publicados/parametros-minimos.json`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/funcionalidades/parametros-minimos.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criada documentação técnica da funcionalidade Parâmetros Mínimos com Spec, Plan, Research, fluxo de dados, estados de interface, validações, segurança, performance, tarefas, testes e rollback.
+- Decisão registrada: o documento foi preenchido apenas com base em evidência real da memória e do código; lacunas não confirmadas foram marcadas como `Não identificado ainda.` ou `Não aplicável.`.
+- Validações executadas: `New-Item -ItemType File -Force -Path "memoria\01_PROJETO_APLICACAO\funcionalidades\parametros-minimos.md"`; `git status --short`; buscas `rg` pontuais por `parametros-minimos`, `diagnostico-ouvidorias`, `IN 75/2026`, `checklist-parametros-minimos` e `parametrosMinimos`; leituras pontuais com `Get-Content`; aplicação do patch documental.
+- Resultado: `parametros-minimos.md` criado; pendência da documentação de Parâmetros Mínimos foi saneada; demais funcionalidades críticas permanecem para etapas posteriores.
+- Pendências: documentar `orcamento-2026.md`, `formalizacao-profor.md`, `publicacao-estatica.md` e `dashboard-geral.md`.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
