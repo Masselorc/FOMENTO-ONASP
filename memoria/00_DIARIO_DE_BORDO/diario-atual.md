@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 16/05/2026 - Estrutura inicial de funcionalidades
+
+- Branch atual: `main`.
+- Tarefa executada: criação da pasta de documentação técnica por funcionalidade e do arquivo `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md`.
+- Arquivos lidos: `AGENTS.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criada a estrutura inicial para documentação técnica por funcionalidade, com critérios de criação, uso por agentes, relação com SDD adaptado e regras de atualização.
+- Decisão registrada: os arquivos de funcionalidade serão criados um por vez, começando pelo modelo técnico e depois pelas funcionalidades críticas.
+- Validações executadas: `git status --short`, `git diff --name-only`.
+- Resultado: pasta `funcionalidades/` criada com README; modelo e documentos de funcionalidades permanecem para etapas posteriores.
+- Pendências: criar `_modelo-funcionalidade.md` e documentar funcionalidades críticas.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
 ## 16/05/2026 - Entrada rápida para agentes
 
 - Branch atual: `main`.
