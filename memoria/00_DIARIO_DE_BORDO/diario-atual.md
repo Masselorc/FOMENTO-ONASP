@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 16/05/2026 - Modelo técnico de funcionalidade
+
+- Branch atual: `main`.
+- Tarefa executada: criação do modelo padrão `memoria/01_PROJETO_APLICACAO/funcionalidades/_modelo-funcionalidade.md`.
+- Arquivos lidos: `AGENTS.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md`, `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/regras-do-projeto.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md`, `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `memoria/09_ERROS_E_CORRECOES/historico-erros.md`, `memoria/10_TESTES/checklist-validacao.md`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/funcionalidades/_modelo-funcionalidade.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criado modelo técnico reutilizável para documentação de funcionalidades críticas, com estrutura de Spec-Driven Development adaptado, mapeamento de arquivos, rotas, banco, JSONs, fluxo de dados, riscos, testes e rollback.
+- Decisão registrada: os próximos documentos de funcionalidades devem usar este modelo e ser preenchidos apenas com base em inspeção real do código.
+- Validações executadas: `git status --short`, `git diff --name-only`, `git diff --check`.
+- Resultado: modelo criado; documentação das funcionalidades críticas permanece para etapas posteriores.
+- Pendências: documentar `parametros-minimos.md`, `orcamento-2026.md`, `formalizacao-profor.md`, `publicacao-estatica.md` e `dashboard-geral.md`.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
 ## 16/05/2026 - Estrutura inicial de funcionalidades
 
 - Branch atual: `main`.
