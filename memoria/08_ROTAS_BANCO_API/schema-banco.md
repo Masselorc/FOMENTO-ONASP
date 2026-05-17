@@ -271,6 +271,46 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 **Observações de manutenção:** esta tabela não tem foreign keys explícitas no SQL; as validações de origem, destino, categoria e saldo ficam no serviço.
 
+### profor_convenios_monitorados
+
+**Finalidade aparente:** armazenar a carteira de convênios PROFOR 2022 acompanhados pela aplicação. Esta tabela é a fonte local da lista de convênios monitorados. O DETRU e o Transferegov público serão usados em etapas futuras apenas para atualizar e enriquecer dados desses convênios — não para definir quais convênios são acompanhados.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelaConveniosMonitoradosProfor2022()`.
+
+**Serviços relacionados:** nenhum serviço criado nesta etapa. Serviço futuro previsto: `backend/services/profor-2022-service.js` (não existe ainda).
+
+**Rotas relacionadas:** nenhuma rota criada nesta etapa. Rotas futuras previstas em `backend/server.js` (não existem ainda).
+
+**Uso futuro:** a tabela alimentará a página PROFOR 2022, substituindo a leitura atual da aba `Geral` da planilha. A ativação deve ocorrer por etapas com fallback para a origem atual.
+
+**Dados populados nesta etapa:** nenhum. A tabela foi criada vazia.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `numero_convenio TEXT NOT NULL`, `UNIQUE (numero_convenio, ano)`.
+
+**Colunas confirmadas:**
+
+| Coluna | Tipo declarado | Origem | Observações |
+|---|---:|---|---|
+| `id` | `INTEGER` | criação inicial | `PRIMARY KEY AUTOINCREMENT`. |
+| `numero_convenio` | `TEXT` | criação inicial | `NOT NULL`; chave operacional principal; compõe `UNIQUE (numero_convenio, ano)`. |
+| `ano` | `TEXT` | criação inicial | compõe `UNIQUE (numero_convenio, ano)`; pode ser nulo quando não informado. |
+| `uf` | `TEXT` | criação inicial | UF do convenente; não obrigatório no schema, mas esperado para filtros futuros. |
+| `instrumento` | `TEXT DEFAULT 'Convênio'` | criação inicial | tipo de instrumento; default `'Convênio'`. |
+| `programa_origem` | `TEXT DEFAULT 'PROFOR 2022'` | criação inicial | origem do programa; default `'PROFOR 2022'`. |
+| `ativo` | `INTEGER DEFAULT 1` | criação inicial | inativação lógica; `1` ativo, `0` inativo. Convênios removidos do acompanhamento devem ser inativados, não excluídos. |
+| `id_convenio_transferegov` | `TEXT` | criação inicial | identificador futuro para consulta no Transferegov público. |
+| `observacao` | `TEXT` | criação inicial | campo livre de observação operacional. |
+| `criado_em` | `TEXT` | criação inicial | timestamp de inserção do registro. |
+| `atualizado_em` | `TEXT` | criação inicial | timestamp da última atualização. |
+
+**Campos adicionados por evolução incremental:** não há; a tabela é criada completa por `CREATE TABLE IF NOT EXISTS`.
+
+**Riscos de alteração:** alterar `UNIQUE (numero_convenio, ano)` quebra a restrição de unicidade e pode permitir duplicidade na carteira. Remover `numero_convenio NOT NULL` invalida a chave operacional. Alterar `ativo` pode interferir em inativações lógicas futuras. Antes de qualquer migration destrutiva, criar backup do banco.
+
+**Observações de manutenção:** a exclusão física de registros não é recomendada; usar `ativo = 0` para remover convênio do acompanhamento. O número do convênio é a chave de cruzamento com DETRU e Transferegov; deve ser tratado como string numérica.
+
 ### historico_alteracoes
 
 **Finalidade aparente:** registrar alterações realizadas em páginas editáveis, preservando rastreabilidade para consulta e, no caso de Parâmetros Mínimos, reversão.
@@ -334,6 +374,7 @@ Riscos:
 | `orcamento_2026` | `orcamento-2026-service.js` | `POST /api/orcamento-2026/salvar`, `POST /api/orcamento-2026/processos-vinculados/criar` | `orcamento-2026.json` via `publicarDadosEstaticos()`. |
 | `orcamento_2026_movimentacoes` | `orcamento-2026-service.js` | `POST /api/orcamento-2026/saldos/alocar` | não há publicação estática específica confirmada para movimentações no estado atual. |
 | `historico_alteracoes` | `historico-service.js` | escritas de Parâmetros Mínimos, Formalização PROFOR e Orçamento 2026; reversão de Parâmetros Mínimos | não há JSON público específico de histórico confirmado. |
+| `profor_convenios_monitorados` | nenhum serviço criado nesta etapa | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
 
 Relações operacionais confirmadas:
 

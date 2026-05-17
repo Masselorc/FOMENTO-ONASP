@@ -67,6 +67,7 @@ function inicializarBanco() {
   garantirColuna("orcamento_2026", "classificacao_gerencial", "TEXT DEFAULT 'NAO_APARELHAMENTO'");
   garantirColunasOrcamentoRastreio();
   garantirTabelaMovimentacoesOrcamento2026();
+  garantirTabelaConveniosMonitoradosProfor2022();
 }
 
 function garantirColunasOrcamentoRastreio() {
@@ -146,6 +147,25 @@ function garantirTabelaMovimentacoesOrcamento2026() {
       criado_em TEXT NOT NULL,
       criado_por TEXT,
       ativo INTEGER DEFAULT 1
+    );
+  `);
+}
+
+function garantirTabelaConveniosMonitoradosProfor2022() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS profor_convenios_monitorados (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      numero_convenio TEXT NOT NULL,
+      ano TEXT,
+      uf TEXT,
+      instrumento TEXT DEFAULT 'Convênio',
+      programa_origem TEXT DEFAULT 'PROFOR 2022',
+      ativo INTEGER DEFAULT 1,
+      id_convenio_transferegov TEXT,
+      observacao TEXT,
+      criado_em TEXT,
+      atualizado_em TEXT,
+      UNIQUE (numero_convenio, ano)
     );
   `);
 }

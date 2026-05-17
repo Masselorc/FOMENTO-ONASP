@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 3: criação da tabela profor_convenios_monitorados
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `backend/db/init-db.js`.
+- Arquivos alterados: `backend/db/init-db.js`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criada a tabela `profor_convenios_monitorados` em `backend/db/init-db.js` por migration aditiva (`CREATE TABLE IF NOT EXISTS`) dentro da função `garantirTabelaConveniosMonitoradosProfor2022()`, chamada ao final de `inicializarBanco()`. Nenhuma tabela existente foi alterada. Nenhum dado foi populado. Schema documentado em `schema-banco.md`.
+- Validações executadas: `node --check backend/db/init-db.js`, `npm run init-db`, confirmação da tabela e colunas por `PRAGMA table_info`, `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, `git diff --name-only`, `git status --short`.
+- Resultado: tabela criada com todas as colunas e defaults esperados; `npm run init-db` executou sem erro; JSONs publicados válidos; 25 arquivos JS validados sem erro.
+- Risco de regressão: baixo; migration aditiva isolada; nenhuma tabela ou serviço existente foi alterado.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` revertem o código; banco deve ser restaurado por backup ou recriado com `npm run init-db` após revert.
+
 ## 17/05/2026 - Documentação técnica da funcionalidade PROFOR 2022
 
 - Branch atual: `main`.
