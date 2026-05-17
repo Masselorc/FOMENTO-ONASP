@@ -462,25 +462,24 @@ git push origin HEAD
 - Interface da Carteira Monitorada criada na página PROFOR 2022 (Etapa 7). Seção "Carteira Monitorada" adicionada ao final da view, abaixo da tabela financeira existente. Lista convênios da tabela `profor_convenios_monitorados` via `GET /api/profor-2022/convenios-monitorados`. Suporte a "Ver inativos" (checkbox). Modal para criar e editar (botão "Novo" + ícone de lápis por linha). Inativação por botão por linha (ícone de proibido). Modo estático mostra aviso de somente leitura e oculta botões de escrita. Validação mínima no frontend: número obrigatório e apenas dígitos, ano com 4 dígitos, UF com 2 caracteres. Testado ao vivo: criação, edição, inativação e listagem com inativos — todos corretos.
 - Ajuste visual da Carteira Monitorada (Etapa 7.1). A seção "Carteira Monitorada" é área administrativa local — **não deve ficar aberta por padrão** para evitar duplicação visual com a tabela principal de convênios. Alterações: painel colapsado por padrão (`hidden`); botão "Gerenciar carteira" alterna visibilidade com ícone chevron; carregamento lazy na primeira abertura; checkbox "Ver inativos" e botão "Novo" movidos para dentro do painel. Mojibake `Conv�nio` corrigido pontualmente na renderização com `normalizarInstrumento()`. Registros fictícios de teste (`999999`, `888888`, `777777`) todos inativados localmente — não são dados reais e não devem aparecer como ativos.
 - Leitor local do DETRU criado em `backend/services/profor-2022/detru-convenio-reader.js` (Etapa 8). Aceita caminho local para `siconv_convenio.csv.zip`. Funções exportadas: `localizarCsvNoZip`, `lerCsvDetruConvenio`, `normalizarCabecalhoDetru`, `parseCsvLinha`, `detectarSeparadorCsv`, `listarColunasDetruConvenio`. Localiza o primeiro CSV compatível (`siconv_convenio*.csv`) dentro do ZIP com fallback para qualquer CSV. Lê conteúdo como `latin1` (encoding frequente em arquivos do governo). Detecta separador (`;` ou `,`). Retorna array de objetos com chaves normalizadas (maiúsculas, underscores). Erros claros para arquivo ausente, extensão inválida, ZIP sem CSV e CSV vazio. **Não integra ainda com a carteira do banco. Não substitui a aba Geral. Não popula dados. Não altera rotas nem frontend.** Dependência `adm-zip` adicionada (v0.5.17, puro JavaScript, síncrono) — Node.js não tem suporte nativo a ZIP; `zlib` cobre DEFLATE/GZIP; `xlsx` lê ZIPs de planilha, não ZIP genérico. Arquivo DETRU não versionado.
+- Mapeador DETRU criado em `backend/services/profor-2022/detru-convenio-mapper.js` (Etapa 9). Recebe objetos já lidos pelo leitor (Etapa 8) e os transforma no modelo interno. Funções exportadas: `converterNumeroDetru`, `limparTextoDetru`, `obterPrimeiraColunaDisponivel`, `mapearConvenioDetruParaProfor`, `mapearConveniosDetruParaProfor`, `validarColunasObrigatoriasDetru`. Mapeamento obrigatório: `NR_CONVENIO → numeroConvenio`, `ANO → ano`, `NR_PROCESSO → processoSei`, `DIA_FIM_VIGENC_CONV → vencimento`, `QTD_TA → quantidadeTa`, `VL_GLOBAL_CONV → valorGlobal`, `VL_REPASSE_CONV → valorRepasse`, `VL_CONTRAPARTIDA_CONV → valorContrapartida`, `VL_DESEMBOLSADO_CONV → repasseDesembolsado`, `VL_RENDIMENTO_APLICACAO → rendimentoAprovado`, `VL_INGRESSO_CONTRAPARTIDA → contrapartidaIntegralizada`. Colunas de UF mapeadas se presentes (`UF`, `SG_UF`, `UF_PROPONENTE`, `SG_UF_PROPONENTE`), null caso ausentes. Valores monetários convertidos de formato BR (`1.000,50`) para Number com 2 casas decimais. `saldoRendimentosAtual` e campos calculados **não mapeados** nesta etapa. Campo `fonte: "DETRU/siconv_convenio.csv.zip"` sempre presente. **Diretriz arquitetural:** o ZIP é grande e não deve ser carregado pela página. Fluxo futuro previsto: atualização diária backend → leitura do ZIP → filtro pelos convênios monitorados → mapeamento → snapshot/cache pequeno → páginas consomem somente o cache. **Sem integração com banco, rotas ou frontend nesta etapa.**
 
 ### 10.2. Próximas etapas
 
-1. Criar mapeador DETRU (campos `NR_CONVENIO`, `ANO`, `NR_PROCESSO`, etc. → modelo interno).
-7. Criar mapeador DETRU.
-8. Cruzar carteira local com DETRU.
-9. Criar cliente público do Transferegov.
-10. Capturar saldo atual de rendimentos.
-11. Criar cache local online.
-12. Criar cálculos internos.
-13. Ajustar filtro do plano por UF, número e ano.
-14. Criar compositor consolidado.
-15. Criar comparador entre origem antiga e nova.
-16. Criar flag `planilha`/`banco`.
-17. Integrar nova origem no `data-service.js`.
-18. Ajustar publicação estática.
-19. Validar divergências.
-20. Ativar origem nova.
-21. Remover dependência obrigatória da aba `Geral`.
+1. Cruzar carteira local com DETRU (filtrar ZIP pelos convênios monitorados da tabela SQLite).
+2. Criar cliente público do Transferegov para saldo de rendimentos.
+3. Capturar saldo atual de rendimentos.
+4. Criar cache/snapshot local (`profor_convenios_cache_online`).
+5. Criar cálculos internos por área/natureza.
+6. Ajustar filtro do plano por UF, número e ano.
+7. Criar compositor consolidado (objeto PROFOR 2022).
+8. Criar comparador entre origem antiga e nova.
+9. Criar flag `planilha`/`banco`.
+10. Integrar nova origem no `data-service.js`.
+11. Ajustar publicação estática.
+12. Validar divergências.
+13. Ativar origem nova.
+14. Remover dependência obrigatória da aba `Geral`.
 
 ### 10.3. Fase futura
 
@@ -508,3 +507,4 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Etapa 7: interface da carteira | Seção "Carteira Monitorada" adicionada ao final da página PROFOR 2022. CRUD completo via API local; modal de criar/editar; inativação por linha; modo estático somente leitura. |
 | 17/05/2026 | Etapa 7.1: ajuste visual | Carteira colapsada por padrão; botão "Gerenciar carteira" com toggle; lazy load; mojibake corrigido pontualmente; registros fictícios saneados (888888 inativado localmente). |
 | 17/05/2026 | Etapa 8: leitor DETRU | `backend/services/profor-2022/detru-convenio-reader.js` criado. Lê `siconv_convenio.csv.zip`, retorna array de objetos. Sem integração com banco, rotas ou frontend. Dependência `adm-zip` adicionada. |
+| 17/05/2026 | Etapa 9: mapeador DETRU | `backend/services/profor-2022/detru-convenio-mapper.js` criado. Transforma linha DETRU em objeto parcial do modelo interno. Sem banco, rotas ou frontend. Lista de próximas etapas corrigida e renumerada. |

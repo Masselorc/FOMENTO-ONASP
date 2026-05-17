@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 9: mapeador DETRU → modelo interno PROFOR 2022
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `backend/services/profor-2022/detru-convenio-reader.js`, `backend/services/profor-2022/convenios-monitorados-service.js`, `backend/services/data-service.js` (campos do modelo interno).
+- Arquivos criados: `backend/services/profor-2022/detru-convenio-mapper.js`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` (Etapa 9 registrada; lista de próximas etapas corrigida e renumerada — havia duplicação do item "Criar mapeador DETRU"), `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: Criado `backend/services/profor-2022/detru-convenio-mapper.js` com 6 funções exportadas: `converterNumeroDetru`, `limparTextoDetru`, `obterPrimeiraColunaDisponivel`, `mapearConvenioDetruParaProfor`, `mapearConveniosDetruParaProfor`, `validarColunasObrigatoriasDetru`. Mapeamento completo das 11 colunas obrigatórias DETRU → camelCase interno. Valores monetários convertidos de formato BR (`1.000,50`) para Number com arredondamento em 2 casas. UF mapeada apenas se coluna presente (`UF`, `SG_UF`, `UF_PROPONENTE`, `SG_UF_PROPONENTE`), null caso ausente — sem invenção de UF. `saldoRendimentosAtual` e campos calculados não mapeados. Campo `fonte` sempre presente. Sem banco, rotas, frontend ou JSONs publicados alterados. Sem nova dependência. Arquivo DETRU não versionado.
+- Diretriz arquitetural registrada: `siconv_convenio.csv.zip` é grande e não deve ser processado na página. Fluxo futuro: atualização diária backend → leitura ZIP → filtro pelos convênios monitorados → mapeamento → snapshot/cache pequeno → páginas consomem somente o cache.
+- Ajuste documental: numeração residual/duplicada da lista "Próximas etapas" corrigida e renumerada de 1 a 14 (era items 1 e 7-21 com duplicação).
+- Teste funcional: linha fictícia mapeada em memória — todos os tipos e valores corretos (`numeroConvenio` string, monetários Number arredondado, `quantidadeTa` inteiro, `uf` null sem coluna, `saldoRendimentosAtual` ausente, `fonte` correto). Validação de colunas: completo → ok=true; faltando colunas → ok=false com lista de ausentes.
+- Validações executadas: `node --check` (OK), `node -e` com testes funcionais (OK), `npm run validar:json` (OK), `npm run validar:syntax` (OK, 25 arquivos), `git diff --check` (limpo).
+- Risco de regressão: nulo — serviço novo isolado, sem chamadores existentes.
+- Rollback: `git revert <hash>`.
+
 ## 17/05/2026 - Etapa 8: leitor local do siconv_convenio.csv.zip (DETRU)
 
 - Branch atual: `main`.
