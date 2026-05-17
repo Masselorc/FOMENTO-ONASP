@@ -2088,6 +2088,21 @@ async function carregarLogoParaPDF() {
                 abrirDetalheConvenioProfor(row.dataset.proforUf);
             });
 
+            document.getElementById('btnToggleCarteiraMonitorada')?.addEventListener('click', () => {
+                const painel = document.getElementById('profor-carteira-painel');
+                const btn = document.getElementById('btnToggleCarteiraMonitorada');
+                if (!painel || !btn) return;
+                const abrindo = painel.hidden;
+                painel.hidden = !abrindo;
+                btn.setAttribute('aria-expanded', String(abrindo));
+                const icon = btn.querySelector('i');
+                if (icon) icon.className = abrindo ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                if (abrindo && !painel.dataset.carregada) {
+                    painel.dataset.carregada = '1';
+                    const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
+                    carregarCarteiraMonitoradaProfor2022(incluirInativos);
+                }
+            });
             document.getElementById('carteiraIncluirInativos')?.addEventListener('change', (e) => {
                 carregarCarteiraMonitoradaProfor2022(e.target.checked);
             });
@@ -2141,12 +2156,14 @@ async function carregarLogoParaPDF() {
                 });
             }
 
+            const normalizarInstrumento = (v) => (v || '').replace(/Conv�nio/gi, 'Conv\xEAnio');
+
             const linhas = lista.map((c) => `
                 <tr class="${c.ativo === 0 ? 'text-muted' : ''}">
                     <td class="fw-medium">${escapeHtml(c.numeroConvenio)}</td>
                     <td class="text-center">${escapeHtml(c.ano || '—')}</td>
                     <td class="text-center">${escapeHtml(c.uf || '—')}</td>
-                    <td>${escapeHtml(c.instrumento || '—')}</td>
+                    <td>${escapeHtml(normalizarInstrumento(c.instrumento) || '—')}</td>
                     <td class="text-center">${c.ativo !== 0
                         ? '<span class="badge bg-success-subtle text-success-emphasis">Ativo</span>'
                         : '<span class="badge bg-secondary-subtle text-secondary-emphasis">Inativo</span>'}</td>
@@ -2502,26 +2519,32 @@ async function carregarLogoParaPDF() {
                             <h2>Carteira Monitorada</h2>
                         </div>
                         <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-text" id="btnToggleCarteiraMonitorada"
+                                aria-expanded="false" aria-controls="profor-carteira-painel">
+                                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                                <span>Gerenciar carteira</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="profor-carteira-painel" hidden>
+                        <div class="d-flex flex-wrap align-items-center gap-2 px-3 py-2 border-top">
                             <label class="form-check form-check-inline mb-0">
                                 <input class="form-check-input" type="checkbox" id="carteiraIncluirInativos">
                                 <span class="form-check-label small">Ver inativos</span>
                             </label>
                             ${!estaEmModoPublicacaoEstatica() ? `
-                            <button type="button" class="btn btn-sm btn-primary btn-icon-text" id="btnNovoConvenioMonitorado">
+                            <button type="button" class="btn btn-sm btn-primary btn-icon-text ms-auto" id="btnNovoConvenioMonitorado">
                                 <i class="fas fa-circle-plus" aria-hidden="true"></i>
                                 <span>Novo</span>
                             </button>` : ''}
                         </div>
-                    </div>
-                    <div id="profor-carteira-status">
-                        <div class="text-center text-muted py-3 small"><i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Carregando...</div>
+                        <div id="profor-carteira-status"></div>
                     </div>
                 </section>
             `;
 
             registrarEventosProfor2022(dadosProfor);
             atualizarTabelaProfor2022(dadosProfor);
-            carregarCarteiraMonitoradaProfor2022();
         }
 
         function obterAreasPlanoProfor(convenio) {

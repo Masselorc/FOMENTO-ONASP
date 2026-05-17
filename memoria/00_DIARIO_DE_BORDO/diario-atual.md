@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 7.1: ajuste visual da Carteira Monitorada PROFOR 2022
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `frontend/js/app.js`.
+- Arquivos alterados: `frontend/js/app.js`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`. Banco local modificado diretamente (não versionado).
+- Resumo: A seção "Carteira Monitorada" foi convertida de sempre visível para colapsada por padrão. Adicionado botão "Gerenciar carteira" com ícone chevron que alterna visibilidade do painel via atributo `hidden`. O painel interno agrupa o checkbox "Ver inativos" e o botão "Novo". Carregamento é lazy: a API só é chamada na primeira abertura (`data-carregada` no painel). Ícone do botão alterna entre `fa-chevron-down` e `fa-chevron-up`. Adicionada função `normalizarInstrumento()` pontual que substitui o mojibake `Conv�nio` por `Convênio` na renderização — sem alterar banco nem fazer refatoração de encoding. Registros fictícios de teste: `999999` (inativo desde Etapa 5), `888888` (inativado nesta etapa via UPDATE direto no banco local), `777777` (inativo desde Etapa 7). Nenhum dado real foi alterado. `npm run publicar:dados` não foi executado.
+- Saneamento de dados fictícios: `888888` era o único registro fictício ainda ativo. Inativado com `UPDATE profor_convenios_monitorados SET ativo=0 WHERE numero_convenio='888888'` (1 change). Estado final: `999999` ativo=0, `888888` ativo=0, `777777` ativo=0.
+- Validações executadas: `node --check frontend/js/app.js` (OK), `npm run validar:json` (OK), `npm run validar:syntax` (OK, 25 arquivos), `git diff --check` (limpo), `git diff --name-only` (só `frontend/js/app.js`).
+- Resultado: carteira oculta por padrão; botão toggle funcional; lista carrega somente ao abrir; mojibake corrigido na renderização; registros fictícios todos inativos; nenhum JSON publicado alterado; nenhum valor financeiro alterado.
+- Risco de regressão: baixo; alterações restritas à seção "Carteira Monitorada"; nenhuma função existente fora da carteira foi tocada; o auto-carregamento foi apenas removido (não substituído por lógica diferente nas rotas).
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD`. Banco não é revertido; os registros fictícios permanecem inativos, mas não afetam dados reais.
+
 ## 17/05/2026 - Etapa 7: interface da carteira monitorada PROFOR 2022
 
 - Branch atual: `main`.
