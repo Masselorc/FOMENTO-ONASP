@@ -1,5 +1,24 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 12.1: saneamento de escopo da Etapa 12
+
+- Branch atual: `main`.
+- Objetivo: reverter alterações acidentais de timestamps/metadados de publicação geradas no commit `a79a8ef`.
+- Arquivos inspecionados: `frontend/data/publicados/aplicacao.json`, `dashboard-geral.json`, `resumo-publicacao.json`, `backend/data/aplicacao.json`.
+- Alterações identificadas no commit `a79a8ef`:
+  - Os três JSONs publicados tiveram `publicadoEm` alterado de `2026-05-17T20:27:18.017Z` para `2026-05-17T23:15:38.938Z` (acidental — hook `publicar:dados` disparou pelo `aplicacao.json`).
+  - `frontend/data/publicados/aplicacao.json` ganhou seção `detru` acidentalmente (config interna de download não deve ser publicada).
+- Arquivos corrigidos:
+  - `frontend/data/publicados/aplicacao.json`: removida seção `detru`; `publicadoEm` revertido.
+  - `frontend/data/publicados/dashboard-geral.json`: `publicadoEm` revertido.
+  - `frontend/data/publicados/resumo-publicacao.json`: `publicadoEm` revertido.
+- Configuração DETRU preservada: seção `detru` de `backend/data/aplicacao.json` intacta.
+- Nenhum código alterado. Nenhum script DETRU alterado. `npm run publicar:dados` não executado.
+- Validações: `validar:json` OK, `validar:syntax` OK (25 arquivos), `git diff --check` limpo.
+- Commit: `fix(profor-2022): reverter metadados publicados acidentais`.
+
+---
+
 ## 17/05/2026 - Etapa 12: configuração e acesso remoto ao DETRU
 
 - Branch atual: `main`.
