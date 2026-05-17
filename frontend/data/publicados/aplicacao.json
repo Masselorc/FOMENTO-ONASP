@@ -2992,12 +2992,12 @@
       "saldoResidualCapital": 1069766.36,
       "saldoResidualCusteio": 666611.19,
       "contrapartidaIntegralizada": 270014.11,
-      "valorExecutadoGeral": 3202695.9,
+      "valorExecutadoGeral": 2891309.44,
       "previstoOuvidoria": 1669823.9,
       "previstoCorregedoria": 2594077.63,
       "previstoEscolaPenal": 5101382.76,
       "valorExecutadoOuvidoria": 416855.53,
-      "execucaoGeralPercentual": 30.09445206661132,
+      "execucaoGeralPercentual": 27.16847807867766,
       "execucaoOuvidoriaPercentual": 24.964041417780642,
       "saldoDisponivelOuvidoria": 2777253.84
     },
@@ -3020,7 +3020,7 @@
         "saldoResidualCapital": 6831.55,
         "saldoResidualCusteio": 46000.39,
         "contrapartidaIntegralizada": 36509.71,
-        "valorExecutadoGeral": 337453.87,
+        "valorExecutadoGeral": 26067.41,
         "previstoOuvidoria": 119503.74,
         "previstoCorregedoria": 108156,
         "previstoEscolaPenal": 164850,
@@ -12630,7 +12630,7 @@
     }
   },
   "metadadosPublicacao": {
-    "publicadoEm": "2026-05-15T14:06:50.740Z",
+    "publicadoEm": "2026-05-17T20:27:18.017Z",
     "fonteDadosBase": "dados consolidados da Home local",
     "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx"
   }
