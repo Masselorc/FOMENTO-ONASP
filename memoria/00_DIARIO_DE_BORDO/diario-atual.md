@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 17/05/2026 - Decisão técnica: carteira de convênios em banco local
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/01_PROJETO_APLICACAO/pendencias.md`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Decisão registrada: DT-011 — a carteira de convênios monitorados do PROFOR 2022 será mantida em banco SQLite local. O número do convênio é a chave operacional principal. O DETRU é fonte de dados oficiais (não define a carteira). A aba Geral da planilha é transitória e será substituída por composição automática: banco local + DETRU + Transferegov público + cálculos internos.
+- Resultado: patch documental pequeno; nenhum código, banco, tabela ou JSON publicado foi alterado.
+- Validações executadas: `git diff --check`, `git diff --name-only`, `git status --short`.
+- Risco de regressão: nenhum; alteração exclusivamente documental.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` após commit publicado.
+
 ## 16/05/2026 - Modelo técnico de funcionalidade
 
 - Branch atual: `main`.

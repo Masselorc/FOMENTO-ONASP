@@ -163,6 +163,30 @@ O arquivo não substitui `AGENTS.md`, `memoria/INDEX.md`, `regras-do-projeto.md`
 
 **Orientação de manutenção:** atualizar diário e arquivos temáticos existentes quando houver mudança relevante, sem criar novos arquivos temáticos automaticamente fora do escopo.
 
+### DT-011 — Manter carteira de convênios monitorados do PROFOR 2022 em banco SQLite local
+
+**Status:** vigente
+
+**Decisão:** a lista de convênios acompanhados pela aplicação será mantida em banco SQLite local, não na aba Geral da planilha nem no DETRU. O número do convênio é a chave operacional principal para consultas automáticas. O usuário poderá futuramente cadastrar novos convênios diretamente na aplicação.
+
+**Evidência:** decisão registrada em 17/05/2026 a partir de definição conceitual do projeto; o banco local (`backend/data/onasp.sqlite`) já é a camada de persistência central do projeto conforme DT-004.
+
+**Regra conceitual obrigatória:** o DETRU não define quais convênios serão acompanhados. O DETRU é fonte de dados oficiais atualizados (especialmente `siconv_convenio.csv.zip`) sobre convênios existentes, não a carteira de acompanhamento. A carteira de acompanhamento é mantida localmente para permitir cadastro futuro de novos convênios pelo usuário.
+
+**Fontes previstas na composição futura:**
+- banco local: convênios monitorados (carteira de acompanhamento);
+- DETRU (`siconv_convenio.csv.zip`): dados cadastrais e financeiros atualizados do convênio;
+- Transferegov público: saldo atual de rendimentos e dados não disponíveis diretamente no DETRU;
+- cálculos internos da aplicação a partir do plano de aplicação.
+
+**Fonte transitória:** a aba Geral da planilha será tratada como origem transitória a ser substituída futuramente pela composição automática acima.
+
+**Consequência prática:** a ativação da nova origem de dados deve ocorrer por etapas, com fallback para a origem atual (planilha). A migração deve preservar modo local/API e modo estático/GitHub Pages.
+
+**Risco:** migrar a carteira antes de o banco estar estruturado pode quebrar a leitura atual baseada na planilha.
+
+**Orientação de manutenção:** não criar tabela de convênios monitorados nesta etapa; registrar aqui a decisão e planejar criação da tabela em etapa posterior com schema, seed e service próprios.
+
 ## Decisões provisórias ou a revisar
 
 ### DP-001 — Ampliar testes E2E conforme estabilização de seletores
@@ -217,3 +241,4 @@ Cada nova decisão deve informar status, evidência, consequência prática, ris
 ## Histórico de atualização
 
 - 13/05/2026 — Registro inicial das decisões técnicas com base em `AGENTS.md`, `memoria/INDEX.md`, regras do projeto, arquitetura atual, diário de bordo, `package.json`, backend, frontend, serviços, scripts de validação e hook de publicação.
+- 17/05/2026 — DT-011 registrada: carteira de convênios monitorados do PROFOR 2022 em banco SQLite local; DETRU como fonte de dados, não como carteira; aba Geral como transitória.
