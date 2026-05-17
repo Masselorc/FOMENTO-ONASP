@@ -277,7 +277,7 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 **Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelaConveniosMonitoradosProfor2022()`.
 
-**Serviços relacionados:** nenhum serviço criado nesta etapa. Serviço futuro previsto: `backend/services/profor-2022-service.js` (não existe ainda).
+**Serviços relacionados:** `backend/services/profor-2022/convenios-monitorados-service.js` — criado na Etapa 4. Exporta `listarConveniosMonitorados`, `obterConvenioMonitoradoPorId`, `obterConvenioMonitoradoPorNumero`, `criarConvenioMonitorado`, `atualizarConvenioMonitorado` e `inativarConvenioMonitorado`.
 
 **Rotas relacionadas:** nenhuma rota criada nesta etapa. Rotas futuras previstas em `backend/server.js` (não existem ainda).
 
@@ -374,7 +374,7 @@ Riscos:
 | `orcamento_2026` | `orcamento-2026-service.js` | `POST /api/orcamento-2026/salvar`, `POST /api/orcamento-2026/processos-vinculados/criar` | `orcamento-2026.json` via `publicarDadosEstaticos()`. |
 | `orcamento_2026_movimentacoes` | `orcamento-2026-service.js` | `POST /api/orcamento-2026/saldos/alocar` | não há publicação estática específica confirmada para movimentações no estado atual. |
 | `historico_alteracoes` | `historico-service.js` | escritas de Parâmetros Mínimos, Formalização PROFOR e Orçamento 2026; reversão de Parâmetros Mínimos | não há JSON público específico de histórico confirmado. |
-| `profor_convenios_monitorados` | nenhum serviço criado nesta etapa | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
+| `profor_convenios_monitorados` | `backend/services/profor-2022/convenios-monitorados-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
 
 Relações operacionais confirmadas:
 

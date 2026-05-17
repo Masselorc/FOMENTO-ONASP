@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 4: serviço de convênios monitorados PROFOR 2022
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `backend/db/database.js`, `backend/db/init-db.js`, `backend/services/formalizacao-profor-service.js`.
+- Arquivos alterados: `backend/services/profor-2022/convenios-monitorados-service.js` (criado), `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criado `backend/services/profor-2022/convenios-monitorados-service.js` com as funções `listarConveniosMonitorados`, `obterConvenioMonitoradoPorId`, `obterConvenioMonitoradoPorNumero`, `criarConvenioMonitorado`, `atualizarConvenioMonitorado` e `inativarConvenioMonitorado`. Retorno em camelCase. Inativação lógica (`ativo = 0`). Validações de `numero_convenio` (apenas dígitos), `ano` (4 dígitos) e `uf` (2 caracteres, maiúsculas). Duplicidade retorna erro controlado. Nenhuma rota criada. Nenhum dado populado. Referência documental incorreta ao serviço futuro corrigida em `schema-banco.md`.
+- Validações executadas: `node --check` do serviço novo, `node -e` com importação e chamada de `listarConveniosMonitorados()` e das três validações de entrada (número, ano, uf), `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, `git diff --name-only`, `git status --short`.
+- Resultado: serviço criado e funcional; listagem retornou 0 registros (tabela vazia, esperado); todas as validações de entrada bloquearam corretamente entrada inválida; JSONs publicados válidos; sintaxe de 25 arquivos validada.
+- Risco de regressão: baixo; nenhum serviço, rota ou frontend existente foi alterado.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD`; o banco não é afetado (nenhum dado foi inserido).
+
 ## 17/05/2026 - Etapa 3: criação da tabela profor_convenios_monitorados
 
 - Branch atual: `main`.

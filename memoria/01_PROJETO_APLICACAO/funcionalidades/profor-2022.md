@@ -456,6 +456,7 @@ git push origin HEAD
 - Decisão registrada em `decisoes-tecnicas.md` como DT-011.
 - Diário atualizado na etapa documental inicial.
 - Tabela `profor_convenios_monitorados` criada em `backend/db/init-db.js` por `garantirTabelaConveniosMonitoradosProfor2022()`. Migration aditiva, sem dados populados. `npm run init-db` executou sem erro. Schema documentado em `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Serviço `backend/services/profor-2022/convenios-monitorados-service.js` criado com as funções: `listarConveniosMonitorados`, `obterConvenioMonitoradoPorId`, `obterConvenioMonitoradoPorNumero`, `criarConvenioMonitorado`, `atualizarConvenioMonitorado` e `inativarConvenioMonitorado`. Retorno em camelCase. Inativação lógica (`ativo = 0`). Validações de `numero_convenio`, `ano` e `uf`. Sem rota criada nesta etapa.
 
 ### 10.2. Próximas etapas
 
@@ -501,3 +502,4 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | --- | --- | --- |
 | 17/05/2026 | Criação do rascunho técnico | Documento preparado para inserção em `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`. |
 | 17/05/2026 | Etapa 3: tabela criada | `profor_convenios_monitorados` adicionada ao banco local por migration aditiva em `backend/db/init-db.js`. Sem dados populados. Schema documentado em `schema-banco.md`. |
+| 17/05/2026 | Etapa 4: serviço criado | `backend/services/profor-2022/convenios-monitorados-service.js` criado com funções de listagem, leitura, criação, atualização e inativação. Sem rota nem dados populados. |
