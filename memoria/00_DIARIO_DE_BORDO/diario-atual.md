@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 5: rotas de convênios monitorados PROFOR 2022
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `backend/server.js`, `backend/services/profor-2022/convenios-monitorados-service.js`, `backend/services/formalizacao-profor-service.js`.
+- Arquivos alterados: `backend/server.js`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: 4 rotas criadas em `backend/server.js` para a carteira de convênios monitorados PROFOR 2022: `GET /api/profor-2022/convenios-monitorados` (com suporte a `?incluirInativos=true`), `POST /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados/:id/salvar` e `POST /api/profor-2022/convenios-monitorados/:id/inativar`. Helpers `camelParaSnakeConvenio` (conversão de payload da API para o serviço) e `extrairIdConvenioMonitorado` (extração de id de rota paramétrica) adicionados ao servidor. Nenhum frontend, JSON publicado ou serviço existente foi alterado.
+- Validações executadas: `node --check backend/server.js`, `node --check backend/services/profor-2022/convenios-monitorados-service.js`, `npm run validar:json`, `npm run validar:syntax`, teste ao vivo com servidor real (GET lista vazia, POST criar, POST salvar, POST inativar, POST inativar já inativo, POST criar duplicado, POST salvar id inexistente, GET `?incluirInativos=true`), `git diff --check`, `git diff --name-only`, `git status --short`.
+- Resultado: todas as rotas responderam corretamente; camelCase na entrada e saída confirmados; erros de validação e duplicidade retornaram mensagem controlada sem stack trace; inativação lógica preservou o registro. Registro de teste (id=1, número 999999) criado e inativado durante validação; nenhum dado real populado; banco não versionado.
+- Risco de regressão: baixo; adição isolada ao final do roteador de `rotearApi`, antes do 404 final; nenhuma rota ou lógica existente foi alterada.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD`; banco não é afetado pelo revert (o registro de teste inativado permanece localmente, mas não há dado real comprometido).
+
 ## 17/05/2026 - Etapa 4: serviço de convênios monitorados PROFOR 2022
 
 - Branch atual: `main`.

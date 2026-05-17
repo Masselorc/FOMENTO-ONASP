@@ -31,6 +31,12 @@ const {
   salvarExecucaoFaf2021
 } = require("./services/faf-2021-service");
 const {
+  listarConveniosMonitorados,
+  criarConvenioMonitorado,
+  atualizarConvenioMonitorado,
+  inativarConvenioMonitorado
+} = require("./services/profor-2022/convenios-monitorados-service");
+const {
   exportarParametrosMinimosExcel,
   exportarFormalizacaoProforExcel,
   exportarOrcamento2026Excel
@@ -188,6 +194,26 @@ async function publicarAposSalvamento(resultado) {
       message: "Alterações salvas localmente, mas houve falha ao atualizar os dados públicos."
     };
   }
+}
+
+function camelParaSnakeConvenio(payload) {
+  const resultado = {};
+  if (payload.numeroConvenio !== undefined) resultado.numero_convenio = payload.numeroConvenio;
+  if (payload.ano !== undefined) resultado.ano = payload.ano;
+  if (payload.uf !== undefined) resultado.uf = payload.uf;
+  if (payload.instrumento !== undefined) resultado.instrumento = payload.instrumento;
+  if (payload.programaOrigem !== undefined) resultado.programa_origem = payload.programaOrigem;
+  if (payload.idConvenioTransferegov !== undefined) resultado.id_convenio_transferegov = payload.idConvenioTransferegov;
+  if (payload.observacao !== undefined) resultado.observacao = payload.observacao;
+  return resultado;
+}
+
+function extrairIdConvenioMonitorado(pathname, sufixo) {
+  const prefixo = "/api/profor-2022/convenios-monitorados/";
+  if (!pathname.startsWith(prefixo) || !pathname.endsWith(sufixo)) return null;
+  const segmento = pathname.slice(prefixo.length, pathname.length - sufixo.length);
+  const id = Number(segmento);
+  return Number.isInteger(id) && id > 0 ? id : null;
 }
 
 function enviarArquivoEstatico(req, res, pathname) {
@@ -428,6 +454,48 @@ async function rotearApi(req, res, pathname) {
       const resultado = salvarExecucaoFaf2021(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/convenios-monitorados") {
+      const url = new URL(req.url, "http://localhost");
+      const incluirInativos = url.searchParams.get("incluirInativos") === "true";
+      const convenios = listarConveniosMonitorados({ incluirInativos });
+      enviarJson(res, 200, { success: true, convenios });
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/convenios-monitorados") {
+      const body = await lerJsonBody(req);
+      try {
+        const convenio = criarConvenioMonitorado(camelParaSnakeConvenio(body));
+        enviarJson(res, 200, { success: true, convenio });
+      } catch (erro) {
+        enviarJson(res, 400, { success: false, message: erro.message });
+      }
+      return;
+    }
+
+    const idSalvar = extrairIdConvenioMonitorado(pathname, "/salvar");
+    if (req.method === "POST" && idSalvar !== null) {
+      const body = await lerJsonBody(req);
+      try {
+        const convenio = atualizarConvenioMonitorado(idSalvar, camelParaSnakeConvenio(body));
+        enviarJson(res, 200, { success: true, convenio });
+      } catch (erro) {
+        enviarJson(res, 400, { success: false, message: erro.message });
+      }
+      return;
+    }
+
+    const idInativar = extrairIdConvenioMonitorado(pathname, "/inativar");
+    if (req.method === "POST" && idInativar !== null) {
+      try {
+        const convenio = inativarConvenioMonitorado(idInativar);
+        enviarJson(res, 200, { success: true, convenio });
+      } catch (erro) {
+        enviarJson(res, 400, { success: false, message: erro.message });
+      }
       return;
     }
 

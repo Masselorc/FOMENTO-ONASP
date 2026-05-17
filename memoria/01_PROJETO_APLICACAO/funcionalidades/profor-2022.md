@@ -457,6 +457,7 @@ git push origin HEAD
 - Diário atualizado na etapa documental inicial.
 - Tabela `profor_convenios_monitorados` criada em `backend/db/init-db.js` por `garantirTabelaConveniosMonitoradosProfor2022()`. Migration aditiva, sem dados populados. `npm run init-db` executou sem erro. Schema documentado em `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
 - Serviço `backend/services/profor-2022/convenios-monitorados-service.js` criado com as funções: `listarConveniosMonitorados`, `obterConvenioMonitoradoPorId`, `obterConvenioMonitoradoPorNumero`, `criarConvenioMonitorado`, `atualizarConvenioMonitorado` e `inativarConvenioMonitorado`. Retorno em camelCase. Inativação lógica (`ativo = 0`). Validações de `numero_convenio`, `ano` e `uf`. Sem rota criada nesta etapa.
+- Rotas criadas em `backend/server.js` (Etapa 5): `GET /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados/:id/salvar`, `POST /api/profor-2022/convenios-monitorados/:id/inativar`. API recebe e retorna camelCase. Helpers `camelParaSnakeConvenio` e `extrairIdConvenioMonitorado` adicionados ao servidor. Testado ao vivo com servidor real: GET, POST criar, POST salvar, POST inativar, erros de validação e duplicidade — todos corretos. Registro de teste criado (id=1) e inativado (`ativo=0`) durante a validação.
 
 ### 10.2. Próximas etapas
 
@@ -503,3 +504,4 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Criação do rascunho técnico | Documento preparado para inserção em `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`. |
 | 17/05/2026 | Etapa 3: tabela criada | `profor_convenios_monitorados` adicionada ao banco local por migration aditiva em `backend/db/init-db.js`. Sem dados populados. Schema documentado em `schema-banco.md`. |
 | 17/05/2026 | Etapa 4: serviço criado | `backend/services/profor-2022/convenios-monitorados-service.js` criado com funções de listagem, leitura, criação, atualização e inativação. Sem rota nem dados populados. |
+| 17/05/2026 | Etapa 5: rotas criadas | 4 rotas adicionadas em `backend/server.js`. API em camelCase. Testadas ao vivo. Registro de teste inativado; nenhum dado real populado. |

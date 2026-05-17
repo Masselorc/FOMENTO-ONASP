@@ -365,6 +365,88 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Observações de manutenção:** o frontend bloqueia exportação quando existem alterações não salvas.
 
+### PROFOR 2022 — Carteira de convênios monitorados
+
+#### GET /api/profor-2022/convenios-monitorados
+
+**Finalidade:** retornar a lista de convênios monitorados. Por padrão, retorna apenas os ativos. Aceita query `?incluirInativos=true` para incluir inativos.
+
+**Serviço chamado:** `listarConveniosMonitorados(opcoes)`, de `backend/services/profor-2022/convenios-monitorados-service.js`.
+
+**Tipo:** leitura.
+
+**Payload:** não se aplica.
+
+**Resposta:** `{ success: true, convenios: [...] }`. Cada item em camelCase: `id`, `numeroConvenio`, `ano`, `uf`, `instrumento`, `programaOrigem`, `ativo`, `idConvenioTransferegov`, `observacao`, `criadoEm`, `atualizadoEm`.
+
+**Efeito colateral:** nenhum.
+
+**Publicação estática:** não.
+
+**Frontend consumidor:** nenhum ainda; rota disponível para uso futuro pelo frontend da página PROFOR 2022.
+
+**Observações de manutenção:** rota exclusiva do modo local/API. O modo estático não usa esta rota.
+
+#### POST /api/profor-2022/convenios-monitorados
+
+**Finalidade:** criar novo convênio na carteira de acompanhamento.
+
+**Serviço chamado:** `criarConvenioMonitorado(payload)`, de `backend/services/profor-2022/convenios-monitorados-service.js`.
+
+**Tipo:** escrita.
+
+**Payload:** camelCase. Campos aceitos: `numeroConvenio` (obrigatório, apenas dígitos), `ano` (4 dígitos), `uf` (2 caracteres), `instrumento`, `programaOrigem`, `idConvenioTransferegov`, `observacao`.
+
+**Resposta:** `{ success: true, convenio: { ... } }` com o registro criado em camelCase. Em erro de validação ou duplicidade: `{ success: false, message: "..." }` com status `400`.
+
+**Efeito colateral:** grava `profor_convenios_monitorados` no SQLite local.
+
+**Publicação estática:** não.
+
+**Frontend consumidor:** nenhum ainda; rota disponível para uso futuro.
+
+**Observações de manutenção:** `numero_convenio + ano` é único; inserção de convênio duplicado retorna erro controlado sem stack trace.
+
+#### POST /api/profor-2022/convenios-monitorados/:id/salvar
+
+**Finalidade:** atualizar campos editáveis de um convênio monitorado existente.
+
+**Serviço chamado:** `atualizarConvenioMonitorado(id, payload)`, de `backend/services/profor-2022/convenios-monitorados-service.js`.
+
+**Tipo:** escrita.
+
+**Payload:** camelCase. Campos editáveis: `numeroConvenio`, `ano`, `uf`, `instrumento`, `programaOrigem`, `idConvenioTransferegov`, `observacao`. `atualizado_em` é definido automaticamente.
+
+**Resposta:** `{ success: true, convenio: { ... } }` com o registro atualizado. Em erro: `{ success: false, message: "..." }` com status `400`.
+
+**Efeito colateral:** grava `profor_convenios_monitorados` no SQLite local; atualiza `atualizado_em`.
+
+**Publicação estática:** não.
+
+**Frontend consumidor:** nenhum ainda; rota disponível para uso futuro.
+
+**Observações de manutenção:** id inexistente retorna erro `400` controlado; campos fora da whitelist são ignorados silenciosamente.
+
+#### POST /api/profor-2022/convenios-monitorados/:id/inativar
+
+**Finalidade:** inativar logicamente um convênio monitorado, definindo `ativo = 0`. Não exclui o registro.
+
+**Serviço chamado:** `inativarConvenioMonitorado(id)`, de `backend/services/profor-2022/convenios-monitorados-service.js`.
+
+**Tipo:** escrita.
+
+**Payload:** não obrigatório (body ignorado).
+
+**Resposta:** `{ success: true, convenio: { ... } }` com o registro inativado. Em erro: `{ success: false, message: "..." }` com status `400`.
+
+**Efeito colateral:** atualiza `ativo = 0` e `atualizado_em` em `profor_convenios_monitorados`.
+
+**Publicação estática:** não.
+
+**Frontend consumidor:** nenhum ainda; rota disponível para uso futuro.
+
+**Observações de manutenção:** id inexistente ou já inativo retorna erro `400` controlado; a exclusão física nunca deve ocorrer nesta rota.
+
 ### FAF 2021
 
 #### GET /api/faf2021
@@ -511,6 +593,7 @@ Relação em alto nível:
 - Parâmetros Mínimos usa `parametros-minimos-service.js` e SQLite.
 - Formalização PROFOR usa `formalizacao-profor-service.js` e SQLite.
 - Orçamento 2026 usa `orcamento-2026-service.js` e SQLite, incluindo movimentações de saldo.
+- PROFOR 2022 — carteira de convênios usa `profor-2022/convenios-monitorados-service.js` e SQLite; sem publicação estática nesta etapa.
 - FAF 2021 usa `faf-2021-service.js` e grava `backend/data/aplicacao.json`.
 - Histórico usa `historico-service.js`.
 - Exportações usam `excel-export-service.js`.
