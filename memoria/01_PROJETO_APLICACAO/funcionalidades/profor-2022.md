@@ -328,11 +328,13 @@ A captura futura deve armazenar também:
 | `execucaoOuvidoriaPercentual` | executado / previsto da área |
 | `execucaoCorregedoriaPercentual` | executado / previsto da área |
 | `execucaoEscolaPenalPercentual` | executado / previsto da área |
-| `saldoDisponivelOuvidoria` | previsto - executado da área |
+| `saldoDisponivelOuvidoria` | pendente até fórmula segura ou compositor |
 | `saldoResidualCapital` | saldo calculado para natureza CAPITAL |
 | `saldoResidualCusteio` | saldo calculado para natureza CUSTEIO |
 
-A regra exata de saldo residual deve ser validada por comparação com a planilha antes da ativação definitiva.
+Bloco 15 criou os cálculos internos em serviços puros, sem substituir a origem atual da página. As premissas conservadoras são: previstos por área somam `valorPrevisto`; executados por área somam `valorExecutado`; `valorExecutadoGeral` soma `valorExecutado` do plano filtrado; saldos residuais por natureza somam `saldo` e, quando `saldo` não existe, usam `valorPrevisto - valorExecutado`; percentuais usam `valorExecutado / valorPrevisto * 100` quando o previsto é maior que zero. A regra de filtro seguro exige número do convênio quando houver mais de um número na mesma UF e considera UF, número e ano quando informados.
+
+`saldoDisponivelOuvidoria` permanece pendente e não é inventado nos serviços do Bloco 15; deve ser tratado apenas quando houver fórmula segura ou no compositor consolidado.
 
 ### 5.5. Campos eliminados ou opcionais
 
@@ -470,21 +472,21 @@ git push origin HEAD
 - Configuração e acesso remoto ao DETRU criados (Etapa 12). Serviço `backend/services/profor-2022/detru-download-service.js` criado com 6 funções: `obterConfiguracaoDetru` (lê `DETRU_SICONV_CONVENIO_URL`, `DETRU_SICONV_CONVENIO_LOCAL` e `DETRU_ATUALIZACAO_DIARIA_HORA` do `.env` com fallback em `backend/data/aplicacao.json`), `resolverCaminhoLocalDetru`, `validarUrlDetru` (aceita somente `http://` e `https://`; rejeita vazio, nulo e outros protocolos), `baixarArquivoDetru` (fetch nativo Node v18+, baixa para `.tmp` e move ao concluir; remove parcial em falha), `garantirArquivoDetruAtualizado` (usa URL se configurada; usa local se não houver URL; falha com mensagem clara se nenhum disponível), `obterMetadadosArquivoDetru`. Script `atualizar-cache-detru-profor-2022.js` atualizado: sem argumento CLI, chama `garantirArquivoDetruAtualizado()` para download automático ou uso local. Agendador `backend/scripts/agendar-atualizacao-detru-profor-2022.js` criado com `setTimeout` recursivo calculando o próximo horário configurado — **não é acoplado ao `npm start`; deve rodar como processo separado** (`npm run agendar:detru-profor`). Variáveis DETRU adicionadas ao `.env.example` sem valor real. Seção `detru` adicionada em `backend/data/aplicacao.json` com `urlSiconvConvenio` vazio. `.gitignore` atualizado para ignorar `Dados/detru/*.zip`, `*.csv` e `*.tmp`. **Sem nova dependência — usa `fetch` nativo. Sem rota, sem frontend, sem publicação estática alterada.**
 - Etapa 13: disparo administrativo da atualização DETRU criado. Serviço reutilizável `backend/services/profor-2022/profor-detru-update-service.js` centraliza hash, cruzamento, snapshot e registro de auditoria; script `backend/scripts/atualizar-cache-detru-profor-2022.js` passou a chamar esse serviço mantendo compatibilidade com argumento CLI; `backend/server.js` ganhou `POST /api/profor-2022/detru/atualizar` e `GET /api/profor-2022/detru/ultima-atualizacao`; `frontend/js/app.js` passou a exibir botão discreto "Atualizar DETRU" apenas no modo local/API, recarregar o status da última atualização e bloquear o fluxo no modo estático; documentação de rotas e diário de bordo foram atualizados. A página continua sem processar ZIP diretamente.
 - Bloco 14: base técnica de rendimentos Transferegov público criada. Tabelas `profor_transferegov_rendimentos_cache` e `profor_transferegov_rendimentos_consultas` adicionadas ao SQLite local; cliente `backend/services/profor-2022/transferegov-rendimentos-client.js` criado para montar a URL pública conhecida, consultar por `fetch` nativo e extrair `#tr-novaSolicitacaoValorDisponivelRendimento`; serviço `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` criado para salvar apenas consultas bem-sucedidas e preservar o último cache válido em falhas; script `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js` criado e exposto como `npm run atualizar:rendimentos-profor`. A captura direta pode depender de sessão pública do convênio no Transferegov; não há login, bypass ou uso de credenciais. A página PROFOR 2022 ainda não consome este cache nesta etapa.
+- Bloco 15: cálculos internos e filtro seguro do plano criados em serviços puros. `backend/services/profor-2022/profor-plano-aplicacao-service.js` centraliza normalização, filtro por UF/número/ano/área/natureza, bloqueio de filtro por UF quando há risco de mistura de convênios, agrupamento e resumo do plano. `backend/services/profor-2022/profor-calculos-service.js` consolida valores de DETRU/cache, saldo de rendimentos de Transferegov/cache e cálculos por área/natureza do plano filtrado. A página PROFOR 2022 ainda usa a origem antiga em `data-service.js`; não houve integração com telas, rotas, banco ou publicação. `saldoDisponivelOuvidoria` segue pendente até fórmula segura ou compositor.
 
 ### 10.2. Próximas etapas
 
 1. Refinar, se necessário, o estabelecimento de sessão pública do convênio no Transferegov.
 2. Integrar o cache local de rendimentos ao compositor consolidado do PROFOR 2022.
-3. Criar cálculos internos por área/natureza.
-4. Ajustar filtro do plano por UF, número e ano.
-5. Criar compositor consolidado (objeto PROFOR 2022).
-6. Criar comparador entre origem antiga e nova.
-7. Criar flag `planilha`/`banco`.
-8. Integrar nova origem no `data-service.js`.
-9. Ajustar publicação estática.
-10. Validar divergências.
-11. Ativar origem nova.
-12. Remover dependência obrigatória da aba `Geral`.
+3. Criar compositor consolidado (objeto PROFOR 2022).
+4. Definir fórmula segura para `saldoDisponivelOuvidoria`.
+5. Criar comparador entre origem antiga e nova.
+6. Criar flag `planilha`/`banco`.
+7. Integrar nova origem no `data-service.js`.
+8. Ajustar publicação estática.
+9. Validar divergências.
+10. Ativar origem nova.
+11. Remover dependência obrigatória da aba `Geral`.
 
 ### 10.3. Fase futura
 
@@ -518,3 +520,4 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Etapa 12: configuração e acesso remoto ao DETRU | Serviço `detru-download-service.js` criado. Configuração por `.env` e `aplicacao.json`. Download via `fetch` nativo. Agendador `agendar-atualizacao-detru-profor-2022.js` como processo separado. `.gitignore` atualizado. Sem dependência nova, sem rota, sem frontend. |
 | 17/05/2026 | Etapa 13: disparo administrativo da atualização DETRU | Serviço reutilizável `profor-detru-update-service.js` criado. Script manual e rotas locais/API para atualização e status adicionados. Botão discreto na Carteira Monitorada ativa apenas no modo local/API. |
 | 17/05/2026 | Bloco 14: Transferegov público + cache de rendimentos | Cliente público e parser HTML criados. Tabelas de cache/histórico adicionadas ao SQLite local. Script `atualizar:rendimentos-profor` criado. Página PROFOR 2022 ainda não consome o cache. |
+| 17/05/2026 | Bloco 15: cálculos internos + filtro seguro do plano | Serviços puros `profor-plano-aplicacao-service.js` e `profor-calculos-service.js` criados. Filtro seguro por UF/número/ano e cálculos por área/natureza implementados sem integrar na página. |

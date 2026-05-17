@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 17/05/2026 - Bloco 15: cálculos internos + filtro seguro do plano de aplicação
+
+- Branch atual: `main`.
+- Objetivo: criar serviços puros para calcular internamente campos do PROFOR 2022 e filtrar com segurança o plano de aplicação por UF, número do convênio e ano, sem substituir a origem atual da página.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `backend/services/data-service.js`, `backend/services/profor-2022/detru-convenio-mapper.js`, `backend/services/profor-2022/profor-detru-cache-service.js`, `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`.
+- Arquivos alterados: `backend/services/profor-2022/profor-plano-aplicacao-service.js`, `backend/services/profor-2022/profor-calculos-service.js`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção: criado serviço de plano com normalização de texto/número/ano/moeda, filtro seguro por UF/número/ano/área/natureza, bloqueio de filtro por UF quando houver risco de misturar convênios, agrupamento por área/natureza e resumo financeiro do plano filtrado; criado serviço de cálculos que combina DETRU/cache, Transferegov/cache e plano filtrado em objeto parcial consolidável.
+- Premissas: previstos por área somam `valorPrevisto`; executados por área somam `valorExecutado`; saldos residuais por natureza somam `saldo` ou `valorPrevisto - valorExecutado` quando `saldo` não existe; percentuais usam `executado / previsto * 100` quando o previsto é maior que zero.
+- Limitação registrada: `saldoDisponivelOuvidoria` não foi calculado nem retornado no consolidado, pois a fórmula segura permanece pendente para etapa de compositor.
+- Testes node -e: filtro não mistura dois convênios da mesma UF; filtro por ano restringe o mesmo número em anos diferentes; cálculos por OUVIDORIA, CORREGEDORIA e ESCOLA PENAL; saldos por CAPITAL e CUSTEIO; `aplicarCalculosInternosProfor()` usa DETRU para valores financeiros, Transferegov para `saldoRendimentosAtual` e plano para previstos/executados.
+- Escopo preservado: frontend não alterado; página PROFOR 2022 não alterada; home principal não alterada; nenhuma rota criada; banco não alterado; nenhum JSON publicado alterado; `npm run publicar:dados` não executado.
+- Risco de regressão: baixo; serviços novos são puros e não são chamados pela aplicação atual.
+- Rollback: `git revert <hash>` remove os serviços e registros documentais do bloco.
+
 ## 17/05/2026 - Bloco 14: Transferegov público + cache de rendimentos
 
 - Branch atual: `main`.
