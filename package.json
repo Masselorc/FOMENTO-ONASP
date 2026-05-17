@@ -5,6 +5,7 @@
     "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js",
     "import:profor-convenios": "node backend/scripts/importar-convenios-monitorados-profor-2022.js",
     "publicar:dados": "node backend/scripts/publicar-dados-estaticos.js",
+    "atualizar:detru-profor": "node backend/scripts/atualizar-cache-detru-profor-2022.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",

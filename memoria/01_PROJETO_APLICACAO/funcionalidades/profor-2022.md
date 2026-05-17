@@ -464,23 +464,22 @@ git push origin HEAD
 - Leitor local do DETRU criado em `backend/services/profor-2022/detru-convenio-reader.js` (Etapa 8). Aceita caminho local para `siconv_convenio.csv.zip`. Funções exportadas: `localizarCsvNoZip`, `lerCsvDetruConvenio`, `normalizarCabecalhoDetru`, `parseCsvLinha`, `detectarSeparadorCsv`, `listarColunasDetruConvenio`. Localiza o primeiro CSV compatível (`siconv_convenio*.csv`) dentro do ZIP com fallback para qualquer CSV. Lê conteúdo como `latin1` (encoding frequente em arquivos do governo). Detecta separador (`;` ou `,`). Retorna array de objetos com chaves normalizadas (maiúsculas, underscores). Erros claros para arquivo ausente, extensão inválida, ZIP sem CSV e CSV vazio. **Não integra ainda com a carteira do banco. Não substitui a aba Geral. Não popula dados. Não altera rotas nem frontend.** Dependência `adm-zip` adicionada (v0.5.17, puro JavaScript, síncrono) — Node.js não tem suporte nativo a ZIP; `zlib` cobre DEFLATE/GZIP; `xlsx` lê ZIPs de planilha, não ZIP genérico. Arquivo DETRU não versionado.
 - Mapeador DETRU criado em `backend/services/profor-2022/detru-convenio-mapper.js` (Etapa 9). Recebe objetos já lidos pelo leitor (Etapa 8) e os transforma no modelo interno. Funções exportadas: `converterNumeroDetru`, `limparTextoDetru`, `obterPrimeiraColunaDisponivel`, `mapearConvenioDetruParaProfor`, `mapearConveniosDetruParaProfor`, `validarColunasObrigatoriasDetru`. Mapeamento obrigatório: `NR_CONVENIO → numeroConvenio`, `ANO → ano`, `NR_PROCESSO → processoSei`, `DIA_FIM_VIGENC_CONV → vencimento`, `QTD_TA → quantidadeTa`, `VL_GLOBAL_CONV → valorGlobal`, `VL_REPASSE_CONV → valorRepasse`, `VL_CONTRAPARTIDA_CONV → valorContrapartida`, `VL_DESEMBOLSADO_CONV → repasseDesembolsado`, `VL_RENDIMENTO_APLICACAO → rendimentoAprovado`, `VL_INGRESSO_CONTRAPARTIDA → contrapartidaIntegralizada`. Colunas de UF mapeadas se presentes (`UF`, `SG_UF`, `UF_PROPONENTE`, `SG_UF_PROPONENTE`), null caso ausentes. Valores monetários convertidos de formato BR (`1.000,50`) para Number com 2 casas decimais. `saldoRendimentosAtual` e campos calculados **não mapeados** nesta etapa. Campo `fonte: "DETRU/siconv_convenio.csv.zip"` sempre presente. **Diretriz arquitetural:** o ZIP é grande e não deve ser carregado pela página. Fluxo futuro previsto: atualização diária backend → leitura do ZIP → filtro pelos convênios monitorados → mapeamento → snapshot/cache pequeno → páginas consomem somente o cache. **Sem integração com banco, rotas ou frontend nesta etapa.**
 - Serviço de cruzamento criado em `backend/services/profor-2022/profor-detru-sync-service.js` (Etapa 10). Funções exportadas: `obterNumerosConveniosAtivos`, `filtrarLinhasDetruPorCarteira`, `cruzarCarteiraComDetru`, `resumirCruzamentoDetru`, `validarArquivoDetruParaCarteira`. A carteira local (SQLite) define quais convênios acompanhar — o DETRU não define a carteira. O cruzamento usa `NR_CONVENIO` como chave primária; o `ANO` é validação adicional quando preenchido na carteira (null na carteira aceita qualquer ano DETRU). `cruzarCarteiraComDetru(caminhoZip)` retorna `{ sucesso, consultadoEm, totalCarteiraAtiva, totalLinhasDetruLidas, totalEncontrados, totalNaoEncontrados, conveniosEncontrados, conveniosNaoEncontrados, colunas, validacaoColunas }`. **A página PROFOR 2022 e a home não processam o ZIP diretamente.** Cache/snapshot e rotina de atualização diária serão etapas futuras. **Nenhum dado DETRU gravado no banco nesta etapa.**
+- Cache DETRU filtrado criado (Etapa 11). Tabelas `profor_detru_cache` (snapshot por convênio com `UNIQUE(numero_convenio, ano)`) e `profor_detru_atualizacoes` (log de auditoria de cada execução) adicionadas a `backend/db/init-db.js`. Serviço `backend/services/profor-2022/profor-detru-cache-service.js` criado com: `calcularHashArquivo` (SHA-256 via `crypto`), `salvarSnapshotDetru` (upsert em transação — cache anterior preservado em falha), `listarCacheDetruProfor2022`, `obterCacheDetruPorConvenio`, `registrarAtualizacaoDetruInicio`, `registrarAtualizacaoDetruFim`, `registrarAtualizacaoDetruErro`, `obterUltimaAtualizacaoDetru`. Script `backend/scripts/atualizar-cache-detru-profor-2022.js` criado: aceita caminho ZIP por argumento CLI ou usa padrão `Dados/detru/siconv_convenio.csv.zip`; calcula hash, registra início/fim/erro, salva snapshot. Disponível como `npm run atualizar:detru-profor`. **Nenhuma rota pública, frontend ou publicação estática alterada nesta etapa.**
 
 ### 10.2. Próximas etapas
 
 1. Criar cliente público do Transferegov para saldo de rendimentos.
-2. Criar cliente público do Transferegov para saldo de rendimentos.
-3. Capturar saldo atual de rendimentos.
-4. Criar cache/snapshot local (`profor_convenios_cache_online`).
-5. Criar cálculos internos por área/natureza.
-6. Ajustar filtro do plano por UF, número e ano.
-7. Criar compositor consolidado (objeto PROFOR 2022).
-8. Criar comparador entre origem antiga e nova.
-9. Criar flag `planilha`/`banco`.
-10. Integrar nova origem no `data-service.js`.
-11. Ajustar publicação estática.
-12. Validar divergências.
-13. Ativar origem nova.
-14. Remover dependência obrigatória da aba `Geral`.
+2. Capturar saldo atual de rendimentos.
+3. Criar cálculos internos por área/natureza.
+4. Ajustar filtro do plano por UF, número e ano.
+5. Criar compositor consolidado (objeto PROFOR 2022).
+6. Criar comparador entre origem antiga e nova.
+7. Criar flag `planilha`/`banco`.
+8. Integrar nova origem no `data-service.js`.
+9. Ajustar publicação estática.
+10. Validar divergências.
+11. Ativar origem nova.
+12. Remover dependência obrigatória da aba `Geral`.
 
 ### 10.3. Fase futura
 
@@ -510,3 +509,4 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Etapa 8: leitor DETRU | `backend/services/profor-2022/detru-convenio-reader.js` criado. Lê `siconv_convenio.csv.zip`, retorna array de objetos. Sem integração com banco, rotas ou frontend. Dependência `adm-zip` adicionada. |
 | 17/05/2026 | Etapa 9: mapeador DETRU | `backend/services/profor-2022/detru-convenio-mapper.js` criado. Transforma linha DETRU em objeto parcial do modelo interno. Sem banco, rotas ou frontend. Lista de próximas etapas corrigida e renumerada. |
 | 17/05/2026 | Etapa 10: cruzamento carteira × DETRU | `backend/services/profor-2022/profor-detru-sync-service.js` criado. Cruza carteira ativa SQLite com linhas DETRU filtradas por NR_CONVENIO/ANO. Sem gravação no banco, sem cache, sem frontend. |
+| 17/05/2026 | Etapa 11: cache DETRU filtrado | Tabelas `profor_detru_cache` e `profor_detru_atualizacoes` criadas. Serviço `profor-detru-cache-service.js` criado. Script `atualizar-cache-detru-profor-2022.js` e entrada `npm run atualizar:detru-profor` adicionados. Duplicação residual na lista de próximas etapas corrigida. |

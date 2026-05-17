@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 11: cache DETRU filtrado e rotina de atualização
+
+- Branch atual: `main`.
+- Arquivos lidos: `backend/db/init-db.js`, `backend/services/profor-2022/profor-detru-sync-service.js`, `backend/scripts/importar-convenios-monitorados-profor-2022.js`, `package.json`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Arquivos criados: `backend/services/profor-2022/profor-detru-cache-service.js`, `backend/scripts/atualizar-cache-detru-profor-2022.js`.
+- Arquivos alterados: `backend/db/init-db.js` (tabelas `profor_detru_cache` e `profor_detru_atualizacoes`), `package.json` (script `atualizar:detru-profor`), `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` (Etapa 11 registrada; duplicação residual da lista de próximas etapas corrigida), `memoria/08_ROTAS_BANCO_API/schema-banco.md` (novas tabelas documentadas), `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: Criadas tabelas `profor_detru_cache` (snapshot filtrado dos convênios monitorados encontrados no DETRU, UNIQUE por `numero_convenio`/`ano`, upsert preserva cache anterior em caso de falha) e `profor_detru_atualizacoes` (log de auditoria de cada execução da rotina). Serviço `profor-detru-cache-service.js` criado com 8 funções exportadas: `calcularHashArquivo` (SHA-256 via Node.js built-in `crypto`), `salvarSnapshotDetru` (upsert em transação atômica), `listarCacheDetruProfor2022`, `obterCacheDetruPorConvenio`, `registrarAtualizacaoDetruInicio`, `registrarAtualizacaoDetruFim`, `registrarAtualizacaoDetruErro`, `obterUltimaAtualizacaoDetru`. Script `atualizar-cache-detru-profor-2022.js` orquestra: recebe caminho ZIP por argumento CLI (ou usa `Dados/detru/siconv_convenio.csv.zip` como padrão), calcula hash, registra início no log, executa cruzamento + gravação de cache, registra fim com resultado ou erro. Disponível como `npm run atualizar:detru-profor`. Sem nova dependência — usa `crypto` nativo do Node.js. Sem rotas, sem frontend, sem publicação estática alterada.
+- Correção documental: duplicação residual da lista "Próximas etapas" em `profor-2022.md` corrigida (itens 1 e 2 eram ambos "Criar cliente público do Transferegov"; agora a lista tem 12 itens sequenciais sem repetição).
+- Validações executadas: `node --check` em `profor-detru-cache-service.js` (OK), `node --check` em `atualizar-cache-detru-profor-2022.js` (OK).
+- Risco de regressão: nulo — serviços novos isolados; tabelas novas aditivas; script manual não chamado em produção automaticamente.
+- Rollback: `git revert <hash>`.
+
 ## 17/05/2026 - Etapa 10: cruzamento da carteira local com o DETRU
 
 - Branch atual: `main`.

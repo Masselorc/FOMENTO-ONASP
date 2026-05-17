@@ -311,6 +311,77 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 **Observações de manutenção:** a exclusão física de registros não é recomendada; usar `ativo = 0` para remover convênio do acompanhamento. O número do convênio é a chave de cruzamento com DETRU e Transferegov; deve ser tratado como string numérica.
 
+### profor_detru_cache
+
+**Finalidade aparente:** armazenar o snapshot filtrado dos convênios monitorados encontrados no arquivo DETRU (`siconv_convenio.csv.zip`). Apenas os convênios da carteira ativa são gravados — não o CSV completo. O cache anterior não é apagado em falha; apenas convênios encontrados são atualizados via upsert.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelaDetruCacheProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/profor-detru-cache-service.js` — exporta `salvarSnapshotDetru`, `listarCacheDetruProfor2022`, `obterCacheDetruPorConvenio`. Script de atualização: `backend/scripts/atualizar-cache-detru-profor-2022.js` (`npm run atualizar:detru-profor`).
+
+**Rotas relacionadas:** nenhuma rota pública criada nesta etapa.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `numero_convenio TEXT NOT NULL`, `consultado_em TEXT NOT NULL`, `atualizado_em TEXT NOT NULL`, `UNIQUE(numero_convenio, ano)`.
+
+**Colunas confirmadas:**
+
+| Coluna | Tipo declarado | Origem | Observações |
+|---|---:|---|---|
+| `id` | `INTEGER` | criação inicial | `PRIMARY KEY AUTOINCREMENT`. |
+| `numero_convenio` | `TEXT` | criação inicial | `NOT NULL`; compõe `UNIQUE(numero_convenio, ano)`. |
+| `ano` | `TEXT` | criação inicial | compõe `UNIQUE(numero_convenio, ano)`; pode ser nulo — SQLite trata NULLs como distintos em constraints únicas. |
+| `payload_json` | `TEXT` | criação inicial | `NOT NULL`; objeto mapeado por `detru-convenio-mapper.js` serializado como JSON. |
+| `fonte` | `TEXT DEFAULT 'DETRU/siconv_convenio.csv.zip'` | criação inicial | identifica a origem do dado. |
+| `arquivo_origem` | `TEXT` | criação inicial | caminho local do arquivo ZIP usado na atualização. |
+| `arquivo_hash` | `TEXT` | criação inicial | SHA-256 do arquivo ZIP calculado em `calcularHashArquivo`. |
+| `consultado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp ISO do cruzamento que gerou o dado. |
+| `atualizado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp da última gravação do registro. |
+
+**Campos adicionados por evolução incremental:** não há; a tabela é criada completa por `CREATE TABLE IF NOT EXISTS`.
+
+**Riscos de alteração:** alterar `UNIQUE(numero_convenio, ano)` quebra o upsert. Alterar `payload_json` sem atualizar o mapeador pode causar campos ausentes na leitura. Remover `numero_convenio NOT NULL` invalida a chave operacional.
+
+**Observações de manutenção:** a exclusão física não é usada; se um convênio deixar de estar na carteira, ele permanece no cache até a próxima atualização que o inclua. Convênios não encontrados no DETRU não têm registro no cache — apenas no log de auditoria da tabela `profor_detru_atualizacoes`.
+
+### profor_detru_atualizacoes
+
+**Finalidade aparente:** registrar o histórico de execuções da rotina de atualização do cache DETRU. Cada execução grava um registro com início, fim, resultado e resumo. Preserva rastreabilidade para diagnóstico e auditoria.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelaDetruAtualizacoesProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/profor-detru-cache-service.js` — exporta `registrarAtualizacaoDetruInicio`, `registrarAtualizacaoDetruFim`, `registrarAtualizacaoDetruErro`, `obterUltimaAtualizacaoDetru`. Script de atualização: `backend/scripts/atualizar-cache-detru-profor-2022.js`.
+
+**Rotas relacionadas:** nenhuma rota pública criada nesta etapa.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `iniciado_em TEXT NOT NULL`.
+
+**Colunas confirmadas:**
+
+| Coluna | Tipo declarado | Origem | Observações |
+|---|---:|---|---|
+| `id` | `INTEGER` | criação inicial | `PRIMARY KEY AUTOINCREMENT`. |
+| `iniciado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp ISO de início da execução. |
+| `concluido_em` | `TEXT` | criação inicial | timestamp ISO de fim; nulo se ainda em andamento ou se houve erro antes do fim. |
+| `sucesso` | `INTEGER DEFAULT 0` | criação inicial | `1` quando a execução concluiu com sucesso; `0` caso contrário. |
+| `caminho_arquivo` | `TEXT` | criação inicial | caminho local do arquivo ZIP usado. |
+| `arquivo_hash` | `TEXT` | criação inicial | SHA-256 do arquivo ZIP. |
+| `total_carteira_ativa` | `INTEGER DEFAULT 0` | criação inicial | número de convênios ativos na carteira no momento da execução. |
+| `total_linhas_detru_lidas` | `INTEGER DEFAULT 0` | criação inicial | número de linhas lidas do CSV DETRU. |
+| `total_encontrados` | `INTEGER DEFAULT 0` | criação inicial | número de convênios da carteira encontrados no DETRU. |
+| `total_nao_encontrados` | `INTEGER DEFAULT 0` | criação inicial | número de convênios da carteira não encontrados no DETRU. |
+| `erro` | `TEXT` | criação inicial | mensagem de erro quando `sucesso = 0`. |
+| `resumo_json` | `TEXT` | criação inicial | objeto completo retornado por `cruzarCarteiraComDetru` serializado como JSON. |
+
+**Campos adicionados por evolução incremental:** não há; a tabela é criada completa por `CREATE TABLE IF NOT EXISTS`.
+
+**Riscos de alteração:** esta tabela é de auditoria — alterações destrutivas apagam rastreabilidade. Remover `iniciado_em NOT NULL` remove a âncora temporal da execução.
+
+**Observações de manutenção:** não há política de retenção automática. Registros de execuções com falha (`sucesso = 0`) devem ser preservados para diagnóstico. Não há foreign key entre esta tabela e `profor_detru_cache`.
+
 ### historico_alteracoes
 
 **Finalidade aparente:** registrar alterações realizadas em páginas editáveis, preservando rastreabilidade para consulta e, no caso de Parâmetros Mínimos, reversão.
@@ -374,7 +445,9 @@ Riscos:
 | `orcamento_2026` | `orcamento-2026-service.js` | `POST /api/orcamento-2026/salvar`, `POST /api/orcamento-2026/processos-vinculados/criar` | `orcamento-2026.json` via `publicarDadosEstaticos()`. |
 | `orcamento_2026_movimentacoes` | `orcamento-2026-service.js` | `POST /api/orcamento-2026/saldos/alocar` | não há publicação estática específica confirmada para movimentações no estado atual. |
 | `historico_alteracoes` | `historico-service.js` | escritas de Parâmetros Mínimos, Formalização PROFOR e Orçamento 2026; reversão de Parâmetros Mínimos | não há JSON público específico de histórico confirmado. |
-| `profor_convenios_monitorados` | `backend/services/profor-2022/convenios-monitorados-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
+| `profor_convenios_monitorados` | `backend/services/profor-2022/convenios-monitorados-service.js` | `GET /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados/:id/salvar`, `POST /api/profor-2022/convenios-monitorados/:id/inativar` | nenhuma publicação estática criada nesta etapa. |
+| `profor_detru_cache` | `backend/services/profor-2022/profor-detru-cache-service.js` | nenhuma rota pública criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
+| `profor_detru_atualizacoes` | `backend/services/profor-2022/profor-detru-cache-service.js` | nenhuma rota pública criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
 
 Relações operacionais confirmadas:
 

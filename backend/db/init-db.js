@@ -68,6 +68,8 @@ function inicializarBanco() {
   garantirColunasOrcamentoRastreio();
   garantirTabelaMovimentacoesOrcamento2026();
   garantirTabelaConveniosMonitoradosProfor2022();
+  garantirTabelaDetruCacheProfor2022();
+  garantirTabelaDetruAtualizacoesProfor2022();
 }
 
 function garantirColunasOrcamentoRastreio() {
@@ -166,6 +168,42 @@ function garantirTabelaConveniosMonitoradosProfor2022() {
       criado_em TEXT,
       atualizado_em TEXT,
       UNIQUE (numero_convenio, ano)
+    );
+  `);
+}
+
+function garantirTabelaDetruCacheProfor2022() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS profor_detru_cache (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      numero_convenio TEXT NOT NULL,
+      ano TEXT,
+      payload_json TEXT NOT NULL,
+      fonte TEXT DEFAULT 'DETRU/siconv_convenio.csv.zip',
+      arquivo_origem TEXT,
+      arquivo_hash TEXT,
+      consultado_em TEXT NOT NULL,
+      atualizado_em TEXT NOT NULL,
+      UNIQUE(numero_convenio, ano)
+    );
+  `);
+}
+
+function garantirTabelaDetruAtualizacoesProfor2022() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS profor_detru_atualizacoes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      iniciado_em TEXT NOT NULL,
+      concluido_em TEXT,
+      sucesso INTEGER DEFAULT 0,
+      caminho_arquivo TEXT,
+      arquivo_hash TEXT,
+      total_carteira_ativa INTEGER DEFAULT 0,
+      total_linhas_detru_lidas INTEGER DEFAULT 0,
+      total_encontrados INTEGER DEFAULT 0,
+      total_nao_encontrados INTEGER DEFAULT 0,
+      erro TEXT,
+      resumo_json TEXT
     );
   `);
 }
