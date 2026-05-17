@@ -7,8 +7,21 @@ const {
   obterConvenioMonitoradoPorNumero
 } = require("../services/profor-2022/convenios-monitorados-service");
 
-// Planilha de convênios (valor definido em backend/data/aplicacao.json > configuracao.arquivoPlanilhaConvenios)
-const CAMINHO_PLANILHA = path.join(__dirname, "..", "..", "Planilhas", "gestao_financeira_ouvidoria.xlsx");
+function resolverCaminhoPlanilha() {
+  const caminhoConfig = path.join(__dirname, "..", "data", "aplicacao.json");
+  try {
+    const config = JSON.parse(fs.readFileSync(caminhoConfig, "utf8"));
+    const arquivo = config?.configuracao?.arquivoPlanilhaConvenios;
+    if (arquivo && typeof arquivo === "string") {
+      return path.join(__dirname, "..", "..", arquivo);
+    }
+  } catch {
+    // configuração ausente ou inválida — usar fallback
+  }
+  return path.join(__dirname, "..", "..", "Planilhas", "gestao_financeira_ouvidoria.xlsx");
+}
+
+const CAMINHO_PLANILHA = resolverCaminhoPlanilha();
 const ABA_GERAL = "Geral";
 
 // Índices de coluna da aba Geral (espelho de COLUNAS_GERAL_PROFOR em data-service.js)

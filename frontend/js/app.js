@@ -88,6 +88,7 @@ const DEBUG_PERF_ONASP = (() => {
 })();
 let resumoPublicacaoSistemaCache = null;
 let faf2021UfDetalheAtual = '';
+let carteiraMonitoradaProfor2022Cache = [];
 const APP_CACHE_VERSION = '20260507-05';
 const ANALYTICS_CACHE_VERSION = '20260428-2';
 const TEMPO_MAXIMO_CARREGAMENTO_ORCAMENTO_MS = 15000;
@@ -2086,6 +2087,241 @@ async function carregarLogoParaPDF() {
                 event.preventDefault();
                 abrirDetalheConvenioProfor(row.dataset.proforUf);
             });
+
+            document.getElementById('carteiraIncluirInativos')?.addEventListener('change', (e) => {
+                carregarCarteiraMonitoradaProfor2022(e.target.checked);
+            });
+            document.getElementById('btnNovoConvenioMonitorado')?.addEventListener('click', () => {
+                abrirModalConvenioMonitorado(null);
+            });
+            document.getElementById('profor-carteira-monitorada-container')?.addEventListener('click', async (event) => {
+                const btnEditar = event.target.closest('[data-acao="editar-convenio"]');
+                const btnInativar = event.target.closest('[data-acao="inativar-convenio"]');
+                if (btnEditar) {
+                    const id = Number(btnEditar.dataset.id);
+                    abrirModalConvenioMonitorado(carteiraMonitoradaProfor2022Cache.find((c) => c.id === id) || null);
+                }
+                if (btnInativar) {
+                    const id = Number(btnInativar.dataset.id);
+                    const numero = btnInativar.dataset.numero || String(id);
+                    if (!confirm(`Inativar o convênio ${numero}? O registro não será excluído.`)) return;
+                    await inativarConvenioMonitoradoUI(id);
+                }
+            });
+        }
+
+        async function carregarCarteiraMonitoradaProfor2022(incluirInativos = false) {
+            const statusEl = document.getElementById('profor-carteira-status');
+            if (!statusEl) return;
+
+            if (estaEmModoPublicacaoEstatica()) {
+                statusEl.innerHTML = renderPublicationNotice();
+                return;
+            }
+
+            statusEl.innerHTML = '<div class="text-center text-muted py-3 small"><i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Carregando carteira...</div>';
+
+            try {
+                const qs = incluirInativos ? '?incluirInativos=true' : '';
+                const { payload } = await fetchJsonApiOnasp(`/api/profor-2022/convenios-monitorados${qs}`);
+                if (!payload.success) throw new Error(payload.message || 'Erro ao carregar carteira.');
+                carteiraMonitoradaProfor2022Cache = payload.convenios || [];
+                statusEl.innerHTML = renderizarListaConveniosMonitorados(carteiraMonitoradaProfor2022Cache);
+            } catch (err) {
+                statusEl.innerHTML = `<div class="alert alert-warning m-3"><i class="fas fa-exclamation-triangle me-2" aria-hidden="true"></i>${escapeHtml(err.message || 'Não foi possível carregar a carteira monitorada.')}</div>`;
+            }
+        }
+
+        function renderizarListaConveniosMonitorados(lista) {
+            if (!lista.length) {
+                return renderEmptyState({
+                    titulo: 'Nenhum convênio na carteira.',
+                    descricao: 'Use o botão "Novo" ou execute npm run import:profor-convenios.',
+                    icon: 'fa-file-contract'
+                });
+            }
+
+            const linhas = lista.map((c) => `
+                <tr class="${c.ativo === 0 ? 'text-muted' : ''}">
+                    <td class="fw-medium">${escapeHtml(c.numeroConvenio)}</td>
+                    <td class="text-center">${escapeHtml(c.ano || '—')}</td>
+                    <td class="text-center">${escapeHtml(c.uf || '—')}</td>
+                    <td>${escapeHtml(c.instrumento || '—')}</td>
+                    <td class="text-center">${c.ativo !== 0
+                        ? '<span class="badge bg-success-subtle text-success-emphasis">Ativo</span>'
+                        : '<span class="badge bg-secondary-subtle text-secondary-emphasis">Inativo</span>'}</td>
+                    <td class="text-muted small">${escapeHtml(c.observacao || '')}</td>
+                    <td class="text-end text-nowrap">${c.ativo !== 0 ? `
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-only me-1"
+                            data-acao="editar-convenio" data-id="${c.id}" title="Editar convênio">
+                            <i class="fas fa-pen-to-square" aria-hidden="true"></i>
+                            <span class="visually-hidden">Editar</span>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-icon-only"
+                            data-acao="inativar-convenio" data-id="${c.id}" data-numero="${escapeHtml(c.numeroConvenio)}" title="Inativar convênio">
+                            <i class="fas fa-ban" aria-hidden="true"></i>
+                            <span class="visually-hidden">Inativar</span>
+                        </button>` : ''}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover w-100 app-data-table" id="profor-carteira-tabela">
+                        <thead>
+                            <tr>
+                                <th>Convênio</th>
+                                <th class="text-center">Ano</th>
+                                <th class="text-center">UF</th>
+                                <th>Instrumento</th>
+                                <th class="text-center">Situação</th>
+                                <th>Observação</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>${linhas}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function abrirModalConvenioMonitorado(convenio = null) {
+            if (estaEmModoPublicacaoEstatica()) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            const idEdicao = convenio?.id ?? null;
+            const titulo = idEdicao ? 'Editar convênio' : 'Novo convênio';
+
+            removerModalOnasp('modalConvenioMonitorado');
+            document.body.insertAdjacentHTML('beforeend', `
+                <div class="modal fade" id="modalConvenioMonitorado" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${escapeHtml(titulo)}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label" for="convmNumero">Número do convênio <span class="text-danger" aria-hidden="true">*</span></label>
+                                    <input type="text" class="form-control" id="convmNumero" placeholder="Somente dígitos"
+                                        value="${escapeHtml(convenio?.numeroConvenio || '')}"
+                                        ${idEdicao ? 'readonly' : ''}>
+                                </div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col">
+                                        <label class="form-label" for="convmAno">Ano</label>
+                                        <input type="text" class="form-control" id="convmAno" placeholder="AAAA" maxlength="4"
+                                            value="${escapeHtml(convenio?.ano || '')}">
+                                    </div>
+                                    <div class="col">
+                                        <label class="form-label" for="convmUf">UF</label>
+                                        <input type="text" class="form-control" id="convmUf" placeholder="Ex: SP" maxlength="2"
+                                            value="${escapeHtml(convenio?.uf || '')}">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="convmInstrumento">Instrumento</label>
+                                    <input type="text" class="form-control" id="convmInstrumento"
+                                        value="${escapeHtml(convenio?.instrumento || 'Convênio')}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="convmObservacao">Observação</label>
+                                    <textarea class="form-control" id="convmObservacao" rows="2">${escapeHtml(convenio?.observacao || '')}</textarea>
+                                </div>
+                                <div id="convmMensagemErro" class="d-none"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="confirmarSalvarConvMonitorado">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            const modalElement = document.getElementById('modalConvenioMonitorado');
+            const modal = new window.bootstrap.Modal(modalElement);
+            modal.show();
+
+            document.getElementById('confirmarSalvarConvMonitorado')?.addEventListener('click', async () => {
+                await salvarConvenioMonitoradoProfor(modal, idEdicao);
+            });
+        }
+
+        async function salvarConvenioMonitoradoProfor(modal, idEdicao = null) {
+            const numero = document.getElementById('convmNumero')?.value.trim() || '';
+            const ano = document.getElementById('convmAno')?.value.trim() || '';
+            const uf = document.getElementById('convmUf')?.value.trim().toUpperCase() || '';
+            const instrumento = document.getElementById('convmInstrumento')?.value.trim() || '';
+            const observacao = document.getElementById('convmObservacao')?.value.trim() || '';
+            const erroEl = document.getElementById('convmMensagemErro');
+
+            const mostrarErro = (msg) => {
+                if (!erroEl) return;
+                erroEl.className = 'alert alert-danger mt-2';
+                erroEl.textContent = msg;
+            };
+
+            if (!numero) { mostrarErro('O número do convênio é obrigatório.'); return; }
+            if (!/^\d+$/.test(numero)) { mostrarErro('O número deve conter apenas dígitos.'); return; }
+            if (ano && !/^\d{4}$/.test(ano)) { mostrarErro('O ano deve ter exatamente 4 dígitos.'); return; }
+            if (uf && uf.length !== 2) { mostrarErro('A UF deve ter exatamente 2 caracteres.'); return; }
+
+            if (erroEl) erroEl.className = 'd-none';
+
+            const bodyPayload = {
+                numeroConvenio: numero,
+                ano: ano || null,
+                uf: uf || null,
+                instrumento: instrumento || 'Convênio',
+                observacao: observacao || null
+            };
+
+            const btnSalvar = document.getElementById('confirmarSalvarConvMonitorado');
+            if (btnSalvar) btnSalvar.disabled = true;
+
+            try {
+                const caminho = idEdicao
+                    ? `/api/profor-2022/convenios-monitorados/${idEdicao}/salvar`
+                    : '/api/profor-2022/convenios-monitorados';
+
+                const { payload } = await fetchJsonApiOnasp(caminho, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (!payload.success) throw new Error(payload.message || 'Não foi possível salvar.');
+
+                modal.hide();
+                const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked || false;
+                await carregarCarteiraMonitoradaProfor2022(incluirInativos);
+            } catch (err) {
+                mostrarErro(err.message || 'Erro ao salvar convênio.');
+            } finally {
+                if (btnSalvar) btnSalvar.disabled = false;
+            }
+        }
+
+        async function inativarConvenioMonitoradoUI(id) {
+            if (estaEmModoPublicacaoEstatica()) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+            try {
+                const { payload } = await fetchJsonApiOnasp(`/api/profor-2022/convenios-monitorados/${id}/inativar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!payload.success) throw new Error(payload.message || 'Não foi possível inativar.');
+                const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked || false;
+                await carregarCarteiraMonitoradaProfor2022(incluirInativos);
+            } catch (err) {
+                alert(err.message || 'Erro ao inativar convênio.');
+            }
         }
 
         function renderProfor2022View() {
@@ -2258,10 +2494,34 @@ async function carregarLogoParaPDF() {
                         </table>
                     </div>
                 </section>
+
+                <section class="table-container mb-4" id="profor-carteira-monitorada-container" aria-label="Carteira de convênios monitorados">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Gestão local</p>
+                            <h2>Carteira Monitorada</h2>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="form-check form-check-inline mb-0">
+                                <input class="form-check-input" type="checkbox" id="carteiraIncluirInativos">
+                                <span class="form-check-label small">Ver inativos</span>
+                            </label>
+                            ${!estaEmModoPublicacaoEstatica() ? `
+                            <button type="button" class="btn btn-sm btn-primary btn-icon-text" id="btnNovoConvenioMonitorado">
+                                <i class="fas fa-circle-plus" aria-hidden="true"></i>
+                                <span>Novo</span>
+                            </button>` : ''}
+                        </div>
+                    </div>
+                    <div id="profor-carteira-status">
+                        <div class="text-center text-muted py-3 small"><i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Carregando...</div>
+                    </div>
+                </section>
             `;
 
             registrarEventosProfor2022(dadosProfor);
             atualizarTabelaProfor2022(dadosProfor);
+            carregarCarteiraMonitoradaProfor2022();
         }
 
         function obterAreasPlanoProfor(convenio) {

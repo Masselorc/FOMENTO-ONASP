@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 7: interface da carteira monitorada PROFOR 2022
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `backend/server.js`, `backend/services/profor-2022/convenios-monitorados-service.js`, `backend/scripts/importar-convenios-monitorados-profor-2022.js`, `backend/data/aplicacao.json`, `frontend/js/app.js`, `frontend/css/app.css`, `index.html`.
+- Arquivos alterados: `frontend/js/app.js`, `backend/scripts/importar-convenios-monitorados-profor-2022.js`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: Adicionada seção "Carteira Monitorada" ao final da página PROFOR 2022, abaixo da tabela financeira existente. A seção usa as rotas locais já criadas: `GET /api/profor-2022/convenios-monitorados` (com `?incluirInativos=true`), `POST /api/profor-2022/convenios-monitorados`, `POST /:id/salvar` e `POST /:id/inativar`. Funções criadas: `carregarCarteiraMonitoradaProfor2022`, `renderizarListaConveniosMonitorados`, `abrirModalConvenioMonitorado`, `salvarConvenioMonitoradoProfor`, `inativarConvenioMonitoradoUI`. Estado global `carteiraMonitoradaProfor2022Cache` adicionado para event delegation. Em modo estático, a seção exibe aviso de somente leitura e oculta botões de escrita. Correção aplicada no script de importação da Etapa 6: caminho da planilha agora lido de `backend/data/aplicacao.json > configuracao.arquivoPlanilhaConvenios` com fallback seguro para `Planilhas/gestao_financeira_ouvidoria.xlsx`.
+- Validações executadas: `node --check backend/scripts/...`, `node --check frontend/js/app.js`, `npm run validar:json`, `npm run validar:syntax`, `npm run import:profor-convenios` (idempotente confirmado), teste ao vivo via API: GET listagem (15 ativos), POST criar (id=18), POST salvar (obs editada), POST inativar (ativo=0), `git diff --check`, `git diff --name-only`, `git status --short`.
+- Resultado: interface funcional; CRUD via API local testado e funcionando; carteira existente (15 convênios) exibida; modo estático protegido; nenhum valor financeiro alterado; nenhum JSON publicado alterado; banco não versionado. Registros de teste (id=1/num=999999, id=17/num=888888, id=18/num=777777) criados/inativados durante teste — não são dados reais.
+- Risco de regressão: baixo; nenhuma função existente alterada; nova seção e novas funções são aditivas; o template da view usa expressão condicional `estaEmModoPublicacaoEstatica()` já disponível no escopo.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD`; banco local não é revertido mas dados de teste podem ser ignorados.
+
 ## 17/05/2026 - Etapa 6: importação inicial da carteira PROFOR 2022
 
 - Branch atual: `main`.
