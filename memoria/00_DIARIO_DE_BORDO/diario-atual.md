@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 6: importação inicial da carteira PROFOR 2022
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `backend/services/profor-2022/convenios-monitorados-service.js`, `backend/db/database.js`, `backend/db/init-db.js`, `backend/scripts/importar-parametros-minimos.js`, `backend/services/data-service.js`, `package.json`, `backend/data/aplicacao.json`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`.
+- Arquivos alterados: `backend/scripts/importar-convenios-monitorados-profor-2022.js` (criado), `package.json`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: criado o script `backend/scripts/importar-convenios-monitorados-profor-2022.js` para popular a tabela `profor_convenios_monitorados` com os convênios da aba `Geral` da planilha `Planilhas/gestao_financeira_ouvidoria.xlsx`. O script inicializa o banco, verifica existência da planilha e da aba, lê as linhas ignorando o cabeçalho, importa apenas `numero_convenio`, `ano`, `uf`, `instrumento` e `programa_origem = "PROFOR 2022"` — nenhum valor financeiro. Registros já existentes (ativos ou inativos) são detectados e ignorados sem reativar nem duplicar. Registro de teste 999999 é explicitamente ignorado. Relatório final no console com 5 contadores. Script registrado em `package.json` como `import:profor-convenios`.
+- Validações executadas: `node --check` do script novo, `node --check` do serviço, `npm run validar:json`, `npm run validar:syntax`, execução funcional real (15 convênios inseridos, 0 erros), execução idempotente (15 já existentes, 0 inseridos, 0 erros), `git diff --check`, `git diff --name-only`, `git status --short`.
+- Resultado: 15 convênios da carteira PROFOR 2022 populados no banco; nenhum valor financeiro importado; registro de teste 999999 não tratado como real; banco não versionado; idempotência confirmada.
+- Risco de regressão: baixo; script isolado, não altera rotas, serviços existentes, frontend nem JSONs publicados. O `package.json` recebeu apenas um novo script.
+- Rollback: `git revert <hash_do_commit>` e `git push origin HEAD` revertem o código e o script. O banco SQLite não é afetado pelo revert (os registros inseridos permanecem localmente, mas podem ser excluídos manualmente ou o banco pode ser recriado com `npm run init-db`).
+
 ## 17/05/2026 - Etapa 5: rotas de convênios monitorados PROFOR 2022
 
 - Branch atual: `main`.

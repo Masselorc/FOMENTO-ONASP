@@ -3,6 +3,7 @@
     "start": "node backend/server.js",
     "init-db": "node backend/db/init-db.js",
     "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js",
+    "import:profor-convenios": "node backend/scripts/importar-convenios-monitorados-profor-2022.js",
     "publicar:dados": "node backend/scripts/publicar-dados-estaticos.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",
