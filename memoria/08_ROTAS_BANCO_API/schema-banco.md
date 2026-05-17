@@ -382,6 +382,80 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 **Observações de manutenção:** não há política de retenção automática. Registros de execuções com falha (`sucesso = 0`) devem ser preservados para diagnóstico. Não há foreign key entre esta tabela e `profor_detru_cache`.
 
+### profor_transferegov_rendimentos_cache
+
+**Finalidade aparente:** armazenar o último saldo de rendimentos de aplicação capturado com sucesso no acesso público do Transferegov para cada convênio monitorado do PROFOR 2022. Falhas de consulta não apagam nem zeram o último valor válido.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelaTransferegovRendimentosCacheProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`; cliente de captura em `backend/services/profor-2022/transferegov-rendimentos-client.js`; script de atualização em `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js` (`npm run atualizar:rendimentos-profor`).
+
+**Rotas relacionadas:** nenhuma rota criada nesta etapa.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `numero_convenio TEXT NOT NULL`, `consultado_em TEXT NOT NULL`, `atualizado_em TEXT NOT NULL`, `UNIQUE(numero_convenio, ano)`.
+
+**Colunas confirmadas:**
+
+| Coluna | Tipo declarado | Origem | Observações |
+|---|---:|---|---|
+| `id` | `INTEGER` | criação inicial | `PRIMARY KEY AUTOINCREMENT`. |
+| `numero_convenio` | `TEXT` | criação inicial | `NOT NULL`; número do instrumento monitorado. |
+| `ano` | `TEXT` | criação inicial | compõe `UNIQUE(numero_convenio, ano)`; pode ser nulo. |
+| `saldo_rendimentos_atual` | `REAL` | criação inicial | valor numérico convertido de moeda brasileira. |
+| `valor_original` | `TEXT` | criação inicial | texto original capturado, por exemplo `R$ 131.799,75`. |
+| `subtitulo` | `TEXT` | criação inicial | subtítulo da página pública de rendimentos. |
+| `aviso` | `TEXT` | criação inicial | aviso explicativo da página pública, quando presente. |
+| `convenio_texto` | `TEXT` | criação inicial | texto do campo `#convenio`, usado para conferência do instrumento. |
+| `url_final` | `TEXT` | criação inicial | URL final após redirecionamentos públicos. |
+| `consultado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp ISO da consulta. |
+| `atualizado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp da gravação no cache. |
+| `sucesso` | `INTEGER DEFAULT 1` | criação inicial | `1` para consulta salva com sucesso. |
+| `erro` | `TEXT` | criação inicial | preservado para compatibilidade, mas falhas não sobrescrevem cache válido nesta etapa. |
+| `payload_json` | `TEXT` | criação inicial | resultado bruto relevante da extração, sem cookies, credenciais ou HTML completo. |
+
+**Campos adicionados por evolução incremental:** não há; a tabela é criada completa por `CREATE TABLE IF NOT EXISTS`.
+
+**Riscos de alteração:** alterar `UNIQUE(numero_convenio, ano)` quebra o upsert do serviço. Como em outras tabelas do módulo, `ano` pode ser nulo; no SQLite, `UNIQUE(numero_convenio, ano)` permite múltiplas linhas com o mesmo `numero_convenio` quando `ano IS NULL`. Esse risco está documentado e não foi corrigido nesta etapa para evitar refatoração ampla.
+
+**Observações de manutenção:** salvar apenas resultados com `sucesso = true`. Consulta falha deve ser registrada no histórico de consultas e não deve apagar, zerar ou substituir o último saldo capturado com sucesso.
+
+### profor_transferegov_rendimentos_consultas
+
+**Finalidade aparente:** registrar execuções da rotina de atualização de saldos de rendimentos do Transferegov público para a carteira PROFOR 2022.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelaTransferegovRendimentosConsultasProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`; script `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js`.
+
+**Rotas relacionadas:** nenhuma rota criada nesta etapa.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `iniciado_em TEXT NOT NULL`.
+
+**Colunas confirmadas:**
+
+| Coluna | Tipo declarado | Origem | Observações |
+|---|---:|---|---|
+| `id` | `INTEGER` | criação inicial | `PRIMARY KEY AUTOINCREMENT`. |
+| `iniciado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp ISO de início da rotina. |
+| `concluido_em` | `TEXT` | criação inicial | timestamp ISO de encerramento. |
+| `sucesso` | `INTEGER DEFAULT 0` | criação inicial | `1` quando a execução da rotina conclui; `0` em falha fatal. |
+| `total_carteira_ativa` | `INTEGER DEFAULT 0` | criação inicial | total de convênios ativos no início da rotina. |
+| `total_consultados` | `INTEGER DEFAULT 0` | criação inicial | total de convênios consultados. |
+| `total_sucesso` | `INTEGER DEFAULT 0` | criação inicial | consultas salvas no cache. |
+| `total_falha` | `INTEGER DEFAULT 0` | criação inicial | consultas que retornaram erro controlado. |
+| `erro` | `TEXT` | criação inicial | erro fatal da rotina, quando houver. |
+| `resumo_json` | `TEXT` | criação inicial | resumo da execução, incluindo falhas por convênio. |
+
+**Campos adicionados por evolução incremental:** não há; a tabela é criada completa por `CREATE TABLE IF NOT EXISTS`.
+
+**Riscos de alteração:** esta tabela é trilha de auditoria operacional; limpeza ou alteração destrutiva reduz capacidade de diagnóstico de instabilidade no acesso público do Transferegov.
+
+**Observações de manutenção:** falhas por ausência de sessão pública, HTTP não 200 ou mudança de HTML devem ficar registradas no resumo da consulta sem afetar o cache válido.
+
 ### historico_alteracoes
 
 **Finalidade aparente:** registrar alterações realizadas em páginas editáveis, preservando rastreabilidade para consulta e, no caso de Parâmetros Mínimos, reversão.
@@ -448,6 +522,8 @@ Riscos:
 | `profor_convenios_monitorados` | `backend/services/profor-2022/convenios-monitorados-service.js` | `GET /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados/:id/salvar`, `POST /api/profor-2022/convenios-monitorados/:id/inativar` | nenhuma publicação estática criada nesta etapa. |
 | `profor_detru_cache` | `backend/services/profor-2022/profor-detru-cache-service.js` | nenhuma rota pública criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
 | `profor_detru_atualizacoes` | `backend/services/profor-2022/profor-detru-cache-service.js` | nenhuma rota pública criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
+| `profor_transferegov_rendimentos_cache` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
+| `profor_transferegov_rendimentos_consultas` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
 
 Relações operacionais confirmadas:
 

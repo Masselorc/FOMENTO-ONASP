@@ -1,5 +1,18 @@
 # Diário de bordo
 
+## 17/05/2026 - Bloco 14: Transferegov público + cache de rendimentos
+
+- Branch atual: `main`.
+- Objetivo: criar a base técnica para consultar, em acesso público do Transferegov, o saldo atual de rendimentos de aplicação dos convênios monitorados do PROFOR 2022 e armazenar o resultado em cache SQLite local.
+- Arquivos alterados: `backend/db/init-db.js`, `backend/services/profor-2022/transferegov-rendimentos-client.js`, `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`, `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js`, `package.json`, `memoria/08_ROTAS_BANCO_API/schema-banco.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção: adicionadas as tabelas `profor_transferegov_rendimentos_cache` e `profor_transferegov_rendimentos_consultas`; criado cliente público sem credenciais para montar a URL conhecida de rendimentos, consultar com `fetch` nativo e extrair `#tr-novaSolicitacaoValorDisponivelRendimento`; criado serviço de cache que salva apenas consultas bem-sucedidas e preserva o último valor válido em falhas; criado script sequencial `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js`, disponível como `npm run atualizar:rendimentos-profor`.
+- Comportamento técnico: o parser mantém `valorOriginal` como texto em moeda brasileira, converte `saldoRendimentosAtual` para `Number`, captura subtítulo, aviso e texto do convênio, e retorna erro controlado quando o HTML não traz contexto de convênio/sessão pública.
+- Limitações registradas: a consulta direta ao endpoint público pode depender de sessão pública previamente estabelecida pelo Transferegov para o convênio; não foi implementado login, senha, captcha, certificado, área restrita, contorno de bloqueio ou fluxo de seleção de convênio não confirmado no código.
+- Escopo preservado: a página PROFOR 2022 ainda não consome este cache; home principal não alterada; frontend não alterado; nenhum JSON publicado alterado; `npm run publicar:dados` não executado.
+- Testes previstos/executados nesta etapa: `node --check` dos novos serviços/script e de `backend/db/init-db.js`; `npm run init-db`; validação manual por `node -e` para conversão de moeda, parser com HTML fictício, persistência/consulta de cache fictício e falha controlada de parser; `npm run validar:json`; `npm run validar:syntax`; `git diff --check`.
+- Risco de regressão: baixo; mudanças são aditivas, isoladas no backend local/API e no schema SQLite. A constraint `UNIQUE(numero_convenio, ano)` permite duplicidade quando `ano IS NULL` no SQLite; risco documentado e não corrigido nesta etapa para evitar refatoração ampla.
+- Rollback: `git revert <hash>` remove o bloco técnico e a migration aditiva do código; banco local já inicializado pode manter tabelas vazias sem afetar fluxos existentes.
+
 ## 17/05/2026 - Etapa 13: disparo administrativo da atualização DETRU
 
 - Branch atual: `main`.

@@ -70,6 +70,8 @@ function inicializarBanco() {
   garantirTabelaConveniosMonitoradosProfor2022();
   garantirTabelaDetruCacheProfor2022();
   garantirTabelaDetruAtualizacoesProfor2022();
+  garantirTabelaTransferegovRendimentosCacheProfor2022();
+  garantirTabelaTransferegovRendimentosConsultasProfor2022();
 }
 
 function garantirColunasOrcamentoRastreio() {
@@ -202,6 +204,45 @@ function garantirTabelaDetruAtualizacoesProfor2022() {
       total_linhas_detru_lidas INTEGER DEFAULT 0,
       total_encontrados INTEGER DEFAULT 0,
       total_nao_encontrados INTEGER DEFAULT 0,
+      erro TEXT,
+      resumo_json TEXT
+    );
+  `);
+}
+
+function garantirTabelaTransferegovRendimentosCacheProfor2022() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS profor_transferegov_rendimentos_cache (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      numero_convenio TEXT NOT NULL,
+      ano TEXT,
+      saldo_rendimentos_atual REAL,
+      valor_original TEXT,
+      subtitulo TEXT,
+      aviso TEXT,
+      convenio_texto TEXT,
+      url_final TEXT,
+      consultado_em TEXT NOT NULL,
+      atualizado_em TEXT NOT NULL,
+      sucesso INTEGER DEFAULT 1,
+      erro TEXT,
+      payload_json TEXT,
+      UNIQUE(numero_convenio, ano)
+    );
+  `);
+}
+
+function garantirTabelaTransferegovRendimentosConsultasProfor2022() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS profor_transferegov_rendimentos_consultas (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      iniciado_em TEXT NOT NULL,
+      concluido_em TEXT,
+      sucesso INTEGER DEFAULT 0,
+      total_carteira_ativa INTEGER DEFAULT 0,
+      total_consultados INTEGER DEFAULT 0,
+      total_sucesso INTEGER DEFAULT 0,
+      total_falha INTEGER DEFAULT 0,
       erro TEXT,
       resumo_json TEXT
     );
