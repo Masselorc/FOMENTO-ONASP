@@ -6,6 +6,11 @@
     ],
     "classificacaoPlanilhaConvenios": "OUVIDORIA"
   },
+  "detru": {
+    "urlSiconvConvenio": "",
+    "caminhoLocal": "Dados/detru/siconv_convenio.csv.zip",
+    "horaAtualizacaoDiaria": "06:00"
+  },
   "regioes": {
     "NORTE": [
       "AC",
@@ -12630,7 +12635,7 @@
     }
   },
   "metadadosPublicacao": {
-    "publicadoEm": "2026-05-17T20:27:18.017Z",
+    "publicadoEm": "2026-05-17T23:15:38.938Z",
     "fonteDadosBase": "dados consolidados da Home local",
     "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx"
   }

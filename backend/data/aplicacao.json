@@ -6,6 +6,11 @@
     ],
     "classificacaoPlanilhaConvenios": "OUVIDORIA"
   },
+  "detru": {
+    "urlSiconvConvenio": "",
+    "caminhoLocal": "Dados/detru/siconv_convenio.csv.zip",
+    "horaAtualizacaoDiaria": "06:00"
+  },
   "regioes": {
     "NORTE": [
       "AC",

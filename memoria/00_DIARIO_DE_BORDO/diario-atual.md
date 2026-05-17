@@ -1,5 +1,18 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 12: configuração e acesso remoto ao DETRU
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `backend/scripts/atualizar-cache-detru-profor-2022.js`, `backend/services/profor-2022/profor-detru-cache-service.js`, `backend/services/profor-2022/profor-detru-sync-service.js`, `backend/data/aplicacao.json`, `package.json`, `.env.example`, `.gitignore`.
+- Arquivos criados: `backend/services/profor-2022/detru-download-service.js`, `backend/scripts/agendar-atualizacao-detru-profor-2022.js`.
+- Arquivos alterados: `backend/scripts/atualizar-cache-detru-profor-2022.js`, `package.json`, `.env.example`, `.gitignore`, `backend/data/aplicacao.json`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: Serviço `detru-download-service.js` criado com 6 funções exportadas: `obterConfiguracaoDetru` (lê variáveis de ambiente `DETRU_SICONV_CONVENIO_URL`, `DETRU_SICONV_CONVENIO_LOCAL`, `DETRU_ATUALIZACAO_DIARIA_HORA` com fallback em `aplicacao.json`), `resolverCaminhoLocalDetru`, `validarUrlDetru` (aceita apenas `http://` e `https://`; rejeita vazio, null e outros protocolos), `baixarArquivoDetru` (usa `fetch` nativo Node v18+; baixa para `.tmp`, move ao concluir; remove parcial em falha; valida HTTP 200), `garantirArquivoDetruAtualizado` (usa URL se configurada, usa local se existir, falha com mensagem clara caso nenhum disponível), `obterMetadadosArquivoDetru`. Script `atualizar-cache-detru-profor-2022.js` atualizado para chamar `garantirArquivoDetruAtualizado()` quando sem argumento CLI (download automático ou uso local). Agendador `agendar-atualizacao-detru-profor-2022.js` criado com `setTimeout` recursivo calculando o próximo horário configurado — **não acoplado ao `npm start`; rodar como processo separado** (`npm run agendar:detru-profor`). Seção `detru` adicionada em `aplicacao.json` com `urlSiconvConvenio` vazio e horário padrão `06:00`. Variáveis DETRU adicionadas ao `.env.example` sem valor real. `.gitignore` atualizado para ignorar `Dados/detru/*.zip`, `*.csv` e `*.tmp`. Sem dependência nova. Sem rota, frontend ou publicação estática alterada.
+- URL real do DETRU: não configurada localmente — teste real depende de configurar `DETRU_SICONV_CONVENIO_URL` no `.env`.
+- Testes funcionais executados em memória: `validarUrlDetru` com vazia/null/ftp/https/http — todos corretos. `garantirArquivoDetruAtualizado` sem URL e sem arquivo local — falhou com mensagem clara. `obterConfiguracaoDetru` sem env — retornou `url: null`, hora padrão `06:00`. `resolverCaminhoLocalDetru` — caminho correto.
+- Validações executadas: `node --check` dos 3 arquivos (OK), `npm run validar:json` (OK), `npm run validar:syntax` (OK, 25 arquivos), `git diff --check` (limpo).
+- Risco de regressão: nulo — serviços e scripts novos isolados; `atualizar-cache-detru-profor-2022.js` mantém compatibilidade com argumento CLI.
+- Rollback: `git revert <hash>`.
+
 ## 17/05/2026 - Etapa 11: cache DETRU filtrado e rotina de atualização
 
 - Branch atual: `main`.

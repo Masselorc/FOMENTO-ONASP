@@ -1,10 +1,10 @@
-// Rotina manual de atualização do cache DETRU filtrado para PROFOR 2022.
+// Rotina de atualização do cache DETRU filtrado para PROFOR 2022.
 // Uso: node backend/scripts/atualizar-cache-detru-profor-2022.js [caminho/para/siconv_convenio.csv.zip]
-// Se nenhum argumento for fornecido, usa o caminho padrão: Dados/detru/siconv_convenio.csv.zip
+// Se nenhum argumento for fornecido, tenta download automático via DETRU_SICONV_CONVENIO_URL
+// ou usa o arquivo local em Dados/detru/siconv_convenio.csv.zip.
 // NÃO deve ser chamado durante o carregamento da página.
 
 const path = require("path");
-const fs = require("fs");
 const { inicializarBanco } = require("../db/init-db");
 const { cruzarCarteiraComDetru, resumirCruzamentoDetru } = require("../services/profor-2022/profor-detru-sync-service");
 const {
@@ -14,28 +14,32 @@ const {
   registrarAtualizacaoDetruFim,
   registrarAtualizacaoDetruErro,
 } = require("../services/profor-2022/profor-detru-cache-service");
+const { garantirArquivoDetruAtualizado } = require("../services/profor-2022/detru-download-service");
 
-const CAMINHO_PADRAO = path.join(__dirname, "..", "..", "Dados", "detru", "siconv_convenio.csv.zip");
-
-function resolverCaminhoZip() {
+async function resolverCaminhoZip() {
   const arg = process.argv[2];
   if (arg) {
-    return path.isAbsolute(arg) ? arg : path.join(process.cwd(), arg);
+    const caminho = path.isAbsolute(arg) ? arg : path.join(process.cwd(), arg);
+    console.log(`Usando arquivo informado por argumento: ${caminho}`);
+    return caminho;
   }
-  return CAMINHO_PADRAO;
+  // Sem argumento: tenta download automático ou usa local configurado
+  const resultado = await garantirArquivoDetruAtualizado();
+  return resultado.caminho;
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
 
-  const caminhoZip = resolverCaminhoZip();
-  console.log(`Arquivo DETRU: ${caminhoZip}`);
-
-  if (!fs.existsSync(caminhoZip)) {
-    console.error(`Erro: arquivo não encontrado — ${caminhoZip}`);
-    console.error("Forneça o caminho como argumento ou coloque o arquivo em Dados/detru/siconv_convenio.csv.zip");
+  let caminhoZip;
+  try {
+    caminhoZip = await resolverCaminhoZip();
+  } catch (err) {
+    console.error(`Erro ao obter arquivo DETRU: ${err.message}`);
     process.exit(1);
   }
+
+  console.log(`Arquivo DETRU: ${caminhoZip}`);
 
   const arquivoHash = calcularHashArquivo(caminhoZip);
   console.log(`Hash do arquivo: ${arquivoHash}`);

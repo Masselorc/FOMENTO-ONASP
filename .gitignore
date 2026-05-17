@@ -30,6 +30,11 @@ memoria/**/*.jpg
 memoria/**/*.jpeg
 memoria/**/*.webp
 
+# Dados externos baixados automaticamente (não versionar ZIP/CSV do DETRU)
+Dados/detru/*.zip
+Dados/detru/*.csv
+Dados/detru/*.tmp
+
 # Ambientes e dados locais
 backend/data/onasp.sqlite
 backend/data/onasp.sqlite-*
