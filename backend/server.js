@@ -36,6 +36,8 @@ const {
   atualizarConvenioMonitorado,
   inativarConvenioMonitorado
 } = require("./services/profor-2022/convenios-monitorados-service");
+const { atualizarCacheDetruProfor2022 } = require("./services/profor-2022/profor-detru-update-service");
+const { obterUltimaAtualizacaoDetru } = require("./services/profor-2022/profor-detru-cache-service");
 const {
   exportarParametrosMinimosExcel,
   exportarFormalizacaoProforExcel,
@@ -214,6 +216,34 @@ function extrairIdConvenioMonitorado(pathname, sufixo) {
   const segmento = pathname.slice(prefixo.length, pathname.length - sufixo.length);
   const id = Number(segmento);
   return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+function normalizarUltimaAtualizacaoDetru(registro) {
+  if (!registro) return null;
+
+  let resumo = null;
+  if (registro.resumo_json) {
+    try {
+      resumo = JSON.parse(registro.resumo_json);
+    } catch {
+      resumo = null;
+    }
+  }
+
+  return {
+    id: registro.id ?? null,
+    iniciadoEm: registro.iniciado_em ?? null,
+    concluidoEm: registro.concluido_em ?? null,
+    sucesso: registro.sucesso === 1,
+    caminhoArquivo: registro.caminho_arquivo ?? null,
+    arquivoHash: registro.arquivo_hash ?? null,
+    totalCarteiraAtiva: registro.total_carteira_ativa ?? 0,
+    totalLinhasDetruLidas: registro.total_linhas_detru_lidas ?? 0,
+    totalEncontrados: registro.total_encontrados ?? 0,
+    totalNaoEncontrados: registro.total_nao_encontrados ?? 0,
+    erro: registro.erro ?? null,
+    resumo
+  };
 }
 
 function enviarArquivoEstatico(req, res, pathname) {
@@ -454,6 +484,41 @@ async function rotearApi(req, res, pathname) {
       const resultado = salvarExecucaoFaf2021(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/detru/atualizar") {
+      const body = await lerJsonBody(req);
+      try {
+        const resultado = await atualizarCacheDetruProfor2022(body || {});
+        const ultimaAtualizacao = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
+        enviarJson(res, 200, {
+          success: true,
+          message: "Atualização DETRU concluída com sucesso.",
+          totalSalvos: resultado.totalSalvos,
+          resultadoResumo: resultado.resultadoResumo,
+          ultimaAtualizacao
+        });
+      } catch (erro) {
+        const statusCode = Number.isInteger(Number(erro?.statusCode)) && Number(erro?.statusCode) >= 400 && Number(erro?.statusCode) < 600
+          ? Number(erro.statusCode)
+          : 500;
+        if (statusCode >= 500) {
+          console.error("Falha ao atualizar DETRU:", erro);
+        }
+        enviarJson(res, statusCode, {
+          success: false,
+          message: erro?.message || "Erro ao atualizar o DETRU."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/detru/ultima-atualizacao") {
+      enviarJson(res, 200, {
+        success: true,
+        ultimaAtualizacao: normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru())
+      });
       return;
     }
 

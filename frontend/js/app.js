@@ -391,18 +391,135 @@ function renderKpiCard({
     `;
 }
 
-function renderPublicationNotice() {
-    return `
-        <div class="publication-mode-notice" role="status">
-            <i class="fas ${UI_ICONS.lock}" aria-hidden="true"></i>
-            <span>${escapeHtml(MENSAGEM_MODO_PUBLICACAO)}</span>
-        </div>
-    `;
-}
+        function renderPublicationNotice() {
+            return `
+                <div class="publication-mode-notice" role="status">
+                    <i class="fas ${UI_ICONS.lock}" aria-hidden="true"></i>
+                    <span>${escapeHtml(MENSAGEM_MODO_PUBLICACAO)}</span>
+                </div>
+            `;
+        }
 
-function renderizarAvisoModoPublicacao() {
-    return renderPublicationNotice();
-}
+        function formatarResumoUltimaAtualizacaoDetruProfor2022(ultimaAtualizacao) {
+            if (!ultimaAtualizacao) {
+                return 'Última atualização DETRU: nenhuma atualização registrada.';
+            }
+
+            const concluidoEm = ultimaAtualizacao.concluidoEm || ultimaAtualizacao.concluido_em || ultimaAtualizacao.iniciadoEm || ultimaAtualizacao.iniciado_em;
+            const sucesso = ultimaAtualizacao.sucesso === true || ultimaAtualizacao.sucesso === 1;
+            const totalEncontrados = Number(ultimaAtualizacao.totalEncontrados ?? ultimaAtualizacao.total_encontrados ?? 0);
+            const statusLabel = sucesso ? 'Concluído' : (concluidoEm ? 'Crítico' : 'Em andamento');
+            const partes = [
+                formatarDataStatusSistema(concluidoEm),
+                sucesso ? 'sucesso' : (concluidoEm ? 'falha' : 'em andamento')
+            ];
+
+            if (Number.isFinite(totalEncontrados)) {
+                partes.push(`${totalEncontrados.toLocaleString('pt-BR')} convênio(s) encontrados`);
+            }
+
+            if (ultimaAtualizacao.erro) {
+                partes.push(ultimaAtualizacao.erro);
+            }
+
+            return {
+                statusLabel,
+                resumo: `Última atualização DETRU: ${partes.filter(Boolean).join(' • ')}`
+            };
+        }
+
+        function renderStatusUltimaAtualizacaoDetruProfor2022(ultimaAtualizacao) {
+            if (!ultimaAtualizacao) {
+                return `
+                    <div class="small text-muted" id="profor-detru-status" aria-live="polite">
+                        Última atualização DETRU: nenhuma atualização registrada.
+                    </div>
+                `;
+            }
+
+            const { statusLabel, resumo } = formatarResumoUltimaAtualizacaoDetruProfor2022(ultimaAtualizacao);
+            return `
+                <div class="d-flex flex-wrap align-items-center gap-2 small text-muted" id="profor-detru-status" aria-live="polite">
+                    ${renderStatusBadge(statusLabel)}
+                    <span>${escapeHtml(resumo)}</span>
+                </div>
+            `;
+        }
+
+        function renderMensagemDetruProfor2022(tipo, mensagem) {
+            const variante = tipo === 'success'
+                ? 'success'
+                : tipo === 'warning'
+                    ? 'warning'
+                    : 'danger';
+
+            return `
+                <div class="alert alert-${variante} py-2 px-3 small mb-0" role="${variante === 'danger' ? 'alert' : 'status'}">
+                    ${escapeHtml(mensagem)}
+                </div>
+            `;
+        }
+
+        function mostrarMensagemDetruProfor2022(tipo, mensagem) {
+            const feedbackEl = document.getElementById('profor-detru-feedback');
+            if (!feedbackEl) return;
+            feedbackEl.innerHTML = renderMensagemDetruProfor2022(tipo, mensagem);
+        }
+
+        async function carregarStatusUltimaAtualizacaoDetruProfor2022() {
+            const statusEl = document.getElementById('profor-detru-status');
+            if (!statusEl || estaEmModoPublicacaoEstatica()) return;
+
+            statusEl.innerHTML = '<div class="small text-muted"><i class="fas fa-spinner fa-spin me-2" aria-hidden="true"></i>Carregando status da última atualização DETRU...</div>';
+
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/profor-2022/detru/ultima-atualizacao');
+                if (!payload.success) throw new Error(payload.message || 'Não foi possível carregar o status DETRU.');
+                statusEl.outerHTML = renderStatusUltimaAtualizacaoDetruProfor2022(payload.ultimaAtualizacao);
+            } catch (err) {
+                statusEl.outerHTML = `
+                    <div class="small text-warning" id="profor-detru-status" aria-live="polite">
+                        Última atualização DETRU indisponível. ${escapeHtml(err.message || 'Tente novamente mais tarde.')}
+                    </div>
+                `;
+            }
+        }
+
+        async function atualizarCacheDetruProfor2022UI() {
+            if (estaEmModoPublicacaoEstatica()) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            const botao = document.getElementById('btnAtualizarDetruProfor');
+            if (!confirm('Atualizar o cache DETRU agora?')) return;
+
+            if (botao) botao.disabled = true;
+            mostrarMensagemDetruProfor2022('warning', 'Atualizando cache DETRU...');
+
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/profor-2022/detru/atualizar', {
+                    method: 'POST'
+                });
+
+                if (!payload.success) {
+                    throw new Error(payload.message || 'Não foi possível atualizar o DETRU.');
+                }
+
+                mostrarMensagemDetruProfor2022('success', payload.message || 'Cache DETRU atualizado com sucesso.');
+                await carregarStatusUltimaAtualizacaoDetruProfor2022();
+                const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
+                await carregarCarteiraMonitoradaProfor2022(incluirInativos);
+            } catch (err) {
+                mostrarMensagemDetruProfor2022('danger', err.message || 'Erro ao atualizar o DETRU.');
+            } finally {
+                if (botao) botao.disabled = false;
+            }
+        }
+
+        function renderizarAvisoModoPublicacao() {
+            return renderPublicationNotice();
+        }
 
 function renderEmptyState({
     titulo = 'Nenhum dado disponível.',
@@ -2102,9 +2219,15 @@ async function carregarLogoParaPDF() {
                     const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
                     carregarCarteiraMonitoradaProfor2022(incluirInativos);
                 }
+                if (abrindo) {
+                    carregarStatusUltimaAtualizacaoDetruProfor2022();
+                }
             });
             document.getElementById('carteiraIncluirInativos')?.addEventListener('change', (e) => {
                 carregarCarteiraMonitoradaProfor2022(e.target.checked);
+            });
+            document.getElementById('btnAtualizarDetruProfor')?.addEventListener('click', () => {
+                atualizarCacheDetruProfor2022UI();
             });
             document.getElementById('btnNovoConvenioMonitorado')?.addEventListener('click', () => {
                 abrirModalConvenioMonitorado(null);
@@ -2533,11 +2656,25 @@ async function carregarLogoParaPDF() {
                                 <span class="form-check-label small">Ver inativos</span>
                             </label>
                             ${!estaEmModoPublicacaoEstatica() ? `
-                            <button type="button" class="btn btn-sm btn-primary btn-icon-text ms-auto" id="btnNovoConvenioMonitorado">
-                                <i class="fas fa-circle-plus" aria-hidden="true"></i>
-                                <span>Novo</span>
-                            </button>` : ''}
+                            <div class="ms-auto d-flex flex-wrap align-items-center gap-2">
+                                ${renderActionButton({
+                                    id: 'btnAtualizarDetruProfor',
+                                    type: 'refresh',
+                                    label: 'Atualizar DETRU',
+                                    variant: 'outline-secondary',
+                                    backend: true
+                                })}
+                                <button type="button" class="btn btn-sm btn-primary btn-icon-text" id="btnNovoConvenioMonitorado">
+                                    <i class="fas fa-circle-plus" aria-hidden="true"></i>
+                                    <span>Novo</span>
+                                </button>
+                            </div>` : ''}
                         </div>
+                        ${!estaEmModoPublicacaoEstatica() ? `
+                        <div class="px-3 pt-2 pb-1" id="profor-detru-feedback"></div>
+                        <div class="px-3 pb-2">
+                            ${renderStatusUltimaAtualizacaoDetruProfor2022(null)}
+                        </div>` : ''}
                         <div id="profor-carteira-status"></div>
                     </div>
                 </section>

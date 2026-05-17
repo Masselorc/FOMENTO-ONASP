@@ -1,5 +1,24 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 13: disparo administrativo da atualização DETRU
+
+- Branch atual: `main`.
+- Objetivo: permitir atualização manual/local do cache DETRU na Carteira Monitorada do PROFOR 2022 sem depender apenas do agendador diário.
+- Arquivos alterados: `backend/services/profor-2022/profor-detru-update-service.js`, `backend/scripts/atualizar-cache-detru-profor-2022.js`, `backend/server.js`, `frontend/js/app.js`, `index.html`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção: criado serviço reutilizável `atualizarCacheDetruProfor2022(opcoes = {})` para concentrar hash, atualização, cruzamento, snapshot e auditoria; script manual passou a delegar para o serviço; `backend/server.js` ganhou `POST /api/profor-2022/detru/atualizar` e `GET /api/profor-2022/detru/ultima-atualizacao`; `frontend/js/app.js` recebeu botão discreto "Atualizar DETRU" e status básico da última atualização apenas no modo local/API; `index.html` teve cache-buster do bundle ajustado.
+- Comportamento validado:
+  - a view PROFOR 2022 exibe o botão `Atualizar DETRU` apenas no modo local/API;
+  - o status inicial mostra `Última atualização DETRU: nenhuma atualização registrada.`;
+  - o clique sem arquivo local e sem URL configurada retorna erro controlado, sem quebrar a tela;
+  - o modo estático não expõe o botão;
+  - nenhuma publicação estática foi gerada e nenhum JSON publicado foi alterado.
+- Validações executadas: `node --check backend/services/profor-2022/profor-detru-update-service.js` (OK), `node --check backend/scripts/atualizar-cache-detru-profor-2022.js` (OK), `node --check backend/server.js` (OK), `node --check frontend/js/app.js` (OK), `npm run validar:json` (OK), `npm run validar:syntax` (OK, 25 arquivos), `git diff --check` (sem erros), `git diff --name-only` (6 arquivos alterados + 1 novo), `git status --short` (working tree apenas com os arquivos da etapa).
+- Teste funcional local: `npm start`; `GET /api/profor-2022/detru/ultima-atualizacao` respondeu `success:true` com `ultimaAtualizacao:null`; clique do botão no navegador headless mostrou erro controlado ao atualizar sem arquivo/configuração; o painel manteve o status e a tela permaneceu estável.
+- Resultado: etapa concluída sem tocar em banco/schema, sem versionar ZIP/CSV e sem executar `npm run publicar:dados`.
+- Pendências: nenhuma para esta etapa.
+- Risco de regressão: baixo; mudanças ficaram restritas ao fluxo DETRU local/API e à renderização condicional da Carteira Monitorada.
+- Rollback: `git revert <hash>` ou remoção seletiva dos arquivos desta etapa.
+
 ## 17/05/2026 - Etapa 12.1: saneamento de escopo da Etapa 12
 
 - Branch atual: `main`.

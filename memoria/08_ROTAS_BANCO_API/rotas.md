@@ -447,6 +447,46 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Observações de manutenção:** id inexistente ou já inativo retorna erro `400` controlado; a exclusão física nunca deve ocorrer nesta rota.
 
+#### POST /api/profor-2022/detru/atualizar
+
+**Finalidade:** disparar administrativamente a atualização do cache DETRU da carteira PROFOR 2022.
+
+**Serviço chamado:** `atualizarCacheDetruProfor2022(opcoes)`, de `backend/services/profor-2022/profor-detru-update-service.js`.
+
+**Tipo:** escrita local/API.
+
+**Payload:** opcional. Aceita `{ caminhoZip }` em camelCase. Quando ausente, o serviço usa o arquivo configurado ou local por meio de `garantirArquivoDetruAtualizado()`.
+
+**Resposta:** confirmada. Em sucesso retorna `{ success: true, message, totalSalvos, resultadoResumo, ultimaAtualizacao }`. Em erro retorna `{ success: false, message }` com status controlado.
+
+**Efeito colateral:** lê o ZIP configurado/local, calcula hash, registra início e fim da atualização, faz cruzamento com a carteira e salva snapshot no cache DETRU. Não publica JSONs estáticos e não altera banco/schema.
+
+**Publicação estática:** não.
+
+**Frontend consumidor:** botão "Atualizar DETRU" na Carteira Monitorada da página PROFOR 2022.
+
+**Observações de manutenção:** rota local/API בלבד. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador.
+
+#### GET /api/profor-2022/detru/ultima-atualizacao
+
+**Finalidade:** retornar o status básico da última atualização DETRU registrada.
+
+**Serviço chamado:** `obterUltimaAtualizacaoDetru()`, de `backend/services/profor-2022/profor-detru-cache-service.js`.
+
+**Tipo:** leitura local/API.
+
+**Payload:** não se aplica.
+
+**Resposta:** confirmada. Em sucesso retorna `{ success: true, ultimaAtualizacao }`; quando não houver registro, `ultimaAtualizacao` vem como `null`.
+
+**Efeito colateral:** nenhum.
+
+**Publicação estática:** não.
+
+**Frontend consumidor:** status da Carteira Monitorada na página PROFOR 2022.
+
+**Observações de manutenção:** rota local/API בלבד. Não existe no modo estático/GitHub Pages. O frontend deve tratar ausência de atualização sem quebrar a tela.
+
 ### FAF 2021
 
 #### GET /api/faf2021
