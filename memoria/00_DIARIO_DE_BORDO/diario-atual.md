@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 17/05/2026 - Documentação técnica da funcionalidade PROFOR 2022
+
+- Branch atual: `main`.
+- Tarefa executada: inclusão da documentação técnica da funcionalidade PROFOR 2022 em `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, inserida manualmente pelo usuário.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/README.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` (versionado), `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: registrado o documento técnico da funcionalidade PROFOR 2022, consolidando a futura migração da aba Geral para banco local de convênios monitorados, DETRU, Transferegov público e cálculos internos. O documento cobre spec, plan, research, fluxo de dados, mapeamento de campos, riscos, testes e trilha de implementação.
+- Decisão registrada: a documentação da funcionalidade passa a ser referência operacional para as próximas etapas da migração. Tabelas e rotas ainda não existem; devem ser criadas em etapas específicas.
+- Validações executadas: `git status --short`, `git branch --show-current`, `git diff --name-only`, `git diff --check`.
+- Resultado: arquivo versionado; diário atualizado; nenhum código, banco, tabela ou JSON publicado foi alterado.
+- Pendências: próxima etapa é criar a tabela SQLite de convênios monitorados (`profor_convenios_monitorados`) em migration aditiva própria.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
 ## 17/05/2026 - Decisão técnica: carteira de convênios em banco local
 
 - Branch atual: `main`.
