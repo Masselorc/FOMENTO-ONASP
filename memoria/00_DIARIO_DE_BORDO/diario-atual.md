@@ -1,5 +1,18 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 8: leitor local do siconv_convenio.csv.zip (DETRU)
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `backend/services/profor-2022/convenios-monitorados-service.js`, `backend/scripts/importar-convenios-monitorados-profor-2022.js`, `package.json`.
+- Arquivos criados: `backend/services/profor-2022/detru-convenio-reader.js`.
+- Arquivos alterados: `package.json`, `package-lock.json` (adm-zip instalado), `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: Criado serviço `backend/services/profor-2022/detru-convenio-reader.js` com 6 funções exportadas: `localizarCsvNoZip`, `lerCsvDetruConvenio`, `normalizarCabecalhoDetru`, `parseCsvLinha`, `detectarSeparadorCsv`, `listarColunasDetruConvenio`. O serviço lê localmente o arquivo `siconv_convenio.csv.zip`, localiza o primeiro CSV compatível (padrão `siconv_convenio*.csv` com fallback para qualquer CSV), detecta o separador (`;` ou `,`), lê o conteúdo como `latin1` (encoding frequente em arquivos do governo), normaliza o cabeçalho (maiúsculas, underscores, sem caracteres especiais) e retorna array de objetos. Erros claros para: arquivo ausente, extensão inválida, ZIP sem CSV, CSV vazio. Dependência `adm-zip ^0.5.17` adicionada: Node.js não tem suporte nativo a ZIP; `zlib` cobre DEFLATE/GZIP (formato diferente); `xlsx` lê ZIPs de planilha, não ZIP genérico; `adm-zip` é síncrono, puro JS, sem bindings nativos. Arquivo DETRU (`siconv_convenio.csv.zip`) não está presente localmente — não baixado nesta etapa. Nenhum frontend, rota, banco ou JSON publicado foi alterado.
+- Teste funcional: arquivo DETRU ausente localmente — teste real não foi possível. Funções utilitárias testadas sem arquivo: `normalizarCabecalhoDetru`, `detectarSeparadorCsv`, `parseCsvLinha` (incluindo campos com separador dentro de aspas). Mensagens de erro validadas: "Arquivo ZIP não encontrado" e "Extensão inválida". Teste real depende da presença local do `siconv_convenio.csv.zip`.
+- Validações executadas: `node --check backend/services/profor-2022/detru-convenio-reader.js` (OK), `node -e` com require e testes funcionais das utilidades (OK), `npm run validar:json` (OK), `npm run validar:syntax` (OK, 25 arquivos), `git diff --check` (limpo), `git diff --name-only`.
+- Resultado: leitor criado e funcional no que é testável sem o arquivo DETRU; erros claros; nenhum dado real importado; nenhuma integração com banco ou frontend.
+- Risco de regressão: nulo — serviço novo, isolado, sem chamadas existentes.
+- Rollback: `git revert <hash>` e `npm install` para regredir `adm-zip`; o banco local não é afetado.
+
 ## 17/05/2026 - Etapa 7.1: ajuste visual da Carteira Monitorada PROFOR 2022
 
 - Branch atual: `main`.

@@ -13,6 +13,7 @@
     "validar:agente": "npm run validar:json && npm run validar:syntax && npm run validar:services && npx playwright test"
   },
   "dependencies": {
+    "adm-zip": "^0.5.17",
     "better-sqlite3": "^12.9.0",
     "dotenv": "^17.4.2",
     "xlsx": "^0.18.5"
