@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 17/05/2026 - Etapa 10: cruzamento da carteira local com o DETRU
+
+- Branch atual: `main`.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `backend/services/profor-2022/convenios-monitorados-service.js`, `backend/services/profor-2022/detru-convenio-reader.js`, `backend/services/profor-2022/detru-convenio-mapper.js`.
+- Arquivos criados: `backend/services/profor-2022/profor-detru-sync-service.js`.
+- Arquivos alterados: `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resumo: Criado `profor-detru-sync-service.js` com 5 funções exportadas: `obterNumerosConveniosAtivos` (lista carteira ativa do SQLite), `filtrarLinhasDetruPorCarteira` (filtra linhas DETRU por NR_CONVENIO, com validação opcional de ANO), `cruzarCarteiraComDetru` (orquestra leitura ZIP → validação colunas → carteira → filtro → mapeamento → resultado estruturado), `resumirCruzamentoDetru` (resumo texto para log/console), `validarArquivoDetruParaCarteira` (diagnóstico sem gravar). Regra de filtragem: `NR_CONVENIO` é chave primária; `ANO` é validação adicional — se null na carteira, aceita qualquer ANO do DETRU. Carteira local define os convênios monitorados; DETRU não define a carteira. Sem gravação de dados DETRU no banco, sem cache, sem rotas, sem frontend.
+- Arquivo DETRU ausente localmente — teste real não foi possível. Testes funcionais realizados em memória com dados fictícios (números 123456, 654321, 999000, 111111): filtragem correta, naoEncontrados corretos, linha fora da carteira não vazou, resumo formatado correto, diagnóstico de arquivo ausente correto, erro de cruzamento com arquivo ausente correto.
+- Validações executadas: `node --check` dos 3 serviços (OK), `node -e` com 4 testes funcionais (OK), `npm run validar:json` (OK), `npm run validar:syntax` (OK, 25 arquivos), `git diff --check` (limpo).
+- Risco de regressão: nulo — serviço novo isolado.
+- Rollback: `git revert <hash>`.
+
 ## 17/05/2026 - Etapa 9: mapeador DETRU → modelo interno PROFOR 2022
 
 - Branch atual: `main`.
