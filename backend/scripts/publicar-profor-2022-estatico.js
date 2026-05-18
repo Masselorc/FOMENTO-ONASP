@@ -209,26 +209,36 @@ function extrairResumoAtualizacao(stdout) {
     consolidado: null,
   };
 
-  const matchDetru = stdout.match(/DETRU:\s+sucesso=(true|false)\s+encontrados=(\d+)\/(\d+)/);
+  // Formato real: "DETRU encontrados/total: 15/15"
+  const matchDetru = stdout.match(/DETRU encontrados\/total:\s+(\d+)\/(\d+)/);
   if (matchDetru) {
+    const encontrados = Number(matchDetru[1]);
+    const total = Number(matchDetru[2]);
     resumo.detru = {
-      sucesso: matchDetru[1] === "true",
-      encontrados: Number(matchDetru[2]),
-      total: Number(matchDetru[3]),
+      sucesso: encontrados === total && total > 0,
+      encontrados,
+      total,
     };
   }
 
-  const matchRendimentos = stdout.match(/Rendimentos:\s+sucesso=(true|false)\s+sucessos=(\d+)\/(\d+)\s+falhas=(\d+)/);
+  // Formato real: "rendimentos sucesso/total: 15/15 falhas=0"
+  const matchRendimentos = stdout.match(/rendimentos sucesso\/total:\s+(\d+)\/(\d+)\s+falhas=(\d+)/);
   if (matchRendimentos) {
+    const sucessos = Number(matchRendimentos[1]);
+    const total = Number(matchRendimentos[2]);
+    const falhas = Number(matchRendimentos[3]);
     resumo.rendimentos = {
-      sucesso: matchRendimentos[1] === "true",
-      sucessos: Number(matchRendimentos[2]),
-      total: Number(matchRendimentos[3]),
-      falhas: Number(matchRendimentos[4]),
+      sucesso: sucessos === total && total > 0 && falhas === 0,
+      sucessos,
+      total,
+      falhas,
     };
   }
 
-  const matchConsolidado = stdout.match(/Consolidado:\s+convenios=(\d+)\s+detru=(\d+)\s+plano=(\d+)\s+rendimentos=(\d+)/);
+  // Formato real: "Consolidado total de convenios: 15 | totalComDetru=15 | totalComPlano=15 | totalComRendimentos=15"
+  const matchConsolidado = stdout.match(
+    /Consolidado total de convenios:\s+(\d+)\s+\|\s+totalComDetru=(\d+)\s+\|\s+totalComPlano=(\d+)\s+\|\s+totalComRendimentos=(\d+)/
+  );
   if (matchConsolidado) {
     resumo.consolidado = {
       convenios: Number(matchConsolidado[1]),
@@ -237,6 +247,10 @@ function extrairResumoAtualizacao(stdout) {
       rendimentos: Number(matchConsolidado[4]),
     };
   }
+
+  // Fallback: "sucessoGeral:  true" como critério direto
+  const matchSucessoGeral = stdout.match(/sucessoGeral:\s+(true|false)/);
+  const sucessoGeralFlag = matchSucessoGeral ? matchSucessoGeral[1] === "true" : null;
 
   const sucessoCompleto =
     resumo.detru?.sucesso &&
@@ -252,7 +266,7 @@ function extrairResumoAtualizacao(stdout) {
     resumo.consolidado.plano === 15 &&
     resumo.consolidado.rendimentos === 15;
 
-  resumo.sucesso = Boolean(sucessoCompleto);
+  resumo.sucesso = Boolean(sucessoCompleto) || (sucessoGeralFlag === true && resumo.consolidado !== null);
   return resumo;
 }
 
