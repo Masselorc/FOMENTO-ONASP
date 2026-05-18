@@ -17,6 +17,8 @@ import {
     obterDadosFormalizacaoProfor,
     obterDadosDiagnosticoOuvidorias,
     obterDadosProfor2022,
+    resolverOrigemDadosProfor2022Local,
+    carregarConsolidadoProfor2022BancoCacheLocal,
     processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento,
     obterDadosContatos,
@@ -25,7 +27,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260514-03';
+} from '../../backend/services/data-service.js?v=20260518-01';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -74,6 +76,7 @@ let orcamentoOutrosProcessosExpandido = false;
 let orcamentoEventosDelegadosConfigurados = false;
 let erroCarregamentoOrcamento = null;
 let baseAplicacaoCarregamentoPromise = null;
+let avisoFallbackProfor2022 = null;
 const errosCarregamentoView = {};
 const DEBUG_PERF_ONASP = (() => {
     if (typeof window === 'undefined' || typeof URLSearchParams === 'undefined') {
@@ -1017,6 +1020,87 @@ async function carregarLogoParaPDF() {
             }
         }
 
+        function normalizarInstrumentoDashboardProfor(instrumento) {
+            return String(instrumento || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase();
+        }
+
+        function itemDashboardEhConvenio(item) {
+            return normalizarInstrumentoDashboardProfor(item?.instrumento).includes('CONV');
+        }
+
+        function montarItensDashboardProforBancoCache(dadosProfor) {
+            if (!dadosProfor || dadosProfor.origemDadosEfetiva !== 'banco-cache') {
+                return null;
+            }
+
+            return (dadosProfor.convenios || []).map((convenio) => {
+                const valorTotal = Number(convenio.previstoOuvidoria) || 0;
+                const valorExecutado = Number(convenio.valorExecutadoOuvidoria) || 0;
+                return {
+                    uf: convenio.uf,
+                    regiao: '',
+                    instrumento: 'Convênio PROFOR 2022',
+                    objeto: `PROFOR 2022 - Convênio ${convenio.numero || convenio.numeroConvenio || ''}/${convenio.ano || ''}`.trim(),
+                    quantidade: Number(convenio.totalItensOuvidoria) || 1,
+                    valorUnitario: valorTotal,
+                    valorTotal,
+                    valorExecutado,
+                    saldo: valorTotal - valorExecutado,
+                    percentualExecucao: valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0,
+                    origemDados: 'banco-cache'
+                };
+            });
+        }
+
+        function substituirConveniosDashboardPorProforBancoCache(dadosBase, dadosProfor) {
+            const itensProfor = montarItensDashboardProforBancoCache(dadosProfor);
+            if (!itensProfor) return dadosBase;
+
+            const itensNaoConvenio = (dadosBase || []).filter((item) => !itemDashboardEhConvenio(item));
+            return [...itensNaoConvenio, ...itensProfor];
+        }
+
+        async function sincronizarDadosProfor2022Local() {
+            avisoFallbackProfor2022 = null;
+
+            if (estaEmModoPublicacaoEstatica()) {
+                return obterDadosProfor2022();
+            }
+
+            let origem;
+            try {
+                origem = await resolverOrigemDadosProfor2022Local();
+            } catch (error) {
+                avisoFallbackProfor2022 = 'Não foi possível consultar a origem local/API do PROFOR 2022. Mantida a origem planilha.';
+                console.warn(avisoFallbackProfor2022, error);
+                return obterDadosProfor2022();
+            }
+
+            if (origem.origemDados !== 'banco-cache') {
+                return obterDadosProfor2022();
+            }
+
+            try {
+                return await carregarConsolidadoProfor2022BancoCacheLocal();
+            } catch (error) {
+                avisoFallbackProfor2022 = 'Falha ao carregar o consolidado banco-cache. Mantida a origem planilha.';
+                console.warn(avisoFallbackProfor2022, error);
+                const dadosPlanilha = obterDadosProfor2022();
+                if (dadosPlanilha) {
+                    dadosPlanilha.fallbackUsado = true;
+                    dadosPlanilha.origemDadosEfetiva = dadosPlanilha.origemDadosEfetiva || 'planilha';
+                    dadosPlanilha.avisos = [
+                        ...(dadosPlanilha.avisos || []),
+                        avisoFallbackProfor2022
+                    ];
+                }
+                return dadosPlanilha;
+            }
+        }
+
         async function garantirDadosBaseAplicacao() {
             if (baseAplicacaoCarregamentoPromise) {
                 return baseAplicacaoCarregamentoPromise;
@@ -1036,6 +1120,8 @@ async function carregarLogoParaPDF() {
 
                 if (!Array.isArray(dadosFaf) || !dadosFaf.length || !dadosFinanceirosValidados) {
                     dadosFaf = await carregarDadosAplicacao(catalogoAplicacao);
+                    const dadosProforAtualizados = await sincronizarDadosProfor2022Local();
+                    dadosFaf = substituirConveniosDashboardPorProforBancoCache(dadosFaf, dadosProforAtualizados);
                     configurarEstadoDadosValidados(true);
                     ocultarAlertaCarregamentoPlanilha();
                     initDashboard(dadosFaf);
@@ -2464,6 +2550,70 @@ async function carregarLogoParaPDF() {
             }
         }
 
+        function formatarDataHoraProfor(valor) {
+            if (!valor) return '';
+            const data = new Date(valor);
+            if (Number.isNaN(data.getTime())) return String(valor);
+            return data.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function obterDiagnosticoOrigemProfor(dadosProfor) {
+            const diagnostico = dadosProfor?.diagnostico || {};
+            const partes = [];
+            if (diagnostico.totalComDetru !== undefined) partes.push(`DETRU ${diagnostico.totalComDetru}`);
+            if (diagnostico.totalComPlano !== undefined) partes.push(`Plano ${diagnostico.totalComPlano}`);
+            if (diagnostico.totalComRendimentos !== undefined) partes.push(`Rendimentos ${diagnostico.totalComRendimentos}`);
+            return partes.join(' | ');
+        }
+
+        function obterDataReferenciaRendimentosProfor(dadosProfor, convenio = null) {
+            return convenio?.rendimentosConsultadoEm
+                || convenio?.consultadoEm
+                || dadosProfor?.ultimaAtualizacaoRendimentos?.concluidoEm
+                || dadosProfor?.ultimaAtualizacaoRendimentos?.consultadoEm
+                || dadosProfor?.geradoEm
+                || '';
+        }
+
+        function renderizarFonteRendimentosProfor(dadosProfor, convenio = null) {
+            const origemBancoCache = dadosProfor?.origemDadosEfetiva === 'banco-cache';
+            if (!origemBancoCache) {
+                return 'Origem planilha.';
+            }
+
+            const dataReferencia = formatarDataHoraProfor(obterDataReferenciaRendimentosProfor(dadosProfor, convenio));
+            const sufixoData = dataReferencia ? ` Referência local: ${dataReferencia}.` : '';
+            return `Saldo de rendimentos capturado no Transferegov Acesso Livre.${sufixoData} Valor sujeito a alteração conforme movimentação financeira do convênio.`;
+        }
+
+        function renderizarAvisoOrigemProfor(dadosProfor) {
+            const origemEfetiva = dadosProfor?.origemDadosEfetiva || dadosProfor?.origemDados || 'planilha';
+            const geradoEm = formatarDataHoraProfor(dadosProfor?.geradoEm);
+            const diagnostico = obterDiagnosticoOrigemProfor(dadosProfor);
+            const avisos = [
+                ...(avisoFallbackProfor2022 ? [avisoFallbackProfor2022] : []),
+                ...((dadosProfor?.avisos || []).filter(Boolean).slice(0, 3))
+            ];
+            const classe = origemEfetiva === 'banco-cache' ? 'alert-info' : 'alert-secondary';
+            const textoOrigem = origemEfetiva === 'banco-cache'
+                ? 'Origem local/API: banco-cache.'
+                : 'Origem atual: planilha.';
+
+            return `
+                <div class="alert ${classe} py-2 small" role="status">
+                    <div><strong>${textoOrigem}</strong>${geradoEm ? ` Gerado em ${escapeHtml(geradoEm)}.` : ''}${diagnostico ? ` Diagnóstico: ${escapeHtml(diagnostico)}.` : ''}</div>
+                    ${dadosProfor?.fallbackUsado ? '<div>Fallback para planilha ativo.</div>' : ''}
+                    ${avisos.length ? `<div>${escapeHtml(avisos.join(' | '))}</div>` : ''}
+                </div>
+            `;
+        }
+
         function renderProfor2022View() {
             const container = document.getElementById('view-profor-2022');
             if (!container) return;
@@ -2476,6 +2626,7 @@ async function carregarLogoParaPDF() {
             }
 
             const resumo = dadosProfor.resumo;
+            const origemBancoCache = dadosProfor.origemDadosEfetiva === 'banco-cache';
             const opcoesUf = dadosProfor.convenios
                 .map((convenio) => `<option value="${escapeHtml(convenio.uf)}">${escapeHtml(convenio.uf)} - ${escapeHtml(catalogoAplicacao.nomesEstados?.[convenio.uf] || convenio.uf)}</option>`)
                 .join('');
@@ -2491,15 +2642,18 @@ async function carregarLogoParaPDF() {
                         <span><i class="fas fa-file-contract" aria-hidden="true"></i> ${resumo.totalConvenios} convênios</span>
                         <span><i class="fas fa-calendar-check" aria-hidden="true"></i> 2022</span>
                         <span><i class="fas fa-headset" aria-hidden="true"></i> Ouvidoria</span>
+                        <span><i class="fas fa-database" aria-hidden="true"></i> ${origemBancoCache ? 'banco-cache' : 'planilha'}</span>
                     </div>
                 </section>
+
+                ${renderizarAvisoOrigemProfor(dadosProfor)}
 
                 <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3 profor-kpi-grid" aria-label="Indicadores PROFOR 2022">
                     <div class="col">
                         <div class="card kpi-card kpi-card-success">
                             <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Convênios vigentes</div>
                             <div class="kpi-value">${resumo.totalConvenios}</div>
-                            <div class="kpi-desc">Instrumentos da aba Geral</div>
+                            <div class="kpi-desc">${origemBancoCache ? 'Carteira local + caches' : 'Instrumentos da aba Geral'}</div>
                         </div>
                     </div>
                     <div class="col">
@@ -2548,7 +2702,7 @@ async function carregarLogoParaPDF() {
                         <div class="card kpi-card kpi-card-warning">
                             <div class="kpi-title"><i class="fas fa-coins" aria-hidden="true"></i>Rendimentos atuais</div>
                             <div class="kpi-value text-money text-warning">${formatMoney(resumo.saldoRendimentosAtual)}</div>
-                            <div class="kpi-desc">Saldo de rendimentos registrado</div>
+                            <div class="kpi-desc">${escapeHtml(renderizarFonteRendimentosProfor(dadosProfor))}</div>
                         </div>
                     </div>
                     <div class="col">
@@ -2889,6 +3043,7 @@ async function carregarLogoParaPDF() {
                         <div class="profor-finance-item">
                             <span>Saldo de rendimentos atual</span>
                             <strong>${formatMoney(convenio.saldoRendimentosAtual)}</strong>
+                            <small class="text-muted d-block mt-1">${escapeHtml(renderizarFonteRendimentosProfor(dadosProfor, convenio))}</small>
                         </div>
                         <div class="profor-finance-item">
                             <span>Saldo residual capital</span>

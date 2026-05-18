@@ -394,6 +394,7 @@ let dadosDiagnosticoOuvidoriasCache = null;
 let modoPublicacaoEstatica = false;
 const modosDadosOnasp = {
     aplicacao: 'api',
+    profor2022: 'api',
     parametrosMinimos: 'api',
     formalizacaoProfor: 'api',
     orcamento2026: 'api'
@@ -438,6 +439,12 @@ export function obterDadosOrcamento() {
 }
 
 export function obterDadosProfor2022() {
+    return dadosProfor2022Cache;
+}
+
+export function definirDadosProfor2022(dados, modo = 'api') {
+    dadosProfor2022Cache = dados || null;
+    registrarModoDadosOnasp('profor2022', modo);
     return dadosProfor2022Cache;
 }
 
@@ -3492,6 +3499,51 @@ export async function fetchJsonApiOnasp(caminho, opcoes = {}) {
     throw ultimoErro || new Error('API da aplicação indisponível.');
 }
 
+export async function resolverOrigemDadosProfor2022Local() {
+    if (estaRodandoNoGitHubPages()) {
+        registrarModoDadosOnasp('profor2022', 'estatico');
+        return {
+            success: true,
+            origemDados: 'planilha',
+            origemDadosEfetiva: 'planilha',
+            fallbackUsado: false,
+            modo: 'estatico',
+            avisos: ['Modo estático: origem banco-cache não é consultada pelo navegador.']
+        };
+    }
+
+    const { resposta, payload } = await fetchJsonApiOnasp('/api/profor-2022/origem');
+    if (!resposta.ok || !payload?.success) {
+        throw new Error(payload?.message || 'Não foi possível resolver a origem PROFOR 2022.');
+    }
+
+    registrarModoDadosOnasp('profor2022', 'api');
+    return {
+        ...payload,
+        modo: 'api'
+    };
+}
+
+export async function carregarConsolidadoProfor2022BancoCacheLocal() {
+    if (estaRodandoNoGitHubPages()) {
+        return obterDadosProfor2022();
+    }
+
+    const { resposta, payload } = await fetchJsonApiOnasp('/api/profor-2022/consolidado');
+    if (!resposta.ok || !payload?.success || !payload.data) {
+        throw new Error(payload?.message || 'Não foi possível carregar o consolidado PROFOR 2022.');
+    }
+
+    const dados = {
+        ...payload.data,
+        origemDados: payload.data.origemDados || payload.origemDados || 'banco-cache',
+        origemDadosEfetiva: 'banco-cache',
+        fallbackUsado: false
+    };
+
+    return definirDadosProfor2022(dados, 'api');
+}
+
 export async function carregarComFallback(apiUrl, staticUrl, chaveFonte = '') {
     try {
         const { resposta, payload } = await fetchJsonApiOnasp(apiUrl);
@@ -4369,6 +4421,7 @@ export async function carregarCatalogoAplicacao(forcarRecarregamento = false) {
             catalogoAplicacaoCache = await resposta.json();
             registrarModoDadosOnasp('aplicacao', fonte.modo);
             dadosProfor2022Cache = catalogoAplicacaoCache.dadosProfor2022 || null;
+            registrarModoDadosOnasp('profor2022', fonte.modo);
             dadosFaf2021Cache = montarDadosFaf2021(catalogoAplicacaoCache);
             dadosDoacoes2023Cache = montarDadosDoacoes2023(catalogoAplicacaoCache);
             registrarPerfOnasp('carregarCatalogoAplicacao', {
@@ -4401,6 +4454,7 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     if (estaRodandoNoGitHubPages() && dadosBase.length > 0) {
         console.warn('GitHub Pages detectado: usando dadosBase publicado imediatamente.');
         registrarModoDadosOnasp('aplicacao', 'estatico');
+        registrarModoDadosOnasp('profor2022', 'estatico');
         registrarPerfOnasp('carregarDadosAplicacao', {
             modo: 'estatico',
             origem: 'dadosBase',
@@ -4425,6 +4479,7 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
                     ? Number((performance.now() - inicioAplicacao).toFixed(2))
                     : null
             });
+            registrarModoDadosOnasp('profor2022', 'api');
             return dadosMontados;
         }
     } catch (error) {
@@ -4434,6 +4489,7 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     if (dadosBase.length > 0) {
         console.warn('Usando dadosBase estatico do catalogo da aplicacao.');
         registrarModoDadosOnasp('aplicacao', 'estatico');
+        registrarModoDadosOnasp('profor2022', 'estatico');
         registrarPerfOnasp('carregarDadosAplicacao', {
             modo: 'estatico',
             origem: 'dadosBase',

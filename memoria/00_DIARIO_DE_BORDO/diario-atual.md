@@ -1,5 +1,87 @@
 # Diário de bordo
 
+## 18/05/2026 - Integração visual local/API do consolidado PROFOR 2022
+
+- Branch atual: `main`.
+- Pull inicial executado conforme ordem de serviço: `git pull` fez fast-forward de `639fe2e` para `a4323cd`, atualizando `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md`.
+- Objetivo: permitir que a página PROFOR 2022 e os indicadores de convênios da home consumam o consolidado `banco-cache` em modo local/API quando a flag estiver ativa, mantendo `planilha` como origem padrão e fallback.
+- Status: integração visual local/API implementada e validada sem executar `npm run publicar:dados`.
+
+### Arquivos lidos
+
+- `AGENTS.md`
+- `memoria/INDEX.md`
+- `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md`
+- `backend/services/data-service.js`
+- `backend/services/dashboard-publication-service.js`
+- `backend/services/static-publication-service.js`
+- `backend/services/profor-2022/profor-origem-service.js`
+- `backend/services/profor-2022/profor-consolidado-service.js`
+- `backend/services/profor-2022/profor-comparador-service.js`
+- `backend/services/profor-2022/profor-calculos-service.js`
+- `backend/services/profor-2022/profor-plano-aplicacao-service.js`
+- `backend/server.js`
+- `frontend/js/app.js`
+- `index.html`
+- `package.json`
+
+### Arquivos alterados
+
+- `backend/server.js`
+  - Criada rota local/API `GET /api/profor-2022/origem`, que expõe apenas a origem resolvida (`planilha` ou `banco-cache`) e avisos seguros, sem vazar `.env`, caminhos internos ou configuração DETRU.
+- `backend/services/data-service.js`
+  - Adicionadas funções browser-safe para resolver a origem PROFOR 2022 via API local e carregar o consolidado `banco-cache` pela rota `/api/profor-2022/consolidado`.
+  - O cache em memória `dadosProfor2022Cache` pode ser substituído pelo consolidado apenas no navegador local/API, sem importar SQLite ou serviços Node.
+- `frontend/js/app.js`
+  - O carregamento base mantém a planilha como primeira origem e tenta trocar para `banco-cache` somente quando `/api/profor-2022/origem` retorna essa origem.
+  - A home passa a substituir os itens de convênio pelos totais de Ouvidoria do consolidado quando `banco-cache` está ativo, preservando FAF e Doações.
+  - A página PROFOR 2022 exibe origem, diagnóstico básico (`DETRU`, `Plano`, `Rendimentos`) e fonte/data de referência do saldo de rendimentos.
+  - Em falha do consolidado, a tela permanece com a origem planilha e registra aviso controlado.
+- `index.html`
+  - Atualizado cache-buster do `frontend/js/app.js`.
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+
+### Testes executados
+
+- Caches atualizados antes do teste visual:
+  - `npm run atualizar:detru-profor`: 15 convênios encontrados no DETRU.
+  - `npm run atualizar:rendimentos-profor`: 15 consultados, 15 sucessos, 0 falhas.
+- Origem padrão `planilha`:
+  - Servidor local em `PORT=8791` com `PROFOR_2022_ORIGEM_DADOS=planilha`.
+  - Home carregou.
+  - Página PROFOR 2022 carregou.
+  - Origem exibida: `planilha`.
+  - Console do navegador: 0 erros e 0 avisos relevantes.
+- Origem `banco-cache`:
+  - Servidor local em `PORT=8792` com `PROFOR_2022_ORIGEM_DADOS=banco-cache`.
+  - `GET /api/profor-2022/origem`: `banco-cache`.
+  - `GET /api/profor-2022/consolidado`: 15 convênios, `totalComDetru=15`, `totalComPlano=15`, `totalComRendimentos=15`.
+  - `GET /api/profor-2022/comparar-origens`: `totalComDivergencia=15`, divergências já classificadas como aceitas tecnicamente/governança.
+  - Home carregou.
+  - Página PROFOR 2022 carregou com `Origem local/API: banco-cache`.
+  - Detalhe do convênio GO carregou.
+  - Fonte de `saldoRendimentosAtual` exibida como Transferegov Acesso Livre com referência local.
+  - Console do navegador: 0 erros e 0 avisos relevantes.
+- Fallback:
+  - Simulada falha HTTP 500 em `/api/profor-2022/consolidado` via Playwright.
+  - Página PROFOR 2022 permaneceu carregada com origem `planilha` e aviso de fallback.
+- Rollback:
+  - Servidor reiniciado em `PORT=8793` com `PROFOR_2022_ORIGEM_DADOS=planilha`.
+  - Origem voltou para `planilha`, página carregou e console ficou sem erros/avisos.
+
+### Restrições confirmadas
+
+- `npm run publicar:dados` não foi executado.
+- JSONs publicados não foram alterados.
+- Banco/schema não foi alterado.
+- `.env` não foi alterado.
+- Nenhum SQLite, ZIP, CSV, HAR ou HTML bruto foi versionado.
+- `banco-cache` não foi ativado como padrão; a origem padrão continua `planilha`.
+
 ## 18/05/2026 - Fluxo público Transferegov de rendimentos implementado e carteira atualizada
 
 - Branch atual: `main`.

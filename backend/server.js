@@ -41,6 +41,7 @@ const { atualizarCacheDetruProfor2022 } = require("./services/profor-2022/profor
 const { obterUltimaAtualizacaoDetru } = require("./services/profor-2022/profor-detru-cache-service");
 const { montarConsolidadoProfor2022 } = require("./services/profor-2022/profor-consolidado-service");
 const { compararBasesProfor2022 } = require("./services/profor-2022/profor-comparador-service");
+const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
 const {
   montarDadosProfor2022Publicacao,
   extrairPlanoAplicacaoProforDoWorkbook
@@ -529,6 +530,18 @@ async function rotearApi(req, res, pathname) {
       const resultado = salvarExecucaoFaf2021(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/origem") {
+      const origem = resolverOrigemDadosProfor2022({ detalhado: true });
+      enviarJson(res, 200, {
+        success: true,
+        origemDados: origem.origemDados,
+        origemDadosEfetiva: origem.origemDados,
+        fallbackUsado: false,
+        avisos: origem.avisos || []
+      });
       return;
     }
 

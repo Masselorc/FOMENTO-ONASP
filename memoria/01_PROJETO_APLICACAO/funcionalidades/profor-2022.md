@@ -7,7 +7,7 @@
 | Nome da funcionalidade | PROFOR 2022 |
 | Arquivo deste documento | `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` |
 | Status do documento | rascunho técnico |
-| Última revisão | 17/05/2026 |
+| Última revisão | 18/05/2026 |
 | Responsável pela revisão | ONASP / FOMENTO-ONASP |
 | Funcionalidade crítica? | sim |
 | Requer atualização quando alterar código? | sim |
@@ -447,7 +447,7 @@ Bloco 16 criou `backend/services/profor-2022/profor-origem-service.js` com as or
 
 Bloco 17 integrou a seleção de origem de forma conservadora no fluxo de dados e publicação. A origem padrão continua `planilha`; o fluxo antigo da aba `Geral` foi preservado e recebeu apenas metadados seguros (`origemDados`, `origemDadosEfetiva`, `fallbackUsado`, `avisos`, `diagnostico`). A origem `banco-cache` passou a ser suportada no fluxo Node de consolidação/publicação por `dashboard-publication-service.js`, usando o compositor consolidado e o plano de aplicação extraído das abas estaduais, sem fazer o compositor ler a planilha diretamente. Em falha do `banco-cache`, o serviço retorna a origem `planilha` com aviso de fallback.
 
-Por restrição técnica atual, `backend/services/data-service.js` também é importado diretamente pelo navegador como módulo da aplicação. Portanto, ele não importa serviços Node/SQLite do compositor; no navegador e com a origem padrão, a página PROFOR 2022 segue usando a origem `planilha`. A ativação visual/local por `banco-cache` permanece pendente de uma rota/API ou outro acoplamento seguro que não leve dependências Node para o browser.
+Por restrição técnica, `backend/services/data-service.js` também é importado diretamente pelo navegador como módulo da aplicação. Portanto, ele não importa serviços Node/SQLite do compositor; no navegador e com a origem padrão, a página PROFOR 2022 segue usando a origem `planilha`. A ativação visual/local por `banco-cache` deve ocorrer apenas por rota/API local, sem levar dependências Node para o browser.
 
 A publicação estática foi preparada em código para remover a seção interna `detru` do catálogo público antes de gerar `frontend/data/publicados/aplicacao.json`. O comando `npm run publicar:dados` não foi executado neste bloco e nenhum JSON publicado foi alterado.
 
@@ -459,6 +459,18 @@ Bloco 18 criou duas rotas locais/API somente leitura para validar a nova origem 
 A validação inicial do Bloco 18 retornou 15 convênios na origem `planilha` e 15 convênios na origem `banco-cache`, sem ausentes, mas ainda com caches incompletos. Após a validação operacional posterior do DETRU e a correção do fluxo Transferegov em 18/05/2026, o consolidado local passou a indicar `totalComDetru = 15`, `totalComPlano = 15` e `totalComRendimentos = 15`. A comparação continua com `totalIguais = 0` e `totalComDivergencia = 15`, agora por diferenças entre fontes oficiais/cálculos/cache atual e valores manuais antigos da aba `Geral`. Esse resultado mantém a ativação de `banco-cache` bloqueada por governança, não por ausência técnica de cache.
 
 Correção pequena aplicada no Bloco 18: `quantidadeTa` passou a ser comparado como número simples no comparador, e não como moeda. Nenhuma fórmula pendente foi inventada; `saldoDisponivelOuvidoria` continua sem cálculo seguro.
+
+Integração visual local/API do consolidado em 18/05/2026:
+
+- A origem padrão continua `planilha`.
+- Foi criada a rota local/API `GET /api/profor-2022/origem` para o navegador consultar a origem resolvida pelo backend sem acessar `.env` diretamente e sem expor configuração interna.
+- Quando a origem local/API é `banco-cache`, o frontend chama `GET /api/profor-2022/consolidado` e substitui o cache PROFOR 2022 em memória pelo objeto consolidado.
+- Se a chamada ao consolidado falhar, a tela mantém a origem `planilha` já carregada e registra aviso controlado de fallback.
+- Em modo estático/GitHub Pages, a aplicação não tenta acionar a API local e mantém o comportamento atual com dados publicados.
+- A página PROFOR 2022 passou a exibir origem efetiva, data de geração quando disponível, diagnóstico básico (`DETRU`, `Plano`, `Rendimentos`) e aviso de fallback quando aplicável.
+- O campo `saldoRendimentosAtual`, quando vindo de `banco-cache`, é identificado como saldo capturado no Transferegov Acesso Livre, com referência local baseada na data de geração do consolidado quando não houver data específica por convênio.
+- A home principal foi integrada no modo local/API com `banco-cache`: os itens de convênio usados nos indicadores nacionais são substituídos por itens derivados do consolidado PROFOR 2022, preservando FAF e Doações.
+- A publicação estática ainda não usa `banco-cache` como origem publicada; essa ativação depende de decisão posterior e execução controlada de publicação.
 
 As tabelas novas devem ser aditivas e não devem interferir no fluxo atual até a origem nova ser ativada.
 
@@ -543,6 +555,7 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Bloco 20: diagnóstico do consolidado pós-DETRU | Esclarecido falso positivo de `totalComPlano=1` (era erro do script de relatório temporário, não do código). Endpoint real retorna `totalComPlano=15`. Diagnóstico Transferegov: cache vazio (0/15); cliente depende de sessão pública. Sem alteração de código. |
 | 17/05/2026 | Bloco 21: classificação das 15 divergências | Criada matriz de divergências em 5 grupos (A: DETRU oficial, B: cálculo do plano, C: campo novo calculado, D: cache Transferegov ausente, E: validação humana). Documento novo `profor-2022-divergencias.md` criado com matriz, opções de governança e critérios para ativação. Seção 13 adicionada a este documento. Sem alteração de código. |
 | 17/05/2026 | Bloco 22: sondagem do fluxo Transferegov Acesso Livre | Testadas 5 URLs públicas (`ConsultarProposta.do?Usr=guest`, `ForwardAction.do?...MostraPrincipalConsultarConvenio.do`, etc.) com convênio de referência 880892. Todas redirecionam via SAML para tela "Login do Transferegov" (401 no IdP). Fluxo guest direto bloqueado por SAML/SSO no IdP. Sem alteração de código de produção. Seção 13.4 reescrita; Grupo D corrigido no documento de divergências (Transferegov é fonte oficial, DETRU não é). Aguardando HAR/HTML do usuário para reabrir investigação. |
+| 18/05/2026 | Integração visual local/API do `banco-cache` | Frontend passou a consultar `GET /api/profor-2022/origem` e, somente quando a origem resolvida é `banco-cache`, carregar `GET /api/profor-2022/consolidado`. Página PROFOR 2022 exibe origem, diagnóstico e fonte do saldo de rendimentos. Home usa itens de convênio derivados do consolidado no modo local/API. Origem padrão segue `planilha`; publicação estática não foi executada. |
 | 18/05/2026 | Correção do fluxo público de rendimentos | Cliente Transferegov passou a reproduzir o fluxo Acesso Livre completo e popular cache de rendimentos. 880892 e 937216 testados com sucesso; carteira atualizada com 15/15 sucessos; `totalComRendimentos=15`. Origem padrão continua `planilha`; frontend e JSONs publicados não foram alterados. |
 
 ## 13. Critérios de aceitação da futura origem `banco-cache`
