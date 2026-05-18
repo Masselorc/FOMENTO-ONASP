@@ -1,5 +1,23 @@
 # Diário de bordo
 
+## 18/05/2026 - Rotina semiautomatica de publicacao estatica PROFOR 2022
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo; `git pull` executado e retornou `Already up to date`.
+- Objetivo: criar rotina operacional controlada para atualizar o consolidado PROFOR 2022, publicar os JSONs estáticos e auditar vazamento, sem commit/push automático.
+- Script criado: `backend/scripts/publicar-profor-2022-estatico.js`.
+- Script npm criado: `npm run publicar:profor-2022`.
+- Flag excepcional usada no teste controlado: `--permitir-alteracoes-locais`.
+- Resultado da atualização consolidada: `DETRU 15/15`, `Rendimentos 15/15`, `Consolidado 15/15/15`, sem erro bloqueante.
+- Resultado da publicação estática: concluída com sucesso via `npm run publicar:dados`.
+- Resultado das validações: `npm run validar:json` e `npm run validar:syntax` concluíram com sucesso.
+- Resultado da auditoria: sem vazamento em 6 JSONs publicados; padrões sensíveis não encontrados.
+- Arquivos publicados alterados: `frontend/data/publicados/aplicacao.json`, `frontend/data/publicados/dashboard-geral.json`, `frontend/data/publicados/resumo-publicacao.json`.
+- Última atualização operacional publicada: `2026-05-18T12:38:42.187Z`.
+- Origem da última atualização publicada: `Transferegov/rendimentos`.
+- A rotina não executa commit nem push automático; apenas deixa o working tree pronto para revisão manual.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou `.env` foi versionado.
+
 ## 18/05/2026 - Validação do agendamento diário PROFOR 2022
 
 - Branch atual: `main`.

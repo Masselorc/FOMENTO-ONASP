@@ -1,5 +1,5 @@
 {
-  "publicadoEm": "2026-05-18T10:44:12.106Z",
+  "publicadoEm": "2026-05-18T12:38:42.961Z",
   "fonteDadosBase": "dados consolidados da Home local",
   "dadosBase": [
     {
@@ -2788,7 +2788,7 @@
   ],
   "dadosProfor2022": {
     "origemDados": "banco-cache",
-    "geradoEm": "2026-05-18T10:44:12.181Z",
+    "geradoEm": "2026-05-18T12:38:43.037Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -139488,11 +139488,11 @@
       "totalAvisos": 60
     },
     "ultimaAtualizacaoDados": {
-      "dataHora": "2026-05-18T10:44:06.616Z",
+      "dataHora": "2026-05-18T12:38:42.187Z",
       "fonte": "Transferegov/rendimentos",
       "fontesConsideradas": {
-        "detru": "2026-05-18T10:42:11.695Z",
-        "rendimentos": "2026-05-18T10:44:06.616Z"
+        "detru": "2026-05-18T12:36:23.682Z",
+        "rendimentos": "2026-05-18T12:38:42.187Z"
       }
     }
   },

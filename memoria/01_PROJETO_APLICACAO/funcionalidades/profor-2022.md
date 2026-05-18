@@ -537,6 +537,19 @@ Regra de exibição da faixa técnica: a faixa administrativa de origem/diagnós
 | Preservação de cache | Todas as gravações são upsert; em falha de DETRU ou rendimentos, o cache anterior permanece e o relatório registra a falha |
 | Não publica dados estáticos | `npm run publicar:dados` NÃO é chamado pela rotina; JSONs públicos não são alterados |
 
+### 10.1.2. Rotina semiautomática de publicação estática recorrente
+
+| Item | Detalhe |
+| --- | --- |
+| Comando operacional | `npm run publicar:profor-2022` |
+| Flag excepcional | `npm run publicar:profor-2022 -- --permitir-alteracoes-locais` |
+| Fluxo | Executa atualização consolidada, publicação estática, validações e auditoria de vazamento |
+| Segurança | Não faz commit nem push automático; apenas deixa os arquivos publicados no working tree para revisão manual |
+| Uso recomendado | Quando for preciso gerar os JSONs publicados após a rotina local/produtiva de atualização da PROFOR 2022 |
+| Revisão posterior | Conferir `git diff --name-only`, `git status --short` e validar os JSONs antes de decidir commit manual |
+| Publicação condicionada | Se a atualização consolidada não fechar 15/15/15, a publicação é abortada |
+| Auditoria | Verifica padrões sensíveis em todos os JSONs publicados e exige `dadosProfor2022.ultimaAtualizacaoDados` em `aplicacao.json` |
+
 ### 10.2. Próximas etapas
 
 1. Validar governança das divergências remanescentes entre `planilha` e `banco-cache`, especialmente `saldoRendimentosAtual` agora capturado no Transferegov.
@@ -590,6 +603,7 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 18/05/2026 | Rotina operacional consolidada (DETRU + rendimentos + consolidado) | Orquestrador `profor-atualizacao-consolidada-service.js` criado. Scripts npm `atualizar:profor-2022` e `agendar:profor-2022`. Rotas administrativas `POST /api/profor-2022/atualizar` e `GET /api/profor-2022/atualizacao/status`. Frontend com botão e status discreto restritos ao modo local/API. Teste real: 15/15/15 em 119s. Publicação estática NÃO executada. |
 | 18/05/2026 | Data/hora dinâmica na visão geral | Visão geral e rodapé substituem texto "Atualizado em abril de 2026" pela última atualização operacional efetiva: `max(DETRU, Transferegov/rendimentos)`. Endpoint `/api/profor-2022/atualizacao/status` enriquecido com `ultimaAtualizacaoDados`. Frontend formata `dd/mm/aaaa às HH:MM` em fuso local. Fallback "Atualização não registrada" no modo estático ou em falha. Publicação estática NÃO executada. |
 | 18/05/2026 | Publicação estática com `banco-cache` e metadado de atualização | Helper `profor-atualizacao-meta-service.js` criado e reutilizado pelo endpoint e pelo pipeline de publicação. `montarDadosProfor2022Publicacao()` anexa `ultimaAtualizacaoDados` ao objeto publicado. `npm run publicar:dados` executado intencionalmente: `aplicacao.json`, `dashboard-geral.json` e `resumo-publicacao.json` atualizados; 15 convênios; diagnóstico 15/15/15. Auditoria sem vazamento de `.env`, cookies, HAR, HTML bruto, ZIP, CSV ou SQLite. Modo estático passa a exibir a data publicada sem chamar API local. |
+| 18/05/2026 | Rotina semiautomática de publicação recorrente | Script `backend/scripts/publicar-profor-2022-estatico.js` criado e exposto via `npm run publicar:profor-2022`. Executa atualização consolidada, publicação estática, validações e auditoria de vazamento, sem commit/push automático. Flag `--permitir-alteracoes-locais` permite teste controlado com working tree já modificado. |
 
 ## 13. Critérios de aceitação da futura origem `banco-cache`
 
