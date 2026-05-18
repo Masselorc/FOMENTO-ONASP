@@ -1,6 +1,6 @@
 // Agendador diario da rotina operacional consolidada PROFOR 2022.
 // Uso: node backend/scripts/agendar-atualizacao-profor-2022.js
-// Le PROFOR_2022_ATUALIZACAO_DIARIA_HORA (.env), com fallback "06:30".
+// Le PROFOR_2022_ATUALIZACAO_DIARIA_HORA (.env), com fallback "12:00".
 // Deve rodar como processo separado — nao e iniciado pelo npm start.
 // NAO publica dados estaticos. NAO altera JSONs publicados.
 
@@ -13,15 +13,15 @@ const {
   resumirAtualizacaoConsolidada,
 } = require("../services/profor-2022/profor-atualizacao-consolidada-service");
 
-const HORARIO_PADRAO = "06:30";
+const HORARIO_PADRAO = "12:00";
 
 function parsearHora(horaStr) {
   const valor = (horaStr === undefined || horaStr === null || horaStr === "" ? HORARIO_PADRAO : String(horaStr));
   const [hhStr, mmStr] = valor.split(":");
   const hh = Number(hhStr);
   const mm = Number(mmStr);
-  const hora = Number.isFinite(hh) ? Math.min(Math.max(hh, 0), 23) : 6;
-  const minuto = Number.isFinite(mm) ? Math.min(Math.max(mm, 0), 59) : 30;
+  const hora = Number.isFinite(hh) ? Math.min(Math.max(hh, 0), 23) : 12;
+  const minuto = Number.isFinite(mm) ? Math.min(Math.max(mm, 0), 59) : 0;
   return { hora, minuto };
 }
 
