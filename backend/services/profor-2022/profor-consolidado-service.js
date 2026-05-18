@@ -199,7 +199,6 @@ function montarConvenioConsolidadoProfor(convenio, fontes = {}) {
   const avisos = [
     ...fontesConvenio.avisos,
     ...calculado.avisos,
-    "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
   ];
 
   return {
