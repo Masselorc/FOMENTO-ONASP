@@ -185,8 +185,6 @@ function aplicarCalculosInternosProfor(convenioBase = {}, fontes = {}) {
     avisos.push("saldoRendimentosAtual não calculado internamente; depende de Transferegov/cache.");
   }
 
-  avisos.push("saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.");
-
   return {
     numero,
     ano,

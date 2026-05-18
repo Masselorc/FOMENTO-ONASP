@@ -801,10 +801,11 @@ Diagnóstico validado:
 - 0 item sem área ou natureza.
 - 0 valor previsto/executado nulo.
 - 0 saldo residual negativo.
-- 0 percentual acima de 100 por erro de divisão.
+- 0 percentual inválido por erro de divisão.
 - 0 inconsistência entre soma das áreas e total geral quando `N/A` é considerado.
 - 0 inconsistência entre soma CAPITAL+CUSTEIO e total geral.
 - 0 ocorrência de `NaN`, `Infinity` ou `undefined` no payload serializado.
+- A pendência conhecida de `saldoDisponivelOuvidoria` foi consolidada em `pendenciasConhecidas` e não entra mais como aviso repetido por convênio; o `totalAvisos` do consolidado caiu para 45, preservando os demais avisos reais.
 
 Correções feitas:
 

@@ -2548,7 +2548,8 @@ Logs operacionais gravados:
 ### Atualização, API e interface
 
 - `npm run atualizar:profor-2022`: OK. DETRU 15/15, rendimentos 15/15, consolidado 15/15/15, `fetch-publico=0`, `playwright-publico=15`, `sem-fluxo=0`, `sucessoGeral=true`, `totalAvisos=0`, `totalErros=0`, duração 119.376 ms.
-- `GET /api/profor-2022/consolidado` em `PORT=8807`: HTTP 200, `success=true`, 15 convênios, diagnóstico 15/15/15, `totalAvisos=60`, sem `NaN`, `Infinity` ou `undefined`.
+- `GET /api/profor-2022/consolidado` em `PORT=8807`: HTTP 200, `success=true`, 15 convênios, diagnóstico 15/15/15, `totalAvisos=45`, sem `NaN`, `Infinity` ou `undefined`.
+- A pendência conhecida de `saldoDisponivelOuvidoria` ficou registrada uma única vez em `pendenciasConhecidas`; o `totalAvisos` do consolidado passou para 45, preservando os demais avisos reais.
 - Totais principais do endpoint: `valorGlobal=10664015.24`, `valorPrevistoGeral=9684265.65`, `valorExecutadoGeral=3202695.9`, `saldoResidualCapital=4666904.83`, `saldoResidualCusteio=1814664.92`, `saldoRendimentosAtual=1164195.06`, `execucaoGeralPercentual=33.07`.
 - Teste visual Playwright: home carregou; PROFOR 2022 carregou com 15 linhas; detalhe de convênio abriu; tabela de plano carregou; tela de Status do Sistema/logs carregou; sem erro crítico de console; sem `saldoDisponivelOuvidoria`, `NaN`, `Infinity`, `undefined` ou aviso técnico visível.
 

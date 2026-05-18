@@ -278,6 +278,12 @@ function coletarFiltros(convenios) {
   };
 }
 
+function obterPendenciasConhecidasProfor2022() {
+  return [
+    "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
+  ];
+}
+
 function montarConsolidadoProfor2022(opcoes = {}) {
   const origemDetalhada = resolverOrigemDadosProfor2022({
     origemDados: opcoes.origemDados,
@@ -307,6 +313,7 @@ function montarConsolidadoProfor2022(opcoes = {}) {
     convenios,
     filtros: coletarFiltros(convenios),
     avisos: [...avisos, ...avisosConvenios.map((item) => item.aviso)],
+    pendenciasConhecidas: obterPendenciasConhecidasProfor2022(),
     diagnostico: {
       totalCarteira: convenios.length,
       totalComDetru: convenios.filter((item) => item.fontesUtilizadas.includes("DETRU/cache")).length,
