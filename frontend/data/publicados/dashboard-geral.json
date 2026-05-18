@@ -1,5 +1,5 @@
 {
-  "publicadoEm": "2026-05-18T17:17:59.364Z",
+  "publicadoEm": "2026-05-18T20:04:31.130Z",
   "fonteDadosBase": "dados consolidados da Home local",
   "dadosBase": [
     {
@@ -2788,7 +2788,7 @@
   ],
   "dadosProfor2022": {
     "origemDados": "banco-cache",
-    "geradoEm": "2026-05-18T17:17:59.455Z",
+    "geradoEm": "2026-05-18T20:04:31.201Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -3658,7 +3658,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -4236,7 +4235,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -5438,7 +5436,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -6368,7 +6365,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -6690,7 +6686,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -6932,7 +6927,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -7366,7 +7360,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -8216,7 +8209,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -8634,7 +8626,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -9628,7 +9619,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -9950,7 +9940,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -10400,7 +10389,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -11042,7 +11030,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -11732,7 +11719,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -12614,7 +12600,6 @@
         ],
         "avisos": [
           "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
           "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
           "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
         ],
@@ -12652,79 +12637,67 @@
     },
     "avisos": [
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
       "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
       "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
       "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+    ],
+    "pendenciasConhecidas": [
+      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado."
     ],
     "diagnostico": {
       "totalCarteira": 15,
       "totalComDetru": 15,
       "totalComRendimentos": 15,
       "totalComPlano": 15,
-      "totalAvisos": 60
+      "totalAvisos": 45
     },
     "ultimaAtualizacaoDados": {
-      "dataHora": "2026-05-18T17:17:58.637Z",
+      "dataHora": "2026-05-18T19:47:38.945Z",
       "fonte": "Transferegov/rendimentos",
       "fontesConsideradas": {
-        "detru": "2026-05-18T17:16:05.929Z",
-        "rendimentos": "2026-05-18T17:17:58.637Z"
+        "detru": "2026-05-18T19:20:29.334Z",
+        "rendimentos": "2026-05-18T19:47:38.945Z"
       }
     }
   },
