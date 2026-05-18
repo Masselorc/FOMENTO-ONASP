@@ -1,5 +1,124 @@
 # Diário de bordo
 
+## 18/05/2026 - Publicação estática com consolidado `banco-cache` e metadado `ultimaAtualizacaoDados`
+
+- Branch atual: `main`.
+- Pull inicial executado: `git status --short` limpo e `git pull` → `Already up to date.`.
+- Objetivo: gerar/validar JSONs publicados a partir da origem consolidada `banco-cache`, garantindo que o modo estático/GitHub Pages exiba a data/hora da última atualização operacional sem chamar API local.
+- Status: implementado, atualização operacional executada, publicação estática executada intencionalmente, JSONs validados e commit/push concluídos.
+
+### Diagnóstico do pipeline
+
+- `npm run publicar:dados` chama `backend/scripts/publicar-dados-estaticos.js`, que invoca `publicarDadosEstaticos()` em [backend/services/static-publication-service.js](FOMENTO-ONASP/backend/services/static-publication-service.js).
+- O serviço escreve atomicamente: `aplicacao.json`, `dashboard-geral.json`, `parametros-minimos.json`, `formalizacao-profor.json`, `orcamento-2026.json` e `resumo-publicacao.json`. Já sanitiza removendo `respostasBrutas`, `registros`, `arquivo` (orcamento) e a seção interna `detru` do catálogo.
+- `consolidarCatalogoDashboard()` em [backend/services/dashboard-publication-service.js](FOMENTO-ONASP/backend/services/dashboard-publication-service.js) lê a planilha local e monta `dadosProfor2022` via `montarDadosProfor2022Publicacao()`.
+- Quando a flag de origem é `banco-cache`, `montarDadosProfor2022Publicacao()` chama `montarConsolidadoProfor2022()` com plano de aplicação extraído do workbook local.
+- O frontend, em modo estático, carrega `dadosProfor2022` diretamente do JSON publicado via [backend/services/data-service.js](FOMENTO-ONASP/backend/services/data-service.js) (`catalogoAplicacaoCache.dadosProfor2022`), sem chamar `/api/`.
+
+### Implementação aplicada
+
+- **Novo helper** [backend/services/profor-2022/profor-atualizacao-meta-service.js](FOMENTO-ONASP/backend/services/profor-2022/profor-atualizacao-meta-service.js)
+  - `calcularUltimaAtualizacaoDadosProfor2022(ultimaDetru, ultimaRendimentos)` — função pura. Aceita registros em camelCase (vindos do server.js) ou snake_case (vindos direto do SQLite).
+  - `obterUltimaAtualizacaoDadosProfor2022()` — wrapper que lê `obterUltimaAtualizacaoDetru()` e `obterUltimaConsultaRendimentos()` com try/catch defensivos, retornando `{ dataHora, fonte, fontesConsideradas }` ou `dataHora: null` em ausência total.
+- **Refatoração** em [backend/server.js](FOMENTO-ONASP/backend/server.js): função local `calcularUltimaAtualizacaoDadosProfor2022` removida; o endpoint `GET /api/profor-2022/atualizacao/status` agora importa do helper. Comportamento preservado.
+- **Injeção no publicado** em [backend/services/dashboard-publication-service.js](FOMENTO-ONASP/backend/services/dashboard-publication-service.js): `montarDadosProfor2022Publicacao()` passou a anexar `ultimaAtualizacaoDados` ao objeto retornado em todos os ramos (banco-cache OK, fallback planilha por escolha de flag, fallback após exceção). Função `anexarUltimaAtualizacaoDados()` usa try/catch interno para nunca quebrar a publicação por falha de leitura de cache.
+- **Frontend** em [frontend/js/app.js](FOMENTO-ONASP/frontend/js/app.js):
+  - Função `exibirRotuloUltimaAtualizacaoOperacional(info)` extraída para centralizar formatação.
+  - `carregarRotuloUltimaAtualizacaoOperacional()` no **modo estático** lê `obterDadosProfor2022()?.ultimaAtualizacaoDados` em vez de aplicar fallback fixo.
+  - Modo local/API segue chamando `/api/profor-2022/atualizacao/status`.
+  - A chamada inicial foi movida para depois de `garantirDadosBaseAplicacao()` (via `.finally()`), garantindo que o cache de PROFOR 2022 já esteja populado quando a função roda no modo estático.
+- **Cache-buster** [index.html](FOMENTO-ONASP/index.html) atualizado para `v=20260518-04`.
+
+### Execução de `npm run atualizar:profor-2022`
+
+```
+Duracao:       118725 ms
+Origem:        banco-cache
+DETRU:         sucesso=true encontrados=15/15
+Rendimentos:   sucesso=true sucessos=15/15 falhas=0
+Consolidado:   convenios=15 detru=15 plano=15 rendimentos=15
+```
+
+### Execução de `npm run publicar:dados`
+
+```
+Dados estaticos publicados com sucesso. { success: true, publicadoEm: '2026-05-18T10:44:12.106Z' }
+```
+
+### JSONs publicados alterados
+
+- `frontend/data/publicados/aplicacao.json`
+- `frontend/data/publicados/dashboard-geral.json`
+- `frontend/data/publicados/resumo-publicacao.json`
+
+Os JSONs `parametros-minimos.json`, `formalizacao-profor.json` e `orcamento-2026.json` foram reescritos pelo processo, mas o conteúdo não mudou (nenhum diff de campo); ficaram fora do staging.
+
+### Metadado publicado (`dadosProfor2022.ultimaAtualizacaoDados`)
+
+`aplicacao.json` e `dashboard-geral.json`:
+
+```json
+{
+  "ultimaAtualizacaoDados": {
+    "dataHora": "2026-05-18T10:44:06.616Z",
+    "fonte": "Transferegov/rendimentos",
+    "fontesConsideradas": {
+      "detru": "2026-05-18T10:42:11.695Z",
+      "rendimentos": "2026-05-18T10:44:06.616Z"
+    }
+  },
+  "origemDados": "banco-cache",
+  "convenios": 15,
+  "diagnostico": { "totalCarteira": 15, "totalComDetru": 15, "totalComRendimentos": 15, "totalComPlano": 15 }
+}
+```
+
+Texto exibido no navegador após hidratação (fuso BRT): `Atualizado em 18/05/2026 às 07:44 (Transferegov/rendimentos)`.
+
+### Auditoria de vazamento (todos os JSONs publicados)
+
+Padrões testados e ausentes: `JSESSIONID`, `SAMLResponse`, `SAMLRequest`, `Cookie:`, `Set-Cookie`, `Authorization:`, `Bearer`, `ONASP_EDIT_PASSWORD`, `DETRU_SICONV_CONVENIO_URL`, `Dados/detru`, `*.sqlite`, `*.har`, HTML bruto (`<html`), URLs absolutas em `href`. **Nenhum vazamento detectado** nos 6 JSONs publicados. A seção `detru` do catálogo permanece sanitizada (verificado: `apl.detru === undefined`).
+
+### Testes locais
+
+- Servidor de teste PORT=8797 (processo dedicado, finalizado após o teste).
+- `GET /api/profor-2022/atualizacao/status` → `ultimaAtualizacaoDados` corretamente populado.
+- `GET /api/profor-2022/origem` → `banco-cache`, sem fallback.
+- `GET /frontend/data/publicados/aplicacao.json` → entregue com 4.5 MB; metadado seguro presente.
+- HTML servido: cache-buster `v=20260518-04`; IDs `dashboard-ultima-atualizacao` e `footer-ultima-atualizacao` presentes com fallback HTML neutro pronto para hidratação JS.
+
+### Modo estático
+
+O frontend em modo estático/GitHub Pages NÃO chama nenhum endpoint `/api/profor-2022/*`. A hidratação do rótulo de última atualização usa o objeto `dadosProfor2022.ultimaAtualizacaoDados` já carregado a partir do `aplicacao.json` publicado. Quando o metadado está ausente, fallback continua sendo "Atualização não registrada".
+
+### Modo local/API
+
+A rota `/api/profor-2022/atualizacao/status` continua sendo a fonte preferencial em modo local/API. O endpoint não foi alterado em payload (mantém os mesmos campos), apenas passou a usar o helper compartilhado.
+
+### Validações executadas
+
+- `node --check`: `backend/server.js`, `backend/services/dashboard-publication-service.js`, `backend/services/profor-2022/profor-atualizacao-meta-service.js`, `frontend/js/app.js` — OK.
+- `npm run validar:json` → OK.
+- `npm run validar:syntax` → 25 OK.
+- `git diff --check` → sem avisos (apenas LF→CRLF do Windows).
+
+### Restrições confirmadas
+
+- `.env` NÃO foi alterado.
+- Banco/schema NÃO foi alterado.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookies ou arquivo temporário versionado.
+- Nenhuma dependência nova.
+- Origem `planilha` preservada como fallback (em todos os ramos do `montarDadosProfor2022Publicacao`).
+- Aba `Geral` preservada.
+
+### Pendências remanescentes
+
+1. **Retirada gradual da dependência da aba `Geral`** — mantendo a planilha como fallback. Próximo passo: avaliar quais campos do consolidado podem ser totalmente desligados da planilha sem regressão visual.
+2. Decisão de governança formal das 15 divergências `planilha` × `banco-cache` (Grupos A, B, D documentados em `profor-2022-divergencias.md`).
+3. Rodar `npm run agendar:profor-2022` em ambiente operacional (processo separado) e medir cadência real diária.
+
+---
+
 ## 18/05/2026 - Visão geral exibe data/hora da última atualização operacional (DETRU/Transferegov)
 
 - Branch atual: `main`.

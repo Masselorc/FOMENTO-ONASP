@@ -619,28 +619,35 @@ function renderKpiCard({
             if (footerEl) footerEl.textContent = textoCurtoFooter;
         }
 
+        function exibirRotuloUltimaAtualizacaoOperacional(info) {
+            const FALLBACK = 'Atualização não registrada';
+            const formatado = formatarDataHoraAtualizacaoBr(info?.dataHora);
+            if (!formatado) {
+                aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
+                return;
+            }
+            const textoDashboard = `Atualizado em ${formatado}`;
+            const textoFooter = info?.fonte
+                ? `${textoDashboard} (${info.fonte})`
+                : textoDashboard;
+            aplicarRotuloUltimaAtualizacaoOperacional(textoDashboard, textoFooter);
+        }
+
         async function carregarRotuloUltimaAtualizacaoOperacional() {
             const FALLBACK = 'Atualização não registrada';
+
             if (estaEmModoPublicacaoEstatica()) {
-                // Modo estático/GitHub Pages: nao chama API local; mantem texto neutro.
-                aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
+                // Modo estático/GitHub Pages: nao chama API local.
+                // Le ultimaAtualizacaoDados ja carregado no objeto dadosProfor2022 publicado.
+                const info = obterDadosProfor2022()?.ultimaAtualizacaoDados || null;
+                exibirRotuloUltimaAtualizacaoOperacional(info);
                 return;
             }
 
             try {
                 const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizacao/status');
                 if (!payload?.success) throw new Error(payload?.message || 'Status indisponível.');
-                const info = payload.ultimaAtualizacaoDados || null;
-                const formatado = formatarDataHoraAtualizacaoBr(info?.dataHora);
-                if (!formatado) {
-                    aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
-                    return;
-                }
-                const textoDashboard = `Atualizado em ${formatado}`;
-                const textoFooter = info?.fonte
-                    ? `${textoDashboard} (${info.fonte})`
-                    : textoDashboard;
-                aplicarRotuloUltimaAtualizacaoOperacional(textoDashboard, textoFooter);
+                exibirRotuloUltimaAtualizacaoOperacional(payload.ultimaAtualizacaoDados || null);
             } catch (err) {
                 console.warn('Falha ao carregar rotulo de ultima atualizacao operacional:', err?.message || err);
                 aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
@@ -1121,13 +1128,17 @@ async function carregarLogoParaPDF() {
             requestAnimationFrame(() => {
                 const viewInicial = document.body.dataset.currentView || 'dashboard';
                 if (viewInicial === 'dashboard') {
-                    garantirDadosBaseAplicacao().catch((error) => {
-                        console.error('Falha ao carregar a base inicial da dashboard:', error);
-                    });
+                    garantirDadosBaseAplicacao()
+                        .catch((error) => {
+                            console.error('Falha ao carregar a base inicial da dashboard:', error);
+                        })
+                        .finally(() => {
+                            carregarRotuloUltimaAtualizacaoOperacional();
+                        });
+                } else {
+                    carregarRotuloUltimaAtualizacaoOperacional();
                 }
             });
-
-            carregarRotuloUltimaAtualizacaoOperacional();
         });
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---

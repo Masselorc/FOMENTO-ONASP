@@ -47,6 +47,9 @@ const {
   atualizarProfor2022Consolidado
 } = require("./services/profor-2022/profor-atualizacao-consolidada-service");
 const {
+  calcularUltimaAtualizacaoDadosProfor2022
+} = require("./services/profor-2022/profor-atualizacao-meta-service");
+const {
   montarDadosProfor2022Publicacao,
   extrairPlanoAplicacaoProforDoWorkbook
 } = require("./services/dashboard-publication-service");
@@ -229,47 +232,6 @@ function extrairIdConvenioMonitorado(pathname, sufixo) {
   const segmento = pathname.slice(prefixo.length, pathname.length - sufixo.length);
   const id = Number(segmento);
   return Number.isInteger(id) && id > 0 ? id : null;
-}
-
-function calcularUltimaAtualizacaoDadosProfor2022(ultimaDetru, ultimaRendimentos) {
-  const detruIso = ultimaDetru?.concluidoEm || ultimaDetru?.iniciadoEm || null;
-  const rendimentosIso = ultimaRendimentos?.concluidoEm || ultimaRendimentos?.iniciadoEm || null;
-
-  function comoTimestamp(iso) {
-    if (!iso) return null;
-    const ts = Date.parse(iso);
-    return Number.isFinite(ts) ? ts : null;
-  }
-
-  const tsDetru = comoTimestamp(detruIso);
-  const tsRendimentos = comoTimestamp(rendimentosIso);
-
-  let dataHora = null;
-  let fonte = null;
-  if (tsDetru !== null && tsRendimentos !== null) {
-    if (tsRendimentos >= tsDetru) {
-      dataHora = rendimentosIso;
-      fonte = "Transferegov/rendimentos";
-    } else {
-      dataHora = detruIso;
-      fonte = "DETRU";
-    }
-  } else if (tsDetru !== null) {
-    dataHora = detruIso;
-    fonte = "DETRU";
-  } else if (tsRendimentos !== null) {
-    dataHora = rendimentosIso;
-    fonte = "Transferegov/rendimentos";
-  }
-
-  return {
-    dataHora,
-    fonte,
-    fontesConsideradas: {
-      detru: detruIso,
-      rendimentos: rendimentosIso
-    }
-  };
 }
 
 function normalizarUltimaAtualizacaoDetru(registro) {

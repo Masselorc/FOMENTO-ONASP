@@ -2,6 +2,9 @@ const path = require("path");
 const xlsx = require("xlsx");
 const { resolverOrigemDadosProfor2022 } = require("./profor-2022/profor-origem-service");
 const { montarConsolidadoProfor2022 } = require("./profor-2022/profor-consolidado-service");
+const {
+  obterUltimaAtualizacaoDadosProfor2022
+} = require("./profor-2022/profor-atualizacao-meta-service");
 
 const ABA_RESUMO_CONVENIOS = "Geral";
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18;
@@ -509,6 +512,21 @@ function extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao) {
     .flatMap((sheetName) => extrairPlanoAplicacaoProforDaAba(workbook.Sheets[sheetName], sheetName));
 }
 
+function obterUltimaAtualizacaoDadosSeguro() {
+  try {
+    return obterUltimaAtualizacaoDadosProfor2022();
+  } catch (_err) {
+    return { dataHora: null, fonte: null, fontesConsideradas: { detru: null, rendimentos: null } };
+  }
+}
+
+function anexarUltimaAtualizacaoDados(dados) {
+  return {
+    ...dados,
+    ultimaAtualizacaoDados: obterUltimaAtualizacaoDadosSeguro()
+  };
+}
+
 function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {}) {
   const origemResolvida = resolverOrigemDadosProfor2022({
     origemDados: opcoes.origemDados,
@@ -517,23 +535,23 @@ function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {
 
   if (origemResolvida.origemDados !== "banco-cache") {
     const dadosPlanilha = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);
-    return anexarMetadadosOrigemProfor2022(dadosPlanilha, {
+    return anexarUltimaAtualizacaoDados(anexarMetadadosOrigemProfor2022(dadosPlanilha, {
       origemDados: "planilha",
       origemDadosEfetiva: "planilha",
       avisos: origemResolvida.avisos || []
-    });
+    }));
   }
 
   try {
     const montarConsolidado = opcoes.montarConsolidado || montarConsolidadoProfor2022;
     const planoAplicacao = opcoes.planoAplicacao || extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
-    return montarConsolidado({
+    return anexarUltimaAtualizacaoDados(montarConsolidado({
       origemDados: "banco-cache",
       planoAplicacao
-    });
+    }));
   } catch (error) {
     const fallback = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);
-    return anexarMetadadosOrigemProfor2022(fallback, {
+    return anexarUltimaAtualizacaoDados(anexarMetadadosOrigemProfor2022(fallback, {
       origemDados: "banco-cache",
       origemDadosEfetiva: "planilha",
       fallbackUsado: true,
@@ -544,7 +562,7 @@ function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {
       diagnostico: {
         erroBancoCache: error.message
       }
-    });
+    }));
   }
 }
 
