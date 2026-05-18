@@ -21,6 +21,7 @@ const { resolverOrigemDadosProfor2022 } = require("./profor-origem-service");
 const {
   extrairPlanoAplicacaoProforDoWorkbook,
 } = require("../dashboard-publication-service");
+const { registrarLogOperacional } = require("../logs-operacionais-service");
 
 const ROOT_DIR = path.join(__dirname, "..", "..", "..");
 const CATALOGO_APLICACAO_PATH = path.join(__dirname, "..", "..", "data", "aplicacao.json");
@@ -315,7 +316,7 @@ async function atualizarProfor2022Consolidado(opcoes = {}) {
   const totalAvisos = avisos.length;
   const totalErros = erros.length;
 
-  return {
+  const resultado = {
     sucesso,
     sucessoGeral: sucesso,
     iniciadoEm,
@@ -363,6 +364,57 @@ async function atualizarProfor2022Consolidado(opcoes = {}) {
     avisos,
     erros,
   };
+
+  try {
+    const resumoLog =
+      `DETRU ${resultado.detru.totalEncontrados ?? "-"}/${resultado.detru.totalCarteiraAtiva ?? "-"} | ` +
+      `rendimentos ${resultado.rendimentos.totalSucessos ?? "-"}/${resultado.rendimentos.totalConsultados ?? "-"} | ` +
+      `consolidado ${resultado.consolidado.totalComDetru}/${resultado.consolidado.totalComPlano}/${resultado.consolidado.totalComRendimentos} ` +
+      `(convenios=${resultado.consolidado.totalConvenios}) | sucessoGeral=${sucesso}`;
+    registrarLogOperacional({
+      modulo: "profor-2022",
+      tipoEvento: "profor_atualizacao_consolidada",
+      status: sucesso ? "sucesso" : (totalErros > 0 ? "falha" : "parcial"),
+      iniciadoEm,
+      concluidoEm: finalizadoEm,
+      duracaoMs,
+      resumo: resumoLog,
+      payload: {
+        sucessoGeral: sucesso,
+        origemDados,
+        detru: {
+          sucesso: resultado.detru.sucesso,
+          totalCarteiraAtiva: resultado.detru.totalCarteiraAtiva,
+          totalEncontrados: resultado.detru.totalEncontrados,
+          totalNaoEncontrados: resultado.detru.totalNaoEncontrados,
+          totalSalvos: resultado.detru.totalSalvos,
+        },
+        rendimentos: {
+          sucesso: resultado.rendimentos.sucesso,
+          totalConsultados: resultado.rendimentos.totalConsultados,
+          totalSucessos: resultado.rendimentos.totalSucessos,
+          totalFalhas: resultado.rendimentos.totalFalhas,
+          totalFetchPublico: resultado.rendimentos.totalFetchPublico,
+          totalPlaywrightPublico: resultado.rendimentos.totalPlaywrightPublico,
+          totalSemFluxo: resultado.rendimentos.totalSemFluxo,
+          duracaoMsTotal: resultado.rendimentos.duracaoMsTotal,
+          tempoMedioMsPorConvenio: resultado.rendimentos.tempoMedioMsPorConvenio,
+        },
+        consolidado: {
+          totalConvenios: resultado.consolidado.totalConvenios,
+          totalComDetru: resultado.consolidado.totalComDetru,
+          totalComPlano: resultado.consolidado.totalComPlano,
+          totalComRendimentos: resultado.consolidado.totalComRendimentos,
+        },
+        totalAvisos,
+        totalErros,
+      },
+    });
+  } catch (erroLog) {
+    console.warn("Falha ao registrar log operacional de atualizacao consolidada:", erroLog?.message || erroLog);
+  }
+
+  return resultado;
 }
 
 function resumirAtualizacaoConsolidada(resultado) {

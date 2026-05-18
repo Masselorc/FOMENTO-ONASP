@@ -59,6 +59,12 @@ const {
   exportarOrcamento2026Excel
 } = require("./services/excel-export-service");
 const { publicarDadosEstaticos } = require("./services/static-publication-service");
+const {
+  listarLogsOperacionais,
+  obterLogOperacionalPorId,
+  exportarLogsOperacionaisJson,
+  exportarLogsOperacionaisCsv,
+} = require("./services/logs-operacionais-service");
 
 const rootDir = path.join(__dirname, "..");
 const catalogoAplicacaoPath = path.join(__dirname, "data", "aplicacao.json");
@@ -758,6 +764,83 @@ async function rotearApi(req, res, pathname) {
       } catch (erro) {
         enviarJson(res, 400, { success: false, message: erro.message });
       }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/sistema/logs-operacionais") {
+      const url = new URL(req.url, "http://localhost");
+      const filtros = {
+        modulo: url.searchParams.get("modulo") || undefined,
+        tipo_evento: url.searchParams.get("tipo_evento") || undefined,
+        status: url.searchParams.get("status") || undefined,
+        limite: url.searchParams.get("limite") || undefined,
+      };
+      try {
+        const logs = listarLogsOperacionais(filtros);
+        enviarJson(res, 200, { success: true, total: logs.length, logs });
+      } catch (erro) {
+        enviarJson(res, 400, { success: false, message: erro?.message || "Falha ao listar logs." });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/sistema/logs-operacionais/export") {
+      const url = new URL(req.url, "http://localhost");
+      const formato = String(url.searchParams.get("formato") || "json").toLowerCase();
+      const filtros = {
+        modulo: url.searchParams.get("modulo") || undefined,
+        tipo_evento: url.searchParams.get("tipo_evento") || undefined,
+        status: url.searchParams.get("status") || undefined,
+        limite: url.searchParams.get("limite") || undefined,
+      };
+
+      if (formato === "csv") {
+        const csv = exportarLogsOperacionaisCsv(filtros);
+        const buffer = Buffer.from(csv, "utf8");
+        res.writeHead(200, {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": "attachment; filename=\"logs-operacionais.csv\"",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Content-Length": buffer.length,
+        });
+        res.end(buffer);
+        return;
+      }
+
+      if (formato !== "json") {
+        enviarJson(res, 400, { success: false, message: "Formato suportado: json ou csv." });
+        return;
+      }
+
+      const exportado = exportarLogsOperacionaisJson(filtros);
+      const body = Buffer.from(JSON.stringify(exportado, null, 2), "utf8");
+      res.writeHead(200, {
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Disposition": "attachment; filename=\"logs-operacionais.json\"",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Content-Length": body.length,
+      });
+      res.end(body);
+      return;
+    }
+
+    if (req.method === "GET" && pathname.startsWith("/api/sistema/logs-operacionais/")) {
+      const idSegmento = pathname.slice("/api/sistema/logs-operacionais/".length);
+      const id = Number(idSegmento);
+      if (!Number.isInteger(id) || id <= 0) {
+        enviarJson(res, 400, { success: false, message: "ID de log inválido." });
+        return;
+      }
+      const log = obterLogOperacionalPorId(id);
+      if (!log) {
+        enviarJson(res, 404, { success: false, message: "Log operacional não encontrado." });
+        return;
+      }
+      enviarJson(res, 200, { success: true, log });
       return;
     }
 

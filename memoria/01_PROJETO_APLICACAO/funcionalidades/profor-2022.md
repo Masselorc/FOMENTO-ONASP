@@ -714,3 +714,31 @@ Uso recomendado dos logs:
 - identificar rapidamente se o Transferegov operou em HTTP público ou fallback com navegador;
 - correlacionar lentidão por convênio com `duracaoMsTotal` e `tempoMedioMsPorConvenio`;
 - auditar regressão sem abrir a interface nem tocar em publicação estática.
+
+### 13.7. Logs operacionais acessíveis na tela de Sistema
+
+Em 18/05/2026 os logs operacionais do PROFOR 2022 passaram a ser persistidos em uma tabela aditiva genérica e consultáveis pela tela de Sistema, apenas em modo local/API. A tela pública/GitHub Pages continua sem qualquer log técnico.
+
+Eventos registrados:
+
+- `profor_atualizacao_consolidada`: gravado ao final de `atualizarProfor2022Consolidado`, com `sucessoGeral`, `origemDados`, sumários DETRU/rendimentos/consolidado, fluxos de rendimentos, `duracaoMs`, `totalAvisos` e `totalErros`.
+- `profor_publicacao_estatica`: gravado em todos os caminhos de saída de `npm run publicar:profor-2022` (sucesso, falha de etapa, bloqueio por branch ou working tree, falha de auditoria), com diagnóstico consolidado publicado, resultados de validação JSON/syntax/auditoria, lista de arquivos publicados alterados, `motivoBloqueio` quando aplicável e `ultimaAtualizacaoDados`. O script continua proibido de fazer commit/push automático.
+
+Os tipos `profor_detru` e `profor_rendimentos_transferegov` permanecem disponíveis no contrato de log para uso futuro pelas rotinas dedicadas, mas seguem por enquanto refletidos no consolidado.
+
+Acesso pela aplicação:
+
+- A tela "Status do Sistema" recebeu o painel "Logs operacionais", visível apenas quando `modoAplicacao === 'api'`. No GitHub Pages o painel não é injetado e nenhuma chamada à API é feita.
+- O painel oferece filtros por tipo de evento, status e limite, e botões para "Carregar logs", "Exportar JSON" e "Exportar CSV". A tabela mostra data/hora, módulo, tipo, status, duração e resumo curto, sem expor payload bruto, cookies, HTML, caminhos locais, SAML ou tokens.
+
+Rotas locais associadas (documentadas em `memoria/08_ROTAS_BANCO_API/rotas.md`):
+
+- `GET /api/sistema/logs-operacionais` — lista com filtros `modulo`, `tipo_evento`, `status`, `limite` (máx. 200).
+- `GET /api/sistema/logs-operacionais/:id` — detalhe do log já sanitizado.
+- `GET /api/sistema/logs-operacionais/export?formato=json|csv` — exportação sanitizada com `Content-Disposition` para download (máx. 2000 registros).
+
+Restrições:
+
+- Disponível somente em modo local/API. Nenhum log técnico é exposto no GitHub Pages.
+- Payload sempre passa por `sanitizarPayloadLog` antes de gravação e exportação. Padrões proibidos (JSESSIONID, SAML, Cookie, Authorization, Bearer, segredos de ambiente, `C:\Users\`, `.sqlite`, `.har`, HTML bruto) são substituídos por `[REMOVIDO_POR_SANITIZACAO]`.
+- Limites padrão preservam performance: 50 últimos registros em consulta e 500 em exportação por padrão.

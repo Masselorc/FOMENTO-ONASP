@@ -6,6 +6,9 @@ const ROOT_DIR = path.join(__dirname, "..", "..");
 const PUBLIC_DIR = path.join(ROOT_DIR, "frontend", "data", "publicados");
 const FLAG_PERMITIR_ALTERACOES = "--permitir-alteracoes-locais";
 
+const { inicializarBanco } = require("../db/init-db");
+const { registrarLogOperacional } = require("../services/logs-operacionais-service");
+
 const PADROES_PROIBIDOS = [
   { nome: "JSESSIONID", regex: /JSESSIONID/i },
   { nome: "SAMLRequest", regex: /SAMLRequest/i },
@@ -276,10 +279,104 @@ function imprimirSecao(titulo) {
   console.log(`=== ${titulo} ===`);
 }
 
+function obterDiagnosticoConsolidadoPublicado() {
+  const aplicacaoPath = path.join(PUBLIC_DIR, "aplicacao.json");
+  if (!fs.existsSync(aplicacaoPath)) return null;
+  try {
+    const aplicacao = lerJson(aplicacaoPath);
+    const diag = aplicacao?.dadosProfor2022?.diagnostico || null;
+    if (!diag) return null;
+    return {
+      totalConvenios: Number(diag.totalCarteira ?? diag.totalConvenios ?? 0),
+      totalComDetru: Number(diag.totalComDetru ?? 0),
+      totalComPlano: Number(diag.totalComPlano ?? 0),
+      totalComRendimentos: Number(diag.totalComRendimentos ?? 0),
+    };
+  } catch (_error) {
+    return null;
+  }
+}
+
+function registrarLogPublicacaoEstatica(estado) {
+  const resumoLog =
+    `atualizacao=${estado.atualizacaoOk ? "OK" : "FALHA"} | ` +
+    `publicacao=${estado.publicacaoExecutada ? (estado.publicacaoOk ? "OK" : "FALHA") : "nao executada"} | ` +
+    `validacaoJson=${estado.validarJsonOk === null ? "n/a" : (estado.validarJsonOk ? "OK" : "FALHA")} | ` +
+    `validacaoSyntax=${estado.validarSyntaxOk === null ? "n/a" : (estado.validarSyntaxOk ? "OK" : "FALHA")} | ` +
+    `auditoria=${estado.auditoriaOk === null ? "n/a" : (estado.auditoriaOk ? "OK" : "FALHA")}` +
+    (estado.motivoBloqueio ? ` | bloqueio=${estado.motivoBloqueio}` : "");
+
+  try {
+    inicializarBanco();
+    registrarLogOperacional({
+      modulo: "profor-2022",
+      tipoEvento: "profor_publicacao_estatica",
+      status: estado.status,
+      iniciadoEm: estado.iniciadoEm,
+      concluidoEm: estado.concluidoEm,
+      duracaoMs: estado.duracaoMs,
+      resumo: resumoLog,
+      payload: {
+        atualizacaoExecutada: Boolean(estado.atualizacaoExecutada),
+        atualizacaoOk: Boolean(estado.atualizacaoOk),
+        publicacaoExecutada: Boolean(estado.publicacaoExecutada),
+        publicacaoOk: Boolean(estado.publicacaoOk),
+        motivoBloqueio: estado.motivoBloqueio || null,
+        diagnostico: estado.diagnostico || null,
+        validacaoJson: estado.validarJsonOk === null ? null : (estado.validarJsonOk ? "OK" : "erro"),
+        validacaoSyntax: estado.validarSyntaxOk === null ? null : (estado.validarSyntaxOk ? "OK" : "erro"),
+        auditoriaVazamento: estado.auditoriaOk === null ? null : (estado.auditoriaOk ? "OK" : "erro"),
+        arquivosPublicadosAlterados: estado.arquivosPublicadosAlterados || [],
+        publicadoEm: estado.concluidoEm,
+        ultimaAtualizacaoDados: estado.ultimaAtualizacaoDados || null,
+        sucessoFinal: Boolean(estado.sucessoFinal),
+        exitCode: estado.exitCode,
+      },
+    });
+  } catch (erroLog) {
+    console.warn("[PROFOR 2022] Falha ao registrar log operacional da publicacao:", erroLog?.message || erroLog);
+  }
+}
+
 function main() {
   const inicio = Date.now();
   const inicioIso = agoraIso();
   const permitirAlteracoesLocais = process.argv.slice(2).includes(FLAG_PERMITIR_ALTERACOES);
+
+  const estado = {
+    iniciadoEm: inicioIso,
+    concluidoEm: null,
+    duracaoMs: 0,
+    status: "falha",
+    atualizacaoExecutada: false,
+    atualizacaoOk: false,
+    publicacaoExecutada: false,
+    publicacaoOk: false,
+    motivoBloqueio: null,
+    diagnostico: null,
+    validarJsonOk: null,
+    validarSyntaxOk: null,
+    auditoriaOk: null,
+    arquivosPublicadosAlterados: [],
+    ultimaAtualizacaoDados: null,
+    sucessoFinal: false,
+    exitCode: 1,
+  };
+
+  const finalizar = (codigo) => {
+    estado.concluidoEm = agoraIso();
+    estado.duracaoMs = Date.now() - inicio;
+    estado.exitCode = codigo;
+    if (estado.sucessoFinal && codigo === 0) {
+      estado.status = "sucesso";
+    } else if (estado.motivoBloqueio) {
+      estado.status = "bloqueado";
+    } else {
+      estado.status = "falha";
+    }
+    registrarLogPublicacaoEstatica(estado);
+    return codigo;
+  };
 
   console.log(`[PROFOR 2022] Rotina semiautomática de publicação iniciada em ${inicioIso}.`);
   console.log(`[PROFOR 2022] Flag de exceção de working tree: ${permitirAlteracoesLocais ? "habilitada" : "desabilitada"}.`);
@@ -288,7 +385,8 @@ function main() {
   console.log(`[PROFOR 2022] Branch atual: ${branch || "(não identificada)"}.`);
   if (branch && branch !== "main") {
     console.error(`[PROFOR 2022] Branch inesperada: ${branch}. Esperado: main.`);
-    return 1;
+    estado.motivoBloqueio = `branch inesperada: ${branch}`;
+    return finalizar(1);
   }
 
   const statusInicial = executarGit(["status", "--short"]).stdout.trim();
@@ -298,12 +396,15 @@ function main() {
       `[PROFOR 2022] Working tree possui alterações locais. ` +
         `Use ${FLAG_PERMITIR_ALTERACOES} para permitir este teste controlado.`
     );
-    return 1;
+    estado.motivoBloqueio = "working tree com alteracoes locais";
+    return finalizar(1);
   }
 
   imprimirSecao("Atualização consolidada");
+  estado.atualizacaoExecutada = true;
   const resultadoAtualizacao = executarNpmScript("atualizar:profor-2022");
   const resumoAtualizacao = extrairResumoAtualizacao(resultadoAtualizacao.stdout + "\n" + resultadoAtualizacao.stderr);
+  estado.atualizacaoOk = resultadoAtualizacao.code === 0 && resumoAtualizacao.sucesso;
 
   console.log(
     `[PROFOR 2022] atualizar:profor-2022 => code=${resultadoAtualizacao.code}` +
@@ -311,16 +412,19 @@ function main() {
       ` sucesso=${resumoAtualizacao.sucesso}`
   );
 
-  if (resultadoAtualizacao.code !== 0 || !resumoAtualizacao.sucesso) {
+  if (!estado.atualizacaoOk) {
     console.error("[PROFOR 2022] Atualização consolidada não atingiu o critério 15/15/15. Publicação abortada.");
+    estado.motivoBloqueio = "atualizacao consolidada nao atingiu 15/15/15";
     const fimFalha = Date.now();
     console.log(`[PROFOR 2022] Fim: ${agoraIso()} | duração total: ${formatarDuracao(fimFalha - inicio)}`);
-    return 1;
+    return finalizar(1);
   }
 
   imprimirSecao("Publicação estática");
+  estado.publicacaoExecutada = true;
   const resultadoPublicacao = executarNpmScript("publicar:dados");
   const publicacaoOk = resultadoPublicacao.code === 0;
+  estado.publicacaoOk = publicacaoOk;
   console.log(
     `[PROFOR 2022] publicar:dados => code=${resultadoPublicacao.code}` +
       ` duração=${formatarDuracao(resultadoPublicacao.duracaoMs)}`
@@ -328,9 +432,10 @@ function main() {
 
   if (!publicacaoOk) {
     console.error("[PROFOR 2022] Publicação estática falhou. Nenhuma validação adicional foi concluída.");
+    estado.motivoBloqueio = "publicar:dados falhou";
     const fimFalha = Date.now();
     console.log(`[PROFOR 2022] Fim: ${agoraIso()} | duração total: ${formatarDuracao(fimFalha - inicio)}`);
-    return 1;
+    return finalizar(1);
   }
 
   imprimirSecao("Validações");
@@ -338,6 +443,8 @@ function main() {
   const resultadoValidarSyntax = executarNpmScript("validar:syntax");
   const validarJsonOk = resultadoValidarJson.code === 0;
   const validarSyntaxOk = resultadoValidarSyntax.code === 0;
+  estado.validarJsonOk = validarJsonOk;
+  estado.validarSyntaxOk = validarSyntaxOk;
 
   console.log(
     `[PROFOR 2022] validar:json => code=${resultadoValidarJson.code} duração=${formatarDuracao(resultadoValidarJson.duracaoMs)}`
@@ -348,6 +455,7 @@ function main() {
 
   imprimirSecao("Auditoria de vazamento");
   const auditoria = auditarArquivosPublicados();
+  estado.auditoriaOk = auditoria.ok;
   if (auditoria.ok) {
     console.log(`[PROFOR 2022] Auditoria sem vazamento: OK (${auditoria.arquivos.length} arquivos JSON).`);
   } else {
@@ -363,6 +471,11 @@ function main() {
   const arquivosPublicadosAlterados = arquivosAlterados.filter((arquivo) => arquivo.startsWith("frontend/data/publicados/"));
   const ultimaAtualizacao = obterUltimaAtualizacaoPublicada();
   const sucessoFinal = publicacaoOk && validarJsonOk && validarSyntaxOk && auditoria.ok;
+
+  estado.arquivosPublicadosAlterados = arquivosPublicadosAlterados;
+  estado.ultimaAtualizacaoDados = ultimaAtualizacao;
+  estado.diagnostico = obterDiagnosticoConsolidadoPublicado();
+  estado.sucessoFinal = sucessoFinal;
 
   console.log("");
   console.log("=== Relatório final ===");
@@ -387,7 +500,8 @@ function main() {
   console.log("Observação: este script não executa commit/push automático.");
 
   if (!sucessoFinal) {
-    return 1;
+    estado.motivoBloqueio = estado.motivoBloqueio || "validacao ou auditoria falhou";
+    return finalizar(1);
   }
 
   if (statusFinal) {
@@ -397,7 +511,7 @@ function main() {
     console.log("[PROFOR 2022] git status --short final: (limpo)");
   }
 
-  return 0;
+  return finalizar(0);
 }
 
 const exitCode = main();

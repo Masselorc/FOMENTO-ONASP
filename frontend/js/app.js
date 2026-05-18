@@ -1612,9 +1612,198 @@ async function carregarLogoParaPDF() {
                         icon: 'fa-circle-check'
                     })}
                 </section>
+
+                ${modoAplicacao === 'api' ? renderPainelLogsOperacionaisHtml() : ''}
             `;
 
+            if (modoAplicacao === 'api') {
+                inicializarPainelLogsOperacionais();
+            }
+
             aplicarModoSomenteLeituraControlada();
+        }
+
+        function renderPainelLogsOperacionaisHtml() {
+            const tiposEvento = [
+                { valor: '', rotulo: 'Todos os tipos' },
+                { valor: 'profor_atualizacao_consolidada', rotulo: 'Atualização consolidada PROFOR 2022' },
+                { valor: 'profor_publicacao_estatica', rotulo: 'Publicação estática PROFOR 2022' },
+                { valor: 'profor_detru', rotulo: 'Atualização DETRU' },
+                { valor: 'profor_rendimentos_transferegov', rotulo: 'Rendimentos Transferegov' }
+            ];
+            const statusOpcoes = [
+                { valor: '', rotulo: 'Todos os status' },
+                { valor: 'sucesso', rotulo: 'Sucesso' },
+                { valor: 'falha', rotulo: 'Falha' },
+                { valor: 'bloqueado', rotulo: 'Bloqueado' },
+                { valor: 'parcial', rotulo: 'Parcial' }
+            ];
+
+            return `
+                <section class="system-status-panel mb-5" id="painel-logs-operacionais" aria-label="Logs operacionais">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Sistema (local/API)</p>
+                            <h2>Logs operacionais</h2>
+                            <p class="text-muted small mb-0">Disponível apenas no servidor local/API. Logs não são exibidos no GitHub Pages.</p>
+                        </div>
+                    </div>
+                    <form class="row g-2 align-items-end mb-3" id="form-filtros-logs-operacionais" onsubmit="return false;">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label small" for="filtro-logs-tipo">Tipo de evento</label>
+                            <select id="filtro-logs-tipo" class="form-select form-select-sm">
+                                ${tiposEvento.map((opt) => `<option value="${escapeHtml(opt.valor)}">${escapeHtml(opt.rotulo)}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label class="form-label small" for="filtro-logs-status">Status</label>
+                            <select id="filtro-logs-status" class="form-select form-select-sm">
+                                ${statusOpcoes.map((opt) => `<option value="${escapeHtml(opt.valor)}">${escapeHtml(opt.rotulo)}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <label class="form-label small" for="filtro-logs-limite">Limite</label>
+                            <input type="number" id="filtro-logs-limite" class="form-control form-control-sm" value="50" min="1" max="200">
+                        </div>
+                        <div class="col-12 col-md-3 d-flex gap-2 flex-wrap">
+                            <button type="button" id="btn-carregar-logs" class="btn btn-sm btn-primary">
+                                <i class="fas fa-rotate" aria-hidden="true"></i> Carregar logs
+                            </button>
+                            <button type="button" id="btn-exportar-logs-json" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-file-code" aria-hidden="true"></i> JSON
+                            </button>
+                            <button type="button" id="btn-exportar-logs-csv" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-file-csv" aria-hidden="true"></i> CSV
+                            </button>
+                        </div>
+                    </form>
+                    <div id="mensagem-logs-operacionais" class="alert alert-info d-none" role="status"></div>
+                    <div class="table-responsive">
+                        <table class="table table-sm app-data-table" id="tabela-logs-operacionais">
+                            <thead>
+                                <tr>
+                                    <th>Data/hora</th>
+                                    <th>Módulo</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Duração</th>
+                                    <th>Resumo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="6" class="text-center text-muted py-3">Clique em "Carregar logs" para listar os últimos registros.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            `;
+        }
+
+        function obterFiltrosLogsOperacionais() {
+            const tipo = document.getElementById('filtro-logs-tipo')?.value || '';
+            const status = document.getElementById('filtro-logs-status')?.value || '';
+            const limite = document.getElementById('filtro-logs-limite')?.value || '';
+            const filtros = {};
+            if (tipo) filtros.tipo_evento = tipo;
+            if (status) filtros.status = status;
+            if (limite) filtros.limite = limite;
+            return filtros;
+        }
+
+        function montarQueryStringLogs(filtros, extras = {}) {
+            const params = new URLSearchParams();
+            if (filtros.tipo_evento) params.set('tipo_evento', filtros.tipo_evento);
+            if (filtros.status) params.set('status', filtros.status);
+            if (filtros.limite) params.set('limite', filtros.limite);
+            Object.entries(extras).forEach(([chave, valor]) => {
+                if (valor !== undefined && valor !== null && valor !== '') params.set(chave, valor);
+            });
+            const q = params.toString();
+            return q ? `?${q}` : '';
+        }
+
+        function definirMensagemLogsOperacionais(texto, tipo = 'info') {
+            const el = document.getElementById('mensagem-logs-operacionais');
+            if (!el) return;
+            if (!texto) {
+                el.classList.add('d-none');
+                el.textContent = '';
+                return;
+            }
+            el.className = `alert alert-${tipo}`;
+            el.textContent = texto;
+        }
+
+        function formatarDuracaoLog(ms) {
+            const numero = Number(ms);
+            if (!Number.isFinite(numero) || numero < 0) return '';
+            if (numero < 1000) return `${numero} ms`;
+            return `${(numero / 1000).toFixed(1)} s`;
+        }
+
+        function formatarDataHoraLog(iso) {
+            if (!iso) return '';
+            try {
+                const data = new Date(iso);
+                if (Number.isNaN(data.getTime())) return iso;
+                return data.toLocaleString('pt-BR');
+            } catch {
+                return iso;
+            }
+        }
+
+        async function carregarLogsOperacionais() {
+            const tbody = document.querySelector('#tabela-logs-operacionais tbody');
+            if (!tbody) return;
+            const filtros = obterFiltrosLogsOperacionais();
+            definirMensagemLogsOperacionais('Carregando logs operacionais…', 'info');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">Carregando…</td></tr>';
+            try {
+                const caminho = `/api/sistema/logs-operacionais${montarQueryStringLogs(filtros)}`;
+                const { resposta, payload } = await fetchJsonApiOnasp(caminho);
+                if (!resposta.ok || !payload?.success) {
+                    throw new Error(payload?.message || `Falha ao carregar logs (status ${resposta.status}).`);
+                }
+                const logs = Array.isArray(payload.logs) ? payload.logs : [];
+                if (!logs.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">Nenhum log operacional encontrado para os filtros aplicados.</td></tr>';
+                    definirMensagemLogsOperacionais('Nenhum log operacional encontrado.', 'warning');
+                    return;
+                }
+                tbody.innerHTML = logs.map((log) => `
+                    <tr>
+                        <td>${escapeHtml(formatarDataHoraLog(log.criadoEm || log.concluidoEm || ''))}</td>
+                        <td>${escapeHtml(log.modulo || '')}</td>
+                        <td>${escapeHtml(log.tipoEvento || '')}</td>
+                        <td>${escapeHtml(log.status || '')}</td>
+                        <td>${escapeHtml(formatarDuracaoLog(log.duracaoMs))}</td>
+                        <td>${escapeHtml(log.resumo || '')}</td>
+                    </tr>
+                `).join('');
+                definirMensagemLogsOperacionais(`Total de ${logs.length} registro(s) carregado(s).`, 'success');
+            } catch (error) {
+                console.error('Falha ao carregar logs operacionais:', error);
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-3">Não foi possível carregar os logs operacionais.</td></tr>';
+                definirMensagemLogsOperacionais(`Não foi possível carregar os logs operacionais: ${error?.message || error}`, 'danger');
+            }
+        }
+
+        function exportarLogsOperacionais(formato) {
+            const filtros = obterFiltrosLogsOperacionais();
+            const caminho = `/api/sistema/logs-operacionais/export${montarQueryStringLogs(filtros, { formato })}`;
+            const url = obterUrlApiOnasp(caminho);
+            if (typeof window !== 'undefined') {
+                window.open(url, '_blank', 'noopener');
+            }
+        }
+
+        function inicializarPainelLogsOperacionais() {
+            const btnCarregar = document.getElementById('btn-carregar-logs');
+            const btnJson = document.getElementById('btn-exportar-logs-json');
+            const btnCsv = document.getElementById('btn-exportar-logs-csv');
+            if (btnCarregar) btnCarregar.addEventListener('click', () => carregarLogsOperacionais());
+            if (btnJson) btnJson.addEventListener('click', () => exportarLogsOperacionais('json'));
+            if (btnCsv) btnCsv.addEventListener('click', () => exportarLogsOperacionais('csv'));
         }
 
         async function toggleView(viewName) {

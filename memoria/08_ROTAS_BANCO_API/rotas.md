@@ -681,6 +681,68 @@ Relação em alto nível:
 
 O schema completo das tabelas, tipos, chaves, constraints e evolução incremental não deve ser detalhado neste arquivo.
 
+### Sistema — Logs operacionais (local/API)
+
+#### GET /api/sistema/logs-operacionais
+
+**Finalidade:** listar os últimos logs operacionais gravados em `logs_operacionais`, ordenados do mais recente para o mais antigo.
+
+**Serviço chamado:** `listarLogsOperacionais(filtros)`, de `backend/services/logs-operacionais-service.js`.
+
+**Tipo:** leitura.
+
+**Payload:** não se aplica. Aceita query string com `modulo`, `tipo_evento`, `status`, `limite` (limite máximo 200; padrão 50).
+
+**Resposta:** confirmada. Retorna `{ success: true, total, logs }`, onde cada log expõe `id`, `modulo`, `tipoEvento`, `status`, `iniciadoEm`, `concluidoEm`, `duracaoMs`, `resumo`, `criadoEm`.
+
+**Efeito colateral:** nenhum.
+
+**Publicação estática:** não. Indisponível no modo estático.
+
+**Frontend consumidor:** painel "Logs operacionais" em `frontend/js/app.js` (apenas modo local/API).
+
+**Observações de manutenção:** não retornar payload bruto nesta rota; usar `/:id` para detalhe. Não expor no GitHub Pages.
+
+#### GET /api/sistema/logs-operacionais/:id
+
+**Finalidade:** retornar o detalhe sanitizado de um log operacional específico.
+
+**Serviço chamado:** `obterLogOperacionalPorId(id)`, de `backend/services/logs-operacionais-service.js`.
+
+**Tipo:** leitura.
+
+**Payload:** não se aplica. `id` numérico positivo na URL.
+
+**Resposta:** confirmada. Retorna `{ success: true, log: { ..., payload } }` com payload já sanitizado por `sanitizarPayloadLog`.
+
+**Efeito colateral:** nenhum.
+
+**Publicação estática:** não. Indisponível no modo estático.
+
+**Frontend consumidor:** botão opcional "Ver detalhe" do painel "Logs operacionais" em `frontend/js/app.js`.
+
+**Observações de manutenção:** nunca incluir cookies, SAML, tokens, segredos de ambiente ou caminhos locais. A sanitização ocorre no serviço; alterações devem preservar a lista de padrões proibidos.
+
+#### GET /api/sistema/logs-operacionais/export
+
+**Finalidade:** exportar logs operacionais em JSON ou CSV para análise externa.
+
+**Serviço chamado:** `exportarLogsOperacionaisJson(filtros)` ou `exportarLogsOperacionaisCsv(filtros)`, de `backend/services/logs-operacionais-service.js`.
+
+**Tipo:** exportação.
+
+**Payload:** não se aplica. Query string com `formato=json|csv` (padrão `json`), além de `modulo`, `tipo_evento`, `status`, `limite` (limite máximo 2000; padrão 500).
+
+**Resposta:** confirmada. Retorna arquivo com `Content-Disposition: attachment` (`logs-operacionais.json` ou `logs-operacionais.csv`). Formato inválido devolve `400`.
+
+**Efeito colateral:** nenhum.
+
+**Publicação estática:** não. Indisponível no modo estático.
+
+**Frontend consumidor:** botões "Exportar JSON" e "Exportar CSV" do painel "Logs operacionais" em `frontend/js/app.js`.
+
+**Observações de manutenção:** payload sanitizado tanto no JSON quanto no JSON compactado dentro do CSV. CSV usa `;` como delimitador e escapa aspas/quebras de linha conforme convenção brasileira.
+
 ## O que deve ser detalhado em schema-banco.md
 
 `schema-banco.md` deve documentar:

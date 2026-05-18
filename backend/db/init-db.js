@@ -72,6 +72,7 @@ function inicializarBanco() {
   garantirTabelaDetruAtualizacoesProfor2022();
   garantirTabelaTransferegovRendimentosCacheProfor2022();
   garantirTabelaTransferegovRendimentosConsultasProfor2022();
+  garantirTabelaLogsOperacionais();
 }
 
 function garantirColunasOrcamentoRastreio() {
@@ -246,6 +247,28 @@ function garantirTabelaTransferegovRendimentosConsultasProfor2022() {
       erro TEXT,
       resumo_json TEXT
     );
+  `);
+}
+
+function garantirTabelaLogsOperacionais() {
+  // Log genérico aditivo de eventos operacionais por módulo (PROFOR 2022 etc.).
+  // Cresce apenas via INSERT; consulta/exportação são feitas pela tela de Sistema (modo local/API).
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS logs_operacionais (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      modulo TEXT NOT NULL,
+      tipo_evento TEXT NOT NULL,
+      status TEXT NOT NULL,
+      iniciado_em TEXT,
+      concluido_em TEXT,
+      duracao_ms INTEGER,
+      resumo TEXT,
+      payload_json TEXT,
+      criado_em TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_logs_operacionais_criado_em ON logs_operacionais(criado_em DESC);
+    CREATE INDEX IF NOT EXISTS idx_logs_operacionais_tipo_evento ON logs_operacionais(tipo_evento);
+    CREATE INDEX IF NOT EXISTS idx_logs_operacionais_status ON logs_operacionais(status);
   `);
 }
 

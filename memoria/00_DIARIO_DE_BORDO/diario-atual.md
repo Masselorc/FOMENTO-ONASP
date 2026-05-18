@@ -2312,3 +2312,38 @@ oute.fetch() + mutação em memória do payload retornado.
 - Confirmação: nenhum JSON publicado foi alterado.
 - Risco de regressão: baixo; alteração restrita a logs operacionais e resumo de execução.
 - Rollback: `git revert <hash_do_commit>` após commit/push.
+
+## 18/05/2026 - Logs operacionais acessíveis pela tela de Sistema (PROFOR 2022)
+
+- Branch atual: `main`.
+- Objetivo: tornar os logs operacionais já gerados pelo PROFOR 2022 consultáveis e exportáveis pelo usuário operador, dentro da tela de Sistema, apenas em modo local/API; nenhum log técnico exposto no GitHub Pages.
+- Modelagem: nova tabela genérica aditiva `logs_operacionais` em `backend/db/init-db.js` com `CREATE TABLE IF NOT EXISTS` (sem migration destrutiva) e índices em `criado_em`, `tipo_evento` e `status`. Tipos esperados: `profor_atualizacao_consolidada`, `profor_publicacao_estatica`, `profor_detru`, `profor_rendimentos_transferegov`. Status esperados: `sucesso`, `falha`, `bloqueado`, `parcial`.
+- Serviço criado: `backend/services/logs-operacionais-service.js` com `registrarLogOperacional`, `listarLogsOperacionais`, `obterLogOperacionalPorId`, `exportarLogsOperacionaisJson`, `exportarLogsOperacionaisCsv`, `sanitizarPayloadLog`. Sanitização remove JSESSIONID/SAML/cookies/Authorization/Bearer/segredos/caminhos `C:\Users\`/HTML bruto/`.sqlite`/`.har`. Limite padrão de consulta 50 (máx. 200) e exportação padrão 500 (máx. 2000).
+- Integração de eventos: `backend/services/profor-2022/profor-atualizacao-consolidada-service.js` registra um log executivo `profor_atualizacao_consolidada` ao final de `atualizarProfor2022Consolidado` com `iniciadoEm`, `concluidoEm`, `duracaoMs`, `sucessoGeral`, `origemDados`, sumários DETRU/rendimentos/consolidado, totais por fluxo, `totalAvisos`, `totalErros`.
+- Integração de publicação: `backend/scripts/publicar-profor-2022-estatico.js` registra `profor_publicacao_estatica` em todos os caminhos de saída (sucesso, falha de etapa, bloqueio por branch ou working tree, falha de auditoria), incluindo `motivoBloqueio`, diagnóstico consolidado publicado, resultados das validações JSON/syntax e auditoria de vazamento. O script segue proibido de fazer commit/push automático.
+- Rotas locais/API criadas em `backend/server.js`:
+  - `GET /api/sistema/logs-operacionais` (filtros `modulo`, `tipo_evento`, `status`, `limite`).
+  - `GET /api/sistema/logs-operacionais/:id` (detalhe sanitizado).
+  - `GET /api/sistema/logs-operacionais/export?formato=json|csv` (com cabeçalho `Content-Disposition`).
+- Interface: novo painel "Logs operacionais" dentro de `renderStatusSistemaView` (`frontend/js/app.js`), renderizado somente quando `modoAplicacao === 'api'`. Em modo estático (GitHub Pages) o painel não é injetado e nenhuma chamada `/api/sistema/logs-operacionais` é feita. Painel mostra data/hora, módulo, tipo, status, duração e resumo; oferece "Carregar logs", filtros de tipo/status/limite e exportações JSON/CSV. Não exibe payload bruto, cookies, HTML, caminhos locais ou tokens.
+- Cache-buster atualizado: `index.html` agora carrega `app.js?v=20260518-09`.
+- Arquivos alterados: `backend/db/init-db.js`, `backend/services/logs-operacionais-service.js` (novo), `backend/services/profor-2022/profor-atualizacao-consolidada-service.js`, `backend/scripts/publicar-profor-2022-estatico.js`, `backend/server.js`, `frontend/js/app.js`, `index.html`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/08_ROTAS_BANCO_API/rotas.md`.
+- Testes funcionais executados:
+  - `npm run init-db`: tabela `logs_operacionais` criada com sucesso (CREATE TABLE IF NOT EXISTS).
+  - `npm run atualizar:profor-2022`: DETRU 15/15, rendimentos 15/15, consolidado 15/15/15, `sucessoGeral = true`, log id=1 (`status=sucesso`, `duracao_ms=100598`) gravado.
+  - `npm run publicar:profor-2022` (sem flag): bloqueio controlado por alterações locais; log id=2 (`status=bloqueado`, `motivoBloqueio=working tree com alteracoes locais`) gravado. Nenhum JSON publicado foi alterado.
+  - Endpoints HTTP locais em `PORT=8804`:
+    - `GET /api/sistema/logs-operacionais` → 1 log.
+    - `GET /api/sistema/logs-operacionais?tipo_evento=profor_atualizacao_consolidada` → 1 log.
+    - `GET /api/sistema/logs-operacionais?tipo_evento=profor_publicacao_estatica` → 0 antes do bloqueio, 1 depois.
+    - `GET /api/sistema/logs-operacionais/1` → detalhe completo sanitizado.
+    - `GET /api/sistema/logs-operacionais/export?formato=json` → 200, `Content-Disposition` correto.
+    - `GET /api/sistema/logs-operacionais/export?formato=csv` → 200, `Content-Disposition` correto.
+    - `GET /api/sistema/logs-operacionais/export?formato=xml` → 400 (formato inválido).
+  - `node --check` aprovado em `backend/db/init-db.js`, `backend/services/logs-operacionais-service.js`, `backend/services/profor-2022/profor-atualizacao-consolidada-service.js`, `backend/scripts/publicar-profor-2022-estatico.js`, `backend/server.js`, `frontend/js/app.js`.
+  - `npm run validar:json` e `npm run validar:syntax`: ambos OK.
+- Confirmação de sanitização: payload sanitizado por `sanitizarPayloadLog` antes do `INSERT` e antes da exportação. Inspeção do log id=1 confirma payload limitado a resumos numéricos.
+- Confirmação de ocultação no GitHub Pages: `renderStatusSistemaView` só injeta o painel quando `modoAplicacao === 'api'`; o próprio botão "Status do Sistema" já é ocultado em modo estático por `atualizarVisibilidadeBotaoStatusSistema`.
+- Confirmação: não houve publicação de dados estáticos. Nenhum JSON publicado foi alterado nesta etapa.
+- Risco de regressão: baixo; adição de tabela, serviço, rotas e painel sem alterar fluxos existentes nem schema destrutivo.
+- Rollback: `git revert <hash_do_commit>` após commit/push. A tabela `logs_operacionais` permanecerá no SQLite local após reversão (sem impacto operacional).

@@ -488,6 +488,43 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 **Observações de manutenção:** `registrarHistorico` não insere registro quando `valorAnterior` e `valorNovo` são iguais. Não há foreign key formal para registros das tabelas de origem.
 
+### logs_operacionais
+
+**Finalidade aparente:** registrar de forma aditiva eventos operacionais executivos do sistema (atualização consolidada PROFOR 2022, publicação estática, atualizações DETRU/rendimentos), para auditoria e diagnóstico via tela de Sistema em modo local/API.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, função `garantirTabelaLogsOperacionais()`. Criada com `CREATE TABLE IF NOT EXISTS`.
+
+**Serviços relacionados:** `backend/services/logs-operacionais-service.js` (registro, listagem, detalhe, exportação JSON/CSV, sanitização). Consumida indiretamente por `backend/services/profor-2022/profor-atualizacao-consolidada-service.js` e `backend/scripts/publicar-profor-2022-estatico.js`.
+
+**Rotas relacionadas:** `GET /api/sistema/logs-operacionais`, `GET /api/sistema/logs-operacionais/:id`, `GET /api/sistema/logs-operacionais/export`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `modulo TEXT NOT NULL`, `tipo_evento TEXT NOT NULL`, `status TEXT NOT NULL`, `criado_em TEXT NOT NULL`.
+
+**Colunas confirmadas:**
+
+| Coluna | Tipo declarado | Origem | Observações |
+|---|---:|---|---|
+| `id` | `INTEGER` | criação inicial | `PRIMARY KEY AUTOINCREMENT`. |
+| `modulo` | `TEXT` | criação inicial | `NOT NULL`; identifica área funcional (ex.: `profor-2022`). |
+| `tipo_evento` | `TEXT` | criação inicial | `NOT NULL`; tipos esperados: `profor_atualizacao_consolidada`, `profor_publicacao_estatica`, `profor_detru`, `profor_rendimentos_transferegov`. |
+| `status` | `TEXT` | criação inicial | `NOT NULL`; valores esperados: `sucesso`, `falha`, `bloqueado`, `parcial`. |
+| `iniciado_em` | `TEXT` | criação inicial | timestamp de início do evento (opcional). |
+| `concluido_em` | `TEXT` | criação inicial | timestamp de conclusão do evento. |
+| `duracao_ms` | `INTEGER` | criação inicial | duração total do evento em ms. |
+| `resumo` | `TEXT` | criação inicial | resumo curto sanitizado. |
+| `payload_json` | `TEXT` | criação inicial | payload sanitizado em JSON; nunca contém dados sensíveis. |
+| `criado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp de gravação do log. |
+
+**Índices confirmados:** `idx_logs_operacionais_criado_em (criado_em DESC)`, `idx_logs_operacionais_tipo_evento (tipo_evento)`, `idx_logs_operacionais_status (status)`.
+
+**Campos adicionados por evolução incremental:** não se aplica; criação inicial em 18/05/2026.
+
+**Riscos de alteração:** alterar tipo de coluna ou remover índices pode degradar consulta na tela de Sistema. Remover sanitização no serviço expõe risco de vazamento de cookies, SAML, tokens ou caminhos locais.
+
+**Observações de manutenção:** a tabela é estritamente aditiva (INSERT-only); não há UPDATE/DELETE no serviço. Limite padrão de consulta é 50 e máximo 200; limite padrão de exportação é 500 e máximo 2000. Toda escrita passa por `sanitizarPayloadLog`.
+
 ## Evolução incremental de schema
 
 `backend/db/init-db.js` usa `garantirColuna(tabela, coluna, definicao)` para evolução incremental.
