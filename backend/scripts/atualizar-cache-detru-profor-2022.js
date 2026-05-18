@@ -4,6 +4,9 @@
 // ou usa o arquivo local em Dados/detru/siconv_convenio.csv.zip.
 // NÃO deve ser chamado durante o carregamento da página.
 
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") });
+
 const { inicializarBanco } = require("../db/init-db");
 const {
   atualizarCacheDetruProfor2022,
