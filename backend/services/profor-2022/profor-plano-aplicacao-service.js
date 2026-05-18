@@ -50,10 +50,6 @@ function obterValorItem(item, campo) {
 }
 
 function obterSaldoItem(item) {
-  if (item && item.saldo !== undefined && item.saldo !== null && item.saldo !== "") {
-    return arredondarMoedaProfor(item.saldo);
-  }
-
   return arredondarMoedaProfor(obterValorItem(item, "valorPrevisto") - obterValorItem(item, "valorExecutado"));
 }
 
@@ -233,6 +229,7 @@ function resumirPlanoAplicacaoSeguro(planoAplicacao, filtros = {}) {
     previstoOuvidoria,
     previstoCorregedoria,
     previstoEscolaPenal,
+    valorPrevistoGeral,
     valorExecutadoGeral,
     valorExecutadoCorregedoria,
     valorExecutadoEscolaPenal,

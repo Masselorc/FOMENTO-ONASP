@@ -198,3 +198,41 @@ Confirmacoes:
 - `npm run publicar:dados` nao foi executado nesta auditoria.
 - Nenhum JSON publicado foi alterado nesta auditoria.
 - Nenhum codigo de producao foi alterado nesta auditoria.
+
+## 14. Revisao posterior dos calculos internos (18/05/2026)
+
+A revisao tecnica posterior resolveu a pendencia dos campos calculados, sem reintroduzir a aba `Geral` como fonte operacional.
+
+| Campo | Status apos revisao | Regra validada |
+| --- | --- | --- |
+| `saldoResidualCapital` | resolvido | soma `valorPrevisto - valorExecutado` dos itens CAPITAL |
+| `saldoResidualCusteio` | resolvido | soma `valorPrevisto - valorExecutado` dos itens CUSTEIO |
+| `valorExecutadoGeral` | resolvido | soma `valorExecutado` de todos os itens filtrados |
+| `previstoOuvidoria` | resolvido | soma `valorPrevisto` da area OUVIDORIA |
+| `previstoCorregedoria` | resolvido | soma `valorPrevisto` da area CORREGEDORIA |
+| `previstoEscolaPenal` | resolvido | soma `valorPrevisto` da area ESCOLA PENAL |
+| `execucaoOuvidoriaPercentual` | resolvido | `valorExecutadoOuvidoria / previstoOuvidoria * 100` |
+| `execucaoCorregedoriaPercentual` | resolvido | `valorExecutadoCorregedoria / previstoCorregedoria * 100` |
+| `execucaoEscolaPenalPercentual` | resolvido | `valorExecutadoEscolaPenal / previstoEscolaPenal * 100` |
+| `execucaoGeralPercentual` | resolvido | `valorExecutadoGeral / valorPrevistoGeral * 100` |
+| `saldoDisponivelOuvidoria` | permanece pendente | mantido fora da interface; sem formula segura |
+
+Achados corrigidos:
+
+- O servico de plano ainda preferia a coluna `saldo` da planilha quando ela existia. A regra foi alterada para sempre calcular `valorPrevisto - valorExecutado`.
+- O consolidado anexava a lista completa do plano no payload de cada convenio quando recebia o plano como array. O payload agora leva apenas os itens filtrados por UF + numero + ano.
+- A execucao geral do detalhe visual usava `valorGlobal` como base. A exibicao passou a usar o percentual calculado no consolidado.
+
+Diagnostico final:
+
+- 15 convenios com plano.
+- 0 convenio sem itens.
+- 0 item sem area/natureza.
+- 0 saldo residual negativo.
+- 0 percentual com divisao por zero, `NaN` ou `Infinity`.
+- soma das areas fecha com o total geral quando a area `N/A` e considerada.
+- soma CAPITAL+CUSTEIO fecha com o total geral.
+
+Pendencia remanescente:
+
+- `saldoDisponivelOuvidoria` continua sem formula segura e deve permanecer fora da interface ate nova decisao tecnica.

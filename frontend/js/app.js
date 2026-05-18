@@ -2362,6 +2362,7 @@ async function carregarLogoParaPDF() {
                 acc.valorExecutadoGeral += Number(convenio.valorExecutadoGeral) || 0;
                 acc.previstoOuvidoria += Number(convenio.previstoOuvidoria) || 0;
                 acc.valorExecutadoOuvidoria += Number(convenio.valorExecutadoOuvidoria) || 0;
+                acc.valorPrevistoGeral += Number(convenio.valorPrevistoGeral) || 0;
                 return acc;
             }, {
                 totalConvenios: convenios.length,
@@ -2370,11 +2371,13 @@ async function carregarLogoParaPDF() {
                 valorContrapartida: 0,
                 valorExecutadoGeral: 0,
                 previstoOuvidoria: 0,
-                valorExecutadoOuvidoria: 0
+                valorExecutadoOuvidoria: 0,
+                valorPrevistoGeral: 0
             });
 
-            resumo.execucaoGeralPercentual = resumo.valorGlobal > 0
-                ? (resumo.valorExecutadoGeral / resumo.valorGlobal) * 100
+            const baseExecucaoGeral = resumo.valorPrevistoGeral > 0 ? resumo.valorPrevistoGeral : resumo.valorGlobal;
+            resumo.execucaoGeralPercentual = baseExecucaoGeral > 0
+                ? (resumo.valorExecutadoGeral / baseExecucaoGeral) * 100
                 : 0;
             resumo.execucaoOuvidoriaPercentual = resumo.previstoOuvidoria > 0
                 ? (resumo.valorExecutadoOuvidoria / resumo.previstoOuvidoria) * 100
@@ -3238,7 +3241,8 @@ async function carregarLogoParaPDF() {
             ));
             const totalPrevisto = itens.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0);
             const totalExecutado = itens.reduce((total, item) => total + (Number(item.valorExecutado) || 0), 0);
-            const totalSaldo = itens.reduce((total, item) => total + (Number(item.saldo) || 0), 0);
+            const calcularSaldoItemProfor = (item) => (Number(item.valorPrevisto) || 0) - (Number(item.valorExecutado) || 0);
+            const totalSaldo = itens.reduce((total, item) => total + calcularSaldoItemProfor(item), 0);
             const percentual = totalPrevisto > 0 ? (totalExecutado / totalPrevisto) * 100 : 0;
 
             areaLabel.textContent = areaSelecionada || 'Todas as áreas';
@@ -3277,7 +3281,7 @@ async function carregarLogoParaPDF() {
             tableBody.innerHTML = itens.map((item) => {
                 const percentualItem = Number(item.percentualExecucao) || 0;
                 const execucaoAcimaPrevisto = (Number(item.valorExecutado) || 0) - (Number(item.valorPrevisto) || 0) > 0.01;
-                const saldo = Number(item.saldo) || 0;
+                const saldo = calcularSaldoItemProfor(item);
 
                 return `
                     <tr class="${execucaoAcimaPrevisto || saldo < 0 ? 'table-warning' : ''}">
@@ -3365,7 +3369,7 @@ async function carregarLogoParaPDF() {
                         ${renderizarKpiDetalheProfor('Contrapartida', formatMoney(convenio.valorContrapartida), 'Pactuada', '', 'fa-handshake')}
                         ${renderizarKpiDetalheProfor('Repasse Desembolsado', formatMoney(convenio.repasseDesembolsado), 'Liberado ao convenente', 'kpi-card-info', 'fa-money-bill-transfer')}
                         ${renderizarKpiDetalheProfor('Countdown da Vigência', renderizarCountdownVigenciaProfor(convenio), `Vencimento em ${convenio.vencimento || '-'}`, 'kpi-card-warning', 'fa-hourglass-half')}
-                        ${renderizarKpiDetalheProfor('Execução Geral', formatPercent((convenio.valorGlobal > 0 ? convenio.valorExecutadoGeral / convenio.valorGlobal * 100 : 0)), formatMoney(convenio.valorExecutadoGeral), 'kpi-card-success', 'fa-chart-line')}
+                        ${renderizarKpiDetalheProfor('Execução Geral', formatPercent(convenio.execucaoGeralPercentual), formatMoney(convenio.valorExecutadoGeral), 'kpi-card-success', 'fa-chart-line')}
                         ${renderizarKpiDetalheProfor('Previsto Ouvidoria', formatMoney(convenio.previstoOuvidoria), `${convenio.totalItensOuvidoria} item(ns)`, '', 'fa-headset')}
                         ${renderizarKpiDetalheProfor('Execução Ouvidoria', formatPercent(convenio.execucaoOuvidoriaPercentual), formatMoney(convenio.valorExecutadoOuvidoria), 'kpi-card-success', 'fa-check-circle')}
                     </section>

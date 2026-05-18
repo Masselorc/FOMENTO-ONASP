@@ -28,6 +28,7 @@ function calcularExecucaoPorArea(planoAplicacao) {
     previstoOuvidoria: resumo.previstoOuvidoria,
     previstoCorregedoria: resumo.previstoCorregedoria,
     previstoEscolaPenal: resumo.previstoEscolaPenal,
+    valorPrevistoGeral: resumo.valorPrevistoGeral,
     valorExecutadoOuvidoria: resumo.valorExecutadoOuvidoria,
     valorExecutadoCorregedoria: resumo.valorExecutadoCorregedoria,
     valorExecutadoEscolaPenal: resumo.valorExecutadoEscolaPenal,
@@ -98,6 +99,7 @@ function calcularResumoFinanceiroConvenioProfor(fontes = {}) {
     previstoOuvidoria: resumoPlano.previstoOuvidoria,
     previstoCorregedoria: resumoPlano.previstoCorregedoria,
     previstoEscolaPenal: resumoPlano.previstoEscolaPenal,
+    valorPrevistoGeral: resumoPlano.valorPrevistoGeral,
     valorExecutadoOuvidoria: resumoPlano.valorExecutadoOuvidoria,
     valorExecutadoCorregedoria: resumoPlano.valorExecutadoCorregedoria,
     valorExecutadoEscolaPenal: resumoPlano.valorExecutadoEscolaPenal,
@@ -120,10 +122,13 @@ function calcularResumoGeralProfor(convenios) {
   const previstoOuvidoria = somar("previstoOuvidoria");
   const previstoCorregedoria = somar("previstoCorregedoria");
   const previstoEscolaPenal = somar("previstoEscolaPenal");
+  const valorPrevistoGeralCalculado = somar("valorPrevistoGeral");
   const valorExecutadoOuvidoria = somar("valorExecutadoOuvidoria");
   const valorExecutadoCorregedoria = somar("valorExecutadoCorregedoria");
   const valorExecutadoEscolaPenal = somar("valorExecutadoEscolaPenal");
-  const valorPrevistoGeral = arredondarMoedaProfor(previstoOuvidoria + previstoCorregedoria + previstoEscolaPenal);
+  const valorPrevistoGeral = valorPrevistoGeralCalculado > 0
+    ? valorPrevistoGeralCalculado
+    : arredondarMoedaProfor(previstoOuvidoria + previstoCorregedoria + previstoEscolaPenal);
 
   return {
     totalConvenios: lista.length,
@@ -138,6 +143,7 @@ function calcularResumoGeralProfor(convenios) {
     previstoOuvidoria,
     previstoCorregedoria,
     previstoEscolaPenal,
+    valorPrevistoGeral,
     valorExecutadoOuvidoria,
     valorExecutadoCorregedoria,
     valorExecutadoEscolaPenal,
@@ -199,6 +205,7 @@ function aplicarCalculosInternosProfor(convenioBase = {}, fontes = {}) {
     previstoOuvidoria: resumo.previstoOuvidoria,
     previstoCorregedoria: resumo.previstoCorregedoria,
     previstoEscolaPenal: resumo.previstoEscolaPenal,
+    valorPrevistoGeral: resumo.valorPrevistoGeral,
     valorExecutadoOuvidoria: resumo.valorExecutadoOuvidoria,
     valorExecutadoCorregedoria: resumo.valorExecutadoCorregedoria,
     valorExecutadoEscolaPenal: resumo.valorExecutadoEscolaPenal,

@@ -2,6 +2,9 @@ const { listarConveniosMonitorados } = require("./convenios-monitorados-service"
 const { listarCacheDetruProfor2022 } = require("./profor-detru-cache-service");
 const { listarSaldosRendimentosCache } = require("./transferegov-rendimentos-cache-service");
 const {
+  arredondarMoedaProfor,
+  filtrarPlanoAplicacaoSeguro,
+  moedaParaNumeroProfor,
   normalizarAnoProfor,
   normalizarNumeroConvenio,
   normalizarTextoProfor,
@@ -90,8 +93,35 @@ function normalizarCarteiraConvenioProfor(convenio) {
   };
 }
 
-function obterPlanoPorChave(planoAplicacao, numeroConvenio, ano, avisos) {
-  if (Array.isArray(planoAplicacao)) return planoAplicacao;
+function normalizarItemPlanoConsolidado(item) {
+  const valorPrevisto = moedaParaNumeroProfor(item?.valorPrevisto);
+  const valorExecutado = moedaParaNumeroProfor(item?.valorExecutado);
+
+  return {
+    ...item,
+    saldo: arredondarMoedaProfor(valorPrevisto - valorExecutado),
+    percentualExecucao: valorPrevisto > 0 ? Math.round((valorExecutado / valorPrevisto) * 10000) / 100 : 0,
+  };
+}
+
+function normalizarPlanoConsolidado(planoAplicacao) {
+  return (Array.isArray(planoAplicacao) ? planoAplicacao : []).map(normalizarItemPlanoConsolidado);
+}
+
+function obterPlanoPorChave(planoAplicacao, numeroConvenio, ano, avisos, filtros = {}) {
+  if (Array.isArray(planoAplicacao)) {
+    const filtragem = filtrarPlanoAplicacaoSeguro(planoAplicacao, {
+      uf: filtros.uf,
+      numeroConvenio,
+      ano,
+    });
+    avisos.push(...filtragem.avisos);
+    if (numeroConvenio && filtragem.itens.length === 0) {
+      avisos.push(`Plano de aplicacao nao encontrado para ${numeroConvenio}/${normalizarAnoProfor(ano) || "s/ano"}.`);
+    }
+    return normalizarPlanoConsolidado(filtragem.itens);
+  }
+
   if (!planoAplicacao || typeof planoAplicacao !== "object") {
     avisos.push("Plano de aplicacao ausente; calculos do plano retornarao zero.");
     return [];
@@ -101,12 +131,14 @@ function obterPlanoPorChave(planoAplicacao, numeroConvenio, ano, avisos) {
   const anoNormalizado = normalizarAnoProfor(ano);
   const chave = criarChaveConvenioProfor(numero, anoNormalizado);
 
-  if (chave && Array.isArray(planoAplicacao[chave])) return planoAplicacao[chave];
-  if (numero && Array.isArray(planoAplicacao[numero])) return planoAplicacao[numero];
+  if (chave && Array.isArray(planoAplicacao[chave])) return normalizarPlanoConsolidado(planoAplicacao[chave]);
+  if (numero && Array.isArray(planoAplicacao[numero])) return normalizarPlanoConsolidado(planoAplicacao[numero]);
 
   if (numero && !anoNormalizado) {
     const chaves = Object.keys(planoAplicacao).filter((item) => item === numero || item.startsWith(`${numero}::`));
-    if (chaves.length === 1 && Array.isArray(planoAplicacao[chaves[0]])) return planoAplicacao[chaves[0]];
+    if (chaves.length === 1 && Array.isArray(planoAplicacao[chaves[0]])) {
+      return normalizarPlanoConsolidado(planoAplicacao[chaves[0]]);
+    }
     if (chaves.length > 1) {
       avisos.push(`Plano de aplicacao nao escolhido para ${numero}: ha mais de uma chave possivel.`);
       return [];
@@ -131,7 +163,8 @@ function montarFontesConvenioProfor(convenio, fontes) {
     fontes?.planoAplicacao,
     normalizado.numeroConvenio,
     normalizado.ano,
-    avisos
+    avisos,
+    { uf: normalizado.uf }
   );
 
   if (!detru) avisos.push(`Cache DETRU ausente para ${normalizado.numeroConvenio || "s/numero"}/${normalizado.ano || "s/ano"}.`);
@@ -190,6 +223,7 @@ function montarConvenioConsolidadoProfor(convenio, fontes = {}) {
     previstoOuvidoria: calculado.previstoOuvidoria,
     previstoCorregedoria: calculado.previstoCorregedoria,
     previstoEscolaPenal: calculado.previstoEscolaPenal,
+    valorPrevistoGeral: calculado.valorPrevistoGeral,
     valorExecutadoOuvidoria: calculado.valorExecutadoOuvidoria,
     valorExecutadoCorregedoria: calculado.valorExecutadoCorregedoria,
     valorExecutadoEscolaPenal: calculado.valorExecutadoEscolaPenal,

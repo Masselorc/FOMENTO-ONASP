@@ -2508,3 +2508,66 @@ Logs operacionais gravados:
 
 - Risco baixo: aplicação já operava em `banco-cache` por configuração via `.env`; este commit apenas remove o fallback silencioso.
 - Rollback: `git revert <hash>` retorna o padrão a `planilha` e restaura o fallback no publicador.
+
+---
+
+## 18/05/2026 - Revisão dos cálculos internos do PROFOR 2022
+
+- Branch: `main`. `git pull` inicial: `Already up to date.`. Commits recentes confirmaram a retirada do fallback operacional da aba `Geral`.
+- Objetivo: auditar e corrigir, quando necessário, os cálculos internos que substituíram fórmulas antigas da aba `Geral`, sem reintroduzir a planilha como fonte operacional.
+- Decisões usadas: DETRU prevalece para dados oficiais; Transferegov/rendimentos prevalece para `saldoRendimentosAtual`; cálculos internos substituem fórmulas antigas; divergência com planilha histórica não é erro por si só; `saldoDisponivelOuvidoria` não volta sem fórmula segura.
+
+### Diagnóstico dos cálculos
+
+- Plano extraído: 566 itens no total.
+- Consolidação: 15 convênios, `totalComDetru=15`, `totalComPlano=15`, `totalComRendimentos=15`.
+- Antes da correção, foram encontrados:
+  - uso preferencial da coluna `saldo` da planilha para saldos residuais, divergindo da regra `valorPrevisto - valorExecutado`;
+  - payload do consolidado com `planoAplicacao` bruto completo em cada convênio quando o plano era recebido como array;
+  - KPI visual de "Execução Geral" no detalhe usando `valorGlobal` em vez do percentual calculado pelo consolidado.
+- Não foram encontrados: convênio sem itens, item sem área/natureza, valor previsto/executado nulo, saldo residual negativo, percentual inválido, `NaN`, `Infinity` ou `undefined`.
+- A diferença entre soma das três áreas principais e total geral foi explicada por itens `N/A` de saldo remanescente/economicidade. Considerando `N/A`, a soma por área fecha com o total geral.
+
+### Fórmulas confirmadas
+
+- `valorExecutadoGeral = soma(valorExecutado)` dos itens filtrados por UF + número + ano.
+- `valorPrevistoGeral = soma(valorPrevisto)` dos itens filtrados, incluindo `N/A`.
+- previstos/executados por área = soma por área.
+- saldos por área e por natureza = `valorPrevisto - valorExecutado`.
+- percentuais = `executado / previsto * 100`; previsto zero retorna 0.
+- valores monetários arredondados em 2 casas.
+
+### Correções feitas
+
+- `backend/services/profor-2022/profor-plano-aplicacao-service.js`: `obterSaldoItem()` passou a calcular sempre `valorPrevisto - valorExecutado`.
+- `backend/services/profor-2022/profor-calculos-service.js`: `valorPrevistoGeral` passou a integrar resumo e base de `execucaoGeralPercentual`.
+- `backend/services/profor-2022/profor-consolidado-service.js`: `planoAplicacao` passou a ser filtrado por convênio no payload e seus itens passaram a ter `saldo` recalculado pela aplicação.
+- `frontend/js/app.js`: o detalhe do plano passou a calcular saldo por item/área pela fórmula interna; "Execução Geral" usa `execucaoGeralPercentual`.
+- `saldoDisponivelOuvidoria`: mantido fora da interface e `null` no consolidado.
+
+### Atualização, API e interface
+
+- `npm run atualizar:profor-2022`: OK. DETRU 15/15, rendimentos 15/15, consolidado 15/15/15, `fetch-publico=0`, `playwright-publico=15`, `sem-fluxo=0`, `sucessoGeral=true`, `totalAvisos=0`, `totalErros=0`, duração 119.376 ms.
+- `GET /api/profor-2022/consolidado` em `PORT=8807`: HTTP 200, `success=true`, 15 convênios, diagnóstico 15/15/15, `totalAvisos=60`, sem `NaN`, `Infinity` ou `undefined`.
+- Totais principais do endpoint: `valorGlobal=10664015.24`, `valorPrevistoGeral=9684265.65`, `valorExecutadoGeral=3202695.9`, `saldoResidualCapital=4666904.83`, `saldoResidualCusteio=1814664.92`, `saldoRendimentosAtual=1164195.06`, `execucaoGeralPercentual=33.07`.
+- Teste visual Playwright: home carregou; PROFOR 2022 carregou com 15 linhas; detalhe de convênio abriu; tabela de plano carregou; tela de Status do Sistema/logs carregou; sem erro crítico de console; sem `saldoDisponivelOuvidoria`, `NaN`, `Infinity`, `undefined` ou aviso técnico visível.
+
+### Publicação controlada
+
+- `npm run publicar:profor-2022`: primeira tentativa bloqueada corretamente por working tree com alterações locais.
+- `npm run publicar:profor-2022 -- --permitir-alteracoes-locais`: a flag não foi repassada pelo PowerShell/npm nesta execução.
+- Execução equivalente controlada: `node backend/scripts/publicar-profor-2022-estatico.js --permitir-alteracoes-locais`.
+- Resultado: atualização consolidada interna OK (DETRU 15/15, rendimentos 15/15, consolidado 15/15/15), publicação estática OK, validação JSON OK, validação syntax OK, auditoria de vazamento OK.
+- Arquivos publicados alterados: `frontend/data/publicados/aplicacao.json`, `frontend/data/publicados/dashboard-geral.json`, `frontend/data/publicados/resumo-publicacao.json`.
+- Última atualização operacional publicada: `2026-05-18T17:17:58.637Z` (`Transferegov/rendimentos`).
+- Logs gravados: `profor_atualizacao_consolidada` e `profor_publicacao_estatica` com status de sucesso.
+
+### Validações e restrições
+
+- Validações executadas na etapa: `node --check` dos serviços alterados e `frontend/js/app.js`; `npm run validar:json`; `npm run validar:syntax`; `git diff --check`; `git diff --name-only`; `git status --short`.
+- `.env` não alterado.
+- Banco/schema não alterado.
+- Planilha não alterada.
+- Nenhuma dependência nova.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou temporário versionado.
+- Rollback recomendado: `git revert <hash>` do commit desta etapa; se necessário, republicar PROFOR 2022 a partir do commit anterior validado.

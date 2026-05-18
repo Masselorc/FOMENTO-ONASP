@@ -333,10 +333,11 @@ A captura futura deve armazenar também:
 | `execucaoCorregedoriaPercentual` | executado / previsto da área |
 | `execucaoEscolaPenalPercentual` | executado / previsto da área |
 | `saldoDisponivelOuvidoria` | pendente até fórmula segura ou compositor |
-| `saldoResidualCapital` | saldo calculado para natureza CAPITAL |
-| `saldoResidualCusteio` | saldo calculado para natureza CUSTEIO |
+| `saldoResidualCapital` | soma de `valorPrevisto - valorExecutado` para natureza CAPITAL |
+| `saldoResidualCusteio` | soma de `valorPrevisto - valorExecutado` para natureza CUSTEIO |
+| `valorPrevistoGeral` | soma de `valorPrevisto` de todos os itens do plano |
 
-Bloco 15 criou os cálculos internos em serviços puros, sem substituir a origem atual da página. As premissas conservadoras são: previstos por área somam `valorPrevisto`; executados por área somam `valorExecutado`; `valorExecutadoGeral` soma `valorExecutado` do plano filtrado; saldos residuais por natureza somam `saldo` e, quando `saldo` não existe, usam `valorPrevisto - valorExecutado`; percentuais usam `valorExecutado / valorPrevisto * 100` quando o previsto é maior que zero. A regra de filtro seguro exige número do convênio quando houver mais de um número na mesma UF e considera UF, número e ano quando informados.
+Bloco 15 criou os cálculos internos em serviços puros, sem substituir a origem atual da página. As premissas conservadoras são: previstos por área somam `valorPrevisto`; executados por área somam `valorExecutado`; `valorExecutadoGeral` soma `valorExecutado` do plano filtrado; saldos residuais por natureza usam sempre `valorPrevisto - valorExecutado`, sem depender da coluna `saldo` da planilha; percentuais usam `valorExecutado / valorPrevisto * 100` quando o previsto é maior que zero. A regra de filtro seguro exige número do convênio quando houver mais de um número na mesma UF e considera UF, número e ano quando informados.
 
 `saldoDisponivelOuvidoria` permanece pendente e não é inventado nos serviços do Bloco 15; deve ser tratado apenas quando houver fórmula segura ou no compositor consolidado.
 
@@ -625,7 +626,7 @@ Classificar uma divergência como erro requer evidência. Aceitar uma divergênc
 | Tipo | Origem | Quando é autoritativa |
 | --- | --- | --- |
 | DETRU oficial | Plataforma SICONV/DETRU (`siconv_convenio.csv.zip`) | Sempre, para campos cadastrais e financeiros oficiais |
-| Cálculo do plano | Soma `valorPrevisto`/`valorExecutado`/`saldo` dos itens do plano filtrado por UF + nº + ano | Sempre, para campos por área/natureza |
+| Cálculo do plano | Soma `valorPrevisto`, `valorExecutado` e `valorPrevisto - valorExecutado` dos itens do plano filtrado por UF + nº + ano | Sempre, para campos por área/natureza |
 | Transferegov público | Página pública de Rendimento de Aplicação (sessão pública do convênio) | Quando a sessão pública estiver estabelecida; sem login/captcha |
 | Aba `Geral` (manual) | Planilha `Planilhas/gestao_financeira_ouvidoria.xlsx` aba `Geral` | Transitória; deve ser substituída pelas três anteriores |
 
@@ -778,3 +779,48 @@ Permanece como **ferramenta técnica de diagnóstico** em `GET /api/profor-2022/
 
 Quando uma fórmula segura for definida, o campo poderá voltar à interface de forma controlada.
 - Limites padrão preservam performance: 50 últimos registros em consulta e 500 em exportação por padrão.
+
+## 15. Revisão dos cálculos internos após retirada da aba `Geral`
+
+Em 18/05/2026 foi concluída a revisão técnica dos cálculos que substituem fórmulas antigas da aba `Geral`, mantendo `banco-cache` como origem operacional.
+
+Regras confirmadas/corrigidas:
+
+- `valorExecutadoGeral`: soma `valorExecutado` de todos os itens do plano filtrado por UF + número + ano.
+- `valorPrevistoGeral`: soma `valorPrevisto` de todos os itens do plano filtrado, incluindo linhas `N/A` de saldo remanescente/economicidade.
+- previstos/executados por área: somam `valorPrevisto` e `valorExecutado` da área (`OUVIDORIA`, `CORREGEDORIA`, `ESCOLA PENAL` e `N/A` quando existir no detalhe).
+- saldos por área e por natureza: usam `valorPrevisto - valorExecutado`, com arredondamento monetário em 2 casas.
+- percentuais por área e geral: usam `executado / previsto * 100`; quando o previsto é zero, retornam 0 para evitar `NaN`/`Infinity`.
+- payload do consolidado: `planoAplicacao` de cada convênio passa a carregar apenas os itens daquele convênio, não a lista bruta completa do plano.
+
+Diagnóstico validado:
+
+- 15 convênios com plano, DETRU e rendimentos.
+- 566 itens de plano extraídos no total.
+- 0 convênio sem itens.
+- 0 item sem área ou natureza.
+- 0 valor previsto/executado nulo.
+- 0 saldo residual negativo.
+- 0 percentual acima de 100 por erro de divisão.
+- 0 inconsistência entre soma das áreas e total geral quando `N/A` é considerado.
+- 0 inconsistência entre soma CAPITAL+CUSTEIO e total geral.
+- 0 ocorrência de `NaN`, `Infinity` ou `undefined` no payload serializado.
+
+Correções feitas:
+
+- `profor-plano-aplicacao-service.js`: `obterSaldoItem` deixou de preferir a coluna `saldo` da planilha e passou a calcular sempre `valorPrevisto - valorExecutado`.
+- `profor-calculos-service.js`: o resumo passou a carregar `valorPrevistoGeral` e a usar essa base para `execucaoGeralPercentual`.
+- `profor-consolidado-service.js`: o plano anexado ao convênio passou a ser filtrado por UF + número + ano e os itens publicados passaram a ter `saldo` recalculado pela aplicação.
+- `frontend/js/app.js`: o detalhe do plano passou a calcular saldo de item/área por `valorPrevisto - valorExecutado`; o KPI "Execução Geral" passou a usar `execucaoGeralPercentual` do consolidado.
+
+Campos descontinuados visualmente:
+
+- `saldoDisponivelOuvidoria` segue fora da interface porque não há fórmula segura validada.
+- O campo permanece `null` no consolidado e deve continuar restrito a documentação/diagnóstico técnico até nova decisão.
+
+Critérios de qualidade:
+
+- Não usar aba `Geral` como fallback operacional.
+- Não ajustar valores manualmente para coincidir com a planilha histórica.
+- Divergência com a aba `Geral` só indica erro se a fórmula da aplicação estiver tecnicamente incorreta.
+- Publicar somente com consolidado `15/15/15`, sem `NaN`, `Infinity` ou `undefined`.
