@@ -1,5 +1,84 @@
 # Diário de bordo
 
+## 18/05/2026 - Visão geral exibe data/hora da última atualização operacional (DETRU/Transferegov)
+
+- Branch atual: `main`.
+- Pull inicial executado: `git status --short` limpo e `git pull` → `Already up to date.`.
+- Objetivo: substituir o texto estático "Atualizado em abril de 2026" da visão geral por data/hora dinâmica, baseada no máximo entre a última atualização DETRU e a última consulta de rendimentos Transferegov.
+- Status: implementado, validado e publicado em commit.
+
+### Problema corrigido
+
+O texto "Atualizado em abril de 2026" aparecia hardcoded em [index.html:146](FOMENTO-ONASP/index.html#L146) (visão geral "Fomento para Ouvidoria") e [index.html:538](FOMENTO-ONASP/index.html#L538) (rodapé). Esse texto era estático e não refletia a atualização operacional real dos dados PROFOR 2022.
+
+A nota "Os dados foram atualizados até abril de 2026 (...) janela de submissão dos relatórios" em [frontend/js/app.js:2045](FOMENTO-ONASP/frontend/js/app.js#L2045) NÃO foi alterada: trata-se de aviso de governança distinto (janela de submissão FAF), com semântica própria, fora do escopo desta correção.
+
+### Regra de cálculo
+
+`ultimaAtualizacaoDados.dataHora = max(ultimaAtualizacaoDetru.concluidoEm||iniciadoEm, ultimaConsultaRendimentos.concluidoEm||iniciadoEm)`. Quando apenas uma das fontes está disponível, ela é usada. Quando nenhuma está, o texto exibido é "Atualização não registrada". A fonte vencedora é exposta em `ultimaAtualizacaoDados.fonte` (`"DETRU"` ou `"Transferegov/rendimentos"`).
+
+### Arquivos alterados
+
+- [backend/server.js](FOMENTO-ONASP/backend/server.js)
+  - Função `calcularUltimaAtualizacaoDadosProfor2022(ultimaDetru, ultimaRendimentos)` adicionada.
+  - `GET /api/profor-2022/atualizacao/status` passou a retornar também `ultimaAtualizacaoDados = { dataHora, fonte, fontesConsideradas: { detru, rendimentos } }`.
+- [index.html](FOMENTO-ONASP/index.html)
+  - Linha 146: `<p>Atualizado em abril de 2026</p>` → `<p id="dashboard-ultima-atualizacao" aria-live="polite">Atualização não registrada</p>`.
+  - Linha 538: footer agora contém `<span id="footer-ultima-atualizacao">Atualização não registrada</span>`.
+  - Cache-buster atualizado para `v=20260518-03`.
+- [frontend/js/app.js](FOMENTO-ONASP/frontend/js/app.js)
+  - Função `formatarDataHoraAtualizacaoBr(iso)` — formato `dd/mm/aaaa às HH:MM` em fuso local; retorna null para entrada inválida.
+  - Função `aplicarRotuloUltimaAtualizacaoOperacional(textoDashboard, textoFooter)`.
+  - Função `carregarRotuloUltimaAtualizacaoOperacional()` — chama `/api/profor-2022/atualizacao/status` em modo local/API; em modo estático/GitHub Pages mantém fallback neutro sem chamar API; em falha de payload, também aplica fallback.
+  - Chamada no `DOMContentLoaded` para popular a home na primeira renderização.
+  - Chamada também ao final do disparo `atualizarProfor2022ConsolidadoUI()` para refletir nova data imediatamente após atualização administrativa.
+
+### Endpoint testado
+
+`GET http://localhost:8796/api/profor-2022/atualizacao/status` (servidor temporário dedicado em PORT=8796):
+
+```json
+{
+  "success": true,
+  "origemDados": "banco-cache",
+  "ultimaAtualizacaoDados": {
+    "dataHora": "2026-05-18T10:17:26.346Z",
+    "fonte": "Transferegov/rendimentos",
+    "fontesConsideradas": {
+      "detru": "2026-05-18T10:15:38.451Z",
+      "rendimentos": "2026-05-18T10:17:26.346Z"
+    }
+  }
+}
+```
+
+A fonte escolhida foi a mais recente (rendimentos). Texto resultante em fuso BRT: "Atualizado em 18/05/2026 às 07:17".
+
+### Comportamento por modo
+
+- **Modo local/API:** chama o endpoint; exibe `Atualizado em dd/mm/aaaa às HH:MM` na visão geral; rodapé acrescenta a fonte entre parênteses.
+- **Modo estático/GitHub Pages:** não chama API; exibe fallback neutro "Atualização não registrada" — não inventa horário.
+- **Falha de rede / endpoint indisponível:** mesmo fallback neutro; sem quebra de console.
+- **Origem `planilha`:** se houver status local disponível (DETRU ou rendimentos), continua exibindo a última atualização operacional. O fallback para planilha não é quebrado.
+
+### Validações
+
+- `node --check` aprovado em: `backend/server.js`, `frontend/js/app.js`, `backend/services/data-service.js`, `backend/services/profor-2022/profor-atualizacao-consolidada-service.js`.
+- `npm run validar:json` → OK.
+- `npm run validar:syntax` → 25 arquivos OK.
+- `GET /index.html` no servidor de teste confirmou que o HTML servido não contém mais "abril de 2026" no header e no rodapé.
+
+### Restrições confirmadas
+
+- `npm run publicar:dados` NÃO foi executado.
+- JSONs publicados em `frontend/data/publicados/` NÃO foram alterados.
+- `.env` NÃO foi alterado.
+- Banco/schema NÃO foi alterado.
+- Nenhuma dependência nova.
+- Origem `planilha` e fallback preservados.
+
+---
+
 ## 18/05/2026 - Rotina operacional consolidada PROFOR 2022 (DETRU + rendimentos + consolidado)
 
 - Branch atual: `main`.

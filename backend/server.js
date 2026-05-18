@@ -231,6 +231,47 @@ function extrairIdConvenioMonitorado(pathname, sufixo) {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+function calcularUltimaAtualizacaoDadosProfor2022(ultimaDetru, ultimaRendimentos) {
+  const detruIso = ultimaDetru?.concluidoEm || ultimaDetru?.iniciadoEm || null;
+  const rendimentosIso = ultimaRendimentos?.concluidoEm || ultimaRendimentos?.iniciadoEm || null;
+
+  function comoTimestamp(iso) {
+    if (!iso) return null;
+    const ts = Date.parse(iso);
+    return Number.isFinite(ts) ? ts : null;
+  }
+
+  const tsDetru = comoTimestamp(detruIso);
+  const tsRendimentos = comoTimestamp(rendimentosIso);
+
+  let dataHora = null;
+  let fonte = null;
+  if (tsDetru !== null && tsRendimentos !== null) {
+    if (tsRendimentos >= tsDetru) {
+      dataHora = rendimentosIso;
+      fonte = "Transferegov/rendimentos";
+    } else {
+      dataHora = detruIso;
+      fonte = "DETRU";
+    }
+  } else if (tsDetru !== null) {
+    dataHora = detruIso;
+    fonte = "DETRU";
+  } else if (tsRendimentos !== null) {
+    dataHora = rendimentosIso;
+    fonte = "Transferegov/rendimentos";
+  }
+
+  return {
+    dataHora,
+    fonte,
+    fontesConsideradas: {
+      detru: detruIso,
+      rendimentos: rendimentosIso
+    }
+  };
+}
+
 function normalizarUltimaAtualizacaoDetru(registro) {
   if (!registro) return null;
 
@@ -678,10 +719,16 @@ async function rotearApi(req, res, pathname) {
         avisos.push(`Diagnostico consolidado indisponivel: ${err?.message || err}`);
       }
 
+      const ultimaAtualizacaoDados = calcularUltimaAtualizacaoDadosProfor2022(
+        ultimaAtualizacaoDetru,
+        ultimaConsultaRendimentos
+      );
+
       enviarJson(res, 200, {
         success: true,
         origemDados: origem.origemDados,
         origemAvisos: origem.avisos || [],
+        ultimaAtualizacaoDados,
         ultimaAtualizacaoDetru,
         ultimaConsultaRendimentos,
         diagnosticoConsolidado,

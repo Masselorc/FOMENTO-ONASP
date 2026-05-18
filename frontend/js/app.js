@@ -600,6 +600,53 @@ function renderKpiCard({
             }
         }
 
+        function formatarDataHoraAtualizacaoBr(isoString) {
+            if (!isoString) return null;
+            const data = new Date(isoString);
+            if (Number.isNaN(data.getTime())) return null;
+            const dd = String(data.getDate()).padStart(2, '0');
+            const mm = String(data.getMonth() + 1).padStart(2, '0');
+            const aaaa = String(data.getFullYear());
+            const hh = String(data.getHours()).padStart(2, '0');
+            const min = String(data.getMinutes()).padStart(2, '0');
+            return `${dd}/${mm}/${aaaa} às ${hh}:${min}`;
+        }
+
+        function aplicarRotuloUltimaAtualizacaoOperacional(textoCompletoDashboard, textoCurtoFooter) {
+            const dashboardEl = document.getElementById('dashboard-ultima-atualizacao');
+            if (dashboardEl) dashboardEl.textContent = textoCompletoDashboard;
+            const footerEl = document.getElementById('footer-ultima-atualizacao');
+            if (footerEl) footerEl.textContent = textoCurtoFooter;
+        }
+
+        async function carregarRotuloUltimaAtualizacaoOperacional() {
+            const FALLBACK = 'Atualização não registrada';
+            if (estaEmModoPublicacaoEstatica()) {
+                // Modo estático/GitHub Pages: nao chama API local; mantem texto neutro.
+                aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
+                return;
+            }
+
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizacao/status');
+                if (!payload?.success) throw new Error(payload?.message || 'Status indisponível.');
+                const info = payload.ultimaAtualizacaoDados || null;
+                const formatado = formatarDataHoraAtualizacaoBr(info?.dataHora);
+                if (!formatado) {
+                    aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
+                    return;
+                }
+                const textoDashboard = `Atualizado em ${formatado}`;
+                const textoFooter = info?.fonte
+                    ? `${textoDashboard} (${info.fonte})`
+                    : textoDashboard;
+                aplicarRotuloUltimaAtualizacaoOperacional(textoDashboard, textoFooter);
+            } catch (err) {
+                console.warn('Falha ao carregar rotulo de ultima atualizacao operacional:', err?.message || err);
+                aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
+            }
+        }
+
         async function atualizarProfor2022ConsolidadoUI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
@@ -627,6 +674,7 @@ function renderKpiCard({
 
                 await carregarStatusUltimaAtualizacaoDetruProfor2022();
                 await carregarStatusAtualizacaoConsolidadaProfor2022();
+                await carregarRotuloUltimaAtualizacaoOperacional();
                 const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
                 await carregarCarteiraMonitoradaProfor2022(incluirInativos);
             } catch (err) {
@@ -1078,6 +1126,8 @@ async function carregarLogoParaPDF() {
                     });
                 }
             });
+
+            carregarRotuloUltimaAtualizacaoOperacional();
         });
 
         // --- CONTROLE DE VISUALIZACAO (SPA) ---
