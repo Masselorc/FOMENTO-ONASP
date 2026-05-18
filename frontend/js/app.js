@@ -2776,14 +2776,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarFonteRendimentosProfor(dadosProfor, convenio = null) {
-            const origemBancoCache = dadosProfor?.origemDadosEfetiva === 'banco-cache';
-            if (!origemBancoCache) {
-                return 'Origem planilha.';
-            }
-
-            const dataReferencia = formatarDataHoraProfor(obterDataReferenciaRendimentosProfor(dadosProfor, convenio));
-            const sufixoData = dataReferencia ? ` Referência local: ${dataReferencia}.` : '';
-            return `Saldo de rendimentos capturado no Transferegov Acesso Livre.${sufixoData} Valor sujeito a alteração conforme movimentação financeira do convênio.`;
+            return '';
         }
 
         function renderizarAvisoOrigemProfor(dadosProfor) {
@@ -2877,7 +2870,6 @@ async function carregarLogoParaPDF() {
                         <div class="card kpi-card kpi-card-warning">
                             <div class="kpi-title"><i class="fas fa-coins" aria-hidden="true"></i>Rendimentos atuais</div>
                             <div class="kpi-value text-money text-warning">${formatMoney(resumo.saldoRendimentosAtual)}</div>
-                            <div class="kpi-desc">${escapeHtml(renderizarFonteRendimentosProfor(dadosProfor))}</div>
                         </div>
                     </div>
                     <div class="col">
@@ -3229,7 +3221,6 @@ async function carregarLogoParaPDF() {
                         <div class="profor-finance-item">
                             <span>Saldo de rendimentos atual</span>
                             <strong>${formatMoney(convenio.saldoRendimentosAtual)}</strong>
-                            <small class="text-muted d-block mt-1">${escapeHtml(renderizarFonteRendimentosProfor(dadosProfor, convenio))}</small>
                         </div>
                         <div class="profor-finance-item">
                             <span>Saldo residual capital</span>

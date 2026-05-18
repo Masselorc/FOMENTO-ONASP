@@ -38,6 +38,10 @@ Inclui a documentação técnica da funcionalidade PROFOR 2022, a decisão de ma
 
 Também inclui a premissa de preservar os nomes dos campos consumidos pelo front-end durante a fase de transição, reduzindo risco de regressão visual.
 
+### 1.5. Regra de apresentação da interface
+
+A visão pública da PROFOR 2022 não deve exibir observações técnicas no card de saldo de rendimentos. O card deve priorizar o valor e o rótulo funcional da métrica, mantendo detalhes operacionais restritos aos endpoints/status ou a áreas administrativas recolhidas já existentes.
+
 ### 1.5. Fora do escopo
 
 Não inclui, nesta etapa documental, criação de tabela, alteração de código, alteração de banco, alteração de JSON publicado, alteração de layout, criação de rotas, criação de modal ou automação efetiva do Transferegov.

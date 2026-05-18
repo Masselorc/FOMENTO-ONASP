@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 18/05/2026 - Remoção da observação do card de rendimentos PROFOR
+
+- Solicitação recebida: remover também a mensagem/observação exibida no card de saldo de rendimentos da PROFOR 2022.
+- A interface pública já não exibia a faixa técnica de origem/diagnóstico; nesta etapa foi removido o texto auxiliar do card de rendimentos, preservando apenas o valor.
+- Arquivos alterados nesta correção: `frontend/js/app.js`, `index.html`.
+- `renderizarFonteRendimentosProfor()` deixou de alimentar texto visível na visão pública.
+- Cache-buster do bundle atualizado para `frontend/js/app.js?v=20260518-08`.
+- `npm run publicar:dados` não foi executado.
+- JSONs publicados não foram alterados.
+- Nenhum arquivo sensível foi versionado.
+
 ## 18/05/2026 - Diagnóstico técnico PROFOR ocultado da interface principal
 
 - Branch atual: `main`.
