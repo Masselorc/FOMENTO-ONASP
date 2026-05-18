@@ -2694,9 +2694,6 @@ async function carregarLogoParaPDF() {
             const alertas = [];
             const execucaoOuvidoria = Number(convenio.execucaoOuvidoriaPercentual) || 0;
             const diasVencimento = obterDiasAteDataPtBr(convenio.vencimento);
-            const temExecucaoAcimaPrevisto = (convenio.planoAplicacao || []).some((item) => (
-                (Number(item.valorExecutado) || 0) - (Number(item.valorPrevisto) || 0) > 0.01
-            ));
 
             if (execucaoOuvidoria <= 0) {
                 alertas.push({ tipo: 'danger', texto: 'Sem execução da Ouvidoria' });
@@ -2710,10 +2707,6 @@ async function carregarLogoParaPDF() {
                 alertas.push({ tipo: 'danger', texto: 'Vencimento expirado' });
             } else if (diasVencimento !== null && diasVencimento <= 365) {
                 alertas.push({ tipo: 'warning', texto: `Vence em ${diasVencimento} dias` });
-            }
-
-            if (temExecucaoAcimaPrevisto) {
-                alertas.push({ tipo: 'warning', texto: 'Item acima do previsto' });
             }
 
             return alertas;
