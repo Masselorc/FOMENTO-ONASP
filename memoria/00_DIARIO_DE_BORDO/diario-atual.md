@@ -2704,3 +2704,60 @@ Logs operacionais gravados:
 - banco/schema nao alterado.
 - JSONs publicados nao alterados.
 - nenhuma publicacao executada (`npm run publicar:dados` e `npm run publicar:profor-2022` nao foram rodados).
+
+---
+
+## 18/05/2026 - Base visual de tema escuro institucional
+
+- Branch: `main`. `git pull` -> `Already up to date.`.
+- Objetivo: criar a base reutilizavel de um tema escuro institucional minimalista (azul-grafite) sem redesenhar todas as paginas. Reorganizar tokens, padronizar superficies-chave e hierarquia de botoes; preservar modos local/API e estatico.
+
+### Decisoes visuais
+
+- Paleta institucional escura nao-preta:
+  - fundo `#0f1620`; surface `#161f2c`; surface muted `#1c2735`; surface elevada `#22303f`; surface hover `#243246`.
+  - bordas `#2a3849` / `#3a4a5e`; texto `#e6edf3` / muted `#8d9bb0`.
+  - primary azul vibrante `#3b82f6`; primary strong `#60a5fa`; primary soft `rgba(96,165,250,0.14)`.
+  - success `#10b981` (apenas concluido); warning `#f59e0b` (apenas atencao); danger `#ef4444` (apenas erro/destrutivo/exclusao); info `#38bdf8`; export `#0d9488` (teal, nao destrutivo).
+- `:root` reorganizado: os mesmos nomes de tokens (`--color-bg`, `--color-surface`, `--color-primary`, etc.) foram preservados para que toda CSS que ja usa `var(--color-*)` adote o tema escuro sem refactor adicional.
+- Bloco "Camada base do tema escuro" sobrescreve hard-codes de superficie sensiveis: `.app-header` rgba, `body` gradient, variantes da sidebar (`.sidebar-link-detail/profor/formalizacao/faf/doacoes/budget`), `.sidebar-uf-option`, `.visible-check-option`, `.uf-chip`, `table.dataTable thead`, `.table-hover`, `.form-control`, `.form-select`, `.form-check-input`, `.custom-progress-pill`, `.badge-uf`, `.badge-inst-default`, `.publication-mode-notice`, `.modal-content`, `.budget-split-modal .modal-body`, `.contatos-map-shell`. Botoes de fechar do Bootstrap (`.btn-close`) ganham filtro de invert para ficarem visiveis em modais escuros.
+- Hierarquia de botoes adicionada (sem alterar classes Bootstrap existentes): `.btn-action`, `.btn-outline-action`, `.btn-export` (teal proprio), `.btn-admin` (cinza discreto), `.btn-destructive` (vermelho reservado). Cada uma traz focus-ring acessivel.
+- Novo componente `.empty-state` para estados vazios padronizados.
+- Foco acessivel global atualizado para `rgba(96, 165, 250, 0.55)`.
+
+### Helpers reutilizaveis em `frontend/js/core/ui-components.js`
+
+- `UI_BUTTON_VARIANTS` (action/outline/export/admin/destructive).
+- `classeBotaoUi(variant)`.
+- `renderBotaoUi({ variant, label, icone, id, type, extraClass, title, disabled, dataAttrs })`.
+- `renderEmptyStateUi({ icone, mensagem })`.
+- `renderPublicationNotice(message)` preservado (import existente nao afetado).
+
+### Arquivos alterados
+
+- `frontend/css/app.css` — paleta `:root` + camada base de tema escuro (overrides de superficie, hierarquia de botoes, foco, estado vazio, modal e mapa).
+- `frontend/js/core/ui-components.js` — helpers de botoes e estado vazio adicionados sem quebrar exports existentes.
+- `index.html` — cache-buster atualizado: `app.css?v=20260518-12-dark` e `app.js?v=20260518-12`.
+
+### Testes executados
+
+- `node --check frontend/js/core/ui-components.js` -> OK.
+- `npm run validar:syntax` -> 25 arquivo(s) OK.
+- `npm run validar:json` -> OK (JSONs publicados intactos).
+- `npm run validar:agente` -> 7 passed / 4 failed. As 4 falhas (testes de modo estatico) sao pre-existentes: foram reproduzidas tambem em `git stash` da base, antes do patch.
+- Smoke test Playwright em `PORT=8807`:
+  - body `rgb(15, 22, 32)`, texto `rgb(230, 237, 243)`.
+  - header `rgba(22, 31, 44, 0.96)`.
+  - kpi-card `rgb(22, 31, 44)`.
+  - 9 views navegadas via `toggleView()` (detalhamento, profor2022, faf2021, doacoes2023, contatos, diagnostico-ouvidorias, orcamento, status-sistema, formalizacao).
+  - `TOTAL_ERRORS: 0` (sem console error, sem page error, sem request failed).
+
+### Riscos remanescentes
+
+- Restam aproximadamente 100 ocorrencias hard-coded de hex/rgba(255,...) ao longo do `app.css` em telas especificas (badges legados, alguns gradients pasteis de Orcamento, FAF, Doacoes, etc.). Foram cobertas as superficies-chave; ajustes especificos por pagina serao feitos em rounds posteriores conforme prioridade de redesign.
+- A classe `.btn-action` ainda nao e usada em lugar nenhum do app — apenas disponivel. As 4 telas-piloto que receberao botoes nesse padrao podem ser priorizadas em commit seguinte.
+- Bandeiras de UF, logos e graficos (ChartJS, mini-pie) podem ter contraste a ajustar; deixei `.mini-pie` inalterado para preservar geometria.
+
+### Rollback
+
+`git revert <hash>` reverte integralmente os 3 arquivos (somente tema/visual). Nenhum efeito em backend, banco, rotas ou dados publicados.
