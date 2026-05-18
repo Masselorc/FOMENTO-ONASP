@@ -590,7 +590,7 @@ function renderKpiCard({
             atualizarProgressoAtualizacaoSistema(tipo, 0, 'Atualização em andamento', 'andamento');
             progressoAtualizacaoSistema.timerId = window.setInterval(() => {
                 const atual = progressoAtualizacaoSistema.percentual;
-                const incremento = atual < 70 ? 4 : (atual < 85 ? 2 : 1);
+                const incremento = atual < 70 ? (4 / 3) : (atual < 85 ? (2 / 3) : (1 / 3));
                 const proximo = Math.min(92, atual + incremento);
                 atualizarProgressoAtualizacaoSistema(tipo, proximo, 'Atualização em andamento', 'andamento');
             }, 500);
