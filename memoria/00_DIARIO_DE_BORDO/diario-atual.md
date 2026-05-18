@@ -2282,3 +2282,20 @@ oute.fetch() + mutação em memória do payload retornado.
 - Pendências: documentar `orcamento-2026.md`, `formalizacao-profor.md`, `publicacao-estatica.md` e `dashboard-geral.md`.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: após commit e push, usar `git revert <hash_do_commit>` e `git push origin HEAD`.
+
+## 18/05/2026 - Auditoria da dependência da aba Geral do PROFOR 2022
+
+- Branch atual: `main`.
+- Objetivo: mapear campo a campo a dependência atual da aba `Geral` da planilha PROFOR 2022 e preparar matriz técnica para descontinuar a aba como fonte operacional da aplicação.
+- Decisões de governança usadas: DETRU prevalece para dados cadastrais/financeiros oficiais; Transferegov/rendimentos prevalece para `saldoRendimentosAtual`; cálculos internos substituem fórmulas antigas; aba `Geral` não deve permanecer como fallback operacional; divergências temporais ou por fonte oficial são esperadas; somente erro sem explicação bloqueia a retirada.
+- Arquivo criado: `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-auditoria-aba-geral.md`.
+- Arquivo atualizado: `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`.
+- Resumo dos grupos de campos: 34 campos auditados; 21 prontos para desligar; 11 exigem revisão/lock de cálculo; 2 sem uso operacional identificado.
+- Campos prontos para desligar: carteira SQLite (`uf`, `instrumento`, `numero`, `ano`), DETRU (`processoSei`, `vencimento`, `quantidadeTa`, valores oficiais), Transferegov (`saldoRendimentosAtual`) e campos derivados diretamente do plano.
+- Campos com revisão de cálculo: saldos residuais, valores previstos por área, percentuais de execução e principalmente `saldoDisponivelOuvidoria`, que continua sem fórmula segura no compositor consolidado.
+- Campos sem uso identificado: `solicitouProrrogacao` e `valorRelativoOuvidoria`.
+- Recomendação da próxima etapa: retirar o fallback da aba `Geral` em implementação pequena, bloquear publicação se `banco-cache` não fechar 15/15/15, revisar `saldoDisponivelOuvidoria` antes de exposição operacional e remover/ocultar campos sem utilidade da interface.
+- Confirmação: não houve alteração de lógica de produção, frontend, index, banco/schema, planilhas ou JSONs publicados nesta auditoria.
+- Confirmação: `npm run publicar:dados` não foi executado.
+- Risco de regressão: baixo; alteração documental.
+- Rollback: `git revert <hash_do_commit>` após commit/push.
