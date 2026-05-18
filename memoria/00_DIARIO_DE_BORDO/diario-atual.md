@@ -1,5 +1,31 @@
 # Diário de bordo
 
+## 18/05/2026 - Diagnóstico técnico PROFOR ocultado da interface principal
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo; `git pull` executado e retornou `Already up to date`.
+- Commits confirmados no histórico local: `f7c42c3` e `2e23aa1`.
+- Problema: a página PROFOR 2022 ainda exibia, em localhost, uma faixa azul com origem/diagnóstico técnico (`Origem local/API`, `banco-cache`, `Diagnóstico: DETRU 15 | Plano 15 | Rendimentos 15`) e avisos técnicos como `saldoDisponivelOuvidoria`.
+- Decisão: diagnóstico técnico não deve aparecer na interface pública/normal, nem em GitHub Pages nem em localhost. A informação permanece acessível por endpoints/status e áreas administrativas já existentes.
+
+### Arquivos alterados
+
+- `frontend/js/app.js`
+  - `renderizarAvisoOrigemProfor()` passou a retornar string vazia por padrão.
+  - A badge visual de origem (`banco-cache`/`planilha`) foi removida da introdução da página PROFOR 2022.
+  - O texto do KPI de convênios vigentes em origem consolidada passou de `Carteira local + caches` para `Carteira monitorada`.
+- `index.html`
+  - Cache-buster do `frontend/js/app.js` atualizado para `v=20260518-07`.
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+
+### Restrições confirmadas
+
+- `npm run publicar:dados` não foi executado.
+- JSONs publicados não foram alterados.
+- Banco/schema, `.env`, valores de convênios e rotinas DETRU/Transferegov não foram alterados.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou temporário foi versionado.
+
 ## 18/05/2026 - Diagnóstico real do localhost e proteção contra sobrescrita do rótulo operacional
 
 - Branch atual: `main`.

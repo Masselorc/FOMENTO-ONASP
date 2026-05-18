@@ -2787,31 +2787,7 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarAvisoOrigemProfor(dadosProfor) {
-            // Faixa técnica de origem/diagnóstico é informação administrativa.
-            // Em modo estático/GitHub Pages, não aparece na tela do usuário final.
-            if (estaEmModoPublicacaoEstatica()) {
-                return '';
-            }
-
-            const origemEfetiva = dadosProfor?.origemDadosEfetiva || dadosProfor?.origemDados || 'planilha';
-            const geradoEm = formatarDataHoraProfor(dadosProfor?.geradoEm);
-            const diagnostico = obterDiagnosticoOrigemProfor(dadosProfor);
-            const avisos = [
-                ...(avisoFallbackProfor2022 ? [avisoFallbackProfor2022] : []),
-                ...((dadosProfor?.avisos || []).filter(Boolean).slice(0, 3))
-            ];
-            const classe = origemEfetiva === 'banco-cache' ? 'alert-info' : 'alert-secondary';
-            const textoOrigem = origemEfetiva === 'banco-cache'
-                ? 'Origem local/API: banco-cache.'
-                : 'Origem atual: planilha.';
-
-            return `
-                <div class="alert ${classe} py-2 small" role="status">
-                    <div><strong>${textoOrigem}</strong>${geradoEm ? ` Gerado em ${escapeHtml(geradoEm)}.` : ''}${diagnostico ? ` Diagnóstico: ${escapeHtml(diagnostico)}.` : ''}</div>
-                    ${dadosProfor?.fallbackUsado ? '<div>Fallback para planilha ativo.</div>' : ''}
-                    ${avisos.length ? `<div>${escapeHtml(avisos.join(' | '))}</div>` : ''}
-                </div>
-            `;
+            return '';
         }
 
         function renderProfor2022View() {
@@ -2842,7 +2818,6 @@ async function carregarLogoParaPDF() {
                         <span><i class="fas fa-file-contract" aria-hidden="true"></i> ${resumo.totalConvenios} convênios</span>
                         <span><i class="fas fa-calendar-check" aria-hidden="true"></i> 2022</span>
                         <span><i class="fas fa-headset" aria-hidden="true"></i> Ouvidoria</span>
-                        <span><i class="fas fa-database" aria-hidden="true"></i> ${origemBancoCache ? 'banco-cache' : 'planilha'}</span>
                     </div>
                 </section>
 
@@ -2853,7 +2828,7 @@ async function carregarLogoParaPDF() {
                         <div class="card kpi-card kpi-card-success">
                             <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Convênios vigentes</div>
                             <div class="kpi-value">${resumo.totalConvenios}</div>
-                            <div class="kpi-desc">${origemBancoCache ? 'Carteira local + caches' : 'Instrumentos da aba Geral'}</div>
+                            <div class="kpi-desc">${origemBancoCache ? 'Carteira monitorada' : 'Instrumentos da aba Geral'}</div>
                         </div>
                     </div>
                     <div class="col">

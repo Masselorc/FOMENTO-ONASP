@@ -518,7 +518,7 @@ Correção de robustez em 18/05/2026: em modo local/API, se `GET /api/profor-202
 
 Complemento operacional: o rótulo da visão geral não deve ser sobrescrito por fallback nulo depois que já estiver exibindo `Atualizado em ...`. Se uma chamada posterior não trouxer `dataHora`, o frontend preserva o rótulo válido existente. O cache-buster do bundle foi atualizado para `v=20260518-06` para forçar navegadores locais a buscar a correção.
 
-Regra de exibição da faixa técnica: a faixa administrativa de origem/diagnóstico (`Origem local/API`, `Diagnóstico`, avisos de campos pendentes como `saldoDisponivelOuvidoria`) fica restrita ao modo local/API. Em modo estático/GitHub Pages, `renderizarAvisoOrigemProfor()` retorna vazio; a página PROFOR 2022 não exibe essa faixa para o usuário final e não chama rotas `/api/`.
+Regra de exibição da faixa técnica: a faixa administrativa de origem/diagnóstico (`Origem local/API`, `Diagnóstico`, avisos de campos pendentes como `saldoDisponivelOuvidoria`) não é exibida na visão principal, nem em modo local/API nem em modo estático/GitHub Pages. A informação técnica deve permanecer restrita a endpoints/status ou a área administrativa recolhida, quando houver necessidade operacional. A página PROFOR 2022 não deve mostrar `banco-cache`, contagens DETRU/Plano/Rendimentos ou pendências internas como mensagem visual para o usuário final.
 
 ### 10.1.1. Rotina operacional diária consolidada (referência rápida)
 
