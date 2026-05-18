@@ -7,7 +7,7 @@
 | Nome do documento | PROFOR 2022 — Classificação das divergências planilha × banco-cache |
 | Arquivo | `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md` |
 | Status | rascunho técnico de diagnóstico |
-| Última revisão | 17/05/2026 |
+| Última revisão | 18/05/2026 |
 | Responsável | ONASP / FOMENTO-ONASP |
 | Documento de governança? | sim (suporte à decisão de futura ativação do `banco-cache`) |
 | Documento de implementação? | não — diagnóstico documental, sem alteração de código |
@@ -21,20 +21,20 @@ Após a resolução do download e do cache DETRU (commit `ebe861f` e anteriores)
 | `diagnostico.totalCarteira` | 15 |
 | `diagnostico.totalComDetru` | 15 |
 | `diagnostico.totalComPlano` | 15 |
-| `diagnostico.totalComRendimentos` | 0 |
-| `diagnostico.totalAvisos` | 90 |
+| `diagnostico.totalComRendimentos` | 15 |
+| `diagnostico.totalAvisos` | 60 |
 | `comparacao.totalAntigo` | 15 |
 | `comparacao.totalNovo` | 15 |
 | `comparacao.totalIguais` | 0 |
 | `comparacao.totalComDivergencia` | 15 |
 | `comparacao.totalAusentesAntigo` | 0 |
 | `comparacao.totalAusentesNovo` | 0 |
-| Severidade alta | 14 convênios |
-| Severidade média | 1 convênio |
+| Severidade alta | 15 convênios |
+| Severidade média | 0 convênios |
 | Origem padrão atual (`.env`) | `PROFOR_2022_ORIGEM_DADOS=planilha` |
 | `banco-cache` ativado? | **não** |
 
-Ou seja: todos os 15 convênios da carteira estão tecnicamente compostos pelo `banco-cache` (DETRU + Plano + Carteira), mas nenhum convênio é integralmente igual ao retornado pela origem antiga `planilha` (aba `Geral`). Este documento separa essas 15 divergências em categorias técnicas e de governança para sustentar decisão segura sobre futura ativação.
+Ou seja: todos os 15 convênios da carteira estão tecnicamente compostos pelo `banco-cache` (DETRU + Plano + Carteira + Transferegov/rendimentos), mas nenhum convênio é integralmente igual ao retornado pela origem antiga `planilha` (aba `Geral`). Este documento separa essas 15 divergências em categorias técnicas e de governança para sustentar decisão segura sobre futura ativação.
 
 ## 2. Metodologia
 
@@ -49,17 +49,17 @@ Critérios de classificação:
 1. **Grupo A — divergência esperada por fonte oficial DETRU**: campo extraído do DETRU/cache que substitui valor manual da aba Geral.
 2. **Grupo B — divergência esperada por cálculo do plano**: campo calculado por soma sobre os itens do plano de aplicação filtrados por UF + número + ano.
 3. **Grupo C — divergência por ausência na origem antiga**: campo só existe no `banco-cache` (não estava extraído no nível do convênio na aba Geral).
-4. **Grupo D — pendência real por ausência na origem nova**: campo existe na aba Geral, mas está `null` no `banco-cache`.
+4. **Grupo D — divergência por fonte Transferegov atualizada**: campo existe na aba Geral, mas o `banco-cache` agora traz o valor capturado na tela pública atual do Transferegov.
 5. **Grupo E — divergência que exige validação humana**: casos isolados de divergência monetária alta que exigem análise individual.
 
 ## 3. Diagnóstico
 
-### 3.1. Distribuição das divergências por campo (estado em 18/05/2026 02:01 UTC)
+### 3.1. Distribuição das divergências por campo (estado em 18/05/2026, após atualização do cache Transferegov)
 
 | Campo | Convênios divergentes | Status predominante | Severidade predominante |
 | --- | ---: | --- | --- |
 | `quantidadeTa` | 15 | `divergente` | baixa (dif=1) / média (dif=2) |
-| `saldoRendimentosAtual` | 15 | `ausente_novo` | média |
+| `saldoRendimentosAtual` | 15 | `divergente` | alta |
 | `execucaoGeralPercentual` | 15 | `ausente_antigo` | média |
 | `saldoResidualCapital` | 14 | `divergente` | alta |
 | `saldoResidualCusteio` | 12 | `divergente` | alta |
@@ -73,8 +73,8 @@ Critérios de classificação:
 
 | Severidade | Convênios |
 | --- | ---: |
-| alta | 14 |
-| média | 1 (937592/AM) |
+| alta | 15 |
+| média | 0 |
 | baixa | 0 |
 
 Total: 15 convênios divergentes.
@@ -86,7 +86,7 @@ Total: 15 convênios divergentes.
 | MT | 937698/2022 | 5 | alta |
 | GO | 937216/2022 | 4 | alta |
 | PR | 937871/2022 | 5 | alta |
-| AM | 937592/2022 | 3 | média |
+| AM | 937592/2022 | 3 | alta |
 | AC | 937782/2022 | 6 | alta |
 | MS | 937265/2022 | 5 | alta |
 | SP | 938128/2022 | 5 | alta |
@@ -111,7 +111,7 @@ Total: 15 convênios divergentes.
 | `saldoResidualCapital` | aba Geral (coluna 14, manual) | soma `saldo` dos itens do plano com natureza=CAPITAL | `divergente` | 14 | aceitável — cálculo do plano | não | Aceitar cálculo. Aba Geral tinha valores manuais antigos, frequentemente zerados ou negativos; novo reflete saldo real por natureza |
 | `saldoResidualCusteio` | aba Geral (coluna 15, manual) | soma `saldo` dos itens do plano com natureza=CUSTEIO | `divergente` | 12 | aceitável — cálculo do plano | não | Aceitar cálculo. Mesmo critério do `saldoResidualCapital` |
 | `execucaoGeralPercentual` | **não extraído** no nível do convênio em `extrairProfor2022DoWorkbook` | `valorExecutado/valorPrevisto*100` calculado do plano | `ausente_antigo` | 15 | não bloqueante — campo novo calculado | não | Ignorar diferença. Antigo retorna `null` simplesmente porque o campo nunca foi extraído da aba Geral no nível do convênio. Opcionalmente, adicionar extração futura para reduzir ruído de comparação |
-| `saldoRendimentosAtual` | aba Geral (coluna 13, manual atualizado periodicamente) | cache Transferegov (vazio) | `ausente_novo` | 15 | **bloqueante parcial — automação do fluxo público pendente** | **parcial (sim)** | A fonte oficial deste campo é o **Transferegov Acesso Livre**, na tela de Rendimento de Aplicação, após posicionar sessão no convênio (consulta por `numeroConvenio` → `idConvenio` → seleção do instrumento → tela final). A sondagem técnica de 17/05/2026 confirmou que o fluxo guest direto está atualmente bloqueado por SAML SSO no IdP do Transferegov (toda URL `Usr=guest&Pwd=guest` cai em tela de Login). Aguardando HAR/HTML do usuário para reabrir investigação. DETRU **não** é fonte deste campo. Ver seção 5.4 |
+| `saldoRendimentosAtual` | aba Geral (coluna 13, manual atualizado periodicamente) | cache Transferegov populado pela tela pública de Rendimento de Aplicação | `divergente` | 15 | pendência de governança — fonte atualizada | **parcial (sim)** | A fonte técnica deste campo é o **Transferegov Acesso Livre**, na tela de Rendimento de Aplicação, após posicionar sessão no convênio (consulta por `numeroConvenio` → `idConvenio` → seleção do instrumento → tela final). Em 18/05/2026 o fluxo foi automatizado no modo local/API e o cache foi populado para 15/15 convênios. A divergência restante é entre valor manual da aba `Geral` e saldo atual capturado no Transferegov. DETRU **não** é fonte deste campo. Ver seção 5.5 |
 
 ### 4.1. Resumo dos grupos
 
@@ -120,29 +120,29 @@ Total: 15 convênios divergentes.
 | **A — DETRU oficial** | `quantidadeTa`, `valorGlobal`, `valorRepasse`, `rendimentoAprovado` | 15 (em ao menos 1 campo) | aceitável | não |
 | **B — Cálculo do plano** | `valorExecutadoGeral`, `saldoResidualCapital`, `saldoResidualCusteio` | 14 | aceitável | não |
 | **C — Ausente na origem antiga** | `execucaoGeralPercentual` | 15 | não bloqueante | não |
-| **D — Ausente na origem nova** | `saldoRendimentosAtual` | 15 | pendência real | **parcial** |
+| **D — Transferegov atualizado** | `saldoRendimentosAtual` | 15 | pendência de governança | **parcial** |
 | **E — Validação humana** | nenhum caso identificado | 0 | — | — |
 
-**Nenhuma divergência foi classificada como erro provável.** Todas as 75 ocorrências estão tecnicamente justificadas pela arquitetura definida nos blocos 14–18 (DETRU como fonte oficial + cálculo do plano + Transferegov para rendimento).
+**Nenhuma divergência foi classificada como erro provável.** Todas as 75 ocorrências estão tecnicamente justificadas pela arquitetura definida nos blocos 14–18 e pela correção do fluxo Transferegov em 18/05/2026 (DETRU como fonte oficial + cálculo do plano + saldo de rendimento capturado no Transferegov público).
 
 ## 5. Recomendações técnicas
 
 ### 5.1. Opção 1 — Não ativar `banco-cache` (status quo)
 
-**Quando aplicar**: se a tela PROFOR 2022 considerar `saldoRendimentosAtual` indispensável e a governança não autorizar exibir esse campo como `null`.
+**Quando aplicar**: se a governança não autorizar trocar o valor manual da aba `Geral` pelo saldo atual capturado no Transferegov público.
 
-**Consequência**: a origem `planilha` continua única; o cache DETRU populado fica disponível apenas para consultas administrativas (rota local), sem impacto visual; o trabalho dos blocos 11–18 fica em modo de prontidão.
+**Consequência**: a origem `planilha` continua única; os caches DETRU e Transferegov ficam disponíveis apenas para consultas administrativas/locais, sem impacto visual; o trabalho dos blocos 11–18 e da correção de 18/05/2026 fica em modo de prontidão.
 
 ### 5.2. Opção 2 — Ativar `banco-cache` parcialmente
 
-**Quando aplicar**: se a governança aceitar `saldoRendimentosAtual = null` com aviso explícito ao usuário até a solução do Transferegov.
+**Quando aplicar**: se a governança aceitar os saldos atuais capturados no Transferegov como fonte do campo `saldoRendimentosAtual`, mesmo que divirjam dos valores manuais da aba `Geral`.
 
 **Implementação futura sugerida** (não implementar agora):
 - Tornar `PROFOR_2022_ORIGEM_DADOS=banco-cache` o padrão.
-- Garantir que o frontend mostre aviso visível: "Saldo de rendimentos: cache pendente; consulte o Transferegov diretamente."
+- Garantir que o frontend mostre aviso técnico discreto de origem: "Saldo de rendimentos capturado no Transferegov Acesso Livre."
 - Manter a rota e o botão de atualização DETRU para refresco diário.
 
-**Risco**: usuários podem ler `null` como "zero", reduzindo confiança operacional. Aviso de UI mitiga, mas não elimina.
+**Risco**: usuários podem estranhar diferenças frente à planilha antiga. Aviso de origem e comunicação operacional mitigam, mas não eliminam a necessidade de validação.
 
 ### 5.3. Opção 3 — Ativar `banco-cache` com composição híbrida
 
@@ -163,18 +163,24 @@ Total: 15 convênios divergentes.
 4. Reexecuta-se a comparação até `totalIguais` ≈ 15.
 5. Após convergência, opção 2 ou ativação plena passa a ser segura.
 
-### 5.5. Alternativas específicas para o Grupo D (`saldoRendimentosAtual`)
+### 5.5. Situação específica do Grupo D (`saldoRendimentosAtual`)
 
 A fonte oficial e única do campo é a **tela de Rendimento de Aplicação do Transferegov Acesso Livre**, acessada após posicionar sessão pública no convênio (consulta por `numeroConvenio` → extrair `idConvenio` → selecionar instrumento → ler tela final). Esta é a estratégia correta; DETRU **não** substitui esse campo.
 
-Estado em 17/05/2026 (após sondagem técnica): o fluxo guest está bloqueado por SAML SSO no IdP do Transferegov para clientes HTTP simples (toda URL `Usr=guest&Pwd=guest` retorna 401 e redireciona para a tela de Login, contendo apenas "Entrar com gov.br" e um link informativo de "Acesso livre" que aponta de volta ao mesmo ciclo). A inspeção que o usuário fez previamente em navegador interativo provavelmente dependeu de cookies/JS de sessão que não são reproduzíveis em chamada HTTP direta.
+Estado em 18/05/2026: o fluxo foi implementado no cliente local/API. O cliente tenta primeiro HTTP público com cookie jar em memória; quando o IdP/SAML impede o cliente HTTP simples, usa fallback local com Playwright/Chromium já disponível no projeto para reproduzir sessão pública Acesso Livre de navegador, sem login, senha, gov.br, captcha, certificado, cookies do HAR ou persistência de cookies.
 
-Alternativas (em ordem de preferência):
+Validações executadas:
 
-1. **(Principal) Reabrir investigação do fluxo público com evidências do usuário**: solicitar HAR sanitizado, HTML real após o POST `numeroConvenio=880892`, URL/payload de seleção do instrumento, e HTML da tela final. Sem essas evidências, o cliente automatizado não pode ser implementado sem violar regras absolutas (sem login, senha, certificado, área restrita, bypass).
-2. **(Provisório) Manter `null` com aviso de UI**: opção mais conservadora; permite ativar `banco-cache` (Opção 2) reconhecendo que o campo está indisponível.
-3. **(Operacional) Importação manual controlada**: rotina local que aceita CSV/JSON exportado manualmente pelo responsável da SENAPPEN, gravando no cache. Trabalho operacional recorrente, sem violar segurança. Útil como ponte enquanto o fluxo automático não é reaberto.
-4. **(Pesquisa institucional)** Verificar se a API pública do Transferegov.br (`gov.br/transferegov/pt-br/sobre/apis-integracao`) expõe o saldo de rendimento sem necessidade de SSO. Não confirmado nesta sondagem.
+1. `880892`: `idConvenio=732378`, `Instrumento 880892`, `R$ 131.799,75`.
+2. `937216`: `idConvenio=1031156`, `Instrumento 937216`, `-R$ 25.373,11`.
+3. `npm run atualizar:rendimentos-profor`: 15 convênios consultados, 15 sucessos, 0 falhas.
+4. `/api/profor-2022/consolidado`: `totalComRendimentos=15`.
+
+Pendência remanescente:
+
+- Validar se os saldos atuais capturados no Transferegov devem substituir os valores manuais antigos da aba `Geral`.
+- Confirmar se o fallback local com Playwright/Chromium é aceito como mecanismo operacional de atualização em ambiente local/API.
+- Manter `banco-cache` fora do padrão até decisão de governança.
 
 **Não recomendadas**:
 - Composição híbrida campo a campo (Opção 3 da seção 5): aumenta complexidade arquitetural.
@@ -186,16 +192,17 @@ A ativação como origem padrão (`PROFOR_2022_ORIGEM_DADOS=banco-cache`) só de
 
 1. ✅ DETRU populado para os 15 convênios da carteira (`totalComDetru = 15`).
 2. ✅ Plano de aplicação casando para os 15 convênios (`totalComPlano = 15`).
-3. ⚠️ Decisão de governança formalizada sobre `saldoRendimentosAtual`: aceitar `null` (Opção 2) ou outra alternativa (5.5).
+3. ✅ Cache Transferegov/rendimentos populado para os 15 convênios (`totalComRendimentos = 15`).
 4. ⚠️ Decisão de governança formalizada sobre divergências do Grupo A (DETRU): aceitar `quantidadeTa`, `valorGlobal`, `valorRepasse`, `rendimentoAprovado` da fonte oficial.
 5. ⚠️ Decisão de governança formalizada sobre divergências do Grupo B (Cálculo do plano): aceitar `saldoResidualCapital`, `saldoResidualCusteio`, `valorExecutadoGeral` calculados.
-6. ⚠️ (Recomendado) Validação visual no modo local/API antes da publicação estática.
-7. ⚠️ (Recomendado) Comunicar usuários da SENAPPEN/ONASP sobre mudança de origem antes da virada, para evitar interpretações equivocadas dos novos valores.
+6. ⚠️ Decisão de governança formalizada sobre divergências do Grupo D (Transferegov): aceitar saldos atuais capturados frente aos valores manuais antigos.
+7. ⚠️ (Recomendado) Validação visual no modo local/API antes da publicação estática.
+8. ⚠️ (Recomendado) Comunicar usuários da SENAPPEN/ONASP sobre mudança de origem antes da virada, para evitar interpretações equivocadas dos novos valores.
 
 Status em 17/05/2026:
-- Critérios técnicos (1 e 2): ✅ atendidos.
-- Critérios de governança (3–5): ⚠️ pendentes.
-- Critérios operacionais (6 e 7): ⚠️ a executar quando a governança decidir.
+- Critérios técnicos (1, 2 e 3): ✅ atendidos.
+- Critérios de governança (4–6): ⚠️ pendentes.
+- Critérios operacionais (7 e 8): ⚠️ a executar quando a governança decidir.
 
 ## 7. Rollback
 
@@ -215,3 +222,4 @@ Em caso de falha pontual do `banco-cache` após ativação, o serviço `dashboar
 | --- | --- |
 | 17/05/2026 | Criação do documento. Diagnóstico inicial das 15 divergências e classificação em Grupos A–E. Recomendação: aguardar decisão de governança antes de ativar `banco-cache`. Nenhuma alteração de código nesta etapa. |
 | 17/05/2026 | Grupo D corrigido: fonte oficial de `saldoRendimentosAtual` é Transferegov Acesso Livre (consulta por número → idConvenio → seleção do instrumento → tela de rendimento), **não** DETRU nem importação manual como solução principal. Sondagem técnica revelou bloqueio SAML/SSO no IdP do Transferegov para clientes HTTP simples; implementação automatizada pendente de evidências (HAR/HTML) do usuário. Seção 5.5 reorganizada com nova ordem de preferência das alternativas. |
+| 18/05/2026 | Grupo D atualizado: fluxo público Transferegov implementado no cliente local/API com cookie jar em memória e fallback público Playwright/Chromium. Cache populado para 15/15 convênios; `totalComRendimentos=15`. Divergência remanescente passa a ser governança entre saldo manual da aba `Geral` e saldo atual capturado na tela pública. |

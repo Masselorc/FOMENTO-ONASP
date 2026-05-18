@@ -17,12 +17,13 @@ function aguardar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function montarFalha(convenio, erro) {
+function montarFalha(convenio, resultado) {
   return {
     numeroConvenio: convenio.numeroConvenio,
     ano: convenio.ano ?? null,
     uf: convenio.uf ?? null,
-    erro,
+    etapa: resultado?.etapa ?? null,
+    erro: resultado?.erro || "Consulta sem sucesso.",
   };
 }
 
@@ -52,7 +53,7 @@ async function executar() {
         });
         totalSucesso += 1;
       } else {
-        falhas.push(montarFalha(convenio, resultadoComCarteira.erro || "Consulta sem sucesso."));
+        falhas.push(montarFalha(convenio, resultadoComCarteira));
       }
 
       await aguardar(500);
@@ -76,7 +77,10 @@ async function executar() {
     if (falhas.length) {
       console.log("Falhas:");
       falhas.forEach((falha) => {
-        console.log(`  - ${falha.numeroConvenio}/${falha.ano ?? "s/ano"} (${falha.uf ?? "s/UF"}): ${falha.erro}`);
+        console.log(
+          `  - ${falha.numeroConvenio}/${falha.ano ?? "s/ano"} (${falha.uf ?? "s/UF"})` +
+          ` [${falha.etapa ?? "s/etapa"}]: ${falha.erro}`
+        );
       });
     }
     console.log("----------------------------------------------------------");

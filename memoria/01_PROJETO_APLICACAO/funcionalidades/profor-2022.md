@@ -198,11 +198,11 @@ Por isso, o banco local deve guardar a carteira de convênios monitorados. A par
 
 ### 3.4. Limites de conhecimento
 
-1. A tabela local de convênios monitorados ainda não foi criada.
-2. As rotas locais da carteira ainda não existem.
-3. A captura do saldo de rendimento foi diagnosticada tecnicamente, mas ainda não foi implementada no código.
+1. A origem padrão ainda é `planilha`; `banco-cache` permanece desativado por padrão.
+2. A captura de saldo de rendimento já existe no modo local/API, mas depende do fluxo público do Transferegov e pode falhar se o site alterar SAML, sessão ou tela.
+3. O fallback local com Playwright/Chromium para sessão pública precisa ser validado como mecanismo operacional antes de agendamento recorrente.
 4. A automação do PAD detalhado ainda não foi implementada.
-5. A eliminação completa da planilha depende de futura automação do plano de aplicação detalhado.
+5. A eliminação completa da planilha depende de futura automação do plano de aplicação detalhado e validação de governança das divergências.
 
 ## 4. Fluxo de dados
 
@@ -306,7 +306,7 @@ A fonte de verdade da carteira será o banco local. O DETRU poderá conferir ou 
 | --- | --- |
 | `saldoRendimentosAtual` | tela pública de Rendimento de Aplicação |
 
-Bloco 14 criou a base técnica para que `saldoRendimentosAtual` tenha origem planejada no Transferegov público, por consulta local/API e cache SQLite. A captura direta pode depender de sessão pública previamente estabelecida para o convênio no próprio Transferegov; não há login, senha, captcha, certificado, área restrita ou bypass. Nesta etapa, a página PROFOR 2022 ainda não consome esse cache.
+Bloco 14 criou a base técnica para que `saldoRendimentosAtual` tenha origem planejada no Transferegov público, por consulta local/API e cache SQLite. Em 18/05/2026 o cliente foi evoluído para posicionar a sessão pública por consulta de número do convênio, extrair `idConvenio`, selecionar o instrumento e ler a tela de rendimentos. Não há login, senha, captcha, certificado, área restrita ou bypass. A página PROFOR 2022 ainda não usa esse cache como origem padrão.
 
 A captura futura deve armazenar também:
 
@@ -456,7 +456,7 @@ Bloco 18 criou duas rotas locais/API somente leitura para validar a nova origem 
 - `GET /api/profor-2022/consolidado`: monta o consolidado `banco-cache` no backend Node, usando o compositor e o plano de aplicação extraído da planilha local, sem importar dependências Node/SQLite no navegador.
 - `GET /api/profor-2022/comparar-origens`: monta a origem antiga `planilha`, monta a origem nova `banco-cache` e compara as bases pelo comparador PROFOR 2022.
 
-A validação real local retornou 15 convênios na origem `planilha` e 15 convênios na origem `banco-cache`, sem ausentes. O consolidado `banco-cache` retornou `resumo`, `convenios`, `filtros`, `avisos` e `diagnostico`, mas o diagnóstico indicou `totalComDetru = 0` e `totalComRendimentos = 0`. A comparação apontou `totalIguais = 0` e `totalComDivergencia = 15`, com divergências principais em campos dependentes de cache DETRU/Transferegov: `processoSei`, `vencimento`, `quantidadeTa`, `valorGlobal`, `valorRepasse`, `valorContrapartida`, `repasseDesembolsado`, `rendimentoAprovado`, `saldoRendimentosAtual` e `contrapartidaIntegralizada`. Esse resultado bloqueia a ativação de `banco-cache` como origem padrão até os caches locais serem populados e validados.
+A validação inicial do Bloco 18 retornou 15 convênios na origem `planilha` e 15 convênios na origem `banco-cache`, sem ausentes, mas ainda com caches incompletos. Após a validação operacional posterior do DETRU e a correção do fluxo Transferegov em 18/05/2026, o consolidado local passou a indicar `totalComDetru = 15`, `totalComPlano = 15` e `totalComRendimentos = 15`. A comparação continua com `totalIguais = 0` e `totalComDivergencia = 15`, agora por diferenças entre fontes oficiais/cálculos/cache atual e valores manuais antigos da aba `Geral`. Esse resultado mantém a ativação de `banco-cache` bloqueada por governança, não por ausência técnica de cache.
 
 Correção pequena aplicada no Bloco 18: `quantidadeTa` passou a ser comparado como número simples no comparador, e não como moeda. Nenhuma fórmula pendente foi inventada; `saldoDisponivelOuvidoria` continua sem cálculo seguro.
 
@@ -493,16 +493,15 @@ git push origin HEAD
 - Bloco 16: compositor consolidado, comparador e flag de origem criados sem ativação na página. `backend/services/profor-2022/profor-origem-service.js` mantém a origem padrão `planilha` e reserva `banco-cache` para ativação futura. `backend/services/profor-2022/profor-consolidado-service.js` monta objeto PROFOR 2022 consolidado a partir da carteira local, cache DETRU, cache Transferegov e plano de aplicação filtrado por UF + número + ano. `backend/services/profor-2022/profor-comparador-service.js` compara origem antiga versus nova com tolerâncias monetária e percentual. `data-service.js`, frontend, rotas, banco e publicação estática não foram alterados. `saldoDisponivelOuvidoria` continua pendente e sai como `null` com aviso.
 - Bloco 17: integração controlada da origem consolidada com fallback. `backend/services/data-service.js` preserva a origem `planilha` e acrescenta metadados seguros ao objeto PROFOR 2022 sem mudar o shape consumido pela tela. `backend/services/dashboard-publication-service.js` passa a resolver a origem por flag/opção: `planilha` mantém o fluxo antigo; `banco-cache` chama `profor-consolidado-service.js` com plano extraído das abas UF; falhas retornam para `planilha` com aviso. `backend/services/static-publication-service.js` sanitiza o catálogo público para não publicar a seção interna `detru`. Frontend, rotas, banco, `backend/data/aplicacao.json` e JSONs publicados não foram alterados; `npm run publicar:dados` não foi executado.
 - Bloco 18: validação final local e rotas somente leitura. `backend/server.js` recebeu `GET /api/profor-2022/consolidado` e `GET /api/profor-2022/comparar-origens`, ambas locais/API e sem consulta externa. O comparador passou a tratar `quantidadeTa` como número simples. A validação real retornou 15 convênios em cada origem, sem ausentes, mas 15 divergentes porque os caches DETRU e Transferegov ainda não possuem dados para a carteira (`totalComDetru = 0`, `totalComRendimentos = 0`). Home e página PROFOR 2022 carregaram com origem padrão `planilha` e sem erro de console. Banco-cache segue bloqueado para ativação como padrão.
+- Correção do fluxo público Transferegov (18/05/2026): `backend/services/profor-2022/transferegov-rendimentos-client.js` passou a reproduzir o fluxo público completo de rendimentos por sessão Acesso Livre: inicialização guest, consulta pública por `numeroConvenio`, extração de `idConvenio`, seleção do instrumento e leitura da tela de Rendimento de Aplicação. O cliente tenta HTTP com cookie jar em memória e, quando o IdP/SAML impede sessão por HTTP simples, usa fallback local com Playwright/Chromium já disponível no projeto, sem login, sem credenciais e sem cookies persistidos. Testes reais: `880892` → `idConvenio=732378`, R$ 131.799,75; `937216` → `idConvenio=1031156`, -R$ 25.373,11. `npm run atualizar:rendimentos-profor` populou o cache para 15/15 convênios. `totalComRendimentos` passou a 15. Banco-cache continua fora do padrão.
 
 ### 10.2. Próximas etapas
 
-1. Refinar, se necessário, o estabelecimento de sessão pública do convênio no Transferegov.
+1. Validar governança das divergências remanescentes entre `planilha` e `banco-cache`, especialmente `saldoRendimentosAtual` agora capturado no Transferegov.
 2. Definir fórmula segura para `saldoDisponivelOuvidoria`.
-3. Popular e validar cache DETRU para a carteira monitorada.
-4. Popular e validar cache Transferegov/rendimentos para a carteira monitorada.
-5. Reexecutar comparação origem `planilha` x `banco-cache` após caches populados.
-6. Ativar origem nova apenas após divergências bloqueantes serem saneadas.
-7. Remover dependência obrigatória da aba `Geral`.
+3. Confirmar se o fallback local com Playwright/Chromium é aceitável como mecanismo operacional de atualização em ambiente local/API.
+4. Ativar origem nova apenas após divergências bloqueantes serem saneadas e comunicadas.
+5. Remover dependência obrigatória da aba `Geral`.
 
 ### 10.3. Fase futura
 
@@ -544,6 +543,7 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Bloco 20: diagnóstico do consolidado pós-DETRU | Esclarecido falso positivo de `totalComPlano=1` (era erro do script de relatório temporário, não do código). Endpoint real retorna `totalComPlano=15`. Diagnóstico Transferegov: cache vazio (0/15); cliente depende de sessão pública. Sem alteração de código. |
 | 17/05/2026 | Bloco 21: classificação das 15 divergências | Criada matriz de divergências em 5 grupos (A: DETRU oficial, B: cálculo do plano, C: campo novo calculado, D: cache Transferegov ausente, E: validação humana). Documento novo `profor-2022-divergencias.md` criado com matriz, opções de governança e critérios para ativação. Seção 13 adicionada a este documento. Sem alteração de código. |
 | 17/05/2026 | Bloco 22: sondagem do fluxo Transferegov Acesso Livre | Testadas 5 URLs públicas (`ConsultarProposta.do?Usr=guest`, `ForwardAction.do?...MostraPrincipalConsultarConvenio.do`, etc.) com convênio de referência 880892. Todas redirecionam via SAML para tela "Login do Transferegov" (401 no IdP). Fluxo guest direto bloqueado por SAML/SSO no IdP. Sem alteração de código de produção. Seção 13.4 reescrita; Grupo D corrigido no documento de divergências (Transferegov é fonte oficial, DETRU não é). Aguardando HAR/HTML do usuário para reabrir investigação. |
+| 18/05/2026 | Correção do fluxo público de rendimentos | Cliente Transferegov passou a reproduzir o fluxo Acesso Livre completo e popular cache de rendimentos. 880892 e 937216 testados com sucesso; carteira atualizada com 15/15 sucessos; `totalComRendimentos=15`. Origem padrão continua `planilha`; frontend e JSONs publicados não foram alterados. |
 
 ## 13. Critérios de aceitação da futura origem `banco-cache`
 
@@ -555,7 +555,7 @@ Divergência entre `planilha` e `banco-cache` **não é automaticamente erro**. 
 
 - valores oficiais do DETRU substituem valores manuais antigos da aba Geral;
 - saldos e execuções por área/natureza são recalculados a partir dos itens do plano filtrados por UF + número + ano;
-- `saldoRendimentosAtual` depende do Transferegov e está temporariamente ausente no `banco-cache` (cache vazio).
+- `saldoRendimentosAtual` vem do cache Transferegov populado pela tela pública de Rendimento de Aplicação e ainda diverge dos valores manuais antigos da aba Geral.
 
 Classificar uma divergência como erro requer evidência. Aceitar uma divergência como esperada requer decisão registrada (preferencialmente em ata).
 
@@ -574,37 +574,42 @@ A ativação como padrão (`PROFOR_2022_ORIGEM_DADOS=banco-cache`) só deve ocor
 
 1. ✅ `totalComDetru = 15` (técnico — atingido).
 2. ✅ `totalComPlano = 15` (técnico — atingido).
-3. ⚠️ Decisão de governança formalizada sobre `saldoRendimentosAtual` (Grupo D): aceitar `null` com aviso de UI, ou outra alternativa.
+3. ✅ `totalComRendimentos = 15` (técnico — atingido em 18/05/2026 via Transferegov Acesso Livre).
 4. ⚠️ Decisão de governança formalizada sobre Grupo A (DETRU oficial): aceitar `quantidadeTa`, `valorGlobal`, `valorRepasse`, `rendimentoAprovado` da fonte oficial.
 5. ⚠️ Decisão de governança formalizada sobre Grupo B (cálculo do plano): aceitar `saldoResidualCapital`, `saldoResidualCusteio`, `valorExecutadoGeral` calculados.
-6. ⚠️ Validação visual no modo local/API antes da publicação estática.
-7. ⚠️ Comunicação aos usuários da SENAPPEN/ONASP sobre mudança de origem.
+6. ⚠️ Decisão de governança formalizada sobre Grupo D (Transferegov): aceitar diferenças entre o saldo manual da aba `Geral` e o saldo atual capturado na tela pública.
+7. ⚠️ Validação visual no modo local/API antes da publicação estática.
+8. ⚠️ Comunicação aos usuários da SENAPPEN/ONASP sobre mudança de origem.
 
 A matriz completa por campo e as quatro opções de governança (não ativar; ativar parcialmente; ativar híbrido; validar humanamente) estão em [`profor-2022-divergencias.md`](profor-2022-divergencias.md).
 
-### 13.4. Pendência específica do Transferegov
+### 13.4. Situação específica do Transferegov
 
-`saldoRendimentosAtual` é a única pendência real (Grupo D). A fonte oficial é o **Transferegov Acesso Livre**, na tela de Rendimento de Aplicação, após posicionar sessão pública no convênio. O fluxo conceitual é:
+`saldoRendimentosAtual` tem fonte técnica definida no **Transferegov Acesso Livre**, na tela de Rendimento de Aplicação, após posicionar sessão pública no convênio. O fluxo implementado em 18/05/2026 é:
+
+1. Inicializar sessão pública Acesso Livre.
+2. Consultar Pré-Instrumento/Instrumento por `numeroConvenio`.
+3. Extrair `idConvenio` da resposta.
+4. Acessar/selecionar o instrumento por `idConvenio` mantendo a sessão pública.
+5. Acessar a tela `ListarSolicitacaoRendimentosAplicacao.do` e extrair `valorDisponivelRendimento` (linha `tr-novaSolicitacaoValorDisponivelRendimento`).
+
+DETRU **não** é fonte deste campo. O SICONV traz `VL_RENDIMENTO_APLICACAO` (rendimento aprovado, Grupo A), que é diferente do saldo disponível atual de rendimentos.
+
+**Estado em 18/05/2026**:
+
+- O cliente em `backend/services/profor-2022/transferegov-rendimentos-client.js` tenta primeiro o fluxo HTTP público com cookies em memória.
+- Como o cliente HTTP simples ainda recebe SAML/IdP antes de estabelecer a sessão de convênio, o cliente usa fallback local com Playwright/Chromium já disponível no projeto para reproduzir sessão pública de navegador.
+- O fallback não usa login, senha, gov.br, certificado, captcha, cookies do HAR, cookie persistido ou área restrita.
+- O caso de referência `880892` extraiu `idConvenio=732378`, `Instrumento 880892` e `R$ 131.799,75`.
+- O convênio PROFOR `937216` extraiu `idConvenio=1031156` e `-R$ 25.373,11`.
+- `npm run atualizar:rendimentos-profor` populou o cache de rendimentos para 15/15 convênios monitorados.
+- `/api/profor-2022/consolidado` passou a retornar `totalComRendimentos=15`.
+
+O bloqueio atual deixou de ser captura técnica ausente. A pendência passou a ser de validação/governança: a comparação ainda marca 15 divergências em `saldoRendimentosAtual`, porque a aba `Geral` guarda valores manuais antigos e o `banco-cache` guarda o saldo atual da tela pública do Transferegov.
+
+**Fluxo conceitual preservado**:
 
 1. Consultar Pré-Instrumento/Instrumento por `numeroConvenio`.
 2. Extrair `idConvenio` da resposta.
 3. Acessar/selecionar o instrumento por `idConvenio` (mantendo cookies de sessão).
 4. Acessar a tela `ListarSolicitacaoRendimentosAplicacao.do` e extrair `valorDisponivelRendimento` (linha `tr-novaSolicitacaoValorDisponivelRendimento`).
-
-DETRU **não** é fonte deste campo. O SICONV traz `VL_RENDIMENTO_APLICACAO` (rendimento aprovado, Grupo A), que é diferente do saldo disponível atual de rendimentos.
-
-**Estado em 17/05/2026 (sondagem técnica)**:
-
-- O fluxo guest direto (`/voluntarias/ConsultarProposta/...?Usr=guest&Pwd=guest` ou `/voluntarias/ForwardAction.do?modulo=Principal&path=/MostraPrincipal...&Usr=guest&Pwd=guest`) está atualmente **bloqueado por SAML SSO** no IdP `idp.transferegov.sistema.gov.br/idp/`.
-- Toda chamada HTTP simples cai em: 200 com SAML SP-initiated → POST SAMLRequest no IdP → **401 Unauthorized** → tela "Login do Transferegov" com botões "Entrar com gov.br" (login real) ou "Acesso livre" (link informativo cíclico).
-- User-Agent institucional e User-Agent de navegador real (Chrome 120) testados: comportamento idêntico.
-- A implementação automatizada **não é possível por HTTP simples nesta data** sem violar regras absolutas (sem login, senha, certificado, área restrita, bypass).
-
-**Alternativas em ordem de preferência** (detalhadas em [`profor-2022-divergencias.md`](profor-2022-divergencias.md) seção 5.5):
-
-1. Aguardar evidências do usuário (HAR sanitizado, HTML real após POST) para reabrir a investigação do fluxo público.
-2. (Provisório) Manter `null` com aviso de UI explícito até a automação ser viável.
-3. (Operacional) Importação manual controlada via CSV/JSON exportado pelo responsável.
-4. (Pesquisa institucional) Verificar APIs públicas de integração Transferegov.br.
-
-Não implementar nenhuma alternativa sem decisão prévia.

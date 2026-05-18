@@ -1,5 +1,121 @@
 # Diário de bordo
 
+## 18/05/2026 - Fluxo público Transferegov de rendimentos implementado e carteira atualizada
+
+- Branch atual: `main`.
+- Objetivo: corrigir a captura de `saldoRendimentosAtual` pelo Transferegov Acesso Livre, sem ativar `banco-cache` como origem padrão e sem alterar frontend, banco/schema ou JSONs publicados.
+- Escopo: evolução conservadora de `backend/services/profor-2022/transferegov-rendimentos-client.js`; ajuste mínimo de relatório no script de atualização; documentação da nova evidência.
+- Status: ✅ **FLUXO FUNCIONAL NO MODO LOCAL/API** — cache de rendimentos populado para 15/15 convênios da carteira.
+
+### Arquivos lidos
+
+- `AGENTS.md`
+- `memoria/INDEX.md`
+- `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md`
+- `backend/services/profor-2022/transferegov-rendimentos-client.js`
+- `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js`
+- `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`
+- `backend/services/profor-2022/convenios-monitorados-service.js`
+- `backend/services/profor-2022/profor-consolidado-service.js`
+- `backend/server.js`
+- `package.json`
+
+### Arquivos alterados
+
+- `backend/services/profor-2022/transferegov-rendimentos-client.js`
+  - Adicionado cookie jar em memória, `fetchComSessao`, montagem de payload da consulta pública, extração de `idConvenio`, seleção do instrumento e abertura da tela de rendimentos.
+  - O fluxo tenta primeiro HTTP público com cookies em memória. Quando o Transferegov retorna SAML/IdP para cliente HTTP simples, usa fallback local com Playwright/Chromium já disponível no projeto para reproduzir sessão pública de navegador, sem login, sem credenciais e sem cookies persistidos.
+  - O retorno passou a incluir `idConvenio`, `etapa`, `payload` diagnóstico seguro e validação de que a tela final pertence ao convênio solicitado.
+- `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js`
+  - Ajuste mínimo para registrar a `etapa` nas falhas do relatório, sem alterar persistência nem paralelizar consultas.
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md`
+
+### Fluxo público implementado
+
+Endpoints públicos usados:
+
+1. `GET /voluntarias/Principal/Principal.do?Usr=guest&Pwd=guest`
+2. `GET /voluntarias/ForwardAction.do?modulo=Principal&path=/MostraPrincipalConsultarConvenio.do`
+3. `POST /voluntarias/ConsultarProposta/PreenchaOsDadosDaConsultaConsultar.do?tipo_consulta=CONSULTA_COMPLETA`
+4. `GET /voluntarias/ConsultarProposta/ResultadoDaConsultaDeConvenioSelecionarConvenio.do?idConvenio={idConvenio}&destino=`
+5. `GET /voluntarias/ForwardAction.do?modulo=proposta&path=/SelecionarConvenio/SelecionarConvenio.do?destino=ListarSolicitacaoRendimentosAplicacao`
+6. Tela final: `/voluntarias/execucao/ListarSolicitacaoRendimentosAplicacao/ListarSolicitacaoRendimentosAplicacao.do?destino=ListarSolicitacaoRendimentosAplicacao`
+
+O cliente HTTP simples ainda cai em SAML/IdP antes de conseguir extrair `idConvenio`. O fallback com navegador público local estabelece a sessão Acesso Livre sem login e sem reutilizar cookies do HAR, executa o POST público por `numeroConvenio`, extrai `idConvenio`, seleciona o instrumento e lê a tela final.
+
+### Testes reais
+
+| Convênio | Resultado | `idConvenio` | Valor extraído | Observação |
+| --- | --- | ---: | ---: | --- |
+| `880892` | sucesso | `732378` | R$ 131.799,75 | subtítulo: `Rendimento de Aplicação – Valor Total Disponível em 18/05/2026` |
+| `937216` | sucesso | `1031156` | -R$ 25.373,11 | convênio PROFOR GO; saldo negativo preservado conforme tela pública |
+
+Nenhum cookie, `SAMLRequest`, `SAMLResponse`, `JSESSIONID`, token ou HTML bruto foi impresso, salvo ou versionado.
+
+### Atualização da carteira
+
+Com os dois testes reais aprovados, foi executado `npm run atualizar:rendimentos-profor`.
+
+| Métrica | Antes | Depois |
+| --- | ---: | ---: |
+| Cache `profor_transferegov_rendimentos_cache` | 0 | 15 |
+| Carteira ativa consultada | - | 15 |
+| Sucessos | - | 15 |
+| Falhas | - | 0 |
+| Última consulta registrada | inexistente | `id=1`, sucesso, 15 consultados, 15 sucesso, 0 falhas |
+
+### Consolidação e comparação
+
+Rotas locais/API testadas no servidor já ativo em `localhost:8790`:
+
+- `GET /api/profor-2022/consolidado`
+- `GET /api/profor-2022/comparar-origens`
+
+Resultado após popular o cache:
+
+| Métrica | Valor |
+| --- | ---: |
+| `totalComDetru` | 15 |
+| `totalComPlano` | 15 |
+| `totalComRendimentos` | 15 |
+| `totalComDivergencia` | 15 |
+| `totalAusentesAntigo` | 0 |
+| `totalAusentesNovo` | 0 |
+
+Principais divergências remanescentes por campo: `quantidadeTa` (15), `saldoRendimentosAtual` (15), `execucaoGeralPercentual` (15), `saldoResidualCapital` (14), `saldoResidualCusteio` (12), além de divergências pontuais em `valorExecutadoGeral`, `valorRepasse`, `valorGlobal` e `rendimentoAprovado`.
+
+O campo `saldoRendimentosAtual` deixou de ser ausência técnica do `banco-cache`; agora há valor capturado para 15/15. As divergências remanescentes indicam diferença entre valores manuais da aba `Geral` e saldos atuais da tela pública do Transferegov, portanto continuam exigindo validação/governança antes de ativar `banco-cache`.
+
+### Validação funcional local
+
+- `npm start` não abriu novo processo porque `0.0.0.0:8790` já estava em uso; o servidor local existente foi usado.
+- `GET /index.html`: 200.
+- Playwright abriu `http://localhost:8790/index.html`, acionou `toggleView("profor2022")`, confirmou view PROFOR 2022 visível, tabela renderizada e nenhuma mensagem de erro/aviso no console capturado.
+
+### Restrições confirmadas
+
+- `PROFOR_2022_ORIGEM_DADOS` não foi alterado.
+- `banco-cache` não foi ativado como origem padrão.
+- Frontend e `index.html` não foram alterados.
+- Banco/schema não foi alterado.
+- JSONs publicados em `frontend/data/publicados/` não foram alterados.
+- `npm run publicar:dados` não foi executado.
+- DETRU não foi usado como fonte de `saldoRendimentosAtual`.
+- HAR, HTML bruto, TXT de saída, cookies, ZIP, CSV e SQLite não foram versionados.
+
+### Pendências
+
+1. Validar governança das 15 diferenças de `saldoRendimentosAtual` entre aba `Geral` e tela pública atual do Transferegov.
+2. Confirmar se o fallback local com Playwright/Chromium será aceito como mecanismo operacional para atualização periódica em ambiente local/API.
+3. Manter `banco-cache` fora do padrão até validação das divergências remanescentes.
+
+---
+
 ## 17/05/2026 - Sondagem do fluxo público Transferegov — bloqueio SAML confirmado
 
 - Branch atual: `main`.
