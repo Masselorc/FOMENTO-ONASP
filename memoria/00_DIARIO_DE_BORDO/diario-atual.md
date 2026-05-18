@@ -1,5 +1,18 @@
 # Diário de bordo
 
+## 17/05/2026 - Bloco 16: compositor consolidado + comparador + flag de origem
+
+- Branch atual: `main`.
+- Objetivo: criar serviços isolados para montar o objeto consolidado PROFOR 2022 pela nova arquitetura e comparar esse objeto com a origem antiga da planilha, sem ativar a substituição.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `backend/services/data-service.js`, `backend/services/profor-2022/convenios-monitorados-service.js`, `backend/services/profor-2022/profor-detru-cache-service.js`, `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`, `backend/services/profor-2022/profor-plano-aplicacao-service.js`, `backend/services/profor-2022/profor-calculos-service.js`, `.env.example`.
+- Arquivos alterados: `backend/services/profor-2022/profor-origem-service.js`, `backend/services/profor-2022/profor-consolidado-service.js`, `backend/services/profor-2022/profor-comparador-service.js`, `.env.example`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção: criado serviço de origem com padrão obrigatório `planilha` e opção futura `banco-cache`; criado compositor que combina carteira local, cache DETRU, cache Transferegov e plano filtrado por UF + número + ano; criado comparador com tolerância de R$ 0,01 e 0,1 ponto percentual para validar origem antiga versus nova.
+- Comportamento técnico: o compositor não lê planilha, não consulta rede, não baixa arquivos e não altera banco; campos sem fonte confiável ficam `null` e geram aviso; `saldoDisponivelOuvidoria` permanece `null` por fórmula pendente.
+- Testes node -e: chave estável `numero::ano`; índice por número+ano; fallback por número sem ano apenas quando há um único registro; bloqueio de escolha arbitrária em duplicidade; composição de carteira + DETRU/cache + Transferegov/cache + plano; filtro do plano por UF + número + ano; `saldoDisponivelOuvidoria` nulo com aviso; comparação monetária com diferença de R$ 0,01 como igual; detecção de divergência monetária e convênio ausente; origem padrão `planilha`.
+- Escopo preservado: `frontend/js/app.js`, `index.html`, `backend/server.js`, `backend/services/data-service.js`, `backend/db/init-db.js`, `backend/data/aplicacao.json` e JSONs publicados não foram alterados; `npm run publicar:dados` não executado.
+- Risco de regressão: baixo; serviços novos não são chamados pela aplicação atual e a flag documentada mantém `planilha` como padrão.
+- Rollback: `git revert <hash>` remove os serviços e registros documentais do bloco.
+
 ## 17/05/2026 - Bloco 15: cálculos internos + filtro seguro do plano de aplicação
 
 - Branch atual: `main`.
