@@ -1,5 +1,126 @@
 # Diário de bordo
 
+## 17/05/2026 - Diagnóstico do consolidado PROFOR 2022 — totalComPlano e Transferegov esclarecidos
+
+- Branch atual: `main`.
+- Objetivo: investigar e, se possível, corrigir os bloqueios remanescentes da origem `banco-cache` do PROFOR 2022: `totalComPlano = 1`, `totalComRendimentos = 1` e 15 divergências entre planilha × banco-cache.
+- Escopo: arquiteto técnico conservador, revisor sênior, executor técnico. Sem ativar `banco-cache`, sem publicar dados, sem alterar JSONs/frontend/banco/schema.
+- Status: ✅ **DIAGNÓSTICO CONCLUÍDO** — nenhuma alteração de código necessária.
+
+### Achado principal: falso positivo do relatório anterior
+
+O `totalComPlano = 1` e `totalComRendimentos = 1` relatados na entrada anterior **não vieram do endpoint real**. Eles foram calculados incorretamente no script temporário de relatório (`relatorio-validacao.js`) com a fórmula:
+
+```javascript
+console.log(`     - diagnostico.totalComRendimentos: ${consolidado.data?.resumo?.rendimentoAprovado ? 1 : 0}`);
+console.log(`     - diagnostico.totalComPlano: ${consolidado.data?.resumo?.previstoOuvidoria ? 1 : 0}`);
+```
+
+Ou seja, eram **booleanos truncados** (1 quando o resumo tinha valor > 0; 0 caso contrário) — não a contagem real do campo `diagnostico.totalComPlano`.
+
+### Diagnóstico real (executado nesta etapa)
+
+Endpoint `GET /api/profor-2022/consolidado` retorna agora:
+
+```json
+{
+  "totalCarteira": 15,
+  "totalComDetru": 15,
+  "totalComRendimentos": 0,
+  "totalComPlano": 15,
+  "totalAvisos": 90
+}
+```
+
+- **`totalComPlano = 15`** ✅ — o plano de aplicação está casando para todos os 15 convênios da carteira.
+- **`totalComDetru = 15`** ✅ — cache DETRU populado (etapa anterior).
+- **`totalComRendimentos = 0`** ⚠️ — cache Transferegov vazio (esperado pelo modelo atual).
+
+### Diagnóstico do plano de aplicação (FASE 2)
+
+Inspeção da planilha `Planilhas/gestao_financeira_ouvidoria.xlsx` em todas as 15 abas estaduais (MT, GO, PR, AM, AC, MS, SP, MA, PB, PI, RO, TO, RJ, AL, SC):
+
+- 0 abas com colunas ocultas (`!cols` ausente em todas).
+- Cabeçalho uniforme: `[0]=UF`, `[1]=INSTRUMENTO`, `[2]=NÚMERO`, `[3]=ANO`, `[4]=ÁREA`, `[5]=NATUREZA`, `[6]=DESCRIÇÃO`, `[7]=QUANTIDADE`, `[8]=VALOR UNITÁRIO`, `[9]=VALOR TOTAL PREVISTO`, `[10]=VALOR TOTAL EXECUTADO`, `[11]=SALDO`, `[12]=SALDO ECONOMICIDADE`.
+- Total de 566 itens úteis distribuídos nas 15 abas.
+- 100% das linhas úteis têm `numero` (índice 2) preenchido como string `"937xxx"` ou `"938xxx"`.
+- 100% das linhas úteis têm `ano` (índice 3) preenchido como string `"2022"`.
+- Cada UF da carteira tem exatamente 1 convênio ativo (premissa F confirmada — enriquecimento por UF seria seguro, mas não é necessário neste momento).
+- Match exato pelo filtro atual (UF + número + ano) retorna a quantidade esperada em todas as 15 abas.
+
+### Hipóteses (FASE 4) — confirmadas/descartadas
+
+| Hipótese | Resultado |
+| --- | --- |
+| A. Colunas ocultas deslocaram leitura por índice | ❌ DESCARTADA (sem colunas ocultas) |
+| B. Número/ano em índices diferentes de 2 e 3 | ❌ DESCARTADA (corretos em 2/3) |
+| C. Número/ano ausentes nas linhas | ❌ DESCARTADA (preenchidos em 100% das linhas úteis) |
+| D. Número no formato `937xxx/2022` colado | ❌ DESCARTADA (formato puro `937xxx`) |
+| E. Ano ausente, embutido no número | ❌ DESCARTADA |
+| F. Cada UF tem exatamente 1 convênio ativo | ✅ CONFIRMADA (15 UFs com 1 convênio cada) |
+| G. Alguma UF com >1 convênio | ❌ NÃO OCORRE |
+
+### Decisão técnica (FASE 4)
+
+**Causa confirmada do `totalComPlano = 1` reportado**: falso positivo do script `relatorio-validacao.js` (script temporário de diagnóstico que eu mesmo havia criado), não havia bug no código de produção.
+
+**Correção escolhida**: nenhuma. O código de produção (`backend/services/profor-2022/profor-consolidado-service.js`, `profor-calculos-service.js`, `profor-plano-aplicacao-service.js`, `dashboard-publication-service.js`) está correto e retorna `totalComPlano = 15` para a carteira atual. Risco de regressão se eu alterasse algo: alto, desnecessário.
+
+**Por que não mistura convênios**: o filtro seguro em `filtrarPlanoAplicacaoSeguro` continua a exigir `UF + número + ano`; o enriquecimento por UF não foi implementado porque não é necessário (todas as linhas já têm número/ano corretos).
+
+### Divergências reais residuais (FASE 3)
+
+`GET /api/profor-2022/comparar-origens` retorna `totalAntigo = 15`, `totalNovo = 15`, `totalIguais = 0`, `totalComDivergencia = 15`. Resumo por campo:
+
+| Campo | Convênios divergentes | Causa raiz |
+| --- | --- | --- |
+| `saldoRendimentosAtual` | 15 | Cache Transferegov vazio (`ausente_novo`) — depende do Transferegov |
+| `quantidadeTa` | 15 | DETRU oficial traz QTD_TA real; aba Geral tem valor manual diferente |
+| `execucaoGeralPercentual` | 15 | Aba Geral não traz esse campo no nível do convênio (`ausente_antigo`); novo calcula |
+| `saldoResidualCapital` | 14 | Novo soma `saldo` dos itens do plano (natureza=CAPITAL); antigo era manual desatualizado |
+| `saldoResidualCusteio` | 12 | Idem para natureza=CUSTEIO |
+| `valorExecutadoGeral` | 1 (937698/MT) | Soma do plano vs valor manual antigo na aba Geral |
+| `valorGlobal`, `valorRepasse`, `rendimentoAprovado` | 1 (937468/TO, 937782/AC) | DETRU oficial corrige valor manual desatualizado |
+
+**Interpretação**: as 15 divergências são **esperadas pela arquitetura**. O `banco-cache` é proposital e estruturalmente superior à aba Geral antiga (DETRU oficial + soma do plano por área/natureza). Não são "bugs", são diferenças intencionais entre fonte manual antiga e fonte calculada nova.
+
+### Diagnóstico Transferegov (FASE 7)
+
+- Registros em `profor_transferegov_rendimentos_cache`: **0**.
+- Convênios com cache: 0; sem cache: 15.
+- Última consulta em `profor_transferegov_rendimentos_consultas`: **nenhuma** (tabela vazia).
+- Cliente atual (`transferegov-rendimentos-client.js`): usa URL fixa pública `discricionarias.transferegov.sistema.gov.br/voluntarias/execucao/ListarSolicitacaoRendimentosAplicacao/...` e valida se `convenioTexto` contém o número do convênio. Se a sessão pública do convênio **não está estabelecida**, retorna erro controlado `"Sessão pública do convênio não estabelecida."`.
+- Conclusão: o cliente atual **depende de sessão pública** do convênio. **Sem workaround possível** sem violar restrições absolutas (sem login, senha, captcha, certificado, área restrita, bypass).
+
+### Validações (FASE 6)
+
+- `node --check` em todos os 5 arquivos críticos do PROFOR 2022: ✅ OK.
+- `npm run validar:json` → `OK: todos os JSONs publicados esperados existem e sao validos.`
+- `npm run validar:syntax` → `OK: 25 arquivo(s) validados.`
+- `git diff --check` → sem trailing whitespace (apenas o diário foi alterado).
+
+### Estado final do banco-cache
+
+- Ativação: ❌ **continua bloqueada** — não pela `totalComPlano` (que está OK), mas pelas 15 divergências residuais entre planilha manual e cálculo novo. A decisão de migração precisa ocorrer fora do escopo técnico (questão de governança: aceitar o novo cálculo como autoritativo ou validar caso a caso).
+- Origem padrão: `PROFOR_2022_ORIGEM_DADOS=planilha` mantida.
+
+### Confirmações de segurança
+
+- `npm run publicar:dados`: **não executado**.
+- JSONs publicados em `frontend/data/publicados/`: **não alterados**.
+- Frontend, `index.html`, `backend/server.js`, banco/schema, `.env`, `.env.example`, `backend/data/aplicacao.json`, `package.json`: **não alterados**.
+- ZIP/CSV/banco SQLite: **não versionados** (`.gitignore` continua bloqueando).
+- Arquivo único alterado nesta etapa: `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+
+### Próximas pendências (não-bloqueantes técnicas)
+
+1. **Governança**: decidir se o `banco-cache` (DETRU + soma do plano) pode ser ativado mesmo divergindo da aba Geral manual.
+2. **Transferegov/rendimentos**: estudar se há fonte pública alternativa para `saldoRendimentosAtual` que não dependa de sessão estabelecida. Sem workaround sem violar restrições absolutas.
+3. **`saldoDisponivelOuvidoria`**: continua pendente — fórmula segura ainda não definida.
+4. **(opcional)** Extrair `execucaoGeralPercentual` no nível do convênio em `extrairProfor2022DoWorkbook` para reduzir 15 ocorrências de `ausente_antigo`. Pequena melhoria de qualidade da comparação, não-bloqueante.
+
+---
+
 ## 17/05/2026 - Validação operacional do cache DETRU — sucesso na atualização por URL
 
 - Branch atual: `main`.
