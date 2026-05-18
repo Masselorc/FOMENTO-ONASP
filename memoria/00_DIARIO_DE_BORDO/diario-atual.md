@@ -2467,7 +2467,25 @@ Banco/cache real não foi alterado.
 
 ### Execução de `npm run publicar:profor-2022` (working tree limpo)
 
-(Será preenchido após a execução real abaixo.)
+Após o commit do código (working tree limpo), `npm run publicar:profor-2022` foi executado e concluiu em 102.9 s:
+
+- Atualização consolidada: OK (DETRU 15/15, rendimentos 15/15, consolidado 15/15/15, `sucessoGeral=true`).
+- Publicação estática: OK (`publicar:dados` em 628 ms).
+- Validação JSON: OK. Validação syntax: OK (25 arquivos).
+- Auditoria de vazamento: OK (6 arquivos JSON sem padrão proibido).
+- Arquivos publicados alterados: `aplicacao.json`, `dashboard-geral.json`, `resumo-publicacao.json`.
+- Última atualização publicada: `2026-05-18T16:59:11.841Z` (`Transferegov/rendimentos`).
+
+Logs operacionais gravados:
+
+- id=9 — `profor_publicacao_estatica/sucesso`, 102.9 s, resumo `atualizacao=OK | publicacao=OK | validacaoJson=OK | validacaoSyntax=OK | auditoria=OK`.
+- id=8 — `profor_atualizacao_consolidada/sucesso`, 99 s, resumo `DETRU 15/15 | rendimentos 15/15 | consolidado 15/15/15 (convenios=15) | sucessoGeral=true`.
+
+### Endpoints validados (PORT=8806)
+
+- `GET /api/profor-2022/origem` → `{ origemDados: "banco-cache", origemDadosEfetiva: "banco-cache", fallbackUsado: false, avisos: [] }` — padrão novo aplicado sem `.env`.
+- `GET /api/profor-2022/consolidado` → `success=true`, 15 convênios, `totalCarteira=15`, `totalComDetru=15`, `totalComPlano=15`, `totalComRendimentos=15`, `ultimaAtualizacaoDados.dataHora` presente.
+- `GET /api/sistema/logs-operacionais?tipoEvento=profor_publicacao_estatica` → 9 logs retornados, statuses esperados (sucesso e bloqueado).
 
 ### Validações sintáticas (pré-commit)
 

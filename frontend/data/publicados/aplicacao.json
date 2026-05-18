@@ -2982,7 +2982,7 @@
   ],
   "dadosProfor2022": {
     "origemDados": "banco-cache",
-    "geradoEm": "2026-05-18T16:57:21.666Z",
+    "geradoEm": "2026-05-18T16:59:12.535Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -139682,16 +139682,16 @@
       "totalAvisos": 60
     },
     "ultimaAtualizacaoDados": {
-      "dataHora": "2026-05-18T16:26:03.725Z",
+      "dataHora": "2026-05-18T16:59:11.841Z",
       "fonte": "Transferegov/rendimentos",
       "fontesConsideradas": {
-        "detru": "2026-05-18T16:24:37.484Z",
-        "rendimentos": "2026-05-18T16:26:03.725Z"
+        "detru": "2026-05-18T16:57:35.464Z",
+        "rendimentos": "2026-05-18T16:59:11.841Z"
       }
     }
   },
   "metadadosPublicacao": {
-    "publicadoEm": "2026-05-18T16:57:21.590Z",
+    "publicadoEm": "2026-05-18T16:59:12.443Z",
     "fonteDadosBase": "dados consolidados da Home local",
     "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx"
   }
