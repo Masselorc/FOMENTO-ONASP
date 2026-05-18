@@ -7001,4 +7001,98 @@ table.dataTable.display tbody tr.odd > * {
     color: #ffffff !important;
 }
 
+/* --- Chips de UF (home cards, lista detalhamento, contatos) --- */
+.uf-chip,
+.filter-count-uf-list .uf-chip,
+.contact-uf-filter-chip {
+    background-color: var(--color-surface-muted) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-primary-strong) !important;
+}
+
+.uf-chip:hover,
+.filter-count-uf-list .uf-chip:hover,
+.contact-uf-filter-chip:hover,
+.contact-uf-filter-chip:focus {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+.contact-uf-filter-chip.active,
+.contact-uf-filter-chip[aria-pressed="true"] {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
+/* --- Painel de detalhe da UF no mapa de contatos --- */
+.contatos-uf-panel,
+.contatos-map-shell {
+    background-color: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text);
+}
+
+.contatos-state-head h3 {
+    color: var(--color-primary-strong);
+}
+
+.contatos-state-orgao {
+    color: var(--color-text);
+}
+
+.contatos-state-field {
+    border-top-color: var(--color-border);
+}
+
+.contatos-state-field dt {
+    color: var(--color-primary-strong);
+}
+
+.contatos-state-field dd {
+    color: var(--color-text);
+}
+
+.contatos-state-note {
+    background-color: var(--color-warning-soft);
+    border-left-color: var(--color-warning);
+    color: var(--color-text);
+}
+
+.contatos-region-chip {
+    color: var(--color-text);
+}
+
+.contatos-map-legend span {
+    color: var(--color-text);
+}
+
+/* --- Status badges genericos do Orcamento (PROCESSO AUTUADO, EXECUTADO, etc.) --- */
+.budget-status-default,
+.formalizacao-doc-status-neutral,
+.formalizacao-doc-ref {
+    background-color: var(--color-surface-elevated) !important;
+    color: var(--color-text) !important;
+}
+
+.formalizacao-status-danger,
+.formalizacao-doc-status-danger {
+    background-color: var(--color-danger-soft) !important;
+    color: var(--color-danger) !important;
+}
+
+/* --- Compatibilidade: btn-sm + btn-export precisam manter cor teal --- */
+.btn-sm.btn-export {
+    background-color: transparent;
+    border-color: var(--color-export-strong);
+    color: var(--color-export-strong);
+}
+
+.btn-sm.btn-export:hover,
+.btn-sm.btn-export:focus {
+    background-color: var(--color-export-soft);
+    color: var(--color-export-strong);
+}
+
 }

@@ -10377,7 +10377,7 @@ async function carregarLogoParaPDF() {
                             id: 'btn-export-budget-pdf',
                             type: 'exportPdf',
                             label: 'PDF',
-                            variant: 'outline-danger',
+                            variant: 'export',
                             onClick: 'exportarOrcamentoPDF()'
                         })}
                     </div>
