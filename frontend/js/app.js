@@ -2623,6 +2623,8 @@ async function carregarLogoParaPDF() {
                 acc.previstoOuvidoria += Number(convenio.previstoOuvidoria) || 0;
                 acc.valorExecutadoOuvidoria += Number(convenio.valorExecutadoOuvidoria) || 0;
                 acc.valorPrevistoGeral += Number(convenio.valorPrevistoGeral) || 0;
+                acc.saldoDisponivelOuvidoria += Number(convenio.saldoDisponivelOuvidoria) || 0;
+                acc.saldoPotencialDestinavelOuvidoria += Number(convenio.saldoPotencialDestinavelOuvidoria) || 0;
                 return acc;
             }, {
                 totalConvenios: convenios.length,
@@ -2632,7 +2634,9 @@ async function carregarLogoParaPDF() {
                 valorExecutadoGeral: 0,
                 previstoOuvidoria: 0,
                 valorExecutadoOuvidoria: 0,
-                valorPrevistoGeral: 0
+                valorPrevistoGeral: 0,
+                saldoDisponivelOuvidoria: 0,
+                saldoPotencialDestinavelOuvidoria: 0
             });
 
             const baseExecucaoGeral = resumo.valorPrevistoGeral > 0 ? resumo.valorPrevistoGeral : resumo.valorGlobal;
@@ -3220,7 +3224,14 @@ async function carregarLogoParaPDF() {
             }
 
             const resumo = dadosProfor.resumo;
+            const resumoConvenios = calcularResumoConveniosProfor(dadosProfor.convenios || []);
             const origemBancoCache = dadosProfor.origemDadosEfetiva === 'banco-cache';
+            const saldoDisponivelOuvidoria = Number.isFinite(Number(resumo?.saldoDisponivelOuvidoria))
+                ? Number(resumo.saldoDisponivelOuvidoria)
+                : resumoConvenios.saldoDisponivelOuvidoria;
+            const saldoPotencialDestinavelOuvidoria = Number.isFinite(Number(resumo?.saldoPotencialDestinavelOuvidoria))
+                ? Number(resumo.saldoPotencialDestinavelOuvidoria)
+                : resumoConvenios.saldoPotencialDestinavelOuvidoria;
             const opcoesUf = dadosProfor.convenios
                 .map((convenio) => `<option value="${escapeHtml(convenio.uf)}">${escapeHtml(convenio.uf)} - ${escapeHtml(catalogoAplicacao.nomesEstados?.[convenio.uf] || convenio.uf)}</option>`)
                 .join('');
@@ -3295,6 +3306,20 @@ async function carregarLogoParaPDF() {
                         <div class="card kpi-card kpi-card-warning">
                             <div class="kpi-title"><i class="fas fa-coins" aria-hidden="true"></i>Rendimentos atuais</div>
                             <div class="kpi-value text-money text-warning">${formatMoney(resumo.saldoRendimentosAtual)}</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-info" title="Saldo ainda não executado dos itens já destinados à Ouvidoria no plano de aplicação.">
+                            <div class="kpi-title"><i class="fas fa-wallet" aria-hidden="true"></i>Saldo disponível da Ouvidoria</div>
+                            <div class="kpi-value text-money">${formatMoney(saldoDisponivelOuvidoria)}</div>
+                            <div class="kpi-desc">Saldo dos itens da área OUVIDORIA</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card kpi-card kpi-card-warning" title="Composição: saldo de rendimentos atualizado + economicidade de capital + economicidade de custeio. Valor gerencial sujeito à análise e eventual reprogramação.">
+                            <div class="kpi-title"><i class="fas fa-layer-group" aria-hidden="true"></i>Potencial destinável à Ouvidoria</div>
+                            <div class="kpi-value text-money">${formatMoney(saldoPotencialDestinavelOuvidoria)}</div>
+                            <div class="kpi-desc">Indicador gerencial para decisão administrativa</div>
                         </div>
                     </div>
                 </section>
@@ -3603,6 +3628,8 @@ async function carregarLogoParaPDF() {
                         ${renderizarKpiDetalheProfor('Execução Geral', formatPercent(convenio.execucaoGeralPercentual), formatMoney(convenio.valorExecutadoGeral), 'kpi-card-success', 'fa-chart-line')}
                         ${renderizarKpiDetalheProfor('Previsto Ouvidoria', formatMoney(convenio.previstoOuvidoria), `${convenio.totalItensOuvidoria} item(ns)`, '', 'fa-headset')}
                         ${renderizarKpiDetalheProfor('Execução Ouvidoria', formatPercent(convenio.execucaoOuvidoriaPercentual), formatMoney(convenio.valorExecutadoOuvidoria), 'kpi-card-success', 'fa-check-circle')}
+                        ${renderizarKpiDetalheProfor('Saldo disponível da Ouvidoria', formatMoney(convenio.saldoDisponivelOuvidoria), 'Saldo dos itens já destinados à OUVIDORIA', 'kpi-card-info', 'fa-wallet')}
+                        ${renderizarKpiDetalheProfor('Potencial destinável à Ouvidoria', formatMoney(convenio.saldoPotencialDestinavelOuvidoria), 'Rendimentos + economicidade capital + economicidade custeio', 'kpi-card-warning', 'fa-layer-group')}
                     </section>
 
                     <section class="profor-finance-grid mb-4" aria-label="Saldos e rendimentos">
@@ -3625,6 +3652,25 @@ async function carregarLogoParaPDF() {
                         <div class="profor-finance-item">
                             <span>Contrapartida integralizada</span>
                             <strong>${formatMoney(convenio.contrapartidaIntegralizada)}</strong>
+                        </div>
+                    </section>
+
+                    <section class="profor-finance-grid mb-4" aria-label="Composição do potencial destinável à Ouvidoria">
+                        <div class="profor-finance-item">
+                            <span>Saldo de rendimentos</span>
+                            <strong>${formatMoney(convenio.saldoRendimentosAtual)}</strong>
+                        </div>
+                        <div class="profor-finance-item">
+                            <span>Economicidade capital</span>
+                            <strong>${formatMoney(convenio.saldoEconomicidadeCapital)}</strong>
+                        </div>
+                        <div class="profor-finance-item">
+                            <span>Economicidade custeio</span>
+                            <strong>${formatMoney(convenio.saldoEconomicidadeCusteio)}</strong>
+                        </div>
+                        <div class="profor-finance-item">
+                            <span>Total potencial destinável</span>
+                            <strong>${formatMoney(convenio.saldoPotencialDestinavelOuvidoria)}</strong>
                         </div>
                     </section>
 

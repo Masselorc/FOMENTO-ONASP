@@ -63,6 +63,18 @@ function arredondarMoedaOpcional(valor) {
   return arredondarMoedaProfor(valor);
 }
 
+function calcularSaldoPotencialDestinavelOuvidoria({
+  saldoRendimentosAtual,
+  saldoEconomicidadeCapital,
+  saldoEconomicidadeCusteio,
+}) {
+  return arredondarMoedaProfor(
+    moedaParaNumeroProfor(saldoRendimentosAtual)
+      + moedaParaNumeroProfor(saldoEconomicidadeCapital)
+      + moedaParaNumeroProfor(saldoEconomicidadeCusteio)
+  );
+}
+
 function obterNumeroBase(convenioBase, detru) {
   return normalizarNumeroConvenio(
     obterPrimeiroValor(convenioBase?.numero, convenioBase?.numeroConvenio, detru?.numeroConvenio, detru?.numero)
@@ -83,6 +95,15 @@ function calcularResumoFinanceiroConvenioProfor(fontes = {}) {
   const transferegov = obterDadosTransferegov(fontes.transferegov);
   const planoAplicacao = Array.isArray(fontes.planoAplicacao) ? fontes.planoAplicacao : [];
   const resumoPlano = resumirPlanoAplicacaoSeguro(planoAplicacao, fontes.filtrosPlano ?? {});
+  const saldoRendimentosAtual =
+    transferegov.saldoRendimentosAtual === undefined || transferegov.saldoRendimentosAtual === null
+      ? null
+      : arredondarMoedaProfor(transferegov.saldoRendimentosAtual);
+  const saldoPotencialDestinavelOuvidoria = calcularSaldoPotencialDestinavelOuvidoria({
+    saldoRendimentosAtual,
+    saldoEconomicidadeCapital: resumoPlano.saldoEconomicidadeCapital,
+    saldoEconomicidadeCusteio: resumoPlano.saldoEconomicidadeCusteio,
+  });
 
   return {
     valorGlobal: arredondarMoedaOpcional(detru.valorGlobal),
@@ -90,10 +111,11 @@ function calcularResumoFinanceiroConvenioProfor(fontes = {}) {
     valorContrapartida: arredondarMoedaOpcional(detru.valorContrapartida),
     repasseDesembolsado: arredondarMoedaOpcional(detru.repasseDesembolsado),
     rendimentoAprovado: arredondarMoedaOpcional(detru.rendimentoAprovado),
-    saldoRendimentosAtual:
-      transferegov.saldoRendimentosAtual === undefined || transferegov.saldoRendimentosAtual === null
-        ? null
-        : arredondarMoedaProfor(transferegov.saldoRendimentosAtual),
+    saldoRendimentosAtual,
+    saldoDisponivelOuvidoria: resumoPlano.saldoDisponivelOuvidoria,
+    saldoEconomicidadeCapital: resumoPlano.saldoEconomicidadeCapital,
+    saldoEconomicidadeCusteio: resumoPlano.saldoEconomicidadeCusteio,
+    saldoPotencialDestinavelOuvidoria,
     contrapartidaIntegralizada: arredondarMoedaOpcional(detru.contrapartidaIntegralizada),
     valorExecutadoGeral: resumoPlano.valorExecutadoGeral,
     previstoOuvidoria: resumoPlano.previstoOuvidoria,
@@ -138,6 +160,10 @@ function calcularResumoGeralProfor(convenios) {
     repasseDesembolsado: somar("repasseDesembolsado"),
     rendimentoAprovado: somar("rendimentoAprovado"),
     saldoRendimentosAtual: somar("saldoRendimentosAtual"),
+    saldoDisponivelOuvidoria: somar("saldoDisponivelOuvidoria"),
+    saldoEconomicidadeCapital: somar("saldoEconomicidadeCapital"),
+    saldoEconomicidadeCusteio: somar("saldoEconomicidadeCusteio"),
+    saldoPotencialDestinavelOuvidoria: somar("saldoPotencialDestinavelOuvidoria"),
     contrapartidaIntegralizada: somar("contrapartidaIntegralizada"),
     valorExecutadoGeral,
     previstoOuvidoria,
@@ -198,6 +224,10 @@ function aplicarCalculosInternosProfor(convenioBase = {}, fontes = {}) {
     repasseDesembolsado: resumo.repasseDesembolsado,
     rendimentoAprovado: resumo.rendimentoAprovado,
     saldoRendimentosAtual: resumo.saldoRendimentosAtual,
+    saldoDisponivelOuvidoria: resumo.saldoDisponivelOuvidoria,
+    saldoEconomicidadeCapital: resumo.saldoEconomicidadeCapital,
+    saldoEconomicidadeCusteio: resumo.saldoEconomicidadeCusteio,
+    saldoPotencialDestinavelOuvidoria: resumo.saldoPotencialDestinavelOuvidoria,
     contrapartidaIntegralizada: resumo.contrapartidaIntegralizada,
     valorExecutadoGeral: resumo.valorExecutadoGeral,
     previstoOuvidoria: resumo.previstoOuvidoria,
@@ -224,6 +254,7 @@ module.exports = {
   calcularPercentualProfor,
   calcularSaldosPorNatureza,
   calcularExecucaoPorArea,
+  calcularSaldoPotencialDestinavelOuvidoria,
   calcularResumoFinanceiroConvenioProfor,
   calcularResumoGeralProfor,
   aplicarCalculosInternosProfor,

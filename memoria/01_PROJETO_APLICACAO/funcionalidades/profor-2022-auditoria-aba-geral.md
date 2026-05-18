@@ -236,3 +236,32 @@ Diagnostico final:
 Pendencia remanescente:
 
 - `saldoDisponivelOuvidoria` continua sem formula segura e deve permanecer fora da interface ate nova decisao tecnica.
+
+## 15. Resolucao posterior do campo Z/25 (18/05/2026)
+
+A antiga referencia `Z/25` da aba `Geral` foi revisada e separada em dois conceitos operacionais distintos, sem reintroduzir planilha como fonte:
+
+1. `saldoDisponivelOuvidoria` (saldo estrito da area OUVIDORIA):
+   - calculado internamente como soma de `max(valorPrevisto - valorExecutado, 0)` nos itens da area `OUVIDORIA`.
+2. `saldoPotencialDestinavelOuvidoria` (indicador gerencial):
+   - calculado internamente como `saldoRendimentosAtual + saldoEconomicidadeCapital + saldoEconomicidadeCusteio`.
+
+Regras de economicidade mantidas:
+
+- item em area `N/A`: economicidade = `valorPrevisto`;
+- item fora de `N/A` com `valorExecutado <= 0`: economicidade = `0`;
+- item fora de `N/A` com execução positiva: economicidade = `valorPrevisto - valorExecutado`;
+- economicidade negativa e ajustada para `0` com aviso tecnico.
+
+Status atualizado da auditoria:
+
+| Campo | Status atualizado | Observacao |
+| --- | --- | --- |
+| `saldoDisponivelOuvidoria` | resolvido | voltou a interface com semantica estrita (saldo da area OUVIDORIA) |
+| `saldoPotencialDestinavelOuvidoria` | novo campo operacional | representa a logica gerencial da antiga coluna Z (`N + O + P`) |
+
+Mantido:
+
+- aba `Geral` fora da fonte operacional;
+- sem fallback silencioso para planilha;
+- sem uso da coluna Z como dado de entrada.

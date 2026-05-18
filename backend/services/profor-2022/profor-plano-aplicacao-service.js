@@ -53,6 +53,52 @@ function obterSaldoItem(item) {
   return arredondarMoedaProfor(obterValorItem(item, "valorPrevisto") - obterValorItem(item, "valorExecutado"));
 }
 
+function calcularSaldoDisponivelOuvidoria(itens, avisos = []) {
+  const lista = Array.isArray(itens) ? itens : [];
+  return arredondarMoedaProfor(lista.reduce((total, item) => {
+    if (!ehAreaOuvidoria(item?.area)) return total;
+    const saldoBruto = obterSaldoItem(item);
+    if (saldoBruto < 0) {
+      avisos.push("Item da OUVIDORIA com sobre-execucao; saldo disponivel considera zero no item.");
+    }
+    return total + Math.max(saldoBruto, 0);
+  }, 0));
+}
+
+function calcularEconomicidadeItem(item, avisos = []) {
+  const area = normalizarTextoProfor(item?.area);
+  const valorPrevisto = obterValorItem(item, "valorPrevisto");
+  const valorExecutado = obterValorItem(item, "valorExecutado");
+  let economicidade = 0;
+
+  if (area === "N/A") {
+    economicidade = valorPrevisto;
+  } else if (valorExecutado > 0) {
+    economicidade = valorPrevisto - valorExecutado;
+  }
+
+  if (economicidade < 0) {
+    avisos.push("Item com sobre-execucao para economicidade; valor negativo ajustado para zero.");
+    return 0;
+  }
+
+  return arredondarMoedaProfor(economicidade);
+}
+
+function calcularSaldosEconomicidadePorNatureza(itens, avisos = []) {
+  const acumulado = { saldoEconomicidadeCapital: 0, saldoEconomicidadeCusteio: 0 };
+  for (const item of Array.isArray(itens) ? itens : []) {
+    const natureza = normalizarTextoProfor(item?.natureza);
+    const economicidade = calcularEconomicidadeItem(item, avisos);
+    if (natureza === "CAPITAL") {
+      acumulado.saldoEconomicidadeCapital = arredondarMoedaProfor(acumulado.saldoEconomicidadeCapital + economicidade);
+    } else if (natureza === "CUSTEIO") {
+      acumulado.saldoEconomicidadeCusteio = arredondarMoedaProfor(acumulado.saldoEconomicidadeCusteio + economicidade);
+    }
+  }
+  return acumulado;
+}
+
 function ehAreaOuvidoria(area) {
   return normalizarTextoProfor(area) === "OUVIDORIA";
 }
@@ -201,6 +247,7 @@ function somarItens(itens, predicado, campo) {
 function resumirPlanoAplicacaoSeguro(planoAplicacao, filtros = {}) {
   const filtragem = filtrarPlanoAplicacaoSeguro(planoAplicacao, filtros);
   const itens = filtragem.itens;
+  const avisos = [...filtragem.avisos];
   const itensOuvidoria = itens.filter((item) => ehAreaOuvidoria(item?.area));
   const previstoOuvidoria = somarItens(itens, (item) => ehAreaOuvidoria(item?.area), "valorPrevisto");
   const previstoCorregedoria = somarItens(itens, (item) => ehAreaCorregedoria(item?.area), "valorPrevisto");
@@ -210,6 +257,8 @@ function resumirPlanoAplicacaoSeguro(planoAplicacao, filtros = {}) {
   const valorExecutadoEscolaPenal = somarItens(itens, (item) => ehAreaEscolaPenal(item?.area), "valorExecutado");
   const valorPrevistoGeral = somarItens(itens, () => true, "valorPrevisto");
   const valorExecutadoGeral = somarItens(itens, () => true, "valorExecutado");
+  const saldoDisponivelOuvidoria = calcularSaldoDisponivelOuvidoria(itens, avisos);
+  const { saldoEconomicidadeCapital, saldoEconomicidadeCusteio } = calcularSaldosEconomicidadePorNatureza(itens, avisos);
 
   return {
     totalItensPlano: itens.length,
@@ -235,16 +284,15 @@ function resumirPlanoAplicacaoSeguro(planoAplicacao, filtros = {}) {
     valorExecutadoEscolaPenal,
     saldoResidualCapital: somarItens(itens, (item) => normalizarTextoProfor(item?.natureza) === "CAPITAL", "saldo"),
     saldoResidualCusteio: somarItens(itens, (item) => normalizarTextoProfor(item?.natureza) === "CUSTEIO", "saldo"),
+    saldoEconomicidadeCapital,
+    saldoEconomicidadeCusteio,
+    saldoDisponivelOuvidoria,
     execucaoOuvidoriaPercentual: calcularPercentual(valorExecutadoOuvidoria, previstoOuvidoria),
     execucaoCorregedoriaPercentual: calcularPercentual(valorExecutadoCorregedoria, previstoCorregedoria),
     execucaoEscolaPenalPercentual: calcularPercentual(valorExecutadoEscolaPenal, previstoEscolaPenal),
     execucaoGeralPercentual: calcularPercentual(valorExecutadoGeral, valorPrevistoGeral),
-    saldoDisponivelOuvidoria: null,
     filtragem,
-    avisos: [
-      ...filtragem.avisos,
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-    ],
+    avisos,
   };
 }
 
@@ -256,5 +304,8 @@ module.exports = {
   arredondarMoedaProfor,
   filtrarPlanoAplicacaoSeguro,
   agruparPlanoPorAreaENatureza,
+  calcularSaldoDisponivelOuvidoria,
+  calcularEconomicidadeItem,
+  calcularSaldosEconomicidadePorNatureza,
   resumirPlanoAplicacaoSeguro,
 };

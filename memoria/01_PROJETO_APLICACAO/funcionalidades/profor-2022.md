@@ -829,3 +829,53 @@ Critérios de qualidade:
 ## Guia operacional
 
 O guia operacional consolidado da funcionalidade está registrado em `profor-2022-operacao.md`.
+
+## 16. Separação dos indicadores da Ouvidoria (18/05/2026)
+
+Nesta revisão, `saldoDisponivelOuvidoria` deixou de ser pendência e passou a ter semântica operacional explícita, separada do indicador gerencial que herdava a lógica da antiga coluna Z da aba `Geral`.
+
+Definições aplicadas:
+
+- `saldoDisponivelOuvidoria`:
+  - conceito: saldo efetivamente disponível nos itens já destinados à área `OUVIDORIA`;
+  - regra: soma de `max(valorPrevisto - valorExecutado, 0)` para itens `area === "OUVIDORIA"`;
+  - sobre-execução em item de Ouvidoria: gera aviso técnico e o item contribui com `0` para este indicador.
+- `saldoPotencialDestinavelOuvidoria`:
+  - conceito: indicador gerencial potencialmente destinável à Ouvidoria, sujeito à decisão administrativa;
+  - regra: `saldoRendimentosAtual + saldoEconomicidadeCapital + saldoEconomicidadeCusteio`;
+  - origem conceitual: reinterpretação da antiga coluna Z (`N + O + P`) como potencial gerencial, não como saldo estrito da Ouvidoria.
+
+Regras de economicidade implementadas (herdadas da lógica planilha, sem usar a planilha como fonte):
+
+- se `area === "N/A"`, economicidade do item = `valorPrevisto`;
+- senão, se `valorExecutado <= 0` ou ausente, economicidade = `0`;
+- senão, economicidade = `valorPrevisto - valorExecutado`;
+- se a economicidade calculada for negativa, ela é ajustada para `0` com aviso de sobre-execução.
+
+Campos novos/ajustados no consolidado por convênio:
+
+- `saldoDisponivelOuvidoria`;
+- `saldoEconomicidadeCapital`;
+- `saldoEconomicidadeCusteio`;
+- `saldoPotencialDestinavelOuvidoria`.
+
+Totais adicionados no resumo geral:
+
+- total de `saldoDisponivelOuvidoria`;
+- total de `saldoPotencialDestinavelOuvidoria`.
+
+Interface PROFOR 2022:
+
+- exibe dois indicadores distintos:
+  - **Saldo disponível da Ouvidoria**;
+  - **Potencial destinável à Ouvidoria**.
+- no detalhe do convênio, exibe composição do potencial:
+  - saldo de rendimentos;
+  - economicidade capital;
+  - economicidade custeio;
+  - total potencial destinável.
+
+Fonte operacional:
+
+- a aba `Geral` permanece fora da operação e sem fallback silencioso;
+- a coluna Z não é lida como fonte; apenas sua fórmula histórica foi reinterpretada para nomear corretamente o indicador gerencial.

@@ -3,6 +3,7 @@ const { listarCacheDetruProfor2022 } = require("./profor-detru-cache-service");
 const { listarSaldosRendimentosCache } = require("./transferegov-rendimentos-cache-service");
 const {
   arredondarMoedaProfor,
+  calcularEconomicidadeItem,
   filtrarPlanoAplicacaoSeguro,
   moedaParaNumeroProfor,
   normalizarAnoProfor,
@@ -100,6 +101,7 @@ function normalizarItemPlanoConsolidado(item) {
   return {
     ...item,
     saldo: arredondarMoedaProfor(valorPrevisto - valorExecutado),
+    saldoEconomicidade: calcularEconomicidadeItem(item, []),
     percentualExecucao: valorPrevisto > 0 ? Math.round((valorExecutado / valorPrevisto) * 10000) / 100 : 0,
   };
 }
@@ -197,7 +199,6 @@ function montarConvenioConsolidadoProfor(convenio, fontes = {}) {
   const avisos = [
     ...fontesConvenio.avisos,
     ...calculado.avisos,
-    "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
     "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
   ];
 
@@ -216,6 +217,10 @@ function montarConvenioConsolidadoProfor(convenio, fontes = {}) {
     repasseDesembolsado: calculado.repasseDesembolsado,
     rendimentoAprovado: calculado.rendimentoAprovado,
     saldoRendimentosAtual: calculado.saldoRendimentosAtual,
+    saldoDisponivelOuvidoria: calculado.saldoDisponivelOuvidoria,
+    saldoEconomicidadeCapital: calculado.saldoEconomicidadeCapital,
+    saldoEconomicidadeCusteio: calculado.saldoEconomicidadeCusteio,
+    saldoPotencialDestinavelOuvidoria: calculado.saldoPotencialDestinavelOuvidoria,
     saldoResidualCapital: calculado.saldoResidualCapital,
     saldoResidualCusteio: calculado.saldoResidualCusteio,
     contrapartidaIntegralizada: calculado.contrapartidaIntegralizada,
@@ -231,7 +236,6 @@ function montarConvenioConsolidadoProfor(convenio, fontes = {}) {
     execucaoOuvidoriaPercentual: calculado.execucaoOuvidoriaPercentual,
     execucaoCorregedoriaPercentual: calculado.execucaoCorregedoriaPercentual,
     execucaoEscolaPenalPercentual: calculado.execucaoEscolaPenalPercentual,
-    saldoDisponivelOuvidoria: null,
     valorRelativoOuvidoria: null,
     totalItensPlano: calculado.totalItensPlano,
     totalItensOuvidoria: calculado.totalItensOuvidoria,
@@ -279,9 +283,7 @@ function coletarFiltros(convenios) {
 }
 
 function obterPendenciasConhecidasProfor2022() {
-  return [
-    "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado.",
-  ];
+  return [];
 }
 
 function montarConsolidadoProfor2022(opcoes = {}) {

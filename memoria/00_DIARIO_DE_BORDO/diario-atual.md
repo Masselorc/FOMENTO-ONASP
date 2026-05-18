@@ -2625,3 +2625,82 @@ Logs operacionais gravados:
 - Controle de execucao: os tres botoes administrativos da secao ficam bloqueados durante qualquer atualizacao e sao reabilitados no `finally`.
 - Restricoes mantidas: sem alteracao de `.env`, banco/schema, JSONs publicados ou publicacao estatica.
 - Validacoes planejadas: `npm run validar:syntax` e teste `curl` do endpoint de rendimentos.
+
+## 18/05/2026 - Separacao de saldo da Ouvidoria x potencial destinavel (PROFOR 2022)
+
+- Branch atual: `main`.
+- Objetivo: separar conceitualmente e tecnicamente dois indicadores:
+  - `saldoDisponivelOuvidoria` (saldo estrito dos itens da area OUVIDORIA);
+  - `saldoPotencialDestinavelOuvidoria` (indicador gerencial da antiga logica `N + O + P`).
+
+### Backend alterado
+
+- `backend/services/profor-2022/profor-plano-aplicacao-service.js`
+  - novos helpers: `calcularSaldoDisponivelOuvidoria`, `calcularEconomicidadeItem`, `calcularSaldosEconomicidadePorNatureza`;
+  - `resumirPlanoAplicacaoSeguro` agora retorna:
+    - `saldoDisponivelOuvidoria`;
+    - `saldoEconomicidadeCapital`;
+    - `saldoEconomicidadeCusteio`;
+  - removida a mensagem antiga de pendencia de formula do saldo da Ouvidoria.
+- `backend/services/profor-2022/profor-calculos-service.js`
+  - novo helper `calcularSaldoPotencialDestinavelOuvidoria`;
+  - resumo por convenio inclui:
+    - `saldoDisponivelOuvidoria`;
+    - `saldoEconomicidadeCapital`;
+    - `saldoEconomicidadeCusteio`;
+    - `saldoPotencialDestinavelOuvidoria`;
+  - resumo geral agora soma esses campos.
+- `backend/services/profor-2022/profor-consolidado-service.js`
+  - payload por convenio inclui os 4 campos acima;
+  - itens de plano passam a incluir `saldoEconomicidade` calculado internamente;
+  - `pendenciasConhecidas` deixa de listar `saldoDisponivelOuvidoria` como formula pendente.
+
+### Frontend alterado
+
+- `frontend/js/app.js`
+  - pagina PROFOR 2022 passa a exibir os dois indicadores com nomes distintos:
+    - `Saldo disponível da Ouvidoria`;
+    - `Potencial destinável à Ouvidoria`.
+  - detalhe do convenio passa a exibir a composicao do potencial:
+    - saldo de rendimentos;
+    - economicidade capital;
+    - economicidade custeio;
+    - total potencial destinavel.
+  - mantidas as restricoes: sem mensagens tecnicas de diagnostico/origem na interface publica.
+
+### Diagnostico de calculo executado (terminal)
+
+- Validacao por convenio executada com:
+  - numero;
+  - UF;
+  - `saldoDisponivelOuvidoria`;
+  - `saldoRendimentosAtual`;
+  - `saldoEconomicidadeCapital`;
+  - `saldoEconomicidadeCusteio`;
+  - `saldoPotencialDestinavelOuvidoria`.
+- Resultado: todos os 15 convenios com regra fechando:
+  - `saldoPotencialDestinavelOuvidoria = saldoRendimentosAtual + saldoEconomicidadeCapital + saldoEconomicidadeCusteio`.
+
+### API/estado validado
+
+- `curl.exe -i http://localhost:8790/api/profor-2022/consolidado` -> HTTP 200.
+- `curl.exe -i http://localhost:8790/api/profor-2022/atualizacao/status` -> HTTP 200.
+- Diagnostico do consolidado permaneceu `15/15/15`.
+
+### Interface validada
+
+- Smoke Playwright:
+  - PROFOR 2022 carregou com 15 linhas.
+  - Indicadores distintos presentes (`Saldo disponível da Ouvidoria`, `Potencial destinável à Ouvidoria`).
+  - Detalhe exibiu composicao com `Economicidade capital`.
+  - Status do Sistema manteve os 3 botoes administrativos.
+  - Durante atualizacao mockada, os 3 botoes ficaram bloqueados e voltaram no final.
+  - Barra de progresso concluiu em 100%.
+  - Sem erro de console.
+
+### Restricoes confirmadas
+
+- `.env` nao alterado.
+- banco/schema nao alterado.
+- JSONs publicados nao alterados.
+- nenhuma publicacao executada (`npm run publicar:dados` e `npm run publicar:profor-2022` nao foram rodados).
