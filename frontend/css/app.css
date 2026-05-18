@@ -6813,4 +6813,45 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
     color: var(--color-text);
 }
 
+/* --- Container offcanvas: o Bootstrap aplica fundo branco; aqui forçamos
+       a surface escura institucional no container, header, body e título. --- */
+.offcanvas.app-offcanvas,
+.app-offcanvas {
+    background-color: var(--color-surface) !important;
+    color: var(--color-text);
+    border-left: 1px solid var(--color-border);
+}
+
+.app-offcanvas .offcanvas-header,
+.app-offcanvas .offcanvas-body {
+    background-color: transparent;
+    color: var(--color-text);
+}
+
+.app-offcanvas .offcanvas-header {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.app-offcanvas .offcanvas-title,
+.app-offcanvas .section-eyebrow {
+    color: var(--color-text);
+}
+
+.app-offcanvas .offcanvas-title {
+    color: var(--color-primary-strong);
+}
+
+.app-offcanvas .sidebar-section {
+    border-top-color: var(--color-border);
+}
+
+/* Sidebar-link base: garantir surface escura mesmo quando o Bootstrap reabre
+   o offcanvas e reaplica estilos do tema claro. */
+.app-offcanvas .sidebar-link,
+.app-offcanvas .sidebar-action {
+    background-color: var(--color-surface-muted);
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
 }
