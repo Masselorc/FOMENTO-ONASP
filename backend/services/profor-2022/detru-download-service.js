@@ -39,7 +39,7 @@ function obterConfiguracaoDetru() {
   // String vazia não conta como URL configurada
   if (config.url !== null && config.url.trim() === "") config.url = null;
 
-  config.horaAtualizacaoDiaria = config.horaAtualizacaoDiaria || "06:00";
+  config.horaAtualizacaoDiaria = config.horaAtualizacaoDiaria || "12:00";
 
   return config;
 }
