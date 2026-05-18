@@ -491,11 +491,11 @@ function renderKpiCard({
         async function atualizarCacheDetruProfor2022UI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
-                return;
+                return { sucesso: false, cancelado: true };
             }
 
             const botao = document.getElementById('btnAtualizarDetruProfor');
-            if (!confirm('Atualizar o cache DETRU agora?')) return;
+            if (!confirm('Atualizar o cache DETRU agora?')) return { sucesso: false, cancelado: true };
 
             if (botao) botao.disabled = true;
             mostrarMensagemDetruProfor2022('warning', 'Atualizando cache DETRU...');
@@ -513,8 +513,10 @@ function renderKpiCard({
                 await carregarStatusUltimaAtualizacaoDetruProfor2022();
                 const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
                 await carregarCarteiraMonitoradaProfor2022(incluirInativos);
+                return { sucesso: true, mensagem: payload.message || 'Cache DETRU atualizado com sucesso.' };
             } catch (err) {
                 mostrarMensagemDetruProfor2022('danger', err.message || 'Erro ao atualizar o DETRU.');
+                return { sucesso: false, mensagem: err.message || 'Erro ao atualizar o DETRU.' };
             } finally {
                 if (botao) botao.disabled = false;
             }
@@ -538,6 +540,105 @@ function renderKpiCard({
             const feedbackEl = document.getElementById('profor-consolidado-feedback');
             if (!feedbackEl) return;
             feedbackEl.innerHTML = renderMensagemConsolidadoProfor2022(tipo, mensagem);
+        }
+
+        const progressoAtualizacaoSistema = {
+            timerId: null,
+            percentual: 0
+        };
+
+        function obterElementosProgressoAtualizacaoSistema() {
+            return {
+                container: document.getElementById('profor-atualizacao-progresso-container'),
+                barra: document.getElementById('profor-atualizacao-progresso-barra'),
+                texto: document.getElementById('profor-atualizacao-progresso-texto'),
+                percentual: document.getElementById('profor-atualizacao-progresso-percentual')
+            };
+        }
+
+        function limparTimerProgressoAtualizacaoSistema() {
+            if (!progressoAtualizacaoSistema.timerId) return;
+            window.clearInterval(progressoAtualizacaoSistema.timerId);
+            progressoAtualizacaoSistema.timerId = null;
+        }
+
+        function atualizarProgressoAtualizacaoSistema(tipo, percentual, texto, estado = 'andamento') {
+            const { container, barra, texto: textoEl, percentual: percentualEl } = obterElementosProgressoAtualizacaoSistema();
+            if (!container || !barra || !textoEl || !percentualEl) return;
+
+            const valorSeguro = Math.max(0, Math.min(100, Number(percentual) || 0));
+            progressoAtualizacaoSistema.percentual = valorSeguro;
+
+            container.classList.remove('d-none');
+            barra.style.width = `${valorSeguro}%`;
+            barra.setAttribute('aria-valuenow', String(valorSeguro));
+            percentualEl.textContent = `${Math.round(valorSeguro)}%`;
+            textoEl.textContent = texto || 'Atualização em andamento';
+            barra.classList.remove('bg-info', 'bg-success', 'bg-danger', 'progress-bar-animated');
+
+            if (estado === 'sucesso') {
+                barra.classList.add('bg-success');
+            } else if (estado === 'erro') {
+                barra.classList.add('bg-danger');
+            } else {
+                barra.classList.add('bg-info', 'progress-bar-animated');
+            }
+        }
+
+        function iniciarProgressoAtualizacaoSistema(tipo) {
+            limparTimerProgressoAtualizacaoSistema();
+            atualizarProgressoAtualizacaoSistema(tipo, 0, 'Atualização em andamento', 'andamento');
+            progressoAtualizacaoSistema.timerId = window.setInterval(() => {
+                const atual = progressoAtualizacaoSistema.percentual;
+                const incremento = atual < 70 ? 4 : (atual < 85 ? 2 : 1);
+                const proximo = Math.min(92, atual + incremento);
+                atualizarProgressoAtualizacaoSistema(tipo, proximo, 'Atualização em andamento', 'andamento');
+            }, 500);
+        }
+
+        function finalizarProgressoAtualizacaoSistema(tipo, sucesso, mensagem) {
+            limparTimerProgressoAtualizacaoSistema();
+            if (sucesso) {
+                atualizarProgressoAtualizacaoSistema(tipo, 100, mensagem || 'Atualização concluída.', 'sucesso');
+                return;
+            }
+            atualizarProgressoAtualizacaoSistema(
+                tipo,
+                Math.max(1, progressoAtualizacaoSistema.percentual),
+                mensagem || 'Falha na atualização.',
+                'erro'
+            );
+        }
+
+        function definirEstadoBotoesAtualizacaoSistema(disabled) {
+            document.getElementById('btnAtualizarDetruProfor')?.toggleAttribute('disabled', disabled);
+            document.getElementById('btnAtualizarProfor2022')?.toggleAttribute('disabled', disabled);
+        }
+
+        async function executarAtualizacaoAdministrativaProfor(tipo, executor) {
+            if (estaEmModoPublicacaoEstatica()) return;
+
+            definirEstadoBotoesAtualizacaoSistema(true);
+            iniciarProgressoAtualizacaoSistema(tipo);
+
+            try {
+                const resultado = await executor();
+                if (resultado?.cancelado) {
+                    finalizarProgressoAtualizacaoSistema(tipo, false, 'Atualização cancelada pelo usuário.');
+                    return;
+                }
+                if (resultado?.sucesso === false) {
+                    finalizarProgressoAtualizacaoSistema(tipo, false, resultado.mensagem || 'Falha na atualização.');
+                    return;
+                }
+                finalizarProgressoAtualizacaoSistema(tipo, true, 'Atualização concluída.');
+            } catch (error) {
+                finalizarProgressoAtualizacaoSistema(tipo, false, error?.message || 'Falha na atualização.');
+            } finally {
+                definirEstadoBotoesAtualizacaoSistema(false);
+                await carregarStatusAtualizacaoConsolidadaProfor2022();
+                await carregarStatusUltimaAtualizacaoDetruProfor2022();
+            }
         }
 
         function renderStatusAtualizacaoConsolidadaProfor2022(status) {
@@ -629,6 +730,22 @@ function renderKpiCard({
                         })}
                     </div>
                     ${modoEstatico ? `<div class="mb-3">${renderPublicationNotice()}</div>` : ''}
+                    <div class="d-none mb-3" id="profor-atualizacao-progresso-container">
+                        <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
+                            <span id="profor-atualizacao-progresso-texto">Atualização em andamento</span>
+                            <span id="profor-atualizacao-progresso-percentual">0%</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div
+                                class="progress-bar progress-bar-striped bg-info"
+                                id="profor-atualizacao-progresso-barra"
+                                role="progressbar"
+                                style="width: 0%;"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="0"></div>
+                        </div>
+                    </div>
                     <div class="mb-2" id="profor-consolidado-feedback"></div>
                     <div class="mb-2">
                         ${renderStatusAtualizacaoConsolidadaProfor2022(statusConsolidadoInicial)}
@@ -642,11 +759,11 @@ function renderKpiCard({
         }
 
         function registrarEventosStatusSistema() {
-            document.getElementById('btnAtualizarDetruProfor')?.addEventListener('click', () => {
-                atualizarCacheDetruProfor2022UI();
+            document.getElementById('btnAtualizarDetruProfor')?.addEventListener('click', async () => {
+                await executarAtualizacaoAdministrativaProfor('detru', atualizarCacheDetruProfor2022UI);
             });
-            document.getElementById('btnAtualizarProfor2022')?.addEventListener('click', () => {
-                atualizarProfor2022ConsolidadoUI();
+            document.getElementById('btnAtualizarProfor2022')?.addEventListener('click', async () => {
+                await executarAtualizacaoAdministrativaProfor('consolidado', atualizarProfor2022ConsolidadoUI);
             });
         }
 
@@ -738,11 +855,13 @@ function renderKpiCard({
         async function atualizarProfor2022ConsolidadoUI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
-                return;
+                return { sucesso: false, cancelado: true };
             }
 
             const botao = document.getElementById('btnAtualizarProfor2022');
-            if (!confirm('Atualizar PROFOR 2022 agora? Esta rotina executa DETRU + rendimentos + consolidado e pode levar alguns minutos.')) return;
+            if (!confirm('Atualizar PROFOR 2022 agora? Esta rotina executa DETRU + rendimentos + consolidado e pode levar alguns minutos.')) {
+                return { sucesso: false, cancelado: true };
+            }
 
             if (botao) botao.disabled = true;
             mostrarMensagemConsolidadoProfor2022('warning', 'Atualizando PROFOR 2022 (DETRU + rendimentos + consolidado)...');
@@ -765,8 +884,13 @@ function renderKpiCard({
                 await carregarRotuloUltimaAtualizacaoOperacional();
                 const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
                 await carregarCarteiraMonitoradaProfor2022(incluirInativos);
+                return {
+                    sucesso: Boolean(payload.resultado?.sucesso),
+                    mensagem: payload.message || 'Atualização PROFOR 2022 concluída.'
+                };
             } catch (err) {
                 mostrarMensagemConsolidadoProfor2022('danger', err.message || 'Erro ao atualizar PROFOR 2022.');
+                return { sucesso: false, mensagem: err.message || 'Erro ao atualizar PROFOR 2022.' };
             } finally {
                 if (botao) botao.disabled = false;
             }

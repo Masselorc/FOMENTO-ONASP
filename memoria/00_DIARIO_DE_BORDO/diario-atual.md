@@ -2605,3 +2605,13 @@ Logs operacionais gravados:
 - Escopo: detectar raiz automaticamente, validar `package.json`, validar `npm`, criar pasta `logs`, registrar a tarefa `ONASP - Atualizar PROFOR 2022`, redirecionar log para `logs\atualizacao-profor-2022.log` e imprimir comandos de teste/manual.
 - Confirmacao operacional: sem alteracao de backend, frontend, banco, `.env` ou publicacao.
 - Validacao planejada: `npm run validar:syntax`.
+
+## 18/05/2026 - Barra de progresso estimado na Status do Sistema (PROFOR 2022)
+
+- Branch atual: `main`.
+- Objetivo: adicionar barra de progresso animada (estimada) para atualizações administrativas do PROFOR 2022 na página `Status do Sistema`.
+- Arquivo alterado: `frontend/js/app.js`.
+- Implementacao: utilitarios de progresso estimado com `setInterval`, controle de estado/aria, desabilitacao conjunta dos botoes durante requisicao, finalizacao em 100% no sucesso e estado de falha no erro.
+- Escopo visual: barra e texto adicionados na secao `Atualizações PROFOR 2022` da `Status do Sistema`; pagina PROFOR 2022 permanece sem botoes administrativos.
+- Restricoes mantidas: sem alteracao de backend, banco, `.env` ou JSON publicado; sem publicacao executada.
+- Validacoes executadas: `npm run validar:syntax`; smoke Playwright em `status-sistema` confirmando botoes + barra e sem erro de console.
