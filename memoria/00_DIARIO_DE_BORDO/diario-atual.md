@@ -2347,3 +2347,68 @@ oute.fetch() + mutação em memória do payload retornado.
 - Confirmação: não houve publicação de dados estáticos. Nenhum JSON publicado foi alterado nesta etapa.
 - Risco de regressão: baixo; adição de tabela, serviço, rotas e painel sem alterar fluxos existentes nem schema destrutivo.
 - Rollback: `git revert <hash_do_commit>` após commit/push. A tabela `logs_operacionais` permanecerá no SQLite local após reversão (sem impacto operacional).
+
+---
+
+## 18/05/2026 - Validação dos logs de publicação estática + correção de regex
+
+- Branch: `main`. `git pull` → `Already up to date.` Commits confirmados: `f6dcac5`, `fd21467` (fix regex).
+- Objetivo: validar o caminho `status=sucesso` do log `profor_publicacao_estatica` com working tree limpo.
+
+### Bug encontrado e corrigido
+
+- `extrairResumoAtualizacao()` em `backend/scripts/publicar-profor-2022-estatico.js` usava regex com formato inventado (`DETRU: sucesso=true encontrados=...`), não correspondente à saída real do script `atualizar:profor-2022`.
+- Formato real da saída: `DETRU encontrados/total: 15/15`, `rendimentos sucesso/total: 15/15 falhas=0`, `Consolidado total de convenios: 15 | totalComDetru=15 | ...`.
+- Resultado: `resumoAtualizacao.sucesso` sempre `false`, abortando a publicação mesmo com 15/15/15.
+- Correção: regex alinhados ao formato real + fallback em `sucessoGeral: true` (commit `fd21467`).
+- Arquivo alterado: `backend/scripts/publicar-profor-2022-estatico.js`.
+
+### Execução de `npm run publicar:profor-2022` com working tree limpo
+
+- Resultado: **sucesso completo** — duração 92.7 s.
+- Atualização consolidada: DETRU 15/15, rendimentos 15/15, consolidado 15/15/15.
+- Publicação estática: `npm run publicar:dados` → code=0, 556 ms.
+- Validação JSON: OK. Validação syntax: OK (25 arquivos).
+- Auditoria de vazamento: OK (6 arquivos JSON).
+- Arquivos publicados alterados: `aplicacao.json`, `dashboard-geral.json`, `resumo-publicacao.json`.
+- Última atualização publicada: `2026-05-18T16:26:03.725Z` (`Transferegov/rendimentos`).
+
+### Log registrado no banco
+
+- id=7: `modulo=profor-2022`, `tipo_evento=profor_publicacao_estatica`, `status=sucesso`, `duracao_ms=92663`.
+- Resumo: `atualizacao=OK | publicacao=OK | validacaoJson=OK | validacaoSyntax=OK | auditoria=OK`.
+- Log id=6: `tipo_evento=profor_atualizacao_consolidada`, `status=sucesso`, `duracao_ms=89123`.
+- Total de logs no banco após validação: 7.
+
+### Rotas API testadas (PORT=8805)
+
+| Rota | Resultado |
+|---|---|
+| `GET /api/sistema/logs-operacionais` | `success=true total=7 count=7` |
+| `?status=sucesso` | `total=4 ids=[7,6,3,1]` |
+| `?tipoEvento=profor_publicacao_estatica` | `total=7 statuses=[sucesso,sucesso,bloqueado,...]` |
+| `/7` | `id=7 tipo=profor_publicacao_estatica status=sucesso` |
+| `/9999` | `success=false message="Log operacional não encontrado."` |
+| `/export?formato=json` | `total=7 registros=7` (`geradoEm`, `filtros`, `registros`) |
+| `/export?formato=csv` | CSV com separador `;`, header correto |
+| `/export?formato=xml` | `success=false message="Formato suportado: json ou csv."` |
+
+### Auditoria de segurança nos logs exportados
+
+- Arquivo: export JSON completo (8.376 chars).
+- Padrões verificados: JSESSIONID, SAMLRequest, SAMLResponse, Cookie:, Authorization:, Bearer, ONASP_EDIT_PASSWORD, DETRU_SICONV_CONVENIO_URL, .sqlite, .har, HTML tags, caminho local.
+- Resultado: **nenhum padrão proibido encontrado**.
+
+### Validações finais
+
+- `node --check backend/scripts/publicar-profor-2022-estatico.js` → OK.
+- `npm run validar:json` → OK.
+- `npm run validar:syntax` → 25 OK.
+- `git diff --check` → OK (apenas avisos LF→CRLF do Windows).
+
+### Restrições confirmadas
+
+- `.env` NÃO alterado.
+- Banco/schema NÃO alterado (apenas INSERTs na tabela `logs_operacionais`).
+- Nenhuma dependência nova.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou arquivo temporário versionado.
