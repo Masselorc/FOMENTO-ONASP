@@ -20,8 +20,8 @@ const {
 } = require("../services/profor-2022/detru-download-service");
 
 function parsearHora(horaStr) {
-  const [hh, mm] = (horaStr || "06:00").split(":").map(Number);
-  const hora = Number.isFinite(hh) ? Math.min(Math.max(hh, 0), 23) : 6;
+  const [hh, mm] = (horaStr || "12:00").split(":").map(Number);
+  const hora = Number.isFinite(hh) ? Math.min(Math.max(hh, 0), 23) : 12;
   const minuto = Number.isFinite(mm) ? Math.min(Math.max(mm, 0), 59) : 0;
   return { hora, minuto };
 }
