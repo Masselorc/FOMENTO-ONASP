@@ -467,6 +467,46 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Observações de manutenção:** rota local/API בלבד. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador.
 
+#### POST /api/profor-2022/atualizar
+
+**Finalidade:** disparar administrativamente a rotina operacional consolidada PROFOR 2022 (DETRU → rendimentos Transferegov → montagem do consolidado → validação).
+
+**Serviço chamado:** `atualizarProfor2022Consolidado(opcoes)`, de `backend/services/profor-2022/profor-atualizacao-consolidada-service.js`.
+
+**Tipo:** escrita local/API.
+
+**Payload:** opcional. Aceita `{ detru?: { caminhoZip? }, intervaloEntreConsultasMs?, origemDados? }` em camelCase. Quando ausente, o serviço usa o arquivo DETRU configurado/local e o intervalo padrão de 500ms entre consultas Transferegov.
+
+**Resposta:** confirmada. Em sucesso retorna `{ success: true, message, resultado }`, onde `resultado` contém `{ sucesso, iniciadoEm, finalizadoEm, duracaoMs, origemDados, detru, rendimentos, consolidado, avisos, erros }`. Cada bloco (`detru`, `rendimentos`, `consolidado`) traz `{ executado, sucesso, totais, erro, avisos }`. Em erro genérico retorna `{ success: false, message }` com status `500`.
+
+**Efeito colateral:** executa o serviço de atualização DETRU (download/local, hash, snapshot, log), itera a carteira ativa consultando o Transferegov público e gravando o cache de rendimentos (apenas em sucesso), e monta o consolidado em memória para validação. Caches anteriores não são apagados em falha (todas as gravações são upsert).
+
+**Publicação estática:** não. A rotina NÃO chama `npm run publicar:dados` e não altera JSONs publicados.
+
+**Frontend consumidor:** botão "Atualizar PROFOR 2022" na Carteira Monitorada da página PROFOR 2022 (apenas no modo local/API).
+
+**Observações de manutenção:** rota local/API. Não existe no modo estático/GitHub Pages. Pode demorar minutos por consultar Transferegov para cada convênio.
+
+#### GET /api/profor-2022/atualizacao/status
+
+**Finalidade:** retornar o estado atual da rotina consolidada PROFOR 2022: origem efetiva, última atualização DETRU, última consulta de rendimentos e diagnóstico do consolidado.
+
+**Serviço chamado:** `resolverOrigemDadosProfor2022({ detalhado: true })`, `obterUltimaAtualizacaoDetru()`, `obterUltimaConsultaRendimentos()` e `montarConsolidadoProfor2022({ origemDados: "banco-cache", planoAplicacao })` em modo somente leitura.
+
+**Tipo:** leitura local/API.
+
+**Payload:** não se aplica.
+
+**Resposta:** confirmada. Retorna `{ success: true, origemDados, origemAvisos, ultimaAtualizacaoDetru, ultimaConsultaRendimentos, diagnosticoConsolidado, geradoEmConsolidado, avisos }`. `ultimaAtualizacaoDetru` e `ultimaConsultaRendimentos` podem vir `null` quando não houver registro. Falhas pontuais em cada bloco são agregadas em `avisos`, mantendo a resposta com `success: true`.
+
+**Efeito colateral:** nenhum. Não consulta rede externa, não atualiza cache, não publica JSONs. A montagem do consolidado em memória lê a planilha local apenas para extrair o plano de aplicação.
+
+**Publicação estática:** não.
+
+**Frontend consumidor:** linha de status "Última atualização consolidada" no painel da Carteira Monitorada (apenas no modo local/API).
+
+**Observações de manutenção:** rota local/API. Não existe no modo estático/GitHub Pages.
+
 #### GET /api/profor-2022/detru/ultima-atualizacao
 
 **Finalidade:** retornar o status básico da última atualização DETRU registrada.

@@ -1,5 +1,126 @@
 # Diário de bordo
 
+## 18/05/2026 - Rotina operacional consolidada PROFOR 2022 (DETRU + rendimentos + consolidado)
+
+- Branch atual: `main`.
+- Pull inicial executado: `git status --short` limpo e `git pull` em `Already up to date.`.
+- Objetivo: criar rotina única e rastreável de atualização diária PROFOR 2022 em modo local/API, sequenciando DETRU → rendimentos Transferegov → montagem do consolidado → validação, com preservação do último cache válido em falhas.
+- Status: rotina consolidada implementada, scripts CLI e de agendamento criados, rotas administrativas adicionadas, frontend com botão e status discreto, validações executadas, publicação estática NÃO executada.
+
+### Arquivos lidos
+
+- `AGENTS.md`
+- `memoria/INDEX.md`
+- `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/08_ROTAS_BANCO_API/rotas.md`
+- `backend/server.js`
+- `backend/services/profor-2022/profor-detru-update-service.js`
+- `backend/services/profor-2022/profor-detru-cache-service.js`
+- `backend/services/profor-2022/profor-consolidado-service.js`
+- `backend/services/profor-2022/profor-origem-service.js`
+- `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`
+- `backend/services/profor-2022/transferegov-rendimentos-client.js` (verificação de exports)
+- `backend/services/dashboard-publication-service.js` (verificação de exports)
+- `backend/scripts/atualizar-cache-detru-profor-2022.js`
+- `backend/scripts/agendar-atualizacao-detru-profor-2022.js`
+- `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js`
+- `frontend/js/app.js`
+- `index.html`
+- `package.json`
+- `.env.example`
+
+### Arquivos criados
+
+- `backend/services/profor-2022/profor-atualizacao-consolidada-service.js`
+  - Funções públicas: `atualizarProfor2022Consolidado(opcoes)`, `validarDiagnosticoConsolidado(resultado)`, `resumirAtualizacaoConsolidada(resultado)`, `executarEtapaComProtecao(nome, fn)`.
+  - Sequência: DETRU (reusa `atualizarCacheDetruProfor2022`) → rendimentos Transferegov (loop sobre carteira com `consultarSaldoRendimentosConvenio` e `salvarSaldoRendimentoTransferegov`, com 500ms entre consultas) → montagem do consolidado (`montarConsolidadoProfor2022` com plano de aplicação extraído do workbook local) → validação de diagnóstico.
+  - Cada etapa é envolvida por `executarEtapaComProtecao` para impedir perda de relatório e não mascarar falhas. Erros parciais retornam relatório com `sucesso: false` da etapa, sem limpar caches anteriores (todos os salvamentos são upsert).
+- `backend/scripts/atualizar-profor-2022-consolidado.js`
+  - Script CLI manual. Carrega `.env`, inicializa banco, chama o orquestrador, imprime resumo. Retorna `0` em sucesso e `1` apenas em falha bloqueante (consolidado com 0 convênios ou todas as etapas reais falharam).
+- `backend/scripts/agendar-atualizacao-profor-2022.js`
+  - Agendador diário em Node com `setTimeout` recursivo. Lê `PROFOR_2022_ATUALIZACAO_DIARIA_HORA` do `.env` com fallback `06:30`. Roda como processo separado; não é iniciado por `npm start`.
+
+### Arquivos alterados
+
+- `backend/server.js`
+  - Imports: adicionados `obterUltimaConsultaRendimentos` e `atualizarProfor2022Consolidado`.
+  - Novas rotas locais/API administrativas:
+    - `POST /api/profor-2022/atualizar` — dispara o orquestrador e retorna `{ success, message, resultado }`.
+    - `GET /api/profor-2022/atualizacao/status` — somente leitura: retorna origem atual, última atualização DETRU, última consulta de rendimentos, diagnóstico consolidado e avisos. Não atualiza cache nem consulta rede externa (mas executa montagem do consolidado em memória, que lê a planilha local para extrair plano de aplicação).
+- `frontend/js/app.js`
+  - Funções novas: `renderMensagemConsolidadoProfor2022`, `mostrarMensagemConsolidadoProfor2022`, `renderStatusAtualizacaoConsolidadaProfor2022`, `carregarStatusAtualizacaoConsolidadaProfor2022`, `atualizarProfor2022ConsolidadoUI`.
+  - Painel da Carteira Monitorada da página PROFOR 2022 ganhou: botão `btnAtualizarProfor2022` (apenas no modo local/API), feedback `#profor-consolidado-feedback` e linha de status `#profor-consolidado-status`. Botão DETRU preservado.
+  - O toggle do painel da carteira passa a disparar o carregamento dos dois status (DETRU + consolidado) na primeira abertura.
+- `index.html`
+  - Cache-buster de `frontend/js/app.js` atualizado para `v=20260518-02`.
+- `package.json`
+  - Scripts adicionados:
+    - `atualizar:profor-2022` → `node backend/scripts/atualizar-profor-2022-consolidado.js`
+    - `agendar:profor-2022` → `node backend/scripts/agendar-atualizacao-profor-2022.js`
+- `.env.example`
+  - Variável `PROFOR_2022_ATUALIZACAO_DIARIA_HORA=06:30` adicionada para o agendador consolidado.
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/08_ROTAS_BANCO_API/rotas.md`
+
+### Execução de `npm run atualizar:profor-2022`
+
+Resultado real, 18/05/2026:
+
+```text
+Inicio:        2026-05-18T10:12:20.652Z
+Fim:           2026-05-18T10:14:20.114Z
+Duracao:       119462 ms
+Origem:        banco-cache
+DETRU:         sucesso=true encontrados=15/15
+Rendimentos:   sucesso=true sucessos=15/15 falhas=0
+Consolidado:   convenios=15 detru=15 plano=15 rendimentos=15
+```
+
+DETRU foi baixado automaticamente do repositório oficial (`https://repositorio.dados.gov.br/seges/detru/siconv_convenio.csv.zip`), salvo localmente em `Dados/detru/siconv_convenio.csv.zip` (15.48 MB, fora do versionamento). Nenhum aviso ou erro acumulado.
+
+### Endpoints testados (servidor local em PORT=8795, apenas para teste das rotas novas)
+
+- `GET /api/profor-2022/origem` → `{ success: true, origemDados: "banco-cache", origemDadosEfetiva: "banco-cache", fallbackUsado: false, avisos: [] }`.
+- `GET /api/profor-2022/consolidado` → `success: true`, `data.diagnostico = { totalCarteira: 15, totalComDetru: 15, totalComRendimentos: 15, totalComPlano: 15 }`, 15 convênios.
+- `GET /api/profor-2022/atualizacao/status` → `success: true`, origem `banco-cache`, última DETRU sucesso (15 encontrados), última rendimentos sucesso (15/15), diagnóstico 15/15/15.
+- `POST /api/profor-2022/atualizar` → `success: true`, `resultado.sucesso: true`, DETRU 15/15, rendimentos 15/15, consolidado 15/15, 0 avisos, 0 erros.
+- `GET /api/profor-2022/comparar-origens` → 15 divergências esperadas por governança (Grupos A, B, D já documentados em `profor-2022-divergencias.md`).
+- `GET /api/profor-2022/detru/ultima-atualizacao` → sucesso, 15 encontrados.
+- `GET /index.html` → 200. `GET /frontend/js/app.js?v=20260518-02` → 200.
+
+O servidor `localhost:8790` em execução pelo usuário NÃO foi reiniciado nem afetado; o teste das novas rotas usou `PORT=8795` em processo dedicado e finalizado ao fim do teste.
+
+### Validações obrigatórias
+
+- `node --check` aprovado em: `profor-atualizacao-consolidada-service.js`, `atualizar-profor-2022-consolidado.js`, `agendar-atualizacao-profor-2022.js`, `backend/server.js`, `frontend/js/app.js`.
+- `npm run validar:json` → OK (todos os JSONs publicados esperados existem e são válidos).
+- `npm run validar:syntax` → OK (25 arquivos validados).
+- `git diff --check` → sem avisos de whitespace; apenas warnings de LF→CRLF do Windows.
+
+### Restrições confirmadas
+
+- `npm run publicar:dados` NÃO foi executado.
+- JSONs publicados em `frontend/data/publicados/` NÃO foram alterados.
+- `.env` NÃO foi alterado.
+- Banco/schema NÃO foi alterado (apenas upserts em tabelas existentes).
+- Nenhuma dependência nova adicionada.
+- Nenhum serviço Windows, GitHub Action ou agendamento de SO criado.
+- Origem padrão de `.env` permanece `banco-cache` (estado anterior preservado).
+- Fallback para `planilha` preservado.
+- Aba `Geral` preservada.
+- SQLite, ZIP DETRU, CSV, HAR, HTML bruto, cookies e arquivos temporários NÃO versionados.
+
+### Pendências
+
+1. Decisão de governança formal das divergências classificadas (Grupos A, B, D) antes de ativar `banco-cache` em publicação estática.
+2. Validação operacional do agendador consolidado em produção (rodar `npm run agendar:profor-2022` como processo separado).
+3. Avaliar se faz sentido reutilizar a função interna do orquestrador no script existente `atualizar-rendimentos-transferegov-profor-2022.js` para evitar duplicação leve (mantido intacto nesta etapa para não regredir validação anterior).
+
+---
+
 ## 18/05/2026 - Integração visual local/API do consolidado PROFOR 2022
 
 - Branch atual: `main`.

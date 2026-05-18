@@ -39,9 +39,13 @@ const {
 } = require("./services/profor-2022/convenios-monitorados-service");
 const { atualizarCacheDetruProfor2022 } = require("./services/profor-2022/profor-detru-update-service");
 const { obterUltimaAtualizacaoDetru } = require("./services/profor-2022/profor-detru-cache-service");
+const { obterUltimaConsultaRendimentos } = require("./services/profor-2022/transferegov-rendimentos-cache-service");
 const { montarConsolidadoProfor2022 } = require("./services/profor-2022/profor-consolidado-service");
 const { compararBasesProfor2022 } = require("./services/profor-2022/profor-comparador-service");
 const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
+const {
+  atualizarProfor2022Consolidado
+} = require("./services/profor-2022/profor-atualizacao-consolidada-service");
 const {
   montarDadosProfor2022Publicacao,
   extrairPlanoAplicacaoProforDoWorkbook
@@ -621,6 +625,68 @@ async function rotearApi(req, res, pathname) {
       enviarJson(res, 200, {
         success: true,
         ultimaAtualizacao: normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru())
+      });
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/atualizar") {
+      const body = await lerJsonBody(req);
+      try {
+        const resultado = await atualizarProfor2022Consolidado(body || {});
+        enviarJson(res, 200, {
+          success: true,
+          message: resultado.sucesso
+            ? "Atualizacao consolidada PROFOR 2022 concluida."
+            : "Atualizacao consolidada PROFOR 2022 concluida com avisos/erros.",
+          resultado
+        });
+      } catch (erro) {
+        console.error("Falha ao executar atualizacao consolidada PROFOR 2022:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao atualizar PROFOR 2022."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/atualizacao/status") {
+      const avisos = [];
+      const origem = resolverOrigemDadosProfor2022({ detalhado: true });
+
+      let ultimaAtualizacaoDetru = null;
+      try {
+        ultimaAtualizacaoDetru = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
+      } catch (err) {
+        avisos.push(`Ultima atualizacao DETRU indisponivel: ${err?.message || err}`);
+      }
+
+      let ultimaConsultaRendimentos = null;
+      try {
+        ultimaConsultaRendimentos = obterUltimaConsultaRendimentos();
+      } catch (err) {
+        avisos.push(`Ultima consulta de rendimentos indisponivel: ${err?.message || err}`);
+      }
+
+      let diagnosticoConsolidado = null;
+      let geradoEmConsolidado = null;
+      try {
+        const consolidado = montarConsolidadoProfor2022Local();
+        diagnosticoConsolidado = consolidado?.diagnostico || null;
+        geradoEmConsolidado = consolidado?.geradoEm || null;
+      } catch (err) {
+        avisos.push(`Diagnostico consolidado indisponivel: ${err?.message || err}`);
+      }
+
+      enviarJson(res, 200, {
+        success: true,
+        origemDados: origem.origemDados,
+        origemAvisos: origem.avisos || [],
+        ultimaAtualizacaoDetru,
+        ultimaConsultaRendimentos,
+        diagnosticoConsolidado,
+        geradoEmConsolidado,
+        avisos
       });
       return;
     }
