@@ -6,15 +6,15 @@
 | --- | --- |
 | Nome do documento | PROFOR 2022 — Classificação das divergências planilha × banco-cache |
 | Arquivo | `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md` |
-| Status | rascunho técnico de diagnóstico |
+| Status | diagnóstico técnico de suporte à decisão |
 | Última revisão | 18/05/2026 |
 | Responsável | ONASP / FOMENTO-ONASP |
-| Documento de governança? | sim (suporte à decisão de futura ativação do `banco-cache`) |
+| Documento de governança? | sim (suporte à decisão de ativação do `banco-cache`) |
 | Documento de implementação? | não — diagnóstico documental, sem alteração de código |
 
 ## 1. Contexto
 
-Após a resolução do download e do cache DETRU (commit `ebe861f` e anteriores), o estado real do consolidado PROFOR 2022 ficou:
+Após a resolução do download/cache DETRU, do plano de aplicação filtrado e do fluxo público Transferegov para saldo de rendimentos, o consolidado PROFOR 2022 ficou tecnicamente completo:
 
 | Métrica | Valor |
 | --- | --- |
@@ -34,23 +34,23 @@ Após a resolução do download e do cache DETRU (commit `ebe861f` e anteriores)
 | Origem padrão atual (`.env`) | `PROFOR_2022_ORIGEM_DADOS=planilha` |
 | `banco-cache` ativado? | **não** |
 
-Ou seja: todos os 15 convênios da carteira estão tecnicamente compostos pelo `banco-cache` (DETRU + Plano + Carteira + Transferegov/rendimentos), mas nenhum convênio é integralmente igual ao retornado pela origem antiga `planilha` (aba `Geral`). Este documento separa essas 15 divergências em categorias técnicas e de governança para sustentar decisão segura sobre futura ativação.
+Ou seja: todos os 15 convênios da carteira estão tecnicamente compostos pelo `banco-cache` (Carteira + DETRU + Plano + Transferegov/rendimentos), mas nenhum convênio é integralmente igual ao retornado pela origem antiga `planilha` (aba `Geral`). Este documento separa essas 15 divergências em categorias técnicas e de governança para sustentar decisão segura sobre a ativação.
 
 ## 2. Metodologia
 
-A classificação foi feita exclusivamente por observação dos endpoints locais e diagnóstico documental, sem alteração de código de produção:
+A classificação foi feita por observação dos endpoints locais e diagnóstico documental, sem alteração de código de produção nesta etapa:
 
 - `GET /api/profor-2022/consolidado` — origem `banco-cache` montada localmente em backend Node, sem ativar como padrão.
 - `GET /api/profor-2022/comparar-origens` — compara `planilha` × `banco-cache` com tolerâncias monetária (R$ 0,01) e percentual (0,1 ponto).
-- Script temporário (apagado após análise) inspecionou as 15 abas estaduais da planilha `Planilhas/gestao_financeira_ouvidoria.xlsx` e cruzou com a carteira ativa do banco local SQLite.
+- Análise da trilha de implementação do DETRU, dos cálculos internos do plano e do cache Transferegov/rendimentos.
 
 Critérios de classificação:
 
-1. **Grupo A — divergência esperada por fonte oficial DETRU**: campo extraído do DETRU/cache que substitui valor manual da aba Geral.
+1. **Grupo A — divergência esperada por fonte oficial DETRU**: campo extraído do DETRU/cache que substitui valor manual da aba `Geral`.
 2. **Grupo B — divergência esperada por cálculo do plano**: campo calculado por soma sobre os itens do plano de aplicação filtrados por UF + número + ano.
-3. **Grupo C — divergência por ausência na origem antiga**: campo só existe no `banco-cache` (não estava extraído no nível do convênio na aba Geral).
-4. **Grupo D — divergência por fonte Transferegov atualizada**: campo existe na aba Geral, mas o `banco-cache` agora traz o valor capturado na tela pública atual do Transferegov.
-5. **Grupo E — divergência que exige validação humana**: casos isolados de divergência monetária alta que exigem análise individual.
+3. **Grupo C — divergência por ausência na origem antiga**: campo só existe no `banco-cache` ou não era extraído no nível do convênio na origem antiga.
+4. **Grupo D — divergência temporal esperada por fonte Transferegov atualizada**: campo existe na aba `Geral`, mas o `banco-cache` traz o valor atual capturado na tela pública do Transferegov.
+5. **Grupo E — divergência que exige validação humana**: casos isolados sem justificativa técnica suficiente.
 
 ## 3. Diagnóstico
 
@@ -103,15 +103,15 @@ Total: 15 convênios divergentes.
 
 | Campo | Origem antiga | Origem nova | Tipo de divergência | Convênios | Classificação | Bloqueia ativação? | Providência recomendada |
 | --- | --- | --- | --- | ---: | --- | --- | --- |
-| `quantidadeTa` | aba Geral (coluna 6, manual) | DETRU/cache (`QTD_TA`) | `divergente` | 15 | aceitável — fonte oficial DETRU | não | Aceitar valor DETRU; documentar diferença de critério (DETRU conta total de TA assinados, planilha pode contar parciais) |
-| `valorGlobal` | aba Geral (coluna 8, manual) | DETRU/cache (`VL_GLOBAL_CONV`) | `divergente` | 1 (937468/TO) | aceitável — fonte oficial DETRU | não | Aceitar DETRU. Diferença R$ 21.868 = valor de TA não refletido na planilha |
-| `valorRepasse` | aba Geral (coluna 9, manual) | DETRU/cache (`VL_REPASSE_CONV`) | `divergente` | 1 (937782/AC) | aceitável — fonte oficial DETRU | não | Aceitar DETRU. Diferença R$ 5.993,71 = ajuste de repasse não refletido na planilha |
-| `rendimentoAprovado` | aba Geral (coluna 12, manual) | DETRU/cache (`VL_RENDIMENTO_APLICACAO`) | `divergente` | 1 (937468/TO) | aceitável — fonte oficial DETRU | não | Aceitar DETRU. Antigo=0, Novo=R$ 21.868 (rendimento aprovado e registrado oficialmente) |
-| `valorExecutadoGeral` | aba Geral (coluna 17, manual) | soma `valorExecutado` do plano filtrado por UF+nº+ano | `divergente` | 1 (937698/MT) | aceitável — cálculo do plano | não | Aceitar cálculo. Antigo=R$ 26.067,41 (desatualizado); Novo=R$ 337.453,87 (soma real dos 12 itens do plano MT) |
-| `saldoResidualCapital` | aba Geral (coluna 14, manual) | soma `saldo` dos itens do plano com natureza=CAPITAL | `divergente` | 14 | aceitável — cálculo do plano | não | Aceitar cálculo. Aba Geral tinha valores manuais antigos, frequentemente zerados ou negativos; novo reflete saldo real por natureza |
-| `saldoResidualCusteio` | aba Geral (coluna 15, manual) | soma `saldo` dos itens do plano com natureza=CUSTEIO | `divergente` | 12 | aceitável — cálculo do plano | não | Aceitar cálculo. Mesmo critério do `saldoResidualCapital` |
-| `execucaoGeralPercentual` | **não extraído** no nível do convênio em `extrairProfor2022DoWorkbook` | `valorExecutado/valorPrevisto*100` calculado do plano | `ausente_antigo` | 15 | não bloqueante — campo novo calculado | não | Ignorar diferença. Antigo retorna `null` simplesmente porque o campo nunca foi extraído da aba Geral no nível do convênio. Opcionalmente, adicionar extração futura para reduzir ruído de comparação |
-| `saldoRendimentosAtual` | aba Geral (coluna 13, manual atualizado periodicamente) | cache Transferegov populado pela tela pública de Rendimento de Aplicação | `divergente` | 15 | pendência de governança — fonte atualizada | **parcial (sim)** | A fonte técnica deste campo é o **Transferegov Acesso Livre**, na tela de Rendimento de Aplicação, após posicionar sessão no convênio (consulta por `numeroConvenio` → `idConvenio` → seleção do instrumento → tela final). Em 18/05/2026 o fluxo foi automatizado no modo local/API e o cache foi populado para 15/15 convênios. A divergência restante é entre valor manual da aba `Geral` e saldo atual capturado no Transferegov. DETRU **não** é fonte deste campo. Ver seção 5.5 |
+| `quantidadeTa` | aba Geral (coluna 6, manual) | DETRU/cache (`QTD_TA`) | `divergente` | 15 | aceitável — fonte oficial DETRU | não | Aceitar valor DETRU; documentar diferença de critério (DETRU conta total de TA assinados, planilha pode contar parciais). |
+| `valorGlobal` | aba Geral (coluna 8, manual) | DETRU/cache (`VL_GLOBAL_CONV`) | `divergente` | 1 (937468/TO) | aceitável — fonte oficial DETRU | não | Aceitar DETRU. Diferença de R$ 21.868,00 indica atualização oficial não refletida na planilha. |
+| `valorRepasse` | aba Geral (coluna 9, manual) | DETRU/cache (`VL_REPASSE_CONV`) | `divergente` | 1 (937782/AC) | aceitável — fonte oficial DETRU | não | Aceitar DETRU. Diferença de R$ 5.993,71 indica ajuste de repasse não refletido na planilha. |
+| `rendimentoAprovado` | aba Geral (coluna 12, manual) | DETRU/cache (`VL_RENDIMENTO_APLICACAO`) | `divergente` | 1 (937468/TO) | aceitável — fonte oficial DETRU | não | Aceitar DETRU. Antigo=0, novo=R$ 21.868,00 (rendimento aprovado e registrado oficialmente). |
+| `valorExecutadoGeral` | aba Geral (coluna 17, manual) | soma `valorExecutado` do plano filtrado por UF+nº+ano | `divergente` | 1 (937698/MT) | aceitável — cálculo do plano | não | Aceitar cálculo. Antigo=R$ 26.067,41; novo=R$ 337.453,87 (soma dos itens do plano MT). |
+| `saldoResidualCapital` | aba Geral (coluna 14, manual) | soma `saldo` dos itens do plano com natureza=CAPITAL | `divergente` | 14 | aceitável — cálculo do plano | não | Aceitar cálculo. Aba Geral trazia valores manuais antigos, frequentemente zerados ou negativos; novo reflete saldo por natureza. |
+| `saldoResidualCusteio` | aba Geral (coluna 15, manual) | soma `saldo` dos itens do plano com natureza=CUSTEIO | `divergente` | 12 | aceitável — cálculo do plano | não | Aceitar cálculo. Mesmo critério do `saldoResidualCapital`. |
+| `execucaoGeralPercentual` | **não extraído** no nível do convênio em `extrairProfor2022DoWorkbook` | `valorExecutado/valorPrevisto*100` calculado do plano | `ausente_antigo` | 15 | não bloqueante — campo novo calculado | não | Ignorar diferença. Antigo retorna `null` porque o campo não era extraído da aba Geral no nível do convênio. |
+| `saldoRendimentosAtual` | aba Geral (coluna 13, manual; retrato de data anterior) | cache Transferegov populado pela tela pública atual de Rendimento de Aplicação | `divergente` | 15 | aceitável — divergência temporal esperada | **não** | Aceitar como atualização de fonte. O saldo de rendimentos é dinâmico e pode mudar quase diariamente. A divergência com a planilha indica defasagem temporal do valor manual antigo, não erro técnico do `banco-cache`. Exibir fonte e data/hora da captura na interface/relatório. |
 
 ### 4.1. Resumo dos grupos
 
@@ -120,52 +120,62 @@ Total: 15 convênios divergentes.
 | **A — DETRU oficial** | `quantidadeTa`, `valorGlobal`, `valorRepasse`, `rendimentoAprovado` | 15 (em ao menos 1 campo) | aceitável | não |
 | **B — Cálculo do plano** | `valorExecutadoGeral`, `saldoResidualCapital`, `saldoResidualCusteio` | 14 | aceitável | não |
 | **C — Ausente na origem antiga** | `execucaoGeralPercentual` | 15 | não bloqueante | não |
-| **D — Transferegov atualizado** | `saldoRendimentosAtual` | 15 | pendência de governança | **parcial** |
+| **D — Transferegov atualizado** | `saldoRendimentosAtual` | 15 | aceitável — divergência temporal esperada | **não** |
 | **E — Validação humana** | nenhum caso identificado | 0 | — | — |
 
-**Nenhuma divergência foi classificada como erro provável.** Todas as 75 ocorrências estão tecnicamente justificadas pela arquitetura definida nos blocos 14–18 e pela correção do fluxo Transferegov em 18/05/2026 (DETRU como fonte oficial + cálculo do plano + saldo de rendimento capturado no Transferegov público).
+**Nenhuma divergência foi classificada como erro provável.** Todas as 75 ocorrências estão tecnicamente justificadas pela arquitetura definida: DETRU como fonte oficial, cálculo interno do plano e saldo de rendimento atual capturado no Transferegov público.
 
 ## 5. Recomendações técnicas
 
-### 5.1. Opção 1 — Não ativar `banco-cache` (status quo)
+### 5.1. Opção 1 — Manter `planilha` como origem padrão (status quo)
 
-**Quando aplicar**: se a governança não autorizar trocar o valor manual da aba `Geral` pelo saldo atual capturado no Transferegov público.
+**Quando aplicar**: se a ONASP optar por adiar a virada de origem por razões operacionais, comunicação interna ou validação visual adicional.
 
-**Consequência**: a origem `planilha` continua única; os caches DETRU e Transferegov ficam disponíveis apenas para consultas administrativas/locais, sem impacto visual; o trabalho dos blocos 11–18 e da correção de 18/05/2026 fica em modo de prontidão.
+**Consequência**: a origem `planilha` continua única para a interface padrão; os caches DETRU e Transferegov permanecem disponíveis para consultas administrativas/locais, mas sem impacto visual padrão.
 
-### 5.2. Opção 2 — Ativar `banco-cache` parcialmente
+### 5.2. Opção 2 — Ativar `banco-cache` como origem padrão controlada
 
-**Quando aplicar**: se a governança aceitar os saldos atuais capturados no Transferegov como fonte do campo `saldoRendimentosAtual`, mesmo que divirjam dos valores manuais da aba `Geral`.
+**Quando aplicar**: recomendada quando a equipe aceitar que campos oficiais/atualizados devem prevalecer sobre os valores manuais antigos da aba `Geral`.
 
-**Implementação futura sugerida** (não implementar agora):
-- Tornar `PROFOR_2022_ORIGEM_DADOS=banco-cache` o padrão.
-- Garantir que o frontend mostre aviso técnico discreto de origem: "Saldo de rendimentos capturado no Transferegov Acesso Livre."
-- Manter a rota e o botão de atualização DETRU para refresco diário.
+**Justificativa técnica**:
 
-**Risco**: usuários podem estranhar diferenças frente à planilha antiga. Aviso de origem e comunicação operacional mitigam, mas não eliminam a necessidade de validação.
+- DETRU é fonte oficial para dados cadastrais e financeiros do convênio.
+- O plano de aplicação filtrado por UF + número + ano permite cálculo interno auditável.
+- O Transferegov Acesso Livre fornece o saldo atual de rendimentos, campo dinâmico cuja divergência com a planilha é temporal e esperada.
+
+**Implementação futura sugerida**:
+
+- Tornar `PROFOR_2022_ORIGEM_DADOS=banco-cache` o padrão no ambiente local/API.
+- Garantir aviso técnico discreto de origem para `saldoRendimentosAtual`: "Saldo de rendimentos capturado no Transferegov Acesso Livre em [data/hora]. Valor sujeito a alteração conforme movimentação financeira do convênio."
+- Manter rollback imediato para `PROFOR_2022_ORIGEM_DADOS=planilha`.
+- Não publicar estaticamente antes de validação visual local.
+
+**Risco**: usuários podem estranhar diferenças frente à planilha antiga. O aviso de fonte, a data de captura e a comunicação operacional mitigam esse risco.
 
 ### 5.3. Opção 3 — Ativar `banco-cache` com composição híbrida
 
-**Quando aplicar**: se for tecnicamente seguro manter apenas `saldoRendimentosAtual` vindo da aba Geral enquanto os demais campos vêm do `banco-cache`. **Avaliar; não implementar agora.**
+**Quando aplicar**: não recomendada, salvo decisão excepcional.
 
-**Custo arquitetural**: cria uma terceira origem efetiva (híbrida `banco-cache` + planilha por campo), aumenta complexidade do `dashboard-publication-service.js`, gera dependência continuada da planilha como fonte de campo único, e dilui a clareza do mapeamento "uma origem por consolidado".
+**Custo arquitetural**: cria uma terceira origem efetiva (híbrida `banco-cache` + planilha por campo), aumenta complexidade do `dashboard-publication-service.js`, mantém dependência continuada da planilha para campo único e enfraquece a rastreabilidade.
 
-**Recomendação interna**: evitar. Se necessário, preferir Opção 2 com cache importado manualmente quando houver janela de tempo, ou Opção 4 com validação humana periódica.
+**Recomendação interna**: evitar. Preferir Opção 2 com aviso de origem e rollback.
 
-### 5.4. Opção 4 — Validação humana dos campos divergentes (governança)
+### 5.4. Opção 4 — Validação humana dos campos divergentes
 
-**Quando aplicar**: se a governança não aceitar trocar valores manuais por DETRU oficial e cálculo do plano sem revisão caso a caso.
+**Quando aplicar**: se a governança quiser revisar caso a caso antes de trocar valores manuais por DETRU oficial, cálculo do plano e Transferegov atualizado.
 
-**Procedimento sugerido** (operacional, não código):
-1. Revisor compara cada um dos 15 convênios entre `planilha` e `banco-cache` usando a saída atual de `/api/profor-2022/comparar-origens`.
-2. Para cada campo divergente, registra-se decisão (manter antigo / aceitar novo / ajustar planilha) em ata.
-3. Após aprovação, planilha é atualizada para refletir DETRU oficial (campos A) e o cálculo do plano (campos B).
-4. Reexecuta-se a comparação até `totalIguais` ≈ 15.
-5. Após convergência, opção 2 ou ativação plena passa a ser segura.
+**Procedimento sugerido**:
+
+1. Revisor compara cada um dos 15 convênios entre `planilha` e `banco-cache` usando `/api/profor-2022/comparar-origens`.
+2. Para cada campo divergente, registra-se decisão (aceitar novo / manter antigo / ajustar planilha) em ata ou registro técnico.
+3. Após aprovação, a planilha pode ser atualizada para refletir a nova origem ou mantida apenas como fallback histórico.
+4. A ativação pode ocorrer com rollback por variável de ambiente.
 
 ### 5.5. Situação específica do Grupo D (`saldoRendimentosAtual`)
 
-A fonte oficial e única do campo é a **tela de Rendimento de Aplicação do Transferegov Acesso Livre**, acessada após posicionar sessão pública no convênio (consulta por `numeroConvenio` → extrair `idConvenio` → selecionar instrumento → ler tela final). Esta é a estratégia correta; DETRU **não** substitui esse campo.
+A fonte operacional correta do campo é a **tela de Rendimento de Aplicação do Transferegov Acesso Livre**, acessada após posicionar sessão pública no convênio (consulta por `numeroConvenio` → extrair `idConvenio` → selecionar instrumento → ler tela final). DETRU **não** substitui esse campo.
+
+O campo `saldoRendimentosAtual` tem natureza dinâmica. Ele representa o saldo disponível no Transferegov em determinada data de referência e pode variar conforme movimentações financeiras, aprovações, uso de rendimento, atualização bancária ou registro sistêmico. A aba `Geral` contém valor manual e, por definição, pode estar defasada em relação à tela pública atual.
 
 Estado em 18/05/2026: o fluxo foi implementado no cliente local/API. O cliente tenta primeiro HTTP público com cookie jar em memória; quando o IdP/SAML impede o cliente HTTP simples, usa fallback local com Playwright/Chromium já disponível no projeto para reproduzir sessão pública Acesso Livre de navegador, sem login, senha, gov.br, captcha, certificado, cookies do HAR ou persistência de cookies.
 
@@ -176,37 +186,41 @@ Validações executadas:
 3. `npm run atualizar:rendimentos-profor`: 15 convênios consultados, 15 sucessos, 0 falhas.
 4. `/api/profor-2022/consolidado`: `totalComRendimentos=15`.
 
-Pendência remanescente:
+Conclusão atualizada:
 
-- Validar se os saldos atuais capturados no Transferegov devem substituir os valores manuais antigos da aba `Geral`.
-- Confirmar se o fallback local com Playwright/Chromium é aceito como mecanismo operacional de atualização em ambiente local/API.
-- Manter `banco-cache` fora do padrão até decisão de governança.
+- A divergência de `saldoRendimentosAtual` com a aba `Geral` **não bloqueia tecnicamente** a ativação.
+- A divergência deve ser classificada como **temporal esperada**, pois a nova origem captura valor atual do Transferegov.
+- A providência correta é exibir fonte e data/hora de captura, não tentar igualar a planilha.
+- A ativação de `banco-cache` passa a depender de validação visual/operacional e comunicação, não de correção técnica do campo.
 
-**Não recomendadas**:
-- Composição híbrida campo a campo (Opção 3 da seção 5): aumenta complexidade arquitetural.
-- DETRU como fonte do campo: o SICONV não traz `saldoRendimentosAtual`; traz apenas `VL_RENDIMENTO_APLICACAO` (rendimento aprovado, campo distinto que já é coberto pelo Grupo A).
+Não recomendadas:
+
+- Composição híbrida campo a campo.
+- DETRU como fonte de `saldoRendimentosAtual`.
+- Correção manual para forçar igualdade com a planilha.
 
 ## 6. Critérios para ativação futura do `banco-cache`
 
-A ativação como origem padrão (`PROFOR_2022_ORIGEM_DADOS=banco-cache`) só deve ocorrer quando **todos** os critérios abaixo forem atendidos:
+A ativação como origem padrão (`PROFOR_2022_ORIGEM_DADOS=banco-cache`) pode ser considerada tecnicamente apta quando os critérios abaixo forem atendidos:
 
 1. ✅ DETRU populado para os 15 convênios da carteira (`totalComDetru = 15`).
 2. ✅ Plano de aplicação casando para os 15 convênios (`totalComPlano = 15`).
 3. ✅ Cache Transferegov/rendimentos populado para os 15 convênios (`totalComRendimentos = 15`).
-4. ⚠️ Decisão de governança formalizada sobre divergências do Grupo A (DETRU): aceitar `quantidadeTa`, `valorGlobal`, `valorRepasse`, `rendimentoAprovado` da fonte oficial.
-5. ⚠️ Decisão de governança formalizada sobre divergências do Grupo B (Cálculo do plano): aceitar `saldoResidualCapital`, `saldoResidualCusteio`, `valorExecutadoGeral` calculados.
-6. ⚠️ Decisão de governança formalizada sobre divergências do Grupo D (Transferegov): aceitar saldos atuais capturados frente aos valores manuais antigos.
-7. ⚠️ (Recomendado) Validação visual no modo local/API antes da publicação estática.
-8. ⚠️ (Recomendado) Comunicar usuários da SENAPPEN/ONASP sobre mudança de origem antes da virada, para evitar interpretações equivocadas dos novos valores.
+4. ✅ Divergências do Grupo A justificadas por fonte oficial DETRU.
+5. ✅ Divergências do Grupo B justificadas por cálculo interno do plano.
+6. ✅ Divergências do Grupo D justificadas por atualização temporal do Transferegov.
+7. ⚠️ Validação visual no modo local/API antes de publicação estática.
+8. ⚠️ Comunicação operacional aos usuários da ONASP/SENAPPEN sobre mudança de origem, especialmente para valores de rendimentos.
+9. ⚠️ Exibição de fonte/data de captura para `saldoRendimentosAtual` na interface ou relatório, quando disponível no objeto consolidado.
 
-Status em 17/05/2026:
-- Critérios técnicos (1, 2 e 3): ✅ atendidos.
-- Critérios de governança (4–6): ⚠️ pendentes.
-- Critérios operacionais (7 e 8): ⚠️ a executar quando a governança decidir.
+Status em 18/05/2026:
+
+- Critérios técnicos (1–6): ✅ atendidos.
+- Critérios operacionais/comunicação (7–9): ⚠️ a executar antes da virada definitiva/publicação.
 
 ## 7. Rollback
 
-A ativação futura do `banco-cache` é totalmente reversível por configuração:
+A ativação futura do `banco-cache` é reversível por configuração:
 
 ```text
 PROFOR_2022_ORIGEM_DADOS=planilha
@@ -221,5 +235,6 @@ Em caso de falha pontual do `banco-cache` após ativação, o serviço `dashboar
 | Data | Evento |
 | --- | --- |
 | 17/05/2026 | Criação do documento. Diagnóstico inicial das 15 divergências e classificação em Grupos A–E. Recomendação: aguardar decisão de governança antes de ativar `banco-cache`. Nenhuma alteração de código nesta etapa. |
-| 17/05/2026 | Grupo D corrigido: fonte oficial de `saldoRendimentosAtual` é Transferegov Acesso Livre (consulta por número → idConvenio → seleção do instrumento → tela de rendimento), **não** DETRU nem importação manual como solução principal. Sondagem técnica revelou bloqueio SAML/SSO no IdP do Transferegov para clientes HTTP simples; implementação automatizada pendente de evidências (HAR/HTML) do usuário. Seção 5.5 reorganizada com nova ordem de preferência das alternativas. |
-| 18/05/2026 | Grupo D atualizado: fluxo público Transferegov implementado no cliente local/API com cookie jar em memória e fallback público Playwright/Chromium. Cache populado para 15/15 convênios; `totalComRendimentos=15`. Divergência remanescente passa a ser governança entre saldo manual da aba `Geral` e saldo atual capturado na tela pública. |
+| 17/05/2026 | Grupo D corrigido: fonte operacional de `saldoRendimentosAtual` é Transferegov Acesso Livre (consulta por número → idConvenio → seleção do instrumento → tela de rendimento), **não** DETRU nem importação manual como solução principal. Sondagem técnica inicial revelou bloqueio SAML/SSO no IdP do Transferegov para clientes HTTP simples; implementação automatizada dependente de HAR/HTML do usuário. |
+| 18/05/2026 | Grupo D atualizado: fluxo público Transferegov implementado no cliente local/API com cookie jar em memória e fallback público Playwright/Chromium. Cache populado para 15/15 convênios; `totalComRendimentos=15`. Divergência remanescente passou a ser entre valor manual da aba `Geral` e saldo atual capturado na tela pública. |
+| 18/05/2026 | Grupo D reclassificado: `saldoRendimentosAtual` passou de bloqueio parcial para divergência temporal esperada. Como o saldo de rendimentos é dinâmico e pode mudar quase diariamente, a divergência com a planilha manual não é erro técnico e não bloqueia a ativação; exige exibição de fonte/data de captura e comunicação operacional. |
