@@ -1,5 +1,107 @@
 # Diário de bordo
 
+## 17/05/2026 - Sondagem do fluxo público Transferegov — bloqueio SAML confirmado
+
+- Branch atual: `main`.
+- Objetivo: implementar a captura automática de `saldoRendimentosAtual` via fluxo público do Transferegov Acesso Livre, conforme conceito validado pelo usuário (consultar por `numeroConvenio` → extrair `idConvenio` → selecionar instrumento → ler tela de rendimentos).
+- Escopo: executor técnico conservador; testar com convênio de referência 880892 antes de qualquer alteração; preservar o cliente atual se a sondagem falhar.
+- Status: ⛔ **FLUXO BLOQUEADO POR SAML — nenhuma alteração de código realizada**.
+
+### Sondagem técnica executada (5 scripts temporários locais)
+
+**Convênio de referência**: 880892 (esperado `idConvenio=732378`, saldo R$ 131.799,75).
+
+URLs testadas:
+
+1. `https://discricionarias.transferegov.sistema.gov.br/voluntarias/ConsultarProposta/ConsultarProposta.do?Usr=guest&Pwd=guest`
+2. `https://discricionarias.transferegov.sistema.gov.br/voluntarias/ConsultarProposta/PreenchaOsDadosDaConsultaConsultar.do?tipo_consulta=CONSULTA_COMPLETA`
+3. `https://discricionarias.transferegov.sistema.gov.br/voluntarias/ForwardAction.do?modulo=Principal&path=/MostraPrincipalConsultarConvenio.do&Usr=guest&Pwd=guest`
+4. `https://discricionarias.transferegov.sistema.gov.br/voluntarias/ForwardAction.do?modulo=Principal&path=/MostraPrincipalConsultarProposta.do&Usr=guest&Pwd=guest`
+5. Variantes adicionais (`AcessoLivre.do`, `login/login.do`, etc.).
+
+Em **todas** as URLs, o comportamento foi idêntico:
+
+```
+GET /voluntarias/.../...?Usr=guest&Pwd=guest
+  → 200 OK, HTML 3.469 bytes, título "HTTP Post Binding (Request)"
+  → auto-submit POST SAMLRequest para https://idp.transferegov.sistema.gov.br/idp/
+  → 401 Unauthorized, HTML 12.838 bytes, título "Login do Transferegov"
+```
+
+Resultados detalhados:
+
+| Etapa | Status | URL final | Observação |
+| --- | --- | --- | --- |
+| GET URL pública qualquer | 200 | SP-initiated SAML request | retorna formulário auto-submit (POST binding) para o IdP |
+| POST SAMLRequest no IdP | 401 | `idp.transferegov.sistema.gov.br/idp/` | retorna tela "Login do Transferegov" com botões "Entrar com gov.br" e "Acesso livre" |
+| Link "Acesso livre" | 200 | `gov.br/transferegov/pt-br/sistemas/acesso-livre` | página informativa do portal, lista os mesmos endereços `ForwardAction.do?...&Usr=guest&Pwd=guest` (ciclo) |
+| POST consulta `numeroConvenio=880892` | 200 | tela de Login | mesma cadeia SAML, termina sem sessão |
+
+### Causa raiz
+
+O IdP do Transferegov (`idp.transferegov.sistema.gov.br/idp/`) **não autoriza mais** o fluxo guest direto via SAML SP-initiated quando recebido por cliente HTTP simples. O User-Agent foi testado tanto com identificador institucional (`ONASP-SENAPPEN-FOMENTO/1.0`) quanto com User-Agent de navegador real (Chrome 120) — comportamento idêntico. O acesso público "Acesso livre" passou a depender de algum estado adicional (provavelmente cookies de sessão estabelecidos por JavaScript do portal, ou fluxo de navegador interativo) que o `fetch` não reproduz.
+
+A inspeção que o usuário realizou anteriormente (caminho 880892 → 732378 → R$ 131.799,75) **funcionou em navegador interativo** mas **não é reproduzível por HTTP simples** no estado atual do site. Não houve evidência de bloqueio por User-Agent ou rate-limit; o bloqueio é de fluxo SAML/sessão.
+
+### Decisão conservadora (executor técnico)
+
+**Nenhuma alteração de código** realizada nesta etapa:
+
+- `backend/services/profor-2022/transferegov-rendimentos-client.js` — preservado. Já retorna erro controlado `"Sessão pública do convênio não estabelecida."` quando o HTML final não inclui o número do convênio, que é exatamente o que ocorre na sondagem.
+- `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js` — preservado.
+- `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` — preservado.
+- Cache continua vazio (`profor_transferegov_rendimentos_cache` com 0 registros).
+- `totalComRendimentos` permanece **0**.
+
+A regra absoluta foi respeitada: **não burlar Transferegov, não usar login/senha/captcha/certificado/área restrita, não inventar endpoint**. Como nenhum dos endereços indicados estabelece sessão por HTTP simples, parei na FASE 3 conforme orientação ("Se não conseguir confirmar o fluxo público, pare e documente exatamente em qual etapa falhou.").
+
+### Solicitação ao usuário (próxima etapa)
+
+Para destravar a implementação, é necessário um dos seguintes itens, fornecido pelo usuário:
+
+1. **HAR completo** (ou exportado pelo DevTools do navegador) da consulta bem-sucedida de `880892`, do primeiro GET até a página final de rendimentos. Sem cookies sensíveis pode ser difícil — alternativa: HAR sanitizado ou screenshot das requisições principais com URL, método, status, headers de resposta (especialmente `Set-Cookie`) e payload do POST.
+2. **HTML da resposta** logo após o POST de `numeroConvenio=880892`, junto com a URL exata acionada e a sequência de cookies enviada (pode ser anonimizada, mas precisa indicar quais cookies são necessários para o IdP autorizar).
+3. **URL exata e payload** acionados ao clicar/acessar o instrumento `idConvenio=732378` na tela de listagem.
+4. **HTML da tela final** de rendimento depois da seleção do instrumento (para confirmar que o parser existente `extrairSaldoRendimentosDoHtml()` continua válido).
+
+Sem um desses, **não há como implementar o fluxo automatizado** sem violar restrições absolutas (não usar credenciais, não burlar IdP).
+
+### Reafirmação de segurança
+
+- Código de produção: **não alterado**.
+- Frontend, `index.html`, `backend/data/aplicacao.json`, `.env`, `.env.example`, `backend/db/init-db.js`, `package.json`: **não alterados**.
+- JSONs publicados em `frontend/data/publicados/`: **não alterados**.
+- `npm run publicar:dados`: **não executado**.
+- `banco-cache`: **não ativado** (`PROFOR_2022_ORIGEM_DADOS=planilha` mantida).
+- Cookies/HTML bruto/HAR: **não versionados**. Cookies só permaneceram em memória durante as sondagens; todos os scripts temporários foram apagados.
+
+### Estado dos diagnósticos após sondagem
+
+| Métrica | Antes | Depois |
+| --- | ---: | ---: |
+| `totalComDetru` | 15 | 15 |
+| `totalComPlano` | 15 | 15 |
+| `totalComRendimentos` | 0 | **0** (inalterado — sem dados novos) |
+| `totalComDivergencia` | 15 | 15 |
+| Cache Transferegov | 0 registros | 0 registros (inalterado) |
+| Consultas Transferegov registradas | 0 | 0 (inalterado) |
+
+### Arquivos alterados nesta etapa
+
+| Arquivo | Mudança |
+| --- | --- |
+| `memoria/00_DIARIO_DE_BORDO/diario-atual.md` | nova entrada com sondagem e bloqueio SAML |
+| `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md` | Grupo D corrigido (Transferegov Acesso Livre como fonte oficial; DETRU não é fonte principal; importação manual rebaixada) |
+| `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` | seção 13.4 atualizada (bloqueio SAML documentado) |
+
+### Próximas pendências
+
+1. **Bloqueante**: aguardar HAR/HTML/URLs do usuário para reabrir a investigação do fluxo público Transferegov.
+2. **Alternativa de operação manual**: até a automação ser viável, considerar importação periódica controlada de saldos exportados manualmente pelo responsável (procedimento operacional, não código).
+3. **Decisão de governança**: avaliar se `saldoRendimentosAtual = null` com aviso de UI é aceitável para ativar `banco-cache` (Opção 2 do `profor-2022-divergencias.md`).
+
+---
+
 ## 17/05/2026 - Classificação das 15 divergências planilha × banco-cache (Grupos A–E)
 
 - Branch atual: `main`.

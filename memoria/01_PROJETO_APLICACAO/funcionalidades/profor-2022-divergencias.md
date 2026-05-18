@@ -111,7 +111,7 @@ Total: 15 convênios divergentes.
 | `saldoResidualCapital` | aba Geral (coluna 14, manual) | soma `saldo` dos itens do plano com natureza=CAPITAL | `divergente` | 14 | aceitável — cálculo do plano | não | Aceitar cálculo. Aba Geral tinha valores manuais antigos, frequentemente zerados ou negativos; novo reflete saldo real por natureza |
 | `saldoResidualCusteio` | aba Geral (coluna 15, manual) | soma `saldo` dos itens do plano com natureza=CUSTEIO | `divergente` | 12 | aceitável — cálculo do plano | não | Aceitar cálculo. Mesmo critério do `saldoResidualCapital` |
 | `execucaoGeralPercentual` | **não extraído** no nível do convênio em `extrairProfor2022DoWorkbook` | `valorExecutado/valorPrevisto*100` calculado do plano | `ausente_antigo` | 15 | não bloqueante — campo novo calculado | não | Ignorar diferença. Antigo retorna `null` simplesmente porque o campo nunca foi extraído da aba Geral no nível do convênio. Opcionalmente, adicionar extração futura para reduzir ruído de comparação |
-| `saldoRendimentosAtual` | aba Geral (coluna 13, manual atualizado periodicamente) | cache Transferegov (vazio) | `ausente_novo` | 15 | **bloqueante parcial — fonte ausente** | **parcial (sim)** | Não corrigir por suposição. Cache Transferegov depende de sessão pública do convênio (regra absoluta: sem login/senha/captcha/certificado). Ver alternativas na seção 5.4 |
+| `saldoRendimentosAtual` | aba Geral (coluna 13, manual atualizado periodicamente) | cache Transferegov (vazio) | `ausente_novo` | 15 | **bloqueante parcial — automação do fluxo público pendente** | **parcial (sim)** | A fonte oficial deste campo é o **Transferegov Acesso Livre**, na tela de Rendimento de Aplicação, após posicionar sessão no convênio (consulta por `numeroConvenio` → `idConvenio` → seleção do instrumento → tela final). A sondagem técnica de 17/05/2026 confirmou que o fluxo guest direto está atualmente bloqueado por SAML SSO no IdP do Transferegov (toda URL `Usr=guest&Pwd=guest` cai em tela de Login). Aguardando HAR/HTML do usuário para reabrir investigação. DETRU **não** é fonte deste campo. Ver seção 5.4 |
 
 ### 4.1. Resumo dos grupos
 
@@ -165,10 +165,20 @@ Total: 15 convênios divergentes.
 
 ### 5.5. Alternativas específicas para o Grupo D (`saldoRendimentosAtual`)
 
-1. **Manter `null` com aviso**: opção mais conservadora.
-2. **Manter origem `planilha` apenas para esse campo** (Opção 3): não recomendada — adiciona complexidade arquitetural.
-3. **Importação manual controlada**: criar rotina local que aceita CSV/JSON exportado manualmente do Transferegov pelo responsável, gravando no cache. Permite popular o cache sem burlar sessão; trabalho operacional recorrente.
-4. **Fonte pública alternativa**: pesquisar se a Plataforma +Brasil ou o Portal da Transparência publicam saldo de rendimentos. Requer pesquisa institucional formal, não diagnóstico técnico.
+A fonte oficial e única do campo é a **tela de Rendimento de Aplicação do Transferegov Acesso Livre**, acessada após posicionar sessão pública no convênio (consulta por `numeroConvenio` → extrair `idConvenio` → selecionar instrumento → ler tela final). Esta é a estratégia correta; DETRU **não** substitui esse campo.
+
+Estado em 17/05/2026 (após sondagem técnica): o fluxo guest está bloqueado por SAML SSO no IdP do Transferegov para clientes HTTP simples (toda URL `Usr=guest&Pwd=guest` retorna 401 e redireciona para a tela de Login, contendo apenas "Entrar com gov.br" e um link informativo de "Acesso livre" que aponta de volta ao mesmo ciclo). A inspeção que o usuário fez previamente em navegador interativo provavelmente dependeu de cookies/JS de sessão que não são reproduzíveis em chamada HTTP direta.
+
+Alternativas (em ordem de preferência):
+
+1. **(Principal) Reabrir investigação do fluxo público com evidências do usuário**: solicitar HAR sanitizado, HTML real após o POST `numeroConvenio=880892`, URL/payload de seleção do instrumento, e HTML da tela final. Sem essas evidências, o cliente automatizado não pode ser implementado sem violar regras absolutas (sem login, senha, certificado, área restrita, bypass).
+2. **(Provisório) Manter `null` com aviso de UI**: opção mais conservadora; permite ativar `banco-cache` (Opção 2) reconhecendo que o campo está indisponível.
+3. **(Operacional) Importação manual controlada**: rotina local que aceita CSV/JSON exportado manualmente pelo responsável da SENAPPEN, gravando no cache. Trabalho operacional recorrente, sem violar segurança. Útil como ponte enquanto o fluxo automático não é reaberto.
+4. **(Pesquisa institucional)** Verificar se a API pública do Transferegov.br (`gov.br/transferegov/pt-br/sobre/apis-integracao`) expõe o saldo de rendimento sem necessidade de SSO. Não confirmado nesta sondagem.
+
+**Não recomendadas**:
+- Composição híbrida campo a campo (Opção 3 da seção 5): aumenta complexidade arquitetural.
+- DETRU como fonte do campo: o SICONV não traz `saldoRendimentosAtual`; traz apenas `VL_RENDIMENTO_APLICACAO` (rendimento aprovado, campo distinto que já é coberto pelo Grupo A).
 
 ## 6. Critérios para ativação futura do `banco-cache`
 
@@ -204,3 +214,4 @@ Em caso de falha pontual do `banco-cache` após ativação, o serviço `dashboar
 | Data | Evento |
 | --- | --- |
 | 17/05/2026 | Criação do documento. Diagnóstico inicial das 15 divergências e classificação em Grupos A–E. Recomendação: aguardar decisão de governança antes de ativar `banco-cache`. Nenhuma alteração de código nesta etapa. |
+| 17/05/2026 | Grupo D corrigido: fonte oficial de `saldoRendimentosAtual` é Transferegov Acesso Livre (consulta por número → idConvenio → seleção do instrumento → tela de rendimento), **não** DETRU nem importação manual como solução principal. Sondagem técnica revelou bloqueio SAML/SSO no IdP do Transferegov para clientes HTTP simples; implementação automatizada pendente de evidências (HAR/HTML) do usuário. Seção 5.5 reorganizada com nova ordem de preferência das alternativas. |

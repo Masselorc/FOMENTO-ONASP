@@ -543,6 +543,7 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Bloco 19: validação operacional do cache DETRU | URL oficial configurada e download automático executado. Cache populado: 15/15 convênios encontrados. `totalComDetru` foi para 15. Sem alteração de código. |
 | 17/05/2026 | Bloco 20: diagnóstico do consolidado pós-DETRU | Esclarecido falso positivo de `totalComPlano=1` (era erro do script de relatório temporário, não do código). Endpoint real retorna `totalComPlano=15`. Diagnóstico Transferegov: cache vazio (0/15); cliente depende de sessão pública. Sem alteração de código. |
 | 17/05/2026 | Bloco 21: classificação das 15 divergências | Criada matriz de divergências em 5 grupos (A: DETRU oficial, B: cálculo do plano, C: campo novo calculado, D: cache Transferegov ausente, E: validação humana). Documento novo `profor-2022-divergencias.md` criado com matriz, opções de governança e critérios para ativação. Seção 13 adicionada a este documento. Sem alteração de código. |
+| 17/05/2026 | Bloco 22: sondagem do fluxo Transferegov Acesso Livre | Testadas 5 URLs públicas (`ConsultarProposta.do?Usr=guest`, `ForwardAction.do?...MostraPrincipalConsultarConvenio.do`, etc.) com convênio de referência 880892. Todas redirecionam via SAML para tela "Login do Transferegov" (401 no IdP). Fluxo guest direto bloqueado por SAML/SSO no IdP. Sem alteração de código de produção. Seção 13.4 reescrita; Grupo D corrigido no documento de divergências (Transferegov é fonte oficial, DETRU não é). Aguardando HAR/HTML do usuário para reabrir investigação. |
 
 ## 13. Critérios de aceitação da futura origem `banco-cache`
 
@@ -583,10 +584,27 @@ A matriz completa por campo e as quatro opções de governança (não ativar; at
 
 ### 13.4. Pendência específica do Transferegov
 
-`saldoRendimentosAtual` é a única pendência real (Grupo D). O cliente atual depende de sessão pública estabelecida e não pode ser corrigido sem violar regras absolutas (sem login, senha, captcha, certificado, área restrita, bypass). Alternativas avaliáveis:
+`saldoRendimentosAtual` é a única pendência real (Grupo D). A fonte oficial é o **Transferegov Acesso Livre**, na tela de Rendimento de Aplicação, após posicionar sessão pública no convênio. O fluxo conceitual é:
 
-1. Manter `null` com aviso de UI explícito.
-2. Importação manual controlada por CSV/JSON exportado pelo responsável.
-3. Pesquisar fonte pública alternativa institucional (+Brasil, Portal da Transparência).
+1. Consultar Pré-Instrumento/Instrumento por `numeroConvenio`.
+2. Extrair `idConvenio` da resposta.
+3. Acessar/selecionar o instrumento por `idConvenio` (mantendo cookies de sessão).
+4. Acessar a tela `ListarSolicitacaoRendimentosAplicacao.do` e extrair `valorDisponivelRendimento` (linha `tr-novaSolicitacaoValorDisponivelRendimento`).
 
-Não implementar nenhuma das alternativas sem decisão prévia.
+DETRU **não** é fonte deste campo. O SICONV traz `VL_RENDIMENTO_APLICACAO` (rendimento aprovado, Grupo A), que é diferente do saldo disponível atual de rendimentos.
+
+**Estado em 17/05/2026 (sondagem técnica)**:
+
+- O fluxo guest direto (`/voluntarias/ConsultarProposta/...?Usr=guest&Pwd=guest` ou `/voluntarias/ForwardAction.do?modulo=Principal&path=/MostraPrincipal...&Usr=guest&Pwd=guest`) está atualmente **bloqueado por SAML SSO** no IdP `idp.transferegov.sistema.gov.br/idp/`.
+- Toda chamada HTTP simples cai em: 200 com SAML SP-initiated → POST SAMLRequest no IdP → **401 Unauthorized** → tela "Login do Transferegov" com botões "Entrar com gov.br" (login real) ou "Acesso livre" (link informativo cíclico).
+- User-Agent institucional e User-Agent de navegador real (Chrome 120) testados: comportamento idêntico.
+- A implementação automatizada **não é possível por HTTP simples nesta data** sem violar regras absolutas (sem login, senha, certificado, área restrita, bypass).
+
+**Alternativas em ordem de preferência** (detalhadas em [`profor-2022-divergencias.md`](profor-2022-divergencias.md) seção 5.5):
+
+1. Aguardar evidências do usuário (HAR sanitizado, HTML real após POST) para reabrir a investigação do fluxo público.
+2. (Provisório) Manter `null` com aviso de UI explícito até a automação ser viável.
+3. (Operacional) Importação manual controlada via CSV/JSON exportado pelo responsável.
+4. (Pesquisa institucional) Verificar APIs públicas de integração Transferegov.br.
+
+Não implementar nenhuma alternativa sem decisão prévia.
