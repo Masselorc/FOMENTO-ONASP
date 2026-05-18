@@ -2299,3 +2299,16 @@ oute.fetch() + mutação em memória do payload retornado.
 - Confirmação: `npm run publicar:dados` não foi executado.
 - Risco de regressão: baixo; alteração documental.
 - Rollback: `git revert <hash_do_commit>` após commit/push.
+
+## 18/05/2026 - Logs operacionais da atualização PROFOR 2022
+
+- Branch atual: `main`.
+- Objetivo: registrar fluxos operacionais de consulta de rendimentos Transferegov e consolidado PROFOR 2022, sem alterar frontend, publicação estática, schema ou arquitetura.
+- Arquivos alterados: `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js`, `backend/services/profor-2022/profor-atualizacao-consolidada-service.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`.
+- Novos campos de log em rendimentos: `totalFetchPublico`, `totalPlaywrightPublico`, `totalSemFluxo`, `fluxosPorConvenio`, `duracaoMsTotal`, `tempoMedioMsPorConvenio`.
+- Resultado de `npm run atualizar:rendimentos-profor`: 15 consultados, 15 sucesso, 0 falha, `fetch-publico = 0`, `playwright-publico = 15`, `sem-fluxo = 0`, duração total aproximada de 98s no primeiro ciclo validado.
+- Resultado de `npm run atualizar:profor-2022`: DETRU 15/15, rendimentos 15/15, consolidado 15/15/15, `fetch-publico = 0`, `playwright-publico = 15`, `sem-fluxo = 0`, `sucessoGeral = true`, `totalAvisos = 0`, `totalErros = 0`, duração total aproximada de 91s no ciclo consolidado validado.
+- Confirmação: não houve publicação de dados estáticos.
+- Confirmação: nenhum JSON publicado foi alterado.
+- Risco de regressão: baixo; alteração restrita a logs operacionais e resumo de execução.
+- Rollback: `git revert <hash_do_commit>` após commit/push.

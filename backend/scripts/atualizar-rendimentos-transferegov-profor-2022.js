@@ -17,6 +17,15 @@ function aguardar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function extrairFluxoConsultaRendimentos(resultado) {
+  return (
+    resultado?.payload?.fluxo ??
+    resultado?.payload?.payload?.fluxo ??
+    resultado?.fluxo ??
+    "sem-fluxo"
+  );
+}
+
 function montarFalha(convenio, resultado) {
   return {
     numeroConvenio: convenio.numeroConvenio,
@@ -31,10 +40,15 @@ async function executar() {
   inicializarBanco();
 
   const convenios = listarConveniosMonitorados({ incluirInativos: false });
+  const inicioExecucao = Date.now();
   const idConsulta = registrarConsultaRendimentosInicio({
     totalCarteiraAtiva: convenios.length,
   });
   const falhas = [];
+  const fluxosPorConvenio = [];
+  let totalFetchPublico = 0;
+  let totalPlaywrightPublico = 0;
+  let totalSemFluxo = 0;
   let totalSucesso = 0;
 
   try {
@@ -45,6 +59,24 @@ async function executar() {
         ano: convenio.ano ?? null,
         uf: convenio.uf ?? null,
       };
+      const fluxo = extrairFluxoConsultaRendimentos(resultadoComCarteira);
+
+      fluxosPorConvenio.push({
+        numeroConvenio: convenio.numeroConvenio,
+        ano: convenio.ano ?? null,
+        uf: convenio.uf ?? null,
+        fluxo,
+        sucesso: Boolean(resultadoComCarteira.sucesso),
+        etapa: resultadoComCarteira.etapa ?? null,
+      });
+
+      if (fluxo === "fetch-publico") {
+        totalFetchPublico += 1;
+      } else if (fluxo === "playwright-publico") {
+        totalPlaywrightPublico += 1;
+      } else {
+        totalSemFluxo += 1;
+      }
 
       if (resultadoComCarteira.sucesso) {
         salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
@@ -64,6 +96,14 @@ async function executar() {
       totalConsultados: convenios.length,
       totalSucesso,
       totalFalha: falhas.length,
+      totalFetchPublico,
+      totalPlaywrightPublico,
+      totalSemFluxo,
+      fluxosPorConvenio,
+      duracaoMsTotal: Date.now() - inicioExecucao,
+      tempoMedioMsPorConvenio: convenios.length
+        ? Math.round((Date.now() - inicioExecucao) / convenios.length)
+        : 0,
       falhas,
     };
 
@@ -74,6 +114,11 @@ async function executar() {
     console.log(`Consultados:        ${resumo.totalConsultados}`);
     console.log(`Sucesso:            ${resumo.totalSucesso}`);
     console.log(`Falha:              ${resumo.totalFalha}`);
+    console.log(`Fluxo fetch-publico:      ${resumo.totalFetchPublico}`);
+    console.log(`Fluxo playwright-publico: ${resumo.totalPlaywrightPublico}`);
+    console.log(`Fluxo nao identificado:   ${resumo.totalSemFluxo}`);
+    console.log(`Duracao total (ms):     ${resumo.duracaoMsTotal}`);
+    console.log(`Tempo medio por convênio: ${resumo.tempoMedioMsPorConvenio}`);
     if (falhas.length) {
       console.log("Falhas:");
       falhas.forEach((falha) => {

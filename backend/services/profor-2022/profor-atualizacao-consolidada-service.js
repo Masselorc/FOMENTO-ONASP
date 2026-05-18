@@ -30,6 +30,15 @@ function aguardar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function extrairFluxoConsultaRendimentos(resultado) {
+  return (
+    resultado?.payload?.fluxo ??
+    resultado?.payload?.payload?.fluxo ??
+    resultado?.fluxo ??
+    "sem-fluxo"
+  );
+}
+
 function carregarCatalogoAplicacaoLocal() {
   return JSON.parse(fs.readFileSync(CATALOGO_APLICACAO_PATH, "utf8"));
 }
@@ -100,10 +109,15 @@ async function executarEtapaRendimentos(opcoes = {}) {
     const intervaloMs = Number.isFinite(opcoes.intervaloEntreConsultasMs)
       ? Math.max(0, opcoes.intervaloEntreConsultasMs)
       : INTERVALO_RENDIMENTOS_PADRAO_MS;
+    const inicioEtapa = Date.now();
     const idConsulta = registrarConsultaRendimentosInicio({
       totalCarteiraAtiva: convenios.length,
     });
     const falhas = [];
+    const fluxosPorConvenio = [];
+    let totalFetchPublico = 0;
+    let totalPlaywrightPublico = 0;
+    let totalSemFluxo = 0;
     let totalSucesso = 0;
 
     try {
@@ -115,6 +129,24 @@ async function executarEtapaRendimentos(opcoes = {}) {
             ano: convenio.ano ?? null,
             uf: convenio.uf ?? null,
           };
+          const fluxo = extrairFluxoConsultaRendimentos(resultadoComCarteira);
+
+          fluxosPorConvenio.push({
+            numeroConvenio: convenio.numeroConvenio,
+            ano: convenio.ano ?? null,
+            uf: convenio.uf ?? null,
+            fluxo,
+            sucesso: Boolean(resultadoComCarteira.sucesso),
+            etapa: resultadoComCarteira.etapa ?? null,
+          });
+
+          if (fluxo === "fetch-publico") {
+            totalFetchPublico += 1;
+          } else if (fluxo === "playwright-publico") {
+            totalPlaywrightPublico += 1;
+          } else {
+            totalSemFluxo += 1;
+          }
 
           if (resultadoComCarteira.sucesso) {
             salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
@@ -151,6 +183,14 @@ async function executarEtapaRendimentos(opcoes = {}) {
         totalConsultados: convenios.length,
         totalSucesso,
         totalFalha: falhas.length,
+        totalFetchPublico,
+        totalPlaywrightPublico,
+        totalSemFluxo,
+        fluxosPorConvenio,
+        duracaoMsTotal: Date.now() - inicioEtapa,
+        tempoMedioMsPorConvenio: convenios.length
+          ? Math.round((Date.now() - inicioEtapa) / convenios.length)
+          : 0,
         falhas,
       };
       registrarConsultaRendimentosFim(idConsulta, resumo);
@@ -166,6 +206,12 @@ async function executarEtapaRendimentos(opcoes = {}) {
         totalConsultados: convenios.length,
         totalSucessos: totalSucesso,
         totalFalhas: falhas.length,
+        totalFetchPublico,
+        totalPlaywrightPublico,
+        totalSemFluxo,
+        fluxosPorConvenio,
+        duracaoMsTotal: resumo.duracaoMsTotal,
+        tempoMedioMsPorConvenio: resumo.tempoMedioMsPorConvenio,
         avisos,
         falhas,
       };
@@ -266,11 +312,15 @@ async function atualizarProfor2022Consolidado(opcoes = {}) {
 
   const sucesso =
     detru.sucesso && rendimentos.sucesso && consolidado.sucesso && validacao.sucesso;
+  const totalAvisos = avisos.length;
+  const totalErros = erros.length;
 
   return {
     sucesso,
+    sucessoGeral: sucesso,
     iniciadoEm,
     finalizadoEm,
+    concluidoEm: finalizadoEm,
     duracaoMs,
     origemDados,
     detru: {
@@ -289,6 +339,12 @@ async function atualizarProfor2022Consolidado(opcoes = {}) {
       totalConsultados: rendimentos.totalConsultados ?? null,
       totalSucessos: rendimentos.totalSucessos ?? null,
       totalFalhas: rendimentos.totalFalhas ?? null,
+      totalFetchPublico: rendimentos.totalFetchPublico ?? null,
+      totalPlaywrightPublico: rendimentos.totalPlaywrightPublico ?? null,
+      totalSemFluxo: rendimentos.totalSemFluxo ?? null,
+      fluxosPorConvenio: rendimentos.fluxosPorConvenio ?? [],
+      duracaoMsTotal: rendimentos.duracaoMsTotal ?? null,
+      tempoMedioMsPorConvenio: rendimentos.tempoMedioMsPorConvenio ?? null,
       erro: rendimentos.erro ?? null,
       avisos: rendimentos.avisos || [],
     },
@@ -302,6 +358,8 @@ async function atualizarProfor2022Consolidado(opcoes = {}) {
       erro: consolidado.erro ?? null,
       avisos: consolidado.avisos || [],
     },
+    totalAvisos,
+    totalErros,
     avisos,
     erros,
   };
@@ -309,24 +367,30 @@ async function atualizarProfor2022Consolidado(opcoes = {}) {
 
 function resumirAtualizacaoConsolidada(resultado) {
   if (!resultado) return "Sem resultado.";
+  const fluxoFetch = Number(resultado.rendimentos?.totalFetchPublico ?? 0);
+  const fluxoPlaywright = Number(resultado.rendimentos?.totalPlaywrightPublico ?? 0);
+  const fluxoSem = Number(resultado.rendimentos?.totalSemFluxo ?? 0);
   const linhas = [
     "--- Atualizacao consolidada PROFOR 2022 ---",
-    `Inicio:        ${resultado.iniciadoEm}`,
-    `Fim:           ${resultado.finalizadoEm}`,
-    `Duracao:       ${resultado.duracaoMs} ms`,
+    `iniciadoEm:    ${resultado.iniciadoEm}`,
+    `concluidoEm:    ${resultado.concluidoEm || resultado.finalizadoEm}`,
+    `duracaoMs:     ${resultado.duracaoMs} ms`,
+    `sucessoGeral:  ${resultado.sucessoGeral ?? resultado.sucesso}`,
     `Origem:        ${resultado.origemDados}`,
-    `DETRU:         sucesso=${resultado.detru.sucesso}` +
-      ` encontrados=${resultado.detru.totalEncontrados ?? "-"}/${resultado.detru.totalCarteiraAtiva ?? "-"}` +
+    `DETRU encontrados/total: ${resultado.detru.totalEncontrados ?? "-"}/${resultado.detru.totalCarteiraAtiva ?? "-"}` +
       (resultado.detru.erro ? ` erro="${resultado.detru.erro}"` : ""),
-    `Rendimentos:   sucesso=${resultado.rendimentos.sucesso}` +
-      ` sucessos=${resultado.rendimentos.totalSucessos ?? "-"}/${resultado.rendimentos.totalConsultados ?? "-"}` +
+    `rendimentos sucesso/total: ${resultado.rendimentos.totalSucessos ?? "-"}/${resultado.rendimentos.totalConsultados ?? "-"}` +
       ` falhas=${resultado.rendimentos.totalFalhas ?? "-"}` +
       (resultado.rendimentos.erro ? ` erro="${resultado.rendimentos.erro}"` : ""),
-    `Consolidado:   convenios=${resultado.consolidado.totalConvenios}` +
-      ` detru=${resultado.consolidado.totalComDetru}` +
-      ` plano=${resultado.consolidado.totalComPlano}` +
-      ` rendimentos=${resultado.consolidado.totalComRendimentos}` +
-      (resultado.consolidado.erro ? ` erro="${resultado.consolidado.erro}"` : ""),
+    `Rendimentos por fluxo: fetch-publico=${fluxoFetch}` +
+      ` | playwright-publico=${fluxoPlaywright}` +
+      ` | sem-fluxo=${fluxoSem}`,
+    `Consolidado total de convenios: ${resultado.consolidado.totalConvenios}` +
+      ` | totalComDetru=${resultado.consolidado.totalComDetru}` +
+      ` | totalComPlano=${resultado.consolidado.totalComPlano}` +
+      ` | totalComRendimentos=${resultado.consolidado.totalComRendimentos}`,
+    `totalAvisos:   ${resultado.totalAvisos ?? resultado.avisos.length}`,
+    `totalErros:    ${resultado.totalErros ?? resultado.erros.length}`,
   ];
 
   if (resultado.avisos.length) {

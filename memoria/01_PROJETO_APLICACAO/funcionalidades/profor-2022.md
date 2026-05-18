@@ -688,3 +688,29 @@ Resumo da auditoria:
 - 11 campos exigem revisao/lock de formula antes da retirada definitiva, com atencao principal a `saldoDisponivelOuvidoria`.
 - 2 campos nao tiveram uso operacional identificado: `solicitouProrrogacao` e `valorRelativoOuvidoria`.
 - A proxima etapa recomendada e retirar o fallback da aba `Geral` em implementacao pequena, mantendo bloqueio por erro sem explicacao e sem criar painel publico de divergencias aceitas.
+
+### 13.6. Logs operacionais de atualização
+
+Em 18/05/2026 foram adicionados logs operacionais na atualização PROFOR 2022 para melhorar rastreabilidade sem mudar interface ou publicação estática.
+
+No fluxo de rendimentos Transferegov, o resumo salvo em `profor_transferegov_rendimentos_consultas.resumo_json` passou a incluir:
+
+- `totalFetchPublico`
+- `totalPlaywrightPublico`
+- `totalSemFluxo`
+- `fluxosPorConvenio`
+- `duracaoMsTotal`
+- `tempoMedioMsPorConvenio`
+
+O fluxo `fetch-publico` representa a consulta pública HTTP que fecha a sessão sem navegador. O fluxo `playwright-publico` representa o fallback com navegador público quando o HTTP simples não conclui a sessão. A ausência de fluxo agora é registrada como `sem-fluxo` para diagnostico.
+
+Resultado operacional validado:
+
+- `npm run atualizar:rendimentos-profor`: 15 consultados, 15 sucesso, 0 falha, `fetch-publico = 0`, `playwright-publico = 15`, `sem-fluxo = 0`.
+- `npm run atualizar:profor-2022`: DETRU 15/15, rendimentos 15/15, consolidado 15/15/15, `sucessoGeral = true`, `totalAvisos = 0`, `totalErros = 0`.
+
+Uso recomendado dos logs:
+
+- identificar rapidamente se o Transferegov operou em HTTP público ou fallback com navegador;
+- correlacionar lentidão por convênio com `duracaoMsTotal` e `tempoMedioMsPorConvenio`;
+- auditar regressão sem abrir a interface nem tocar em publicação estática.
