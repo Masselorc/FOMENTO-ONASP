@@ -11,7 +11,7 @@ const CAMPOS_CONVENIO_COMPARACAO = [
   { campo: "ano", tipo: "texto", severidade: "alta" },
   { campo: "processoSei", tipo: "texto", severidade: "media" },
   { campo: "vencimento", tipo: "texto", severidade: "media" },
-  { campo: "quantidadeTa", tipo: "moeda", severidade: "baixa" },
+  { campo: "quantidadeTa", tipo: "numero", severidade: "baixa" },
   { campo: "valorGlobal", tipo: "moeda", severidade: "alta" },
   { campo: "valorRepasse", tipo: "moeda", severidade: "alta" },
   { campo: "valorContrapartida", tipo: "moeda", severidade: "alta" },
@@ -77,6 +77,24 @@ function compararPercentualProfor(valorAntigo, valorNovo, tolerancia = 0.1) {
   return { status: "divergente", severidade: "alta", diferenca };
 }
 
+function compararNumeroProfor(valorAntigo, valorNovo, tolerancia = 0) {
+  if (valorAusente(valorAntigo) && valorAusente(valorNovo)) {
+    return { status: "igual", severidade: "baixa", diferenca: 0 };
+  }
+  if (valorAusente(valorAntigo)) return { status: "ausente_antigo", severidade: "media", diferenca: null };
+  if (valorAusente(valorNovo)) return { status: "ausente_novo", severidade: "media", diferenca: null };
+
+  const antigo = Number(valorAntigo);
+  const novo = Number(valorNovo);
+  if (!Number.isFinite(antigo) || !Number.isFinite(novo)) {
+    return compararTextoProfor(valorAntigo, valorNovo);
+  }
+
+  const diferenca = Math.abs(antigo - novo);
+  if (diferenca <= tolerancia) return { status: "igual", severidade: "baixa", diferenca };
+  return { status: "divergente", severidade: diferenca <= 1 ? "baixa" : "media", diferenca };
+}
+
 function compararTextoProfor(valorAntigo, valorNovo) {
   if (valorAusente(valorAntigo) && valorAusente(valorNovo)) return { status: "igual", severidade: "baixa" };
   if (valorAusente(valorAntigo)) return { status: "ausente_antigo", severidade: "media" };
@@ -98,6 +116,8 @@ function compararCampo(campoConfig, convenioAntigo, convenioNovo, opcoes) {
     resultado = compararMoedaProfor(valorAntigo, valorNovo, opcoes.toleranciaMoeda ?? 0.01);
   } else if (campoConfig.tipo === "percentual") {
     resultado = compararPercentualProfor(valorAntigo, valorNovo, opcoes.toleranciaPercentual ?? 0.1);
+  } else if (campoConfig.tipo === "numero") {
+    resultado = compararNumeroProfor(valorAntigo, valorNovo, opcoes.toleranciaNumero ?? 0);
   } else {
     resultado = compararTextoProfor(valorAntigo, valorNovo);
   }
@@ -267,6 +287,7 @@ function gerarResumoDivergenciasProfor2022(comparacao) {
 module.exports = {
   compararMoedaProfor,
   compararPercentualProfor,
+  compararNumeroProfor,
   compararTextoProfor,
   compararConvenioProfor2022,
   compararResumoProfor2022,

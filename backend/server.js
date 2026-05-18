@@ -2,6 +2,7 @@ const fs = require("fs");
 const http = require("http");
 const os = require("os");
 const path = require("path");
+const xlsx = require("xlsx");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env"), quiet: true });
 
 const { prepararBanco } = require("./db/preparar-banco");
@@ -38,6 +39,12 @@ const {
 } = require("./services/profor-2022/convenios-monitorados-service");
 const { atualizarCacheDetruProfor2022 } = require("./services/profor-2022/profor-detru-update-service");
 const { obterUltimaAtualizacaoDetru } = require("./services/profor-2022/profor-detru-cache-service");
+const { montarConsolidadoProfor2022 } = require("./services/profor-2022/profor-consolidado-service");
+const { compararBasesProfor2022 } = require("./services/profor-2022/profor-comparador-service");
+const {
+  montarDadosProfor2022Publicacao,
+  extrairPlanoAplicacaoProforDoWorkbook
+} = require("./services/dashboard-publication-service");
 const {
   exportarParametrosMinimosExcel,
   exportarFormalizacaoProforExcel,
@@ -46,6 +53,7 @@ const {
 const { publicarDadosEstaticos } = require("./services/static-publication-service");
 
 const rootDir = path.join(__dirname, "..");
+const catalogoAplicacaoPath = path.join(__dirname, "data", "aplicacao.json");
 const host = process.env.HOST || "0.0.0.0";
 const port = Number(process.env.PORT || 8790);
 
@@ -244,6 +252,43 @@ function normalizarUltimaAtualizacaoDetru(registro) {
     erro: registro.erro ?? null,
     resumo
   };
+}
+
+function carregarCatalogoAplicacaoLocal() {
+  return JSON.parse(fs.readFileSync(catalogoAplicacaoPath, "utf8"));
+}
+
+function carregarWorkbookProfor2022(catalogoAplicacao) {
+  const planilhaRelativa = catalogoAplicacao?.configuracao?.arquivoPlanilhaConvenios;
+  if (!planilhaRelativa) {
+    throw new Error("Catalogo da aplicacao sem configuracao.arquivoPlanilhaConvenios.");
+  }
+
+  return xlsx.readFile(path.join(rootDir, planilhaRelativa), { cellDates: true });
+}
+
+function montarConsolidadoProfor2022Local() {
+  const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
+  const workbook = carregarWorkbookProfor2022(catalogoAplicacao);
+  const planoAplicacao = extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
+  return montarConsolidadoProfor2022({
+    origemDados: "banco-cache",
+    planoAplicacao
+  });
+}
+
+function montarComparacaoOrigensProfor2022Local() {
+  const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
+  const workbook = carregarWorkbookProfor2022(catalogoAplicacao);
+  const planoAplicacao = extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
+  const baseAntiga = montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, {
+    origemDados: "planilha"
+  });
+  const baseNova = montarConsolidadoProfor2022({
+    origemDados: "banco-cache",
+    planoAplicacao
+  });
+  return compararBasesProfor2022(baseAntiga, baseNova);
 }
 
 function enviarArquivoEstatico(req, res, pathname) {
@@ -484,6 +529,51 @@ async function rotearApi(req, res, pathname) {
       const resultado = salvarExecucaoFaf2021(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/consolidado") {
+      try {
+        const data = montarConsolidadoProfor2022Local();
+        enviarJson(res, 200, {
+          success: true,
+          origemDados: "banco-cache",
+          data: {
+            resumo: data.resumo,
+            convenios: data.convenios,
+            filtros: data.filtros,
+            avisos: data.avisos,
+            diagnostico: data.diagnostico,
+            origemDados: data.origemDados,
+            geradoEm: data.geradoEm
+          }
+        });
+      } catch (erro) {
+        console.error("Falha ao montar consolidado PROFOR 2022:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: "Não foi possível montar o consolidado PROFOR 2022 no momento."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/comparar-origens") {
+      try {
+        const comparacao = montarComparacaoOrigensProfor2022Local();
+        enviarJson(res, 200, {
+          success: true,
+          comparacao,
+          resumo: comparacao.resumo,
+          avisos: []
+        });
+      } catch (erro) {
+        console.error("Falha ao comparar origens PROFOR 2022:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: "Não foi possível comparar as origens PROFOR 2022 no momento."
+        });
+      }
       return;
     }
 

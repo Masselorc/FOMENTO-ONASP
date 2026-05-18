@@ -451,6 +451,15 @@ Por restrição técnica atual, `backend/services/data-service.js` também é im
 
 A publicação estática foi preparada em código para remover a seção interna `detru` do catálogo público antes de gerar `frontend/data/publicados/aplicacao.json`. O comando `npm run publicar:dados` não foi executado neste bloco e nenhum JSON publicado foi alterado.
 
+Bloco 18 criou duas rotas locais/API somente leitura para validar a nova origem sem ativá-la como padrão:
+
+- `GET /api/profor-2022/consolidado`: monta o consolidado `banco-cache` no backend Node, usando o compositor e o plano de aplicação extraído da planilha local, sem importar dependências Node/SQLite no navegador.
+- `GET /api/profor-2022/comparar-origens`: monta a origem antiga `planilha`, monta a origem nova `banco-cache` e compara as bases pelo comparador PROFOR 2022.
+
+A validação real local retornou 15 convênios na origem `planilha` e 15 convênios na origem `banco-cache`, sem ausentes. O consolidado `banco-cache` retornou `resumo`, `convenios`, `filtros`, `avisos` e `diagnostico`, mas o diagnóstico indicou `totalComDetru = 0` e `totalComRendimentos = 0`. A comparação apontou `totalIguais = 0` e `totalComDivergencia = 15`, com divergências principais em campos dependentes de cache DETRU/Transferegov: `processoSei`, `vencimento`, `quantidadeTa`, `valorGlobal`, `valorRepasse`, `valorContrapartida`, `repasseDesembolsado`, `rendimentoAprovado`, `saldoRendimentosAtual` e `contrapartidaIntegralizada`. Esse resultado bloqueia a ativação de `banco-cache` como origem padrão até os caches locais serem populados e validados.
+
+Correção pequena aplicada no Bloco 18: `quantidadeTa` passou a ser comparado como número simples no comparador, e não como moeda. Nenhuma fórmula pendente foi inventada; `saldoDisponivelOuvidoria` continua sem cálculo seguro.
+
 As tabelas novas devem ser aditivas e não devem interferir no fluxo atual até a origem nova ser ativada.
 
 Após commits específicos, usar:
@@ -483,15 +492,16 @@ git push origin HEAD
 - Bloco 15: cálculos internos e filtro seguro do plano criados em serviços puros. `backend/services/profor-2022/profor-plano-aplicacao-service.js` centraliza normalização, filtro por UF/número/ano/área/natureza, bloqueio de filtro por UF quando há risco de mistura de convênios, agrupamento e resumo do plano. `backend/services/profor-2022/profor-calculos-service.js` consolida valores de DETRU/cache, saldo de rendimentos de Transferegov/cache e cálculos por área/natureza do plano filtrado. A página PROFOR 2022 ainda usa a origem antiga em `data-service.js`; não houve integração com telas, rotas, banco ou publicação. `saldoDisponivelOuvidoria` segue pendente até fórmula segura ou compositor.
 - Bloco 16: compositor consolidado, comparador e flag de origem criados sem ativação na página. `backend/services/profor-2022/profor-origem-service.js` mantém a origem padrão `planilha` e reserva `banco-cache` para ativação futura. `backend/services/profor-2022/profor-consolidado-service.js` monta objeto PROFOR 2022 consolidado a partir da carteira local, cache DETRU, cache Transferegov e plano de aplicação filtrado por UF + número + ano. `backend/services/profor-2022/profor-comparador-service.js` compara origem antiga versus nova com tolerâncias monetária e percentual. `data-service.js`, frontend, rotas, banco e publicação estática não foram alterados. `saldoDisponivelOuvidoria` continua pendente e sai como `null` com aviso.
 - Bloco 17: integração controlada da origem consolidada com fallback. `backend/services/data-service.js` preserva a origem `planilha` e acrescenta metadados seguros ao objeto PROFOR 2022 sem mudar o shape consumido pela tela. `backend/services/dashboard-publication-service.js` passa a resolver a origem por flag/opção: `planilha` mantém o fluxo antigo; `banco-cache` chama `profor-consolidado-service.js` com plano extraído das abas UF; falhas retornam para `planilha` com aviso. `backend/services/static-publication-service.js` sanitiza o catálogo público para não publicar a seção interna `detru`. Frontend, rotas, banco, `backend/data/aplicacao.json` e JSONs publicados não foram alterados; `npm run publicar:dados` não foi executado.
+- Bloco 18: validação final local e rotas somente leitura. `backend/server.js` recebeu `GET /api/profor-2022/consolidado` e `GET /api/profor-2022/comparar-origens`, ambas locais/API e sem consulta externa. O comparador passou a tratar `quantidadeTa` como número simples. A validação real retornou 15 convênios em cada origem, sem ausentes, mas 15 divergentes porque os caches DETRU e Transferegov ainda não possuem dados para a carteira (`totalComDetru = 0`, `totalComRendimentos = 0`). Home e página PROFOR 2022 carregaram com origem padrão `planilha` e sem erro de console. Banco-cache segue bloqueado para ativação como padrão.
 
 ### 10.2. Próximas etapas
 
 1. Refinar, se necessário, o estabelecimento de sessão pública do convênio no Transferegov.
 2. Definir fórmula segura para `saldoDisponivelOuvidoria`.
-3. Executar comparação real entre origem antiga e nova com dados atuais.
-4. Criar caminho seguro de ativação visual/local para `banco-cache`, sem importar dependências Node/SQLite no browser.
-5. Validar divergências.
-6. Ativar origem nova apenas após validação.
+3. Popular e validar cache DETRU para a carteira monitorada.
+4. Popular e validar cache Transferegov/rendimentos para a carteira monitorada.
+5. Reexecutar comparação origem `planilha` x `banco-cache` após caches populados.
+6. Ativar origem nova apenas após divergências bloqueantes serem saneadas.
 7. Remover dependência obrigatória da aba `Geral`.
 
 ### 10.3. Fase futura
@@ -529,3 +539,4 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Bloco 15: cálculos internos + filtro seguro do plano | Serviços puros `profor-plano-aplicacao-service.js` e `profor-calculos-service.js` criados. Filtro seguro por UF/número/ano e cálculos por área/natureza implementados sem integrar na página. |
 | 17/05/2026 | Bloco 16: compositor consolidado + comparador + flag | Serviços `profor-origem-service.js`, `profor-consolidado-service.js` e `profor-comparador-service.js` criados. Origem padrão segue `planilha`; `banco-cache` fica reservado para ativação futura. |
 | 17/05/2026 | Bloco 17: integração nas telas + publicação estática | Origem padrão `planilha` preservada. Fluxo Node de publicação suporta `banco-cache` com fallback para `planilha`; `data-service.js` mantém compatibilidade da tela; publicação estática sanitiza a seção interna `detru`. |
+| 17/05/2026 | Bloco 18: validação final + leitura local do consolidado | Rotas locais/API somente leitura criadas para consolidado e comparação. Comparação real executada; 15 convênios divergentes por ausência de cache DETRU/rendimentos. Banco-cache permanece fora do padrão. |

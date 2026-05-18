@@ -1,5 +1,22 @@
 # Diário de bordo
 
+## 17/05/2026 - Bloco 18: validação final + leitura local do consolidado
+
+- Branch atual: `main`.
+- Objetivo: validar a migração PROFOR 2022 sem ativar `banco-cache` como padrão, criar caminho local/API somente leitura para consultar o consolidado e comparar origem antiga versus nova.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `backend/server.js`, `backend/services/data-service.js`, `backend/services/dashboard-publication-service.js`, `backend/services/static-publication-service.js`, `backend/services/profor-2022/profor-origem-service.js`, `backend/services/profor-2022/profor-consolidado-service.js`, `backend/services/profor-2022/profor-comparador-service.js`, `backend/services/profor-2022/profor-calculos-service.js`, `backend/services/profor-2022/profor-plano-aplicacao-service.js`.
+- Arquivos alterados: `backend/server.js`, `backend/services/profor-2022/profor-comparador-service.js`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção: criadas as rotas locais/API somente leitura `GET /api/profor-2022/consolidado` e `GET /api/profor-2022/comparar-origens`. As rotas rodam no backend Node, extraem o plano de aplicação pela função segura do `dashboard-publication-service.js`, chamam o compositor/comparador e retornam erro controlado sem stack trace ao usuário.
+- Correção pequena adicional: `quantidadeTa` no comparador passou de tipo `moeda` para tipo `numero`, evitando comparação monetária de contador simples.
+- Resultado da comparação real: origem padrão atual `planilha`; origem antiga retornou 15 convênios; origem `banco-cache` retornou 15 convênios, `resumo`, `convenios`, `filtros`, `avisos` e `diagnostico`; comparação retornou `totalAntigo = 15`, `totalNovo = 15`, `totalIguais = 0`, `totalComDivergencia = 15`, `totalAusentesAntigo = 0`, `totalAusentesNovo = 0`.
+- Principais divergências: `processoSei`, `vencimento`, `quantidadeTa`, `valorGlobal`, `valorRepasse`, `valorContrapartida`, `repasseDesembolsado`, `rendimentoAprovado`, `saldoRendimentosAtual` e `contrapartidaIntegralizada`, todos em 15 convênios. Causa técnica observada: `diagnostico.totalComDetru = 0` e `diagnostico.totalComRendimentos = 0`; caches locais ainda não estão populados para a carteira.
+- Divergência bloqueante: sim. `banco-cache` não deve ser ativado como origem padrão até cache DETRU e cache Transferegov/rendimentos serem populados e a comparação ser reexecutada.
+- Testes: `node --check` de `backend/server.js`, `profor-consolidado-service.js`, `profor-comparador-service.js`, `profor-calculos-service.js`, `dashboard-publication-service.js` e `static-publication-service.js`; `node -e` para origem padrão, consolidado, comparação e sanitização de `detru`; `npm start` em porta alternativa `8791` porque a `8790` já estava ocupada; chamadas reais a `GET /api/profor-2022/consolidado` e `GET /api/profor-2022/comparar-origens`; navegação headless na home e na página PROFOR 2022 sem erros de console.
+- Consumo aproximado do Codex: não informado pela ferramenta local.
+- Escopo preservado: origem padrão continua `planilha`; `banco-cache` não foi ativado como padrão; frontend não alterado; `index.html` não alterado; banco/schema não alterado; `backend/data/aplicacao.json` não alterado; JSONs publicados não alterados; nenhuma consulta DETRU ou Transferegov executada; nenhum download executado; `npm run publicar:dados` não executado.
+- Risco de regressão: baixo no fluxo padrão; médio apenas para as novas rotas locais/API de diagnóstico, mitigado por serem somente leitura e não usadas pela tela.
+- Rollback: `git revert <hash>` remove as rotas, a correção do comparador e os registros documentais do bloco.
+
 ## 17/05/2026 - Bloco 17: integração nas telas + publicação estática
 
 - Branch atual: `main`.
