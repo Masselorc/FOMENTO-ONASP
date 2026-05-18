@@ -2596,3 +2596,12 @@ Logs operacionais gravados:
 - Modo estático: controles administrativos ficam desabilitados com mensagem institucional de somente leitura.
 - Confirmacao operacional: backend, banco, `.env`, JSONs publicados e publicação estática nao foram alterados.
 - Validacao planejada: `npm run validar:syntax`.
+
+## 18/05/2026 - Tarefa agendada PROFOR 2022 no Windows
+
+- Branch atual: `main`.
+- Objetivo: criar script PowerShell seguro para registrar tarefa diaria unica no Agendador de Tarefas do Windows para `npm run atualizar:profor-2022`.
+- Arquivo criado: `scripts/windows/criar-tarefa-atualizacao-profor-2022.ps1`.
+- Escopo: detectar raiz automaticamente, validar `package.json`, validar `npm`, criar pasta `logs`, registrar a tarefa `ONASP - Atualizar PROFOR 2022`, redirecionar log para `logs\atualizacao-profor-2022.log` e imprimir comandos de teste/manual.
+- Confirmacao operacional: sem alteracao de backend, frontend, banco, `.env` ou publicacao.
+- Validacao planejada: `npm run validar:syntax`.
