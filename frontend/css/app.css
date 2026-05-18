@@ -6854,4 +6854,151 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
     color: var(--color-text);
 }
 
+/* --- Tabelas: Bootstrap aplica fundo branco em .table; forcar surface escura
+       no body, zebra suave, e cabecalhos em surface elevada. --- */
+.table,
+.table-bordered,
+.app-data-table,
+.profor-data-table,
+.profor-plan-table,
+.budget-main-table,
+.budget-data-table,
+.formalizacao-contact-table,
+table.dataTable {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--color-text);
+    --bs-table-striped-bg: var(--color-surface-elevated);
+    --bs-table-striped-color: var(--color-text);
+    --bs-table-hover-bg: var(--color-surface-hover);
+    --bs-table-hover-color: var(--color-text);
+    --bs-table-border-color: var(--color-border);
+    background-color: transparent !important;
+    color: var(--color-text) !important;
+}
+
+.table > tbody,
+.table > tbody > tr,
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+table.dataTable tbody,
+table.dataTable tbody tr,
+table.dataTable tbody td,
+table.dataTable tbody th {
+    background-color: transparent !important;
+    color: var(--color-text) !important;
+    border-color: var(--color-border) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > *,
+table.dataTable.stripe tbody tr.odd > *,
+table.dataTable.display tbody tr.odd > * {
+    background-color: var(--color-surface-elevated) !important;
+    color: var(--color-text) !important;
+}
+
+.table > thead,
+.table > thead th,
+.table > thead td,
+.app-data-table thead th,
+.profor-data-table thead th,
+.profor-plan-table thead th,
+.budget-data-table thead th,
+.budget-main-table thead th,
+.formalizacao-contact-table thead th,
+.budget-column-row > th {
+    background-color: var(--color-surface-elevated) !important;
+    color: var(--color-primary-strong) !important;
+    border-color: var(--color-border-strong) !important;
+}
+
+.profor-row:hover,
+.profor-row:hover > * {
+    background-color: var(--color-surface-hover) !important;
+    color: var(--color-text) !important;
+}
+
+.budget-edit-row > td {
+    background-color: var(--color-surface-elevated) !important;
+}
+
+/* --- Cards filtro (UFs COM CONVÊNIOS / FAF / DOAÇÕES / FOMENTO) e
+       trackers que estavam em #fff hard-coded. --- */
+.filter-count-item,
+.budget-tracking-status,
+.budget-tracking-marker {
+    background-color: var(--color-surface-muted) !important;
+    color: var(--color-text);
+}
+
+.budget-tracking-marker {
+    border-color: var(--color-border-strong);
+    color: var(--color-muted);
+}
+
+.budget-group-metrics > span,
+.budget-group-status-summary span {
+    background-color: var(--color-surface-elevated) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-primary-strong) !important;
+}
+
+/* --- Faixa "UFs sem ouvidoria específica" e opções pasteis hard-coded. --- */
+.visible-check-option {
+    background-color: var(--color-surface-muted) !important;
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+.visible-check-option:has(input:checked) {
+    background-color: var(--color-primary-soft) !important;
+    border-color: rgba(96, 165, 250, 0.36);
+}
+
+.visible-check-option.uf-special-option:has(input:checked) {
+    background-color: var(--color-warning-soft) !important;
+    border-color: rgba(245, 158, 11, 0.45);
+}
+
+.visible-check-label {
+    color: var(--color-text);
+}
+
+/* --- Badges pasteis (countdown, alerta) com hex hard-coded. --- */
+.profor-countdown-danger,
+.profor-alert-danger {
+    background-color: var(--color-danger-soft) !important;
+    color: var(--color-danger) !important;
+}
+
+.profor-countdown-neutral,
+.profor-alert-neutral {
+    background-color: var(--color-surface-elevated) !important;
+    color: var(--color-muted) !important;
+}
+
+/* --- DataTables wrapper: paginacao, length e filter usam texto claro. --- */
+.dataTables_wrapper,
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate,
+.dataTables_wrapper label {
+    color: var(--color-text) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+.dataTables_wrapper .dataTables_paginate .paginate_button.next {
+    color: var(--color-text) !important;
+    background: transparent !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
+}
+
 }
