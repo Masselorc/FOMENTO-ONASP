@@ -1,5 +1,55 @@
 # Diário de bordo
 
+## 18/05/2026 - Correção do rótulo de atualização e ocultação do aviso técnico no modo estático
+
+- Continuação após interrupção por limite de tokens. Antes de qualquer `git pull`, foi inspecionado o estado local conforme ordem de serviço.
+- Estado inicial encontrado: alteração parcial apenas em `frontend/js/app.js`, já contendo a guarda inicial em `renderizarAvisoOrigemProfor()` para ocultar a faixa técnica no modo estático. O diff local foi preservado e continuado.
+- `git pull` não foi executado nesta retomada porque havia diff local parcial a ser analisado primeiro. O log anterior registrava `git pull` já executado com `Already up to date`.
+- Objetivo: impedir a exibição online da faixa administrativa `Origem local/API... Diagnóstico...` e reforçar a robustez do rótulo de última atualização operacional.
+
+### Diagnóstico
+
+- A faixa técnica aparecia no GitHub Pages porque `renderizarAvisoOrigemProfor()` não tinha uma guarda suficiente para `estaEmModoPublicacaoEstatica()`.
+- O texto `Atualização não registrada` em localhost provavelmente decorria de cache do navegador, chamada precoce ou falha transitória do endpoint antes do objeto PROFOR carregado estar disponível. O endpoint local já retornava metadado correto.
+- Os JSONs publicados `aplicacao.json` e `dashboard-geral.json` já continham `dadosProfor2022.ultimaAtualizacaoDados`; por isso `npm run publicar:dados` não foi executado.
+
+### Arquivos alterados
+
+- `frontend/js/app.js`
+  - `renderizarAvisoOrigemProfor()` agora retorna string vazia em modo estático/GitHub Pages, ocultando a faixa administrativa.
+  - `carregarRotuloUltimaAtualizacaoOperacional()` tenta `/api/profor-2022/atualizacao/status` em modo local/API e, se o endpoint falhar ou vier sem `dataHora`, usa `obterDadosProfor2022()?.ultimaAtualizacaoDados` antes de exibir fallback neutro.
+  - `garantirDadosBaseAplicacao()` chama novamente o carregamento do rótulo após popular o cache PROFOR, reduzindo corrida assíncrona.
+- `backend/server.js`
+  - `GET /api/profor-2022/consolidado` passou a incluir `ultimaAtualizacaoDados` no payload `data`, usando o mesmo cálculo seguro do endpoint de status.
+- `index.html`
+  - Cache-buster do `frontend/js/app.js` atualizado para `v=20260518-05`.
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+
+### Testes executados
+
+- Endpoint local em `PORT=8798`:
+  - `GET /api/profor-2022/atualizacao/status`: `success=true`, `origemDados=banco-cache`, `ultimaAtualizacaoDados.dataHora=2026-05-18T10:44:06.616Z`, `fonte=Transferegov/rendimentos`.
+  - `GET /api/profor-2022/consolidado`: 15 convênios, `totalComDetru=15`, `totalComPlano=15`, `totalComRendimentos=15`, `ultimaAtualizacaoDados` presente.
+- Playwright em localhost:
+  - `#dashboard-ultima-atualizacao`: `Atualizado em 18/05/2026 às 07:44`.
+  - `#footer-ultima-atualizacao`: `Atualizado em 18/05/2026 às 07:44 (Transferegov/rendimentos)`.
+  - Página PROFOR 2022 carregou.
+  - Console sem erros e sem avisos.
+- Simulação controlada de GitHub Pages com hostname `teste-onasp.github.io` apontando para o servidor local:
+  - `estaEmModoPublicacaoEstatica() = true`.
+  - Nenhuma chamada `/api/` foi feita.
+  - Rótulo de atualização foi lido do JSON publicado.
+  - Textos `Origem local/API`, `Diagnóstico: DETRU` e `saldoDisponivelOuvidoria` não apareceram na interface.
+  - Console sem erros; houve apenas aviso não crítico esperado do modo estático.
+
+### Restrições confirmadas
+
+- `npm run publicar:dados` não foi executado.
+- JSONs publicados não foram alterados.
+- Banco/schema, `.env`, rotinas DETRU/Transferegov e valores de convênios não foram alterados.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou temporário foi versionado.
+
 ## 18/05/2026 - Publicação estática com consolidado `banco-cache` e metadado `ultimaAtualizacaoDados`
 
 - Branch atual: `main`.

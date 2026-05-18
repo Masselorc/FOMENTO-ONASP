@@ -514,6 +514,10 @@ A visão geral da home ("Fomento para Ouvidoria") e o rodapé deixam de exibir o
 
 A partir do bloco de publicação estática (18/05/2026), o mesmo metadado `ultimaAtualizacaoDados` passou a ser publicado dentro de `dadosProfor2022` em `frontend/data/publicados/aplicacao.json` e `frontend/data/publicados/dashboard-geral.json`. No modo estático/GitHub Pages, o frontend lê esse metadado diretamente do JSON publicado já carregado, sem chamar nenhuma rota `/api/`. Em modo local/API, o endpoint continua sendo a fonte preferencial. Quando o metadado está totalmente ausente (`dataHora: null`), o fallback continua sendo "Atualização não registrada" — sem inventar horário. O helper compartilhado `backend/services/profor-2022/profor-atualizacao-meta-service.js` evita duplicação entre o endpoint e o pipeline de publicação.
 
+Correção de robustez em 18/05/2026: em modo local/API, se `GET /api/profor-2022/atualizacao/status` falhar ou retornar sem `ultimaAtualizacaoDados.dataHora`, o frontend tenta `obterDadosProfor2022()?.ultimaAtualizacaoDados` antes de exibir "Atualização não registrada". Ao final de `garantirDadosBaseAplicacao()`, o rótulo é recalculado depois que o cache PROFOR 2022 já foi populado, reduzindo corrida assíncrona. O endpoint `GET /api/profor-2022/consolidado` também passou a incluir `ultimaAtualizacaoDados` no payload `data` como metadado defensivo.
+
+Regra de exibição da faixa técnica: a faixa administrativa de origem/diagnóstico (`Origem local/API`, `Diagnóstico`, avisos de campos pendentes como `saldoDisponivelOuvidoria`) fica restrita ao modo local/API. Em modo estático/GitHub Pages, `renderizarAvisoOrigemProfor()` retorna vazio; a página PROFOR 2022 não exibe essa faixa para o usuário final e não chama rotas `/api/`.
+
 ### 10.1.1. Rotina operacional diária consolidada (referência rápida)
 
 | Item | Detalhe |

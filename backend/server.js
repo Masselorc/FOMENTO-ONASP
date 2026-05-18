@@ -262,6 +262,24 @@ function normalizarUltimaAtualizacaoDetru(registro) {
   };
 }
 
+function obterUltimaAtualizacaoDadosProfor2022Seguro() {
+  let ultimaDetru = null;
+  try {
+    ultimaDetru = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
+  } catch {
+    ultimaDetru = null;
+  }
+
+  let ultimaRendimentos = null;
+  try {
+    ultimaRendimentos = obterUltimaConsultaRendimentos();
+  } catch {
+    ultimaRendimentos = null;
+  }
+
+  return calcularUltimaAtualizacaoDadosProfor2022(ultimaDetru, ultimaRendimentos);
+}
+
 function carregarCatalogoAplicacaoLocal() {
   return JSON.parse(fs.readFileSync(catalogoAplicacaoPath, "utf8"));
 }
@@ -565,7 +583,8 @@ async function rotearApi(req, res, pathname) {
             avisos: data.avisos,
             diagnostico: data.diagnostico,
             origemDados: data.origemDados,
-            geradoEm: data.geradoEm
+            geradoEm: data.geradoEm,
+            ultimaAtualizacaoDados: data.ultimaAtualizacaoDados || obterUltimaAtualizacaoDadosProfor2022Seguro()
           }
         });
       } catch (erro) {

@@ -633,24 +633,27 @@ function renderKpiCard({
             aplicarRotuloUltimaAtualizacaoOperacional(textoDashboard, textoFooter);
         }
 
-        async function carregarRotuloUltimaAtualizacaoOperacional() {
-            const FALLBACK = 'Atualização não registrada';
+        function obterUltimaAtualizacaoDadosProforCarregado() {
+            return obterDadosProfor2022()?.ultimaAtualizacaoDados || null;
+        }
 
+        async function carregarRotuloUltimaAtualizacaoOperacional() {
             if (estaEmModoPublicacaoEstatica()) {
                 // Modo estático/GitHub Pages: nao chama API local.
                 // Le ultimaAtualizacaoDados ja carregado no objeto dadosProfor2022 publicado.
-                const info = obterDadosProfor2022()?.ultimaAtualizacaoDados || null;
-                exibirRotuloUltimaAtualizacaoOperacional(info);
+                exibirRotuloUltimaAtualizacaoOperacional(obterUltimaAtualizacaoDadosProforCarregado());
                 return;
             }
 
             try {
                 const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizacao/status');
                 if (!payload?.success) throw new Error(payload?.message || 'Status indisponível.');
-                exibirRotuloUltimaAtualizacaoOperacional(payload.ultimaAtualizacaoDados || null);
+                const infoApi = payload.ultimaAtualizacaoDados || null;
+                const infoFallback = obterUltimaAtualizacaoDadosProforCarregado();
+                exibirRotuloUltimaAtualizacaoOperacional(infoApi?.dataHora ? infoApi : infoFallback);
             } catch (err) {
                 console.warn('Falha ao carregar rotulo de ultima atualizacao operacional:', err?.message || err);
-                aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
+                exibirRotuloUltimaAtualizacaoOperacional(obterUltimaAtualizacaoDadosProforCarregado());
             }
         }
 
@@ -1303,6 +1306,7 @@ async function carregarLogoParaPDF() {
                     ocultarAlertaCarregamentoPlanilha();
                     initDashboard(dadosFaf);
                     renderDetailsView();
+                    await carregarRotuloUltimaAtualizacaoOperacional();
                 }
 
                 if (document.body.dataset.currentView === 'profor2022') {
@@ -2774,6 +2778,12 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarAvisoOrigemProfor(dadosProfor) {
+            // Faixa técnica de origem/diagnóstico é informação administrativa.
+            // Em modo estático/GitHub Pages, não aparece na tela do usuário final.
+            if (estaEmModoPublicacaoEstatica()) {
+                return '';
+            }
+
             const origemEfetiva = dadosProfor?.origemDadosEfetiva || dadosProfor?.origemDados || 'planilha';
             const geradoEm = formatarDataHoraProfor(dadosProfor?.geradoEm);
             const diagnostico = obterDiagnosticoOrigemProfor(dadosProfor);
