@@ -2615,3 +2615,13 @@ Logs operacionais gravados:
 - Escopo visual: barra e texto adicionados na secao `Atualizações PROFOR 2022` da `Status do Sistema`; pagina PROFOR 2022 permanece sem botoes administrativos.
 - Restricoes mantidas: sem alteracao de backend, banco, `.env` ou JSON publicado; sem publicacao executada.
 - Validacoes executadas: `npm run validar:syntax`; smoke Playwright em `status-sistema` confirmando botoes + barra e sem erro de console.
+
+## 18/05/2026 - Botao "Atualizar Transferegov" na Status do Sistema
+
+- Branch atual: `main`.
+- Objetivo: adicionar terceiro botao administrativo para atualizar apenas rendimentos Transferegov do PROFOR 2022.
+- Backend: exportada `executarEtapaRendimentos` em `profor-atualizacao-consolidada-service.js` e criado endpoint `POST /api/profor-2022/rendimentos/atualizar` em `backend/server.js`.
+- Front-end: adicionado botao `btnAtualizarRendimentosProfor`, funcao `atualizarRendimentosTransferegovProfor2022UI()` e registro no fluxo de progresso estimado `executarAtualizacaoAdministrativaProfor('rendimentos', ...)`.
+- Controle de execucao: os tres botoes administrativos da secao ficam bloqueados durante qualquer atualizacao e sao reabilitados no `finally`.
+- Restricoes mantidas: sem alteracao de `.env`, banco/schema, JSONs publicados ou publicacao estatica.
+- Validacoes planejadas: `npm run validar:syntax` e teste `curl` do endpoint de rendimentos.

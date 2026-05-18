@@ -44,7 +44,8 @@ const { montarConsolidadoProfor2022 } = require("./services/profor-2022/profor-c
 const { compararBasesProfor2022 } = require("./services/profor-2022/profor-comparador-service");
 const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
 const {
-  atualizarProfor2022Consolidado
+  atualizarProfor2022Consolidado,
+  executarEtapaRendimentos
 } = require("./services/profor-2022/profor-atualizacao-consolidada-service");
 const {
   calcularUltimaAtualizacaoDadosProfor2022
@@ -654,6 +655,27 @@ async function rotearApi(req, res, pathname) {
         success: true,
         ultimaAtualizacao: normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru())
       });
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/rendimentos/atualizar") {
+      const body = await lerJsonBody(req);
+      try {
+        const resultado = await executarEtapaRendimentos(body || {});
+        enviarJson(res, 200, {
+          success: resultado.sucesso,
+          message: resultado.sucesso
+            ? "Atualização de rendimentos Transferegov concluída."
+            : "Atualização de rendimentos Transferegov concluída com avisos/erros.",
+          resultado
+        });
+      } catch (erro) {
+        console.error("Falha ao atualizar rendimentos Transferegov:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao atualizar rendimentos Transferegov."
+        });
+      }
       return;
     }
 

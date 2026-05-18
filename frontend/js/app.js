@@ -613,6 +613,7 @@ function renderKpiCard({
         function definirEstadoBotoesAtualizacaoSistema(disabled) {
             document.getElementById('btnAtualizarDetruProfor')?.toggleAttribute('disabled', disabled);
             document.getElementById('btnAtualizarProfor2022')?.toggleAttribute('disabled', disabled);
+            document.getElementById('btnAtualizarRendimentosProfor')?.toggleAttribute('disabled', disabled);
         }
 
         async function executarAtualizacaoAdministrativaProfor(tipo, executor) {
@@ -728,6 +729,15 @@ function renderKpiCard({
                             disabled: modoEstatico,
                             title: modoEstatico ? MENSAGEM_MODO_PUBLICACAO : ''
                         })}
+                        ${renderActionButton({
+                            id: 'btnAtualizarRendimentosProfor',
+                            type: 'refresh',
+                            label: 'Atualizar Transferegov',
+                            variant: 'outline-secondary',
+                            backend: true,
+                            disabled: modoEstatico,
+                            title: modoEstatico ? MENSAGEM_MODO_PUBLICACAO : ''
+                        })}
                     </div>
                     ${modoEstatico ? `<div class="mb-3">${renderPublicationNotice()}</div>` : ''}
                     <div class="d-none mb-3" id="profor-atualizacao-progresso-container">
@@ -764,6 +774,9 @@ function renderKpiCard({
             });
             document.getElementById('btnAtualizarProfor2022')?.addEventListener('click', async () => {
                 await executarAtualizacaoAdministrativaProfor('consolidado', atualizarProfor2022ConsolidadoUI);
+            });
+            document.getElementById('btnAtualizarRendimentosProfor')?.addEventListener('click', async () => {
+                await executarAtualizacaoAdministrativaProfor('rendimentos', atualizarRendimentosTransferegovProfor2022UI);
             });
         }
 
@@ -891,6 +904,52 @@ function renderKpiCard({
             } catch (err) {
                 mostrarMensagemConsolidadoProfor2022('danger', err.message || 'Erro ao atualizar PROFOR 2022.');
                 return { sucesso: false, mensagem: err.message || 'Erro ao atualizar PROFOR 2022.' };
+            } finally {
+                if (botao) botao.disabled = false;
+            }
+        }
+
+        async function atualizarRendimentosTransferegovProfor2022UI() {
+            if (estaEmModoPublicacaoEstatica()) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return { sucesso: false, cancelado: true };
+            }
+
+            const botao = document.getElementById('btnAtualizarRendimentosProfor');
+            if (!confirm('Atualizar rendimentos do Transferegov agora?')) {
+                return { sucesso: false, cancelado: true };
+            }
+
+            if (botao) botao.disabled = true;
+            mostrarMensagemConsolidadoProfor2022('warning', 'Atualizando rendimentos Transferegov...');
+
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/profor-2022/rendimentos/atualizar', {
+                    method: 'POST',
+                    body: JSON.stringify({})
+                });
+
+                if (!payload.success) {
+                    throw new Error(payload.message || 'Não foi possível atualizar rendimentos Transferegov.');
+                }
+
+                mostrarMensagemConsolidadoProfor2022('success', payload.message || 'Atualização de rendimentos Transferegov concluída.');
+                await carregarStatusAtualizacaoConsolidadaProfor2022();
+                await carregarStatusUltimaAtualizacaoDetruProfor2022();
+                if (typeof carregarRotuloUltimaAtualizacaoOperacional === 'function') {
+                    await carregarRotuloUltimaAtualizacaoOperacional();
+                }
+
+                return {
+                    sucesso: Boolean(payload.resultado?.sucesso ?? payload.success),
+                    mensagem: payload.message || 'Atualização de rendimentos Transferegov concluída.'
+                };
+            } catch (err) {
+                mostrarMensagemConsolidadoProfor2022('danger', err.message || 'Erro ao atualizar rendimentos Transferegov.');
+                return {
+                    sucesso: false,
+                    mensagem: err.message || 'Erro ao atualizar rendimentos Transferegov.'
+                };
             } finally {
                 if (botao) botao.disabled = false;
             }

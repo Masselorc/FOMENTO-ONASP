@@ -462,4 +462,5 @@ module.exports = {
   validarDiagnosticoConsolidado,
   resumirAtualizacaoConsolidada,
   executarEtapaComProtecao,
+  executarEtapaRendimentos,
 };
