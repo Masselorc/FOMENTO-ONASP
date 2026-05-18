@@ -19,7 +19,7 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css?v=20260518-17-dark" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260518-18-dark" rel="stylesheet">
 </head>
 <body>
 
@@ -139,59 +139,70 @@
 
         <!-- VIEW 1: DASHBOARD GERAL -->
         <main id="view-dashboard" class="container app-view fade-in">
-            <section class="dashboard-intro">
+            <section class="dashboard-intro app-page-hero">
                 <div>
-                    <p class="section-eyebrow mb-1">Visão geral</p>
-                    <h2>Fomento para Ouvidoria</h2>
-                    <p id="dashboard-ultima-atualizacao" aria-live="polite">Atualização não registrada</p>
+                    <p class="section-eyebrow app-page-eyebrow mb-1">Visão geral</p>
+                    <h2 class="app-page-title">Fomento para Ouvidoria</h2>
+                    <p id="dashboard-ultima-atualizacao" class="app-page-subtitle" aria-live="polite">Atualização não registrada</p>
                 </div>
-                <div class="intro-badges" aria-label="Tipos de instrumentos monitorados">
+                <div class="intro-badges app-page-actions" aria-label="Tipos de instrumentos monitorados">
                     <span><i class="fas fa-landmark" aria-hidden="true"></i> FAF</span>
                     <span><i class="fas fa-file-contract" aria-hidden="true"></i> Convênios</span>
                     <span><i class="fas fa-gift" aria-hidden="true"></i> Doações</span>
                 </div>
             </section>
 
-            <!-- KPI SECTION (GLOBAL) -->
-            <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores gerais">
-                <div class="col">
-                    <div class="card kpi-card kpi-card-success">
-                        <div class="kpi-title"><i class="fas fa-briefcase" aria-hidden="true"></i>Total de Fomento para Ouvidoria</div>
-                        <div class="kpi-value text-money text-success" id="kpi-total-fomento-ouvidoria">R$ 0,00</div>
-                        <div class="kpi-desc">Repassado + Doações</div>
-                    </div>
+            <!-- KPI PRIMÁRIO (4 cards principais) -->
+            <section class="app-summary-grid -cols-4 mb-4" aria-label="Indicadores principais">
+                <div class="card kpi-card app-summary-card -success">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-briefcase" aria-hidden="true"></i>Total de Fomento</div>
+                    <div class="kpi-value app-summary-card-value text-money" id="kpi-total-fomento-ouvidoria">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Repassado + Doações</div>
                 </div>
-                <div class="col">
-                    <div class="card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Total Repassado</div>
-                        <div class="kpi-value text-money" id="kpi-total-contratado">R$ 0,00</div>
-                        <div class="kpi-desc">Convênios e FAF</div>
-                    </div>
+                <div class="card kpi-card app-summary-card -success">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-check-circle" aria-hidden="true"></i>Total Executado</div>
+                    <div class="kpi-value app-summary-card-value text-money" id="kpi-total-executado">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Convênios e FAF</div>
                 </div>
-                <div class="col">
-                    <div class="card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-check-circle" aria-hidden="true"></i>Total Executado</div>
-                        <div class="kpi-value text-money text-success" id="kpi-total-executado">R$ 0,00</div>
-                        <div class="kpi-desc">Convênios e FAF</div>
-                    </div>
+                <div class="card kpi-card app-summary-card -info">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-chart-pie" aria-hidden="true"></i>Execução Global</div>
+                    <div class="kpi-value app-summary-card-value" id="kpi-percentual-global">0,0%</div>
+                    <div class="kpi-desc app-summary-card-desc">Média Nacional (Conv/FAF)</div>
                 </div>
-                <div class="col">
-                    <div class="card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-chart-pie" aria-hidden="true"></i>Execução Global</div>
-                        <div class="kpi-value" id="kpi-percentual-global">0,0%</div>
-                        <div class="kpi-desc">Média Nacional (Conv/FAF)</div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card kpi-card kpi-card-warning">
-                        <div class="kpi-title"><i class="fas fa-gift" aria-hidden="true"></i>Total em Doações</div>
-                        <div class="kpi-value text-money text-warning" id="kpi-total-doado">R$ 0,00</div>
-                        <div class="kpi-desc">Veículos e Equipamentos</div>
-                    </div>
+                <div class="card kpi-card app-summary-card">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-map-marked-alt" aria-hidden="true"></i>UFs com Fomento</div>
+                    <div class="kpi-value app-summary-card-value" id="kpi-total-ufs-fomento">0</div>
+                    <div class="kpi-desc app-summary-card-desc">Cobertura nacional</div>
                 </div>
             </section>
 
-            <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-instrumentos-section" aria-label="Indicadores por instrumento">
+            <!-- KPI SECUNDÁRIO (Repassado + Doações) -->
+            <section class="app-summary-grid -cols-3 mb-4" aria-label="Demais indicadores">
+                <div class="card kpi-card app-summary-card">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Total Repassado</div>
+                    <div class="kpi-value app-summary-card-value text-money" id="kpi-total-contratado">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Convênios e FAF</div>
+                </div>
+                <div class="card kpi-card app-summary-card -warning">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-gift" aria-hidden="true"></i>Total em Doações</div>
+                    <div class="kpi-value app-summary-card-value text-money text-warning" id="kpi-total-doado">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Veículos e Equipamentos</div>
+                </div>
+                <div class="card kpi-card app-summary-card -muted">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-layer-group" aria-hidden="true"></i>Instrumentos monitorados</div>
+                    <div class="kpi-value app-summary-card-value">FAF • CONV • DOA</div>
+                    <div class="kpi-desc app-summary-card-desc">Veja detalhes na seção abaixo.</div>
+                </div>
+            </section>
+
+            <section class="app-section mb-4" id="cards-instrumentos-section-wrapper" aria-label="Por instrumento">
+                <div class="app-section-header">
+                    <div>
+                        <p class="section-eyebrow mb-1">Por instrumento</p>
+                        <h2 class="app-section-title">Visão por tipo de instrumento</h2>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-instrumentos-section" aria-label="Indicadores por instrumento">
                 <div class="col">
                     <div class="card kpi-card instrument-summary-card convenio">
                         <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Total em Convênios (Ouvidoria)</div>
@@ -247,6 +258,7 @@
                         <div class="uf-chip-list" id="kpi-ufs-doacao-lista"></div>
                     </div>
                 </div>
+                </div>
             </section>
 
             <!-- FILTROS MULTI-SELECT -->
@@ -271,7 +283,7 @@
                             </div>
                         </div>
 
-                        <div class="visible-filter-grid">
+                        <div class="visible-filter-grid app-filter-compact">
                             <div class="visible-filter-group">
                                 <div class="visible-filter-title">Regiões</div>
                                 <div class="visible-check-list" id="filtroRegiaoOpcoes">
@@ -397,11 +409,11 @@
             <!-- TABELA -->
             <section class="row mb-5">
                 <div class="col-12">
-                    <div class="table-container">
-                        <div class="section-header compact">
+                    <div class="table-container app-table-shell">
+                        <div class="section-header compact app-section-header">
                             <div>
                                 <p class="section-eyebrow mb-1">Itens financeiros</p>
-                                <h2>Base consolidada</h2>
+                                <h2 class="app-section-title">Base consolidada</h2>
                             </div>
                         </div>
                         <table id="tabelaItens" class="table table-striped table-hover w-100 app-data-table">
@@ -555,6 +567,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script type="module" src="./frontend/js/app.js?v=20260518-13"></script>
+    <script type="module" src="./frontend/js/app.js?v=20260518-14"></script>
 </body>
 </html>

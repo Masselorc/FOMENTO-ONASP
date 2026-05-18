@@ -7094,3 +7094,344 @@ table.dataTable.display tbody tr.odd > * {
     background-color: var(--color-export-soft);
     color: var(--color-export-strong);
 }
+
+/* ==========================================================================
+   Padrões .app-* — Etapa 2
+   --------------------------------------------------------------------------
+   Componentes visuais canônicos reutilizáveis nas páginas principais. Cada
+   classe é definida UMA vez e aplicada via "alias" às classes existentes
+   (.dashboard-intro, .budget-intro, .formalizacao-intro, .diagnostico-intro,
+   etc.) por meio de seletores agrupados. Não reescreve regras antigas.
+   Todas as cores usam tokens var(--color-*).
+   ========================================================================== */
+
+/* --- Hero (topo de página) --- */
+.app-page-hero,
+.dashboard-intro,
+.budget-intro,
+.profor-intro,
+.formalizacao-intro,
+.diagnostico-intro {
+    align-items: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-panel);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding: 1.1rem 1.25rem;
+}
+
+.app-page-hero .app-page-eyebrow,
+.dashboard-intro .section-eyebrow,
+.budget-intro .section-eyebrow,
+.formalizacao-intro .section-eyebrow,
+.diagnostico-intro .section-eyebrow {
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.app-page-hero .app-page-title,
+.app-page-hero h2,
+.dashboard-intro h2,
+.budget-intro h2,
+.formalizacao-intro h2,
+.diagnostico-intro h2 {
+    color: var(--color-primary-strong);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.app-page-hero .app-page-subtitle,
+.app-page-hero p,
+.dashboard-intro p,
+.budget-intro p,
+.formalizacao-intro p,
+.diagnostico-intro p {
+    color: var(--color-muted);
+    font-size: 0.92rem;
+    margin: 0.2rem 0 0;
+}
+
+.app-page-hero > div:first-child {
+    min-width: 0;
+}
+
+.app-page-actions {
+    align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: flex-end;
+}
+
+/* --- Seções genéricas --- */
+.app-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-panel);
+    margin-bottom: 1.25rem;
+    padding: 1.1rem 1.15rem;
+}
+
+.app-section-header,
+.app-section .app-section-header {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+}
+
+.app-section-title {
+    color: var(--color-primary-strong);
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.app-section-subtitle {
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+.app-muted-panel {
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+}
+
+/* --- Grids de resumo (KPI) --- */
+.app-summary-grid {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 1.1rem;
+}
+
+.app-summary-grid.-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.app-summary-grid.-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.app-summary-grid.-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 1279.98px) {
+    .app-summary-grid,
+    .app-summary-grid.-cols-4,
+    .app-summary-grid.-cols-5 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991.98px) {
+    .app-summary-grid,
+    .app-summary-grid.-cols-3,
+    .app-summary-grid.-cols-4,
+    .app-summary-grid.-cols-5 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    .app-summary-grid,
+    .app-summary-grid.-cols-3,
+    .app-summary-grid.-cols-4,
+    .app-summary-grid.-cols-5 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- Cartões reutilizáveis --- */
+.app-summary-card,
+.app-insight-card,
+.app-decision-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1rem 1.1rem;
+}
+
+.app-summary-card {
+    border-left: 4px solid var(--color-primary);
+    min-height: 124px;
+}
+
+.app-summary-card.-success { border-left-color: var(--color-success); }
+.app-summary-card.-warning { border-left-color: var(--color-warning); }
+.app-summary-card.-info    { border-left-color: var(--color-info); }
+.app-summary-card.-danger  { border-left-color: var(--color-danger); }
+.app-summary-card.-muted   { border-left-color: var(--color-border-strong); }
+
+.app-summary-card-title {
+    align-items: center;
+    color: var(--color-muted);
+    display: flex;
+    font-size: 0.74rem;
+    font-weight: 700;
+    gap: 0.45rem;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+
+.app-summary-card-value {
+    color: var(--color-primary-strong);
+    font-size: 1.32rem;
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.app-summary-card-desc {
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    line-height: 1.35;
+}
+
+.app-insight-card {
+    border-left: 4px solid var(--color-primary);
+}
+
+/* --- Filtros compactos --- */
+.app-filter-compact {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+@media (max-width: 767.98px) {
+    .app-filter-compact {
+        grid-template-columns: 1fr;
+    }
+}
+
+.app-filter-compact .visible-filter-group {
+    margin: 0;
+}
+
+/* --- Barra de ações --- */
+.app-action-bar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    justify-content: flex-end;
+}
+
+@media (max-width: 575.98px) {
+    .app-action-bar {
+        justify-content: stretch;
+    }
+
+    .app-action-bar > .btn {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+}
+
+/* --- Shell de tabela --- */
+.app-table-shell {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-panel);
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.app-table-toolbar {
+    align-items: center;
+    color: var(--color-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+/* --- Refinos pontuais herdados das classes antigas --- */
+
+/* Diagnóstico — remover #0f766e hardcoded do border-left antigo */
+.diagnostico-intro {
+    border-left: 3px solid var(--color-success);
+}
+
+/* Budget status badge mais compacto */
+.budget-status,
+.budget-status-default,
+.budget-status-running,
+.budget-status-planned {
+    font-size: 0.65rem;
+    min-height: 24px;
+    min-width: 76px;
+    padding: 0.22rem 0.5rem;
+}
+
+/* Cards da Formalização — reduzir ruído e padronizar com app-decision-card */
+.formalizacao-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text);
+    padding: 1rem 1.1rem;
+}
+
+.formalizacao-card.formalizacao-card-risk {
+    border-left-color: var(--color-danger);
+}
+
+.formalizacao-card .formalizacao-card-header h3,
+.formalizacao-card h3 {
+    color: var(--color-primary-strong);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.formalizacao-card .formalizacao-card-metrics,
+.formalizacao-card .formalizacao-card-tags,
+.formalizacao-card .formalizacao-card-actions {
+    color: var(--color-text);
+}
+
+/* .formalizacao-card-grid: manter o layout original (2 colunas) para
+   preservar pointer events nos botões internos do editor. */
+
+/* Aliases para tabelas — reaproveita o shell visual */
+.budget-main-table,
+.formalizacao-data-table,
+.profor-data-table,
+.app-data-table {
+    background: transparent;
+}
+
+/* Refinos de tipografia da hero quando placed em <section> antiga */
+.dashboard-intro p,
+.budget-intro p {
+    max-width: 64ch;
+}
+

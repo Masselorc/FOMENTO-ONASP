@@ -5444,17 +5444,17 @@ async function carregarLogoParaPDF() {
                         <h2>Formalização PROFOR</h2>
                         ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
                         ${modoEstatico
-                            ? '<small class="text-muted">Dados carregados dos JSONs publicados.</small>'
+                            ? '<small class="text-muted">Modo publicação: somente leitura.</small>'
                             : totalAlteracoes
                                 ? `<small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas UFs.</small>`
-                                : '<small class="text-muted">Edite cada UF pelo botão no fim da linha.</small>'}
+                                : '<small class="text-muted">Use Ações para editar UFs.</small>'}
                     </div>
                     <div class="diagnostico-action-buttons">
                         ${renderActionButton({
                             id: 'btnExportarFormalizacao',
                             type: 'exportExcel',
                             label: 'Exportar Excel',
-                            variant: 'outline-success',
+                            variant: 'export',
                             backend: true,
                             disabled: modoEstatico
                         })}
@@ -5462,7 +5462,7 @@ async function carregarLogoParaPDF() {
                             id: 'btnHistoricoFormalizacao',
                             type: 'history',
                             label: 'Histórico',
-                            variant: 'outline-dark',
+                            variant: 'admin',
                             backend: true,
                             disabled: modoEstatico
                         })}
@@ -9866,7 +9866,7 @@ async function carregarLogoParaPDF() {
                             id: 'btnExportarParametrosMinimos',
                             type: 'exportExcel',
                             label: 'Exportar Excel',
-                            variant: 'outline-success',
+                            variant: 'export',
                             backend: true,
                             disabled: modoEstatico
                         })}
@@ -9874,7 +9874,7 @@ async function carregarLogoParaPDF() {
                             id: 'btnHistoricoParametrosMinimos',
                             type: 'history',
                             label: 'Histórico',
-                            variant: 'outline-dark',
+                            variant: 'admin',
                             backend: true,
                             disabled: modoEstatico
                         })}
@@ -10351,17 +10351,17 @@ async function carregarLogoParaPDF() {
                         <h2>Orçamento 2026</h2>
                         ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
                         ${modoEstatico
-                            ? '<small class="text-muted">Dados carregados dos JSONs publicados.</small>'
+                            ? '<small class="text-muted">Modo publicação: somente leitura.</small>'
                             : totalAlteracoes
                                 ? `<small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas linhas.</small>`
-                                : '<small class="text-muted">Edite cada item pelo botão no fim da linha.</small>'}
+                                : '<small class="text-muted">Use Ações para editar linhas.</small>'}
                     </div>
                     <div class="diagnostico-action-buttons">
                         ${renderActionButton({
                             id: 'btnExportarOrcamentoExcel',
                             type: 'exportExcel',
                             label: 'Exportar Excel',
-                            variant: 'outline-success',
+                            variant: 'export',
                             backend: true,
                             disabled: modoEstatico
                         })}
@@ -10369,7 +10369,7 @@ async function carregarLogoParaPDF() {
                             id: 'btnHistoricoOrcamento',
                             type: 'history',
                             label: 'Histórico',
-                            variant: 'outline-dark',
+                            variant: 'admin',
                             backend: true,
                             disabled: modoEstatico
                         })}
@@ -12473,6 +12473,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
             $('#count-faf').text(resumoInstrumentos.faf.quantidadeUfs);
             $('#count-doacoes').text(resumoInstrumentos.doacao.quantidadeUfs);
             $('#count-ufs-instrumentos').text(ufsComAlgumInstrumento.length);
+            $('#kpi-total-ufs-fomento').text(ufsComAlgumInstrumento.length);
 
             renderUfChipsFiltro('count-convenios-ufs', resumoInstrumentos.convenios.ufs);
             renderUfChipsFiltro('count-faf-ufs', resumoInstrumentos.faf.ufs);
