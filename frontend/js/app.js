@@ -619,10 +619,19 @@ function renderKpiCard({
             if (footerEl) footerEl.textContent = textoCurtoFooter;
         }
 
+        function existeRotuloUltimaAtualizacaoValido() {
+            const dashboardEl = document.getElementById('dashboard-ultima-atualizacao');
+            const footerEl = document.getElementById('footer-ultima-atualizacao');
+            return [dashboardEl?.textContent, footerEl?.textContent].some((texto) => (
+                String(texto || '').trim().startsWith('Atualizado em ')
+            ));
+        }
+
         function exibirRotuloUltimaAtualizacaoOperacional(info) {
             const FALLBACK = 'Atualização não registrada';
             const formatado = formatarDataHoraAtualizacaoBr(info?.dataHora);
             if (!formatado) {
+                if (existeRotuloUltimaAtualizacaoValido()) return;
                 aplicarRotuloUltimaAtualizacaoOperacional(FALLBACK, FALLBACK);
                 return;
             }
@@ -648,7 +657,7 @@ function renderKpiCard({
             try {
                 const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizacao/status');
                 if (!payload?.success) throw new Error(payload?.message || 'Status indisponível.');
-                const infoApi = payload.ultimaAtualizacaoDados || null;
+                const infoApi = payload.ultimaAtualizacaoDados || payload.data?.ultimaAtualizacaoDados || null;
                 const infoFallback = obterUltimaAtualizacaoDadosProforCarregado();
                 exibirRotuloUltimaAtualizacaoOperacional(infoApi?.dataHora ? infoApi : infoFallback);
             } catch (err) {

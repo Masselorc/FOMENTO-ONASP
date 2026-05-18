@@ -516,6 +516,8 @@ A partir do bloco de publicação estática (18/05/2026), o mesmo metadado `ulti
 
 Correção de robustez em 18/05/2026: em modo local/API, se `GET /api/profor-2022/atualizacao/status` falhar ou retornar sem `ultimaAtualizacaoDados.dataHora`, o frontend tenta `obterDadosProfor2022()?.ultimaAtualizacaoDados` antes de exibir "Atualização não registrada". Ao final de `garantirDadosBaseAplicacao()`, o rótulo é recalculado depois que o cache PROFOR 2022 já foi populado, reduzindo corrida assíncrona. O endpoint `GET /api/profor-2022/consolidado` também passou a incluir `ultimaAtualizacaoDados` no payload `data` como metadado defensivo.
 
+Complemento operacional: o rótulo da visão geral não deve ser sobrescrito por fallback nulo depois que já estiver exibindo `Atualizado em ...`. Se uma chamada posterior não trouxer `dataHora`, o frontend preserva o rótulo válido existente. O cache-buster do bundle foi atualizado para `v=20260518-06` para forçar navegadores locais a buscar a correção.
+
 Regra de exibição da faixa técnica: a faixa administrativa de origem/diagnóstico (`Origem local/API`, `Diagnóstico`, avisos de campos pendentes como `saldoDisponivelOuvidoria`) fica restrita ao modo local/API. Em modo estático/GitHub Pages, `renderizarAvisoOrigemProfor()` retorna vazio; a página PROFOR 2022 não exibe essa faixa para o usuário final e não chama rotas `/api/`.
 
 ### 10.1.1. Rotina operacional diária consolidada (referência rápida)

@@ -1,5 +1,60 @@
 # Diário de bordo
 
+## 18/05/2026 - Diagnóstico real do localhost e proteção contra sobrescrita do rótulo operacional
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo; `git pull` executado e retornou `Already up to date`.
+- Commit confirmado no histórico local: `f7c42c3 fix(profor-2022): corrigir rotulo de atualizacao e aviso tecnico`.
+- `index.html` estava servindo `frontend/js/app.js?v=20260518-05` antes da correção desta etapa.
+- Objetivo: diagnosticar por que o usuário ainda via `Atualização não registrada` no servidor local e aplicar correção pontual baseada em evidência.
+
+### Diagnóstico real em localhost
+
+- Servidor temporário: `PORT=8799 node backend/server.js`.
+- `GET /api/profor-2022/atualizacao/status` retornou `success=true`, `origemDados=banco-cache`, `ultimaAtualizacaoDados.dataHora=2026-05-18T10:44:06.616Z` e `fonte=Transferegov/rendimentos`.
+- `GET /api/profor-2022/consolidado` retornou `success=true`, 15 convênios, `data.ultimaAtualizacaoDados` presente e diagnóstico `totalComDetru=15`, `totalComPlano=15`, `totalComRendimentos=15`.
+- `GET /index.html` retornava `app.js?v=20260518-05` e o bundle continha a lógica do commit anterior.
+- Playwright em `http://localhost:8799/index.html` não reproduziu o erro: dashboard e rodapé exibiram a data correta, com console sem erros/avisos.
+
+### Causa encontrada
+
+- Não foi identificada falha no endpoint nem ausência de metadado publicado.
+- A hipótese mais consistente para a persistência visual no navegador do usuário é cache/bundle antigo ou uma chamada tardia com metadado nulo sobrescrevendo um rótulo já válido.
+- O código ainda permitia essa sobrescrita: `exibirRotuloUltimaAtualizacaoOperacional(null)` sempre aplicava `Atualização não registrada`, mesmo se a tela já exibisse `Atualizado em ...`.
+
+### Correção aplicada
+
+- `frontend/js/app.js`
+  - Criada proteção `existeRotuloUltimaAtualizacaoValido()` para não sobrescrever um rótulo já válido com fallback nulo.
+  - Leitura defensiva aceita `payload.ultimaAtualizacaoDados` e `payload.data?.ultimaAtualizacaoDados`.
+- `index.html`
+  - Cache-buster atualizado para `frontend/js/app.js?v=20260518-06`, forçando o navegador a buscar o bundle novo.
+- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+
+### Testes após correção
+
+- HTML servido em `PORT=8799`: `app.js?v=20260518-06`.
+- Bundle servido contém `existeRotuloUltimaAtualizacaoValido()` e fallback defensivo para `payload.data?.ultimaAtualizacaoDados`.
+- Playwright localhost:
+  - `#dashboard-ultima-atualizacao`: `Atualizado em 18/05/2026 às 07:44`.
+  - `#footer-ultima-atualizacao`: `Atualizado em 18/05/2026 às 07:44 (Transferegov/rendimentos)`.
+  - Página PROFOR 2022 carregou.
+  - Console sem erros e sem avisos.
+- Simulação controlada de GitHub Pages:
+  - `estaEmModoPublicacaoEstatica() = true`.
+  - Nenhuma chamada `/api/` foi feita.
+  - Rótulo lido de `dadosProfor2022.ultimaAtualizacaoDados` no JSON publicado.
+  - Faixa técnica (`Origem local/API`, `Diagnóstico: DETRU`, `saldoDisponivelOuvidoria`) não apareceu.
+  - Console sem erros; apenas aviso esperado de modo estático.
+
+### Restrições confirmadas
+
+- `npm run publicar:dados` não foi executado.
+- JSONs publicados não foram alterados.
+- Banco/schema, `.env`, valores de convênios e rotinas DETRU/Transferegov não foram alterados.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou arquivo temporário foi versionado.
+
 ## 18/05/2026 - Correção do rótulo de atualização e ocultação do aviso técnico no modo estático
 
 - Continuação após interrupção por limite de tokens. Antes de qualquer `git pull`, foi inspecionado o estado local conforme ordem de serviço.
