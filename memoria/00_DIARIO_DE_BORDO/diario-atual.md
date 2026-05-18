@@ -1,5 +1,66 @@
 # Diário de bordo
 
+## 17/05/2026 - Validação operacional do cache DETRU — sucesso na atualização por URL
+
+- Branch atual: `main`.
+- Objetivo: reexecutar validação operacional do cache DETRU com URL oficial configurada, confirmar download automático e validar endpoints de diagnóstico.
+- Escopo: operacional/validação, executor técnico conservador, sem alterações de código/frontend/banco/JSONs.
+- Status: ✅ **CONCLUÍDO COM SUCESSO**.
+- URL oficial usada: `https://repositorio.dados.gov.br/seges/detru/siconv_convenio.csv.zip`.
+- Download automático: executado com sucesso via `npm run atualizar:detru-profor`.
+- Arquivo local gerado: `Dados/detru/siconv_convenio.csv.zip`.
+- Tamanho do arquivo: 15,48 MB.
+- Hash SHA-256: `b55d5be23bba2f78574c53737362a09b2d25abdc2ca74c66054f35c41103b94f`.
+- **Resultado do cruzamento carteira × DETRU:**
+  - Carteira ativa: 15 convênios.
+  - Linhas DETRU lidas: 281.229.
+  - Encontrados no DETRU: 15.
+  - Não encontrados: 0.
+  - Taxa de cobertura: 100% (15/15).
+- **Cache DETRU no banco:**
+  - Total registros em `profor_detru_cache`: 15.
+  - ID última atualização: 2.
+  - Sucesso: sim (flag `sucesso = 1`).
+  - Total carteira processada: 15.
+  - Erro: nenhum.
+- **Endpoints testados:** ambos respondendo `200 OK`.
+  - `GET /api/profor-2022/consolidado`: status 200, resposta JSON com resumo financeiro e lista de 15 convênios.
+  - `GET /api/profor-2022/comparar-origens`: status 200, resposta JSON com comparação planilha × banco-cache.
+- **Diagnóstico extraído de `/api/profor-2022/consolidado`:**
+  - `diagnostico.totalComDetru`: 15 ✅ (cache populado).
+  - `diagnostico.totalComRendimentos`: 1 (ainda sem cache completo de rendimentos).
+  - `diagnostico.totalComPlano`: 1 (ainda sem cache completo de plano).
+- **Comparação de origens (`/api/profor-2022/comparar-origens`):**
+  - `totalAntigo` (planilha): 15.
+  - `totalNovo` (banco-cache): 15.
+  - `totalIguais`: 0 (nenhum convênio idêntico entre as duas origens).
+  - `totalComDivergencia`: 15 (todos os 15 convênios apresentam pelo menos uma divergência).
+  - Causa: `diagnostico.totalComDetru` agora = 15 (DETRU resolvido), mas `totalComRendimentos` = 1 e `totalComPlano` = 1 ainda geram divergências em campos `saldoRendimentosAtual` e previstos/executados.
+- **Conclusão técnica:**
+  - Cache DETRU: ✅ **resolvido e operacional**.
+  - Cache Transferegov (rendimentos): ⚠️ **ainda incompleto** (afeta `diagnostico.totalComRendimentos`).
+  - Cache plano de aplicação: ⚠️ **ainda incompleto** (afeta `diagnostico.totalComPlano`).
+  - Ativação de `banco-cache`: ❌ **ainda bloqueada** por pendências de rendimentos/plano e divergências não resolvidas.
+- **Confirmações de segurança:**
+  - Origem padrão: `PROFOR_2022_ORIGEM_DADOS=planilha` (mantida).
+  - `banco-cache`: **não foi ativado** como origem padrão.
+  - `npm run publicar:dados`: **não foi executado**.
+  - JSONs publicados em `frontend/data/publicados/`: **não foram alterados**.
+  - ZIP/CSV em `Dados/detru/`: **não foi versionado** em `.git`.
+  - Banco SQLite: **não foi versionado** em `.git`.
+- **Validações executadas:**
+  - `npm run validar:json` — não necessário (nenhum JSON publicado foi alterado).
+  - `npm run validar:syntax` — não necessário (nenhum código foi alterado).
+  - `git status --short` — repositório limpo (sem arquivos temporários).
+  - `git diff --check` — sem trailing whitespace.
+  - `git diff --name-only` — vazio (nenhuma alteração).
+- **Próxima pendência crítica:**
+  - Investigar e resolver `totalComRendimentos = 1` e `totalComPlano = 1` para eliminar as 15 divergências atuais.
+  - Apenas após resolver, considerar ativação de `banco-cache` como origem padrão.
+- Commit/Push: **não necessário**, nenhuma alteração de código ou banco.
+
+---
+
 ## 17/05/2026 - Validação operacional do cache DETRU — impedimento por ausência de fonte
 
 - Branch atual: `main`.
