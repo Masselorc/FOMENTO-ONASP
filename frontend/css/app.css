@@ -7435,3 +7435,182 @@ table.dataTable.display tbody tr.odd > * {
     max-width: 64ch;
 }
 
+/* ==========================================================================
+   Etapa 2.1 — Respiro visual minimalista
+   --------------------------------------------------------------------------
+   Ajustes incrementais de espaco e densidade nas paginas principais.
+   Mantem estrutura, cores, contratos de dados e componentes existentes.
+   ========================================================================== */
+
+:root {
+    --space-21-xs: 0.65rem;
+    --space-21-sm: 0.85rem;
+    --space-21-md: 1rem;
+    --space-21-lg: 1.15rem;
+    --space-21-xl: 1.45rem;
+}
+
+.app-page-hero,
+.dashboard-intro,
+.budget-intro,
+.formalizacao-intro,
+.diagnostico-intro {
+    gap: var(--space-21-lg);
+    margin-bottom: var(--space-21-xl);
+    padding: 1.25rem 1.45rem;
+}
+
+.app-page-hero .app-page-subtitle,
+.app-page-hero p,
+.dashboard-intro p,
+.budget-intro p,
+.formalizacao-intro p,
+.diagnostico-intro p {
+    line-height: 1.55;
+    margin-top: 0.28rem;
+}
+
+#view-dashboard .filter-section,
+#view-dashboard .table-container,
+#view-orcamento .filter-section,
+#view-orcamento .table-container,
+#view-formalizacao-profor .filter-section,
+#view-formalizacao-profor .table-container,
+#view-diagnostico-ouvidorias .filter-section,
+#view-diagnostico-ouvidorias .table-container,
+.app-section,
+.diagnostico-block {
+    margin-bottom: var(--space-21-xl);
+    padding: 1.15rem 1.25rem;
+}
+
+.app-section-header,
+.app-section .app-section-header,
+.section-header.compact {
+    gap: var(--space-21-sm);
+    margin-bottom: var(--space-21-md);
+}
+
+.app-summary-grid,
+.budget-insight-grid,
+.formalizacao-insight-grid {
+    gap: var(--space-21-md);
+    margin-bottom: 1.25rem;
+}
+
+#cards-instrumentos-section {
+    margin-bottom: var(--space-21-xl);
+    row-gap: var(--space-21-lg);
+}
+
+.app-summary-card,
+.app-insight-card,
+.app-decision-card,
+.budget-insight-card,
+.instrument-summary-card,
+.formalizacao-shortcut-panel,
+.formalizacao-quick-filter-panel,
+.formalizacao-alert-panel {
+    gap: 0.5rem;
+    padding: 1.15rem 1.25rem;
+}
+
+.instrument-mini-chart {
+    gap: var(--space-21-sm);
+    min-height: 82px;
+    padding-top: var(--space-21-md);
+}
+
+.app-summary-card-desc,
+.budget-management-note,
+.formalizacao-alert-item span:last-child,
+.diagnostico-current-selector {
+    line-height: 1.5;
+}
+
+.app-filter-compact,
+.budget-filter-grid,
+.formalizacao-quick-filter-grid,
+.diagnostico-filter-section,
+.diagnostico-shortcut-panel {
+    gap: var(--space-21-md);
+}
+
+.filter-toolbar,
+.app-table-toolbar {
+    gap: var(--space-21-md);
+    margin-bottom: var(--space-21-lg);
+}
+
+.app-action-bar,
+.diagnostico-action-buttons,
+.formalizacao-card-actions {
+    gap: 0.65rem;
+}
+
+.app-table-shell {
+    padding: 1.15rem;
+}
+
+.formalizacao-card-grid {
+    gap: var(--space-21-lg);
+}
+
+.formalizacao-card {
+    gap: 0.95rem;
+    padding: 1.15rem 1.25rem;
+}
+
+.formalizacao-card-header {
+    gap: var(--space-21-sm);
+}
+
+.formalizacao-card-metrics,
+.formalizacao-card-progress,
+.formalizacao-card-checklists,
+.formalizacao-card-tags {
+    gap: 0.65rem;
+}
+
+.diagnostico-action-bar {
+    gap: var(--space-21-md);
+}
+
+@media (max-width: 991.98px) {
+    .app-page-hero,
+    .dashboard-intro,
+    .budget-intro,
+    .formalizacao-intro,
+    .diagnostico-intro {
+        padding: 1.15rem 1.25rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .app-page-hero,
+    .dashboard-intro,
+    .budget-intro,
+    .formalizacao-intro,
+    .diagnostico-intro,
+    #view-dashboard .filter-section,
+    #view-dashboard .table-container,
+    #view-orcamento .filter-section,
+    #view-orcamento .table-container,
+    #view-formalizacao-profor .filter-section,
+    #view-formalizacao-profor .table-container,
+    #view-diagnostico-ouvidorias .filter-section,
+    #view-diagnostico-ouvidorias .table-container,
+    .app-section,
+    .diagnostico-block {
+        padding: 1rem;
+    }
+
+    .app-summary-card,
+    .app-insight-card,
+    .app-decision-card,
+    .budget-insight-card,
+    .formalizacao-card {
+        padding: 1rem 1.05rem;
+    }
+}
+

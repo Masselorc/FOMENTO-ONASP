@@ -2806,3 +2806,40 @@ Logs operacionais gravados:
 ### Rollback
 
 `git revert <hash>` reverte os 2 arquivos (CSS + index.html). Sem impacto em backend, banco ou JSONs publicados.
+
+---
+
+## 18/05/2026 - Etapa 2.1: respiro visual minimalista
+
+- Objetivo: aumentar em torno de 15% o respiro visual das paginas principais, preservando o tema escuro institucional e sem redesenhar a interface.
+- Paginas-alvo: Home/Dashboard, Orcamento 2026, Formalizacao PROFOR e Parametros Minimos.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Escopo tecnico:
+  - adicionada a secao final `Etapa 2.1 — Respiro visual minimalista` em `app.css`;
+  - ajustes agrupados em hero, secoes, grids, cards, filtros, barras de acao, shells de tabela, cards da Formalizacao e blocos de Diagnostico;
+  - reforco pontual na Home para a secao `Por instrumento`, aumentando o intervalo entre cards e o respiro interno dos mini graficos sem remover informacao;
+  - paddings, gaps e margens aumentados de forma controlada, com reducao responsiva em telas pequenas;
+  - cache-buster do CSS atualizado em `index.html` para `app.css?v=20260518-19-respiro`.
+- Restricoes preservadas:
+  - sem alteracao de regras de negocio, calculos, endpoints, payloads, banco, `.env` ou JSONs publicados;
+  - sem alteracao de templates ou listeners;
+  - sem publicacao executada.
+- Testes planejados/executados nesta etapa:
+  - `node --check frontend/js/app.js`;
+  - `node --check frontend/js/core/ui-components.js`;
+  - `npm run validar:syntax`;
+  - `npm run validar:json`;
+  - `npm run validar:agente`;
+  - smoke visual das quatro paginas-alvo em 1366px, 1024px, 768px e 390px.
+- Resultado dos testes:
+  - checks de sintaxe e JSON concluidos com sucesso;
+  - `npm run validar:agente` manteve 7 testes Playwright aprovados e 4 falhas conhecidas de modo estatico por ausencia da classe `modo-publicacao-estatica` no `body`;
+  - smoke visual confirmou Home, Orcamento 2026, Formalizacao PROFOR e Parametros Minimos sem erro de console, sem estado visual de erro e sem overflow horizontal nos quatro tamanhos avaliados.
+- Riscos remanescentes:
+  - como `filter-section` e `table-container` sao classes historicas compartilhadas, os ajustes foram escopados por view nas paginas-alvo sempre que possivel;
+  - diferencas finas de altura podem aparecer em cards com textos muito longos, mas sem mudanca de conteudo ou comportamento.
+- Rollback:
+  - reverter este commit restaura os espacamentos anteriores; nao ha impacto em backend, banco, dados publicados ou configuracao.
