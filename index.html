@@ -19,7 +19,7 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css?v=20260518-12-dark" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260518-13-dark" rel="stylesheet">
 </head>
 <body>
 
@@ -437,7 +437,7 @@
                     <p class="section-eyebrow mb-1">Estados e regiões</p>
                     <h2>Detalhamento dos Recursos por Estado</h2>
                 </div>
-                <button type="button" class="btn btn-danger btn-icon-text pdf-hidden" id="btn-detail-export-state-pdf" onclick="abrirSelecaoUfExportacao()" aria-expanded="false" aria-controls="detail-uf-export-panel">
+                <button type="button" class="btn btn-export btn-icon-text pdf-hidden" id="btn-detail-export-state-pdf" onclick="abrirSelecaoUfExportacao()" aria-expanded="false" aria-controls="detail-uf-export-panel">
                     <i class="fas fa-file-pdf" aria-hidden="true"></i>
                     <span>Exportar Relatório Estadual</span>
                 </button>
@@ -459,7 +459,7 @@
                     <i class="fas fa-arrow-left" aria-hidden="true"></i>
                     <span>Voltar para Visão por Região</span>
                 </button>
-                <button id="btn-export-pdf" type="button" class="btn btn-danger btn-icon-text" onclick="exportarRelatorioPDF()">
+                <button id="btn-export-pdf" type="button" class="btn btn-export btn-icon-text" onclick="exportarRelatorioPDF()">
                     <i class="fas fa-file-pdf" aria-hidden="true"></i>
                     <span>Exportar PDF</span>
                 </button>

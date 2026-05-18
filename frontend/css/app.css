@@ -6703,3 +6703,114 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
         min-width: 0;
     }
 }
+
+/* ==========================================================================
+   Overrides finais — Tema escuro institucional
+   --------------------------------------------------------------------------
+   Esta seção fica intencionalmente no fim do arquivo para vencer a cascata
+   sobre regras antigas com hard-codes pastéis (sidebar variantes, estados
+   active/aria-current, alguns gradients). Mantém especificidade equivalente
+   à das regras antigas e usa apenas tokens (var --color-*).
+   ========================================================================== */
+
+/* --- Sidebar: variantes temáticas com superfície escura + borda colorida --- */
+.app-offcanvas .sidebar-link-detail,
+.app-offcanvas .sidebar-link-profor,
+.app-offcanvas .sidebar-link-formalizacao,
+.app-offcanvas .sidebar-link-faf,
+.app-offcanvas .sidebar-link-doacoes,
+.app-offcanvas .sidebar-link-budget {
+    background: var(--color-surface-muted);
+    border-color: var(--color-border);
+    border-left-width: 3px;
+    color: var(--color-text);
+    box-shadow: none;
+}
+
+.app-offcanvas .sidebar-link-detail        { border-left-color: var(--color-info); }
+.app-offcanvas .sidebar-link-detail i      { color: var(--color-info); }
+.app-offcanvas .sidebar-link-profor        { border-left-color: var(--color-success); }
+.app-offcanvas .sidebar-link-profor i      { color: var(--color-success); }
+.app-offcanvas .sidebar-link-formalizacao  { border-left-color: #a78bfa; }
+.app-offcanvas .sidebar-link-formalizacao i{ color: #a78bfa; }
+.app-offcanvas .sidebar-link-faf           { border-left-color: var(--color-warning); }
+.app-offcanvas .sidebar-link-faf i         { color: var(--color-warning); }
+.app-offcanvas .sidebar-link-doacoes       { border-left-color: var(--color-danger); }
+.app-offcanvas .sidebar-link-doacoes i     { color: var(--color-danger); }
+.app-offcanvas .sidebar-link-budget        { border-left-color: var(--color-warning); }
+.app-offcanvas .sidebar-link-budget i      { color: var(--color-warning); }
+
+/* --- Sidebar: hover / active / aria-current uniformes no tema escuro --- */
+.app-offcanvas .sidebar-link-detail:hover,
+.app-offcanvas .sidebar-link-detail.active,
+.app-offcanvas .sidebar-link-detail[aria-current="page"],
+.app-offcanvas .sidebar-link-profor:hover,
+.app-offcanvas .sidebar-link-profor.active,
+.app-offcanvas .sidebar-link-profor[aria-current="page"],
+.app-offcanvas .sidebar-link-formalizacao:hover,
+.app-offcanvas .sidebar-link-formalizacao.active,
+.app-offcanvas .sidebar-link-formalizacao[aria-current="page"],
+.app-offcanvas .sidebar-link-faf:hover,
+.app-offcanvas .sidebar-link-faf.active,
+.app-offcanvas .sidebar-link-faf[aria-current="page"],
+.app-offcanvas .sidebar-link-doacoes:hover,
+.app-offcanvas .sidebar-link-doacoes.active,
+.app-offcanvas .sidebar-link-doacoes[aria-current="page"],
+.app-offcanvas .sidebar-link-budget:hover,
+.app-offcanvas .sidebar-link-budget.active,
+.app-offcanvas .sidebar-link-budget[aria-current="page"] {
+    background: var(--color-surface-elevated);
+    border-color: var(--color-border-strong);
+    color: var(--color-text);
+    box-shadow: none;
+}
+
+/* Regras com 3 classes (specificity 0,3,0) usadas pelas variantes ativas no CSS antigo. */
+.app-offcanvas .sidebar-link.sidebar-link-detail.active,
+.app-offcanvas .sidebar-link.sidebar-link-detail[aria-current="page"],
+.app-offcanvas .sidebar-link.sidebar-link-profor.active,
+.app-offcanvas .sidebar-link.sidebar-link-profor[aria-current="page"],
+.app-offcanvas .sidebar-link.sidebar-link-formalizacao.active,
+.app-offcanvas .sidebar-link.sidebar-link-formalizacao[aria-current="page"],
+.app-offcanvas .sidebar-link.sidebar-link-faf.active,
+.app-offcanvas .sidebar-link.sidebar-link-faf[aria-current="page"],
+.app-offcanvas .sidebar-link.sidebar-link-doacoes.active,
+.app-offcanvas .sidebar-link.sidebar-link-doacoes[aria-current="page"],
+.app-offcanvas .sidebar-link-budget.active,
+.app-offcanvas .sidebar-link-budget[aria-current="page"] {
+    background: var(--color-surface-elevated);
+    color: var(--color-text);
+}
+
+/* Folder toggle: substitui o #eef7ff pastel da regra antiga. */
+.app-offcanvas .sidebar-folder-toggle.active,
+.app-offcanvas .sidebar-folder-toggle[aria-expanded="true"] {
+    background: var(--color-primary-soft);
+    border-color: rgba(96, 165, 250, 0.36);
+    color: var(--color-primary-strong);
+}
+
+/* Sidebar-link padrão ativo. */
+.app-offcanvas .sidebar-link.active,
+.app-offcanvas .sidebar-link[aria-current="page"] {
+    background: var(--color-primary-soft);
+    border-color: rgba(96, 165, 250, 0.36);
+    color: var(--color-primary-strong);
+}
+
+/* Hover/foco neutro do sidebar-link base. */
+.app-offcanvas .sidebar-link:hover,
+.app-offcanvas .sidebar-action:hover {
+    background: var(--color-surface-elevated);
+    border-color: var(--color-border-strong);
+}
+
+/* --- Gradients pastéis de modais e cards que escapavam à camada anterior. --- */
+.budget-split-modal .modal-body,
+.modal-body[class*="profor"],
+.budget-split-modal {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+}

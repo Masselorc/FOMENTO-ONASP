@@ -2761,3 +2761,48 @@ Logs operacionais gravados:
 ### Rollback
 
 `git revert <hash>` reverte integralmente os 3 arquivos (somente tema/visual). Nenhum efeito em backend, banco, rotas ou dados publicados.
+
+---
+
+## 18/05/2026 - Corrigir cascata e botoes de exportacao do tema escuro
+
+- Branch: `main`. `git pull` -> `Already up to date.`. Commit base: `2023243`.
+- Motivo: na Etapa 1 a camada de tema escuro foi inserida no topo do `app.css`, mas regras antigas posteriores com hard-codes pasteis (sidebar variantes, estados active/aria-current) venciam a cascata. Alem disso, dois botoes estaticos de exportacao em `index.html` continuavam usando `btn-danger` (visual destrutivo).
+
+### Correcoes
+
+- `frontend/css/app.css`: adicionada secao final "Overrides finais - Tema escuro institucional" com:
+  - variantes `.sidebar-link-detail/profor/formalizacao/faf/doacoes/budget` em superficie escura uniforme (`var(--color-surface-muted)`) com borda esquerda colorida (info/success/roxo/warning/danger/warning);
+  - estados `:hover`, `.active` e `[aria-current="page"]` uniformes em `var(--color-surface-elevated)`;
+  - regras com 3 classes (specificity 0,3,0) sobrescrevendo os pasteis antigos `.sidebar-link.sidebar-link-X.active`;
+  - `.sidebar-folder-toggle.active` em `var(--color-primary-soft)`;
+  - escopagem por `.app-offcanvas` para evitar conflito com regras nao-sidebar de mesma classe.
+- `index.html`:
+  - botao "Exportar Relatorio Estadual" (`#btn-detail-export-state-pdf`): `btn-danger` -> `btn-export`;
+  - botao "Exportar PDF" (`#btn-export-pdf`): `btn-danger` -> `btn-export`;
+  - IDs, `onclick`, `aria-expanded` e `aria-controls` preservados;
+  - cache-buster do CSS: `app.css?v=20260518-13-dark`.
+
+### Testes
+
+- `node --check frontend/js/core/ui-components.js` -> OK.
+- `npm run validar:syntax` -> 25 arquivo(s) OK.
+- `npm run validar:json` -> OK (JSONs publicados intactos).
+- Smoke Playwright em `PORT=8808`:
+  - 6 variantes da sidebar com background uniforme `rgb(28, 39, 53)` e borda esquerda na cor semantica esperada (`#38bdf8`, `#10b981`, `#a78bfa`, `#f59e0b`, `#ef4444`, `#f59e0b`).
+  - `#btn-detail-export-state-pdf` agora com classe `btn btn-export`, cor `rgb(20, 184, 166)` (teal), fundo transparente. Vermelho ausente.
+  - 0 erros de console/page/request.
+- `npm run validar:agente` nao re-executado nesta correcao; 4 falhas conhecidas pre-existentes em testes de modo estatico permanecem (registradas em pendencia).
+
+### Pendencia registrada
+
+- Investigar e corrigir as 4 falhas pre-existentes da suite E2E em testes de modo estatico (`tests/e2e/app.spec.js:96`, `:142`, `:169`, `:391`) antes da Etapa 3.
+
+### Riscos remanescentes
+
+- Botoes dinamicos de exportacao renderizados pelo `app.js` ainda podem usar `btn-danger`. Esta correcao trata apenas casos estaticos do `index.html`. A migracao dos dinamicos deve ser feita em commit dedicado, junto com a evolucao do `renderBotaoUi()` (suporte a `onclick`, `aria-disabled`, `iconOnly`).
+- `btn-danger` continua valido para acoes de exclusao/destrutivas; o que mudou foi a separacao semantica em relacao a exportacao.
+
+### Rollback
+
+`git revert <hash>` reverte os 2 arquivos (CSS + index.html). Sem impacto em backend, banco ou JSONs publicados.
