@@ -581,6 +581,75 @@ function renderKpiCard({
             `;
         }
 
+        function obterStatusConsolidadoProforParaStatusSistema() {
+            const dados = obterDadosProfor2022() || {};
+            const diagnostico = dados.diagnosticoConsolidado || dados.diagnostico || null;
+            if (!diagnostico && !dados.ultimaAtualizacaoDados && !dados.ultimaAtualizacaoDetru && !dados.ultimaConsultaRendimentos) {
+                return null;
+            }
+            return {
+                origemDados: dados.origemDados || dados.metadadosPublicacao?.fonteDadosBase || 'banco-cache',
+                diagnosticoConsolidado: diagnostico,
+                ultimaAtualizacaoDetru: dados.ultimaAtualizacaoDetru || null,
+                ultimaConsultaRendimentos: dados.ultimaConsultaRendimentos || null
+            };
+        }
+
+        function renderBlocoAtualizacoesProforStatusSistema() {
+            const modoEstatico = estaEmModoPublicacaoEstatica();
+            const statusConsolidadoInicial = modoEstatico ? obterStatusConsolidadoProforParaStatusSistema() : null;
+            const statusDetruInicial = modoEstatico ? statusConsolidadoInicial?.ultimaAtualizacaoDetru || null : null;
+
+            return `
+                <section class="system-status-panel mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Operações PROFOR 2022</p>
+                            <h2>Atualizações PROFOR 2022</h2>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                        ${renderActionButton({
+                            id: 'btnAtualizarProfor2022',
+                            type: 'refresh',
+                            label: 'Atualizar PROFOR 2022',
+                            variant: 'outline-primary',
+                            backend: true,
+                            disabled: modoEstatico,
+                            title: modoEstatico ? MENSAGEM_MODO_PUBLICACAO : ''
+                        })}
+                        ${renderActionButton({
+                            id: 'btnAtualizarDetruProfor',
+                            type: 'refresh',
+                            label: 'Atualizar DETRU',
+                            variant: 'outline-secondary',
+                            backend: true,
+                            disabled: modoEstatico,
+                            title: modoEstatico ? MENSAGEM_MODO_PUBLICACAO : ''
+                        })}
+                    </div>
+                    ${modoEstatico ? `<div class="mb-3">${renderPublicationNotice()}</div>` : ''}
+                    <div class="mb-2" id="profor-consolidado-feedback"></div>
+                    <div class="mb-2">
+                        ${renderStatusAtualizacaoConsolidadaProfor2022(statusConsolidadoInicial)}
+                    </div>
+                    <div class="mb-2" id="profor-detru-feedback"></div>
+                    <div class="mb-0">
+                        ${renderStatusUltimaAtualizacaoDetruProfor2022(statusDetruInicial)}
+                    </div>
+                </section>
+            `;
+        }
+
+        function registrarEventosStatusSistema() {
+            document.getElementById('btnAtualizarDetruProfor')?.addEventListener('click', () => {
+                atualizarCacheDetruProfor2022UI();
+            });
+            document.getElementById('btnAtualizarProfor2022')?.addEventListener('click', () => {
+                atualizarProfor2022ConsolidadoUI();
+            });
+        }
+
         async function carregarStatusAtualizacaoConsolidadaProfor2022() {
             const statusEl = document.getElementById('profor-consolidado-status');
             if (!statusEl || estaEmModoPublicacaoEstatica()) return;
@@ -1590,6 +1659,8 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
+                ${renderBlocoAtualizacoesProforStatusSistema()}
+
                 <section class="system-status-panel mb-5">
                     <div class="section-header compact">
                         <div>
@@ -1618,6 +1689,12 @@ async function carregarLogoParaPDF() {
 
             if (modoAplicacao === 'api') {
                 inicializarPainelLogsOperacionais();
+            }
+
+            registrarEventosStatusSistema();
+            if (modoAplicacao === 'api') {
+                await carregarStatusAtualizacaoConsolidadaProfor2022();
+                await carregarStatusUltimaAtualizacaoDetruProfor2022();
             }
 
             aplicarModoSomenteLeituraControlada();
@@ -2674,12 +2751,6 @@ async function carregarLogoParaPDF() {
             document.getElementById('carteiraIncluirInativos')?.addEventListener('change', (e) => {
                 carregarCarteiraMonitoradaProfor2022(e.target.checked);
             });
-            document.getElementById('btnAtualizarDetruProfor')?.addEventListener('click', () => {
-                atualizarCacheDetruProfor2022UI();
-            });
-            document.getElementById('btnAtualizarProfor2022')?.addEventListener('click', () => {
-                atualizarProfor2022ConsolidadoUI();
-            });
             document.getElementById('btnNovoConvenioMonitorado')?.addEventListener('click', () => {
                 abrirModalConvenioMonitorado(null);
             });
@@ -3139,35 +3210,12 @@ async function carregarLogoParaPDF() {
                             </label>
                             ${!estaEmModoPublicacaoEstatica() ? `
                             <div class="ms-auto d-flex flex-wrap align-items-center gap-2">
-                                ${renderActionButton({
-                                    id: 'btnAtualizarProfor2022',
-                                    type: 'refresh',
-                                    label: 'Atualizar PROFOR 2022',
-                                    variant: 'outline-primary',
-                                    backend: true
-                                })}
-                                ${renderActionButton({
-                                    id: 'btnAtualizarDetruProfor',
-                                    type: 'refresh',
-                                    label: 'Atualizar DETRU',
-                                    variant: 'outline-secondary',
-                                    backend: true
-                                })}
                                 <button type="button" class="btn btn-sm btn-primary btn-icon-text" id="btnNovoConvenioMonitorado">
                                     <i class="fas fa-circle-plus" aria-hidden="true"></i>
                                     <span>Novo</span>
                                 </button>
                             </div>` : ''}
                         </div>
-                        ${!estaEmModoPublicacaoEstatica() ? `
-                        <div class="px-3 pt-2 pb-1" id="profor-consolidado-feedback"></div>
-                        <div class="px-3 pb-1">
-                            ${renderStatusAtualizacaoConsolidadaProfor2022(null)}
-                        </div>
-                        <div class="px-3 pt-1 pb-1" id="profor-detru-feedback"></div>
-                        <div class="px-3 pb-2">
-                            ${renderStatusUltimaAtualizacaoDetruProfor2022(null)}
-                        </div>` : ''}
                         <div id="profor-carteira-status"></div>
                     </div>
                 </section>

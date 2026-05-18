@@ -2584,3 +2584,15 @@ Logs operacionais gravados:
 - Confirmacao operacional: nenhuma alteracao de codigo, frontend, banco ou JSON publicado foi feita nesta etapa.
 - Validacoes executadas: `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, `git diff --name-only`, `git status --short`.
 - Publicacao nao executada: `npm run publicar:dados` e `npm run publicar:profor-2022` nao foram rodados.
+
+## 18/05/2026 - Reposicionamento dos controles de atualização PROFOR 2022
+
+- Branch atual: `main`.
+- Objetivo: mover os controles administrativos de atualização do PROFOR 2022 para a página `Status do Sistema`.
+- Arquivo alterado: `frontend/js/app.js`.
+- Arquivos impactados na interface: `renderProfor2022View`, `renderStatusSistemaView`, `registrarEventosProfor2022` e registro de eventos da Status do Sistema.
+- Resultado funcional: os botões `Atualizar PROFOR 2022` e `Atualizar DETRU` saem da página PROFOR 2022 e passam a ser renderizados na `Status do Sistema`.
+- Carteira monitorada preservada: botão `Gerenciar carteira`, checkbox `Ver inativos`, listagem da carteira e botão `Novo` permanecem na página PROFOR 2022.
+- Modo estático: controles administrativos ficam desabilitados com mensagem institucional de somente leitura.
+- Confirmacao operacional: backend, banco, `.env`, JSONs publicados e publicação estática nao foram alterados.
+- Validacao planejada: `npm run validar:syntax`.
