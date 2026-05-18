@@ -1,5 +1,36 @@
 # Diário de bordo
 
+## 17/05/2026 - Validação operacional do cache DETRU — impedimento por ausência de fonte
+
+- Branch atual: `main`.
+- Objetivo: popular e validar o cache DETRU real da carteira monitorada do PROFOR 2022 e reexecutar a comparação planilha × banco-cache.
+- Escopo: operacional/validação, sem arquitetura nova, executor técnico conservador.
+- Leitura realizada: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md` (Bloco 18 anterior), `.env.example`, `package.json`, `backend/data/aplicacao.json`.
+- Validações executadas:
+  1. `git status --short` → sem alterações (working tree clean).
+  2. `git branch --show-current` → `main`.
+  3. Conferência de `.env` → arquivo existe, mas `DETRU_SICONV_CONVENIO_URL` está vazio.
+  4. Conferência de arquivo local → `Dados/detru/siconv_convenio.csv.zip` **não existe**; diretório `Dados` também não existe.
+  5. Conferência de `backend/data/aplicacao.json` → seção `detru` configurada com `caminhoLocal: "Dados/detru/siconv_convenio.csv.zip"` (arquivo não encontrado) e `urlSiconvConvenio: ""` (vazio).
+- Busca adicional: `**/siconv_convenio.csv.zip` no workspace → nenhum arquivo encontrado.
+- **Impedimento bloqueante identificado:**
+  - DETRU_SICONV_CONVENIO_URL não está configurada em `.env` (vazio).
+  - Arquivo local `Dados/detru/siconv_convenio.csv.zip` não existe.
+  - Impossível prosseguir com `npm run atualizar:detru-profor` sem um dos dois.
+- Ação não executada:
+  - `npm run atualizar:detru-profor` — retido.
+  - Consulta ao banco SQLite — retida.
+  - Testes de rota — retida.
+  - `npm start` — não iniciado.
+  - Nenhuma alteração de arquivo — não há o que fazer.
+- Commit/Push: não necessário, nada foi alterado.
+- Próximas etapas necessárias (bloqueadas):
+  1. Obter URL pública do arquivo SICONV do DETRU ou arquivo `siconv_convenio.csv.zip` local.
+  2. Configurar `DETRU_SICONV_CONVENIO_URL` em `.env` OU colocar arquivo em `Dados/detru/siconv_convenio.csv.zip`.
+  3. Reexecutar esta validação.
+
+---
+
 ## 17/05/2026 - Bloco 18: validação final + leitura local do consolidado
 
 - Branch atual: `main`.
