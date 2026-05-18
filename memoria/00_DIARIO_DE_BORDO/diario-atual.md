@@ -2843,3 +2843,52 @@ Logs operacionais gravados:
   - diferencas finas de altura podem aparecer em cards com textos muito longos, mas sem mudanca de conteudo ou comportamento.
 - Rollback:
   - reverter este commit restaura os espacamentos anteriores; nao ha impacto em backend, banco, dados publicados ou configuracao.
+
+---
+
+## 18/05/2026 - Etapa 3: harmonizacao visual final e modo estatico
+
+- Objetivo: concluir a harmonizacao visual do tema escuro institucional nas paginas remanescentes e corrigir a falha recorrente dos testes E2E de modo estatico.
+- Branch: `main`.
+- Estado inicial: working tree limpo antes da implementacao; Etapa 2.1 ja estava commitada.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `frontend/js/app.js`;
+  - `frontend/js/core/static-mode.js`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correcao do modo estatico:
+  - alinhado o import de `data-service.js` em `static-mode.js` para a mesma versao usada por `app.js`;
+  - causa: `app.js` e `static-mode.js` carregavam instancias diferentes de `data-service.js` por cache-busters distintos, separando o estado interno de `modoPublicacaoEstatica`;
+  - efeito: quando Orcamento, Formalizacao ou Parametros Minimos caem para JSON publicado por falha da API local, o `body` volta a receber `modo-publicacao-estatica` e controles `data-requer-backend="true"` ficam bloqueados.
+- Harmonizacao visual:
+  - adicionada secao final `Etapa 3 - Harmonizacao visual final e modo estatico` em `app.css`;
+  - escopo visual aplicado a PROFOR 2022, detalhe PROFOR, FAF 2021, detalhe FAF, Doacoes 2023, detalhe Doacoes, Contatos, Status do Sistema, Detalhamento por Estado, Relatorio Estadual, modais, alertas, estados vazios, tabelas e filtros;
+  - removidos residuos claros por CSS final em `.bg-white`, `.bg-light`, `.table-light`, `.text-dark`, `.table-warning`, `contact-uf-body`, cards de relatorio, alertas do Status do Sistema e modais;
+  - cache-busters atualizados em `index.html` para `app.css?v=20260518-20-etapa3` e `app.js?v=20260518-15-etapa3`.
+- Restricoes preservadas:
+  - sem alteracao de regras de negocio, calculos, endpoints, payloads, backend, banco, `.env` ou JSONs publicados;
+  - sem publicacao executada;
+  - sem remocao de IDs, data attributes, listeners, mini graficos, tabelas ou filtros.
+- Testes executados:
+  - `node --check frontend/js/app.js` -> OK;
+  - `node --check frontend/js/core/ui-components.js` -> OK;
+  - `node --check frontend/js/core/static-mode.js` -> OK;
+  - `npx playwright test tests/e2e/app.spec.js:96 tests/e2e/app.spec.js:142 tests/e2e/app.spec.js:169 tests/e2e/app.spec.js:391` -> 4/4 OK;
+  - `npm run validar:syntax` -> 25 arquivos OK;
+  - `npm run validar:json` -> OK;
+  - `npm run validar:agente` -> 11/11 OK;
+  - smoke visual local em 1366px, 1024px, 768px e 390px para Home, Detalhamento, PROFOR 2022, FAF 2021, Doacoes 2023, Orcamento, Formalizacao, Parametros Minimos, Contatos e Status do Sistema;
+  - smoke de detalhes para Relatorio Estadual, detalhe PROFOR, detalhe FAF e detalhe Doacoes;
+  - smoke de modal FAF e fallback estatico do Orcamento.
+- Resultado do smoke:
+  - sem erros de console ou page error;
+  - sem estado visual `.app-error-state`;
+  - sem blocos claros indevidos nos seletores avaliados;
+  - fallback estatico do Orcamento aplicou `body.modo-publicacao-estatica` e bloqueou controles dependentes de backend;
+  - tabelas largas permanecem com rolagem interna quando necessario.
+- Riscos remanescentes:
+  - `app.css` ainda preserva classes historicas por compatibilidade; novos componentes devem usar preferencialmente os padroes `.app-*`;
+  - relatorios exportados em PDF passam a refletir mais fielmente o tema escuro atual.
+- Rollback:
+  - reverter este commit restaura a cascata visual anterior e a importacao antiga do modo estatico; nao ha impacto em backend, banco, dados publicados ou configuracao.

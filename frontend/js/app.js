@@ -38,7 +38,7 @@ import {
     MENSAGEM_MODO_PUBLICACAO,
     aplicarModoSomenteLeitura,
     dadosPaginaEmModoEstatico
-} from './core/static-mode.js?v=20260507-05';
+} from './core/static-mode.js?v=20260518-01';
 
 // ========================================================================
 // CONFIGURACOES E ESTADO
