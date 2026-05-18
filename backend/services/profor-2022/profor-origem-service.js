@@ -1,5 +1,5 @@
 const ORIGENS_DADOS_PROFOR_2022 = Object.freeze(["planilha", "banco-cache"]);
-const ORIGEM_PADRAO_PROFOR_2022 = "planilha";
+const ORIGEM_PADRAO_PROFOR_2022 = "banco-cache";
 
 function listarOrigensDadosProfor2022() {
   return [...ORIGENS_DADOS_PROFOR_2022];
@@ -21,7 +21,9 @@ function resolverOrigemDadosProfor2022(opcoes = {}) {
     String(valorInformado).trim() !== "" &&
     !ORIGENS_DADOS_PROFOR_2022.includes(String(valorInformado).trim().toLowerCase())
   ) {
-    avisos.push(`Origem de dados PROFOR 2022 invalida: ${String(valorInformado)}. Usando planilha.`);
+    avisos.push(
+      `Origem de dados PROFOR 2022 invalida: ${String(valorInformado)}. Usando ${ORIGEM_PADRAO_PROFOR_2022}.`
+    );
   }
 
   if (opcoes.detalhado) {

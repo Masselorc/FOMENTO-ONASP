@@ -152,6 +152,27 @@ Recomendacao: implementar a retirada operacional da aba `Geral` em ordem conserv
 
 Nao implementar nesta auditoria.
 
+## 13. Status da retirada operacional (18/05/2026)
+
+A retirada operacional foi implementada. Estado atual:
+
+| Item | Estado | Observacao |
+| --- | --- | --- |
+| Padrao de origem em `profor-origem-service.js` | concluido | `ORIGEM_PADRAO_PROFOR_2022 = "banco-cache"` |
+| Fallback silencioso em `dashboard-publication-service.js` | removido | substituido por `validarConsolidadoProfor2022Publicavel` |
+| Bloqueio 15/15/15 na publicacao | concluido | mensagem `Publicação bloqueada: consolidado PROFOR 2022 incompleto...` |
+| `saldoDisponivelOuvidoria` na UI | removido | KPIs, coluna, filtros, alertas e acumulador retirados de `app.js` |
+| Aba `Geral` fisicamente na planilha | preservada | permanece como historico/controle |
+| Comparador planilha x banco-cache | preservado | mantido como diagnostico tecnico em `/api/profor-2022/comparar-origens` |
+| Modo `planilha` como escolha explicita | preservado | via `PROFOR_2022_ORIGEM_DADOS=planilha` |
+| `data-service.js` (navegador) | preservado | leitura inicial mantida; em modo local/API o consolidado substitui o cache pela rota `/api/profor-2022/consolidado`; em modo estatico usa o JSON publicado |
+| Revisao de formula de `saldoDisponivelOuvidoria` | pendente | campo segue removido da UI ate ter formula segura |
+
+Pendencias remanescentes:
+
+1. Revisar formulas dos demais campos da Categoria 6 (`saldoResidualCapital`, `saldoResidualCusteio`, `valorExecutadoGeral`, percentuais de execucao por area).
+2. Avaliar simplificacao adicional em `data-service.js` para reduzir leitura inicial da planilha quando a aplicacao esta em modo local/API.
+
 ## 13. Evidencias consultadas
 
 Arquivos lidos nesta auditoria:

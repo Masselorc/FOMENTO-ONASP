@@ -1,5 +1,5 @@
 {
-  "publicadoEm": "2026-05-18T16:26:04.281Z",
+  "publicadoEm": "2026-05-18T16:57:21.590Z",
   "fonteDadosBase": "dados consolidados da Home local",
   "dadosBase": [
     {
@@ -2788,7 +2788,7 @@
   ],
   "dadosProfor2022": {
     "origemDados": "banco-cache",
-    "geradoEm": "2026-05-18T16:26:04.346Z",
+    "geradoEm": "2026-05-18T16:57:21.666Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,

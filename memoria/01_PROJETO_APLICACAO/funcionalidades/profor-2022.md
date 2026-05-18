@@ -741,4 +741,40 @@ Restrições:
 
 - Disponível somente em modo local/API. Nenhum log técnico é exposto no GitHub Pages.
 - Payload sempre passa por `sanitizarPayloadLog` antes de gravação e exportação. Padrões proibidos (JSESSIONID, SAML, Cookie, Authorization, Bearer, segredos de ambiente, `C:\Users\`, `.sqlite`, `.har`, HTML bruto) são substituídos por `[REMOVIDO_POR_SANITIZACAO]`.
+
+## 14. Origem de dados operacional (sem fallback para aba `Geral`)
+
+A origem operacional padrão do PROFOR 2022 é **`banco-cache`**. A aba `Geral` da planilha PROFOR 2022 permanece fisicamente apenas como histórico/controle e **não é mais usada como fallback silencioso** da aplicação.
+
+### Regras
+
+- `backend/services/profor-2022/profor-origem-service.js`:
+  - `ORIGEM_PADRAO_PROFOR_2022 = "banco-cache"`.
+  - Valor inválido em `PROFOR_2022_ORIGEM_DADOS` aciona aviso e cai no padrão `banco-cache`.
+  - O modo `planilha` continua disponível como **escolha técnica explícita** via `PROFOR_2022_ORIGEM_DADOS=planilha` ou via `opcoes.origemDados`, mas não como fallback automático.
+- `backend/services/dashboard-publication-service.js`:
+  - `montarDadosProfor2022Publicacao` em modo `banco-cache` NÃO cai mais para `extrairProfor2022DoWorkbook` em caso de falha.
+  - Nova função `validarConsolidadoProfor2022Publicavel(dados)` rejeita publicação se `convenios.length !== 15`, `totalCarteira !== 15`, `totalComDetru !== 15`, `totalComPlano !== 15`, `totalComRendimentos !== 15` ou se `dadosProfor2022.ultimaAtualizacaoDados.dataHora` estiver ausente.
+  - A mensagem de erro segue o padrão `Publicação bloqueada: consolidado PROFOR 2022 incompleto. Esperado 15/15/15. Obtido carteira=X, detru=Y, plano=Z, rendimentos=W.`.
+- `backend/scripts/publicar-profor-2022-estatico.js`:
+  - Já bloqueia se a atualização operacional não atingir 15/15/15.
+  - A nova validação no `dashboard-publication-service` bloqueia internamente o `npm run publicar:dados` se o consolidado não fechar 15/15/15.
+  - A auditoria pós-publicação (`auditarArquivoPublicado`) continua validando 15/15/15 e a presença de `ultimaAtualizacaoDados.dataHora` no JSON publicado.
+
+### Comparador planilha × banco-cache
+
+Permanece como **ferramenta técnica de diagnóstico** em `GET /api/profor-2022/comparar-origens`. Não é mais fonte operacional.
+
+### Campos removidos da interface
+
+`saldoDisponivelOuvidoria` foi **removido da interface PROFOR 2022** porque o consolidado `banco-cache` retorna `null` (fórmula segura ainda pendente). Removido de:
+
+- KPI do dashboard PROFOR 2022.
+- KPI do detalhe do convênio.
+- Coluna da tabela de convênios.
+- Filtros de situação (`saldo-negativo`, `saldo-alto`).
+- Alertas (`Saldo disponível negativo`, `Saldo disponível alto`).
+- Acumulador da seleção.
+
+Quando uma fórmula segura for definida, o campo poderá voltar à interface de forma controlada.
 - Limites padrão preservam performance: 50 últimos registros em consulta e 500 em exportação por padrão.

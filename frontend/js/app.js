@@ -2362,7 +2362,6 @@ async function carregarLogoParaPDF() {
                 acc.valorExecutadoGeral += Number(convenio.valorExecutadoGeral) || 0;
                 acc.previstoOuvidoria += Number(convenio.previstoOuvidoria) || 0;
                 acc.valorExecutadoOuvidoria += Number(convenio.valorExecutadoOuvidoria) || 0;
-                acc.saldoDisponivelOuvidoria += Number(convenio.saldoDisponivelOuvidoria) || 0;
                 return acc;
             }, {
                 totalConvenios: convenios.length,
@@ -2371,8 +2370,7 @@ async function carregarLogoParaPDF() {
                 valorContrapartida: 0,
                 valorExecutadoGeral: 0,
                 previstoOuvidoria: 0,
-                valorExecutadoOuvidoria: 0,
-                saldoDisponivelOuvidoria: 0
+                valorExecutadoOuvidoria: 0
             });
 
             resumo.execucaoGeralPercentual = resumo.valorGlobal > 0
@@ -2425,16 +2423,9 @@ async function carregarLogoParaPDF() {
             return `<span class="profor-countdown ${classe}" title="${escapeHtml(titulo)}">${escapeHtml(texto)}</span>`;
         }
 
-        function isSaldoDisponivelAltoProfor(convenio) {
-            const saldo = Number(convenio.saldoDisponivelOuvidoria) || 0;
-            const previsto = Number(convenio.previstoOuvidoria) || 0;
-            return saldo > 100000 || (previsto > 0 && saldo > previsto * 0.5);
-        }
-
         function obterAlertasProfor(convenio) {
             const alertas = [];
             const execucaoOuvidoria = Number(convenio.execucaoOuvidoriaPercentual) || 0;
-            const saldoDisponivel = Number(convenio.saldoDisponivelOuvidoria) || 0;
             const diasVencimento = obterDiasAteDataPtBr(convenio.vencimento);
             const temExecucaoAcimaPrevisto = (convenio.planoAplicacao || []).some((item) => (
                 (Number(item.valorExecutado) || 0) - (Number(item.valorPrevisto) || 0) > 0.01
@@ -2446,12 +2437,6 @@ async function carregarLogoParaPDF() {
                 alertas.push({ tipo: 'warning', texto: 'Execução baixa' });
             } else if (execucaoOuvidoria >= 100) {
                 alertas.push({ tipo: 'success', texto: 'Ouvidoria executada' });
-            }
-
-            if (saldoDisponivel < 0) {
-                alertas.push({ tipo: 'danger', texto: 'Saldo disponível negativo' });
-            } else if (isSaldoDisponivelAltoProfor(convenio)) {
-                alertas.push({ tipo: 'info', texto: 'Saldo disponível alto' });
             }
 
             if (diasVencimento !== null && diasVencimento < 0) {
@@ -2480,16 +2465,13 @@ async function carregarLogoParaPDF() {
 
         function convenioAtendeSituacaoProfor(convenio, situacao) {
             const execucao = Number(convenio.execucaoOuvidoriaPercentual) || 0;
-            const saldo = Number(convenio.saldoDisponivelOuvidoria) || 0;
             const diasVencimento = obterDiasAteDataPtBr(convenio.vencimento);
 
             if (!situacao) return true;
             if (situacao === 'sem-execucao') return execucao <= 0;
             if (situacao === 'baixa-execucao') return execucao > 0 && execucao < 50;
             if (situacao === 'execucao-integral') return execucao >= 100;
-            if (situacao === 'saldo-negativo') return saldo < 0;
             if (situacao === 'vencimento-proximo') return diasVencimento !== null && diasVencimento >= 0 && diasVencimento <= 365;
-            if (situacao === 'saldo-alto') return isSaldoDisponivelAltoProfor(convenio);
             return true;
         }
 
@@ -2595,7 +2577,7 @@ async function carregarLogoParaPDF() {
             if (conveniosFiltrados.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-4">Nenhum convênio encontrado para os filtros selecionados.</td>
+                        <td colspan="7" class="text-center text-muted py-4">Nenhum convênio encontrado para os filtros selecionados.</td>
                     </tr>
                 `;
                 return;
@@ -2603,14 +2585,12 @@ async function carregarLogoParaPDF() {
 
             tbody.innerHTML = conveniosOrdenados.map((convenio) => {
                 const execucao = Number(convenio.execucaoOuvidoriaPercentual) || 0;
-                const saldoDisponivel = Number(convenio.saldoDisponivelOuvidoria) || 0;
                 const safeUf = escapeHtml(convenio.uf);
                 const safeNumero = escapeHtml(convenio.numero);
                 const safeAno = escapeHtml(convenio.ano);
-                const rowClass = saldoDisponivel < 0 ? 'profor-row profor-row-risk' : 'profor-row';
 
                 return `
-                    <tr class="${rowClass}" data-profor-uf="${safeUf}" role="button" tabindex="0">
+                    <tr class="profor-row" data-profor-uf="${safeUf}" role="button" tabindex="0">
                         <td data-label="Convênio" class="align-middle">
                             <div class="profor-convenio-cell">
                                 <span class="badge bg-secondary badge-uf">${safeUf}</span>
@@ -2629,7 +2609,6 @@ async function carregarLogoParaPDF() {
                                 <div class="pill-text">${formatPercent(execucao)}</div>
                             </div>
                         </td>
-                        <td data-label="Saldo p/ Ouvidoria" class="align-middle text-end font-monospace ${saldoDisponivel < 0 ? 'text-danger fw-bold' : ''}">${formatMoney(saldoDisponivel)}</td>
                         <td data-label="Sinais de gestão" class="align-middle">
                             <div class="profor-alert-list">${renderizarBadgesAlertaProfor(convenio)}</div>
                         </td>
@@ -3061,13 +3040,6 @@ async function carregarLogoParaPDF() {
                             <div class="kpi-value text-money text-warning">${formatMoney(resumo.saldoRendimentosAtual)}</div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="card kpi-card ${resumo.saldoDisponivelOuvidoria < 0 ? 'kpi-card-warning' : ''}">
-                            <div class="kpi-title"><i class="fas fa-vault" aria-hidden="true"></i>Saldo p/ Ouvidoria</div>
-                            <div class="kpi-value text-money ${resumo.saldoDisponivelOuvidoria < 0 ? 'text-danger' : ''}">${formatMoney(resumo.saldoDisponivelOuvidoria)}</div>
-                            <div class="kpi-desc">Disponível para destinação</div>
-                        </div>
-                    </div>
                 </section>
 
                 <section class="filter-section mb-4" aria-label="Filtros PROFOR 2022">
@@ -3099,9 +3071,7 @@ async function carregarLogoParaPDF() {
                                 <option value="sem-execucao">Sem execução da Ouvidoria</option>
                                 <option value="baixa-execucao">Execução baixa</option>
                                 <option value="execucao-integral">Execução integral</option>
-                                <option value="saldo-negativo">Saldo negativo</option>
                                 <option value="vencimento-proximo">Vencimento em até 12 meses</option>
-                                <option value="saldo-alto">Saldo disponível alto</option>
                             </select>
                         </div>
                         <div class="visible-filter-group">
@@ -3136,7 +3106,6 @@ async function carregarLogoParaPDF() {
                                     <th class="text-end">Valor Global</th>
                                     <th class="text-end">Previsto Ouvidoria</th>
                                     <th class="text-center">Execução Ouvidoria</th>
-                                    <th class="text-end">Saldo p/ Ouvidoria</th>
                                     <th>Sinais de gestão</th>
                                 </tr>
                             </thead>
@@ -3399,7 +3368,6 @@ async function carregarLogoParaPDF() {
                         ${renderizarKpiDetalheProfor('Execução Geral', formatPercent((convenio.valorGlobal > 0 ? convenio.valorExecutadoGeral / convenio.valorGlobal * 100 : 0)), formatMoney(convenio.valorExecutadoGeral), 'kpi-card-success', 'fa-chart-line')}
                         ${renderizarKpiDetalheProfor('Previsto Ouvidoria', formatMoney(convenio.previstoOuvidoria), `${convenio.totalItensOuvidoria} item(ns)`, '', 'fa-headset')}
                         ${renderizarKpiDetalheProfor('Execução Ouvidoria', formatPercent(convenio.execucaoOuvidoriaPercentual), formatMoney(convenio.valorExecutadoOuvidoria), 'kpi-card-success', 'fa-check-circle')}
-                        ${renderizarKpiDetalheProfor('Saldo p/ Ouvidoria', formatMoney(convenio.saldoDisponivelOuvidoria), 'Disponível para destinação', convenio.saldoDisponivelOuvidoria < 0 ? 'kpi-card-warning' : '', 'fa-vault')}
                     </section>
 
                     <section class="profor-finance-grid mb-4" aria-label="Saldos e rendimentos">

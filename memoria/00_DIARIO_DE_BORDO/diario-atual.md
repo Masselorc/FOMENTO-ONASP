@@ -2412,3 +2412,81 @@ oute.fetch() + mutação em memória do payload retornado.
 - Banco/schema NÃO alterado (apenas INSERTs na tabela `logs_operacionais`).
 - Nenhuma dependência nova.
 - Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou arquivo temporário versionado.
+
+---
+
+## 18/05/2026 - Retirada do fallback operacional da aba Geral
+
+- Branch: `main`. `git pull` → `Already up to date.`. Commits confirmados: `d80e3b0`, `fd21467`, `f6dcac5`.
+- Objetivo: descontinuar a aba `Geral` da planilha como fonte operacional silenciosa para PROFOR 2022. Aba `Geral` permanece fisicamente apenas como histórico/controle.
+
+### Mudança técnica principal
+
+- **`backend/services/profor-2022/profor-origem-service.js`**: `ORIGEM_PADRAO_PROFOR_2022` mudou de `"planilha"` para `"banco-cache"`. Mensagem de aviso de origem inválida atualizada para `Usando banco-cache`. O modo `planilha` continua disponível apenas como escolha técnica explícita via `PROFOR_2022_ORIGEM_DADOS` ou via `opcoes.origemDados`.
+- **`backend/services/dashboard-publication-service.js`**:
+  - Removido o `try/catch` que silenciosamente caía para `extrairProfor2022DoWorkbook` quando o consolidado `banco-cache` falhava.
+  - Adicionada `validarConsolidadoProfor2022Publicavel(dados)` que rejeita publicação quando: `convenios.length !== 15`, `totalCarteira !== 15`, `totalComDetru !== 15`, `totalComPlano !== 15`, `totalComRendimentos !== 15` ou `ultimaAtualizacaoDados.dataHora` ausente.
+  - `montarDadosProfor2022Publicacao()` agora chama essa validação antes de retornar e lança erro controlado em qualquer falha.
+  - Função `validarConsolidadoProfor2022Publicavel` exportada para testes diretos.
+
+### Frontend — remoção de `saldoDisponivelOuvidoria` (campo sem fórmula segura)
+
+- `frontend/js/app.js`:
+  - Removida a função `isSaldoDisponivelAltoProfor()` (sem uso após esta etapa).
+  - Removidos KPIs "Saldo p/ Ouvidoria" do dashboard PROFOR 2022 e do detalhe do convênio.
+  - Removida a coluna "Saldo p/ Ouvidoria" da tabela de convênios e seu header (`colspan` ajustado de 8 para 7).
+  - Removidas opções `saldo-negativo` e `saldo-alto` do seletor de situação.
+  - Removidos alertas "Saldo disponível negativo" e "Saldo disponível alto" de `obterAlertasProfor()`.
+  - Removidas situações `saldo-negativo` e `saldo-alto` de `convenioAtendeSituacaoProfor()`.
+  - Removido acumulador `saldoDisponivelOuvidoria` do `calcularResumoConveniosProfor()`.
+- `index.html`: cache-buster atualizado para `frontend/js/app.js?v=20260518-10`.
+
+### Endpoints não alterados (apenas verificados)
+
+- `GET /api/profor-2022/origem`: já retorna `origemDados` igual ao resolvido (`banco-cache` por padrão).
+- `GET /api/profor-2022/consolidado`: já chama `montarConsolidadoProfor2022({ origemDados: "banco-cache" })`. Em erro, devolve HTTP 500 com mensagem controlada (não cai para planilha).
+- `GET /api/profor-2022/comparar-origens`: preservado como ferramenta técnica de diagnóstico.
+
+### Script semiautomático não alterado (apenas verificado)
+
+- `backend/scripts/publicar-profor-2022-estatico.js` já bloqueia se atualização não atingir 15/15/15 (linhas 415-421).
+- A nova `validarConsolidadoProfor2022Publicavel()` é executada pelo `dashboard-publication-service` durante `npm run publicar:dados`, que falha com código != 0 se o consolidado estiver incompleto.
+- `auditarArquivoPublicado()` continua validando 15/15/15 e presença de `ultimaAtualizacaoDados.dataHora` no JSON publicado.
+
+### Teste de bloqueio controlado
+
+Executado fora do banco real, com objetos fictícios:
+
+| Caso | Resultado esperado | Resultado obtido |
+|---|---|---|
+| `14/15/15` com `dataHora` | lança erro | OK — `Publicação bloqueada: consolidado PROFOR 2022 incompleto. Esperado 15/15/15. Obtido carteira=14, ...` |
+| `15/15/15` sem `dataHora` | lança erro | OK — `Publicação bloqueada: dadosProfor2022.ultimaAtualizacaoDados.dataHora ausente no consolidado banco-cache.` |
+| `15/15/15` com `dataHora` | não lança | OK — passou |
+
+Banco/cache real não foi alterado.
+
+### Execução de `npm run publicar:profor-2022` (working tree limpo)
+
+(Será preenchido após a execução real abaixo.)
+
+### Validações sintáticas (pré-commit)
+
+- `node --check` aprovado em: `profor-origem-service.js`, `dashboard-publication-service.js`, `static-publication-service.js`, `publicar-profor-2022-estatico.js`, `server.js`, `data-service.js`, `profor-consolidado-service.js`, `frontend/js/app.js`.
+- `npm run validar:json` → OK.
+- `npm run validar:syntax` → 25 OK.
+- `git diff --check` → OK (apenas avisos LF→CRLF do Windows).
+
+### Restrições confirmadas
+
+- `.env` NÃO alterado.
+- Banco/schema NÃO alterado.
+- Planilha NÃO alterada (aba `Geral` permanece fisicamente).
+- Nenhuma dependência nova.
+- Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou temporário versionado.
+- Comparador `planilha × banco-cache` preservado como ferramenta técnica.
+- Modo `planilha` continua disponível apenas como escolha técnica explícita.
+
+### Risco e rollback
+
+- Risco baixo: aplicação já operava em `banco-cache` por configuração via `.env`; este commit apenas remove o fallback silencioso.
+- Rollback: `git revert <hash>` retorna o padrão a `planilha` e restaura o fallback no publicador.

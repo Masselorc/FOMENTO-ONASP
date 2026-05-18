@@ -527,6 +527,37 @@ function anexarUltimaAtualizacaoDados(dados) {
   };
 }
 
+function validarConsolidadoProfor2022Publicavel(dadosConsolidados) {
+  const diagnostico = dadosConsolidados?.diagnostico || {};
+  const conveniosLength = Array.isArray(dadosConsolidados?.convenios) ? dadosConsolidados.convenios.length : 0;
+  const totalComDetru = Number(diagnostico.totalComDetru ?? 0);
+  const totalComPlano = Number(diagnostico.totalComPlano ?? 0);
+  const totalComRendimentos = Number(diagnostico.totalComRendimentos ?? 0);
+  const totalCarteira = Number(diagnostico.totalCarteira ?? conveniosLength);
+  const ultimaAtualizacao = dadosConsolidados?.ultimaAtualizacaoDados;
+  const dataHora = ultimaAtualizacao && typeof ultimaAtualizacao === "object" ? ultimaAtualizacao.dataHora : null;
+
+  if (
+    totalCarteira !== 15 ||
+    conveniosLength !== 15 ||
+    totalComDetru !== 15 ||
+    totalComPlano !== 15 ||
+    totalComRendimentos !== 15
+  ) {
+    throw new Error(
+      `Publicação bloqueada: consolidado PROFOR 2022 incompleto. ` +
+        `Esperado 15/15/15. Obtido carteira=${totalCarteira}, ` +
+        `detru=${totalComDetru}, plano=${totalComPlano}, rendimentos=${totalComRendimentos}.`
+    );
+  }
+
+  if (!dataHora || typeof dataHora !== "string" || dataHora.trim() === "") {
+    throw new Error(
+      "Publicação bloqueada: dadosProfor2022.ultimaAtualizacaoDados.dataHora ausente no consolidado banco-cache."
+    );
+  }
+}
+
 function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {}) {
   const origemResolvida = resolverOrigemDadosProfor2022({
     origemDados: opcoes.origemDados,
@@ -542,28 +573,15 @@ function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {
     }));
   }
 
-  try {
-    const montarConsolidado = opcoes.montarConsolidado || montarConsolidadoProfor2022;
-    const planoAplicacao = opcoes.planoAplicacao || extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
-    return anexarUltimaAtualizacaoDados(montarConsolidado({
-      origemDados: "banco-cache",
-      planoAplicacao
-    }));
-  } catch (error) {
-    const fallback = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);
-    return anexarUltimaAtualizacaoDados(anexarMetadadosOrigemProfor2022(fallback, {
-      origemDados: "banco-cache",
-      origemDadosEfetiva: "planilha",
-      fallbackUsado: true,
-      avisos: [
-        ...(fallback.avisos || []),
-        `Falha ao montar origem banco-cache. Fallback para planilha: ${error.message}`
-      ],
-      diagnostico: {
-        erroBancoCache: error.message
-      }
-    }));
-  }
+  const montarConsolidado = opcoes.montarConsolidado || montarConsolidadoProfor2022;
+  const planoAplicacao = opcoes.planoAplicacao || extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
+  const consolidado = montarConsolidado({
+    origemDados: "banco-cache",
+    planoAplicacao
+  });
+  const dadosConsolidados = anexarUltimaAtualizacaoDados(consolidado);
+  validarConsolidadoProfor2022Publicavel(dadosConsolidados);
+  return dadosConsolidados;
 }
 
 function removerConveniosDoDadosBase(dadosBase) {
@@ -656,5 +674,6 @@ function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
 module.exports = {
   consolidarCatalogoDashboard,
   montarDadosProfor2022Publicacao,
-  extrairPlanoAplicacaoProforDoWorkbook
+  extrairPlanoAplicacaoProforDoWorkbook,
+  validarConsolidadoProfor2022Publicavel
 };
