@@ -540,3 +540,53 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Bloco 16: compositor consolidado + comparador + flag | Serviços `profor-origem-service.js`, `profor-consolidado-service.js` e `profor-comparador-service.js` criados. Origem padrão segue `planilha`; `banco-cache` fica reservado para ativação futura. |
 | 17/05/2026 | Bloco 17: integração nas telas + publicação estática | Origem padrão `planilha` preservada. Fluxo Node de publicação suporta `banco-cache` com fallback para `planilha`; `data-service.js` mantém compatibilidade da tela; publicação estática sanitiza a seção interna `detru`. |
 | 17/05/2026 | Bloco 18: validação final + leitura local do consolidado | Rotas locais/API somente leitura criadas para consolidado e comparação. Comparação real executada; 15 convênios divergentes por ausência de cache DETRU/rendimentos. Banco-cache permanece fora do padrão. |
+| 17/05/2026 | Bloco 19: validação operacional do cache DETRU | URL oficial configurada e download automático executado. Cache populado: 15/15 convênios encontrados. `totalComDetru` foi para 15. Sem alteração de código. |
+| 17/05/2026 | Bloco 20: diagnóstico do consolidado pós-DETRU | Esclarecido falso positivo de `totalComPlano=1` (era erro do script de relatório temporário, não do código). Endpoint real retorna `totalComPlano=15`. Diagnóstico Transferegov: cache vazio (0/15); cliente depende de sessão pública. Sem alteração de código. |
+| 17/05/2026 | Bloco 21: classificação das 15 divergências | Criada matriz de divergências em 5 grupos (A: DETRU oficial, B: cálculo do plano, C: campo novo calculado, D: cache Transferegov ausente, E: validação humana). Documento novo `profor-2022-divergencias.md` criado com matriz, opções de governança e critérios para ativação. Seção 13 adicionada a este documento. Sem alteração de código. |
+
+## 13. Critérios de aceitação da futura origem `banco-cache`
+
+Após a conclusão do diagnóstico de 17/05/2026 (DETRU resolvido, plano de aplicação casando), a ativação do `banco-cache` como origem padrão deixou de ser problema técnico e passou a ser **decisão de governança**.
+
+### 13.1. Princípio operativo
+
+Divergência entre `planilha` e `banco-cache` **não é automaticamente erro**. As 15 divergências atuais são todas explicáveis pela arquitetura definida nos blocos 14–18:
+
+- valores oficiais do DETRU substituem valores manuais antigos da aba Geral;
+- saldos e execuções por área/natureza são recalculados a partir dos itens do plano filtrados por UF + número + ano;
+- `saldoRendimentosAtual` depende do Transferegov e está temporariamente ausente no `banco-cache` (cache vazio).
+
+Classificar uma divergência como erro requer evidência. Aceitar uma divergência como esperada requer decisão registrada (preferencialmente em ata).
+
+### 13.2. Distinção entre fontes
+
+| Tipo | Origem | Quando é autoritativa |
+| --- | --- | --- |
+| DETRU oficial | Plataforma SICONV/DETRU (`siconv_convenio.csv.zip`) | Sempre, para campos cadastrais e financeiros oficiais |
+| Cálculo do plano | Soma `valorPrevisto`/`valorExecutado`/`saldo` dos itens do plano filtrado por UF + nº + ano | Sempre, para campos por área/natureza |
+| Transferegov público | Página pública de Rendimento de Aplicação (sessão pública do convênio) | Quando a sessão pública estiver estabelecida; sem login/captcha |
+| Aba `Geral` (manual) | Planilha `Planilhas/gestao_financeira_ouvidoria.xlsx` aba `Geral` | Transitória; deve ser substituída pelas três anteriores |
+
+### 13.3. Critérios para ativação
+
+A ativação como padrão (`PROFOR_2022_ORIGEM_DADOS=banco-cache`) só deve ocorrer quando **todos** os critérios abaixo forem atendidos:
+
+1. ✅ `totalComDetru = 15` (técnico — atingido).
+2. ✅ `totalComPlano = 15` (técnico — atingido).
+3. ⚠️ Decisão de governança formalizada sobre `saldoRendimentosAtual` (Grupo D): aceitar `null` com aviso de UI, ou outra alternativa.
+4. ⚠️ Decisão de governança formalizada sobre Grupo A (DETRU oficial): aceitar `quantidadeTa`, `valorGlobal`, `valorRepasse`, `rendimentoAprovado` da fonte oficial.
+5. ⚠️ Decisão de governança formalizada sobre Grupo B (cálculo do plano): aceitar `saldoResidualCapital`, `saldoResidualCusteio`, `valorExecutadoGeral` calculados.
+6. ⚠️ Validação visual no modo local/API antes da publicação estática.
+7. ⚠️ Comunicação aos usuários da SENAPPEN/ONASP sobre mudança de origem.
+
+A matriz completa por campo e as quatro opções de governança (não ativar; ativar parcialmente; ativar híbrido; validar humanamente) estão em [`profor-2022-divergencias.md`](profor-2022-divergencias.md).
+
+### 13.4. Pendência específica do Transferegov
+
+`saldoRendimentosAtual` é a única pendência real (Grupo D). O cliente atual depende de sessão pública estabelecida e não pode ser corrigido sem violar regras absolutas (sem login, senha, captcha, certificado, área restrita, bypass). Alternativas avaliáveis:
+
+1. Manter `null` com aviso de UI explícito.
+2. Importação manual controlada por CSV/JSON exportado pelo responsável.
+3. Pesquisar fonte pública alternativa institucional (+Brasil, Portal da Transparência).
+
+Não implementar nenhuma das alternativas sem decisão prévia.

@@ -1,5 +1,98 @@
 # Diário de bordo
 
+## 17/05/2026 - Classificação das 15 divergências planilha × banco-cache (Grupos A–E)
+
+- Branch atual: `main`.
+- Objetivo: classificar tecnicamente as 15 divergências residuais do consolidado PROFOR 2022, separando o que é divergência aceitável (fonte oficial DETRU ou cálculo do plano) do que é pendência real (cache Transferegov ausente). Subsidiar decisão futura de governança sobre ativação do `banco-cache`.
+- Escopo: diagnóstico documental, sem alteração de código, sem ativar origem nova, sem publicar dados.
+- Status: ✅ **CLASSIFICAÇÃO CONCLUÍDA** — sem alteração de código.
+
+### Reafirmação do estado técnico
+
+| Métrica | Valor |
+| --- | --- |
+| `diagnostico.totalCarteira` | 15 |
+| `diagnostico.totalComDetru` | **15** ✅ |
+| `diagnostico.totalComPlano` | **15** ✅ |
+| `diagnostico.totalComRendimentos` | **0** ⚠️ |
+| `diagnostico.totalAvisos` | 90 |
+| `comparacao.totalAntigo` | 15 |
+| `comparacao.totalNovo` | 15 |
+| `comparacao.totalIguais` | 0 |
+| `comparacao.totalComDivergencia` | 15 |
+| Severidade alta | 14 convênios |
+| Severidade média | 1 convênio (937592/AM) |
+
+### Classificação em grupos (matriz resumida)
+
+| Grupo | Campos | Convênios | Classificação | Bloqueia ativação? |
+| --- | --- | ---: | --- | --- |
+| **A — DETRU oficial** | `quantidadeTa` (15), `valorGlobal` (1), `valorRepasse` (1), `rendimentoAprovado` (1) | até 15 | aceitável — fonte oficial substitui valor manual | não |
+| **B — Cálculo do plano** | `valorExecutadoGeral` (1), `saldoResidualCapital` (14), `saldoResidualCusteio` (12) | até 14 | aceitável — soma do plano por área/natureza | não |
+| **C — Ausente na origem antiga** | `execucaoGeralPercentual` (15) | 15 | não bloqueante — campo novo calculado | não |
+| **D — Ausente na origem nova** | `saldoRendimentosAtual` (15) | 15 | **pendência real** — cache Transferegov vazio | **parcial** |
+| **E — Validação humana** | nenhum | 0 | — | — |
+
+**Total**: 75 ocorrências distribuídas em 15 convênios. **Nenhuma classificada como erro provável.**
+
+### Principais achados
+
+1. As divergências DETRU (Grupo A) refletem a substituição intencional de valores manuais por fonte oficial. Exemplos:
+   - 937468/TO: `valorGlobal` antigo R$ 265.260,78 → DETRU R$ 287.128,78 (TA não refletido na planilha, R$ 21.868).
+   - 937782/AC: `valorRepasse` antigo R$ 396.423,71 → DETRU R$ 390.430,00 (ajuste de repasse, R$ 5.993,71).
+   - `quantidadeTa`: DETRU traz `QTD_TA` real para todos os 15 convênios; planilha contava parciais (diferença de 1 a 2 unidades por convênio).
+2. As divergências de cálculo do plano (Grupo B) são em geral altas em valor absoluto (`saldoResidualCapital` chega a R$ 1.276.901,97 de diferença em 937817/RJ), o que sugere que os valores antigos na aba Geral estavam **muito desatualizados**. O novo cálculo é determinístico (soma direta do plano filtrado por UF+nº+ano por natureza) e auditável.
+3. `execucaoGeralPercentual` (Grupo C) sempre vem `null` na origem antiga porque o campo não é extraído no nível do convênio em `extrairProfor2022DoWorkbook`. Não é bug; é uma adição estrutural do `banco-cache`.
+4. `saldoRendimentosAtual` (Grupo D) é a única pendência real. Sem cache populado, todos os 15 convênios divergem (antigo tem valor manual, novo é `null`). Cliente Transferegov atual depende de sessão pública estabelecida — não há workaround sem violar restrições absolutas.
+
+### Decisão de não ativação
+
+`banco-cache` **continua bloqueado** como origem padrão. A bloqueio agora não é técnico (cache populado, plano casando), e sim de **governança**:
+
+1. ⚠️ pendente: decisão sobre `saldoRendimentosAtual` (Opção 1, 2 ou 5.4 do documento de divergências).
+2. ⚠️ pendente: decisão sobre aceitar Grupo A (DETRU oficial) e Grupo B (cálculo do plano) como autoritativos.
+
+Detalhes completos em [`memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md`](../01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md).
+
+### Recomendação técnica
+
+- **Curto prazo**: manter `PROFOR_2022_ORIGEM_DADOS=planilha` (Opção 1) até que governança decida.
+- **Médio prazo**: se aceito `null` para `saldoRendimentosAtual` com aviso de UI, migrar para `banco-cache` (Opção 2). Importação manual controlada de saldos Transferegov é a 2ª via mais segura.
+- **Evitar**: composição híbrida campo a campo (Opção 3) — aumenta complexidade arquitetural e dilui clareza do mapeamento "uma origem por consolidado".
+
+### Arquivos alterados nesta etapa
+
+| Arquivo | Mudança |
+| --- | --- |
+| `memoria/00_DIARIO_DE_BORDO/diario-atual.md` | nova entrada com classificação |
+| `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` | seção 13 adicionada (critérios de aceitação `banco-cache`) |
+| `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md` | **arquivo novo** (matriz, classificação, recomendações) |
+
+### Confirmações de segurança
+
+- Código: **não alterado** (`backend/server.js`, services PROFOR 2022, `backend/db/init-db.js`).
+- Frontend, `index.html`, `backend/data/aplicacao.json`, `.env`, `.env.example`, `package.json`: **não alterados**.
+- JSONs publicados em `frontend/data/publicados/`: **não alterados**.
+- `npm run publicar:dados`: **não executado**.
+- ZIP/CSV/banco SQLite: **não versionados**.
+- Origem padrão: `PROFOR_2022_ORIGEM_DADOS=planilha` (mantida).
+- `banco-cache`: **não ativado**.
+
+### Validações executadas
+
+- `npm run validar:json` → OK (todos JSONs publicados válidos).
+- `npm run validar:syntax` → OK (25 arquivos validados).
+- `git diff --check` → sem trailing whitespace.
+- `git status --short` → apenas arquivos de memória alterados/criados.
+
+### Próximas pendências
+
+1. **Governança**: decidir entre Opções 1–4 (ver seção 5 do documento de divergências).
+2. **Transferegov**: avaliar viabilidade de importação manual controlada ou fonte pública alternativa para `saldoRendimentosAtual`.
+3. **(Opcional)** Adicionar extração de `execucaoGeralPercentual` no nível do convênio em `extrairProfor2022DoWorkbook` para reduzir 15 ocorrências de `ausente_antigo` na comparação (melhoria de qualidade, não-bloqueante).
+
+---
+
 ## 17/05/2026 - Diagnóstico do consolidado PROFOR 2022 — totalComPlano e Transferegov esclarecidos
 
 - Branch atual: `main`.
