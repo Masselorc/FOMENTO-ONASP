@@ -445,6 +445,12 @@ PROFOR_2022_ORIGEM_DADOS=planilha
 
 Bloco 16 criou `backend/services/profor-2022/profor-origem-service.js` com as origens permitidas `planilha` e `banco-cache`. O padrão obrigatório permanece `planilha`; a flag `PROFOR_2022_ORIGEM_DADOS=banco-cache` existe apenas para ativação futura controlada e não é consumida pela página PROFOR 2022 nesta etapa.
 
+Bloco 17 integrou a seleção de origem de forma conservadora no fluxo de dados e publicação. A origem padrão continua `planilha`; o fluxo antigo da aba `Geral` foi preservado e recebeu apenas metadados seguros (`origemDados`, `origemDadosEfetiva`, `fallbackUsado`, `avisos`, `diagnostico`). A origem `banco-cache` passou a ser suportada no fluxo Node de consolidação/publicação por `dashboard-publication-service.js`, usando o compositor consolidado e o plano de aplicação extraído das abas estaduais, sem fazer o compositor ler a planilha diretamente. Em falha do `banco-cache`, o serviço retorna a origem `planilha` com aviso de fallback.
+
+Por restrição técnica atual, `backend/services/data-service.js` também é importado diretamente pelo navegador como módulo da aplicação. Portanto, ele não importa serviços Node/SQLite do compositor; no navegador e com a origem padrão, a página PROFOR 2022 segue usando a origem `planilha`. A ativação visual/local por `banco-cache` permanece pendente de uma rota/API ou outro acoplamento seguro que não leve dependências Node para o browser.
+
+A publicação estática foi preparada em código para remover a seção interna `detru` do catálogo público antes de gerar `frontend/data/publicados/aplicacao.json`. O comando `npm run publicar:dados` não foi executado neste bloco e nenhum JSON publicado foi alterado.
+
 As tabelas novas devem ser aditivas e não devem interferir no fluxo atual até a origem nova ser ativada.
 
 Após commits específicos, usar:
@@ -476,18 +482,17 @@ git push origin HEAD
 - Bloco 14: base técnica de rendimentos Transferegov público criada. Tabelas `profor_transferegov_rendimentos_cache` e `profor_transferegov_rendimentos_consultas` adicionadas ao SQLite local; cliente `backend/services/profor-2022/transferegov-rendimentos-client.js` criado para montar a URL pública conhecida, consultar por `fetch` nativo e extrair `#tr-novaSolicitacaoValorDisponivelRendimento`; serviço `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` criado para salvar apenas consultas bem-sucedidas e preservar o último cache válido em falhas; script `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js` criado e exposto como `npm run atualizar:rendimentos-profor`. A captura direta pode depender de sessão pública do convênio no Transferegov; não há login, bypass ou uso de credenciais. A página PROFOR 2022 ainda não consome este cache nesta etapa.
 - Bloco 15: cálculos internos e filtro seguro do plano criados em serviços puros. `backend/services/profor-2022/profor-plano-aplicacao-service.js` centraliza normalização, filtro por UF/número/ano/área/natureza, bloqueio de filtro por UF quando há risco de mistura de convênios, agrupamento e resumo do plano. `backend/services/profor-2022/profor-calculos-service.js` consolida valores de DETRU/cache, saldo de rendimentos de Transferegov/cache e cálculos por área/natureza do plano filtrado. A página PROFOR 2022 ainda usa a origem antiga em `data-service.js`; não houve integração com telas, rotas, banco ou publicação. `saldoDisponivelOuvidoria` segue pendente até fórmula segura ou compositor.
 - Bloco 16: compositor consolidado, comparador e flag de origem criados sem ativação na página. `backend/services/profor-2022/profor-origem-service.js` mantém a origem padrão `planilha` e reserva `banco-cache` para ativação futura. `backend/services/profor-2022/profor-consolidado-service.js` monta objeto PROFOR 2022 consolidado a partir da carteira local, cache DETRU, cache Transferegov e plano de aplicação filtrado por UF + número + ano. `backend/services/profor-2022/profor-comparador-service.js` compara origem antiga versus nova com tolerâncias monetária e percentual. `data-service.js`, frontend, rotas, banco e publicação estática não foram alterados. `saldoDisponivelOuvidoria` continua pendente e sai como `null` com aviso.
+- Bloco 17: integração controlada da origem consolidada com fallback. `backend/services/data-service.js` preserva a origem `planilha` e acrescenta metadados seguros ao objeto PROFOR 2022 sem mudar o shape consumido pela tela. `backend/services/dashboard-publication-service.js` passa a resolver a origem por flag/opção: `planilha` mantém o fluxo antigo; `banco-cache` chama `profor-consolidado-service.js` com plano extraído das abas UF; falhas retornam para `planilha` com aviso. `backend/services/static-publication-service.js` sanitiza o catálogo público para não publicar a seção interna `detru`. Frontend, rotas, banco, `backend/data/aplicacao.json` e JSONs publicados não foram alterados; `npm run publicar:dados` não foi executado.
 
 ### 10.2. Próximas etapas
 
 1. Refinar, se necessário, o estabelecimento de sessão pública do convênio no Transferegov.
-2. Integrar o cache local de rendimentos ao compositor consolidado do PROFOR 2022.
-3. Definir fórmula segura para `saldoDisponivelOuvidoria`.
-4. Executar comparação real entre origem antiga e nova com dados atuais.
-5. Integrar nova origem no `data-service.js` com fallback por flag.
-6. Ajustar publicação estática.
-7. Validar divergências.
-8. Ativar origem nova.
-9. Remover dependência obrigatória da aba `Geral`.
+2. Definir fórmula segura para `saldoDisponivelOuvidoria`.
+3. Executar comparação real entre origem antiga e nova com dados atuais.
+4. Criar caminho seguro de ativação visual/local para `banco-cache`, sem importar dependências Node/SQLite no browser.
+5. Validar divergências.
+6. Ativar origem nova apenas após validação.
+7. Remover dependência obrigatória da aba `Geral`.
 
 ### 10.3. Fase futura
 
@@ -523,3 +528,4 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 17/05/2026 | Bloco 14: Transferegov público + cache de rendimentos | Cliente público e parser HTML criados. Tabelas de cache/histórico adicionadas ao SQLite local. Script `atualizar:rendimentos-profor` criado. Página PROFOR 2022 ainda não consome o cache. |
 | 17/05/2026 | Bloco 15: cálculos internos + filtro seguro do plano | Serviços puros `profor-plano-aplicacao-service.js` e `profor-calculos-service.js` criados. Filtro seguro por UF/número/ano e cálculos por área/natureza implementados sem integrar na página. |
 | 17/05/2026 | Bloco 16: compositor consolidado + comparador + flag | Serviços `profor-origem-service.js`, `profor-consolidado-service.js` e `profor-comparador-service.js` criados. Origem padrão segue `planilha`; `banco-cache` fica reservado para ativação futura. |
+| 17/05/2026 | Bloco 17: integração nas telas + publicação estática | Origem padrão `planilha` preservada. Fluxo Node de publicação suporta `banco-cache` com fallback para `planilha`; `data-service.js` mantém compatibilidade da tela; publicação estática sanitiza a seção interna `detru`. |

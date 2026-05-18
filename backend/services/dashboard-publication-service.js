@@ -1,5 +1,7 @@
 const path = require("path");
 const xlsx = require("xlsx");
+const { resolverOrigemDadosProfor2022 } = require("./profor-2022/profor-origem-service");
+const { montarConsolidadoProfor2022 } = require("./profor-2022/profor-consolidado-service");
 
 const ABA_RESUMO_CONVENIOS = "Geral";
 const COLUNA_VALOR_OUVIDORIA_GERAL = 18;
@@ -397,6 +399,23 @@ function montarResumoProfor2022(convenios) {
   };
 }
 
+function anexarMetadadosOrigemProfor2022(dados, metadados = {}) {
+  const avisos = Array.isArray(metadados.avisos) ? metadados.avisos : [];
+
+  return {
+    ...dados,
+    origemDados: metadados.origemDados || "planilha",
+    origemDadosEfetiva: metadados.origemDadosEfetiva || "planilha",
+    fallbackUsado: Boolean(metadados.fallbackUsado),
+    avisos,
+    diagnostico: {
+      totalConvenios: dados?.convenios?.length || 0,
+      totalAvisos: avisos.length,
+      ...(metadados.diagnostico || {})
+    }
+  };
+}
+
 function extrairProfor2022DoWorkbook(workbook, catalogoAplicacao) {
   const sheetGeral = workbook.Sheets[ABA_RESUMO_CONVENIOS];
   if (!sheetGeral) {
@@ -457,7 +476,7 @@ function extrairProfor2022DoWorkbook(workbook, catalogoAplicacao) {
     throw new Error("Nenhum convenio PROFOR 2022 foi encontrado na aba Geral.");
   }
 
-  return {
+  return anexarMetadadosOrigemProfor2022({
     resumo: montarResumoProfor2022(convenios),
     convenios,
     filtros: {
@@ -469,7 +488,64 @@ function extrairProfor2022DoWorkbook(workbook, catalogoAplicacao) {
         convenios.flatMap((convenio) => convenio.planoAplicacao.map((item) => item.natureza))
       )).filter(Boolean).sort((a, b) => a.localeCompare(b, "pt-BR"))
     }
-  };
+  });
+}
+
+function listarAbasEstadoProfor(workbook, catalogoAplicacao) {
+  const { configuracao, nomesEstados } = catalogoAplicacao;
+  const abasIgnoradas = new Set([
+    ABA_RESUMO_CONVENIOS,
+    "IND_PRORROG",
+    ...(configuracao.abasPlanilhaIgnoradas || [])
+  ].map((nomeAba) => normalizarTexto(nomeAba)));
+
+  return workbook.SheetNames.filter((sheetName) => (
+    nomesEstados[normalizarTexto(sheetName)] && !abasIgnoradas.has(normalizarTexto(sheetName))
+  ));
+}
+
+function extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao) {
+  return listarAbasEstadoProfor(workbook, catalogoAplicacao)
+    .flatMap((sheetName) => extrairPlanoAplicacaoProforDaAba(workbook.Sheets[sheetName], sheetName));
+}
+
+function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {}) {
+  const origemResolvida = resolverOrigemDadosProfor2022({
+    origemDados: opcoes.origemDados,
+    detalhado: true
+  });
+
+  if (origemResolvida.origemDados !== "banco-cache") {
+    const dadosPlanilha = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);
+    return anexarMetadadosOrigemProfor2022(dadosPlanilha, {
+      origemDados: "planilha",
+      origemDadosEfetiva: "planilha",
+      avisos: origemResolvida.avisos || []
+    });
+  }
+
+  try {
+    const montarConsolidado = opcoes.montarConsolidado || montarConsolidadoProfor2022;
+    const planoAplicacao = opcoes.planoAplicacao || extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
+    return montarConsolidado({
+      origemDados: "banco-cache",
+      planoAplicacao
+    });
+  } catch (error) {
+    const fallback = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);
+    return anexarMetadadosOrigemProfor2022(fallback, {
+      origemDados: "banco-cache",
+      origemDadosEfetiva: "planilha",
+      fallbackUsado: true,
+      avisos: [
+        ...(fallback.avisos || []),
+        `Falha ao montar origem banco-cache. Fallback para planilha: ${error.message}`
+      ],
+      diagnostico: {
+        erroBancoCache: error.message
+      }
+    });
+  }
 }
 
 function removerConveniosDoDadosBase(dadosBase) {
@@ -526,7 +602,7 @@ function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
     ...removerConveniosDoDadosBase(catalogoAplicacao.dadosBase),
     ...dadosConvenio
   ];
-  const dadosProfor2022 = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);
+  const dadosProfor2022 = montarDadosProfor2022Publicacao(workbook, catalogoAplicacao);
   const resumoDashboard = calcularResumoDashboard(dadosBaseConsolidado);
 
   if (resumoDashboard.totalConvenios <= 0 || resumoDashboard.quantidadeUfsConvenios <= 0) {
@@ -560,5 +636,7 @@ function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
 }
 
 module.exports = {
-  consolidarCatalogoDashboard
+  consolidarCatalogoDashboard,
+  montarDadosProfor2022Publicacao,
+  extrairPlanoAplicacaoProforDoWorkbook
 };

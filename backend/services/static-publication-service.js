@@ -42,6 +42,11 @@ function sanitizarOrcamento2026(dados) {
   return resto;
 }
 
+function sanitizarCatalogoAplicacaoPublico(dados) {
+  const { detru, ...resto } = dados || {};
+  return resto;
+}
+
 function carregarCatalogoAplicacao() {
   return JSON.parse(fs.readFileSync(catalogoAplicacaoPath, "utf8"));
 }
@@ -54,11 +59,12 @@ async function publicarDadosEstaticos() {
   const publicadoEm = new Date().toISOString();
   const dashboard = consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm);
 
+  const catalogoAplicacaoPublico = sanitizarCatalogoAplicacaoPublico(dashboard.catalogoPublicado);
   const parametrosMinimosPublicos = sanitizarParametrosMinimos(parametrosMinimos);
   const formalizacaoProforPublico = sanitizarFormalizacaoProfor(formalizacaoProfor);
   const orcamento2026Publico = sanitizarOrcamento2026(orcamento2026);
 
-  escreverJsonAtomico("aplicacao.json", dashboard.catalogoPublicado);
+  escreverJsonAtomico("aplicacao.json", catalogoAplicacaoPublico);
   escreverJsonAtomico("dashboard-geral.json", dashboard.dashboardGeral);
   escreverJsonAtomico("parametros-minimos.json", parametrosMinimosPublicos);
   escreverJsonAtomico("formalizacao-profor.json", formalizacaoProforPublico);
@@ -74,7 +80,7 @@ async function publicarDadosEstaticos() {
       "orcamento-2026.json"
     ],
     totais: {
-      aplicacaoDadosBase: contarItensPublicados(dashboard.catalogoPublicado, ["dadosBase"]),
+      aplicacaoDadosBase: contarItensPublicados(catalogoAplicacaoPublico, ["dadosBase"]),
       dashboard: dashboard.resumoDashboard,
       itensConvenio: dashboard.totaisExtracao.itensConvenio,
       conveniosProfor2022: dashboard.totaisExtracao.conveniosProfor2022,
@@ -91,5 +97,6 @@ async function publicarDadosEstaticos() {
 }
 
 module.exports = {
-  publicarDadosEstaticos
+  publicarDadosEstaticos,
+  sanitizarCatalogoAplicacaoPublico
 };

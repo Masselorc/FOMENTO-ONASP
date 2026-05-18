@@ -999,6 +999,23 @@ function montarResumoProfor2022(convenios) {
     };
 }
 
+function anexarMetadadosOrigemProfor2022(dados, metadados = {}) {
+    const avisos = Array.isArray(metadados.avisos) ? metadados.avisos : [];
+
+    return {
+        ...dados,
+        origemDados: metadados.origemDados || 'planilha',
+        origemDadosEfetiva: metadados.origemDadosEfetiva || 'planilha',
+        fallbackUsado: Boolean(metadados.fallbackUsado),
+        avisos,
+        diagnostico: {
+            totalConvenios: dados?.convenios?.length || 0,
+            totalAvisos: avisos.length,
+            ...(metadados.diagnostico || {})
+        }
+    };
+}
+
 function extrairProfor2022DoWorkbook(workbook, catalogoAplicacao) {
     const sheetGeral = workbook.Sheets[ABA_RESUMO_CONVENIOS];
     if (!sheetGeral) {
@@ -1059,7 +1076,7 @@ function extrairProfor2022DoWorkbook(workbook, catalogoAplicacao) {
         throw new Error('Nenhum convenio PROFOR 2022 foi encontrado na aba Geral.');
     }
 
-    return {
+    return anexarMetadadosOrigemProfor2022({
         resumo: montarResumoProfor2022(convenios),
         convenios,
         filtros: {
@@ -1071,7 +1088,7 @@ function extrairProfor2022DoWorkbook(workbook, catalogoAplicacao) {
                 convenios.flatMap((convenio) => convenio.planoAplicacao.map((item) => item.natureza))
             )).filter(Boolean).sort((a, b) => a.localeCompare(b, 'pt-BR'))
         }
-    };
+    });
 }
 
 // Extrai somente itens de convênio classificados como OUVIDORIA nas abas de UF.

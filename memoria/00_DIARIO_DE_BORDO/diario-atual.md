@@ -1,5 +1,20 @@
 # Diário de bordo
 
+## 17/05/2026 - Bloco 17: integração nas telas + publicação estática
+
+- Branch atual: `main`.
+- Objetivo: integrar a nova origem consolidada PROFOR 2022 no fluxo da aplicação, preservando fallback para a origem antiga da planilha e mantendo `planilha` como padrão.
+- Arquivos lidos: `AGENTS.md`, `memoria/INDEX.md`, `memoria/00_CONTEXTO_AGENTES/entrada-agente.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `backend/services/data-service.js`, `backend/services/dashboard-publication-service.js`, `backend/services/static-publication-service.js`, `backend/services/profor-2022/profor-origem-service.js`, `backend/services/profor-2022/profor-consolidado-service.js`, `backend/services/profor-2022/profor-comparador-service.js`, `backend/services/profor-2022/profor-plano-aplicacao-service.js`, `backend/services/profor-2022/profor-calculos-service.js`, `frontend/js/app.js`.
+- Arquivos alterados: `backend/services/data-service.js`, `backend/services/dashboard-publication-service.js`, `backend/services/static-publication-service.js`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção: `data-service.js` preserva a origem `planilha` e acrescenta metadados seguros ao objeto PROFOR 2022 (`origemDados`, `origemDadosEfetiva`, `fallbackUsado`, `avisos`, `diagnostico`) sem alterar o shape esperado pela tela. `dashboard-publication-service.js` resolve a origem por flag/opção: `planilha` mantém o fluxo antigo; `banco-cache` chama o compositor consolidado com plano extraído das abas UF; falhas retornam para `planilha` com aviso. `static-publication-service.js` remove a seção interna `detru` do catálogo público antes de gerar `frontend/data/publicados/aplicacao.json`.
+- Decisão técnica: `backend/services/data-service.js` também é importado pelo navegador como módulo da aplicação, então não deve importar diretamente serviços Node/SQLite do compositor. A ativação visual/local por `banco-cache` fica preparada no fluxo Node de publicação/consolidação e permanece pendente de rota/API ou acoplamento equivalente seguro.
+- Testes node -e: origem padrão retorna `planilha`; fluxo `planilha` mantém `{ resumo, convenios, filtros }`; compositor monta objeto com dados fictícios de carteira, DETRU/cache, Transferegov/cache e plano; fallback `banco-cache` para `planilha` é acionado quando o consolidado falha; metadados não removem campos esperados; sanitização remove `detru` de catálogo público; `saldoDisponivelOuvidoria` `null` não quebra o resumo fictício.
+- Teste funcional local: `npm start` encontrou servidor já em uso na porta 8790; o servidor existente respondeu `200` na home. Navegação headless abriu a home e a página PROFOR 2022 com origem padrão `planilha`, cards/tabela carregados e sem erros de console.
+- Escopo preservado: frontend não alterado; `index.html` não alterado; `backend/server.js` não alterado; banco/schema não alterado; `backend/data/aplicacao.json` não alterado; JSONs publicados não alterados; nenhuma consulta DETRU ou Transferegov executada; nenhum download executado; `npm run publicar:dados` não executado.
+- Limitações: a origem `banco-cache` ainda não é padrão e não foi ativada visualmente na página; `saldoDisponivelOuvidoria` continua pendente de fórmula segura; comparação real entre origem antiga e nova segue como etapa posterior.
+- Risco de regressão: baixo no fluxo padrão, porque `planilha` permanece como origem efetiva e o front-end não foi alterado. Risco residual concentrado no fluxo futuro de publicação com `PROFOR_2022_ORIGEM_DADOS=banco-cache`, mitigado por fallback para planilha.
+- Rollback: `git revert <hash>` remove a integração e os registros documentais do bloco.
+
 ## 17/05/2026 - Bloco 16: compositor consolidado + comparador + flag de origem
 
 - Branch atual: `main`.
