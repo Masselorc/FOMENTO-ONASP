@@ -825,3 +825,7 @@ Critérios de qualidade:
 - Não ajustar valores manualmente para coincidir com a planilha histórica.
 - Divergência com a aba `Geral` só indica erro se a fórmula da aplicação estiver tecnicamente incorreta.
 - Publicar somente com consolidado `15/15/15`, sem `NaN`, `Infinity` ou `undefined`.
+
+## Guia operacional
+
+O guia operacional consolidado da funcionalidade está registrado em `profor-2022-operacao.md`.

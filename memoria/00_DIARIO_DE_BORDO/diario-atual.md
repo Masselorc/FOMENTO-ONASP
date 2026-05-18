@@ -2572,3 +2572,15 @@ Logs operacionais gravados:
 - Nenhuma dependência nova.
 - Nenhum SQLite, ZIP, CSV, HAR, HTML bruto, cookie ou temporário versionado.
 - Rollback recomendado: `git revert <hash>` do commit desta etapa; se necessário, republicar PROFOR 2022 a partir do commit anterior validado.
+
+## 18/05/2026 - Guia operacional final da migracao PROFOR 2022
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo; `git pull` executado e retornou `Already up to date`.
+- Objetivo: consolidar em um documento único o estado final da arquitetura operacional do PROFOR 2022, sem alterar código de produção, frontend, banco, JSONs publicados ou scripts.
+- Arquivo criado: `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
+- Arquivos atualizados: `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`, `memoria/INDEX.md`.
+- Escopo documental: arquitetura final, fontes de dados, comandos operacionais, rotina diária, publicação estática, logs operacionais, critérios de bloqueio, pendências conhecidas, rollback e checklist de publicação.
+- Confirmacao operacional: nenhuma alteracao de codigo, frontend, banco ou JSON publicado foi feita nesta etapa.
+- Validacoes executadas: `npm run validar:json`, `npm run validar:syntax`, `git diff --check`, `git diff --name-only`, `git status --short`.
+- Publicacao nao executada: `npm run publicar:dados` e `npm run publicar:profor-2022` nao foram rodados.

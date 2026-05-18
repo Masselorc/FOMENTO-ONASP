@@ -34,6 +34,10 @@ Arquivos temáticos existentes nesta árvore:
 - `memoria/01_PROJETO_APLICACAO/pendencias.md`
 - `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md`
 - `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-auditoria-aba-geral.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`
 - `memoria/02_ONASP_INSTITUCIONAL/visao-geral-onasp.md`
 - `memoria/02_ONASP_INSTITUCIONAL/competencias-onasp.md`
 - `memoria/02_ONASP_INSTITUCIONAL/glossario-institucional.md`
