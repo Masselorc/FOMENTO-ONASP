@@ -1,5 +1,32 @@
 # Diário de bordo
 
+## 18/05/2026 - Validação do agendamento diário PROFOR 2022
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo; `git pull` executado e retornou `Already up to date`.
+- Histórico recente conferido antes da validação: `6b33a0f`, `e0915b2`, `2e23aa1`, `f7c42c3`, `f84d1e6`.
+- Baseline manual executado com `npm run atualizar:profor-2022`.
+- Resultado do baseline: `DETRU 15/15`, `Rendimentos 15/15`, `Consolidado 15`, `diagnostico 15/15/15`, sem erro bloqueante.
+- Horário temporário usado no teste do agendador na sessão: `09:26`.
+- `npm run agendar:profor-2022` iniciou corretamente, calculou a próxima execução e disparou a rodada no horário temporário.
+- Rodada agendada executada com sucesso:
+  - início: `2026-05-18T12:26:00.024Z`
+  - fim: `2026-05-18T12:28:12.742Z`
+  - duração: `132718 ms`
+  - DETRU: `15/15`
+  - rendimentos: `15/15`
+  - consolidado: `15/15/15`
+- Status operacional após a rodada via `GET /api/profor-2022/atualizacao/status` e `GET /api/profor-2022/consolidado`:
+  - `success=true`
+  - `origemDados=banco-cache`
+  - `ultimaAtualizacaoDados.dataHora=18/05/2026 12:28:12`
+  - `ultimaAtualizacaoDados.fonte=Transferegov/rendimentos`
+  - consolidado permaneceu em `15` convênios com `15/15/15`.
+- Qualidade dos logs: suficiente para operação; informa início, resumo final, duração, próximo agendamento e falhas de forma legível.
+- `npm run publicar:dados` não foi executado.
+- JSONs publicados não foram alterados.
+- Nenhum arquivo sensível foi versionado.
+
 ## 18/05/2026 - Remoção da observação do card de rendimentos PROFOR
 
 - Solicitação recebida: remover também a mensagem/observação exibida no card de saldo de rendimentos da PROFOR 2022.
