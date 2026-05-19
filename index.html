@@ -19,7 +19,7 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css?v=20260519-38-padroniza" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260519-39-instrumentos" rel="stylesheet">
     <link href="./frontend/css/budget-dark-fix.css?v=20260519-01" rel="stylesheet">
 </head>
 <body>
@@ -194,62 +194,66 @@
                         <h2 class="app-section-title">Visão por tipo de instrumento</h2>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-instrumentos-section" aria-label="Indicadores por instrumento">
-                <div class="col">
-                    <div class="card kpi-card instrument-summary-card convenio">
-                        <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Total em Convênios (Ouvidoria)</div>
-                        <div class="instrument-metric-line">
-                            <div class="kpi-value text-money" id="kpi-total-convenios">R$ 0,00</div>
-                            <span class="instrument-percent" id="kpi-percentual-convenios">0,0%</span>
+                <div id="cards-instrumentos-section" class="instrument-grid-layout" aria-label="Indicadores por instrumento">
+                    <div class="instrument-grid-finance">
+                        <div class="card kpi-card instrument-summary-card instrument-value-card convenio">
+                            <div class="instrument-value-body">
+                                <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Total em Convênios (Ouvidoria)</div>
+                                <div class="instrument-metric-line">
+                                    <div class="kpi-value text-money" id="kpi-total-convenios">R$ 0,00</div>
+                                    <span class="instrument-percent" id="kpi-percentual-convenios">0,0%</span>
+                                </div>
+                                <div class="kpi-desc" id="kpi-desc-convenios">Executado: R$ 0,00</div>
+                            </div>
+                            <div class="instrument-mini-chart" aria-label="Percentual executado em convênios">
+                                <div class="mini-pie mini-pie-convenio" id="mini-pie-convenios" aria-hidden="true"></div>
+                                <div class="mini-pie-caption">
+                                    <span>Executado</span>
+                                    <strong id="mini-pie-convenios-label">0,0%</strong>
+                                </div>
+                            </div>
                         </div>
-                        <div class="kpi-desc" id="kpi-desc-convenios">Executado: R$ 0,00</div>
-                        <div class="instrument-mini-chart" aria-label="Percentual executado em convênios">
-                            <div class="mini-pie mini-pie-convenio" id="mini-pie-convenios" aria-hidden="true"></div>
-                            <div class="mini-pie-caption">
-                                <span>Executado</span>
-                                <strong id="mini-pie-convenios-label">0,0%</strong>
+                        <div class="card kpi-card instrument-summary-card instrument-value-card faf">
+                            <div class="instrument-value-body">
+                                <div class="kpi-title"><i class="fas fa-landmark" aria-hidden="true"></i>Total em FaF</div>
+                                <div class="instrument-metric-line">
+                                    <div class="kpi-value text-money" id="kpi-total-faf">R$ 0,00</div>
+                                    <span class="instrument-percent" id="kpi-percentual-faf">0,0%</span>
+                                </div>
+                                <div class="kpi-desc" id="kpi-desc-faf">Executado: R$ 0,00</div>
+                            </div>
+                            <div class="instrument-mini-chart" aria-label="Percentual executado em FaF">
+                                <div class="mini-pie mini-pie-faf" id="mini-pie-faf" aria-hidden="true"></div>
+                                <div class="mini-pie-caption">
+                                    <span>Executado</span>
+                                    <strong id="mini-pie-faf-label">0,0%</strong>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card kpi-card instrument-summary-card faf">
-                        <div class="kpi-title"><i class="fas fa-landmark" aria-hidden="true"></i>Total em FaF</div>
-                        <div class="instrument-metric-line">
-                            <div class="kpi-value text-money" id="kpi-total-faf">R$ 0,00</div>
-                            <span class="instrument-percent" id="kpi-percentual-faf">0,0%</span>
-                        </div>
-                        <div class="kpi-desc" id="kpi-desc-faf">Executado: R$ 0,00</div>
-                        <div class="instrument-mini-chart" aria-label="Percentual executado em FaF">
-                            <div class="mini-pie mini-pie-faf" id="mini-pie-faf" aria-hidden="true"></div>
-                            <div class="mini-pie-caption">
-                                <span>Executado</span>
-                                <strong id="mini-pie-faf-label">0,0%</strong>
+                    <div class="instrument-grid-coverage">
+                        <div class="card kpi-card instrument-summary-card instrument-coverage-card convenio">
+                            <div class="instrument-coverage-header">
+                                <div class="kpi-title"><i class="fas fa-map-marked-alt" aria-hidden="true"></i>UFs com Convênios</div>
+                                <div class="kpi-value" id="kpi-ufs-convenios-qtd">0</div>
                             </div>
+                            <div class="uf-chip-list" id="kpi-ufs-convenios-lista"></div>
+                        </div>
+                        <div class="card kpi-card instrument-summary-card instrument-coverage-card faf">
+                            <div class="instrument-coverage-header">
+                                <div class="kpi-title"><i class="fas fa-map-marker-alt" aria-hidden="true"></i>UFs com FaF</div>
+                                <div class="kpi-value" id="kpi-ufs-faf-qtd">0</div>
+                            </div>
+                            <div class="uf-chip-list" id="kpi-ufs-faf-lista"></div>
+                        </div>
+                        <div class="card kpi-card instrument-summary-card instrument-coverage-card doacao">
+                            <div class="instrument-coverage-header">
+                                <div class="kpi-title"><i class="fas fa-gift" aria-hidden="true"></i>UFs com Doações</div>
+                                <div class="kpi-value" id="kpi-ufs-doacao-qtd">0</div>
+                            </div>
+                            <div class="uf-chip-list" id="kpi-ufs-doacao-lista"></div>
                         </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card kpi-card instrument-summary-card convenio">
-                        <div class="kpi-title"><i class="fas fa-map-marked-alt" aria-hidden="true"></i>UFs com Convênios ativos</div>
-                        <div class="kpi-value" id="kpi-ufs-convenios-qtd">0</div>
-                        <div class="uf-chip-list" id="kpi-ufs-convenios-lista"></div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card kpi-card instrument-summary-card faf">
-                        <div class="kpi-title"><i class="fas fa-map-marker-alt" aria-hidden="true"></i>UFs com FaF ativo</div>
-                        <div class="kpi-value" id="kpi-ufs-faf-qtd">0</div>
-                        <div class="uf-chip-list" id="kpi-ufs-faf-lista"></div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card kpi-card instrument-summary-card doacao">
-                        <div class="kpi-title"><i class="fas fa-gift" aria-hidden="true"></i>UFs com Doações</div>
-                        <div class="kpi-value" id="kpi-ufs-doacao-qtd">0</div>
-                        <div class="uf-chip-list" id="kpi-ufs-doacao-lista"></div>
-                    </div>
-                </div>
                 </div>
             </section>
 
@@ -564,6 +568,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script type="module" src="./frontend/js/app.js?v=20260519-38-padroniza"></script>
+    <script type="module" src="./frontend/js/app.js?v=20260519-39-instrumentos"></script>
 </body>
 </html>

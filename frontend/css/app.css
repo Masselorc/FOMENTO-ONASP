@@ -9799,3 +9799,172 @@ table.dataTable thead th {
     gap: 0.4rem;
     flex-wrap: wrap;
 }
+
+/* ============================================================ */
+/* Etapa 3.9 - Remodelagem "Visao por tipo de instrumento"      */
+/* 2 sub-grids semanticos: financeiro (2 cards) + cobertura     */
+/* (3 cards). Layout interno do card financeiro em 2 colunas    */
+/* (conteudo | mini-pie) para aproveitar largura horizontal.    */
+/* ============================================================ */
+
+#cards-instrumentos-section.instrument-grid-layout {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.instrument-grid-finance {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+}
+
+.instrument-grid-coverage {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+}
+
+/* Card financeiro: 2 colunas internas (conteudo | grafico) */
+.instrument-value-card {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.75rem 0.95rem !important;
+}
+
+.instrument-value-card .instrument-value-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.instrument-value-card .kpi-title {
+    font-size: 0.72rem;
+    margin-bottom: 0.15rem;
+}
+
+.instrument-value-card .instrument-metric-line {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.instrument-value-card .kpi-value {
+    font-size: 1.15rem;
+    line-height: 1.1;
+}
+
+.instrument-value-card .instrument-percent {
+    font-size: 0.78rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.18);
+    color: #93c5fd;
+}
+
+.instrument-value-card .kpi-desc {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.instrument-value-card .instrument-mini-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0 !important;
+    min-height: auto !important;
+    flex-shrink: 0;
+}
+
+.instrument-value-card .mini-pie {
+    width: 56px;
+    height: 56px;
+}
+
+.instrument-value-card .mini-pie-caption {
+    text-align: center;
+    line-height: 1.1;
+}
+
+.instrument-value-card .mini-pie-caption span {
+    font-size: 0.6rem;
+    opacity: 0.7;
+    display: block;
+}
+
+.instrument-value-card .mini-pie-caption strong {
+    font-size: 0.78rem;
+}
+
+/* Card de cobertura: vertical compacto */
+.instrument-coverage-card {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0.4rem !important;
+    padding: 0.65rem 0.8rem !important;
+}
+
+.instrument-coverage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.instrument-coverage-card .kpi-title {
+    font-size: 0.7rem;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+.instrument-coverage-card .kpi-value {
+    font-size: 1.1rem;
+    line-height: 1;
+    margin: 0;
+}
+
+.instrument-coverage-card .uf-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+    margin-top: 0;
+    padding-top: 0.2rem;
+}
+
+.instrument-coverage-card .uf-chip {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    line-height: 1.1;
+}
+
+/* Responsivo */
+@media (max-width: 991.98px) {
+    .instrument-grid-finance {
+        grid-template-columns: 1fr;
+    }
+
+    .instrument-grid-coverage {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .instrument-grid-coverage {
+        grid-template-columns: 1fr;
+    }
+
+    .instrument-value-card {
+        grid-template-columns: 1fr;
+    }
+
+    .instrument-value-card .instrument-mini-chart {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+}
