@@ -8864,44 +8864,28 @@ async function carregarLogoParaPDF() {
                     ${notaSaldoAparelhamento}
                 </section>
 
-                <section class="filter-section mb-4" aria-label="Filtros da tabela de orçamento">
-                    <div class="filter-toolbar">
-                        <div class="filter-title">
-                            <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
-                            <strong>Filtros</strong>
-                        </div>
-                        <div class="filter-search-actions">
-                            <input type="text" id="filtroOrcamentoBusca" class="form-control" placeholder="Buscar por item, modalidade, status ou SEI..." aria-label="Buscar orçamento">
-                            <button id="btnLimparFiltroOrcamento" type="button" class="btn btn-outline-secondary btn-icon-text">
-                                <i class="fas fa-undo" aria-hidden="true"></i>
-                                <span>Limpar</span>
-                            </button>
-                        </div>
+                <section class="filter-section budget-filter-bar mb-3" aria-label="Filtros da tabela de orçamento">
+                    <div class="budget-filter-bar-title">
+                        <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
+                        <strong>Filtros</strong>
                     </div>
-
-                    <div class="budget-filter-grid">
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroOrcamentoStatus">Status</label>
-                            <select id="filtroOrcamentoStatus" class="form-select budget-filter-control">
-                                <option value="">Todos</option>
-                                ${renderizarOpcoesFiltroOrcamento(filtros.status)}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroOrcamentoNatureza">Natureza</label>
-                            <select id="filtroOrcamentoNatureza" class="form-select budget-filter-control">
-                                <option value="">Todas</option>
-                                ${renderizarOpcoesFiltroOrcamento(filtros.naturezas)}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroOrcamentoModalidade">Modalidade</label>
-                            <select id="filtroOrcamentoModalidade" class="form-select budget-filter-control">
-                                <option value="">Todas</option>
-                                ${renderizarOpcoesFiltroOrcamento(filtros.modalidades)}
-                            </select>
-                        </div>
-                    </div>
+                    <input type="text" id="filtroOrcamentoBusca" class="form-control budget-filter-bar-search" placeholder="Buscar por item, modalidade, status ou SEI..." aria-label="Buscar orçamento">
+                    <select id="filtroOrcamentoStatus" class="form-select budget-filter-control budget-filter-bar-select" aria-label="Filtrar por status">
+                        <option value="">Status: todos</option>
+                        ${renderizarOpcoesFiltroOrcamento(filtros.status)}
+                    </select>
+                    <select id="filtroOrcamentoNatureza" class="form-select budget-filter-control budget-filter-bar-select" aria-label="Filtrar por natureza">
+                        <option value="">Natureza: todas</option>
+                        ${renderizarOpcoesFiltroOrcamento(filtros.naturezas)}
+                    </select>
+                    <select id="filtroOrcamentoModalidade" class="form-select budget-filter-control budget-filter-bar-select" aria-label="Filtrar por modalidade">
+                        <option value="">Modalidade: todas</option>
+                        ${renderizarOpcoesFiltroOrcamento(filtros.modalidades)}
+                    </select>
+                    <button id="btnLimparFiltroOrcamento" type="button" class="btn btn-outline-secondary btn-icon-text budget-filter-bar-clear">
+                        <i class="fas fa-undo" aria-hidden="true"></i>
+                        <span>Limpar</span>
+                    </button>
                 </section>
 
                 <section class="budget-insight-grid budget-insight-grid-four mb-4" aria-label="Resumo da seleção orçamentária">

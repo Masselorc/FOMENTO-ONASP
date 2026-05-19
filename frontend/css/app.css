@@ -8484,3 +8484,87 @@ body {
     }
 }
 
+/* ============================================================ */
+/* Etapa 3.3 - Filtros compactos reais do Orcamento             */
+/* Barra horizontal unica para #view-orcamento, sem cards       */
+/* internos. Escopo restrito; nao afeta outras telas.           */
+/* ============================================================ */
+
+#view-orcamento .budget-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.7rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+#view-orcamento .budget-filter-bar-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    margin-right: 0.25rem;
+    white-space: nowrap;
+}
+
+#view-orcamento .budget-filter-bar .form-control,
+#view-orcamento .budget-filter-bar .form-select {
+    min-height: 34px;
+    height: 34px;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+
+#view-orcamento .budget-filter-bar-search {
+    flex: 1 1 240px;
+    max-width: 360px;
+}
+
+#view-orcamento .budget-filter-bar-select {
+    flex: 0 1 170px;
+    min-width: 140px;
+}
+
+#view-orcamento .budget-filter-bar-clear {
+    min-height: 34px;
+    height: 34px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Notebook (<=1199px): busca quebra em linha propria, selects continuam em linha */
+@media (max-width: 1199.98px) {
+    #view-orcamento .budget-filter-bar-search {
+        flex-basis: 100%;
+        max-width: none;
+    }
+}
+
+/* Mobile (<768px): empilhar em coluna unica compacta */
+@media (max-width: 767.98px) {
+    #view-orcamento .budget-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #view-orcamento .budget-filter-bar-title {
+        margin-bottom: 0.1rem;
+    }
+
+    #view-orcamento .budget-filter-bar-search,
+    #view-orcamento .budget-filter-bar-select,
+    #view-orcamento .budget-filter-bar-clear {
+        flex: 1 1 auto;
+        max-width: none;
+        width: 100%;
+    }
+}
+
