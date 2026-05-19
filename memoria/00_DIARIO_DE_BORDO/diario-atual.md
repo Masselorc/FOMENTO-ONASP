@@ -2892,3 +2892,165 @@ Logs operacionais gravados:
   - relatorios exportados em PDF passam a refletir mais fielmente o tema escuro atual.
 - Rollback:
   - reverter este commit restaura a cascata visual anterior e a importacao antiga do modo estatico; nao ha impacto em backend, banco, dados publicados ou configuracao.
+
+---
+
+## 18/05/2026 - Etapa 3.1: correcao de direcao visual minimalista
+
+- Objetivo: reduzir ruido visual do tema escuro institucional, aproximando a aplicacao de um painel executivo mais limpo, sobrio e minimalista, sem alterar regras de negocio.
+- Estado inicial:
+  - branch `main`;
+  - etapa anterior commitada em `9716458`;
+  - servidor local recolocado no ar em `http://localhost:8790/index.html` e na rede em `http://10.19.10.50:8790/index.html`.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Decisoes visuais:
+  - adicionada a secao final `Etapa 3.1 - Correcao de direcao visual minimalista` em `app.css`;
+  - reduzidas sombras globais de paineis e cards por ajuste dos tokens `--shadow-panel` e `--shadow-card`;
+  - reduzido peso visual de bordas em secoes, filtros, tabelas, cards, paineis de contato, PROFOR, FAF, Doacoes, Status do Sistema e Formalizacao;
+  - mini graficos da Home ocultados por CSS, preservando IDs, dados textuais e JS;
+  - badges, chips, status e pills suavizados com fundos mais discretos e menor competicao cromatica;
+  - tabelas mantidas em fundo escuro uniforme, cabecalho discreto, linhas suaves e hover sutil;
+  - filtros e contadores passaram a funcionar visualmente como ferramentas auxiliares, nao como blocos principais;
+  - tabela FAF ajustada em tablet para evitar scroll horizontal da pagina inteira;
+  - cache-buster do CSS atualizado para `app.css?v=20260518-21-minimalista`.
+- Restricoes preservadas:
+  - sem alteracao em `frontend/js/app.js`, `frontend/js/core/ui-components.js`, backend, endpoints, payloads, banco, `.env`, JSONs publicados ou regras de negocio;
+  - sem publicacao executada;
+  - sem remocao de IDs, data attributes, listeners, tabelas, filtros ou controles de edicao.
+- Validacao visual:
+  - screenshots de referencia antes da alteracao gerados fora do repositorio em `%TEMP%`;
+  - smoke visual depois da alteracao em Home, Orcamento 2026, Formalizacao PROFOR, Parametros Minimos, PROFOR 2022, FAF 2021, Doacoes 2023, Contatos e Status do Sistema;
+  - breakpoints avaliados: 1366x768, 1024x768, 768x1024 e 390x844;
+  - sem erros de console;
+  - sem `.app-error-state`;
+  - mini graficos da Home com `display: none`;
+  - sem scroll horizontal efetivo da pagina.
+- Testes executados:
+  - `node --check frontend/js/app.js` -> OK;
+  - `node --check frontend/js/core/ui-components.js` -> OK;
+  - `npm run validar:syntax` -> OK, 25 arquivos;
+  - `npm run validar:json` -> OK;
+  - `npm run validar:agente` -> OK, 11/11 Playwright e 5/5 testes de servico.
+- Riscos remanescentes:
+  - a reducao de ruido e feita por camada CSS final, preservando classes historicas; novas telas devem preferir padroes `.app-*` para evitar fragmentacao;
+  - a tabela FAF em tablet prioriza nao gerar overflow da pagina, com maior quebra de texto nas celulas.
+- Rollback:
+  - reverter este conjunto restaura a direcao visual anterior; nao ha impacto em backend, banco, dados publicados ou configuracao.
+
+---
+
+## 18/05/2026 - Ajuste complementar: cards mais compactados
+
+- Objetivo: reduzir o espaco excessivo entre cards e melhorar a compactacao visual sem reintroduzir poluicao cromatica ou alterar comportamento.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajustes feitos:
+  - reduzido o `gap` dos grids principais da Home, dos blocos de instrumentos e da Formalizacao;
+  - reduzido o `padding` interno de cards secundarios e cards de instrumento;
+  - suavizados os espacos entre badges, chips, listas de status e acoes;
+  - cards de instrumentos passaram a usar gutters menores no grid;
+  - a tabela FAF recebeu tratamento para manter a largura dentro do container em tablet;
+  - o `app.css` recebeu cache-buster atualizado para carregar a versao compactada.
+- Resultado visual:
+  - cards ficaram mais proximos e a leitura ficou mais densa;
+  - Home continua com os elementos principais preservados;
+  - mini graficos seguem ocultos;
+  - nao houve overflow horizontal efetivo no smoke visual.
+- Testes executados:
+  - smoke Playwright em Home, Orcamento, Formalizacao, Parametros Minimos, PROFOR 2022, FAF 2021, Doacoes 2023, Contatos e Status do Sistema;
+  - verificacao de breakpoints em 1366x768, 1024x768, 768x1024 e 390x844;
+  - `node --check frontend/js/app.js` -> OK;
+  - `node --check frontend/js/core/ui-components.js` -> OK;
+  - `npm run validar:syntax` -> OK;
+  - `npm run validar:json` -> OK;
+  - `npm run validar:agente` -> OK, 11/11.
+- Riscos remanescentes:
+  - a densidade ficou mais alta; telas com textos excepcionalmente longos podem ainda pedir refinamento pontual;
+  - a harmonia da Formalizacao continua dependente da composicao dos dados de cada UF.
+- Rollback:
+  - reverter esta etapa restaura os gaps e paddings anteriores; nao ha impacto em backend, banco, dados publicados ou regras de negocio.
+
+---
+
+## 18/05/2026 - Ajuste de paleta: brilho metalizado leve
+
+- Objetivo: atender ao pedido de uma paleta um pouco mais neon/metalizada, mantendo a leitura institucional e sem exagero.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajustes visuais:
+  - tokens principais de cor tornados um pouco mais luminosos e frios;
+  - superfícies principais receberam brilho metálico discreto por `linear-gradient` sutil;
+  - `primary`, `info`, `export` e estados semânticos ficaram mais vivos sem virar neon forte;
+  - badges, pills e chips ganharam contornos e textos ligeiramente mais claros;
+  - o painel "Instrumentos monitorados" permaneceu mais discreto, mas aderente ao novo brilho da paleta.
+- Resultado visual:
+  - a interface ficou um pouco mais moderna e metálica, sem perder o tom executivo;
+  - o efeito continua contido e legível em fundo escuro;
+  - sem overflow horizontal e sem erro de console no smoke visual.
+- Testes executados:
+  - smoke visual do Dashboard em `1366x768`;
+  - `node --check frontend/js/app.js` -> OK;
+  - `node --check frontend/js/core/ui-components.js` -> OK;
+  - `npm run validar:syntax` -> OK;
+  - `npm run validar:json` -> OK;
+  - `npm run validar:agente` -> OK, 11/11.
+- Riscos remanescentes:
+  - aumento leve de brilho pode parecer mais presente em monitores com contraste alto;
+  - o refinamento continua dependente da leitura visual do usuário em telas reais.
+- Rollback:
+  - reverter esta etapa restaura a paleta anterior sem impacto em backend, banco, dados publicados ou lógica da aplicação.
+
+---
+
+## 18/05/2026 - Ajuste do logo SENAPPEN
+
+- Objetivo: aumentar o contraste percebido da logo da SENAPPEN no cabeçalho sem alterar a imagem nem a estrutura da marca.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste aplicado:
+  - logo recebeu `brightness`, `contrast`, `saturate` e `drop-shadow` sutis para leitura melhor em fundo escuro;
+  - fallback textual da marca foi mantido como contingência;
+  - cache-buster do CSS atualizado para `app.css?v=20260518-24-logo-contrast`.
+- Resultado:
+  - logo ficou mais destacada no cabeçalho;
+  - sem alteração de layout, sem erro de console e sem overflow horizontal.
+- Teste executado:
+  - smoke visual do cabeçalho em `1366x768` -> OK.
+- Risco remanescente:
+  - o ganho de contraste depende da qualidade visual do PNG original; caso a imagem fonte seja muito escura, um novo asset pode ser necessário no futuro.
+- Rollback:
+  - reverter esta etapa remove apenas os filtros CSS aplicados ao logo; não há impacto em backend, banco ou dados publicados.
+
+---
+
+## 18/05/2026 - Ajuste de sidebar e mapa de contatos
+
+- Objetivo: recuperar cor nos icones do menu lateral e suavizar o mapa do Brasil na pagina de Contatos, reduzindo a aparencia branca agressiva.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajustes feitos:
+  - icones do menu lateral passaram a receber cores semanticas por `data-view`, preservando o botao de Orcamento como referencia visual forte;
+  - o mapa de Contatos recebeu fundo escuro com leve brilho metalizado e o SVG de fundo ficou menos claro;
+  - marcadores do mapa e legendas foram ajustados para contraste melhor em fundo escuro;
+  - cache-buster do CSS atualizado para `app.css?v=20260518-25-sidebar-contatos`.
+- Resultado:
+  - menu lateral ficou mais legivel e com melhor hierarquia cromatica;
+  - mapa de Contatos deixou de parecer branco e ficou mais coerente com o tema escuro;
+  - sem erro de console e sem overflow horizontal no smoke visual.
+- Teste executado:
+  - smoke Playwright no Dashboard e em Contatos -> OK.
+- Riscos remanescentes:
+  - a imagem-base do mapa continua a mesma; se a fonte SVG voltar a ser atualizada, a aparencia pode mudar e pedir novo ajuste fino.
+- Rollback:
+  - reverter esta etapa desfaz apenas a coloracao dos icones e os ajustes visuais do mapa; nao ha impacto em backend, banco ou dados publicados.

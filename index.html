@@ -19,7 +19,7 @@
     <!-- html2canvas & jsPDF para Exportação em PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="./frontend/css/app.css?v=20260518-20-etapa3" rel="stylesheet">
+    <link href="./frontend/css/app.css?v=20260518-25-sidebar-contatos" rel="stylesheet">
 </head>
 <body>
 
@@ -188,10 +188,17 @@
                     <div class="kpi-value app-summary-card-value text-money text-warning" id="kpi-total-doado">R$ 0,00</div>
                     <div class="kpi-desc app-summary-card-desc">Veículos e Equipamentos</div>
                 </div>
-                <div class="card kpi-card app-summary-card -muted">
-                    <div class="kpi-title app-summary-card-title"><i class="fas fa-layer-group" aria-hidden="true"></i>Instrumentos monitorados</div>
-                    <div class="kpi-value app-summary-card-value">FAF • CONV • DOA</div>
-                    <div class="kpi-desc app-summary-card-desc">Veja detalhes na seção abaixo.</div>
+                <div class="app-muted-panel instrument-monitor-panel" aria-label="Instrumentos monitorados">
+                    <div class="instrument-monitor-label">
+                        <i class="fas fa-layer-group" aria-hidden="true"></i>
+                        <span>Instrumentos monitorados</span>
+                    </div>
+                    <div class="instrument-monitor-tags">
+                        <span>FAF</span>
+                        <span>Convênios</span>
+                        <span>Doações</span>
+                    </div>
+                    <p class="instrument-monitor-note">Comparativo consolidado na seção abaixo.</p>
                 </div>
             </section>
 

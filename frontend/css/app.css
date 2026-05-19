@@ -11,46 +11,46 @@
    ========================================================================== */
 :root {
     /* Superfícies (do fundo para os cards) */
-    --color-bg: #0f1620;
-    --color-surface: #161f2c;
-    --color-surface-muted: #1c2735;
-    --color-surface-elevated: #22303f;
-    --color-surface-hover: #243246;
+    --color-bg: #0e1723;
+    --color-surface: #182231;
+    --color-surface-muted: #1d2a3b;
+    --color-surface-elevated: #253347;
+    --color-surface-hover: #2a3b52;
 
     /* Bordas */
-    --color-border: #2a3849;
-    --color-border-strong: #3a4a5e;
+    --color-border: #314154;
+    --color-border-strong: #495c73;
 
     /* Texto */
     --color-text: #e6edf3;
     --color-muted: #8d9bb0;
 
     /* Cor institucional de ação (azul vibrante) */
-    --color-primary: #3b82f6;
-    --color-primary-strong: #60a5fa;
-    --color-primary-soft: rgba(96, 165, 250, 0.14);
+    --color-primary: #4b8fff;
+    --color-primary-strong: #8ebdff;
+    --color-primary-soft: rgba(142, 189, 255, 0.16);
 
     /* Status — uso restrito */
-    --color-success: #10b981;
-    --color-success-soft: rgba(16, 185, 129, 0.14);
-    --color-warning: #f59e0b;
-    --color-warning-soft: rgba(245, 158, 11, 0.14);
-    --color-danger: #ef4444;
-    --color-danger-soft: rgba(239, 68, 68, 0.14);
-    --color-info: #38bdf8;
-    --color-info-soft: rgba(56, 189, 248, 0.14);
+    --color-success: #15c58d;
+    --color-success-soft: rgba(21, 197, 141, 0.16);
+    --color-warning: #ffb020;
+    --color-warning-soft: rgba(255, 176, 32, 0.16);
+    --color-danger: #ff5f5f;
+    --color-danger-soft: rgba(255, 95, 95, 0.16);
+    --color-info: #4ad2ff;
+    --color-info-soft: rgba(74, 210, 255, 0.16);
 
     /* Ação utilitária de exportação (não destrutiva, não primária) */
-    --color-export: #0d9488;
-    --color-export-strong: #14b8a6;
-    --color-export-soft: rgba(13, 148, 136, 0.16);
+    --color-export: #12a89b;
+    --color-export-strong: #27d0bf;
+    --color-export-soft: rgba(18, 168, 155, 0.18);
 
     /* Sombra discreta em fundo escuro */
-    --shadow-panel: 0 6px 18px rgba(0, 0, 0, 0.32);
-    --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.24);
+    --shadow-panel: 0 7px 20px rgba(0, 0, 0, 0.34);
+    --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.26);
 
     /* Anel de foco acessível */
-    --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.35);
+    --focus-ring: 0 0 0 3px rgba(142, 189, 255, 0.38);
 
     --radius: 8px;
     --header-height: 86px;
@@ -83,10 +83,44 @@
     color: var(--color-text);
 }
 
+.sidebar-link i,
+.sidebar-action i {
+    color: var(--color-muted);
+}
+
+.sidebar-link[data-view="dashboard"] i {
+    color: var(--color-info);
+}
+
+.sidebar-link[data-view="contatos"] i {
+    color: var(--color-export-strong);
+}
+
+.sidebar-link[data-view="diagnostico-ouvidorias"] i {
+    color: var(--color-warning);
+}
+
+.sidebar-link[data-view="status-sistema"] i {
+    color: var(--color-primary-strong);
+}
+
+.sidebar-folder-toggle > i:first-child {
+    color: var(--color-primary-strong);
+}
+
+.sidebar-folder-chevron {
+    color: var(--color-muted);
+}
+
 .sidebar-link:hover,
 .sidebar-action:hover {
     background: var(--color-surface-elevated);
     border-color: var(--color-border-strong);
+}
+
+.sidebar-link:hover i,
+.sidebar-action:hover i {
+    color: var(--color-primary-strong);
 }
 
 .sidebar-folder-toggle.active,
@@ -100,6 +134,11 @@
 .sidebar-link[aria-current="page"] {
     background: var(--color-primary-soft);
     border-color: rgba(96, 165, 250, 0.36);
+    color: var(--color-primary-strong);
+}
+
+.sidebar-link.active i,
+.sidebar-link[aria-current="page"] i {
     color: var(--color-primary-strong);
 }
 
@@ -679,7 +718,12 @@ input:focus-visible,
     height: 64px;
     max-width: 210px;
     object-fit: contain;
+    filter: brightness(1.18) contrast(1.18) saturate(1.05) drop-shadow(0 2px 8px rgba(7, 29, 65, 0.42));
     width: 210px;
+}
+
+.senappen-logo:hover {
+    filter: brightness(1.22) contrast(1.22) saturate(1.08) drop-shadow(0 2px 10px rgba(7, 29, 65, 0.48));
 }
 
 .senappen-logo-fallback {
@@ -703,6 +747,10 @@ input:focus-visible,
 .senappen-logo-fallback span {
     color: var(--color-muted);
     font-size: 0.75rem;
+}
+
+.brand-block .brand-copy {
+    padding-left: 0.15rem;
 }
 
 .brand-copy {
@@ -5299,7 +5347,9 @@ table.dataTable thead td,
     overflow: hidden;
     isolation: isolate;
     padding: 1.25rem;
-    background: linear-gradient(180deg, #f7f8fb 0%, #e7ecf5 100%);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+        linear-gradient(180deg, #162130 0%, #111a27 100%);
 }
 
 .contatos-map-legend {
@@ -5313,7 +5363,7 @@ table.dataTable thead td,
 
 .contatos-map-legend span {
     align-items: center;
-    color: #374151;
+    color: var(--color-text);
     display: inline-flex;
     font-size: 0.9rem;
     gap: 0.5rem;
@@ -5363,7 +5413,8 @@ table.dataTable thead td,
     background-size: contain;
     content: "";
     inset: -2px;
-    opacity: 1;
+    filter: brightness(0.72) contrast(1.15) saturate(0.82);
+    opacity: 0.88;
     pointer-events: none;
     position: absolute;
 }
@@ -5415,7 +5466,7 @@ table.dataTable thead td,
 
 .contatos-map-marker-pin {
     background: center / 100% 100% no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 36' fill='none'%3E%3Cpath d='M13 0C6.156 0 0.75 5.42 0.75 12.165C0.75 20.242 9.948 32.28 12.335 35.238C12.503 35.446 12.742 35.567 13 35.567C13.258 35.567 13.497 35.446 13.665 35.238C16.052 32.28 25.25 20.242 25.25 12.165C25.25 5.42 19.844 0 13 0Z' fill='white'/%3E%3C/svg%3E");
-    filter: drop-shadow(0 8px 12px rgba(31, 20, 47, 0.22));
+    filter: drop-shadow(0 8px 12px rgba(7, 29, 65, 0.32));
     flex: 0 0 36px;
     height: 36px;
     position: relative;
@@ -5438,7 +5489,7 @@ table.dataTable thead td,
 
 .contatos-map-marker-code {
     align-items: center;
-    background: rgba(15, 23, 42, 0.36);
+    background: rgba(15, 23, 42, 0.6);
     border-radius: 999px;
     color: #ffffff;
     display: inline-flex;
@@ -5461,7 +5512,7 @@ table.dataTable thead td,
 .contatos-map-button.is-callout .contatos-map-marker-pin {
     background: center / 100% 100% no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 36' fill='none'%3E%3Cpath d='M13 0C6.156 0 0.75 5.42 0.75 12.165C0.75 20.242 9.948 32.28 12.335 35.238C12.503 35.446 12.742 35.567 13 35.567C13.258 35.567 13.497 35.446 13.665 35.238C16.052 32.28 25.25 20.242 25.25 12.165C25.25 5.42 19.844 0 13 0Z' fill='white'/%3E%3C/svg%3E");
     box-shadow: none;
-    filter: drop-shadow(0 6px 10px rgba(31, 20, 47, 0.22));
+    filter: drop-shadow(0 6px 10px rgba(7, 29, 65, 0.32));
     height: 25px;
     left: 0;
     position: absolute;
@@ -5479,8 +5530,8 @@ table.dataTable thead td,
 }
 
 .contatos-map-button.is-callout .contatos-map-marker-code {
-    background: rgba(15, 23, 42, 0.58);
-    box-shadow: 0 7px 16px rgba(7, 29, 65, 0.18);
+    background: rgba(15, 23, 42, 0.72);
+    box-shadow: 0 7px 16px rgba(7, 29, 65, 0.28);
     left: var(--label-x, 0px);
     margin-top: 0;
     position: absolute;
@@ -5521,7 +5572,7 @@ table.dataTable thead td,
 .contatos-map-button:hover .contatos-map-marker-code,
 .contatos-map-button:focus-visible .contatos-map-marker-code,
 .contatos-map-button.is-active .contatos-map-marker-code {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(230, 241, 251, 0.98);
     box-shadow: 0 8px 18px rgba(7, 29, 65, 0.16);
     color: #071d41;
 }
@@ -5549,6 +5600,7 @@ table.dataTable thead td,
 .contatos-uf-panel {
     box-shadow: 0 12px 22px rgba(7, 29, 65, 0.06);
     padding: 1.25rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)), var(--color-surface);
 }
 
 .contatos-state-head {
@@ -7494,13 +7546,15 @@ table.dataTable.display tbody tr.odd > * {
 .app-summary-grid,
 .budget-insight-grid,
 .formalizacao-insight-grid {
-    gap: var(--space-21-md);
+    gap: 0.7rem;
     margin-bottom: 1.25rem;
 }
 
 #cards-instrumentos-section {
     margin-bottom: var(--space-21-xl);
-    row-gap: var(--space-21-lg);
+    --bs-gutter-x: 0.7rem;
+    --bs-gutter-y: 0.7rem;
+    row-gap: 0.55rem;
 }
 
 .app-summary-card,
@@ -7512,7 +7566,7 @@ table.dataTable.display tbody tr.odd > * {
 .formalizacao-quick-filter-panel,
 .formalizacao-alert-panel {
     gap: 0.5rem;
-    padding: 1.15rem 1.25rem;
+    padding: 1rem 1.05rem;
 }
 
 .instrument-mini-chart {
@@ -7545,7 +7599,7 @@ table.dataTable.display tbody tr.odd > * {
 .app-action-bar,
 .diagnostico-action-buttons,
 .formalizacao-card-actions {
-    gap: 0.65rem;
+    gap: 0.5rem;
 }
 
 .app-table-shell {
@@ -7553,12 +7607,12 @@ table.dataTable.display tbody tr.odd > * {
 }
 
 .formalizacao-card-grid {
-    gap: var(--space-21-lg);
+    gap: 0.65rem;
 }
 
 .formalizacao-card {
-    gap: 0.95rem;
-    padding: 1.15rem 1.25rem;
+    gap: 0.8rem;
+    padding: 1rem 1.05rem;
 }
 
 .formalizacao-card-header {
@@ -7569,7 +7623,7 @@ table.dataTable.display tbody tr.odd > * {
 .formalizacao-card-progress,
 .formalizacao-card-checklists,
 .formalizacao-card-tags {
-    gap: 0.65rem;
+    gap: 0.45rem;
 }
 
 .diagnostico-action-bar {
@@ -7852,6 +7906,400 @@ table.dataTable.display tbody tr.odd > * {
     .contact-uf-bar {
         align-items: stretch;
         flex-direction: column;
+    }
+}
+
+/* ==========================================================================
+   Etapa 3.1 - Correcao de direcao visual minimalista
+   --------------------------------------------------------------------------
+   Camada visual executiva: reduz caixas concorrentes, sombras, bordas fortes,
+   badges chamativos e mini graficos da Home. Nao altera markup, dados,
+   listeners, IDs, payloads ou regras de negocio.
+   ========================================================================== */
+
+:root {
+    --shadow-panel: 0 6px 18px rgba(0, 0, 0, 0.18);
+    --shadow-card: 0 1px 6px rgba(0, 0, 0, 0.14);
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+.app-page-hero,
+.dashboard-intro,
+.budget-intro,
+.formalizacao-intro,
+.diagnostico-intro {
+    border-color: rgba(148, 163, 184, 0.16);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+}
+
+.app-section,
+.panel-section,
+.filter-section,
+.diagnostico-filter-section,
+.table-container,
+.app-table-shell,
+.formalizacao-advanced-panel,
+#view-status-sistema .system-status-panel,
+#view-contatos .panel-section,
+#view-contatos .contact-uf-filter,
+#view-contatos .contatos-map-section,
+.profor-detail-content,
+.report-content {
+    border-color: rgba(148, 163, 184, 0.13) !important;
+    box-shadow: none !important;
+}
+
+.app-section,
+.filter-section,
+.diagnostico-filter-section {
+    background:
+        linear-gradient(180deg, rgba(20, 28, 39, 0.92), rgba(17, 24, 34, 0.86)) !important;
+}
+
+.table-container,
+.app-table-shell {
+    background-color: rgba(17, 24, 34, 0.92) !important;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.app-offcanvas:not(.show):not(.showing):not(.hiding) {
+    pointer-events: none;
+    visibility: hidden !important;
+}
+
+.kpi-card,
+.app-summary-card,
+.app-insight-card,
+.app-decision-card,
+.budget-insight-card,
+.instrument-summary-card,
+.dynamic-card,
+.formalizacao-card,
+.diagnostico-block,
+.profor-insight-card,
+.profor-finance-item,
+.profor-area-summary,
+.profor-plan-summary-item,
+.contact-person-card,
+.contact-info-item,
+.contact-uf-card,
+.contatos-map-shell,
+.system-status-alert-item {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.008)),
+        var(--color-surface) !important;
+    border-color: rgba(148, 163, 184, 0.12) !important;
+    box-shadow: none !important;
+}
+
+.kpi-card:hover,
+.app-summary-card:hover,
+.instrument-summary-card:hover,
+.formalizacao-card:hover,
+.contact-uf-card:hover,
+.system-status-alert-item:hover {
+    border-color: rgba(96, 165, 250, 0.22) !important;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12) !important;
+}
+
+.app-summary-card,
+.instrument-summary-card,
+.budget-insight-card,
+.formalizacao-card {
+    border-left-width: 2px !important;
+}
+
+.app-summary-card.-success,
+.instrument-summary-card.convenio,
+.instrument-summary-card.faf,
+.instrument-summary-card.doacao,
+.kpi-card-success,
+.kpi-card-warning,
+.kpi-card-info,
+.formalizacao-card-risk {
+    border-left-color: rgba(148, 163, 184, 0.28) !important;
+}
+
+#cards-instrumentos-section-wrapper {
+    background: transparent !important;
+    border-color: rgba(148, 163, 184, 0.08) !important;
+    padding-top: 0.25rem;
+}
+
+#cards-instrumentos-section {
+    --bs-gutter-x: 0.7rem;
+    --bs-gutter-y: 0.7rem;
+    row-gap: 0.55rem;
+}
+
+.instrument-monitor-panel {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
+        rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: var(--radius);
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-height: 124px;
+    padding: 0.9rem 0.95rem;
+}
+
+.instrument-monitor-label {
+    align-items: center;
+    color: var(--color-muted);
+    display: flex;
+    gap: 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.instrument-monitor-label i {
+    color: var(--color-primary-strong);
+}
+
+.instrument-monitor-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.instrument-monitor-tags span {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
+        rgba(30, 41, 59, 0.58);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 999px;
+    color: var(--color-text);
+    font-size: 0.76rem;
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 1;
+    padding: 0.34rem 0.55rem;
+}
+
+.instrument-monitor-note {
+    color: var(--color-muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.instrument-summary-card {
+    min-height: auto;
+    padding: 0.9rem 0.95rem;
+}
+
+.instrument-summary-card .kpi-title,
+.instrument-summary-card .kpi-desc,
+.instrument-summary-card .uf-chip-list {
+    color: var(--color-muted);
+}
+
+.instrument-summary-card .kpi-value {
+    color: var(--color-text);
+}
+
+/* Os mini graficos da Home duplicam o percentual textual e carregam a tela. */
+.instrument-mini-chart {
+    display: none !important;
+}
+
+.intro-badges,
+.app-page-actions,
+.formalizacao-card-tags,
+.profor-alert-list,
+.filter-counts,
+.uf-chip-list,
+.contact-uf-chip-list {
+    gap: 0.32rem;
+}
+
+.intro-badges span,
+.section-pill,
+.active-filter-badge,
+.uf-chip,
+.filter-count-uf-list .uf-chip,
+.contact-uf-chip,
+.budget-status,
+.budget-status-default,
+.budget-status-running,
+.budget-status-planned,
+.profor-alert-badge,
+.formalizacao-doc-status {
+    background-color: rgba(30, 41, 59, 0.58) !important;
+    border-color: rgba(142, 189, 255, 0.18) !important;
+    box-shadow: none !important;
+    color: #c7d7ea !important;
+    font-weight: 650;
+}
+
+.profor-alert-success,
+.budget-status-running,
+.formalizacao-card-doc-step-concluida .formalizacao-doc-status {
+    background-color: rgba(21, 197, 141, 0.12) !important;
+    border-color: rgba(21, 197, 141, 0.26) !important;
+    color: #bff6e1 !important;
+}
+
+.profor-alert-warning,
+.budget-status-planned,
+.formalizacao-card-doc-step-atual .formalizacao-doc-status {
+    background-color: rgba(255, 176, 32, 0.12) !important;
+    border-color: rgba(255, 176, 32, 0.26) !important;
+    color: #ffe1a5 !important;
+}
+
+.profor-alert-danger,
+.formalizacao-card-doc-step-risco .formalizacao-doc-status {
+    background-color: rgba(255, 95, 95, 0.12) !important;
+    border-color: rgba(255, 95, 95, 0.26) !important;
+    color: #ffd0d0 !important;
+}
+
+.profor-alert-info,
+.section-pill,
+.active-filter-badge {
+    background-color: rgba(74, 210, 255, 0.10) !important;
+    border-color: rgba(74, 210, 255, 0.20) !important;
+    color: #d0f3ff !important;
+}
+
+.filter-toolbar,
+.app-table-toolbar,
+.formalizacao-card-actions,
+.diagnostico-action-bar,
+.diagnostico-action-buttons {
+    border-color: rgba(148, 163, 184, 0.10);
+}
+
+.visible-filter-group,
+.filter-count-item,
+.formalizacao-card-metrics div,
+.formalizacao-card-progress,
+.formalizacao-card-checklist,
+.formalizacao-card-check-panel {
+    background-color: rgba(15, 23, 42, 0.34) !important;
+    border-color: rgba(148, 163, 184, 0.10) !important;
+    box-shadow: none !important;
+}
+
+.filter-counts {
+    gap: 0.4rem;
+}
+
+.filter-count-item.convenio,
+.filter-count-item.faf,
+.filter-count-item.doacao,
+.filter-count-item.total {
+    border-left-color: rgba(148, 163, 184, 0.20) !important;
+}
+
+.btn-outline-secondary,
+.btn-outline-primary,
+.btn-outline-action {
+    border-color: rgba(148, 163, 184, 0.20);
+    box-shadow: none !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-primary:hover,
+.btn-outline-action:hover,
+.btn-outline-secondary:focus,
+.btn-outline-primary:focus,
+.btn-outline-action:focus {
+    border-color: rgba(96, 165, 250, 0.36);
+    box-shadow: none !important;
+}
+
+.app-data-table,
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: rgba(30, 41, 59, 0.18);
+    --bs-table-hover-bg: rgba(96, 165, 250, 0.08);
+    --bs-table-border-color: rgba(148, 163, 184, 0.10);
+}
+
+.app-data-table thead th,
+.table thead th {
+    background-color: rgba(15, 23, 42, 0.72) !important;
+    border-bottom-color: rgba(148, 163, 184, 0.16) !important;
+    color: var(--color-muted) !important;
+    font-weight: 700;
+}
+
+.app-data-table tbody td,
+.table tbody td {
+    border-color: rgba(148, 163, 184, 0.08) !important;
+}
+
+.app-data-table tbody tr:hover,
+.table tbody tr:hover {
+    color: var(--color-text);
+}
+
+.formalizacao-card {
+    background:
+        linear-gradient(180deg, rgba(20, 28, 39, 0.94), rgba(17, 24, 34, 0.92)) !important;
+}
+
+.formalizacao-card-header,
+.formalizacao-card-title-row,
+.formalizacao-card-metrics,
+.formalizacao-card-tags,
+.formalizacao-card-actions {
+    border-color: rgba(148, 163, 184, 0.10);
+}
+
+.formalizacao-card-flag,
+.formalizacao-card-flag-placeholder,
+.contact-uf-sigla,
+.contact-uf-flag-placeholder {
+    box-shadow: none !important;
+}
+
+.card-watermark {
+    opacity: 0.12;
+}
+
+@media (max-width: 575.98px) {
+    .instrument-summary-card,
+    .instrument-monitor-panel,
+    .formalizacao-card,
+    .app-summary-card,
+    .kpi-card {
+        padding: 0.95rem;
+    }
+
+    .intro-badges span,
+    .profor-alert-badge,
+    .budget-status,
+    .uf-chip {
+        font-size: 0.72rem;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    #view-faf-2021 .profor-plan-table {
+        min-width: 100% !important;
+        table-layout: fixed;
+        width: 100% !important;
+    }
+
+    #view-faf-2021 .profor-plan-table th,
+    #view-faf-2021 .profor-plan-table td {
+        overflow-wrap: anywhere;
+        white-space: normal;
     }
 }
 
