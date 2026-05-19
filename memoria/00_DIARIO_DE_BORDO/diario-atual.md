@@ -3174,3 +3174,35 @@ Logs operacionais gravados:
   - baixo a moderado, concentrado no fallback de cópia e na normalização de campos de acompanhamento.
 - Rollback:
   - reverter esta etapa restaura o comportamento anterior de cópia e remove a normalização defensiva de aliases camelCase.
+
+---
+
+## 19/05/2026 - Orçamento 2026: correção de data e espaçamento do resumo
+
+- Problemas observados:
+  - contagem de dias no setor atual exibiu `0 dias` para entrada anterior à data atual;
+  - texto exportado tinha linhas em branco excessivas entre grupos e itens;
+  - campo "Data de entrada no setor atual" era `input date`, dificultando digitação manual.
+- Causa diagnosticada:
+  - parsing de data estava restrito e o campo de UI forçava o formato de calendário do navegador;
+  - data digitada não era normalizada explicitamente antes de entrar em alterações pendentes;
+  - `montarGrupoResumoOrcamento()` usava string vazia combinada com `join('\n\n')`, gerando quebras extras.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção aplicada:
+  - parser de data passou a aceitar `YYYY-MM-DD`, `DD/MM/AAAA`, `DD-MM-AAAA` e espaços nas extremidades;
+  - cálculo de dias passou a comparar datas sem hora usando componentes locais e `Date.UTC`;
+  - campo `data_entrada_setor` passou a ser texto digitável com placeholder `DD/MM/AAAA` e exibição amigável;
+  - valor digitado para `data_entrada_setor` passa a ser normalizado para ISO nas alterações pendentes quando válido;
+  - montagem dos grupos do resumo foi ajustada para manter apenas uma linha em branco entre título, itens e grupos.
+- Validações realizadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `git diff --check` -> OK.
+- Pendências:
+  - validação manual restrita no navegador;
+  - reiniciar backend local se ele estava rodando antes das alterações recentes.
+- Risco de regressão:
+  - baixo a moderado, concentrado no parsing de data do acompanhamento e no espaçamento do texto exportado.
+- Rollback:
+  - reverter esta etapa restaura o campo de data anterior e a montagem anterior de quebras de linha no resumo.

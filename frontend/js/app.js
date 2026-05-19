@@ -8011,7 +8011,7 @@ async function carregarLogoParaPDF() {
                                     </label>
                                     <label>
                                         <span>Data de entrada no setor atual</span>
-                                        ${renderizarCampoOrcamento(item, 'data_entrada_setor', 'date')}
+                                        ${renderizarCampoOrcamento(item, 'data_entrada_setor')}
                                     </label>
                                     <label>
                                         <span>Pendência atual</span>
@@ -10355,38 +10355,56 @@ async function carregarLogoParaPDF() {
             return item[campoCamel] ?? fallback;
         }
 
-        function obterDataLocalOrcamento(valor) {
+        function obterPartesDataOrcamento(valor) {
             const texto = String(valor ?? '').trim();
             if (!texto) return null;
             const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
             const br = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            const brComHifen = texto.match(/^(\d{2})-(\d{2})-(\d{4})$/);
             const partes = iso
                 ? [Number(iso[1]), Number(iso[2]), Number(iso[3])]
                 : br
                     ? [Number(br[3]), Number(br[2]), Number(br[1])]
-                    : null;
+                    : brComHifen
+                        ? [Number(brComHifen[3]), Number(brComHifen[2]), Number(brComHifen[1])]
+                        : null;
             if (!partes) return null;
             const [ano, mes, dia] = partes;
             const data = new Date(ano, mes - 1, dia);
             if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) return null;
-            return data;
+            return { ano, mes, dia };
+        }
+
+        function obterDataLocalOrcamento(valor) {
+            const partes = obterPartesDataOrcamento(valor);
+            if (!partes) return null;
+            const { ano, mes, dia } = partes;
+            return new Date(ano, mes - 1, dia);
         }
 
         function normalizarDataInputOrcamento(valor) {
-            const data = obterDataLocalOrcamento(valor);
-            if (!data) return '';
-            const ano = data.getFullYear();
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const dia = String(data.getDate()).padStart(2, '0');
-            return `${ano}-${mes}-${dia}`;
+            const partes = obterPartesDataOrcamento(valor);
+            if (!partes) return String(valor ?? '').trim();
+            const dia = String(partes.dia).padStart(2, '0');
+            const mes = String(partes.mes).padStart(2, '0');
+            return `${dia}/${mes}/${partes.ano}`;
+        }
+
+        function normalizarDataBancoOrcamento(valor) {
+            const partes = obterPartesDataOrcamento(valor);
+            if (!partes) return String(valor ?? '').trim();
+            const mes = String(partes.mes).padStart(2, '0');
+            const dia = String(partes.dia).padStart(2, '0');
+            return `${partes.ano}-${mes}-${dia}`;
         }
 
         function calcularDiasNoSetorAtualOrcamento(dataEntradaSetor) {
-            const dataEntrada = obterDataLocalOrcamento(dataEntradaSetor);
+            const dataEntrada = obterPartesDataOrcamento(dataEntradaSetor);
             if (!dataEntrada) return null;
             const hoje = new Date();
-            const hojeLocal = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
-            const diferencaMs = hojeLocal.getTime() - dataEntrada.getTime();
+            const hojeUtc = Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+            const entradaUtc = Date.UTC(dataEntrada.ano, dataEntrada.mes - 1, dataEntrada.dia);
+            const diferencaMs = hojeUtc - entradaUtc;
             const dias = Math.floor(diferencaMs / 86400000);
             return Number.isFinite(dias) ? Math.max(0, dias) : null;
         }
@@ -10421,6 +10439,8 @@ async function carregarLogoParaPDF() {
                     ? normalizarBooleanOrcamento(valorOriginal)
                     : campo === 'classificacao_gerencial'
                         ? normalizarClassificacaoGerencialOrcamento(valorOriginal)
+                    : campo === 'data_entrada_setor'
+                        ? normalizarDataBancoOrcamento(valorOriginal)
                     : String(valorOriginal ?? '');
             const novoNormalizado = campo.startsWith('valor_')
                 ? parseNumeroMonetarioFrontend(novoValor)
@@ -10428,6 +10448,8 @@ async function carregarLogoParaPDF() {
                     ? normalizarBooleanOrcamento(novoValor)
                     : campo === 'classificacao_gerencial'
                         ? normalizarClassificacaoGerencialOrcamento(novoValor)
+                    : campo === 'data_entrada_setor'
+                        ? normalizarDataBancoOrcamento(novoValor)
                     : String(novoValor ?? '').trim();
 
             if (!orcamentoAlteracoesPendentes[id]) {
@@ -10641,11 +10663,8 @@ async function carregarLogoParaPDF() {
 
         function montarGrupoResumoOrcamento(titulo, itens) {
             if (!itens.length) return '';
-            return [
-                titulo,
-                '',
-                ...itens.map((registro, indice) => montarLinhasItemResumoOrcamento(registro, indice + 1))
-            ].join('\n\n');
+            const linhasItens = itens.map((registro, indice) => montarLinhasItemResumoOrcamento(registro, indice + 1));
+            return `${titulo}\n\n${linhasItens.join('\n\n')}`;
         }
 
         function gerarTextoResumoOrcamentoWhatsapp(budgetData) {
@@ -10683,7 +10702,7 @@ async function carregarLogoParaPDF() {
                 return blocos.join('\n');
             }
 
-            return [...blocos, '', ...gruposTexto].join('\n');
+            return `${blocos.join('\n')}\n\n${gruposTexto.join('\n\n')}`;
         }
 
         async function copiarTextoComFallback(texto, campoTexto) {
@@ -10849,12 +10868,13 @@ async function carregarLogoParaPDF() {
                 <input
                     type="${tipo === 'money' ? 'text' : tipo}"
                     class="form-control form-control-sm budget-edit-control"
-                    value="${escapeHtml(tipo === 'money' ? formatarValorMonetarioInput(valor) : tipo === 'date' ? normalizarDataInputOrcamento(valor) : (valor ?? ''))}"
+                    value="${escapeHtml(tipo === 'money' ? formatarValorMonetarioInput(valor) : campo === 'data_entrada_setor' ? normalizarDataInputOrcamento(valor) : (valor ?? ''))}"
                     data-orcamento-id="${escapeHtml(item.id)}"
                     data-orcamento-campo="${campo}"
                     data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
                     ${tipo === 'number' ? 'min="0" step="0.01"' : ''}
                     ${tipo === 'money' ? 'inputmode="decimal" placeholder="0,00"' : ''}
+                    ${campo === 'data_entrada_setor' ? 'inputmode="numeric" placeholder="DD/MM/AAAA"' : ''}
                 >
                 </div>
             `;
