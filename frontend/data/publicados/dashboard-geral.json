@@ -1,5 +1,5 @@
 {
-  "publicadoEm": "2026-05-18T20:04:31.130Z",
+  "publicadoEm": "2026-05-19T14:59:42.955Z",
   "fonteDadosBase": "dados consolidados da Home local",
   "dadosBase": [
     {
@@ -2788,7 +2788,7 @@
   ],
   "dadosProfor2022": {
     "origemDados": "banco-cache",
-    "geradoEm": "2026-05-18T20:04:31.201Z",
+    "geradoEm": "2026-05-19T14:59:43.050Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -2797,6 +2797,10 @@
       "repasseDesembolsado": 9976824.54,
       "rendimentoAprovado": 174346.59,
       "saldoRendimentosAtual": 1164195.06,
+      "saldoDisponivelOuvidoria": 1314099.25,
+      "saldoEconomicidadeCapital": 1264763.88,
+      "saldoEconomicidadeCusteio": 667252.06,
+      "saldoPotencialDestinavelOuvidoria": 3096211,
       "contrapartidaIntegralizada": 270014.11,
       "valorExecutadoGeral": 3202695.9,
       "previstoOuvidoria": 1669823.9,
@@ -2829,6 +2833,10 @@
         "repasseDesembolsado": 384963.95,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": -25373.11,
+        "saldoDisponivelOuvidoria": 0,
+        "saldoEconomicidadeCapital": 62862.12,
+        "saldoEconomicidadeCusteio": 0,
+        "saldoPotencialDestinavelOuvidoria": 37489.01,
         "saldoResidualCapital": 65033.21,
         "saldoResidualCusteio": 0,
         "contrapartidaIntegralizada": 3888.53,
@@ -2844,7 +2852,6 @@
         "execucaoOuvidoriaPercentual": 100,
         "execucaoCorregedoriaPercentual": 73.63,
         "execucaoEscolaPenalPercentual": 95.04,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 50,
         "totalItensOuvidoria": 1,
@@ -3342,7 +3349,7 @@
             "valorPrevisto": 142.32,
             "valorExecutado": 148,
             "saldo": -5.68,
-            "saldoEconomicidade": -5.68,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 103.99
           },
           {
@@ -3438,7 +3445,7 @@
             "valorPrevisto": 5263.33,
             "valorExecutado": 10394.56,
             "saldo": -5131.23,
-            "saldoEconomicidade": -5131.23,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 197.49
           },
           {
@@ -3657,9 +3664,7 @@
           "Plano de aplicação filtrado"
         ],
         "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+          "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
         ],
         "origemDados": "banco-cache"
       },
@@ -3678,6 +3683,10 @@
         "repasseDesembolsado": 156000,
         "rendimentoAprovado": 3.5,
         "saldoRendimentosAtual": 27708.98,
+        "saldoDisponivelOuvidoria": 39023.53,
+        "saldoEconomicidadeCapital": 3.5,
+        "saldoEconomicidadeCusteio": 0,
+        "saldoPotencialDestinavelOuvidoria": 27712.48,
         "saldoResidualCapital": 128703.5,
         "saldoResidualCusteio": 42900,
         "contrapartidaIntegralizada": 15600,
@@ -3693,7 +3702,6 @@
         "execucaoOuvidoriaPercentual": 0,
         "execucaoCorregedoriaPercentual": 0,
         "execucaoEscolaPenalPercentual": 0,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 33,
         "totalItensOuvidoria": 18,
@@ -4233,11 +4241,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -4255,6 +4259,10 @@
         "repasseDesembolsado": 537040,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 84792.08,
+        "saldoDisponivelOuvidoria": 97870.18,
+        "saldoEconomicidadeCapital": 2040.88,
+        "saldoEconomicidadeCusteio": 0,
+        "saldoPotencialDestinavelOuvidoria": 86832.96,
         "saldoResidualCapital": 99558.12,
         "saldoResidualCusteio": 137000,
         "contrapartidaIntegralizada": 10960,
@@ -4270,7 +4278,6 @@
         "execucaoOuvidoriaPercentual": 71.17,
         "execucaoCorregedoriaPercentual": 6.35,
         "execucaoEscolaPenalPercentual": 70.97,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 72,
         "totalItensOuvidoria": 31,
@@ -4896,7 +4903,7 @@
             "valorPrevisto": 10381.21,
             "valorExecutado": 18920,
             "saldo": -8538.79,
-            "saldoEconomicidade": -8538.79,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 182.25
           },
           {
@@ -4928,7 +4935,7 @@
             "valorPrevisto": 8689.78,
             "valorExecutado": 13280,
             "saldo": -4590.22,
-            "saldoEconomicidade": -4590.22,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 152.82
           },
           {
@@ -5072,7 +5079,7 @@
             "valorPrevisto": 19090,
             "valorExecutado": 80178,
             "saldo": -61088,
-            "saldoEconomicidade": -61088,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 420
           },
           {
@@ -5360,7 +5367,7 @@
             "valorPrevisto": 7114,
             "valorExecutado": 14228,
             "saldo": -7114,
-            "saldoEconomicidade": -7114,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 200
           },
           {
@@ -5435,9 +5442,8 @@
           "Plano de aplicação filtrado"
         ],
         "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+          "Item da OUVIDORIA com sobre-execucao; saldo disponivel considera zero no item.",
+          "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
         ],
         "origemDados": "banco-cache"
       },
@@ -5456,6 +5462,10 @@
         "repasseDesembolsado": 259498.63,
         "rendimentoAprovado": 21868,
         "saldoRendimentosAtual": 19971.96,
+        "saldoDisponivelOuvidoria": 59674.73,
+        "saldoEconomicidadeCapital": 2421,
+        "saldoEconomicidadeCusteio": 13594.58,
+        "saldoPotencialDestinavelOuvidoria": 35987.54,
         "saldoResidualCapital": 217301.32,
         "saldoResidualCusteio": 52701.55,
         "contrapartidaIntegralizada": 5762.15,
@@ -5471,7 +5481,6 @@
         "execucaoOuvidoriaPercentual": 2.2,
         "execucaoCorregedoriaPercentual": 11.31,
         "execucaoEscolaPenalPercentual": 3.66,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 55,
         "totalItensOuvidoria": 10,
@@ -6145,7 +6154,7 @@
             "valorPrevisto": 7079.94,
             "valorExecutado": 10619.91,
             "saldo": -3539.97,
-            "saldoEconomicidade": -3539.97,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 150
           },
           {
@@ -6364,9 +6373,7 @@
           "Plano de aplicação filtrado"
         ],
         "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+          "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
         ],
         "origemDados": "banco-cache"
       },
@@ -6385,6 +6392,10 @@
         "repasseDesembolsado": 300000,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 18967.98,
+        "saldoDisponivelOuvidoria": 11767.99,
+        "saldoEconomicidadeCapital": 47225.22,
+        "saldoEconomicidadeCusteio": 29175,
+        "saldoPotencialDestinavelOuvidoria": 95368.2,
         "saldoResidualCapital": 47225.22,
         "saldoResidualCusteio": 29175,
         "contrapartidaIntegralizada": 300,
@@ -6400,7 +6411,6 @@
         "execucaoOuvidoriaPercentual": 79.54,
         "execucaoCorregedoriaPercentual": 80.37,
         "execucaoEscolaPenalPercentual": 72.91,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 17,
         "totalItensOuvidoria": 6,
@@ -6684,11 +6694,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -6706,6 +6712,10 @@
         "repasseDesembolsado": 356000,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": -48745.04,
+        "saldoDisponivelOuvidoria": 48909.41,
+        "saldoEconomicidadeCapital": 6874.43,
+        "saldoEconomicidadeCusteio": 46000.39,
+        "saldoPotencialDestinavelOuvidoria": 4129.78,
         "saldoResidualCapital": 9055.48,
         "saldoResidualCusteio": 46000.39,
         "contrapartidaIntegralizada": 36509.71,
@@ -6721,7 +6731,6 @@
         "execucaoOuvidoriaPercentual": 59.11,
         "execucaoCorregedoriaPercentual": 94.28,
         "execucaoEscolaPenalPercentual": 100,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 12,
         "totalItensOuvidoria": 10,
@@ -6835,7 +6844,7 @@
             "valorPrevisto": 852.12,
             "valorExecutado": 895,
             "saldo": -42.88,
-            "saldoEconomicidade": -42.88,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 105.03
           },
           {
@@ -6926,9 +6935,8 @@
           "Plano de aplicação filtrado"
         ],
         "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+          "Item da OUVIDORIA com sobre-execucao; saldo disponivel considera zero no item.",
+          "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
         ],
         "origemDados": "banco-cache"
       },
@@ -6947,6 +6955,10 @@
         "repasseDesembolsado": 387952.7,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 60002.57,
+        "saldoDisponivelOuvidoria": 44450.77,
+        "saldoEconomicidadeCapital": 5.03,
+        "saldoEconomicidadeCusteio": 98.2,
+        "saldoPotencialDestinavelOuvidoria": 60105.8,
         "saldoResidualCapital": 337764.66,
         "saldoResidualCusteio": 44132.8,
         "contrapartidaIntegralizada": 20418.56,
@@ -6962,7 +6974,6 @@
         "execucaoOuvidoriaPercentual": 0,
         "execucaoCorregedoriaPercentual": 0,
         "execucaoEscolaPenalPercentual": 13.59,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 24,
         "totalItensOuvidoria": 14,
@@ -7358,11 +7369,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -7380,6 +7387,10 @@
         "repasseDesembolsado": 150000,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 22589.51,
+        "saldoDisponivelOuvidoria": 206543.27,
+        "saldoEconomicidadeCapital": 10533.1,
+        "saldoEconomicidadeCusteio": 0,
+        "saldoPotencialDestinavelOuvidoria": 33122.61,
         "saldoResidualCapital": 92882.16,
         "saldoResidualCusteio": 206400,
         "contrapartidaIntegralizada": 3593.71,
@@ -7395,7 +7406,6 @@
         "execucaoOuvidoriaPercentual": 14.7,
         "execucaoCorregedoriaPercentual": 85.94,
         "execucaoEscolaPenalPercentual": 21.17,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 50,
         "totalItensOuvidoria": 16,
@@ -8207,11 +8217,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -8229,6 +8235,10 @@
         "repasseDesembolsado": 569399.82,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 45631.14,
+        "saldoDisponivelOuvidoria": 140216.7,
+        "saldoEconomicidadeCapital": 18488.15,
+        "saldoEconomicidadeCusteio": 92886.88,
+        "saldoPotencialDestinavelOuvidoria": 157006.17,
         "saldoResidualCapital": 436035.58,
         "saldoResidualCusteio": 100086.88,
         "contrapartidaIntegralizada": 11620.4,
@@ -8244,7 +8254,6 @@
         "execucaoOuvidoriaPercentual": 0,
         "execucaoCorregedoriaPercentual": 0,
         "execucaoEscolaPenalPercentual": 24.67,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 23,
         "totalItensOuvidoria": 1,
@@ -8624,11 +8633,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -8646,6 +8651,10 @@
         "repasseDesembolsado": 1415055.78,
         "rendimentoAprovado": 101341.43,
         "saldoRendimentosAtual": 158453.37,
+        "saldoDisponivelOuvidoria": 323838.9,
+        "saldoEconomicidadeCapital": 171222.04,
+        "saldoEconomicidadeCusteio": 28104.14,
+        "saldoPotencialDestinavelOuvidoria": 357779.55,
         "saldoResidualCapital": 1346069.94,
         "saldoResidualCusteio": 83869.58,
         "contrapartidaIntegralizada": 66621.71,
@@ -8661,7 +8670,6 @@
         "execucaoOuvidoriaPercentual": 0,
         "execucaoCorregedoriaPercentual": 0,
         "execucaoEscolaPenalPercentual": 23.29,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 59,
         "totalItensOuvidoria": 1,
@@ -8727,7 +8735,7 @@
             "valorPrevisto": 157.47,
             "valorExecutado": 540,
             "saldo": -382.53,
-            "saldoEconomicidade": -382.53,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 342.92
           },
           {
@@ -8855,7 +8863,7 @@
             "valorPrevisto": 660.07,
             "valorExecutado": 880,
             "saldo": -219.93,
-            "saldoEconomicidade": -219.93,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 133.32
           },
           {
@@ -8871,7 +8879,7 @@
             "valorPrevisto": 167.59,
             "valorExecutado": 206,
             "saldo": -38.41,
-            "saldoEconomicidade": -38.41,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 122.92
           },
           {
@@ -9127,7 +9135,7 @@
             "valorPrevisto": 1549.63,
             "valorExecutado": 1850.37,
             "saldo": -300.74,
-            "saldoEconomicidade": -300.74,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 119.41
           },
           {
@@ -9319,7 +9327,7 @@
             "valorPrevisto": 8785.2,
             "valorExecutado": 23130,
             "saldo": -14344.8,
-            "saldoEconomicidade": -14344.8,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 263.28
           },
           {
@@ -9495,7 +9503,7 @@
             "valorPrevisto": 101341.43,
             "valorExecutado": 14780.1,
             "saldo": 86561.33,
-            "saldoEconomicidade": 0,
+            "saldoEconomicidade": 86561.33,
             "percentualExecucao": 14.58
           },
           {
@@ -9559,7 +9567,7 @@
             "valorPrevisto": 1265.33,
             "valorExecutado": 1500,
             "saldo": -234.67,
-            "saldoEconomicidade": -234.67,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 118.55
           },
           {
@@ -9607,7 +9615,7 @@
             "valorPrevisto": 1775.47,
             "valorExecutado": 2388,
             "saldo": -612.53,
-            "saldoEconomicidade": -612.53,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 134.5
           }
         ],
@@ -9618,9 +9626,7 @@
           "Plano de aplicação filtrado"
         ],
         "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+          "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
         ],
         "origemDados": "banco-cache"
       },
@@ -9639,6 +9645,10 @@
         "repasseDesembolsado": 317439.34,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 73718.25,
+        "saldoDisponivelOuvidoria": 24774.02,
+        "saldoEconomicidadeCapital": 0,
+        "saldoEconomicidadeCusteio": 0,
+        "saldoPotencialDestinavelOuvidoria": 73718.25,
         "saldoResidualCapital": 210338.76,
         "saldoResidualCusteio": 76333.33,
         "contrapartidaIntegralizada": 317.75,
@@ -9654,7 +9664,6 @@
         "execucaoOuvidoriaPercentual": 9.7,
         "execucaoCorregedoriaPercentual": 0,
         "execucaoEscolaPenalPercentual": 14.59,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 17,
         "totalItensOuvidoria": 4,
@@ -9938,11 +9947,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -9960,6 +9965,10 @@
         "repasseDesembolsado": 794355.17,
         "rendimentoAprovado": 51133.66,
         "saldoRendimentosAtual": 50332.42,
+        "saldoDisponivelOuvidoria": 145822.82,
+        "saldoEconomicidadeCapital": 45196.7,
+        "saldoEconomicidadeCusteio": 0,
+        "saldoPotencialDestinavelOuvidoria": 95529.12,
         "saldoResidualCapital": 316905.54,
         "saldoResidualCusteio": 59554.86,
         "contrapartidaIntegralizada": 16211.33,
@@ -9975,7 +9984,6 @@
         "execucaoOuvidoriaPercentual": 9.61,
         "execucaoCorregedoriaPercentual": 79.9,
         "execucaoEscolaPenalPercentual": 63.29,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 25,
         "totalItensOuvidoria": 10,
@@ -10387,11 +10395,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -10409,6 +10413,10 @@
         "repasseDesembolsado": 233837.94,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 41375.68,
+        "saldoDisponivelOuvidoria": 73284.48,
+        "saldoEconomicidadeCapital": 0,
+        "saldoEconomicidadeCusteio": 15004.16,
+        "saldoPotencialDestinavelOuvidoria": 56379.84,
         "saldoResidualCapital": 203120.43,
         "saldoResidualCusteio": 17501.58,
         "contrapartidaIntegralizada": 234.07,
@@ -10424,7 +10432,6 @@
         "execucaoOuvidoriaPercentual": 15.51,
         "execucaoCorregedoriaPercentual": 0,
         "execucaoEscolaPenalPercentual": 0,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 37,
         "totalItensOuvidoria": 8,
@@ -11028,11 +11035,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       },
       {
@@ -11050,6 +11053,10 @@
         "repasseDesembolsado": 3769628.31,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 567515.94,
+        "saldoDisponivelOuvidoria": 7429.69,
+        "saldoEconomicidadeCapital": 890623.83,
+        "saldoEconomicidadeCusteio": 400731.5,
+        "saldoPotencialDestinavelOuvidoria": 1858871.27,
         "saldoResidualCapital": 940369.88,
         "saldoResidualCusteio": 858337.93,
         "contrapartidaIntegralizada": 76931.19,
@@ -11065,7 +11072,6 @@
         "execucaoOuvidoriaPercentual": 73,
         "execucaoCorregedoriaPercentual": 8.26,
         "execucaoEscolaPenalPercentual": 45.69,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 40,
         "totalItensOuvidoria": 7,
@@ -11467,7 +11473,7 @@
             "valorPrevisto": 9714.32,
             "valorExecutado": 11032,
             "saldo": -1317.68,
-            "saldoEconomicidade": -1317.68,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 113.56
           },
           {
@@ -11579,7 +11585,7 @@
             "valorPrevisto": 1705,
             "valorExecutado": 3280,
             "saldo": -1575,
-            "saldoEconomicidade": -1575,
+            "saldoEconomicidade": 0,
             "percentualExecucao": 192.38
           },
           {
@@ -11718,9 +11724,7 @@
           "Plano de aplicação filtrado"
         ],
         "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+          "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
         ],
         "origemDados": "banco-cache"
       },
@@ -11739,6 +11743,10 @@
         "repasseDesembolsado": 345652.9,
         "rendimentoAprovado": 0,
         "saldoRendimentosAtual": 67253.33,
+        "saldoDisponivelOuvidoria": 90492.76,
+        "saldoEconomicidadeCapital": 7267.88,
+        "saldoEconomicidadeCusteio": 41657.21,
+        "saldoPotencialDestinavelOuvidoria": 116178.42,
         "saldoResidualCapital": 216541.03,
         "saldoResidualCusteio": 60671.02,
         "contrapartidaIntegralizada": 1045,
@@ -11754,7 +11762,6 @@
         "execucaoOuvidoriaPercentual": 13.85,
         "execucaoCorregedoriaPercentual": 5.83,
         "execucaoEscolaPenalPercentual": 40.45,
-        "saldoDisponivelOuvidoria": null,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 52,
         "totalItensOuvidoria": 7,
@@ -12598,11 +12605,7 @@
           "Transferegov/cache",
           "Plano de aplicação filtrado"
         ],
-        "avisos": [
-          "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-          "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-          "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
-        ],
+        "avisos": [],
         "origemDados": "banco-cache"
       }
     ],
@@ -12636,68 +12639,29 @@
       ]
     },
     "avisos": [
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa.",
-      "saldoDisponivelOuvidoria não calculado nesta função; depende de regra segura no compositor.",
-      "saldoDisponivelOuvidoria definido como null: formula segura ainda pendente.",
-      "valorRelativoOuvidoria definido como null: nao calculado nesta etapa."
+      "Item com sobre-execucao para economicidade; valor negativo ajustado para zero.",
+      "Item da OUVIDORIA com sobre-execucao; saldo disponivel considera zero no item.",
+      "Item com sobre-execucao para economicidade; valor negativo ajustado para zero.",
+      "Item com sobre-execucao para economicidade; valor negativo ajustado para zero.",
+      "Item da OUVIDORIA com sobre-execucao; saldo disponivel considera zero no item.",
+      "Item com sobre-execucao para economicidade; valor negativo ajustado para zero.",
+      "Item com sobre-execucao para economicidade; valor negativo ajustado para zero.",
+      "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
     ],
-    "pendenciasConhecidas": [
-      "saldoDisponivelOuvidoria não foi calculado; fórmula pendente para o compositor consolidado."
-    ],
+    "pendenciasConhecidas": [],
     "diagnostico": {
       "totalCarteira": 15,
       "totalComDetru": 15,
       "totalComRendimentos": 15,
       "totalComPlano": 15,
-      "totalAvisos": 45
+      "totalAvisos": 8
     },
     "ultimaAtualizacaoDados": {
-      "dataHora": "2026-05-18T19:47:38.945Z",
+      "dataHora": "2026-05-19T13:29:04.386Z",
       "fonte": "Transferegov/rendimentos",
       "fontesConsideradas": {
-        "detru": "2026-05-18T19:20:29.334Z",
-        "rendimentos": "2026-05-18T19:47:38.945Z"
+        "detru": "2026-05-19T13:26:36.518Z",
+        "rendimentos": "2026-05-19T13:29:04.386Z"
       }
     }
   },
