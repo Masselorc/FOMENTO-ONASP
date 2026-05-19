@@ -1,5 +1,36 @@
 # Diário de bordo
 
+## 19/05/2026 - Reforma estrutural de layout - Home/Dashboard (Etapa 3.4)
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo (após push do commit anterior `7fa32a8`).
+- Problema identificado: as etapas 3.1, 3.2 e 3.3 ajustaram tema, densidade e a barra de filtros do Orçamento, mas a Home continuava com 8 seções verticalmente espaçadas (2 grids KPI separados de 4+2, filtros com 3 cards internos altos + 4 cards contadores de UF), empurrando a tabela para muito abaixo da dobra.
+- Por que CSS-only não resolveu: o markup gera ESTRUTURALMENTE caixas demais. Cada `<section>` separada cria margem; cada `.visible-filter-group` é um card com padding próprio; `filter-counts` era um grid 4-colunas de cards com `min-height: 94px`. Compactar com `padding`/`gap` reduzia parcialmente, mas a contagem de elementos verticais não mudava.
+- Mudanças estruturais realizadas:
+  1. **KPIs mesclados**: dois `<section class="app-summary-grid -cols-4/-cols-2">` viraram **um único** `<section class="app-summary-grid metric-strip -cols-6">` com 6 cards. Cards ganharam classe `metric-tile` (sem `min-height`, padding `0.65rem 0.8rem`, value `1.05rem`).
+  2. **Filtros recolhíveis**: `.filter-section` virou `.filter-bar` com `.filter-bar-main` (Filtros + busca + Limpar + badge ativo, sempre visível, altura ~34px) + `<details class="filter-bar-advanced">` recolhível com summary "Mais filtros" contendo Regiões/Instrumentos/UFs e contadores. Sem JS extra — elemento `<details>` nativo.
+  3. **Contadores de UF compactos**: `.filter-counts` recebeu modificador `.compact-summary-row` — virou flex horizontal com tiles `flex: 1 1 180px`, padding `0.5rem 0.7rem`, sem `min-height`.
+  4. **Hero compacto**: padding `0.85rem 1.1rem`, título `1.35rem`, badges `0.72rem`.
+  5. **"Por instrumento"**: `.instrument-summary-card` com `min-height: auto`, padding `0.7rem 0.85rem`; `.instrument-mini-chart` com `min-height: auto` e padding-top `0.35rem`.
+  6. Cache-buster atualizado: CSS e JS para `?v=20260519-34-etapa`.
+- Classes estruturais novas (escopo restrito): `.metric-strip`, `.metric-tile`, `.filter-bar`, `.filter-bar-main`, `.filter-bar-search`, `.filter-bar-advanced`, `.filter-bar-advanced-toggle`, `.compact-summary-row`. Todas no bloco "Etapa 3.4" no fim de `app.css`.
+- Arquivos alterados:
+  - `index.html` (KPIs mesclados, filtros recolhíveis, cache-buster).
+  - `frontend/css/app.css` (Etapa 3.4 adicionada — ~190 linhas no fim do arquivo).
+- IDs preservados (todos): `filtroObjeto`, `btnLimparFiltros`, `filtroAtivoBadge`, `textoFiltroAtivo`, `filtroRegiaoOpcoes`, `filtroInstrumentoOpcoes`, `filtroUFOpcoes`, `count-convenios`, `count-faf`, `count-doacoes`, `count-ufs-instrumentos`, `count-convenios-ufs`, `count-faf-ufs`, `count-doacoes-ufs`, `count-ufs-instrumentos-lista`, `kpi-total-fomento-ouvidoria`, `kpi-total-executado`, `kpi-percentual-global`, `kpi-total-ufs-fomento`, `kpi-total-contratado`, `kpi-total-doado`, `filter-row-section`, `cards-instrumentos-section-wrapper`, `cards-instrumentos-section`, `cards-dinamicos-section`.
+- Testes executados:
+  - `node --check frontend/js/app.js` → OK.
+  - `node --check frontend/js/core/ui-components.js` → OK.
+  - `npm run validar:syntax` → OK (25 arquivos).
+  - `npm run validar:json` → OK.
+  - `git diff --check` → OK (apenas warning LF/CRLF do Windows).
+- Smoke test manual: a confirmar pelo usuário em 1366/1024/768/390px.
+- Riscos remanescentes:
+  - Em telas <480px, os 6 KPIs viram 1 coluna (rolar ainda é necessário, mas inevitável).
+  - O `<details>` para "Mais filtros" começa **fechado** por padrão — usuários habituados aos checkboxes visíveis precisam clicar uma vez. Listeners são por delegação no `document`, então funcionam mesmo com `<details>` fechado.
+  - Cache-buster mudou — cliente vai recarregar CSS e JS uma vez.
+- Rollback: `git revert HEAD` desfaz o commit; o markup volta aos dois grids de KPI e aos filtros expandidos. Layout volta à Etapa 3.3.
+
 ## 19/05/2026 - Compactação operacional (Etapa 3.2 de densidade)
 
 - Branch atual: `main`.
