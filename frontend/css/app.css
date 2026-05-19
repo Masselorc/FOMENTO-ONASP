@@ -9058,3 +9058,417 @@ table.dataTable thead .sorting_desc::after {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(96, 165, 250, 0.45);
 }
+
+/* ============================================================ */
+/* Etapa 3.6 - Compactacao global agressiva                     */
+/* - Hero compacto em TODAS as paginas (nao so dashboard)       */
+/* - Chip rows sem card wrapper (botoes simples)                */
+/* - Section headers menores                                    */
+/* - Action button rows mais baixos                             */
+/* ============================================================ */
+
+/* 1. Hero global compacto - aplicar em todas as paginas */
+.app-page-hero {
+    padding: 0.7rem 1rem !important;
+    margin-bottom: 0.75rem !important;
+    gap: 0.6rem !important;
+}
+
+.app-page-hero .app-page-title,
+.app-page-hero h1,
+.app-page-hero h2 {
+    font-size: 1.25rem !important;
+    margin-bottom: 0 !important;
+    line-height: 1.2;
+}
+
+.app-page-eyebrow,
+.app-page-hero .section-eyebrow {
+    font-size: 0.62rem !important;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.1rem !important;
+}
+
+.app-page-hero .app-page-subtitle {
+    font-size: 0.75rem !important;
+    margin-bottom: 0 !important;
+    opacity: 0.85;
+}
+
+/* 2. Botoes do header de pagina compactos */
+.app-page-actions,
+.app-page-hero .header-actions {
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.app-page-actions .btn,
+.app-page-hero .btn {
+    padding: 0.32rem 0.7rem !important;
+    font-size: 0.78rem !important;
+    min-height: 32px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.app-page-actions .btn i,
+.app-page-hero .btn i {
+    font-size: 0.78rem;
+}
+
+/* 3. Chip rows sem card wrapper - viram simplesmente uma faixa */
+.formalizacao-quick-filter-panel,
+.contact-uf-filter,
+#view-diagnostico-ouvidorias .diagnostico-filter-section {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.4rem 0 !important;
+    margin-bottom: 0.6rem !important;
+}
+
+.formalizacao-quick-filter-panel .section-header,
+.contact-uf-filter .contact-uf-filter-header {
+    margin-bottom: 0.35rem !important;
+    padding: 0 !important;
+}
+
+.formalizacao-quick-filter-panel .section-header h2,
+.formalizacao-quick-filter-panel .section-header h3,
+.contact-uf-filter-header h3 {
+    font-size: 0.85rem !important;
+    margin-bottom: 0;
+}
+
+.formalizacao-quick-filter-grid,
+.diagnostico-uf-chip-list,
+.contact-uf-chip-list {
+    gap: 0.3rem !important;
+}
+
+/* Chips como botoes compactos */
+.contact-uf-filter-chip,
+.formalizacao-quick-filter-chip,
+.diagnostico-uf-filter-chip {
+    padding: 0.2rem 0.6rem !important;
+    font-size: 0.72rem !important;
+    min-height: 28px;
+    line-height: 1.2;
+    border-radius: 6px;
+}
+
+/* 4. Section headers menores em todas as paginas */
+.section-header,
+.app-section-header {
+    margin-bottom: 0.45rem !important;
+    gap: 0.4rem;
+}
+
+.section-header h2,
+.section-header h3,
+.app-section-header h2,
+.app-section-title {
+    font-size: 1rem !important;
+    margin-bottom: 0;
+    line-height: 1.25;
+}
+
+.section-header.compact {
+    margin-bottom: 0.3rem !important;
+}
+
+.section-header.compact h2,
+.section-header.compact .app-section-title {
+    font-size: 0.95rem !important;
+}
+
+.section-pill {
+    font-size: 0.72rem;
+    padding: 0.22rem 0.55rem;
+}
+
+/* 5. Containers operacionais ainda mais enxutos */
+.app-section,
+.panel-section {
+    padding: 0.7rem 0.9rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.app-section + .app-section,
+.panel-section + .panel-section,
+.app-section + .panel-section,
+.panel-section + .app-section {
+    margin-top: 0;
+}
+
+/* 6. Cards genericos: padding reduzido */
+.card.kpi-card,
+.app-summary-card,
+.budget-insight-card,
+.dynamic-card,
+.profor-insight-card,
+.instrument-summary-card,
+.formalizacao-card,
+.contact-uf-card {
+    padding: 0.7rem 0.85rem !important;
+    gap: 0.35rem !important;
+}
+
+/* 7. Resumo da selecao atual - barra de metricas */
+#cards-dinamicos-section {
+    margin-bottom: 0.75rem !important;
+    --bs-gutter-y: 0.4rem !important;
+    --bs-gutter-x: 0.5rem !important;
+}
+
+#cards-dinamicos-section .dynamic-card {
+    padding: 0.55rem 0.75rem !important;
+    min-height: auto !important;
+}
+
+#cards-dinamicos-section .kpi-title {
+    font-size: 0.68rem;
+    margin-bottom: 0.05rem;
+}
+
+#cards-dinamicos-section .kpi-value {
+    font-size: 1rem;
+}
+
+/* 8. Formulario de busca/inputs em chip rows */
+.contacts-toolbar.panel-section {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.4rem 0 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.contacts-toolbar h3 {
+    font-size: 0.85rem !important;
+}
+
+/* 9. Reduzir margem-bottom dos mb-4 do bootstrap em paineis */
+#view-orcamento .mb-4,
+#view-formalizacao .mb-4,
+#view-profor2022 .mb-4,
+#view-faf-2021 .mb-4,
+#view-doacoes-2023 .mb-4,
+#view-contatos .mb-4,
+#view-diagnostico-ouvidorias .mb-4,
+#view-status-sistema .mb-4 {
+    margin-bottom: 0.85rem !important;
+}
+
+/* 10. Resumo de gestao do orcamento mais baixo */
+#view-orcamento .budget-management-summary-section {
+    margin-bottom: 0.75rem !important;
+}
+
+#view-orcamento .budget-management-note {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.7rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* ============================================================ */
+/* Etapa 3.7 - Padronizacao do acabamento metalico/neon GLOBAL  */
+/* Aplica o gradiente metalico+glow em TODAS as paginas:        */
+/* valores monetarios, KPIs, percentuais, totais. Sem decorar   */
+/* demais; mantem leitura institucional.                        */
+/* ============================================================ */
+
+/* 1. Valores monetarios neutros (cinza prateado) em todas as paginas */
+.kpi-card .kpi-value,
+.app-summary-card .app-summary-card-value,
+.budget-insight-card .text-money,
+.dynamic-card .kpi-value,
+.profor-insight-card .text-money,
+.instrument-summary-card .text-money,
+.formalizacao-card .text-money,
+.contact-uf-card .text-money,
+.budget-kpi-value,
+.app-section .text-money,
+.panel-section .text-money,
+.system-status-alert-item .text-money {
+    background: linear-gradient(180deg, #e8f0ff 0%, #b8c8e0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 8px rgba(96, 165, 250, 0.12);
+}
+
+/* 2. Variante sucesso (verde esmeralda neon) em todas as paginas */
+.text-success.text-money,
+.text-money.text-success,
+.kpi-card.-success .kpi-value,
+.app-summary-card.-success .app-summary-card-value,
+.kpi-card-success .kpi-value,
+.budget-insight-card.-success .text-money,
+.profor-insight-card.-success .text-money,
+.profor-insight-card .text-success {
+    background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.18);
+}
+
+/* 3. Variante atencao (ambar neon) */
+.text-warning.text-money,
+.text-money.text-warning,
+.kpi-card.-warning .kpi-value,
+.app-summary-card.-warning .app-summary-card-value,
+.kpi-card-warning .kpi-value,
+.budget-insight-card.-warning .text-money,
+.profor-insight-card.-warning .text-money,
+.profor-insight-card .text-warning {
+    background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.18);
+}
+
+/* 4. Variante info (azul neon) */
+.text-info.text-money,
+.text-money.text-info,
+.kpi-card.-info .kpi-value,
+.app-summary-card.-info .app-summary-card-value,
+.kpi-card-info .kpi-value,
+.budget-insight-card.-info .text-money,
+.profor-insight-card.-info .text-money,
+.text-info,
+.kpi-card .text-info {
+    background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+/* 5. Variante perigo (vermelho neon) */
+.text-danger.text-money,
+.text-money.text-danger,
+.kpi-card.-danger .kpi-value,
+.app-summary-card.-danger .app-summary-card-value {
+    background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.18);
+}
+
+/* 6. Borda lateral colorida em todos os KPI cards */
+.kpi-card,
+.app-summary-card,
+.budget-insight-card,
+.dynamic-card,
+.profor-insight-card,
+.instrument-summary-card,
+.formalizacao-card,
+.contact-uf-card {
+    border-left-width: 3px !important;
+    box-shadow: 0 1px 0 rgba(148, 163, 184, 0.06), inset 1px 0 0 rgba(96, 165, 250, 0.08) !important;
+}
+
+.kpi-card.-success,
+.app-summary-card.-success,
+.budget-insight-card.-success,
+.kpi-card-success,
+.formalizacao-card.-success,
+.profor-insight-card.-success {
+    border-left-color: #10b981 !important;
+}
+
+.kpi-card.-warning,
+.app-summary-card.-warning,
+.budget-insight-card.-warning,
+.kpi-card-warning,
+.formalizacao-card.-warning,
+.profor-insight-card.-warning {
+    border-left-color: #f59e0b !important;
+}
+
+.kpi-card.-info,
+.app-summary-card.-info,
+.budget-insight-card.-info,
+.kpi-card-info,
+.formalizacao-card.-info,
+.profor-insight-card.-info {
+    border-left-color: #3b82f6 !important;
+}
+
+.kpi-card.-danger,
+.app-summary-card.-danger,
+.budget-insight-card.-danger {
+    border-left-color: #ef4444 !important;
+}
+
+/* 7. Botoes de acao com toque metalico (outline) */
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-secondary {
+    border-width: 1px;
+    background: rgba(20, 28, 39, 0.55);
+    transition: background-color 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.btn-outline-primary {
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #93c5fd;
+}
+
+.btn-outline-primary:hover {
+    background: rgba(59, 130, 246, 0.18);
+    border-color: #3b82f6;
+    color: #dbeafe;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-outline-success {
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #6ee7b7;
+}
+
+.btn-outline-success:hover {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: #10b981;
+    color: #d1fae5;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-outline-secondary {
+    border-color: rgba(148, 163, 184, 0.35);
+    color: var(--color-text);
+}
+
+.btn-outline-secondary:hover {
+    background: rgba(148, 163, 184, 0.14);
+    border-color: rgba(148, 163, 184, 0.6);
+    box-shadow: 0 0 10px rgba(148, 163, 184, 0.18);
+}
+
+/* 8. Headers de tabela ja receberam o tom metalico - reforco no titulo do <th> */
+table.dataTable thead th {
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(20, 28, 39, 0.88)) !important;
+    color: #93c5fd !important;
+    box-shadow: inset 0 -1px 0 rgba(59, 130, 246, 0.18) !important;
+}
+
+/* 9. Active chip / filter ativo - acento neon */
+.contact-uf-filter-chip.active,
+.formalizacao-quick-filter-chip.active,
+.diagnostico-uf-filter-chip.active,
+.active-filter-badge {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.45), rgba(37, 99, 235, 0.65)) !important;
+    border-color: rgba(96, 165, 250, 0.7) !important;
+    color: #fff !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+/* 10. Suavizar overlays/gradientes do scrim que possam estar competindo */
+.metric-tile {
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.65), rgba(20, 28, 39, 0.55)) !important;
+}
