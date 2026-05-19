@@ -3263,3 +3263,43 @@ Logs operacionais gravados:
   - baixo, restrito ao bloco de acompanhamento gerencial dentro da trilha expandida.
 - Rollback:
   - reverter esta etapa remove apenas o ajuste de contraste do bloco de acompanhamento gerencial.
+
+---
+
+## 19/05/2026 - Orçamento 2026: sincronização de acompanhamento por processo SEI
+
+- Problemas observados:
+  - itens diferentes com o mesmo processo SEI precisavam repetir manualmente o acompanhamento gerencial;
+  - resumo exportado colocava processos em cobrança por condições automáticas sem providência cadastrada;
+  - texto exportado ainda podia tratar `pendencia_atual` como pendência, em vez de providência cadastrada;
+  - rótulos visíveis exibiam "Pendência atual" no painel de edição e na trilha.
+- Causa diagnosticada:
+  - `salvarOrcamento2026()` agrupava e persistia alterações apenas pelo `id` editado, sem propagação por `processo_sei`;
+  - `classificarItemResumoOrcamento()` ainda considerava ausência de SEI, planejamento, status crítico e dias no setor para grupo vermelho;
+  - montagem do item no resumo tinha camada de providência automática e linha separada `Pendência:`.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `backend/services/orcamento-2026-service.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Regra de replicação por processo SEI:
+  - ao salvar alteração em `setor_atual`, `responsavel_atual`, `data_entrada_setor`, `pendencia_atual` ou `observacao`, o backend replica o campo para demais registros ativos com o mesmo `processo_sei` normalizado;
+  - a replicação só ocorre quando o processo SEI está preenchido;
+  - campos financeiros, trilha, status, vínculo, classificação, descrição e natureza não são replicados;
+  - alterações explícitas já presentes no destino não são sobrescritas pela replicação automática.
+- Regra revisada de classificação do resumo:
+  - 🔴 Cobrança imediata: somente itens com `pendenciaAtual` preenchida;
+  - 🟢 Avançados/concluídos: itens sem `pendenciaAtual` em etapa avançada/concluída ou status `EXECUTADO`;
+  - 🟡 Em acompanhamento: demais itens exportáveis com trilha individual e sem `pendenciaAtual`.
+- Alterações de rótulo:
+  - rótulo visível `Pendência atual` trocado por `Providência` no painel de edição e no bloco abaixo da trilha;
+  - resumo exportado usa somente `Providência: <pendenciaAtual>` e não exibe mais `Pendência:`.
+- Validações realizadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `node --check backend/services/orcamento-2026-service.js` -> OK;
+  - `git diff --check` -> OK.
+- Pendências:
+  - validação manual restrita no navegador e no backend local.
+- Risco de regressão:
+  - moderado, concentrado na persistência backend por processo SEI e na reclassificação do resumo exportado.
+- Rollback:
+  - reverter esta etapa restaura salvamento individual por item e a classificação anterior do resumo.

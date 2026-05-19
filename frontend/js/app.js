@@ -7044,7 +7044,7 @@ async function carregarLogoParaPDF() {
                         <div class="col-md-6"><span class="text-muted">Setor atual:</span> <strong>${escapeHtml(setorAtual || 'não informado')}</strong></div>
                         <div class="col-md-6"><span class="text-muted">Responsável atual:</span> <strong>${escapeHtml(responsavelAtual || 'não informado')}</strong></div>
                         <div class="col-md-6"><span class="text-muted">No setor atual:</span> <strong>${escapeHtml(formatarDiasNoSetorAtualOrcamento(dataEntradaSetor))}</strong></div>
-                        <div class="col-md-6"><span class="text-muted">Pendência atual:</span> <strong>${escapeHtml(pendenciaAtual || 'não informada')}</strong></div>
+                        <div class="col-md-6"><span class="text-muted">Providência:</span> <strong>${escapeHtml(pendenciaAtual || 'não informada')}</strong></div>
                         <div class="col-12"><span class="text-muted">Observação livre:</span> <strong>${escapeHtml(observacao || 'sem observação registrada')}</strong></div>
                     </div>
                 </div>
@@ -8036,7 +8036,7 @@ async function carregarLogoParaPDF() {
                                         ${renderizarCampoOrcamento(item, 'data_entrada_setor')}
                                     </label>
                                     <label>
-                                        <span>Pendência atual</span>
+                                        <span>Providência</span>
                                         ${renderizarCampoOrcamento(item, 'pendencia_atual')}
                                     </label>
                                     <label class="budget-edit-grid-wide">
@@ -10300,7 +10300,6 @@ async function carregarLogoParaPDF() {
             'suspenso',
             'cancelado'
         ]);
-        const DIAS_NO_SETOR_PARA_COBRANCA = 10;
 
         function statusIndicaProcessoAutuadoOrcamento(status) {
             return STATUS_ORCAMENTO_AUTUACAO_VISUAL.has(normalizarBusca(status));
@@ -10546,68 +10545,9 @@ async function carregarLogoParaPDF() {
             return etapas.find((etapa) => etapa.estado === 'atual') || etapas[0] || null;
         }
 
-        function obterProvidenciaResumoOrcamento(chaveEtapa) {
-            const providencias = {
-                planejamento: 'confirmar autuação do processo e início da instrução',
-                'processo-sei': 'impulsionar a instrução inicial do processo',
-                'estudo-tecnico': 'concluir ou validar a especificação/ETP',
-                'termo-referencia': 'finalizar ou revisar o Termo de Referência',
-                'pesquisa-precos': 'consolidar a pesquisa de preços',
-                'autorizacao-autoridade': 'obter autorização da autoridade competente',
-                'parecer-juridico': 'acompanhar retorno jurídico',
-                empenhado: 'acompanhar contratação ou emissão da ordem de serviço',
-                contratado: 'acompanhar execução contratual ou ordem de serviço',
-                'ordem-servico': 'acompanhar entrega do objeto',
-                entregue: 'acompanhar pagamento ou ordem bancária',
-                'ordem-bancaria': 'verificar se há pendência residual de encerramento',
-                autuacao: 'confirmar instrução inicial do processo',
-                'parecer-tecnico': 'concluir ou revisar o parecer técnico',
-                'minuta-edital': 'validar a minuta de edital',
-                'ddo-cgof': 'emitir, assinar ou retornar a DDO',
-                'abertura-programa': 'acompanhar abertura do programa',
-                'parecer-conjur': 'acompanhar retorno jurídico da CONJUR',
-                'publicacao-gabsec': 'acompanhar publicação ou providência final'
-            };
-
-            return providencias[chaveEtapa] || 'verificar o andamento processual';
-        }
-
-        function normalizarProvidenciaLivreOrcamento(texto) {
-            const valor = String(texto || '').trim().replace(/[.!?]+$/g, '');
-            if (!valor) return '';
-            return valor.charAt(0).toLocaleLowerCase('pt-BR') + valor.slice(1);
-        }
-
-        function montarAcionamentoResumoOrcamento(item, providencia) {
-            const setorAtual = String(item.setorAtual || item.setor_atual || '').trim();
-            const responsavelAtual = String(item.responsavelAtual || item.responsavel_atual || '').trim();
-            const providenciaNormalizada = normalizarProvidenciaLivreOrcamento(providencia);
-            if (!providenciaNormalizada) return '';
-
-            if (responsavelAtual && setorAtual) return `acionar ${responsavelAtual} / ${setorAtual} para ${providenciaNormalizada}.`;
-            if (responsavelAtual) return `acionar ${responsavelAtual} para ${providenciaNormalizada}.`;
-            if (setorAtual) return `acionar ${setorAtual} para ${providenciaNormalizada}.`;
-            return `verificar necessidade de ${providenciaNormalizada}.`;
-        }
-
-        function montarProvidenciaResumoOrcamento(registro, pendenciaAtual) {
-            if (pendenciaAtual) {
-                return montarAcionamentoResumoOrcamento(registro.item, pendenciaAtual);
-            }
-            if (registro.grupo === 'cobranca') {
-                const setorAtual = String(registro.item.setorAtual || registro.item.setor_atual || '').trim();
-                const responsavelAtual = String(registro.item.responsavelAtual || registro.item.responsavel_atual || '').trim();
-                if (!setorAtual && !responsavelAtual) return '';
-                return montarAcionamentoResumoOrcamento(registro.item, 'atualizar ou impulsionar o processo');
-            }
-            return '';
-        }
-
         function classificarItemResumoOrcamento(item, etapaAtual) {
-            const processoSei = String(item.processoSei || item.processo_sei || '').trim();
             const statusNormalizado = normalizarBusca(item.status);
             const pendenciaAtual = String(item.pendenciaAtual || item.pendencia_atual || '').trim();
-            const diasNoSetor = calcularDiasNoSetorAtualOrcamento(item.dataEntradaSetor || item.data_entrada_setor);
             const chaveEtapa = etapaAtual?.chave || '';
             const etapasAvancadas = new Set([
                 'empenhado',
@@ -10620,13 +10560,7 @@ async function carregarLogoParaPDF() {
                 'publicacao-gabsec'
             ]);
 
-            if (
-                !processoSei
-                || chaveEtapa === 'planejamento'
-                || ['validar', 'suspenso', 'cancelado'].includes(statusNormalizado)
-                || pendenciaAtual
-                || (diasNoSetor !== null && diasNoSetor >= DIAS_NO_SETOR_PARA_COBRANCA)
-            ) {
+            if (pendenciaAtual) {
                 return 'cobranca';
             }
 
@@ -10658,7 +10592,6 @@ async function carregarLogoParaPDF() {
             const diasNoSetor = calcularDiasNoSetorAtualOrcamento(dataEntradaSetor);
             const pendenciaAtual = String(item.pendenciaAtual || item.pendencia_atual || '').trim();
             const observacao = String(item.observacao || '').trim();
-            const providencia = montarProvidenciaResumoOrcamento(registro, pendenciaAtual);
             const linhas = [
                 `*${indice}. ${descricao}*`,
                 `SEI: ${processoSei || 'não informado'}`,
@@ -10668,8 +10601,7 @@ async function carregarLogoParaPDF() {
             if (setorAtual) linhas.push(`Local atual: ${setorAtual}`);
             if (responsavelAtual) linhas.push(`Responsável: ${responsavelAtual}`);
             if (diasNoSetor !== null) linhas.push(`No setor atual: ${diasNoSetor.toLocaleString('pt-BR')} dia${diasNoSetor === 1 ? '' : 's'}`);
-            if (providencia) linhas.push(`Providência: ${providencia}`);
-            if (pendenciaAtual) linhas.push(`Pendência: ${pendenciaAtual}`);
+            if (pendenciaAtual) linhas.push(`Providência: ${pendenciaAtual}`);
             if (observacao) linhas.push(`Obs.: ${observacao}`);
 
             return linhas.join('\n');

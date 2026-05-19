@@ -112,6 +112,13 @@ const ALIASES_CAMPOS_EDITAVEIS = {
   dataEntradaSetor: "data_entrada_setor",
   pendenciaAtual: "pendencia_atual"
 };
+const CAMPOS_ACOMPANHAMENTO_GERENCIAL = new Set([
+  "setor_atual",
+  "responsavel_atual",
+  "data_entrada_setor",
+  "pendencia_atual",
+  "observacao"
+]);
 const CAMPOS_MONETARIOS_ORCAMENTO = new Set([
   "valor_previsto",
   "valor_disponibilizado",
@@ -1258,6 +1265,52 @@ function obterValorAtual(row, campo) {
   return row[campo] === null || row[campo] === undefined ? "" : row[campo];
 }
 
+function normalizarProcessoSeiParaComparacao(valor) {
+  return limparTexto(valor);
+}
+
+function replicarAcompanhamentoGerencialPorProcesso(alteracoesPorItem, idsInativos = []) {
+  if (!(alteracoesPorItem instanceof Map) || !alteracoesPorItem.size) return;
+
+  const idsInativosSet = new Set((idsInativos || []).map((id) => String(id)));
+  const itensAtivos = db.prepare("SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = 1").all();
+  const itensPorId = new Map(itensAtivos.map((item) => [String(item.id), item]));
+  const idsPorProcesso = new Map();
+
+  itensAtivos.forEach((item) => {
+    const id = String(item.id);
+    if (idsInativosSet.has(id)) return;
+    const processoSei = normalizarProcessoSeiParaComparacao(item.processo_sei);
+    if (!processoSei) return;
+    if (!idsPorProcesso.has(processoSei)) idsPorProcesso.set(processoSei, []);
+    idsPorProcesso.get(processoSei).push(id);
+  });
+
+  Array.from(alteracoesPorItem.entries()).forEach(([id, camposAlterados]) => {
+    const itemAtual = itensPorId.get(String(id));
+    if (!itemAtual || idsInativosSet.has(String(id))) return;
+
+    const acompanhamento = Object.fromEntries(
+      Object.entries(camposAlterados).filter(([campo]) => CAMPOS_ACOMPANHAMENTO_GERENCIAL.has(campo))
+    );
+    if (!Object.keys(acompanhamento).length) return;
+
+    const processoSei = normalizarProcessoSeiParaComparacao(camposAlterados.processo_sei ?? itemAtual.processo_sei);
+    if (!processoSei) return;
+
+    (idsPorProcesso.get(processoSei) || []).forEach((idRelacionado) => {
+      if (idRelacionado === String(id)) return;
+      if (!alteracoesPorItem.has(idRelacionado)) alteracoesPorItem.set(idRelacionado, {});
+      const camposDestino = alteracoesPorItem.get(idRelacionado);
+      Object.entries(acompanhamento).forEach(([campo, valor]) => {
+        if (!Object.prototype.hasOwnProperty.call(camposDestino, campo)) {
+          camposDestino[campo] = valor;
+        }
+      });
+    });
+  });
+}
+
 function validarAlteracoes(changes) {
   if (!changes || typeof changes !== "object" || Array.isArray(changes)) return [];
   return Object.entries(changes).flatMap(([id, campos]) => {
@@ -1355,6 +1408,7 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
     }
     alteracoesPorItem.get(item.id)[item.campo] = item.valor;
   });
+  replicarAcompanhamentoGerencialPorProcesso(alteracoesPorItem, idsInativos);
 
   db.transaction(() => {
     novosItens.forEach((item) => {
