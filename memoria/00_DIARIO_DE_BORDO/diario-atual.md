@@ -3241,3 +3241,25 @@ Logs operacionais gravados:
   - baixo a moderado, concentrado na renderização do campo de data e na presença/ausência da linha `Providência:` no resumo.
 - Rollback:
   - reverter esta etapa restaura o campo de data anterior, a providência automática por etapa e a trilha sem bloco de acompanhamento gerencial.
+
+---
+
+## 19/05/2026 - Orçamento 2026: contraste do acompanhamento gerencial
+
+- Problema observado:
+  - rótulos do bloco "Acompanhamento gerencial" na trilha expandida ficavam com baixo contraste em fundo escuro, especialmente textos herdados de `text-muted`.
+- Causa diagnosticada:
+  - o bloco usava classes de texto atenuado sem regra específica para a superfície escura do painel de rastreio.
+- Arquivos alterados:
+  - `frontend/css/app.css`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção aplicada:
+  - adicionadas regras específicas para `.budget-tracking-management`, seus rótulos `.text-muted` e valores `strong`, preservando contraste no tema escuro.
+- Validações realizadas:
+  - `git diff --check` -> OK.
+- Pendências:
+  - validação visual manual no navegador.
+- Risco de regressão:
+  - baixo, restrito ao bloco de acompanhamento gerencial dentro da trilha expandida.
+- Rollback:
+  - reverter esta etapa remove apenas o ajuste de contraste do bloco de acompanhamento gerencial.

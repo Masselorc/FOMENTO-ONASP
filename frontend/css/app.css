@@ -2790,6 +2790,36 @@ table.dataTable thead td,
     text-decoration: underline;
 }
 
+.budget-tracking-management {
+    color: var(--color-text);
+}
+
+.budget-tracking-management .text-muted {
+    color: var(--color-muted) !important;
+}
+
+.budget-tracking-management strong {
+    color: var(--color-text);
+}
+
+.theme-dark .budget-tracking-management,
+body.dark-mode .budget-tracking-management,
+[data-theme="dark"] .budget-tracking-management {
+    color: #f8fafc;
+}
+
+.theme-dark .budget-tracking-management .text-muted,
+body.dark-mode .budget-tracking-management .text-muted,
+[data-theme="dark"] .budget-tracking-management .text-muted {
+    color: #cbd5e1 !important;
+}
+
+.theme-dark .budget-tracking-management strong,
+body.dark-mode .budget-tracking-management strong,
+[data-theme="dark"] .budget-tracking-management strong {
+    color: #ffffff;
+}
+
 @keyframes budgetTrackingPulse {
     0%,
     100% {
