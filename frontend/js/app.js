@@ -6706,6 +6706,10 @@ async function carregarLogoParaPDF() {
                     item.valorEstimadoPesquisaPreco,
                     item.classificacaoGerencial,
                     item.ehAparelhamento ? 'Aparelhamento' : 'Não aparelhamento',
+                    item.setorAtual,
+                    item.responsavelAtual,
+                    item.dataEntradaSetor,
+                    item.pendenciaAtual,
                     item.observacao,
                     item.proforAutuacao,
                     item.proforParecerTecnico,
@@ -7398,8 +7402,8 @@ async function carregarLogoParaPDF() {
                         <td data-label="Status" class="text-center align-middle">
                             ${renderizarStatusOrcamento(status)}
                         </td>
-                        <td data-label="Observação" class="align-middle" title="${escapeHtml(observacao)}">
-                            <div class="budget-row-note">${escapeHtml(observacao) || '-'}</div>
+                        <td data-label="Acompanhamento" class="align-middle" title="${escapeHtml(observacao)}">
+                            ${renderizarResumoAcompanhamentoGerencialOrcamento(filho)}
                         </td>
                         <td data-label="Ações" class="text-center align-middle">
                             <div class="budget-row-actions justify-content-center">
@@ -7937,7 +7941,7 @@ async function carregarLogoParaPDF() {
                     <th scope="col" title="Valor empenhado"><div class="budget-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Emp.</span></div></th>
                     <th scope="col" title="Valor executado"><div class="budget-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Exec.</span></div></th>
                     <th scope="col"><div class="budget-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
-                    <th scope="col" title="Observação"><div class="budget-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Obs.</span></div></th>
+                    <th scope="col" title="Acompanhamento gerencial"><div class="budget-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Acomp.</span></div></th>
                     <th scope="col"><div class="budget-header-cell"><i class="fas fa-cogs" aria-hidden="true"></i> <span>Ações</span></div></th>
                 </tr>
             `;
@@ -7989,10 +7993,34 @@ async function carregarLogoParaPDF() {
                                     <span>Classificação gerencial</span>
                                     ${renderizarCampoOrcamento(item, 'classificacao_gerencial')}
                                 </label>
-                                <label class="budget-edit-grid-wide">
-                                    <span>Observação</span>
-                                    ${renderizarCampoOrcamento(item, 'observacao')}
-                                </label>
+                            </div>
+                            <div class="budget-edit-section mt-3">
+                                <div class="budget-edit-section-header">
+                                    <strong>Acompanhamento gerencial</strong>
+                                    <span>Dias no setor atual: ${escapeHtml(formatarDiasNoSetorAtualOrcamento(obterValorPendenteOrcamento(item, 'data_entrada_setor')))}</span>
+                                </div>
+                                <div class="budget-edit-grid">
+                                    <label>
+                                        <span>Setor atual</span>
+                                        ${renderizarCampoOrcamento(item, 'setor_atual')}
+                                    </label>
+                                    <label>
+                                        <span>Responsável atual</span>
+                                        ${renderizarCampoOrcamento(item, 'responsavel_atual')}
+                                    </label>
+                                    <label>
+                                        <span>Data de entrada no setor atual</span>
+                                        ${renderizarCampoOrcamento(item, 'data_entrada_setor', 'date')}
+                                    </label>
+                                    <label>
+                                        <span>Pendência atual</span>
+                                        ${renderizarCampoOrcamento(item, 'pendencia_atual')}
+                                    </label>
+                                    <label class="budget-edit-grid-wide">
+                                        <span>Observação livre</span>
+                                        ${renderizarCampoOrcamento(item, 'observacao')}
+                                    </label>
+                                </div>
                             </div>
                             ${itemPodeExibirRastreioOrcamento(item) ? renderizarSecaoEdicaoRastreioOrcamento(item, tituloRastreio, camposRastreio) : ''}
                             <div class="budget-edit-panel-actions">
@@ -8123,8 +8151,8 @@ async function carregarLogoParaPDF() {
                         <td data-label="Status" class="text-center align-middle">
                             ${renderizarStatusOrcamento(status)}
                         </td>
-                        <td data-label="Observação" class="align-middle" title="${escapeHtml(observacao)}">
-                            <div class="budget-row-note">${escapeHtml(observacao) || '-'}</div>
+                        <td data-label="Acompanhamento" class="align-middle" title="${escapeHtml(observacao)}">
+                            ${renderizarResumoAcompanhamentoGerencialOrcamento(item)}
                         </td>
                         <td data-label="Ações" class="text-center align-middle">
                             <div class="budget-row-actions justify-content-center">
@@ -8303,7 +8331,7 @@ async function carregarLogoParaPDF() {
                                     <th class="text-end"><i class="fas fa-coins" aria-hidden="true"></i> Valor estimado</th>
                                     <th class="text-center"><i class="fas fa-file-signature" aria-hidden="true"></i> Processo autuado</th>
                                     <th><i class="fas fa-info-circle" aria-hidden="true"></i> Status</th>
-                                    <th><i class="fas fa-comment-dots" aria-hidden="true"></i> Observação</th>
+                                    <th><i class="fas fa-comment-dots" aria-hidden="true"></i> Acompanhamento</th>
                                     <th class="text-end"><i class="fas fa-cogs" aria-hidden="true"></i> Ações</th>
                                 </tr>
                             </thead>
@@ -8341,7 +8369,7 @@ async function carregarLogoParaPDF() {
                     <td data-label="Valor estimado" class="text-end font-monospace">${renderizarCampoOutrosOrcamento(item, 'valor_estimado_pesquisa_preco', 'number')}</td>
                     <td data-label="Processo autuado" class="text-center">${renderizarCampoOutrosOrcamento(item, 'processo_autuado')}</td>
                     <td data-label="Status">${renderizarCampoOutrosOrcamento(item, 'status')}</td>
-                    <td data-label="Observação">${renderizarCampoOutrosOrcamento(item, 'observacao')}</td>
+                    <td data-label="Acompanhamento">${editando ? renderizarCampoOutrosOrcamento(item, 'observacao') : renderizarResumoAcompanhamentoGerencialOrcamento(item)}</td>
                     <td data-label="Ações" class="text-center">
                         <div class="budget-row-actions justify-content-center">
                             ${renderizarBotaoEdicaoOrcamento(item.id)}
@@ -8425,6 +8453,10 @@ async function carregarLogoParaPDF() {
                 valor_estimado_pesquisa_preco: 0,
                 processo_autuado: false,
                 status: 'PLANEJADO',
+                setor_atual: '',
+                responsavel_atual: '',
+                data_entrada_setor: '',
+                pendencia_atual: '',
                 observacao: ''
             });
             orcamentoOutrosProcessosExpandido = true;
@@ -8506,6 +8538,10 @@ async function carregarLogoParaPDF() {
                     valor_estimado_pesquisa_preco: item.valor_estimado_pesquisa_preco,
                     processo_autuado: item.processo_autuado,
                     status: item.status,
+                    setor_atual: item.setor_atual,
+                    responsavel_atual: item.responsavel_atual,
+                    data_entrada_setor: item.data_entrada_setor,
+                    pendencia_atual: item.pendencia_atual,
                     observacao: item.observacao
                 }));
                 const changes = idEscopo && !idEscopo.startsWith('novo-')
@@ -10298,6 +10334,10 @@ async function carregarLogoParaPDF() {
                 processo_autuado: item.processoAutuado,
                 processo_sei: item.processoSei,
                 status: item.status,
+                setor_atual: item.setorAtual,
+                responsavel_atual: item.responsavelAtual,
+                data_entrada_setor: item.dataEntradaSetor,
+                pendencia_atual: item.pendenciaAtual,
                 observacao: item.observacao,
                 classificacao_gerencial: item.classificacaoGerencial || (item.ehAparelhamento ? 'APARELHAMENTO' : 'NAO_APARELHAMENTO'),
                 descricao: item.descricao,
@@ -10311,6 +10351,65 @@ async function carregarLogoParaPDF() {
 
             const campoCamel = String(campo || '').replace(/_([a-z])/g, (_, letra) => letra.toUpperCase());
             return item[campoCamel] ?? fallback;
+        }
+
+        function obterDataLocalOrcamento(valor) {
+            const texto = String(valor ?? '').trim();
+            if (!texto) return null;
+            const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
+            const br = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+            const partes = iso
+                ? [Number(iso[1]), Number(iso[2]), Number(iso[3])]
+                : br
+                    ? [Number(br[3]), Number(br[2]), Number(br[1])]
+                    : null;
+            if (!partes) return null;
+            const [ano, mes, dia] = partes;
+            const data = new Date(ano, mes - 1, dia);
+            if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) return null;
+            return data;
+        }
+
+        function normalizarDataInputOrcamento(valor) {
+            const data = obterDataLocalOrcamento(valor);
+            if (!data) return '';
+            const ano = data.getFullYear();
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const dia = String(data.getDate()).padStart(2, '0');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        function calcularDiasNoSetorAtualOrcamento(dataEntradaSetor) {
+            const dataEntrada = obterDataLocalOrcamento(dataEntradaSetor);
+            if (!dataEntrada) return null;
+            const hoje = new Date();
+            const hojeLocal = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+            const diferencaMs = hojeLocal.getTime() - dataEntrada.getTime();
+            const dias = Math.floor(diferencaMs / 86400000);
+            return Number.isFinite(dias) ? Math.max(0, dias) : null;
+        }
+
+        function formatarDiasNoSetorAtualOrcamento(dataEntradaSetor) {
+            const dias = calcularDiasNoSetorAtualOrcamento(dataEntradaSetor);
+            if (dias === null) return 'não informado';
+            return `${dias.toLocaleString('pt-BR')} dia${dias === 1 ? '' : 's'}`;
+        }
+
+        function renderizarResumoAcompanhamentoGerencialOrcamento(item) {
+            const setorAtual = obterValorPendenteOrcamento(item, 'setor_atual') || item.setorAtual || '';
+            const dataEntradaSetor = obterValorPendenteOrcamento(item, 'data_entrada_setor') || item.dataEntradaSetor || '';
+            const diasNoSetor = formatarDiasNoSetorAtualOrcamento(dataEntradaSetor);
+
+            if (!setorAtual && diasNoSetor === 'não informado') {
+                return '<div class="budget-row-note">Acompanhamento não informado</div>';
+            }
+
+            return `
+                <div class="budget-row-note">
+                    ${escapeHtml(setorAtual || 'Setor não informado')}
+                    <span class="d-block text-muted small">${escapeHtml(diasNoSetor)} no setor atual</span>
+                </div>
+            `;
         }
 
         function registrarAlteracaoOrcamento(id, campo, valorOriginal, novoValor) {
@@ -10583,7 +10682,7 @@ async function carregarLogoParaPDF() {
                 <input
                     type="${tipo === 'money' ? 'text' : tipo}"
                     class="form-control form-control-sm budget-edit-control"
-                    value="${escapeHtml(tipo === 'money' ? formatarValorMonetarioInput(valor) : (valor ?? ''))}"
+                    value="${escapeHtml(tipo === 'money' ? formatarValorMonetarioInput(valor) : tipo === 'date' ? normalizarDataInputOrcamento(valor) : (valor ?? ''))}"
                     data-orcamento-id="${escapeHtml(item.id)}"
                     data-orcamento-campo="${campo}"
                     data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"

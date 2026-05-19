@@ -37,6 +37,10 @@ const CAMPOS_EDITAVEIS_BASE = [
   "processo_autuado",
   "processo_sei",
   "status",
+  "setor_atual",
+  "responsavel_atual",
+  "data_entrada_setor",
+  "pendencia_atual",
   "observacao",
   "classificacao_gerencial"
 ];
@@ -123,6 +127,14 @@ const CAMPOS_NOVOS_PERMITIDOS = new Set([
   "processo_sei",
   "processoSei",
   "status",
+  "setor_atual",
+  "setorAtual",
+  "responsavel_atual",
+  "responsavelAtual",
+  "data_entrada_setor",
+  "dataEntradaSetor",
+  "pendencia_atual",
+  "pendenciaAtual",
   "observacao"
 ]);
 
@@ -141,6 +153,10 @@ const COLUNAS_ORCAMENTO = [
   "processo_autuado",
   "processo_sei",
   "status",
+  "setor_atual",
+  "responsavel_atual",
+  "data_entrada_setor",
+  "pendencia_atual",
   "observacao",
   "compoe_orcamento",
   "processo_pai_id",
@@ -225,6 +241,10 @@ const MAPA_CAMEL = {
   valor_executado: "valorExecutado",
   valor_estimado_pesquisa_preco: "valorEstimadoPesquisaPreco",
   processo_sei: "processoSei",
+  setor_atual: "setorAtual",
+  responsavel_atual: "responsavelAtual",
+  data_entrada_setor: "dataEntradaSetor",
+  pendencia_atual: "pendenciaAtual",
   processo_autuado: "processoAutuadoNumero",
   compoe_orcamento: "compoeOrcamentoNumero",
   processo_pai_id: "processoPaiId",
@@ -904,6 +924,10 @@ function linhaParaItem(linha) {
     processoAutuadoNumero: processoAutuado ? 1 : 0,
     processoSei: linha.processo_sei || "",
     status: normalizarStatusOrcamento(linha.status || "PLANEJADO"),
+    setorAtual: linha.setor_atual || "",
+    responsavelAtual: linha.responsavel_atual || "",
+    dataEntradaSetor: linha.data_entrada_setor || "",
+    pendenciaAtual: linha.pendencia_atual || "",
     observacao: linha.observacao || "",
     compoeOrcamento,
     compoeOrcamentoNumero: compoeOrcamento ? 1 : 0,
@@ -1111,6 +1135,10 @@ function criarProcessoVinculadoOrcamento2026(payload = {}) {
   const linkProcessoSei = obterTextoOpcional(payload, "linkProcessoSei", "link_processo_sei");
   const dataProcessoSei = obterTextoOpcional(payload, "dataProcessoSei", "data_processo_sei");
   const observacao = obterTextoOpcional(payload, "observacao");
+  const setorAtual = obterTextoOpcional(payload, "setorAtual", "setor_atual");
+  const responsavelAtual = obterTextoOpcional(payload, "responsavelAtual", "responsavel_atual");
+  const dataEntradaSetor = obterTextoOpcional(payload, "dataEntradaSetor", "data_entrada_setor");
+  const pendenciaAtual = obterTextoOpcional(payload, "pendenciaAtual", "pendencia_atual");
 
   const filhosAtivos = registros.filter((registro) => (
     String(registro?.processo_pai_id || "").trim().toUpperCase() === String(processoPai.id || "").trim().toUpperCase()
@@ -1139,6 +1167,10 @@ function criarProcessoVinculadoOrcamento2026(payload = {}) {
     processo_autuado: sincronizado.processo_autuado,
     processo_sei: processoSei,
     status: sincronizado.status,
+    setor_atual: setorAtual,
+    responsavel_atual: responsavelAtual,
+    data_entrada_setor: dataEntradaSetor,
+    pendencia_atual: pendenciaAtual,
     observacao,
     compoe_orcamento: 0,
     classificacao_gerencial: normalizarClassificacaoGerencial(processoPai.classificacao_gerencial),
@@ -1267,6 +1299,10 @@ function validarNovos(novos) {
       processo_autuado: sincronizado.processo_autuado,
       processo_sei: limparTexto(item.processo_sei ?? item.processoSei),
       status: sincronizado.status,
+      setor_atual: limparTexto(item.setor_atual ?? item.setorAtual),
+      responsavel_atual: limparTexto(item.responsavel_atual ?? item.responsavelAtual),
+      data_entrada_setor: limparTexto(item.data_entrada_setor ?? item.dataEntradaSetor),
+      pendencia_atual: limparTexto(item.pendencia_atual ?? item.pendenciaAtual),
       observacao: limparTexto(item.observacao),
       classificacao_gerencial: "NAO_APARELHAMENTO",
       compoe_orcamento: 0,

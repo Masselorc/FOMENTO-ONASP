@@ -33,6 +33,10 @@ function inicializarBanco() {
       valor_empenhado REAL DEFAULT 0,
       valor_executado REAL DEFAULT 0,
       status TEXT,
+      setor_atual TEXT,
+      responsavel_atual TEXT,
+      data_entrada_setor TEXT,
+      pendencia_atual TEXT,
       observacao TEXT,
       classificacao_gerencial TEXT DEFAULT 'NAO_APARELHAMENTO',
       atualizado_em TEXT
@@ -62,6 +66,10 @@ function inicializarBanco() {
   garantirColuna("orcamento_2026", "valor_empenhado", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "processo_autuado", "INTEGER DEFAULT 0");
   garantirColuna("orcamento_2026", "processo_sei", "TEXT");
+  garantirColuna("orcamento_2026", "setor_atual", "TEXT");
+  garantirColuna("orcamento_2026", "responsavel_atual", "TEXT");
+  garantirColuna("orcamento_2026", "data_entrada_setor", "TEXT");
+  garantirColuna("orcamento_2026", "pendencia_atual", "TEXT");
   garantirColuna("orcamento_2026", "compoe_orcamento", "INTEGER DEFAULT 1");
   garantirColuna("orcamento_2026", "ativo", "INTEGER DEFAULT 1");
   garantirColuna("orcamento_2026", "classificacao_gerencial", "TEXT DEFAULT 'NAO_APARELHAMENTO'");

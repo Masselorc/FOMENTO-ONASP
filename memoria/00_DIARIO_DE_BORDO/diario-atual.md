@@ -3054,3 +3054,38 @@ Logs operacionais gravados:
   - a imagem-base do mapa continua a mesma; se a fonte SVG voltar a ser atualizada, a aparencia pode mudar e pedir novo ajuste fino.
 - Rollback:
   - reverter esta etapa desfaz apenas a coloracao dos icones e os ajustes visuais do mapa; nao ha impacto em backend, banco ou dados publicados.
+
+---
+
+## 19/05/2026 - Orçamento 2026: acompanhamento gerencial estruturado
+
+- Objetivo: substituir o uso isolado de observacao por campos estruturados de acompanhamento gerencial, mantendo a observacao livre.
+- Branch: `main`.
+- Arquivos alterados:
+  - `backend/db/init-db.js`;
+  - `backend/services/orcamento-2026-service.js`;
+  - `frontend/js/app.js`;
+  - `frontend/css/app.css`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Campos criados:
+  - `setor_atual` / `setorAtual`;
+  - `responsavel_atual` / `responsavelAtual`;
+  - `data_entrada_setor` / `dataEntradaSetor`;
+  - `pendencia_atual` / `pendenciaAtual`.
+- Ajustes feitos:
+  - adicionadas colunas opcionais `TEXT` na tabela `orcamento_2026` e na rotina de garantia de colunas;
+  - incluidos os campos na lista de colunas, campos editaveis, campos de novos itens e mapeamento snake_case para camelCase;
+  - expostos os campos em `linhaParaItem` e persistidos em `salvarOrcamento2026`;
+  - criado bloco "Acompanhamento gerencial" no painel de edicao da tela Orçamento 2026;
+  - exibido resumo compacto na tabela com setor atual e dias no setor atual;
+  - calculado "dias no setor atual" apenas a partir de `dataEntradaSetor`.
+- Validações realizadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `node --check backend/services/orcamento-2026-service.js` -> OK;
+  - `node --check backend/db/init-db.js` -> OK.
+- Pendencias:
+  - validacao manual restrita no navegador.
+- Risco de regressao:
+  - baixo a moderado, concentrado na persistencia dos novos campos e na renderizacao do painel de edicao.
+- Rollback:
+  - reverter este conjunto remove os campos da UI e do contrato de servico; as colunas adicionadas ao banco sao nao destrutivas e podem permanecer vazias sem afetar o fluxo anterior.
