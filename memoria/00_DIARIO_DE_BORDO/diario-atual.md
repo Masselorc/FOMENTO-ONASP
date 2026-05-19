@@ -1,5 +1,41 @@
 # Diário de bordo
 
+## 19/05/2026 - Padronização final (Etapa 3.8): filtros recolhíveis, neon global, header da Orçamento removido
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo (após push `3ca0e02`).
+- Problemas identificados pelo usuário nas imagens enviadas:
+  1. Seção "RELATÓRIOS / Orçamento 2026" repetia o nome da página (já mostrado no sidebar) e ocupava faixa inteira.
+  2. Vários botões sem acabamento neon (`.btn-primary`, `.btn-success`, `.btn-export`, `.btn-admin`, DataTables export buttons).
+  3. Filtros ainda expostos em Formalização PROFOR, PROFOR 2022, FAF 2021 e Doações 2023 (sem `<details>` recolhível como Home).
+  4. Cards "Por instrumento" com espaço morto quando `.uf-chip-list` está vazio.
+- Mudanças realizadas:
+  - **Orçamento header**: removida a `<section class="diagnostico-action-bar">` com título "Relatórios / Orçamento 2026"; substituída por `<div class="action-buttons-floating">` com os 4 botões (Excel/Histórico/PDF/Exportar resumo) flutuando à direita.
+  - **Filtros recolhíveis** em 4 páginas (padrão idêntico ao Home):
+    - Formalização PROFOR: 5 selects (UF/Região/Status/Ouvidoria/Pendência) dentro de `<details class="filter-bar-advanced">`.
+    - PROFOR 2022: 3 selects (UF/Sinal de gestão/Ordenação).
+    - FAF 2021: 3 selects (UF/Sinal de gestão/Ordenação).
+    - Doações 2023: 2 selects (UF/Ordenação).
+    - Em cada um, a linha principal mostra `.filter-bar-main` com Filtros + busca + Limpar; o `<details>` começa fechado.
+  - **Etapa 3.8 CSS** adicionada (~270 linhas no fim de `app.css`):
+    - Solid buttons com gradiente neon: `.btn-primary` (azul), `.btn-success`/`.btn-export` (verde), `.btn-warning` (âmbar), `.btn-info` (ciano), `.btn-danger` (vermelho), `.btn-admin` (cinza-azulado).
+    - DataTables export buttons (`.dt-buttons .btn`, `.buttons-excel`, `.buttons-pdf`, `.buttons-csv`) com bordas neon coloridas e hover com glow.
+    - `.action-buttons-floating` (flex justify-end com status inline).
+    - `.filter-bar-advanced` global: estilos do summary, chevron, hover; `:has` selectors; `.visible-filter-group` compacto dentro do details.
+    - `.uf-chip-list:empty { display: none }` e `.instrument-mini-chart:empty { display: none }`.
+    - Fallback para `.diagnostico-action-bar` (caso ainda apareça em outras views).
+  - Cache-buster: `?v=20260519-38-padroniza` (CSS e JS).
+- Arquivos alterados: `frontend/js/app.js`, `frontend/css/app.css`, `index.html`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- IDs preservados (verificado: 59 ocorrências): `filtroFormalizacaoUf/Regiao/Status/Ouvidoria/Pendencia/Busca`, `btnLimparFiltroFormalizacao`, `filtroProforUf/Situacao/Busca`, `ordenacaoProfor`, `btnLimparFiltroProfor`, `filtroFafUf/Situacao/Ordenacao/Busca`, `btnLimparFiltroFaf`, `filtroDoacoesUf/Ordenacao/Busca`, `btnLimparFiltroDoacoes`, `btnExportarOrcamentoExcel`, `btnHistoricoOrcamento`, `btn-export-budget-pdf`, `btnExportarResumoOrcamentoTexto`.
+- Testes executados:
+  - `node --check frontend/js/app.js` → OK
+  - `npm run validar:syntax` → OK (25 arquivos)
+  - `npm run validar:json` → OK
+  - `git diff --check` → OK
+- Smoke test manual: a confirmar pelo usuário (Formalização, PROFOR 2022, FAF 2021, Doações 2023 com filtros recolhidos; botões com neon em todas as páginas; Orçamento sem faixa de título).
+- Risco: baixo — `<details>` não interfere em event delegation; nenhum ID removido; CSS é apêndice com escopo nas classes existentes.
+- Rollback: `git revert HEAD`. Filtros voltam expostos, header da Orçamento volta, neon volta ao escopo anterior.
+
 ## 19/05/2026 - Reforma estrutural de layout - Home/Dashboard (Etapa 3.4)
 
 - Branch atual: `main`.

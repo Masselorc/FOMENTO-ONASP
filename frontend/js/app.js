@@ -3318,48 +3318,53 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
-                <section class="filter-section mb-4" aria-label="Filtros PROFOR 2022">
-                    <div class="filter-toolbar">
+                <section class="filter-section filter-bar mb-3" aria-label="Filtros PROFOR 2022">
+                    <div class="filter-bar-main">
                         <div class="filter-title">
                             <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
                             <strong>Filtros</strong>
                         </div>
-                        <div class="filter-search-actions">
-                            <input type="text" id="filtroProforBusca" class="form-control" placeholder="Buscar por UF, convênio ou vencimento..." aria-label="Buscar convênios PROFOR 2022">
-                            <button id="btnLimparFiltroProfor" type="button" class="btn btn-outline-secondary btn-icon-text">
-                                <i class="fas fa-undo" aria-hidden="true"></i>
-                                <span>Limpar</span>
-                            </button>
-                        </div>
+                        <input type="text" id="filtroProforBusca" class="form-control filter-bar-search" placeholder="Buscar por UF, convênio ou vencimento..." aria-label="Buscar convênios PROFOR 2022">
+                        <button id="btnLimparFiltroProfor" type="button" class="btn btn-outline-secondary btn-icon-text">
+                            <i class="fas fa-undo" aria-hidden="true"></i>
+                            <span>Limpar</span>
+                        </button>
                     </div>
-                    <div class="budget-filter-grid profor-filter-grid">
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroProforUf">UF</label>
-                            <select id="filtroProforUf" class="form-select">
-                                <option value="">Todas</option>
-                                ${opcoesUf}
-                            </select>
+                    <details class="filter-bar-advanced">
+                        <summary class="filter-bar-advanced-toggle">
+                            <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                            <span>Mais filtros</span>
+                            <small class="text-muted">UF · Sinal de gestão · Ordenação</small>
+                        </summary>
+                        <div class="budget-filter-grid profor-filter-grid">
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroProforUf">UF</label>
+                                <select id="filtroProforUf" class="form-select">
+                                    <option value="">Todas</option>
+                                    ${opcoesUf}
+                                </select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroProforSituacao">Sinal de gestão</label>
+                                <select id="filtroProforSituacao" class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="sem-execucao">Sem execução da Ouvidoria</option>
+                                    <option value="baixa-execucao">Execução baixa</option>
+                                    <option value="execucao-integral">Execução integral</option>
+                                    <option value="vencimento-proximo">Vencimento em até 12 meses</option>
+                                </select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="ordenacaoProfor">Ordenar por</label>
+                                <select id="ordenacaoProfor" class="form-select">
+                                    <option value="alfabetica">Ordem alfabética</option>
+                                    <option value="regiao">Regiões</option>
+                                    <option value="execucao-desc">Execução: maior para menor</option>
+                                    <option value="execucao-asc">Execução: menor para maior</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroProforSituacao">Sinal de gestão</label>
-                            <select id="filtroProforSituacao" class="form-select">
-                                <option value="">Todos</option>
-                                <option value="sem-execucao">Sem execução da Ouvidoria</option>
-                                <option value="baixa-execucao">Execução baixa</option>
-                                <option value="execucao-integral">Execução integral</option>
-                                <option value="vencimento-proximo">Vencimento em até 12 meses</option>
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="ordenacaoProfor">Ordenar por</label>
-                            <select id="ordenacaoProfor" class="form-select">
-                                <option value="alfabetica">Ordem alfabética</option>
-                                <option value="regiao">Regiões</option>
-                                <option value="execucao-desc">Execução: maior para menor</option>
-                                <option value="execucao-asc">Execução: menor para maior</option>
-                            </select>
-                        </div>
-                    </div>
+                    </details>
                 </section>
 
                 <section class="budget-insight-grid profor-insight-grid mb-4" id="profor-selected-summary" aria-label="Resumo da seleção PROFOR 2022"></section>
@@ -4273,43 +4278,48 @@ async function carregarLogoParaPDF() {
                     ${renderizarKpiFunpen('Saldo a executar', `<span class="text-money">${formatMoney(resumo.saldo)}</span>`, 'Valor ainda não executado', 'fa-vault', 'kpi-card-warning')}
                 </section>
 
-                <section class="filter-section mb-4" aria-label="Filtros FAF 2021">
-                    <div class="filter-toolbar">
+                <section class="filter-section filter-bar mb-3" aria-label="Filtros FAF 2021">
+                    <div class="filter-bar-main">
                         <div class="filter-title"><i class="fas fa-filter text-secondary" aria-hidden="true"></i><strong>Filtros</strong></div>
-                        <div class="filter-search-actions">
-                            <input type="text" id="filtroFafBusca" class="form-control" placeholder="Buscar por UF ou objeto..." aria-label="Buscar itens FAF 2021">
-                            <button id="btnLimparFiltroFaf" type="button" class="btn btn-outline-secondary btn-icon-text">
-                                <i class="fas fa-undo" aria-hidden="true"></i><span>Limpar</span>
-                            </button>
-                        </div>
+                        <input type="text" id="filtroFafBusca" class="form-control filter-bar-search" placeholder="Buscar por UF ou objeto..." aria-label="Buscar itens FAF 2021">
+                        <button id="btnLimparFiltroFaf" type="button" class="btn btn-outline-secondary btn-icon-text">
+                            <i class="fas fa-undo" aria-hidden="true"></i><span>Limpar</span>
+                        </button>
                     </div>
-                    <div class="budget-filter-grid profor-filter-grid">
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFafUf">UF</label>
-                            <select id="filtroFafUf" class="form-select"><option value="">Todas</option>${optionsUf}</select>
+                    <details class="filter-bar-advanced">
+                        <summary class="filter-bar-advanced-toggle">
+                            <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                            <span>Mais filtros</span>
+                            <small class="text-muted">UF · Sinal de gestão · Ordenação</small>
+                        </summary>
+                        <div class="budget-filter-grid profor-filter-grid">
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFafUf">UF</label>
+                                <select id="filtroFafUf" class="form-select"><option value="">Todas</option>${optionsUf}</select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFafSituacao">Sinal de gestão</label>
+                                <select id="filtroFafSituacao" class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="sem-execucao">Sem execução</option>
+                                    <option value="baixa-execucao">Execução baixa</option>
+                                    <option value="execucao-integral">Execução integral</option>
+                                    <option value="saldo-alto">Saldo a executar alto</option>
+                                    <option value="acima-previsto">Execução acima do previsto</option>
+                                </select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFafOrdenacao">Ordenar por</label>
+                                <select id="filtroFafOrdenacao" class="form-select">
+                                    <option value="alfabetica">Ordem alfabética</option>
+                                    <option value="regiao">Regiões</option>
+                                    <option value="execucao-desc">Execução: maior para menor</option>
+                                    <option value="execucao-asc">Execução: menor para maior</option>
+                                    <option value="valor-desc">Valor previsto: maior para menor</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFafSituacao">Sinal de gestão</label>
-                            <select id="filtroFafSituacao" class="form-select">
-                                <option value="">Todos</option>
-                                <option value="sem-execucao">Sem execução</option>
-                                <option value="baixa-execucao">Execução baixa</option>
-                                <option value="execucao-integral">Execução integral</option>
-                                <option value="saldo-alto">Saldo a executar alto</option>
-                                <option value="acima-previsto">Execução acima do previsto</option>
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFafOrdenacao">Ordenar por</label>
-                            <select id="filtroFafOrdenacao" class="form-select">
-                                <option value="alfabetica">Ordem alfabética</option>
-                                <option value="regiao">Regiões</option>
-                                <option value="execucao-desc">Execução: maior para menor</option>
-                                <option value="execucao-asc">Execução: menor para maior</option>
-                                <option value="valor-desc">Valor previsto: maior para menor</option>
-                            </select>
-                        </div>
-                    </div>
+                    </details>
                 </section>
 
                 <section class="budget-insight-grid profor-insight-grid mb-4" id="faf-selected-summary" aria-label="Resumo da seleção FAF 2021"></section>
@@ -4523,31 +4533,36 @@ async function carregarLogoParaPDF() {
                     ${renderizarKpiFunpen('Maior concentração', escapeHtml(resumo.ufMaiorConcentracao || '-'), resumo.valorMaiorConcentracao ? formatMoney(resumo.valorMaiorConcentracao) : '', 'fa-location-dot', 'kpi-card-info')}
                 </section>
 
-                <section class="filter-section mb-4" aria-label="Filtros Doações 2023">
-                    <div class="filter-toolbar">
+                <section class="filter-section filter-bar mb-3" aria-label="Filtros Doações 2023">
+                    <div class="filter-bar-main">
                         <div class="filter-title"><i class="fas fa-filter text-secondary" aria-hidden="true"></i><strong>Filtros</strong></div>
-                        <div class="filter-search-actions">
-                            <input type="text" id="filtroDoacoesBusca" class="form-control" placeholder="Buscar por UF ou objeto..." aria-label="Buscar doações 2023">
-                            <button id="btnLimparFiltroDoacoes" type="button" class="btn btn-outline-secondary btn-icon-text">
-                                <i class="fas fa-undo" aria-hidden="true"></i><span>Limpar</span>
-                            </button>
-                        </div>
+                        <input type="text" id="filtroDoacoesBusca" class="form-control filter-bar-search" placeholder="Buscar por UF ou objeto..." aria-label="Buscar doações 2023">
+                        <button id="btnLimparFiltroDoacoes" type="button" class="btn btn-outline-secondary btn-icon-text">
+                            <i class="fas fa-undo" aria-hidden="true"></i><span>Limpar</span>
+                        </button>
                     </div>
-                    <div class="budget-filter-grid profor-filter-grid">
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDoacoesUf">UF</label>
-                            <select id="filtroDoacoesUf" class="form-select"><option value="">Todas</option>${optionsUf}</select>
+                    <details class="filter-bar-advanced">
+                        <summary class="filter-bar-advanced-toggle">
+                            <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                            <span>Mais filtros</span>
+                            <small class="text-muted">UF · Ordenação</small>
+                        </summary>
+                        <div class="budget-filter-grid profor-filter-grid">
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroDoacoesUf">UF</label>
+                                <select id="filtroDoacoesUf" class="form-select"><option value="">Todas</option>${optionsUf}</select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroDoacoesOrdenacao">Ordenar por</label>
+                                <select id="filtroDoacoesOrdenacao" class="form-select">
+                                    <option value="alfabetica">Ordem alfabética</option>
+                                    <option value="regiao">Regiões</option>
+                                    <option value="valor-desc">Valor estimado: maior para menor</option>
+                                    <option value="quantidade-desc">Quantidade: maior para menor</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroDoacoesOrdenacao">Ordenar por</label>
-                            <select id="filtroDoacoesOrdenacao" class="form-select">
-                                <option value="alfabetica">Ordem alfabética</option>
-                                <option value="regiao">Regiões</option>
-                                <option value="valor-desc">Valor estimado: maior para menor</option>
-                                <option value="quantidade-desc">Quantidade: maior para menor</option>
-                            </select>
-                        </div>
-                    </div>
+                    </details>
                 </section>
 
                 <section class="budget-insight-grid profor-insight-grid mb-4" id="doacoes-selected-summary" aria-label="Resumo da seleção Doações 2023"></section>
@@ -5964,67 +5979,72 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
-                <section class="filter-section mb-4" aria-label="Filtros da formalização">
-                    <div class="filter-toolbar">
+                <section class="filter-section filter-bar mb-3" aria-label="Filtros da formalização">
+                    <div class="filter-bar-main">
                         <div class="filter-title">
                             <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
                             <strong>Filtros</strong>
                         </div>
-                        <div class="filter-search-actions">
-                            <input type="text" id="filtroFormalizacaoBusca" class="form-control" placeholder="Buscar por UF, proposta, contato, órgão ou status..." aria-label="Buscar formalização">
-                            <button id="btnLimparFiltroFormalizacao" type="button" class="btn btn-outline-secondary btn-icon-text">
-                                <i class="fas fa-undo" aria-hidden="true"></i>
-                                <span>Limpar</span>
-                            </button>
-                        </div>
+                        <input type="text" id="filtroFormalizacaoBusca" class="form-control filter-bar-search" placeholder="Buscar por UF, proposta, contato, órgão ou status..." aria-label="Buscar formalização">
+                        <button id="btnLimparFiltroFormalizacao" type="button" class="btn btn-outline-secondary btn-icon-text">
+                            <i class="fas fa-undo" aria-hidden="true"></i>
+                            <span>Limpar</span>
+                        </button>
                     </div>
-                    <div class="budget-filter-grid formalizacao-filter-grid">
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFormalizacaoUf">UF</label>
-                            <select id="filtroFormalizacaoUf" class="form-select">
-                                <option value="">Todas</option>
-                                ${opcoesUf}
-                            </select>
+                    <details class="filter-bar-advanced">
+                        <summary class="filter-bar-advanced-toggle">
+                            <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                            <span>Mais filtros</span>
+                            <small class="text-muted">UF · Região · Status · Ouvidoria · Pendência</small>
+                        </summary>
+                        <div class="budget-filter-grid formalizacao-filter-grid">
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFormalizacaoUf">UF</label>
+                                <select id="filtroFormalizacaoUf" class="form-select">
+                                    <option value="">Todas</option>
+                                    ${opcoesUf}
+                                </select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFormalizacaoRegiao">Região</label>
+                                <select id="filtroFormalizacaoRegiao" class="form-select">
+                                    <option value="">Todos</option>
+                                    ${opcoesRegiao}
+                                </select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFormalizacaoStatus">Status geral</label>
+                                <select id="filtroFormalizacaoStatus" class="form-select">
+                                    <option value="">Todos</option>
+                                    ${opcoesStatus}
+                                </select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFormalizacaoOuvidoria">Ouvidoria</label>
+                                <select id="filtroFormalizacaoOuvidoria" class="form-select">
+                                    <option value="">Todas</option>
+                                    <option value="institucionalizada">Institucionalizada</option>
+                                    <option value="sem-institucionalizacao">Sem institucionalização</option>
+                                    <option value="nao-se-aplica">Não se aplica</option>
+                                </select>
+                            </div>
+                            <div class="visible-filter-group">
+                                <label class="visible-filter-title" for="filtroFormalizacaoPendencia">Pendência</label>
+                                <select id="filtroFormalizacaoPendencia" class="form-select">
+                                    <option value="">Todas</option>
+                                    <option value="condicao-suspensiva">Com condição suspensiva</option>
+                                    <option value="com-pendencia">Com pendência</option>
+                                    <option value="alerta-critico">Com alerta crítico</option>
+                                    <option value="condicao">Condição suspensiva pendente</option>
+                                    <option value="financeiro">Divergência financeira</option>
+                                    <option value="falabr">Fala.BR pendente</option>
+                                    <option value="documentos">Documentação incompleta</option>
+                                    <option value="plano">Plano divergente</option>
+                                    <option value="aptas">Aptas à celebração</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFormalizacaoRegiao">Região</label>
-                            <select id="filtroFormalizacaoRegiao" class="form-select">
-                                <option value="">Todos</option>
-                                ${opcoesRegiao}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFormalizacaoStatus">Status geral</label>
-                            <select id="filtroFormalizacaoStatus" class="form-select">
-                                <option value="">Todos</option>
-                                ${opcoesStatus}
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFormalizacaoOuvidoria">Ouvidoria</label>
-                            <select id="filtroFormalizacaoOuvidoria" class="form-select">
-                                <option value="">Todas</option>
-                                <option value="institucionalizada">Institucionalizada</option>
-                                <option value="sem-institucionalizacao">Sem institucionalização</option>
-                                <option value="nao-se-aplica">Não se aplica</option>
-                            </select>
-                        </div>
-                        <div class="visible-filter-group">
-                            <label class="visible-filter-title" for="filtroFormalizacaoPendencia">Pendência</label>
-                            <select id="filtroFormalizacaoPendencia" class="form-select">
-                                <option value="">Todas</option>
-                                <option value="condicao-suspensiva">Com condição suspensiva</option>
-                                <option value="com-pendencia">Com pendência</option>
-                                <option value="alerta-critico">Com alerta crítico</option>
-                                <option value="condicao">Condição suspensiva pendente</option>
-                                <option value="financeiro">Divergência financeira</option>
-                                <option value="falabr">Fala.BR pendente</option>
-                                <option value="documentos">Documentação incompleta</option>
-                                <option value="plano">Plano divergente</option>
-                                <option value="aptas">Aptas à celebração</option>
-                            </select>
-                        </div>
-                    </div>
+                    </details>
                 </section>
 
                 <section class="formalizacao-shortcut-panel mb-4" aria-label="Acesso rápido por UF">
@@ -10422,51 +10442,46 @@ async function carregarLogoParaPDF() {
         function renderizarAcoesOrcamento() {
             const modoEstatico = orcamentoEmModoPublicacaoEstatico();
             const totalAlteracoes = obterQuantidadeAlteracoesOrcamento();
+            const statusInline = modoEstatico
+                ? '<small class="action-buttons-status text-muted">Modo publicação: somente leitura.</small>'
+                : totalAlteracoes
+                    ? `<small class="action-buttons-status text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas linhas.</small>`
+                    : '';
 
             return `
-                <section class="diagnostico-action-bar diagnostico-block budget-action-bar-compact mb-4" aria-label="Ações do orçamento 2026">
-                    <div>
-                        <p class="section-eyebrow mb-1">Relatórios</p>
-                        <h2>Orçamento 2026</h2>
-                        ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
-                        ${modoEstatico
-                            ? '<small class="text-muted">Modo publicação: somente leitura.</small>'
-                            : totalAlteracoes
-                                ? `<small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s) nas linhas.</small>`
-                                : '<small class="text-muted">Use Ações para editar linhas.</small>'}
-                    </div>
-                    <div class="diagnostico-action-buttons">
-                        ${renderActionButton({
-                            id: 'btnExportarOrcamentoExcel',
-                            type: 'exportExcel',
-                            label: 'Exportar Excel',
-                            variant: 'export',
-                            backend: true,
-                            disabled: modoEstatico
-                        })}
-                        ${renderActionButton({
-                            id: 'btnHistoricoOrcamento',
-                            type: 'history',
-                            label: 'Histórico',
-                            variant: 'admin',
-                            backend: true,
-                            disabled: modoEstatico
-                        })}
-                        ${renderActionButton({
-                            id: 'btn-export-budget-pdf',
-                            type: 'exportPdf',
-                            label: 'PDF',
-                            variant: 'export',
-                            onClick: 'exportarOrcamentoPDF()'
-                        })}
-                        ${renderActionButton({
-                            id: 'btnExportarResumoOrcamentoTexto',
-                            type: 'share',
-                            label: 'Exportar resumo',
-                            variant: 'outline-primary'
-                        })}
-                    </div>
-                </section>
+                ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
+                <div class="action-buttons-floating" aria-label="Ações do orçamento 2026">
+                    ${statusInline}
+                    ${renderActionButton({
+                        id: 'btnExportarOrcamentoExcel',
+                        type: 'exportExcel',
+                        label: 'Exportar Excel',
+                        variant: 'export',
+                        backend: true,
+                        disabled: modoEstatico
+                    })}
+                    ${renderActionButton({
+                        id: 'btnHistoricoOrcamento',
+                        type: 'history',
+                        label: 'Histórico',
+                        variant: 'admin',
+                        backend: true,
+                        disabled: modoEstatico
+                    })}
+                    ${renderActionButton({
+                        id: 'btn-export-budget-pdf',
+                        type: 'exportPdf',
+                        label: 'PDF',
+                        variant: 'export',
+                        onClick: 'exportarOrcamentoPDF()'
+                    })}
+                    ${renderActionButton({
+                        id: 'btnExportarResumoOrcamentoTexto',
+                        type: 'share',
+                        label: 'Exportar resumo',
+                        variant: 'outline-primary'
+                    })}
+                </div>
             `;
         }
 
