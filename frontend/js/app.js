@@ -8812,58 +8812,6 @@ async function carregarLogoParaPDF() {
                     Considera processos autuados com valor de pesquisa de preço informado, excluídos itens cancelados ou suspensos.
                 </div>
 
-                <section class="budget-equipment-section mb-4" aria-label="Indicadores de aparelhamento">
-                    <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Seção 2</p>
-                            <h2>Aparelhamento</h2>
-                        </div>
-                    </div>
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
-                        <div class="col">
-                            ${renderKpiCard({
-                                titulo: 'Previsto em aparelhamento',
-                                valor: `<span class="text-money text-success">${formatMoney(resumoAparelhamento.previstoAparelhamento || 0)}</span>`,
-                                icon: 'fa-boxes-stacked',
-                                variant: 'success'
-                            })}
-                        </div>
-                        <div class="col">
-                            ${renderKpiCard({
-                                titulo: 'Em execução em aparelhamento',
-                                valor: `<span class="text-money text-warning">${formatMoney(resumoAparelhamento.emExecucaoAparelhamento || 0)}</span>`,
-                                icon: 'fa-hourglass-half',
-                                variant: 'warning'
-                            })}
-                        </div>
-                        <div class="col">
-                            ${renderKpiCard({
-                                titulo: 'Saldo de aparelhamento',
-                                valor: `<span class="text-money">${formatMoney(resumoAparelhamento.saldoAparelhamento || 0)}</span>`,
-                                descricao: 'Leitura gerencial do bloco classificado',
-                                icon: 'fa-vault'
-                            })}
-                        </div>
-                        <div class="col">
-                            ${renderKpiCard({
-                                titulo: 'Itens de aparelhamento',
-                                valor: `<span class="text-info">${resumoAparelhamento.quantidadeItensAparelhamento || 0}</span>`,
-                                icon: 'fa-list-check',
-                                variant: 'info'
-                            })}
-                        </div>
-                        <div class="col">
-                            ${renderKpiCard({
-                                titulo: 'Pendentes de pesquisa',
-                                valor: `<span class="text-warning">${resumoAparelhamento.quantidadePendentesPesquisaPreco || 0}</span>`,
-                                icon: 'fa-tags',
-                                variant: 'warning'
-                            })}
-                        </div>
-                    </div>
-                    ${notaSaldoAparelhamento}
-                </section>
-
                 <section class="filter-section budget-filter-bar mb-3" aria-label="Filtros da tabela de orçamento">
                     <div class="budget-filter-bar-title">
                         <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
