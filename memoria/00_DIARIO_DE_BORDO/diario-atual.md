@@ -3408,3 +3408,35 @@ Logs operacionais gravados:
   - moderado, concentrado na persistência backend por processo SEI e na reclassificação do resumo exportado.
 - Rollback:
   - reverter esta etapa restaura salvamento individual por item e a classificação anterior do resumo.
+
+---
+
+## 19/05/2026 - Correções estéticas de layout, contraste, scroll e cálculo lógico
+
+- Branch atual: `main`.
+- Problemas identificados:
+  1. O percentual em execução de Orçamento 2026 exibia `0.8%` em vez do valor correto (aproximadamente `76.1%`) devido a um erro matemático de escala na montagem do KPI no front-end.
+  2. Transição de visão no menu de estados (UFs) e no painel de Parâmetros Mínimos não resetava o scroll, ocultando o cabeçalho se o usuário estivesse mais abaixo na página.
+  3. Sobreposição de z-index de `.app-header` fazia o menu fixo desaparecer ou sobrepor elementos indevidamente ao rolar.
+  4. Fundo claro/branco em vários elementos que quebravam o tema escuro institucional: `.diagnostico-trail-group` (fundo claro), `.diagnostico-trail-marker` (fundo/borda claro), `.diagnostico-missing-item` (fundo branco), `.diagnostico-operational-item` (fundo branco), `.sidebar-uf-option` (fundo branco) e o filtro select `.contatos-map-picker select` (fundo branco com texto claro, impedindo leitura).
+- Arquivos alterados:
+  - `frontend/js/app.js`
+  - `frontend/css/app.css`
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+- Correções aplicadas:
+  - **Cálculo de Orçamento**: Ajustado na linha 8751 de `app.js` para `(valorEmExecucao / totalOrcamento) * 100` e limitado a uma casa decimal com `.toFixed(1)`, resultando no correto `76,1%`.
+  - **Reset de Scroll**: Adicionado `window.scrollTo({ top: 0, behavior: 'instant' })` na linha 11050 de `app.js` ao alternar estados no painel de Parâmetros Mínimos.
+  - **Z-Index**: Adicionado `z-index: 1100 !important;` ao `.app-header` na linha 72 de `app.css`.
+  - **Ajustes de Contraste e Cores no Tema Escuro**:
+    - Substituídos os fundos estáticos `#ffffff`, `#fff` e `#f8fafc` por `var(--color-surface)` nos elementos `.diagnostico-trail-group`, `.diagnostico-missing-item`, `.diagnostico-operational-item` e `.sidebar-uf-option`.
+    - Alterada a linha de trilha `.diagnostico-trail-row::after` de `#dbe4ef` para `var(--color-border)`.
+    - Substituídos os fundos, bordas e shadows do `.diagnostico-trail-marker` por variáveis do tema escuro (`var(--color-surface-elevated)`, `var(--color-surface)`, `var(--color-border)`, `var(--color-text)`).
+    - Ajustado o select `.contatos-map-picker select` em `app.css` na linha 5352 para usar `background: var(--color-surface)` com o texto claro já herdado, sanando totalmente o erro de contraste.
+- Validações realizadas:
+  - Execução bem-sucedida de `node scripts/validar-syntax.js` (25/25 arquivos válidos).
+  - Execução bem-sucedida de `node --test tests/services/validacoes-services.test.js`.
+  - Execução completa e aprovação de todos os 11 testes ponta a ponta do Playwright (`node node_modules/playwright/cli.js test`).
+  - Verificação visual por meio de screenshots confirmando 100% de consistência e conformidade com o tema escuro.
+- Risco de regressão: Nulo.
+- Rollback: `git checkout frontend/js/app.js frontend/css/app.css`.
+

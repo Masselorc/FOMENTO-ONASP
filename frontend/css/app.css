@@ -69,6 +69,7 @@
 .app-header {
     background: rgba(22, 31, 44, 0.96) !important;
     box-shadow: 0 1px 0 var(--color-border), 0 4px 16px rgba(0, 0, 0, 0.32) !important;
+    z-index: 1100 !important;
 }
 
 .app-header-inner {
@@ -1050,7 +1051,7 @@ input:focus-visible,
 
 .sidebar-uf-option {
     align-items: center;
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 6px;
     color: var(--color-primary-strong);
@@ -5349,7 +5350,7 @@ body.dark-mode .budget-tracking-management strong,
 }
 
 .contatos-map-picker select {
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 10px;
     color: var(--color-text);
@@ -6456,7 +6457,7 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
 }
 
 .diagnostico-trail-group {
-    background: #f8fafc;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 8px;
     display: grid;
@@ -6487,7 +6488,7 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
 }
 
 .diagnostico-trail-row::after {
-    background: #dbe4ef;
+    background: var(--color-border);
     bottom: 0;
     content: "";
     left: 1.05rem;
@@ -6507,11 +6508,11 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
 
 .diagnostico-trail-marker {
     align-items: center;
-    background: #e5e7eb;
-    border: 3px solid #ffffff;
+    background: var(--color-surface-elevated);
+    border: 3px solid var(--color-surface);
     border-radius: 999px;
-    box-shadow: 0 0 0 2px #cbd5e1;
-    color: #4b5563;
+    box-shadow: 0 0 0 2px var(--color-border);
+    color: var(--color-text);
     display: inline-flex;
     height: 2.1rem;
     justify-content: center;
@@ -6576,7 +6577,7 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
 
 .diagnostico-missing-item {
     align-items: center;
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-left: 4px solid #6b7280;
     border-radius: 8px;
@@ -6591,7 +6592,7 @@ body.modo-publicacao-estatica [data-requer-backend="true"] {
 }
 
 .diagnostico-operational-item {
-    background: #fff;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-left-width: 5px;
     border-radius: 8px;

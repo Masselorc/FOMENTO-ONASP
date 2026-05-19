@@ -8748,7 +8748,7 @@ async function carregarLogoParaPDF() {
             const inicioResumoAparelhamento = DEBUG_PERF_ONASP ? performance.now() : 0;
             const resumoAparelhamento = budgetData.resumoAparelhamento || calcularResumoAparelhamentoFrontend(itensOrcamento);
             const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
-            const percentualEmExecucao = totalOrcamento > 0 ? valorEmExecucao / totalOrcamento : 0;
+            const percentualEmExecucao = totalOrcamento > 0 ? (valorEmExecucao / totalOrcamento) * 100 : 0;
             const saldoAparelhamento = Number(resumoAparelhamento.saldoAparelhamento || 0);
             const notaSaldoAparelhamento = saldoAparelhamento > 0
                 ? `
@@ -11050,6 +11050,7 @@ async function carregarLogoParaPDF() {
                     diagnosticoUfAtual = uf;
                     diagnosticoOuvidoriaAtual = null;
                     renderDiagnosticoOuvidoriasView();
+                    window.scrollTo({ top: 0, behavior: 'instant' });
                 });
             });
 
