@@ -3119,3 +3119,28 @@ Logs operacionais gravados:
   - baixo a moderado, concentrado na classificação textual e no conteúdo copiado pela modal.
 - Rollback:
   - reverter esta etapa restaura o formato anterior do texto exportado, sem impacto em banco, backend, dados publicados, saldo, vínculo, alocação ou trilha.
+
+---
+
+## 19/05/2026 - Orçamento 2026: ajuste fino de formatação do resumo exportado
+
+- Objetivo: melhorar a legibilidade no WhatsApp sem alterar classificação, dados ou comportamento de mensagem vazia.
+- Branch: `main`.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajustes de formatação realizados:
+  - rótulo `Cobrança sugerida:` alterado para `Providência:`;
+  - título principal com negrito WhatsApp: `📌 *Resumo Orçamento ONASP 2026*`;
+  - contadores com negrito WhatsApp;
+  - nome de cada item com negrito WhatsApp (`*1. Nome do item*`);
+  - `Atualizado em` mantido em `DD/MM/AAAA HH:MM`, sem vírgula entre data e hora.
+- Validações realizadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `git diff --check` -> OK.
+- Pendências:
+  - validação manual restrita no navegador.
+- Risco de regressão:
+  - baixo, concentrado em formatação de texto exportado.
+- Rollback:
+  - reverter esta etapa restaura apenas a formatação anterior da mensagem exportada.

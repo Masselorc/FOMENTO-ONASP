@@ -10595,7 +10595,7 @@ async function carregarLogoParaPDF() {
             const pendenciaAtual = String(item.pendenciaAtual || item.pendencia_atual || '').trim();
             const observacao = String(item.observacao || '').trim();
             const linhas = [
-                `${indice}. ${descricao}`,
+                `*${indice}. ${descricao}*`,
                 `SEI: ${processoSei || 'não informado'}`,
                 `Andamento: ${etapaAtual.rotulo || 'não informado'}`
             ];
@@ -10603,7 +10603,7 @@ async function carregarLogoParaPDF() {
             if (setorAtual) linhas.push(`Local atual: ${setorAtual}`);
             if (responsavelAtual) linhas.push(`Responsável: ${responsavelAtual}`);
             if (diasNoSetor !== null) linhas.push(`No setor atual: ${diasNoSetor.toLocaleString('pt-BR')} dia${diasNoSetor === 1 ? '' : 's'}`);
-            linhas.push(`Cobrança sugerida: ${montarCobrancaSugeridaResumoOrcamento(item, etapaAtual)}`);
+            linhas.push(`Providência: ${montarCobrancaSugeridaResumoOrcamento(item, etapaAtual)}`);
             if (pendenciaAtual) linhas.push(`Pendência: ${pendenciaAtual}`);
             if (observacao) linhas.push(`Obs.: ${observacao}`);
 
@@ -10660,15 +10660,16 @@ async function carregarLogoParaPDF() {
                 month: '2-digit',
                 year: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
-            });
+                minute: '2-digit',
+                hour12: false
+            }).replace(',', '');
             const blocos = [
-                '📌 Resumo Orçamento ONASP 2026',
+                '📌 *Resumo Orçamento ONASP 2026*',
                 `Atualizado em: ${dataHora}`,
                 '',
-                `🔴 Cobrança imediata: ${grupos.cobranca.length}`,
-                `🟡 Em acompanhamento: ${grupos.acompanhamento.length}`,
-                `🟢 Avançados/concluídos: ${grupos.avancado.length}`
+                `🔴 *Cobrança imediata:* ${grupos.cobranca.length}`,
+                `🟡 *Em acompanhamento:* ${grupos.acompanhamento.length}`,
+                `🟢 *Avançados/concluídos:* ${grupos.avancado.length}`
             ];
 
             const gruposTexto = [
