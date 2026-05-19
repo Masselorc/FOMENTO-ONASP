@@ -1,5 +1,29 @@
 # Diário de bordo
 
+## 19/05/2026 - Compactação operacional (Etapa 3.2 de densidade)
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo.
+- Objetivo: reduzir rolagem vertical e aumentar densidade útil das telas, mantendo Tema Escuro Institucional Minimalista. Filtros, cards operacionais e painéis com padding/gap/min-height enxutos; hero, KPIs principais e modais preservados.
+- Arquivo alterado: `frontend/css/app.css` (apêndice "Etapa 3.2 - Densidade compacta operacional" no fim do arquivo).
+- Nenhum JS, HTML, JSON, banco, regra de negócio ou listener tocado. Nenhum arquivo novo criado.
+- Componentes compactados:
+  - Filtros globais: `.filter-section`, `.filter-toolbar`, `.filter-search-actions`, `.visible-filter-grid`, `.budget-filter-grid`, `.app-filter-compact`, `.visible-filter-group`, `.visible-filter-title`.
+  - Inputs/selects dentro de filtros: `min-height: 36px`, padding vertical `0.32rem`.
+  - Cards operacionais: `.dynamic-card`, `.budget-insight-card`, `.profor-insight-card` (`min-height` 88→72px).
+  - Cards de instrumento/formalização/contato/sistema: `.instrument-summary-card`, `.formalizacao-card`, `.contact-uf-card`, `.system-status-alert-item`.
+  - Painéis específicos: `.contact-uf-filter`, `.contacts-toolbar.panel-section`, `.formalizacao-quick-filter-panel`, `.diagnostico-filter-section`.
+  - Breakpoint mobile (<768px): força 1 coluna em filtros e reduz padding mais.
+- Validações executadas:
+  - `node --check frontend/js/app.js` → OK
+  - `node --check frontend/js/core/ui-components.js` → OK
+  - `npm run validar:syntax` → OK: 25 arquivos validados
+  - `npm run validar:json` → OK: todos JSONs publicados válidos
+  - `git diff --check` → OK (apenas aviso LF/CRLF)
+- Smoke test manual no navegador: a confirmar pelo usuário (Orçamento 2026, Home, Formalização PROFOR, Parâmetros Mínimos, PROFOR 2022, FAF 2021, Doações 2023, Contatos, Status do Sistema).
+- Riscos remanescentes: baixo — alterações apenas em dimensões (não em layout estrutural ou paleta). Possíveis ajustes finos em larguras 1024/768/390px caso alguma quebra apareça no smoke test visual.
+- Rollback: remover o bloco "Etapa 3.2" (a partir do comentário até o fim do arquivo) ou reverter o commit. Layout volta à Etapa 3.1.
+
 ## 19/05/2026 - Corrigir replicação de acompanhamento gerencial por processo SEI (Orçamento 2026)
 
 - Branch atual: `main`.

@@ -8341,3 +8341,146 @@ body {
     }
 }
 
+/* ============================================================ */
+/* Etapa 3.2 - Densidade compacta operacional                   */
+/* Reduz padding, gap e min-height de filtros e cards           */
+/* operacionais. NAO altera hero, KPIs principais, modais.      */
+/* ============================================================ */
+
+/* 1. Painel de filtros (wrapper) */
+.filter-section {
+    padding: 0.75rem 0.9rem !important;
+    margin-bottom: 0.85rem !important;
+}
+
+/* 2. Toolbar (titulo + busca + limpar) */
+.filter-section .filter-toolbar {
+    gap: 0.55rem;
+    margin-bottom: 0.55rem;
+}
+
+.filter-section .filter-title {
+    font-size: 0.85rem;
+}
+
+.filter-section .filter-search-actions {
+    gap: 0.5rem;
+}
+
+/* 3. Grids de filtros */
+.filter-section .visible-filter-grid,
+.filter-section .budget-filter-grid,
+.filter-section .app-filter-compact {
+    gap: 0.6rem;
+}
+
+.formalizacao-quick-filter-grid {
+    gap: 0.45rem;
+}
+
+.diagnostico-filter-section {
+    gap: 0.55rem !important;
+}
+
+/* 4. Grupo individual de filtro */
+.filter-section .visible-filter-group {
+    padding: 0.6rem 0.75rem;
+}
+
+.filter-section .visible-filter-title {
+    font-size: 0.7rem;
+    margin-bottom: 0.3rem;
+}
+
+/* 5. Inputs e selects dentro de filtros */
+.filter-section .form-control,
+.filter-section .form-select,
+.filter-section .budget-filter-control {
+    min-height: 36px;
+    padding-top: 0.32rem;
+    padding-bottom: 0.32rem;
+}
+
+/* 6. Painel de filtros de Contatos */
+.contact-uf-filter {
+    padding: 0.75rem 0.9rem;
+}
+
+.contact-uf-filter .contact-uf-filter-header {
+    margin-bottom: 0.55rem;
+}
+
+.contacts-toolbar.panel-section {
+    padding: 0.75rem 0.9rem;
+}
+
+.contacts-toolbar .form-control {
+    min-height: 36px;
+    padding-top: 0.32rem;
+    padding-bottom: 0.32rem;
+}
+
+/* 7. Cards operacionais (insight/dinamicos/profor) */
+.dynamic-card,
+.budget-insight-card,
+.profor-insight-card {
+    min-height: 72px;
+    padding: 0.75rem 0.9rem;
+    gap: 0.4rem;
+}
+
+/* 8. Cards de instrumento e formalizacao */
+.instrument-summary-card {
+    padding: 0.8rem 0.95rem;
+    gap: 0.4rem;
+}
+
+.formalizacao-card {
+    padding: 0.8rem 0.95rem;
+    gap: 0.5rem;
+}
+
+.contact-uf-card {
+    padding: 0.75rem 0.9rem;
+}
+
+/* 9. Status do sistema - alert items */
+.system-status-alert-item {
+    padding: 0.6rem 0.8rem;
+    gap: 0.5rem;
+}
+
+/* 10. Painel de filtros rapidos da formalizacao */
+.formalizacao-quick-filter-panel {
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.85rem;
+}
+
+.formalizacao-quick-filter-panel .section-header {
+    margin-bottom: 0.45rem;
+}
+
+/* 11. Mobile: forcar 1 coluna em filtros, manter padding minimo */
+@media (max-width: 767.98px) {
+    .filter-section .visible-filter-grid,
+    .filter-section .budget-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-section {
+        padding: 0.6rem 0.75rem !important;
+    }
+
+    .filter-section .visible-filter-group {
+        padding: 0.5rem 0.65rem;
+    }
+
+    .dynamic-card,
+    .budget-insight-card,
+    .profor-insight-card,
+    .instrument-summary-card,
+    .formalizacao-card {
+        padding: 0.65rem 0.8rem;
+    }
+}
+
