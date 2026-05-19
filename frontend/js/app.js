@@ -10839,29 +10839,17 @@ async function carregarLogoParaPDF() {
 
             if (campo === 'data_entrada_setor') {
                 const valorTexto = normalizarDataInputOrcamento(valor);
-                const valorCalendario = obterPartesDataOrcamento(valor) ? normalizarDataBancoOrcamento(valor) : '';
                 return `
-                    <div class="input-group input-group-sm">
-                        <input
-                            type="text"
-                            class="form-control form-control-sm budget-edit-control"
-                            value="${escapeHtml(valorTexto)}"
-                            data-orcamento-id="${escapeHtml(item.id)}"
-                            data-orcamento-campo="${campo}"
-                            data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
-                            inputmode="numeric"
-                            placeholder="DD/MM/AAAA"
-                        >
-                        <input
-                            type="date"
-                            class="form-control form-control-sm budget-edit-control"
-                            value="${escapeHtml(valorCalendario)}"
-                            data-orcamento-id="${escapeHtml(item.id)}"
-                            data-orcamento-campo="${campo}"
-                            data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
-                            aria-label="Selecionar data de entrada no setor atual"
-                        >
-                    </div>
+                    <input
+                        type="text"
+                        class="form-control form-control-sm budget-edit-control"
+                        value="${escapeHtml(valorTexto)}"
+                        data-orcamento-id="${escapeHtml(item.id)}"
+                        data-orcamento-campo="${campo}"
+                        data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
+                        inputmode="numeric"
+                        placeholder="DD/MM/AAAA"
+                    >
                 `;
             }
 
