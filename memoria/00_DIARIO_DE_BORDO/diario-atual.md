@@ -3206,3 +3206,38 @@ Logs operacionais gravados:
   - baixo a moderado, concentrado no parsing de data do acompanhamento e no espaçamento do texto exportado.
 - Rollback:
   - reverter esta etapa restaura o campo de data anterior e a montagem anterior de quebras de linha no resumo.
+
+---
+
+## 19/05/2026 - Orçamento 2026: ajuste de data, providência e acompanhamento na trilha
+
+- Problemas observados:
+  - campo "Data de entrada no setor atual" permitia digitação, mas não seleção por calendário;
+  - resumo exportado gerava providência automática baseada apenas na etapa, mesmo quando havia pendência cadastrada;
+  - painel expandido da trilha não exibia o acompanhamento gerencial completo abaixo da timeline;
+  - havia relato anterior de alterações inesperadas em JSONs publicados.
+- Causa diagnosticada:
+  - `data_entrada_setor` havia sido simplificado para um único `input text`;
+  - a linha `Providência:` era sempre montada por `montarCobrancaSugeridaResumoOrcamento()` usando a etapa atual;
+  - `renderizarRastreioOrcamento()` renderizava apenas cabeçalho e timeline;
+  - no início desta etapa, `git status --short` não indicou JSONs publicados modificados.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correções aplicadas:
+  - campo `data_entrada_setor` em edição passou a renderizar input texto `DD/MM/AAAA` e input auxiliar `type="date"` para calendário, ambos usando o mesmo fluxo de alteração e normalização ISO quando válido;
+  - resumo exportado passou a usar `pendenciaAtual` como providência principal quando preenchida;
+  - sem pendência cadastrada, a linha `Providência:` só aparece em cobrança imediata quando houver setor ou responsável, com texto genérico para atualizar ou impulsionar o processo;
+  - itens em acompanhamento ou avançados/concluídos sem pendência não recebem providência automática;
+  - painel expandido da trilha passou a exibir bloco de leitura "Acompanhamento gerencial" com setor, responsável, dias no setor, pendência e observação, usando valores pendentes quando existirem.
+- Tratamento dos JSONs publicados:
+  - `git status --short` inicial estava limpo; nenhum `frontend/data/publicados/*.json` foi alterado, restaurado ou incluído.
+- Validações realizadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `git diff --check` -> OK.
+- Pendências:
+  - validação manual restrita no navegador.
+- Risco de regressão:
+  - baixo a moderado, concentrado na renderização do campo de data e na presença/ausência da linha `Providência:` no resumo.
+- Rollback:
+  - reverter esta etapa restaura o campo de data anterior, a providência automática por etapa e a trilha sem bloco de acompanhamento gerencial.

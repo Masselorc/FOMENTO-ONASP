@@ -7030,6 +7030,27 @@ async function carregarLogoParaPDF() {
             return meta.join('');
         }
 
+        function renderizarAcompanhamentoGerencialRastreioOrcamento(item) {
+            const setorAtual = String(obterValorPendenteOrcamento(item, 'setor_atual') || '').trim();
+            const responsavelAtual = String(obterValorPendenteOrcamento(item, 'responsavel_atual') || '').trim();
+            const dataEntradaSetor = obterValorPendenteOrcamento(item, 'data_entrada_setor');
+            const pendenciaAtual = String(obterValorPendenteOrcamento(item, 'pendencia_atual') || '').trim();
+            const observacao = String(obterValorPendenteOrcamento(item, 'observacao') || '').trim();
+
+            return `
+                <div class="budget-tracking-management mt-3">
+                    <div class="budget-tracking-eyebrow">Acompanhamento gerencial</div>
+                    <div class="row g-2 small">
+                        <div class="col-md-6"><span class="text-muted">Setor atual:</span> <strong>${escapeHtml(setorAtual || 'não informado')}</strong></div>
+                        <div class="col-md-6"><span class="text-muted">Responsável atual:</span> <strong>${escapeHtml(responsavelAtual || 'não informado')}</strong></div>
+                        <div class="col-md-6"><span class="text-muted">No setor atual:</span> <strong>${escapeHtml(formatarDiasNoSetorAtualOrcamento(dataEntradaSetor))}</strong></div>
+                        <div class="col-md-6"><span class="text-muted">Pendência atual:</span> <strong>${escapeHtml(pendenciaAtual || 'não informada')}</strong></div>
+                        <div class="col-12"><span class="text-muted">Observação livre:</span> <strong>${escapeHtml(observacao || 'sem observação registrada')}</strong></div>
+                    </div>
+                </div>
+            `;
+        }
+
         // Renderiza uma linha extra abaixo do item da tabela. Essa linha só entra
         // no DOM quando o item está expandido, permitindo múltiplas trilhas.
         function renderizarRastreioOrcamento(item, colspan = 11) {
@@ -7066,6 +7087,7 @@ async function carregarLogoParaPDF() {
                                     </li>
                                 `).join('')}
                             </ol>
+                            ${renderizarAcompanhamentoGerencialRastreioOrcamento(item)}
                         </div>
                     </td>
                 </tr>
@@ -10550,15 +10572,35 @@ async function carregarLogoParaPDF() {
             return providencias[chaveEtapa] || 'verificar o andamento processual';
         }
 
-        function montarCobrancaSugeridaResumoOrcamento(item, etapaAtual) {
+        function normalizarProvidenciaLivreOrcamento(texto) {
+            const valor = String(texto || '').trim().replace(/[.!?]+$/g, '');
+            if (!valor) return '';
+            return valor.charAt(0).toLocaleLowerCase('pt-BR') + valor.slice(1);
+        }
+
+        function montarAcionamentoResumoOrcamento(item, providencia) {
             const setorAtual = String(item.setorAtual || item.setor_atual || '').trim();
             const responsavelAtual = String(item.responsavelAtual || item.responsavel_atual || '').trim();
-            const providencia = obterProvidenciaResumoOrcamento(etapaAtual?.chave);
+            const providenciaNormalizada = normalizarProvidenciaLivreOrcamento(providencia);
+            if (!providenciaNormalizada) return '';
 
-            if (responsavelAtual && setorAtual) return `acionar ${responsavelAtual} / ${setorAtual} para ${providencia}.`;
-            if (responsavelAtual) return `acionar ${responsavelAtual} para ${providencia}.`;
-            if (setorAtual) return `acionar ${setorAtual} para ${providencia}.`;
-            return `verificar providência pendente para ${providencia}.`;
+            if (responsavelAtual && setorAtual) return `acionar ${responsavelAtual} / ${setorAtual} para ${providenciaNormalizada}.`;
+            if (responsavelAtual) return `acionar ${responsavelAtual} para ${providenciaNormalizada}.`;
+            if (setorAtual) return `acionar ${setorAtual} para ${providenciaNormalizada}.`;
+            return `verificar necessidade de ${providenciaNormalizada}.`;
+        }
+
+        function montarProvidenciaResumoOrcamento(registro, pendenciaAtual) {
+            if (pendenciaAtual) {
+                return montarAcionamentoResumoOrcamento(registro.item, pendenciaAtual);
+            }
+            if (registro.grupo === 'cobranca') {
+                const setorAtual = String(registro.item.setorAtual || registro.item.setor_atual || '').trim();
+                const responsavelAtual = String(registro.item.responsavelAtual || registro.item.responsavel_atual || '').trim();
+                if (!setorAtual && !responsavelAtual) return '';
+                return montarAcionamentoResumoOrcamento(registro.item, 'atualizar ou impulsionar o processo');
+            }
+            return '';
         }
 
         function classificarItemResumoOrcamento(item, etapaAtual) {
@@ -10616,6 +10658,7 @@ async function carregarLogoParaPDF() {
             const diasNoSetor = calcularDiasNoSetorAtualOrcamento(dataEntradaSetor);
             const pendenciaAtual = String(item.pendenciaAtual || item.pendencia_atual || '').trim();
             const observacao = String(item.observacao || '').trim();
+            const providencia = montarProvidenciaResumoOrcamento(registro, pendenciaAtual);
             const linhas = [
                 `*${indice}. ${descricao}*`,
                 `SEI: ${processoSei || 'não informado'}`,
@@ -10625,7 +10668,7 @@ async function carregarLogoParaPDF() {
             if (setorAtual) linhas.push(`Local atual: ${setorAtual}`);
             if (responsavelAtual) linhas.push(`Responsável: ${responsavelAtual}`);
             if (diasNoSetor !== null) linhas.push(`No setor atual: ${diasNoSetor.toLocaleString('pt-BR')} dia${diasNoSetor === 1 ? '' : 's'}`);
-            linhas.push(`Providência: ${montarCobrancaSugeridaResumoOrcamento(item, etapaAtual)}`);
+            if (providencia) linhas.push(`Providência: ${providencia}`);
             if (pendenciaAtual) linhas.push(`Pendência: ${pendenciaAtual}`);
             if (observacao) linhas.push(`Obs.: ${observacao}`);
 
@@ -10862,19 +10905,46 @@ async function carregarLogoParaPDF() {
                 `;
             }
 
+            if (campo === 'data_entrada_setor') {
+                const valorTexto = normalizarDataInputOrcamento(valor);
+                const valorCalendario = obterPartesDataOrcamento(valor) ? normalizarDataBancoOrcamento(valor) : '';
+                return `
+                    <div class="input-group input-group-sm">
+                        <input
+                            type="text"
+                            class="form-control form-control-sm budget-edit-control"
+                            value="${escapeHtml(valorTexto)}"
+                            data-orcamento-id="${escapeHtml(item.id)}"
+                            data-orcamento-campo="${campo}"
+                            data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
+                            inputmode="numeric"
+                            placeholder="DD/MM/AAAA"
+                        >
+                        <input
+                            type="date"
+                            class="form-control form-control-sm budget-edit-control"
+                            value="${escapeHtml(valorCalendario)}"
+                            data-orcamento-id="${escapeHtml(item.id)}"
+                            data-orcamento-campo="${campo}"
+                            data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
+                            aria-label="Selecionar data de entrada no setor atual"
+                        >
+                    </div>
+                `;
+            }
+
             return `
                 <div class="${tipo === 'money' ? 'input-group input-group-sm' : ''}">
                     ${tipo === 'money' ? '<span class="input-group-text">R$</span>' : ''}
                 <input
                     type="${tipo === 'money' ? 'text' : tipo}"
                     class="form-control form-control-sm budget-edit-control"
-                    value="${escapeHtml(tipo === 'money' ? formatarValorMonetarioInput(valor) : campo === 'data_entrada_setor' ? normalizarDataInputOrcamento(valor) : (valor ?? ''))}"
+                    value="${escapeHtml(tipo === 'money' ? formatarValorMonetarioInput(valor) : (valor ?? ''))}"
                     data-orcamento-id="${escapeHtml(item.id)}"
                     data-orcamento-campo="${campo}"
                     data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
                     ${tipo === 'number' ? 'min="0" step="0.01"' : ''}
                     ${tipo === 'money' ? 'inputmode="decimal" placeholder="0,00"' : ''}
-                    ${campo === 'data_entrada_setor' ? 'inputmode="numeric" placeholder="DD/MM/AAAA"' : ''}
                 >
                 </div>
             `;
