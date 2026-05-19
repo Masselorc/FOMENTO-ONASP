@@ -3089,3 +3089,33 @@ Logs operacionais gravados:
   - baixo a moderado, concentrado na persistencia dos novos campos e na renderizacao do painel de edicao.
 - Rollback:
   - reverter este conjunto remove os campos da UI e do contrato de servico; as colunas adicionadas ao banco sao nao destrutivas e podem permanecer vazias sem afetar o fluxo anterior.
+
+---
+
+## 19/05/2026 - Orçamento 2026: resumo gerencial exportado
+
+- Objetivo: refatorar o texto do botão "Exportar resumo" para gerar mensagem curta de WhatsApp baseada no acompanhamento gerencial estruturado.
+- Branch: `main`.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Regra de classificação:
+  - cobrança imediata quando não há SEI, etapa atual é planejamento, status é validar/suspenso/cancelado, há pendência atual ou dias no setor atual >= 10;
+  - avançados/concluídos quando a etapa atual é empenhado, contratado, ordem de serviço, entregue, ordem bancária, abertura de programa, parecer CONJUR ou publicação GABSEC, ou status contém executado;
+  - em acompanhamento para os demais itens com trilha individual;
+  - pendência atual prevalece como cobrança imediata.
+- Ajustes feitos:
+  - exportação passou a ignorar itens sem trilha processual individual;
+  - texto passou a usar setor atual, responsável atual, data de entrada no setor, pendência atual e observação livre;
+  - processos vinculados seguem incluídos junto aos itens principais filtrados, sem duplicidade;
+  - outros processos de interesse entram apenas quando possuem trilha individual;
+  - botão "Exportar resumo" recebeu ícone mapeado de compartilhamento.
+- Validações realizadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `git diff --check` -> OK.
+- Pendências:
+  - validação manual restrita no navegador.
+- Risco de regressão:
+  - baixo a moderado, concentrado na classificação textual e no conteúdo copiado pela modal.
+- Rollback:
+  - reverter esta etapa restaura o formato anterior do texto exportado, sem impacto em banco, backend, dados publicados, saldo, vínculo, alocação ou trilha.

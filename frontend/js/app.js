@@ -260,7 +260,8 @@ const UI_ICONS = {
     search: 'fa-magnifying-glass',
     filter: 'fa-filter',
     refresh: 'fa-rotate-right',
-    allocate: 'fa-right-left'
+    allocate: 'fa-right-left',
+    share: 'fa-share-nodes'
 };
 
 const STATUS_UI = {
@@ -10277,6 +10278,7 @@ async function carregarLogoParaPDF() {
             'suspenso',
             'cancelado'
         ]);
+        const DIAS_NO_SETOR_PARA_COBRANCA = 10;
 
         function statusIndicaProcessoAutuadoOrcamento(status) {
             return STATUS_ORCAMENTO_AUTUACAO_VISUAL.has(normalizarBusca(status));
@@ -10493,70 +10495,194 @@ async function carregarLogoParaPDF() {
             `;
         }
 
-        function obterAndamentoAtualResumoOrcamento(item) {
-            if (itemSemRastreioOrcamento(item)) return 'Sem trilha processual individual';
+        function obterEtapaAtualResumoOrcamento(item) {
+            if (!itemPodeExibirRastreioOrcamento(item)) return null;
             const etapas = obterEtapasRastreioOrcamento(item);
-            if (!Array.isArray(etapas) || !etapas.length) return 'Sem trilha processual individual';
-            const etapaAtual = etapas.find((etapa) => etapa.estado === 'atual') || etapas[0];
-            return etapaAtual?.rotulo || 'Sem trilha processual individual';
+            if (!Array.isArray(etapas) || !etapas.length) return null;
+            return etapas.find((etapa) => etapa.estado === 'atual') || etapas[0] || null;
         }
 
-        function montarLinhaResumoOrcamentoTexto(item, prefixo = '-') {
-            const identificador = item.id || item.item || '-';
-            const descricao = item.descricao || item.nome || 'Sem descrição';
-            const processoSei = item.processoSei || item.processo_sei || '-';
-            const andamentoAtual = obterAndamentoAtualResumoOrcamento(item);
-            const status = item.status || '-';
-            const observacao = item.observacao || '-';
+        function obterProvidenciaResumoOrcamento(chaveEtapa) {
+            const providencias = {
+                planejamento: 'confirmar autuação do processo e início da instrução',
+                'processo-sei': 'impulsionar a instrução inicial do processo',
+                'estudo-tecnico': 'concluir ou validar a especificação/ETP',
+                'termo-referencia': 'finalizar ou revisar o Termo de Referência',
+                'pesquisa-precos': 'consolidar a pesquisa de preços',
+                'autorizacao-autoridade': 'obter autorização da autoridade competente',
+                'parecer-juridico': 'acompanhar retorno jurídico',
+                empenhado: 'acompanhar contratação ou emissão da ordem de serviço',
+                contratado: 'acompanhar execução contratual ou ordem de serviço',
+                'ordem-servico': 'acompanhar entrega do objeto',
+                entregue: 'acompanhar pagamento ou ordem bancária',
+                'ordem-bancaria': 'verificar se há pendência residual de encerramento',
+                autuacao: 'confirmar instrução inicial do processo',
+                'parecer-tecnico': 'concluir ou revisar o parecer técnico',
+                'minuta-edital': 'validar a minuta de edital',
+                'ddo-cgof': 'emitir, assinar ou retornar a DDO',
+                'abertura-programa': 'acompanhar abertura do programa',
+                'parecer-conjur': 'acompanhar retorno jurídico da CONJUR',
+                'publicacao-gabsec': 'acompanhar publicação ou providência final'
+            };
 
-            return `${prefixo} ${descricao} | ID/Item: ${identificador} | SEI: ${processoSei} | Andamento: ${andamentoAtual} | Status: ${status} | Observação: ${observacao}`;
+            return providencias[chaveEtapa] || 'verificar o andamento processual';
+        }
+
+        function montarCobrancaSugeridaResumoOrcamento(item, etapaAtual) {
+            const setorAtual = String(item.setorAtual || item.setor_atual || '').trim();
+            const responsavelAtual = String(item.responsavelAtual || item.responsavel_atual || '').trim();
+            const providencia = obterProvidenciaResumoOrcamento(etapaAtual?.chave);
+
+            if (responsavelAtual && setorAtual) return `acionar ${responsavelAtual} / ${setorAtual} para ${providencia}.`;
+            if (responsavelAtual) return `acionar ${responsavelAtual} para ${providencia}.`;
+            if (setorAtual) return `acionar ${setorAtual} para ${providencia}.`;
+            return `verificar providência pendente para ${providencia}.`;
+        }
+
+        function classificarItemResumoOrcamento(item, etapaAtual) {
+            const processoSei = String(item.processoSei || item.processo_sei || '').trim();
+            const statusNormalizado = normalizarBusca(item.status);
+            const pendenciaAtual = String(item.pendenciaAtual || item.pendencia_atual || '').trim();
+            const diasNoSetor = calcularDiasNoSetorAtualOrcamento(item.dataEntradaSetor || item.data_entrada_setor);
+            const chaveEtapa = etapaAtual?.chave || '';
+            const etapasAvancadas = new Set([
+                'empenhado',
+                'contratado',
+                'ordem-servico',
+                'entregue',
+                'ordem-bancaria',
+                'abertura-programa',
+                'parecer-conjur',
+                'publicacao-gabsec'
+            ]);
+
+            if (
+                !processoSei
+                || chaveEtapa === 'planejamento'
+                || ['validar', 'suspenso', 'cancelado'].includes(statusNormalizado)
+                || pendenciaAtual
+                || (diasNoSetor !== null && diasNoSetor >= DIAS_NO_SETOR_PARA_COBRANCA)
+            ) {
+                return 'cobranca';
+            }
+
+            if (etapasAvancadas.has(chaveEtapa) || statusNormalizado.includes('executado')) {
+                return 'avancado';
+            }
+
+            return 'acompanhamento';
+        }
+
+        function normalizarItemResumoOrcamento(item) {
+            const etapaAtual = obterEtapaAtualResumoOrcamento(item);
+            if (!etapaAtual) return null;
+
+            return {
+                item,
+                etapaAtual,
+                grupo: classificarItemResumoOrcamento(item, etapaAtual)
+            };
+        }
+
+        function montarLinhasItemResumoOrcamento(registro, indice) {
+            const { item, etapaAtual } = registro;
+            const descricao = String(item.descricao || item.nome || item.id || 'Item sem descrição').trim();
+            const processoSei = String(item.processoSei || item.processo_sei || '').trim();
+            const setorAtual = String(item.setorAtual || item.setor_atual || '').trim();
+            const responsavelAtual = String(item.responsavelAtual || item.responsavel_atual || '').trim();
+            const dataEntradaSetor = item.dataEntradaSetor || item.data_entrada_setor;
+            const diasNoSetor = calcularDiasNoSetorAtualOrcamento(dataEntradaSetor);
+            const pendenciaAtual = String(item.pendenciaAtual || item.pendencia_atual || '').trim();
+            const observacao = String(item.observacao || '').trim();
+            const linhas = [
+                `${indice}. ${descricao}`,
+                `SEI: ${processoSei || 'não informado'}`,
+                `Andamento: ${etapaAtual.rotulo || 'não informado'}`
+            ];
+
+            if (setorAtual) linhas.push(`Local atual: ${setorAtual}`);
+            if (responsavelAtual) linhas.push(`Responsável: ${responsavelAtual}`);
+            if (diasNoSetor !== null) linhas.push(`No setor atual: ${diasNoSetor.toLocaleString('pt-BR')} dia${diasNoSetor === 1 ? '' : 's'}`);
+            linhas.push(`Cobrança sugerida: ${montarCobrancaSugeridaResumoOrcamento(item, etapaAtual)}`);
+            if (pendenciaAtual) linhas.push(`Pendência: ${pendenciaAtual}`);
+            if (observacao) linhas.push(`Obs.: ${observacao}`);
+
+            return linhas.join('\n');
         }
 
         function obterItensExibidosResumoOrcamentoTexto(budgetData) {
             const itensFiltrados = filtrarItensOrcamento(budgetData);
             const contextoRenderizacao = prepararContextoRenderizacaoOrcamento(budgetData, orcamentoMovimentacoes);
-            const linhas = [];
+            const idsIncluidos = new Set();
+            const registros = [];
+            const adicionarItem = (item) => {
+                const itemId = String(item?.id || '');
+                if (!item || (itemId && idsIncluidos.has(itemId))) return;
+                const registro = normalizarItemResumoOrcamento(item);
+                if (!registro) return;
+                if (itemId) idsIncluidos.add(itemId);
+                registros.push(registro);
+            };
 
             itensFiltrados.forEach((item) => {
-                linhas.push(montarLinhaResumoOrcamentoTexto(item, '-'));
+                adicionarItem(item);
                 const filhosVinculados = obterFilhosVinculadosOrcamento(item.id, budgetData, contextoRenderizacao);
-                filhosVinculados.forEach((filho) => {
-                    linhas.push(montarLinhaResumoOrcamentoTexto(filho, '  - Vinculado:'));
-                });
+                filhosVinculados.forEach(adicionarItem);
             });
 
             const outrosProcessos = (budgetData?.outrosProcessos || [])
                 .filter((item) => !orcamentoProcessosInativos.has(String(item.id)))
                 .filter((item) => !itemEhProcessoVinculadoOrcamento(item));
 
-            outrosProcessos.forEach((item) => {
-                linhas.push(montarLinhaResumoOrcamentoTexto(item, '-'));
-            });
+            outrosProcessos.forEach(adicionarItem);
 
-            return { linhas, totalPrincipais: itensFiltrados.length, totalOutros: outrosProcessos.length };
+            return registros;
+        }
+
+        function montarGrupoResumoOrcamento(titulo, itens) {
+            if (!itens.length) return '';
+            return [
+                titulo,
+                '',
+                ...itens.map((registro, indice) => montarLinhasItemResumoOrcamento(registro, indice + 1))
+            ].join('\n\n');
         }
 
         function gerarTextoResumoOrcamentoWhatsapp(budgetData) {
-            const { linhas, totalPrincipais, totalOutros } = obterItensExibidosResumoOrcamentoTexto(budgetData);
-            const dataHora = new Date().toLocaleString('pt-BR');
+            const registros = obterItensExibidosResumoOrcamentoTexto(budgetData);
+            const grupos = {
+                cobranca: registros.filter((registro) => registro.grupo === 'cobranca'),
+                acompanhamento: registros.filter((registro) => registro.grupo === 'acompanhamento'),
+                avancado: registros.filter((registro) => registro.grupo === 'avancado')
+            };
+            const dataHora = new Date().toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            const blocos = [
+                '📌 Resumo Orçamento ONASP 2026',
+                `Atualizado em: ${dataHora}`,
+                '',
+                `🔴 Cobrança imediata: ${grupos.cobranca.length}`,
+                `🟡 Em acompanhamento: ${grupos.acompanhamento.length}`,
+                `🟢 Avançados/concluídos: ${grupos.avancado.length}`
+            ];
 
-            if (!linhas.length) {
-                return [
-                    'Resumo Orçamento 2026',
-                    `Gerado em: ${dataHora}`,
-                    '',
-                    'Nenhum item visível com os filtros atuais.'
-                ].join('\n');
+            const gruposTexto = [
+                montarGrupoResumoOrcamento('🔴 Cobrança imediata', grupos.cobranca),
+                montarGrupoResumoOrcamento('🟡 Em acompanhamento', grupos.acompanhamento),
+                montarGrupoResumoOrcamento('🟢 Avançados/concluídos', grupos.avancado)
+            ].filter(Boolean);
+
+            if (!gruposTexto.length) {
+                blocos.push('', 'Nenhum item com trilha individual nos filtros atuais.');
+                return blocos.join('\n');
             }
 
-            return [
-                'Resumo Orçamento 2026',
-                `Gerado em: ${dataHora}`,
-                `Itens principais filtrados: ${totalPrincipais}`,
-                `Outros processos exibidos: ${totalOutros}`,
-                '',
-                ...linhas
-            ].join('\n');
+            return [...blocos, '', ...gruposTexto].join('\n');
         }
 
         function copiarTextoComFallback(texto, campoTexto) {
