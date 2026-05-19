@@ -8953,6 +8953,9 @@ async function carregarLogoParaPDF() {
                 document.getElementById('btnHistoricoOrcamento')?.addEventListener('click', abrirHistoricoOrcamento);
                 document.getElementById('btnAdicionarOutroProcesso')?.addEventListener('click', adicionarNovoProcessoOrcamento);
             }
+            document.getElementById('btnExportarResumoOrcamentoTexto')?.addEventListener('click', () => {
+                abrirModalExportarResumoOrcamentoTexto(budgetData);
+            });
             document.getElementById('filtroOrcamentoBusca')?.addEventListener('input', atualizarDebounced);
             document.querySelectorAll('.budget-filter-control').forEach((controle) => {
                 controle.addEventListener('change', atualizar);
@@ -10380,9 +10383,152 @@ async function carregarLogoParaPDF() {
                             variant: 'export',
                             onClick: 'exportarOrcamentoPDF()'
                         })}
+                        ${renderActionButton({
+                            id: 'btnExportarResumoOrcamentoTexto',
+                            type: 'share',
+                            label: 'Exportar resumo',
+                            variant: 'outline-primary'
+                        })}
                     </div>
                 </section>
             `;
+        }
+
+        function obterAndamentoAtualResumoOrcamento(item) {
+            if (itemSemRastreioOrcamento(item)) return 'Sem trilha processual individual';
+            const etapas = obterEtapasRastreioOrcamento(item);
+            if (!Array.isArray(etapas) || !etapas.length) return 'Sem trilha processual individual';
+            const etapaAtual = etapas.find((etapa) => etapa.estado === 'atual') || etapas[0];
+            return etapaAtual?.rotulo || 'Sem trilha processual individual';
+        }
+
+        function montarLinhaResumoOrcamentoTexto(item, prefixo = '-') {
+            const identificador = item.id || item.item || '-';
+            const descricao = item.descricao || item.nome || 'Sem descrição';
+            const processoSei = item.processoSei || item.processo_sei || '-';
+            const andamentoAtual = obterAndamentoAtualResumoOrcamento(item);
+            const status = item.status || '-';
+            const observacao = item.observacao || '-';
+
+            return `${prefixo} ${descricao} | ID/Item: ${identificador} | SEI: ${processoSei} | Andamento: ${andamentoAtual} | Status: ${status} | Observação: ${observacao}`;
+        }
+
+        function obterItensExibidosResumoOrcamentoTexto(budgetData) {
+            const itensFiltrados = filtrarItensOrcamento(budgetData);
+            const contextoRenderizacao = prepararContextoRenderizacaoOrcamento(budgetData, orcamentoMovimentacoes);
+            const linhas = [];
+
+            itensFiltrados.forEach((item) => {
+                linhas.push(montarLinhaResumoOrcamentoTexto(item, '-'));
+                const filhosVinculados = obterFilhosVinculadosOrcamento(item.id, budgetData, contextoRenderizacao);
+                filhosVinculados.forEach((filho) => {
+                    linhas.push(montarLinhaResumoOrcamentoTexto(filho, '  - Vinculado:'));
+                });
+            });
+
+            const outrosProcessos = (budgetData?.outrosProcessos || [])
+                .filter((item) => !orcamentoProcessosInativos.has(String(item.id)))
+                .filter((item) => !itemEhProcessoVinculadoOrcamento(item));
+
+            outrosProcessos.forEach((item) => {
+                linhas.push(montarLinhaResumoOrcamentoTexto(item, '-'));
+            });
+
+            return { linhas, totalPrincipais: itensFiltrados.length, totalOutros: outrosProcessos.length };
+        }
+
+        function gerarTextoResumoOrcamentoWhatsapp(budgetData) {
+            const { linhas, totalPrincipais, totalOutros } = obterItensExibidosResumoOrcamentoTexto(budgetData);
+            const dataHora = new Date().toLocaleString('pt-BR');
+
+            if (!linhas.length) {
+                return [
+                    'Resumo Orçamento 2026',
+                    `Gerado em: ${dataHora}`,
+                    '',
+                    'Nenhum item visível com os filtros atuais.'
+                ].join('\n');
+            }
+
+            return [
+                'Resumo Orçamento 2026',
+                `Gerado em: ${dataHora}`,
+                `Itens principais filtrados: ${totalPrincipais}`,
+                `Outros processos exibidos: ${totalOutros}`,
+                '',
+                ...linhas
+            ].join('\n');
+        }
+
+        function copiarTextoComFallback(texto, campoTexto) {
+            return navigator.clipboard.writeText(texto)
+                .catch(() => {
+                    if (!campoTexto) return Promise.reject(new Error('Campo de texto indisponível para cópia.'));
+                    campoTexto.focus();
+                    campoTexto.select();
+                    const sucesso = document.execCommand('copy');
+                    if (!sucesso) throw new Error('Não foi possível copiar o texto.');
+                });
+        }
+
+        function abrirModalExportarResumoOrcamentoTexto(budgetData) {
+            const textoResumo = gerarTextoResumoOrcamentoWhatsapp(budgetData);
+            const modalId = 'modalExportarResumoOrcamentoTexto';
+
+            let modalEl = document.getElementById(modalId);
+            if (!modalEl) {
+                modalEl = document.createElement('div');
+                modalEl.className = 'modal fade';
+                modalEl.id = modalId;
+                modalEl.tabIndex = -1;
+                modalEl.setAttribute('aria-hidden', 'true');
+                modalEl.innerHTML = `
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Exportar resumo do Orçamento 2026</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-muted small mb-2">Texto pronto para envio por WhatsApp com os itens atualmente exibidos na tela.</p>
+                                <textarea id="campoResumoOrcamentoTexto" class="form-control font-monospace" rows="14" readonly></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+                                <button type="button" class="btn btn-primary" id="btnCopiarResumoOrcamentoTexto">Copiar texto</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modalEl);
+            }
+
+            const campoTexto = modalEl.querySelector('#campoResumoOrcamentoTexto');
+            const botaoCopiar = modalEl.querySelector('#btnCopiarResumoOrcamentoTexto');
+            if (!campoTexto || !botaoCopiar) return;
+
+            campoTexto.value = textoResumo;
+            botaoCopiar.onclick = async () => {
+                const htmlOriginal = botaoCopiar.innerHTML;
+                try {
+                    await copiarTextoComFallback(campoTexto.value, campoTexto);
+                    botaoCopiar.innerHTML = '<i class="fas fa-check me-1" aria-hidden="true"></i>Copiado';
+                    botaoCopiar.classList.remove('btn-primary');
+                    botaoCopiar.classList.add('btn-success');
+                } catch (erro) {
+                    botaoCopiar.innerHTML = '<i class="fas fa-triangle-exclamation me-1" aria-hidden="true"></i>Falha ao copiar';
+                    botaoCopiar.classList.remove('btn-primary');
+                    botaoCopiar.classList.add('btn-danger');
+                }
+                setTimeout(() => {
+                    botaoCopiar.innerHTML = htmlOriginal;
+                    botaoCopiar.classList.remove('btn-success', 'btn-danger');
+                    botaoCopiar.classList.add('btn-primary');
+                }, 1600);
+            };
+
+            const instanciaModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            instanciaModal.show();
         }
 
         function renderizarCampoOrcamento(item, campo, tipo = 'text') {
