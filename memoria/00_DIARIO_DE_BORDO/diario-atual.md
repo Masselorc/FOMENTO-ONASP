@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 19/05/2026 - Corrigir replicação de acompanhamento gerencial por processo SEI (Orçamento 2026)
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo.
+- Problema observado: ao salvar acompanhamento gerencial em "Aquisição de Notebooks" (SEI `08016.003997/2026-30`), os itens "Aquisição de Scanners" e "Aquisição de câmeras fotográficas" (mesmo SEI) continuavam exibindo "acompanhamento não informado".
+- Causa diagnosticada: `normalizarProcessoSeiParaComparacao` (linha 1268 de `orcamento-2026-service.js`) usava apenas `limparTexto()`, que só faz trim e colapso de espaços. Não normalizava pontuação (`.`, `/`, `-`). Se qualquer item tivesse o SEI armazenado em formato diferente (ex: `08016003997202630` sem pontuação), a comparação falhava, o item não entrava no mapa `idsPorProcesso` sob a mesma chave e a replicação não ocorria. Os demais 11 pontos do diagnóstico obrigatório foram verificados e estão corretos.
+- Arquivo alterado: `backend/services/orcamento-2026-service.js` — apenas 1 linha (1269).
+- Correção aplicada: `normalizarProcessoSeiParaComparacao` passou a remover todos os caracteres não numéricos (`/\D/g`), tornando equivalentes `"08016.003997/2026-30"` e `"08016003997202630"`.
+- Validações executadas: `node --check backend/services/orcamento-2026-service.js` → OK; `git diff --check` → OK (aviso LF/CRLF apenas, não é conflito).
+- Resultado do smoke test restrito: **pendente — requer confirmação manual do usuário no navegador.**
+- Commit e push: **pendentes — aguardando confirmação do smoke test.**
+- Pendências: usuário deve executar o smoke test descrito na tarefa (Notebooks, Scanners, Câmeras com SEI `08016.003997/2026-30`) e confirmar resultado.
+- Risco de regressão: baixo — função usada exclusivamente para comparação interna de SEI na replicação, não afeta armazenamento, exibição ou exportação.
+
 ## 18/05/2026 - Rotina semiautomatica de publicacao estatica PROFOR 2022
 
 - Branch atual: `main`.

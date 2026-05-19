@@ -1266,7 +1266,7 @@ function obterValorAtual(row, campo) {
 }
 
 function normalizarProcessoSeiParaComparacao(valor) {
-  return limparTexto(valor);
+  return String(valor ?? "").replace(/\D/g, "");
 }
 
 function replicarAcompanhamentoGerencialPorProcesso(alteracoesPorItem, idsInativos = []) {
