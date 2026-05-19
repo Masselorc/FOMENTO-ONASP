@@ -10686,15 +10686,55 @@ async function carregarLogoParaPDF() {
             return [...blocos, '', ...gruposTexto].join('\n');
         }
 
-        function copiarTextoComFallback(texto, campoTexto) {
-            return navigator.clipboard.writeText(texto)
-                .catch(() => {
-                    if (!campoTexto) return Promise.reject(new Error('Campo de texto indisponível para cópia.'));
-                    campoTexto.focus();
-                    campoTexto.select();
-                    const sucesso = document.execCommand('copy');
-                    if (!sucesso) throw new Error('Não foi possível copiar o texto.');
-                });
+        async function copiarTextoComFallback(texto, campoTexto) {
+            const textoCopiavel = String(texto ?? '');
+            if (!textoCopiavel.trim()) {
+                throw new Error('Não há texto para copiar.');
+            }
+
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(textoCopiavel);
+                    return;
+                } catch {
+                    // Continua para o fallback por seleção de textarea.
+                }
+            }
+
+            let textarea = campoTexto;
+            let textareaTemporario = false;
+            if (!textarea) {
+                textarea = document.createElement('textarea');
+                textareaTemporario = true;
+                textarea.setAttribute('aria-hidden', 'true');
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '0';
+                document.body.appendChild(textarea);
+            }
+
+            try {
+                textarea.value = textoCopiavel;
+                textarea.focus();
+                textarea.select();
+                if (typeof textarea.setSelectionRange === 'function') {
+                    textarea.setSelectionRange(0, textoCopiavel.length);
+                }
+                const sucesso = document.execCommand('copy');
+                if (!sucesso) {
+                    throw new Error('Não foi possível copiar o texto.');
+                }
+            } catch (erro) {
+                if (!textareaTemporario && textarea) {
+                    textarea.focus();
+                    textarea.select();
+                }
+                throw new Error(erro?.message || 'Não foi possível copiar o texto.');
+            } finally {
+                if (textareaTemporario) {
+                    textarea.remove();
+                }
+            }
         }
 
         function abrirModalExportarResumoOrcamentoTexto(budgetData) {

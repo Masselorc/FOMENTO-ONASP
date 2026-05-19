@@ -3144,3 +3144,33 @@ Logs operacionais gravados:
   - baixo, concentrado em formatação de texto exportado.
 - Rollback:
   - reverter esta etapa restaura apenas a formatação anterior da mensagem exportada.
+
+---
+
+## 19/05/2026 - Orçamento 2026: correção de cópia e salvamento do acompanhamento
+
+- Problemas observados:
+  - modal "Exportar resumo" exibia "Falha ao copiar" ao acionar "Copiar texto";
+  - salvamento do acompanhamento gerencial podia retornar "Campo não permitido" relacionado a setor atual.
+- Causa diagnosticada:
+  - `copiarTextoComFallback()` chamava diretamente `navigator.clipboard.writeText()`, sem verificar disponibilidade da Clipboard API antes de acessar o método;
+  - o código atual já aceita `setor_atual`, `responsavel_atual`, `data_entrada_setor` e `pendencia_atual` no backend, mas o erro é compatível com backend local antigo em execução ou payload alternativo usando aliases camelCase.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `backend/services/orcamento-2026-service.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção aplicada:
+  - cópia passou a validar texto, tentar Clipboard API somente quando disponível e usar fallback por textarea existente ou temporário;
+  - fallback seleciona o texto, usa `setSelectionRange()` quando disponível e mantém seleção em caso de falha;
+  - backend passou a normalizar aliases `setorAtual`, `responsavelAtual`, `dataEntradaSetor` e `pendenciaAtual` para os campos snake_case antes da validação/persistência de alterações.
+- Validações realizadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `node --check backend/services/orcamento-2026-service.js` -> OK;
+  - `git diff --check` -> OK.
+- Pendências:
+  - validação manual restrita no navegador;
+  - se o backend local estava rodando antes da alteração de acompanhamento gerencial, reiniciar o servidor para carregar a whitelist atualizada.
+- Risco de regressão:
+  - baixo a moderado, concentrado no fallback de cópia e na normalização de campos de acompanhamento.
+- Rollback:
+  - reverter esta etapa restaura o comportamento anterior de cópia e remove a normalização defensiva de aliases camelCase.

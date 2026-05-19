@@ -106,6 +106,12 @@ const CAMPOS_EDITAVEIS = new Set([
   ...CAMPOS_EDITAVEIS_BASE,
   ...CAMPOS_EDITAVEIS_RASTREIO
 ]);
+const ALIASES_CAMPOS_EDITAVEIS = {
+  setorAtual: "setor_atual",
+  responsavelAtual: "responsavel_atual",
+  dataEntradaSetor: "data_entrada_setor",
+  pendenciaAtual: "pendencia_atual"
+};
 const CAMPOS_MONETARIOS_ORCAMENTO = new Set([
   "valor_previsto",
   "valor_disponibilizado",
@@ -1260,8 +1266,9 @@ function validarAlteracoes(changes) {
       throw new Error("Registro de alteração inválido.");
     }
     return Object.entries(campos).map(([campo, valor]) => {
-      if (!CAMPOS_EDITAVEIS.has(campo)) throw new Error(`Campo não permitido: ${campo}`);
-      return { id: idNormalizado, campo, valor: valorParaBanco(campo, valor) };
+      const campoNormalizado = ALIASES_CAMPOS_EDITAVEIS[campo] || campo;
+      if (!CAMPOS_EDITAVEIS.has(campoNormalizado)) throw new Error(`Campo não permitido: ${campo}`);
+      return { id: idNormalizado, campo: campoNormalizado, valor: valorParaBanco(campoNormalizado, valor) };
     });
   });
 }
