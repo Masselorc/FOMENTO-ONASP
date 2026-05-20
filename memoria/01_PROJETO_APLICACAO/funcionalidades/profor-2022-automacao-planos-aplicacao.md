@@ -1052,6 +1052,53 @@ A listagem `GET /api/profor-2022/revisao/divergencias` aceita também os filtros
 Esta etapa não cria migration, não implementa front-end, não reconstrói o
 `planoAplicacao`, não altera a origem ativa, não publica e não aplica decisões.
 
+#### 16.2.9. Interface de revisão assistida (Etapa 5.5 — implementada)
+
+A primeira versão da tela `SISTEMA > Revisão de divergências PAD x memória`
+foi criada para operar sobre as rotas da Etapa 5.4/5.4.1, sem aplicar
+decisões ao `planoAplicacao`.
+
+Escopo implementado:
+
+- comando local `npm run profor:pad:revisao:limpar-testes`, que remove de forma
+  transacional apenas divergências com `chave_divergencia` iniciada por
+  `revisao_teste:`, suas decisões e seus logs;
+- a limpeza não remove lotes de revisão e não toca divergências reais;
+- `GET /api/profor-2022/revisao/divergencias` passa a rejeitar filtros
+  contraditórios de decisão resolutiva, retornando HTTP 400 quando
+  `semDecisaoResolutiva` e `comDecisaoResolutiva` forem enviados com valores
+  incompatíveis;
+- nova opção de menu `Revisão de divergências`;
+- resumo de auditoria consumindo `GET /api/profor-2022/revisao/auditoria`;
+- lista filtrável por `status`, `nivel`, `tipo`, `convenio`, `uf`,
+  `bloqueiaPublicacao`, `semDecisaoResolutiva` e `comDecisaoResolutiva`;
+- a interface impede marcar simultaneamente `sem decisão resolutiva` e
+  `com decisão resolutiva`;
+- detalhe por divergência consumindo
+  `GET /api/profor-2022/revisao/divergencias/:id`;
+- visualização `ANTES — memória atual` x `DEPOIS — PAD novo`, com campos
+  estruturados quando existirem no payload;
+- logs/decisões e formulário para registrar `ACEITO`, `REJEITADO`,
+  `EM_REVISAO`, `CORRIGIDO`, `REVERTIDO` e `COMENTAR`.
+
+Regras preservadas:
+
+- toda decisão exige usuário;
+- `ACEITO`, `REJEITADO`, `CORRIGIDO` e `REVERTIDO` exigem justificativa;
+- `COMENTAR` mantém a divergência como `PENDENTE`;
+- `EM_REVISAO` muda o status para `EM_REVISAO`;
+- a resposta do registro de decisão deve deixar claro `aplicadaAoPlano=false`;
+- nenhuma decisão altera `planoAplicacao`, JSON publicado, origem ativa ou
+  publicação.
+
+Pendências ainda fora desta etapa:
+
+- tratar divergências não reapresentadas em fluxo próprio antes de publicação
+  controlada;
+- validar decisão antiga cujo payload tenha sido alterado por nova leitura PAD;
+- desenhar aplicação material das decisões ao plano em etapa posterior, com
+  rollback específico.
+
 ---
 
 ## 17. Fases de implementação recomendadas

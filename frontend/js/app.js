@@ -92,6 +92,12 @@ const DEBUG_PERF_ONASP = (() => {
 let resumoPublicacaoSistemaCache = null;
 let faf2021UfDetalheAtual = '';
 let carteiraMonitoradaProfor2022Cache = [];
+let revisaoDivergenciasEstado = {
+    auditoria: null,
+    divergencias: [],
+    total: 0,
+    detalheAtualId: null
+};
 const APP_CACHE_VERSION = '20260507-05';
 const ANALYTICS_CACHE_VERSION = '20260428-2';
 const TEMPO_MAXIMO_CARREGAMENTO_ORCAMENTO_MS = 15000;
@@ -297,6 +303,10 @@ const VIEW_ERROR_MESSAGES = {
     'status-sistema': {
         titulo: 'Não foi possível carregar Status do Sistema.',
         detalhe: 'Verifique se os dados locais ou os arquivos publicados estão disponíveis.'
+    },
+    'revisao-divergencias': {
+        titulo: 'Não foi possível carregar Revisão de divergências.',
+        detalhe: 'Verifique se o servidor local está ativo e se a fila de revisão PAD x memória foi gerada.'
     }
 };
 
@@ -1145,7 +1155,7 @@ async function exportarRelatorioEstadoSelecionado(uf) {
 
 function atualizarVisibilidadeBotaoStatusSistema() {
     const ocultarNoModoEstatico = estaEmModoPublicacaoEstatica();
-    document.querySelectorAll('.app-menu-link[data-view="status-sistema"]').forEach((botao) => {
+    document.querySelectorAll('.app-menu-link[data-view="status-sistema"], .app-menu-link[data-view="revisao-divergencias"]').forEach((botao) => {
         botao.classList.toggle('d-none', ocultarNoModoEstatico);
         botao.setAttribute('aria-hidden', String(ocultarNoModoEstatico));
     });
@@ -1606,7 +1616,8 @@ async function carregarLogoParaPDF() {
                 'formalizacao-detalhe': 'view-formalizacao-profor-detalhe',
                 'diagnostico-ouvidorias': 'view-diagnostico-ouvidorias',
                 contatos: 'view-contatos',
-                'status-sistema': 'view-status-sistema'
+                'status-sistema': 'view-status-sistema',
+                'revisao-divergencias': 'view-revisao-divergencias'
             };
             const view = document.getElementById(ids[viewName]);
             if (!view) return;
@@ -1889,6 +1900,561 @@ async function carregarLogoParaPDF() {
             aplicarModoSomenteLeituraControlada();
         }
 
+        function formatarBooleanoRevisao(valor) {
+            return valor ? 'Sim' : 'Não';
+        }
+
+        function formatarDataHoraRevisao(valor) {
+            return formatarDataStatusSistema(valor);
+        }
+
+        function formatarValorRevisao(valor, rotulo = '') {
+            if (valor === null || valor === undefined || valor === '') return '-';
+            const campoMonetario = /valor|saldo|diferença|diferenca/i.test(String(rotulo || ''));
+            if (typeof valor === 'number') {
+                if (!Number.isFinite(valor)) return '-';
+                return campoMonetario
+                    ? formatMoney(valor)
+                    : valor.toLocaleString('pt-BR', { maximumFractionDigits: 6 });
+            }
+            const texto = String(valor).trim();
+            if (!texto) return '-';
+            const numero = Number(texto.replace(/\./g, '').replace(',', '.'));
+            if (Number.isFinite(numero) && /^-?\d+([.,]\d+)?$/.test(texto)) {
+                return campoMonetario
+                    ? formatMoney(numero)
+                    : numero.toLocaleString('pt-BR', { maximumFractionDigits: 6 });
+            }
+            return texto;
+        }
+
+        function classeNivelRevisao(nivel) {
+            const texto = String(nivel || '').toLowerCase();
+            if (texto === 'impeditivo') return 'danger';
+            if (texto === 'aviso') return 'warning';
+            return 'info';
+        }
+
+        function classeStatusRevisao(status) {
+            const texto = String(status || '').toUpperCase();
+            if (['ACEITO', 'CORRIGIDO'].includes(texto)) return 'success';
+            if (['REJEITADO', 'REVERTIDO'].includes(texto)) return 'danger';
+            if (texto === 'EM_REVISAO') return 'info';
+            return 'warning';
+        }
+
+        function renderBadgeRevisao(valor, classe = 'secondary') {
+            return `<span class="badge text-bg-${classe} revisao-badge">${escapeHtml(valor || '-')}</span>`;
+        }
+
+        function obterValorAninhadoRevisao(objeto, caminhos = []) {
+            for (const caminho of caminhos) {
+                const partes = String(caminho).split('.');
+                let atual = objeto;
+                for (const parte of partes) {
+                    if (atual === null || atual === undefined) break;
+                    atual = atual[parte];
+                }
+                if (atual !== null && atual !== undefined && atual !== '') return atual;
+            }
+            return '';
+        }
+
+        function renderCampoComparacaoRevisao(rotulo, antes, depois) {
+            const valorAntes = formatarValorRevisao(antes, rotulo);
+            const valorDepois = formatarValorRevisao(depois, rotulo);
+            if (valorAntes === '-' && valorDepois === '-') return '';
+            return `
+                <div class="revisao-comparacao-row">
+                    <span>${escapeHtml(rotulo)}</span>
+                    <strong>${escapeHtml(valorAntes)}</strong>
+                    <strong>${escapeHtml(valorDepois)}</strong>
+                </div>
+            `;
+        }
+
+        function renderObjetoResumoRevisao(objeto) {
+            if (!objeto || typeof objeto !== 'object') return '<span class="text-muted">Não informado.</span>';
+            const entradas = Object.entries(objeto).filter(([, valor]) => valor !== null && valor !== undefined && valor !== '');
+            if (!entradas.length) return '<span class="text-muted">Não informado.</span>';
+            return `
+                <dl class="revisao-keyvalue-list">
+                    ${entradas.slice(0, 12).map(([chave, valor]) => `
+                        <div>
+                            <dt>${escapeHtml(chave)}</dt>
+                            <dd>${escapeHtml(typeof valor === 'object' ? JSON.stringify(valor) : String(valor))}</dd>
+                        </div>
+                    `).join('')}
+                </dl>
+            `;
+        }
+
+        function obterAntesDepoisRevisao(divergencia) {
+            const payload = divergencia?.payload || {};
+            return {
+                antes: payload.antes || payload.memoria || payload.itemConhecido || payload.anterior || {},
+                depois: payload.depois || payload.pad || payload.itemPad || payload.novo || {}
+            };
+        }
+
+        function renderComparacaoRevisao(divergencia) {
+            const { antes, depois } = obterAntesDepoisRevisao(divergencia);
+            const linhas = [
+                renderCampoComparacaoRevisao('Descrição',
+                    obterValorAninhadoRevisao(antes, ['descricao', 'descricaoOriginal', 'descricaoOriginalReferencia']),
+                    obterValorAninhadoRevisao(depois, ['descricao', 'descricaoOriginal'])),
+                renderCampoComparacaoRevisao('Natureza',
+                    obterValorAninhadoRevisao(antes, ['natureza']),
+                    obterValorAninhadoRevisao(depois, ['natureza'])),
+                renderCampoComparacaoRevisao('Quantidade',
+                    obterValorAninhadoRevisao(antes, ['quantidade', 'quantidadeReferencia']),
+                    obterValorAninhadoRevisao(depois, ['quantidade'])),
+                renderCampoComparacaoRevisao('Valor unitário',
+                    obterValorAninhadoRevisao(antes, ['valorUnitario', 'valorUnitarioReferencia']),
+                    obterValorAninhadoRevisao(depois, ['valorUnitario'])),
+                renderCampoComparacaoRevisao('Valor previsto',
+                    obterValorAninhadoRevisao(antes, ['valorPrevisto', 'valorPrevistoReferencia']),
+                    obterValorAninhadoRevisao(depois, ['valorPrevisto', 'valorTotalPrevisto'])),
+                renderCampoComparacaoRevisao('Valor executado',
+                    obterValorAninhadoRevisao(antes, ['valorExecutado', 'valorExecutadoReferencia']),
+                    obterValorAninhadoRevisao(depois, ['valorExecutado', 'valorTotalExecutado'])),
+                renderCampoComparacaoRevisao('Saldo',
+                    obterValorAninhadoRevisao(antes, ['saldo']),
+                    obterValorAninhadoRevisao(depois, ['saldo'])),
+                renderCampoComparacaoRevisao('Campo afetado', divergencia.campoAfetado, divergencia.campoAfetado),
+                renderCampoComparacaoRevisao('Valor anterior / novo', divergencia.valorAnterior, divergencia.valorNovo),
+                renderCampoComparacaoRevisao('Diferença', divergencia.diferenca, divergencia.diferenca),
+                renderCampoComparacaoRevisao('Fonte', divergencia.fonteAnterior, divergencia.fonteNova)
+            ].filter(Boolean).join('');
+
+            return `
+                <section class="revisao-detail-section">
+                    <h3>Antes x Depois</h3>
+                    <div class="revisao-comparacao-grid" aria-label="Comparação entre memória atual e PAD novo">
+                        <div class="revisao-comparacao-header"><span>Campo</span><strong>ANTES — memória atual</strong><strong>DEPOIS — PAD novo</strong></div>
+                        ${linhas || '<div class="revisao-comparacao-empty">Payload sem campos comparáveis estruturados.</div>'}
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderDiagnosticoAutomaticoRevisao(divergencia) {
+            const payload = divergencia?.payload || {};
+            return `
+                <section class="revisao-detail-section">
+                    <h3>Diagnóstico automático</h3>
+                    <dl class="revisao-diagnostic-list">
+                        <div><dt>Motivo provável</dt><dd>${escapeHtml(divergencia.motivoProvavel || '-')}</dd></div>
+                        <div><dt>Evidências</dt><dd>${renderObjetoResumoRevisao(payload.evidencias || payload.evidencia || {})}</dd></div>
+                        <div><dt>Risco de falso positivo</dt><dd>${escapeHtml(payload.riscoFalsoPositivo || payload.risco_falso_positivo || '-')}</dd></div>
+                        <div><dt>Ação sugerida</dt><dd>${escapeHtml(divergencia.acaoSugerida || '-')}</dd></div>
+                        <div><dt>Impacto na reconstrução</dt><dd>${escapeHtml(divergencia.impactoReconstrucao || '-')}</dd></div>
+                    </dl>
+                </section>
+            `;
+        }
+
+        function renderLogsDecisoesRevisao(divergencia) {
+            const decisoes = Array.isArray(divergencia.decisoes) ? divergencia.decisoes : [];
+            const logs = Array.isArray(divergencia.logs) ? divergencia.logs : [];
+            return `
+                <section class="revisao-detail-section">
+                    <h3>Logs e decisões</h3>
+                    <div class="revisao-history-grid">
+                        <div>
+                            <h4>Decisões</h4>
+                            ${decisoes.length ? decisoes.map((decisao) => `
+                                <article class="revisao-history-item">
+                                    <div><strong>${escapeHtml(decisao.decisao || '-')}</strong> por ${escapeHtml(decisao.usuario || '-')}</div>
+                                    <small>${escapeHtml(formatarDataHoraRevisao(decisao.decididoEm || decisao.criadoEm))}</small>
+                                    ${decisao.justificativa ? `<p>${escapeHtml(decisao.justificativa)}</p>` : ''}
+                                </article>
+                            `).join('') : '<p class="text-muted mb-0">Nenhuma decisão registrada.</p>'}
+                        </div>
+                        <div>
+                            <h4>Logs</h4>
+                            ${logs.length ? logs.map((log) => `
+                                <article class="revisao-history-item">
+                                    <div><strong>${escapeHtml(log.evento || '-')}</strong> por ${escapeHtml(log.usuario || '-')}</div>
+                                    <small>${escapeHtml(formatarDataHoraRevisao(log.criadoEm))}</small>
+                                    ${log.detalhe ? `<p>${escapeHtml(log.detalhe)}</p>` : ''}
+                                    <code>${escapeHtml(JSON.stringify({ anterior: log.estadoAnterior, novo: log.estadoNovo }))}</code>
+                                </article>
+                            `).join('') : '<p class="text-muted mb-0">Nenhum log registrado.</p>'}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderFormularioDecisaoRevisao(divergencia) {
+            const decisoes = ['ACEITO', 'REJEITADO', 'EM_REVISAO', 'CORRIGIDO', 'REVERTIDO', 'COMENTAR'];
+            return `
+                <section class="revisao-detail-section revisao-decision-panel">
+                    <h3>Registrar decisão</h3>
+                    <p class="text-muted small">ACEITO registra decisão humana, mas ainda não aplica a alteração ao planoAplicacao.</p>
+                    <form id="form-revisao-decisao" data-divergencia-id="${escapeHtml(String(divergencia.id))}">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label" for="revisao-decisao">Decisão</label>
+                                <select class="form-select" id="revisao-decisao" required>
+                                    ${decisoes.map((decisao) => `<option value="${decisao}">${decisao}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label" for="revisao-usuario">Usuário responsável</label>
+                                <input class="form-control" id="revisao-usuario" required maxlength="120" placeholder="nome.sobrenome">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label" for="revisao-valor-aplicado">Valor aplicado (opcional)</label>
+                                <input class="form-control" id="revisao-valor-aplicado" maxlength="255" placeholder="Uso futuro/auditoria">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="revisao-justificativa">Justificativa ou comentário</label>
+                                <textarea class="form-control" id="revisao-justificativa" rows="3" maxlength="2000" placeholder="Obrigatória para ACEITO, REJEITADO, CORRIGIDO e REVERTIDO."></textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                            <button type="submit" class="btn btn-primary btn-icon-text" data-requer-backend="true">
+                                <i class="fas fa-check" aria-hidden="true"></i>
+                                <span>Registrar decisão</span>
+                            </button>
+                            <span class="text-muted small">Esta tela é de revisão e saneamento; não publica dados.</span>
+                        </div>
+                    </form>
+                </section>
+            `;
+        }
+
+        function renderDetalheDivergenciaRevisao(divergencia) {
+            const container = document.getElementById('revisao-divergencia-detalhe');
+            if (!container) return;
+            container.innerHTML = `
+                <article class="revisao-detail-panel">
+                    <div class="revisao-detail-header">
+                        <div>
+                            <p class="section-eyebrow mb-1">Divergência #${escapeHtml(String(divergencia.id))}</p>
+                            <h2>${escapeHtml(divergencia.tipoAlerta || 'Divergência')}</h2>
+                            <div class="revisao-detail-meta">
+                                ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
+                                ${renderBadgeRevisao(divergencia.nivel, classeNivelRevisao(divergencia.nivel))}
+                                ${renderBadgeRevisao(`Convênio ${divergencia.numeroConvenio || '-'}`, 'secondary')}
+                                ${renderBadgeRevisao(`UF ${divergencia.uf || '-'}`, 'secondary')}
+                                ${renderBadgeRevisao(divergencia.bloqueiaPublicacao ? 'Bloqueia publicação' : 'Não bloqueia publicação', divergencia.bloqueiaPublicacao ? 'danger' : 'success')}
+                            </div>
+                        </div>
+                    </div>
+                    ${renderComparacaoRevisao(divergencia)}
+                    ${renderDiagnosticoAutomaticoRevisao(divergencia)}
+                    ${renderLogsDecisoesRevisao(divergencia)}
+                    ${renderFormularioDecisaoRevisao(divergencia)}
+                </article>
+            `;
+            registrarEventoFormularioDecisaoRevisao();
+            aplicarModoSomenteLeituraControlada();
+        }
+
+        function renderAuditoriaRevisao(auditoria) {
+            const container = document.getElementById('revisao-auditoria-resumo');
+            if (!container) return;
+            const liberada = auditoria?.publicacaoLiberada === true;
+            const itens = [
+                ['Total', auditoria?.totalDivergencias],
+                ['Pendentes', auditoria?.totalPendentes],
+                ['Em revisão', auditoria?.totalEmRevisao],
+                ['Impeditivas', auditoria?.totalImpeditivas],
+                ['Bloqueiam publicação', auditoria?.totalBloqueiamPublicacao],
+                ['Pendentes bloqueantes', auditoria?.totalPendentesQueBloqueiamPublicacao],
+                ['Em revisão bloqueantes', auditoria?.totalEmRevisaoQueBloqueiamPublicacao],
+                ['Com decisão resolutiva', auditoria?.totalComDecisaoResolutiva],
+                ['Com comentário', auditoria?.totalComComentario],
+                ['Sem decisão resolutiva', auditoria?.totalSemDecisaoResolutiva]
+            ];
+            container.innerHTML = `
+                <div class="revisao-publicacao-status ${liberada ? 'is-free' : 'is-blocked'}">
+                    <i class="fas ${liberada ? 'fa-circle-check' : 'fa-lock'}" aria-hidden="true"></i>
+                    <div>
+                        <strong>${liberada ? 'Publicação informativamente liberada' : 'Publicação bloqueada'}</strong>
+                        <span>A reconstrução e a publicação continuam bloqueadas enquanto houver divergências pendentes ou em revisão que bloqueiem publicação.</span>
+                    </div>
+                </div>
+                <div class="revisao-audit-grid">
+                    ${itens.map(([rotulo, valor]) => `
+                        <div class="revisao-audit-card">
+                            <span>${escapeHtml(rotulo)}</span>
+                            <strong>${escapeHtml(String(valor ?? 0))}</strong>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function obterFiltrosRevisao() {
+            const valor = (id) => document.getElementById(id)?.value?.trim?.() || '';
+            const filtros = {
+                status: valor('revisao-filtro-status'),
+                nivel: valor('revisao-filtro-nivel'),
+                tipo: valor('revisao-filtro-tipo'),
+                convenio: valor('revisao-filtro-convenio'),
+                uf: valor('revisao-filtro-uf').toUpperCase(),
+                bloqueiaPublicacao: valor('revisao-filtro-bloqueia'),
+                limite: '100'
+            };
+            if (document.getElementById('revisao-filtro-sem-decisao')?.checked) filtros.semDecisaoResolutiva = 'true';
+            if (document.getElementById('revisao-filtro-com-decisao')?.checked) filtros.comDecisaoResolutiva = 'true';
+            return filtros;
+        }
+
+        function montarQueryRevisao(filtros = {}) {
+            const params = new URLSearchParams();
+            Object.entries(filtros).forEach(([chave, valor]) => {
+                if (valor !== undefined && valor !== null && valor !== '') params.set(chave, valor);
+            });
+            const texto = params.toString();
+            return texto ? `?${texto}` : '';
+        }
+
+        async function buscarJsonRevisao(caminho, opcoes) {
+            const { resposta, payload } = await fetchJsonApiOnasp(caminho, opcoes);
+            if (!resposta.ok || !payload?.success) {
+                throw new Error(payload?.message || `Falha na API de revisão (status ${resposta.status}).`);
+            }
+            return payload;
+        }
+
+        async function carregarAuditoriaRevisao() {
+            const payload = await buscarJsonRevisao('/api/profor-2022/revisao/auditoria');
+            revisaoDivergenciasEstado.auditoria = payload.auditoria || {};
+            renderAuditoriaRevisao(revisaoDivergenciasEstado.auditoria);
+        }
+
+        async function carregarListaRevisao() {
+            const tbody = document.querySelector('#tabela-revisao-divergencias tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-3">Carregando divergências…</td></tr>';
+            try {
+                const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias${montarQueryRevisao(obterFiltrosRevisao())}`);
+                revisaoDivergenciasEstado.divergencias = Array.isArray(payload.divergencias) ? payload.divergencias : [];
+                revisaoDivergenciasEstado.total = Number(payload.total || 0);
+                document.getElementById('revisao-lista-total').textContent = `${revisaoDivergenciasEstado.total} divergência(s)`;
+                if (!revisaoDivergenciasEstado.divergencias.length) {
+                    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-3">Nenhuma divergência encontrada para os filtros.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = revisaoDivergenciasEstado.divergencias.map((item) => `
+                    <tr>
+                        <td>${renderBadgeRevisao(item.status, classeStatusRevisao(item.status))}</td>
+                        <td>${renderBadgeRevisao(item.nivel, classeNivelRevisao(item.nivel))}</td>
+                        <td>${escapeHtml(item.numeroConvenio || '-')}</td>
+                        <td>${escapeHtml(item.uf || '-')}</td>
+                        <td>${escapeHtml(item.tipoAlerta || '-')}</td>
+                        <td>${escapeHtml(item.campoAfetado || '-')}</td>
+                        <td>${escapeHtml(item.motivoProvavel || item.acaoSugerida || '-')}</td>
+                        <td>${renderBadgeRevisao(formatarBooleanoRevisao(item.bloqueiaPublicacao), item.bloqueiaPublicacao ? 'danger' : 'success')}</td>
+                        <td class="text-end">
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-revisao-abrir="${escapeHtml(String(item.id))}">
+                                Revisar
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Falha ao carregar divergências PAD x memória:', error);
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger py-3">${escapeHtml(error.message || 'Falha ao carregar divergências.')}</td></tr>`;
+            }
+        }
+
+        async function abrirDetalheRevisao(id) {
+            const container = document.getElementById('revisao-divergencia-detalhe');
+            if (container) {
+                container.innerHTML = '<div class="revisao-detail-panel text-muted">Carregando detalhe da divergência…</div>';
+            }
+            const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias/${encodeURIComponent(id)}`);
+            revisaoDivergenciasEstado.detalheAtualId = Number(id);
+            renderDetalheDivergenciaRevisao(payload.divergencia);
+        }
+
+        function renderFiltrosRevisao() {
+            const auditoria = revisaoDivergenciasEstado.auditoria || {};
+            const tipos = Array.isArray(auditoria.porTipo) ? auditoria.porTipo.map((item) => item.chave).filter(Boolean) : [];
+            return `
+                <section class="revisao-panel mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Consulta operacional</p>
+                            <h2>Filtros</h2>
+                        </div>
+                        <span id="revisao-lista-total" class="text-muted small">0 divergência(s)</span>
+                    </div>
+                    <form id="form-revisao-filtros" class="revisao-filter-grid">
+                        <label><span>Status</span><select id="revisao-filtro-status" class="form-select"><option value="">Todos</option><option>PENDENTE</option><option>EM_REVISAO</option><option>ACEITO</option><option>REJEITADO</option><option>CORRIGIDO</option><option>REVERTIDO</option></select></label>
+                        <label><span>Nível</span><select id="revisao-filtro-nivel" class="form-select"><option value="">Todos</option><option value="impeditivo">impeditivo</option><option value="aviso">aviso</option><option value="info">info</option></select></label>
+                        <label><span>Tipo</span><select id="revisao-filtro-tipo" class="form-select"><option value="">Todos</option>${tipos.map((tipo) => `<option value="${escapeHtml(tipo)}">${escapeHtml(tipo)}</option>`).join('')}</select></label>
+                        <label><span>Convênio</span><input id="revisao-filtro-convenio" class="form-control" placeholder="937782"></label>
+                        <label><span>UF</span><input id="revisao-filtro-uf" class="form-control" maxlength="2" placeholder="AC"></label>
+                        <label><span>Bloqueia publicação</span><select id="revisao-filtro-bloqueia" class="form-select"><option value="">Todos</option><option value="true">Sim</option><option value="false">Não</option></select></label>
+                        <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-sem-decisao"><span>Sem decisão resolutiva</span></label>
+                        <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-com-decisao"><span>Com decisão resolutiva</span></label>
+                        <div class="revisao-filter-actions">
+                            <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-revisao-limpar-filtros">Limpar</button>
+                        </div>
+                    </form>
+                </section>
+            `;
+        }
+
+        async function renderRevisaoDivergenciasView() {
+            const container = document.getElementById('view-revisao-divergencias');
+            if (!container) return;
+            container.style.display = 'block';
+
+            if (estaEmModoPublicacaoEstatica()) {
+                container.innerHTML = renderEmptyState({
+                    titulo: 'Revisão disponível apenas no servidor local.',
+                    descricao: 'A tela consulta APIs e banco SQLite local. Ela não é exibida na publicação estática.',
+                    icon: 'fa-lock'
+                });
+                return;
+            }
+
+            container.innerHTML = `
+                <section class="view-heading">
+                    ${renderActionButton({
+                        type: 'back',
+                        label: 'Voltar ao Status do Sistema',
+                        onClick: "toggleView('status-sistema')",
+                        variant: 'outline-secondary',
+                        extraClass: 'pdf-hidden'
+                    })}
+                    <div>
+                        <p class="section-eyebrow mb-1">SISTEMA</p>
+                        <h2>Revisão de divergências PAD x memória</h2>
+                        <p class="text-muted mb-0">Consulta, saneamento e decisão humana auditável. Nenhuma decisão é aplicada ao planoAplicacao nesta etapa.</p>
+                    </div>
+                </section>
+                <section class="revisao-warning-stack mb-4">
+                    <div>ACEITO registra decisão humana, mas ainda não aplica a alteração ao planoAplicacao.</div>
+                    <div>A reconstrução e a publicação continuam bloqueadas enquanto houver divergências pendentes ou em revisão que bloqueiem publicação.</div>
+                    <div>Esta tela é de revisão e saneamento; não publica dados.</div>
+                </section>
+                <section class="revisao-panel mb-4">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Auditoria operacional</p>
+                            <h2>Resumo da fila</h2>
+                        </div>
+                    </div>
+                    <div id="revisao-auditoria-resumo" class="text-muted">Carregando auditoria…</div>
+                </section>
+                <div id="revisao-filtros-container"></div>
+                <section class="revisao-panel mb-4">
+                    <div class="table-responsive">
+                        <table class="table table-sm app-data-table revisao-table" id="tabela-revisao-divergencias">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Nível</th>
+                                    <th>Convênio</th>
+                                    <th>UF</th>
+                                    <th>Tipo</th>
+                                    <th>Campo</th>
+                                    <th>Motivo provável</th>
+                                    <th>Bloqueia</th>
+                                    <th class="text-end">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section id="revisao-divergencia-detalhe" class="mb-5">
+                    <div class="revisao-detail-panel text-muted">Selecione uma divergência para revisar.</div>
+                </section>
+            `;
+
+            await carregarAuditoriaRevisao();
+            document.getElementById('revisao-filtros-container').innerHTML = renderFiltrosRevisao();
+            registrarEventosRevisaoDivergencias();
+            await carregarListaRevisao();
+            aplicarModoSomenteLeituraControlada();
+        }
+
+        function registrarEventosRevisaoDivergencias() {
+            const form = document.getElementById('form-revisao-filtros');
+            const semDecisao = document.getElementById('revisao-filtro-sem-decisao');
+            const comDecisao = document.getElementById('revisao-filtro-com-decisao');
+            semDecisao?.addEventListener('change', () => {
+                if (semDecisao.checked && comDecisao) comDecisao.checked = false;
+            });
+            comDecisao?.addEventListener('change', () => {
+                if (comDecisao.checked && semDecisao) semDecisao.checked = false;
+            });
+            form?.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                await carregarListaRevisao();
+            });
+            document.getElementById('btn-revisao-limpar-filtros')?.addEventListener('click', async () => {
+                form?.reset();
+                await carregarListaRevisao();
+            });
+            document.getElementById('tabela-revisao-divergencias')?.addEventListener('click', async (event) => {
+                const botao = event.target.closest('[data-revisao-abrir]');
+                if (!botao) return;
+                try {
+                    await abrirDetalheRevisao(botao.dataset.revisaoAbrir);
+                } catch (error) {
+                    const detalhe = document.getElementById('revisao-divergencia-detalhe');
+                    if (detalhe) detalhe.innerHTML = `<div class="revisao-detail-panel text-danger">${escapeHtml(error.message || 'Falha ao carregar detalhe.')}</div>`;
+                }
+            });
+        }
+
+        function registrarEventoFormularioDecisaoRevisao() {
+            const form = document.getElementById('form-revisao-decisao');
+            if (!form) return;
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const id = form.dataset.divergenciaId;
+                const decisao = document.getElementById('revisao-decisao')?.value || '';
+                const usuario = document.getElementById('revisao-usuario')?.value?.trim?.() || '';
+                const justificativa = document.getElementById('revisao-justificativa')?.value?.trim?.() || '';
+                const valorAplicado = document.getElementById('revisao-valor-aplicado')?.value?.trim?.() || undefined;
+                const exigeJustificativa = ['ACEITO', 'REJEITADO', 'CORRIGIDO', 'REVERTIDO'].includes(decisao);
+                if (!usuario) {
+                    alert('Informe o usuário responsável pela decisão.');
+                    return;
+                }
+                if (exigeJustificativa && !justificativa) {
+                    alert(`A decisão ${decisao} exige justificativa.`);
+                    return;
+                }
+                const botao = form.querySelector('button[type="submit"]');
+                if (botao) botao.disabled = true;
+                try {
+                    const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias/${encodeURIComponent(id)}/decisoes`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            decisao,
+                            usuario,
+                            justificativa,
+                            valorAplicado,
+                            payloadDecisao: { origem: 'interface-revisao-divergencias' }
+                        })
+                    });
+                    alert(`Decisão registrada. aplicadaAoPlano=${payload.decisao?.aplicadaAoPlano === true ? 'true' : 'false'}.`);
+                    await carregarAuditoriaRevisao();
+                    await carregarListaRevisao();
+                    await abrirDetalheRevisao(id);
+                } catch (error) {
+                    alert(error.message || 'Falha ao registrar decisão.');
+                } finally {
+                    if (botao) botao.disabled = false;
+                }
+            });
+        }
+
         function renderPainelLogsOperacionaisHtml() {
             const tiposEvento = [
                 { valor: '', rotulo: 'Todos os tipos' },
@@ -2090,6 +2656,7 @@ async function carregarLogoParaPDF() {
                 const viewDiagnosticoOuvidorias = document.getElementById('view-diagnostico-ouvidorias');
                 const viewFormalizacaoDetalhe = document.getElementById('view-formalizacao-profor-detalhe');
                 const viewStatusSistema = document.getElementById('view-status-sistema');
+                const viewRevisaoDivergencias = document.getElementById('view-revisao-divergencias');
                 if (viewProfor) viewProfor.style.display = 'none';
                 if (viewProforDetalhe) viewProforDetalhe.style.display = 'none';
                 if (viewFaf) viewFaf.style.display = 'none';
@@ -2102,6 +2669,7 @@ async function carregarLogoParaPDF() {
                 if (viewDiagnosticoOuvidorias) viewDiagnosticoOuvidorias.style.display = 'none';
                 if (viewFormalizacaoDetalhe) viewFormalizacaoDetalhe.style.display = 'none';
                 if (viewStatusSistema) viewStatusSistema.style.display = 'none';
+                if (viewRevisaoDivergencias) viewRevisaoDivergencias.style.display = 'none';
 
                 renderOrcamentoViewSkeleton();
                 atualizarNavegacao(viewName);
@@ -2152,9 +2720,10 @@ async function carregarLogoParaPDF() {
             const podeAbrirDiagnosticoOuvidorias = viewName === 'diagnostico-ouvidorias' && obterDadosDiagnosticoOuvidorias();
             const podeAbrirFormalizacao = ['formalizacao', 'formalizacao-detalhe'].includes(viewName);
             const podeAbrirStatusSistema = viewName === 'status-sistema';
+            const podeAbrirRevisaoDivergencias = viewName === 'revisao-divergencias';
             const podeAbrirComDadosEstaticos = ['faf2021', 'faf2021-detalhe', 'doacoes2023', 'doacoes2023-detalhe'].includes(viewName);
 
-            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirContatos && !podeAbrirDiagnosticoOuvidorias && !podeAbrirFormalizacao && !podeAbrirStatusSistema && !podeAbrirComDadosEstaticos) {
+            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirContatos && !podeAbrirDiagnosticoOuvidorias && !podeAbrirFormalizacao && !podeAbrirStatusSistema && !podeAbrirRevisaoDivergencias && !podeAbrirComDadosEstaticos) {
                 mostrarAlertaCarregamentoPlanilha(
                     'Dados financeiros indisponiveis: carregue uma planilha valida antes de acessar detalhes ou exportacoes.',
                     true,
@@ -2178,6 +2747,7 @@ async function carregarLogoParaPDF() {
             const viewDiagnosticoOuvidorias = document.getElementById('view-diagnostico-ouvidorias');
             const viewFormalizacaoDetalhe = document.getElementById('view-formalizacao-profor-detalhe');
             const viewStatusSistema = document.getElementById('view-status-sistema');
+            const viewRevisaoDivergencias = document.getElementById('view-revisao-divergencias');
             if (viewProfor) viewProfor.style.display = 'none';
             if (viewProforDetalhe) viewProforDetalhe.style.display = 'none';
             if (viewFaf) viewFaf.style.display = 'none';
@@ -2190,6 +2760,7 @@ async function carregarLogoParaPDF() {
             if (viewDiagnosticoOuvidorias) viewDiagnosticoOuvidorias.style.display = 'none';
             if (viewFormalizacaoDetalhe) viewFormalizacaoDetalhe.style.display = 'none';
             if (viewStatusSistema) viewStatusSistema.style.display = 'none';
+            if (viewRevisaoDivergencias) viewRevisaoDivergencias.style.display = 'none';
 
             if (viewName === 'detalhamento') {
                 renderDetailsView();
@@ -2240,6 +2811,8 @@ async function carregarLogoParaPDF() {
                 }
             } else if (viewName === 'status-sistema') {
                 await renderStatusSistemaView();
+            } else if (viewName === 'revisao-divergencias') {
+                await renderRevisaoDivergenciasView();
             } else {
                 document.getElementById('view-dashboard').style.display = 'block';
             }
@@ -13043,6 +13616,7 @@ window.abrirOrcamento = () => toggleView('orcamento');
 window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
 window.abrirDiagnosticoOuvidorias = () => toggleView('diagnostico-ouvidorias');
 window.abrirStatusSistema = () => toggleView('status-sistema');
+window.abrirRevisaoDivergencias = () => toggleView('revisao-divergencias');
 window.abrirEditorExecucaoFaf2021 = abrirEditorExecucaoFaf2021;
 window.fecharEditorExecucaoFaf2021 = fecharEditorExecucaoFaf2021;
 window.salvarExecucaoFaf2021 = salvarExecucaoFaf2021;

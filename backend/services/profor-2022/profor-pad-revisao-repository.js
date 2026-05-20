@@ -390,6 +390,56 @@ function contarEventosDoLote(loteId, evento) {
   `).get(evento, loteId).t;
 }
 
+/**
+ * Remove apenas divergências controladas de teste da revisão assistida.
+ * Não toca em lotes nem em divergências reais.
+ */
+function limparDivergenciasTeste() {
+  const executar = db.transaction(() => {
+    const divergencias = db.prepare(`
+      SELECT id, chave_divergencia
+      FROM profor_2022_revisao_divergencias
+      WHERE chave_divergencia LIKE 'revisao_teste:%'
+      ORDER BY id
+    `).all();
+
+    if (!divergencias.length) {
+      return {
+        totalDivergenciasTeste: 0,
+        totalDecisoesRemovidas: 0,
+        totalLogsRemovidos: 0,
+        totalDivergenciasRemovidas: 0,
+        chaves: [],
+      };
+    }
+
+    const ids = divergencias.map((item) => item.id);
+    const placeholders = ids.map(() => "?").join(", ");
+    const totalDecisoesRemovidas = db.prepare(`
+      DELETE FROM profor_2022_revisao_decisoes
+      WHERE divergencia_id IN (${placeholders})
+    `).run(...ids).changes;
+    const totalLogsRemovidos = db.prepare(`
+      DELETE FROM profor_2022_revisao_logs
+      WHERE entidade_tipo = 'divergencia' AND entidade_id IN (${placeholders})
+    `).run(...ids).changes;
+    const totalDivergenciasRemovidas = db.prepare(`
+      DELETE FROM profor_2022_revisao_divergencias
+      WHERE id IN (${placeholders}) AND chave_divergencia LIKE 'revisao_teste:%'
+    `).run(...ids).changes;
+
+    return {
+      totalDivergenciasTeste: divergencias.length,
+      totalDecisoesRemovidas,
+      totalLogsRemovidos,
+      totalDivergenciasRemovidas,
+      chaves: divergencias.map((item) => item.chave_divergencia),
+    };
+  });
+
+  return executar();
+}
+
 module.exports = {
   STATUS_VALIDOS,
   NIVEIS_VALIDOS,
@@ -410,4 +460,5 @@ module.exports = {
   listarDecisoesDaDivergencia,
   listarLogsDaDivergencia,
   registrarDecisao,
+  limparDivergenciasTeste,
 };

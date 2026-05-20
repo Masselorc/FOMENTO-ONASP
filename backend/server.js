@@ -869,6 +869,15 @@ async function rotearApi(req, res, pathname) {
 
     if (req.method === "GET" && pathname === "/api/profor-2022/revisao/divergencias") {
       const sp = new URL(req.url, `http://${req.headers.host || "localhost"}`).searchParams;
+      const lerBooleanQuery = (nome) => {
+        const valor = sp.get(nome);
+        if (valor !== "true" && valor !== "false") {
+          const erro = new Error(`Filtro booleano inválido: ${nome}. Use true ou false.`);
+          erro.statusCode = 400;
+          throw erro;
+        }
+        return valor === "true";
+      };
       const filtros = {
         status: sp.get("status") || undefined,
         nivel: sp.get("nivel") || undefined,
@@ -879,13 +888,24 @@ async function rotearApi(req, res, pathname) {
         offset: sp.get("offset") || undefined,
       };
       if (sp.has("bloqueiaPublicacao")) {
-        filtros.bloqueiaPublicacao = sp.get("bloqueiaPublicacao") === "true";
+        filtros.bloqueiaPublicacao = lerBooleanQuery("bloqueiaPublicacao");
       }
       if (sp.has("semDecisaoResolutiva")) {
-        filtros.semDecisaoResolutiva = sp.get("semDecisaoResolutiva") === "true";
+        filtros.semDecisaoResolutiva = lerBooleanQuery("semDecisaoResolutiva");
       }
       if (sp.has("comDecisaoResolutiva")) {
-        filtros.comDecisaoResolutiva = sp.get("comDecisaoResolutiva") === "true";
+        filtros.comDecisaoResolutiva = lerBooleanQuery("comDecisaoResolutiva");
+      }
+      if (
+        filtros.semDecisaoResolutiva !== undefined
+        && filtros.comDecisaoResolutiva !== undefined
+        && filtros.semDecisaoResolutiva === filtros.comDecisaoResolutiva
+      ) {
+        enviarJson(res, 400, {
+          success: false,
+          message: "Filtros contraditórios: use apenas um entre semDecisaoResolutiva e comDecisaoResolutiva.",
+        });
+        return;
       }
       enviarJson(res, 200, { success: true, ...revisaoDecisaoService.listarDivergencias(filtros) });
       return;

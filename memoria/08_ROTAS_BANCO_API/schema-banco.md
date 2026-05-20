@@ -788,10 +788,28 @@ humana registrada, sem aplicação automática ao `planoAplicacao`.
 Filtros adicionais de listagem: `bloqueiaPublicacao=true|false`,
 `semDecisaoResolutiva=true|false` e `comDecisaoResolutiva=true|false`.
 
-**Pendência futura.** A Etapa 5.3 **não aplica decisões**. A aplicação das
-decisões ao `planoAplicacao`, a tela SISTEMA de revisão e a publicação com
-dados saneados continuam pendentes. Quando forem planejadas, devem reaproveitar
-estas tabelas e o padrão das tabelas de saneamento previstas para a Etapa E
+**Interface operacional (Etapa 5.5).** A tela local `SISTEMA > Revisão de
+divergências PAD x memória` consome as rotas acima e permite consultar a fila,
+abrir o detalhe Antes x Depois, visualizar logs/decisões e registrar decisão
+humana. A tela não altera `planoAplicacao`, não publica e não muda a origem
+ativa do PROFOR 2022.
+
+Comandos relacionados:
+
+- `npm run profor:pad:revisao:limpar-testes` — remove de forma transacional
+  somente divergências controladas com `chave_divergencia LIKE 'revisao_teste:%'`,
+  suas decisões e seus logs. Lotes de revisão são preservados.
+
+Validação de filtros:
+
+- `semDecisaoResolutiva=true` e `comDecisaoResolutiva=true` não podem ser
+  usados simultaneamente; a rota retorna HTTP 400.
+- Valores booleanos diferentes de `true` ou `false` também retornam HTTP 400.
+
+**Pendência futura.** A Etapa 5.5 **não aplica decisões**. A aplicação das
+decisões ao `planoAplicacao` e a publicação com dados saneados continuam
+pendentes. Quando forem planejadas, devem reaproveitar estas tabelas e o padrão
+das tabelas de saneamento previstas para a Etapa E
 (`profor_2022_saneamento_lotes`, `profor_2022_saneamento_decisoes`).
 
 ## Critérios para atualizar este arquivo

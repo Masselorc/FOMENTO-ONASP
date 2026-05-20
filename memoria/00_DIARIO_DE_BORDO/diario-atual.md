@@ -1,5 +1,83 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.5 - Interface de revisão PAD x memória
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo.
+- Objetivo: criar a primeira versão da tela `SISTEMA > Revisão de divergências PAD x memória`, limpar divergências controladas de teste e bloquear filtros contraditórios de decisão resolutiva.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-revisao-repository.js`;
+  - `backend/scripts/limpar-divergencias-teste-revisao-pad-profor-2022.js`;
+  - `backend/server.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `index.html`;
+  - `frontend/js/app.js`;
+  - `frontend/css/app.css`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/08_ROTAS_BANCO_API/schema-banco.md`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Limpeza operacional:
+  - criado comando `npm run profor:pad:revisao:limpar-testes`;
+  - limpeza transacional remove apenas divergências com `chave_divergencia LIKE 'revisao_teste:%'`, suas decisões e seus logs;
+  - lotes de revisão são preservados;
+  - resultado da primeira execução: 1 divergência de teste removida, 2 decisões removidas, 2 logs removidos, 1 divergência removida.
+- Ajustes backend:
+  - `GET /api/profor-2022/revisao/divergencias` valida filtros booleanos;
+  - combinação contraditória `semDecisaoResolutiva=true&comDecisaoResolutiva=true` retorna HTTP 400;
+  - `ACEITO` permanece somente decisão humana registrada, sem aplicação ao plano.
+- Interface criada:
+  - menu lateral `Revisão de divergências` na área SISTEMA;
+  - view `view-revisao-divergencias`;
+  - bloco de auditoria com contadores de publicação bloqueada/liberada;
+  - filtros por status, nível, tipo, convênio, UF, bloqueio de publicação, sem/com decisão resolutiva;
+  - lista de divergências com botão `Revisar`;
+  - detalhe com comparação `ANTES — memória atual` x `DEPOIS — PAD novo`;
+  - logs, decisões e formulário de decisão auditável.
+- Resultado da auditoria após limpeza final:
+  - `totalDivergencias=145`;
+  - `totalPendentes=144`;
+  - `totalEmRevisao=0`;
+  - `totalImpeditivas=44`;
+  - `totalBloqueiamPublicacao=48`;
+  - `totalPendentesQueBloqueiamPublicacao=47`;
+  - `totalEmRevisaoQueBloqueiamPublicacao=0`;
+  - `totalComDecisaoResolutiva=0`;
+  - `totalComComentario=0`;
+  - `totalSemDecisaoResolutiva=145`;
+  - `publicacaoLiberada=false`;
+  - observação: existe 1 divergência real em status `ACEITO` (`equivalencia_por_descricao_normalizada:a666445f21fca80d`), sem decisão resolutiva registrada após a limpeza; não foi removida porque não tem prefixo de teste.
+- Endpoints testados:
+  - `GET /api/profor-2022/revisao/auditoria`;
+  - `GET /api/profor-2022/revisao/divergencias?bloqueiaPublicacao=true&semDecisaoResolutiva=true&limite=3`;
+  - `GET /api/profor-2022/revisao/divergencias?comDecisaoResolutiva=true&limite=5`;
+  - `GET /api/profor-2022/revisao/divergencias?semDecisaoResolutiva=true&comDecisaoResolutiva=true&limite=1` → HTTP 400;
+  - `GET /api/profor-2022/revisao/divergencias/:id`;
+  - `GET /api/profor-2022/revisao/divergencias/:id/logs`;
+  - `POST /api/profor-2022/revisao/divergencias/:id/decisoes` em divergência controlada `revisao_teste:%`, seguido de limpeza final.
+- Validações executadas:
+  - `node --check frontend/js/app.js`;
+  - `node --check backend/server.js`;
+  - `node --check backend/services/profor-2022/profor-pad-revisao-repository.js`;
+  - `node --check backend/scripts/limpar-divergencias-teste-revisao-pad-profor-2022.js`;
+  - `npm run validar:syntax`;
+  - `npm run profor:pad:revisao:limpar-testes`;
+  - `npm run profor:pad:auditar-fila-revisao`.
+  - smoke via Playwright headless em `http://127.0.0.1:8790/index.html`: abriu `revisao-divergencias`, carregou 145 divergências, confirmou exclusão mútua dos filtros sem/com decisão e abriu detalhe sem erros de console;
+  - `git diff --check`;
+  - `git status --short frontend/data/publicados`.
+- Confirmações de escopo:
+  - nenhuma decisão aplicada ao `planoAplicacao`;
+  - nenhuma reconstrução do plano;
+  - nenhuma publicação;
+  - nenhuma alteração de origem ativa;
+  - nenhuma alteração em `frontend/data/publicados`;
+  - nenhum `*.sqlite`, `*.sqlite-wal` ou `*.sqlite-shm` versionado.
+- Riscos e pendências:
+  - a interface ainda é primeira versão e não resolve divergências não reapresentadas nem decisão antiga com payload alterado;
+  - a divergência real em status `ACEITO` sem decisão resolutiva deve ser saneada em rodada própria antes de qualquer aplicação material das decisões;
+  - rollback: reverter os arquivos alterados remove tela, comando e validação de filtros; a limpeza local de `revisao_teste:%` não afeta divergências reais.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.4.1 - Auditoria operacional da revisão assistida
 
 - Branch atual: `main`.
