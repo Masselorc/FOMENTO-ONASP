@@ -3622,3 +3622,77 @@ Logs operacionais gravados:
   - sem ativação de nova origem de `planoAplicacao`;
   - sem integração com PAD nesta etapa.
 
+---
+
+## 20/05/2026 - PROFOR 2022: Etapa 4 (leitor dry-run de relatórios PAD)
+
+- Branch: `main`.
+- Objetivo:
+  - criar rotina local de leitura e conferência dos relatórios PAD `.xls` do PROFOR 2022, sem aplicar rateio e sem integrar com o compositor.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-normalizacao-service.js`;
+  - `backend/services/profor-2022/profor-pad-report-reader.js`;
+  - `backend/scripts/ler-relatorios-pad-profor-2022.js`;
+  - `scripts/validar-syntax.js`;
+  - `package.json`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementação:
+  - leitura de arquivos `RelatorioItensDespesasPAD_*.xls` em `Planilhas/profor-2022/instrumentos`;
+  - identificação do convênio pelo campo interno `Código do Instrumento`;
+  - localização do cabeçalho de itens por rótulos;
+  - extração de cabeçalho, itens, valores monetários, quantidades, unidade e natureza derivada por código `33`/`44`;
+  - geração de JSON de conferência em `backend/data/relatorios/profor-2022-pad-relatorios-dry-run.json`.
+- Resultado do dry-run:
+  - arquivos encontrados: `0`;
+  - relatórios lidos: `0`;
+  - itens extraídos: `0`;
+  - alertas: `0`.
+- Validações executadas:
+  - `node --check backend/services/profor-2022/profor-pad-normalizacao-service.js`;
+  - `node --check backend/services/profor-2022/profor-pad-report-reader.js`;
+  - `node --check backend/scripts/ler-relatorios-pad-profor-2022.js`;
+  - `npm run profor:pad:ler-relatorios:dry-run`;
+  - `npm run validar:syntax`;
+  - `git diff --check`;
+  - conferência de ausência de alteração no banco SQLite local.
+- Restrições preservadas:
+  - sem alteração de banco;
+  - sem alteração de frontend;
+  - a Etapa 4 não executou publicação nem editou `frontend/data/publicados/*.json`; durante a conferência final havia alterações pendentes nesses JSONs no working tree, não revertidas nesta tarefa;
+  - sem integração com rateios;
+  - sem ativação de nova origem de `planoAplicacao`.
+
+---
+
+## 20/05/2026 - PROFOR 2022: Etapa 4 (leitura dos 15 relatórios PAD)
+
+- Branch: `main`.
+- Objetivo:
+  - continuar a conferência da Etapa 4 após inclusão dos 15 arquivos `.xls` em `Planilhas/profor-2022/instrumentos`.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-report-reader.js`;
+  - `backend/data/relatorios/profor-2022-pad-relatorios-dry-run.json`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste realizado:
+  - corrigida a leitura de metadados do cabeçalho PAD quando o relatório traz `Rótulo: valor` na mesma célula, evitando capturar a próxima linha como valor do campo.
+- Resultado do dry-run:
+  - arquivos encontrados: `15`;
+  - relatórios lidos: `15`;
+  - itens extraídos: `525`;
+  - alertas: `0`;
+  - alertas impeditivos: `0`;
+  - instrumentos identificados: `937216`, `937221`, `937265`, `937468`, `937592`, `937698`, `937780`, `937782`, `937783`, `937817`, `937818`, `937871`, `937917`, `938128`, `938277`.
+- Validações executadas:
+  - `node --check backend/services/profor-2022/profor-pad-report-reader.js`;
+  - `node --check backend/services/profor-2022/profor-pad-normalizacao-service.js`;
+  - `node --check backend/scripts/ler-relatorios-pad-profor-2022.js`;
+  - `npm run profor:pad:ler-relatorios:dry-run`;
+  - `npm run validar:syntax`;
+  - `git diff --check`.
+- Restrições preservadas:
+  - sem alteração de banco;
+  - sem alteração de frontend;
+  - sem publicação;
+  - sem integração com rateios;
+  - sem ativação de nova origem de `planoAplicacao`.
+
