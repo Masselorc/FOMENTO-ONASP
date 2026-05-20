@@ -3484,3 +3484,30 @@ Logs operacionais gravados:
 - Risco de regressão: Nulo.
 - Rollback: `git checkout frontend/js/app.js frontend/css/app.css`.
 
+---
+
+## 20/05/2026 - Orçamento 2026: resumo exportado agrupado por processo SEI
+
+- Objetivo:
+  - ajustar a exportação de resumo da tela Orçamento 2026 para consolidar itens com o mesmo processo SEI em um único bloco no texto.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Regra de agrupamento por processo SEI:
+  - agrupamento aplicado apenas quando `processoSei`/`processo_sei` está preenchido;
+  - comparação por versão normalizada do SEI (somente dígitos);
+  - itens sem SEI não são agrupados entre si;
+  - ordem preserva a primeira aparição do processo no conjunto exportado;
+  - grupo consolidado escolhe item representativo por prioridade: providência preenchida, depois contexto processual (`responsavelAtual`, `setorAtual`, `dataEntradaSetor`), depois primeiro item;
+  - classificação consolidada do grupo: 🔴 se qualquer item tiver providência/pendência, 🟢 se nenhum tiver providência e algum estiver avançado, 🟡 nos demais casos.
+- Ajustes funcionais aplicados no resumo:
+  - inclusão dos helpers `normalizarProcessoSeiResumoOrcamento`, `obterProcessoSeiResumoOrcamento`, `obterDescricaoItemResumoOrcamento`;
+  - inclusão das funções `agruparRegistrosResumoPorProcessoSei`, `escolherRegistroRepresentativoResumoOrcamento` e `classificarGrupoResumoOrcamento`;
+  - `obterItensExibidosResumoOrcamentoTexto()` continua coletando itens filtrados, vinculados e outros processos com deduplicação por `id`, e passa a retornar registros consolidados por processo;
+  - `montarLinhasItemResumoOrcamento()` passa a renderizar bloco "Processo <SEI>" com lista `Itens:` quando houver múltiplos itens no mesmo SEI, mantendo formato legado para item único.
+- Validações realizadas:
+  - `node --check frontend/js/app.js`;
+  - `git diff --check`.
+- Pendências:
+  - validação manual restrita no navegador da exportação (agrupamento visual e cópia).
+

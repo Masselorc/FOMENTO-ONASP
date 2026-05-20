@@ -10522,21 +10522,150 @@ async function carregarLogoParaPDF() {
             };
         }
 
+        function normalizarProcessoSeiResumoOrcamento(valor) {
+            return String(valor ?? '').replace(/\D/g, '');
+        }
+
+        function obterProcessoSeiResumoOrcamento(item) {
+            return String(item?.processoSei || item?.processo_sei || '').trim();
+        }
+
+        function obterDescricaoItemResumoOrcamento(item) {
+            return String(item?.descricao || item?.nome || item?.id || 'Item sem descrição').trim();
+        }
+
+        function obterProvidenciaResumoOrcamento(item) {
+            return String(
+                item?.pendenciaAtual
+                || item?.pendencia_atual
+                || item?.providenciaAtual
+                || item?.providencia_atual
+                || item?.providencia
+                || ''
+            ).trim();
+        }
+
+        function escolherRegistroRepresentativoResumoOrcamento(registros) {
+            if (!Array.isArray(registros) || !registros.length) return null;
+
+            const registroComPendencia = registros.find((registro) => obterProvidenciaResumoOrcamento(registro?.item));
+            if (registroComPendencia) return registroComPendencia;
+
+            const registroComContexto = registros.find((registro) => {
+                const item = registro?.item || {};
+                const responsavelAtual = String(item.responsavelAtual || item.responsavel_atual || '').trim();
+                const setorAtual = String(item.setorAtual || item.setor_atual || '').trim();
+                const dataEntradaSetor = item.dataEntradaSetor || item.data_entrada_setor;
+                return Boolean(responsavelAtual || setorAtual || dataEntradaSetor);
+            });
+
+            return registroComContexto || registros[0];
+        }
+
+        function classificarGrupoResumoOrcamento(registros) {
+            if (!Array.isArray(registros) || !registros.length) return 'acompanhamento';
+
+            const possuiPendencia = registros.some((registro) => obterProvidenciaResumoOrcamento(registro?.item));
+            if (possuiPendencia) return 'cobranca';
+
+            const possuiAvancado = registros.some((registro) => registro?.grupo === 'avancado');
+            if (possuiAvancado) return 'avancado';
+
+            return 'acompanhamento';
+        }
+
+        function agruparRegistrosResumoPorProcessoSei(registros) {
+            if (!Array.isArray(registros) || !registros.length) return [];
+
+            const gruposPorSei = new Map();
+            const ordemConsolidada = [];
+
+            registros.forEach((registro) => {
+                const processoSei = obterProcessoSeiResumoOrcamento(registro?.item);
+                const processoSeiNormalizado = normalizarProcessoSeiResumoOrcamento(processoSei);
+
+                if (!processoSeiNormalizado) {
+                    ordemConsolidada.push(registro);
+                    return;
+                }
+
+                let grupo = gruposPorSei.get(processoSeiNormalizado);
+                if (!grupo) {
+                    grupo = {
+                        tipo: 'grupo-sei',
+                        processoSeiNormalizado,
+                        processoSei,
+                        registros: []
+                    };
+                    gruposPorSei.set(processoSeiNormalizado, grupo);
+                    ordemConsolidada.push(grupo);
+                } else if (!grupo.processoSei && processoSei) {
+                    grupo.processoSei = processoSei;
+                }
+
+                grupo.registros.push(registro);
+            });
+
+            return ordemConsolidada.map((entrada) => {
+                if (!entrada || entrada.tipo !== 'grupo-sei') {
+                    return entrada;
+                }
+
+                const registrosDoGrupo = Array.isArray(entrada.registros) ? entrada.registros : [];
+                if (!registrosDoGrupo.length) return null;
+
+                const registroRepresentativo = escolherRegistroRepresentativoResumoOrcamento(registrosDoGrupo) || registrosDoGrupo[0];
+                const itemRepresentativo = registroRepresentativo?.item || {};
+                const descricoesItens = [];
+                const descricoesVistas = new Set();
+
+                registrosDoGrupo.forEach((registro) => {
+                    const descricao = obterDescricaoItemResumoOrcamento(registro?.item);
+                    const chaveDescricao = normalizarBusca(descricao);
+                    if (chaveDescricao && descricoesVistas.has(chaveDescricao)) return;
+                    descricoesVistas.add(chaveDescricao);
+                    descricoesItens.push(descricao);
+                });
+
+                return {
+                    item: itemRepresentativo,
+                    etapaAtual: registroRepresentativo?.etapaAtual || null,
+                    grupo: classificarGrupoResumoOrcamento(registrosDoGrupo),
+                    itens: registrosDoGrupo.map((registro) => registro?.item).filter(Boolean),
+                    descricoesItens,
+                    processoSei: entrada.processoSei || obterProcessoSeiResumoOrcamento(itemRepresentativo)
+                };
+            }).filter(Boolean);
+        }
+
         function montarLinhasItemResumoOrcamento(registro, indice) {
             const { item, etapaAtual } = registro;
-            const descricao = String(item.descricao || item.nome || item.id || 'Item sem descrição').trim();
-            const processoSei = String(item.processoSei || item.processo_sei || '').trim();
+            const descricao = obterDescricaoItemResumoOrcamento(item);
+            const processoSei = String(registro?.processoSei || obterProcessoSeiResumoOrcamento(item)).trim();
+            const itensAgrupados = Array.isArray(registro?.itens) ? registro.itens.filter(Boolean) : [item].filter(Boolean);
+            const descricoesItens = Array.isArray(registro?.descricoesItens) && registro.descricoesItens.length
+                ? registro.descricoesItens
+                : itensAgrupados.map((itemAgrupado) => obterDescricaoItemResumoOrcamento(itemAgrupado));
+            const registroAgrupadoPorSei = Boolean(processoSei && itensAgrupados.length > 1);
             const setorAtual = String(item.setorAtual || item.setor_atual || '').trim();
             const responsavelAtual = String(item.responsavelAtual || item.responsavel_atual || '').trim();
             const dataEntradaSetor = item.dataEntradaSetor || item.data_entrada_setor;
             const diasNoSetor = calcularDiasNoSetorAtualOrcamento(dataEntradaSetor);
-            const pendenciaAtual = String(item.pendenciaAtual || item.pendencia_atual || '').trim();
+            const pendenciaAtual = obterProvidenciaResumoOrcamento(item);
             const observacao = String(item.observacao || '').trim();
-            const linhas = [
-                `*${indice}. ${descricao}*`,
-                `SEI: ${processoSei || 'não informado'}`,
-                `Andamento: ${etapaAtual.rotulo || 'não informado'}`
-            ];
+            const linhas = registroAgrupadoPorSei
+                ? [
+                    `*${indice}. Processo ${processoSei}*`,
+                    'Itens:',
+                    ...descricoesItens.map((descricaoItem) => `- ${descricaoItem}`),
+                    '',
+                    `Andamento: ${etapaAtual?.rotulo || 'não informado'}`
+                ]
+                : [
+                    `*${indice}. ${descricao}*`,
+                    `SEI: ${processoSei || 'não informado'}`,
+                    `Andamento: ${etapaAtual?.rotulo || 'não informado'}`
+                ];
 
             if (setorAtual) linhas.push(`Local atual: ${setorAtual}`);
             if (responsavelAtual) linhas.push(`Responsável: ${responsavelAtual}`);
@@ -10573,7 +10702,7 @@ async function carregarLogoParaPDF() {
 
             outrosProcessos.forEach(adicionarItem);
 
-            return registros;
+            return agruparRegistrosResumoPorProcessoSei(registros);
         }
 
         function montarGrupoResumoOrcamento(titulo, itens) {
