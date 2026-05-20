@@ -1,0 +1,328 @@
+{
+  "resumo": {
+    "geradoEm": "2026-05-20T18:55:03.605Z",
+    "fonteDecisoes": "backend/data/relatorios/profor-2022-pad-decisoes-saneamento.json",
+    "fonteRelatorioPad": "backend/data/relatorios/profor-2022-pad-rateios-dry-run.json",
+    "totalErros": 0,
+    "totalAvisos": 0,
+    "totalPendentes": 78,
+    "arquivoValido": true,
+    "aplicavel": false
+  },
+  "erros": [],
+  "avisos": [],
+  "pendentes": [
+    {
+      "secao": "equivalenciasConfirmadas",
+      "id": "937265::MEIA MILITAR"
+    },
+    {
+      "secao": "equivalenciasConfirmadas",
+      "id": "937782::DESKTOP PARA EDICAO DE VIDEO"
+    },
+    {
+      "secao": "equivalenciasConfirmadas",
+      "id": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN"
+    },
+    {
+      "secao": "equivalenciasConfirmadas",
+      "id": "937782::SWITCHER DE VIDEO"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12."
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA)."
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::QUADRO LOUSA BRANCA"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::SALDO RESIDUAL"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI"
+    },
+    {
+      "secao": "rateiosNovos",
+      "id": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D ("
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937265::CALCA TATICA"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937265::CINTO TATICO"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937265::COTURNO"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "937817::CAPACETE PROTETOR"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938128::AGENDA PLANNER"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938128::CAMERA DIGITAL, PARA A OUVIDORIA"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938128::GAVETEIROS, OUVIDORIA"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938128::SALDO RESIDUAL"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA"
+    },
+    {
+      "secao": "correcoesItensNaoAptos",
+      "id": "938277::SALDO REMANESCENTE"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::CAFETEIRA ELETRICA TRADICIONAL INDUSTRIA"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::COMPUTADOR DESKTOP (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::FORNO DE MICROONDAS - 20L BRANCO (OUVID"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::FRIGOBAR 71L (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::GELADEIRA FROST FREE DUPLEX 400 LITROS ("
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::GRAVADOR DE AUDIO DIGITAL 32GB (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::HD EXTERNO 2TB (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::IMPRESSORA MULTIFUNCIONAL TANQUE DE TIN"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::KIT VIDEOCONFERENCIA (CORREGEDORIA - 03"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::MESA ESCRITORIO REDONDA - 1,20M (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::NOBREAK 1200VA (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::NOTEBOOK (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::PEN DRIVE 64GB (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::POLTRONAS (CORREGEDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::PROJETOR MULTIMIDIA 3.000 LUMENS (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::QUADRO LOUSA BRANCA 250X120CM (ESCOLA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::TELA DE PROJECAO 2X2 RETRATIL COM TRIPE"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::TELEVISAO 50 (CORREGEDORIA - 03 UN. E OU"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937221::WEBCAM FULL HD (OUVIDORIA)"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937782::CONTRATACAO DE BOLSA - ALUNO OUVIDORIA I"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937782::CONTRATACAO DE BOLSA -COORDENADOR OUVID"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937782::CONTRATACAO DE BOLSA -PESQUISADOR OUVID"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937782::DESKTOP PARA EDICAO DE VIDEO"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN"
+    },
+    {
+      "secao": "ausenciasValidadas",
+      "id": "937782::SWITCHER DE VIDEO"
+    }
+  ]
+}

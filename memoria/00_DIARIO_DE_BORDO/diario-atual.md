@@ -1,5 +1,25 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Validador do arquivo de decisões (Etapa D)
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da Etapa C.
+- Objetivo: validar a coerência do arquivo de decisões antes de qualquer alteração de banco (Etapa E, fora desta rodada).
+- Mudanças realizadas:
+  - **Novo serviço** `backend/services/profor-2022/profor-pad-decisoes-saneamento-service.js`: carrega o arquivo de decisões (checa `versaoEsquema`), monta o contexto (carteira monitorada, itens conhecidos, itens PAD do relatório atual) e aplica 10 validadores — convênio na carteira, item PAD existente, item conhecido existente, justificativa obrigatória, soma de rateio 100/100 (tolerância 0,01), áreas válidas (OUVIDORIA/CORREGEDORIA/ESCOLA PENAL/N/A), decisões incompatíveis, exclusão+substituição, liberação de não apto com justificativa, saldo residual/remanescente com justificativa. Exporta `AREAS_VALIDAS` para reuso na Etapa E.
+  - **Novo script** `backend/scripts/validar-decisoes-saneamento-pad-profor-2022.js`.
+  - `package.json`: novo script `profor:pad:validar-decisoes-saneamento`.
+  - `scripts/validar-syntax.js`: adicionados o serviço e o script.
+- Saída gerada: `backend/data/relatorios/profor-2022-pad-validacao-decisoes.json`.
+- Distinção de severidade: **erro** invalida o arquivo e causa `process.exit(1)`; **pendente** (decisão `PENDENTE`) não invalida o arquivo (exit 0), mas marca `aplicavel: false` — a Etapa E só aplicará sem erros e sem pendências.
+- Validações executadas:
+  - `node --check` nos 2 arquivos novos → OK. `npm run validar:syntax` → OK (41 arquivos).
+  - `npm run profor:pad:validar-decisoes-saneamento` sobre o template vazio → 0 erros, 78 pendentes, `arquivoValido: sim`, `aplicavel: não`, exit 0.
+  - Teste de erro: injetadas 3 decisões inválidas (rateio somando 60/70, área `JURIDICO`, exclusão sem justificativa) → 4 erros detectados, `arquivoValido: não`, exit 1 (confirmado executando o script diretamente, sem pipe). Template restaurado ao estado limpo antes do commit.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+- Risco: Baixo. Serviço somente leitura no banco; nenhuma escrita em SQLite, frontend ou publicação.
+- Rollback: `git revert` do commit da Etapa D.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Template editável de decisões (Etapa C)
 
 - Branch atual: `main`.
