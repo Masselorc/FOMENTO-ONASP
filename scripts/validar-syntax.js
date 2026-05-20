@@ -27,6 +27,7 @@ const ARQUIVOS = [
   "backend/scripts/rollback-rateio-inicial-profor-2022.js",
   "backend/scripts/ler-relatorios-pad-profor-2022.js",
   "backend/scripts/conferir-itens-pad-rateios-profor-2022.js",
+  "backend/scripts/gerar-relatorio-saneamento-pad-profor-2022.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
   "frontend/js/core/ui-components.js",

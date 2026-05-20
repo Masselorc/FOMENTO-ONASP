@@ -3736,6 +3736,39 @@ Logs operacionais gravados:
 
 ---
 
+## 20/05/2026 - PROFOR 2022: relatório de saneamento da Etapa 5
+
+- Branch: `main`.
+- Objetivo:
+  - gerar relatório objetivo de saneamento a partir de `backend/data/relatorios/profor-2022-pad-rateios-dry-run.json`, sem correção automática.
+- Arquivos alterados:
+  - `backend/scripts/gerar-relatorio-saneamento-pad-profor-2022.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `backend/data/relatorios/profor-2022-pad-saneamento.json`;
+  - `backend/data/relatorios/profor-2022-pad-saneamento.md`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Comando criado:
+  - `npm run profor:pad:relatorio-saneamento`.
+- Resultado:
+  - itens PAD sem rateio: `27`;
+  - coincidências apenas por descrição normalizada: `4`;
+  - itens conhecidos não aptos: `19`;
+  - itens conhecidos ausentes no PAD: `32`;
+  - possíveis pares por descrição normalizada: `3`;
+  - convênios afetados: `937216`, `937221`, `937265`, `937468`, `937782`, `937817`, `938128`, `938277`.
+- Regra operacional registrada:
+  - pares por descrição normalizada servem apenas como apoio de saneamento e não autorizam rateio automático.
+- Restrições preservadas:
+  - sem alteração de banco;
+  - sem alteração de frontend;
+  - sem publicação;
+  - sem ativação de nova origem de `planoAplicacao`;
+  - sem integração com compositor PROFOR;
+  - sem aplicação financeira dos rateios.
+
+---
+
 ## 20/05/2026 - PROFOR 2022: Etapa 5 (ajuste de chave por descrição original)
 
 - Branch: `main`.
