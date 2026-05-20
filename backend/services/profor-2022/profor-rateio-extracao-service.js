@@ -311,6 +311,7 @@ function grupoPossuiPendenciaImpedativa(chaveItem, alertas) {
 function montarItemConhecido(chaveItem, grupo, alertas) {
   const referencia = grupo[0];
   const valoresUnitarios = grupo.map((linha) => linha.valorUnitario).filter((valor) => valor > 0);
+  const possuiPendenciaImpedativa = grupoPossuiPendenciaImpedativa(chaveItem, alertas);
 
   return {
     chaveItem,
@@ -323,15 +324,16 @@ function montarItemConhecido(chaveItem, grupo, alertas) {
     unidadesEncontradas: [],
     valorUnitarioReferencia: valoresUnitarios.length ? valoresUnitarios[0] : 0,
     origem: ORIGEM_RATEIO_INICIAL,
-    possuiPendenciaImpedativa: grupoPossuiPendenciaImpedativa(chaveItem, alertas),
+    possuiPendenciaImpedativa,
+    aptoParaImportacaoFutura: !possuiPendenciaImpedativa,
   };
 }
 
-function montarResumo({ linhasExtraidas, itensConhecidos, rateios, alertas, abas, arquivoPlanilha }) {
+function montarResumo({ totalLinhasLidas, itensConhecidos, rateios, alertas, abas, arquivoPlanilha }) {
   return {
     arquivoPlanilha,
     abasProcessadas: abas,
-    totalLinhasLidas: linhasExtraidas.length,
+    totalLinhasLidas,
     totalItensConhecidos: itensConhecidos.length,
     totalRateios: rateios.length,
     totalAlertas: alertas.length,
@@ -373,7 +375,7 @@ function extrairRateioInicialProfor2022DryRun(opcoes = {}) {
   }
 
   const resumo = montarResumo({
-    linhasExtraidas: { length: totalLinhasLidas },
+    totalLinhasLidas,
     itensConhecidos,
     rateios,
     alertas,

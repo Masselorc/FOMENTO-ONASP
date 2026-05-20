@@ -3536,3 +3536,41 @@ Logs operacionais gravados:
 - Pendências:
   - validação manual pelo usuário em outros computadores da rede local, se necessário.
 
+---
+
+## 20/05/2026 - PROFOR 2022: revisão da rotina de conferência de rateio inicial (dry-run)
+
+- Objetivo:
+  - revisar e ajustar pontualmente a rotina recém-criada de extração de rateio inicial do `planoAplicacao` por abas UF, sem persistência.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-rateio-extracao-service.js`;
+  - `backend/scripts/extrair-rateios-profor-2022.js`;
+  - `scripts/validar-syntax.js`;
+  - `package.json`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajustes realizados na revisão:
+  - adicionado comando npm `extrair:rateios-profor-2022:dry-run`;
+  - criado script local `backend/scripts/extrair-rateios-profor-2022.js` para gerar prévia no terminal e JSON em `backend/data/relatorios/profor-2022-rateio-inicial-dry-run.json`;
+  - incluídos os novos arquivos no `validar:syntax`;
+  - resumo ajustado para usar `totalLinhasLidas` diretamente (sem objeto artificial);
+  - item conhecido passou a expor `aptoParaImportacaoFutura` (negado quando existe alerta impeditivo), preservando `possuiPendenciaImpedativa`.
+- Resultado do dry-run:
+  - abas por UF processadas: `15`;
+  - linhas lidas: `573`;
+  - itens conhecidos: `500`;
+  - rateios: `567`;
+  - alertas: `34` (todos impeditivos);
+  - naturezas conflitantes: `1`.
+- Validações executadas:
+  - `node --check backend/services/profor-2022/profor-rateio-extracao-service.js`;
+  - `node --check backend/scripts/extrair-rateios-profor-2022.js`;
+  - `npm run extrair:rateios-profor-2022:dry-run`;
+  - `npm run validar:syntax`;
+  - `git diff --check`;
+  - conferência de ausência de alterações em `frontend/data/publicados/`.
+- Restrições preservadas:
+  - sem persistência em banco;
+  - sem alteração de frontend;
+  - sem alteração em `frontend/data/publicados/*.json`;
+  - sem uso de `saldoEconomicidade` para critério de rateio.
+

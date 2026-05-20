@@ -11,6 +11,7 @@
     "atualizar:profor-2022": "node backend/scripts/atualizar-profor-2022-consolidado.js",
     "agendar:detru-profor": "node backend/scripts/agendar-atualizacao-detru-profor-2022.js",
     "agendar:profor-2022": "node backend/scripts/agendar-atualizacao-profor-2022.js",
+    "extrair:rateios-profor-2022:dry-run": "node backend/scripts/extrair-rateios-profor-2022.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",
