@@ -10,6 +10,8 @@ const STATUS_VALIDOS = [
   "REVERTIDO",
 ];
 const NIVEIS_VALIDOS = ["info", "aviso", "impeditivo"];
+const DECISOES_RESOLUTIVAS = ["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"];
+const DECISAO_COMENTARIO = "COMENTAR";
 
 function agoraIso() {
   return new Date().toISOString();
@@ -166,29 +168,49 @@ function agregar(coluna) {
 }
 
 function obterEstatisticasAuditoria() {
-  const total = db.prepare("SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias").get().t;
-  const pendentes = db.prepare(
-    "SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias WHERE status = 'PENDENTE'"
-  ).get().t;
-  const impeditivas = db.prepare(
-    "SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias WHERE nivel = 'impeditivo'"
-  ).get().t;
-  const bloqueiamPublicacao = db.prepare(
-    "SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias WHERE bloqueia_publicacao = 1"
-  ).get().t;
-  const semDecisao = db.prepare(`
-    SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias d
-    WHERE NOT EXISTS (
-      SELECT 1 FROM profor_2022_revisao_decisoes x WHERE x.divergencia_id = d.id
-    )
-  `).get().t;
+  const resolutivasSql = DECISOES_RESOLUTIVAS.map(() => "?").join(", ");
+  const totais = db.prepare(`
+    SELECT
+      COUNT(*) AS totalDivergencias,
+      SUM(CASE WHEN status = 'PENDENTE' THEN 1 ELSE 0 END) AS totalPendentes,
+      SUM(CASE WHEN status = 'EM_REVISAO' THEN 1 ELSE 0 END) AS totalEmRevisao,
+      SUM(CASE WHEN nivel = 'impeditivo' THEN 1 ELSE 0 END) AS totalImpeditivas,
+      SUM(CASE WHEN bloqueia_publicacao = 1 THEN 1 ELSE 0 END) AS totalBloqueiamPublicacao,
+      SUM(CASE WHEN status = 'PENDENTE' AND bloqueia_publicacao = 1 THEN 1 ELSE 0 END) AS totalPendentesQueBloqueiamPublicacao,
+      SUM(CASE WHEN status = 'EM_REVISAO' AND bloqueia_publicacao = 1 THEN 1 ELSE 0 END) AS totalEmRevisaoQueBloqueiamPublicacao
+    FROM profor_2022_revisao_divergencias
+  `).get();
+  const decisoes = db.prepare(`
+    SELECT
+      SUM(CASE WHEN EXISTS (
+        SELECT 1 FROM profor_2022_revisao_decisoes x
+        WHERE x.divergencia_id = d.id AND x.decisao IN (${resolutivasSql})
+      ) THEN 1 ELSE 0 END) AS totalComDecisaoResolutiva,
+      SUM(CASE WHEN EXISTS (
+        SELECT 1 FROM profor_2022_revisao_decisoes x
+        WHERE x.divergencia_id = d.id AND x.decisao = ?
+      ) THEN 1 ELSE 0 END) AS totalComComentario,
+      SUM(CASE WHEN NOT EXISTS (
+        SELECT 1 FROM profor_2022_revisao_decisoes x
+        WHERE x.divergencia_id = d.id AND x.decisao IN (${resolutivasSql})
+      ) THEN 1 ELSE 0 END) AS totalSemDecisaoResolutiva
+    FROM profor_2022_revisao_divergencias d
+  `).get(...DECISOES_RESOLUTIVAS, DECISAO_COMENTARIO, ...DECISOES_RESOLUTIVAS);
+  const bloqueiosAtivos = Number(totais.totalPendentesQueBloqueiamPublicacao || 0)
+    + Number(totais.totalEmRevisaoQueBloqueiamPublicacao || 0);
 
   return {
-    total,
-    pendentes,
-    impeditivas,
-    bloqueiamPublicacao,
-    semDecisao,
+    totalDivergencias: Number(totais.totalDivergencias || 0),
+    totalPendentes: Number(totais.totalPendentes || 0),
+    totalEmRevisao: Number(totais.totalEmRevisao || 0),
+    totalImpeditivas: Number(totais.totalImpeditivas || 0),
+    totalBloqueiamPublicacao: Number(totais.totalBloqueiamPublicacao || 0),
+    totalPendentesQueBloqueiamPublicacao: Number(totais.totalPendentesQueBloqueiamPublicacao || 0),
+    totalEmRevisaoQueBloqueiamPublicacao: Number(totais.totalEmRevisaoQueBloqueiamPublicacao || 0),
+    totalComDecisaoResolutiva: Number(decisoes.totalComDecisaoResolutiva || 0),
+    totalComComentario: Number(decisoes.totalComComentario || 0),
+    totalSemDecisaoResolutiva: Number(decisoes.totalSemDecisaoResolutiva || 0),
+    publicacaoLiberada: bloqueiosAtivos === 0,
     porStatus: agregar("status"),
     porNivel: agregar("nivel"),
     porTipo: agregar("tipo_alerta"),
@@ -228,6 +250,22 @@ function listarDivergencias(filtros = {}) {
   if (filtros.bloqueiaPublicacao !== undefined && filtros.bloqueiaPublicacao !== null) {
     condicoes.push("bloqueia_publicacao = ?");
     parametros.push(filtros.bloqueiaPublicacao ? 1 : 0);
+  }
+  if (filtros.semDecisaoResolutiva !== undefined && filtros.semDecisaoResolutiva !== null) {
+    condicoes.push(`${filtros.semDecisaoResolutiva ? "NOT " : ""}EXISTS (
+      SELECT 1 FROM profor_2022_revisao_decisoes x
+      WHERE x.divergencia_id = profor_2022_revisao_divergencias.id
+        AND x.decisao IN (${DECISOES_RESOLUTIVAS.map(() => "?").join(", ")})
+    )`);
+    parametros.push(...DECISOES_RESOLUTIVAS);
+  }
+  if (filtros.comDecisaoResolutiva !== undefined && filtros.comDecisaoResolutiva !== null) {
+    condicoes.push(`${filtros.comDecisaoResolutiva ? "" : "NOT "}EXISTS (
+      SELECT 1 FROM profor_2022_revisao_decisoes x
+      WHERE x.divergencia_id = profor_2022_revisao_divergencias.id
+        AND x.decisao IN (${DECISOES_RESOLUTIVAS.map(() => "?").join(", ")})
+    )`);
+    parametros.push(...DECISOES_RESOLUTIVAS);
   }
 
   const where = condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : "";
@@ -355,6 +393,8 @@ function contarEventosDoLote(loteId, evento) {
 module.exports = {
   STATUS_VALIDOS,
   NIVEIS_VALIDOS,
+  DECISOES_RESOLUTIVAS,
+  DECISAO_COMENTARIO,
   criarLoteRevisao,
   atualizarTotaisLote,
   buscarDivergenciaPorChave,

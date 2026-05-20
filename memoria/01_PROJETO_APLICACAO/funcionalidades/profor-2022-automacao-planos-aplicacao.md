@@ -1010,6 +1010,48 @@ Regras da decisão:
 A Etapa 5.4 não implementa front-end, não reconstrói o `planoAplicacao`, não
 altera a origem ativa e não publica.
 
+#### 16.2.8. Auditoria operacional da revisão (Etapa 5.4.1 — implementada)
+
+A auditoria da fila de revisão foi ajustada para preparar a futura tela
+SISTEMA > Revisão de divergências. A rota
+`GET /api/profor-2022/revisao/auditoria` passou a retornar, além dos
+agrupamentos por status/nível/tipo/convênio, os seguintes contadores:
+
+- `totalDivergencias`;
+- `totalPendentes`;
+- `totalEmRevisao`;
+- `totalImpeditivas`;
+- `totalBloqueiamPublicacao`;
+- `totalPendentesQueBloqueiamPublicacao`;
+- `totalEmRevisaoQueBloqueiamPublicacao`;
+- `totalComDecisaoResolutiva`;
+- `totalComComentario`;
+- `totalSemDecisaoResolutiva`;
+- `publicacaoLiberada`.
+
+Regra operacional de liberação:
+
+- `publicacaoLiberada = true` somente quando não houver divergência com
+  `status` `PENDENTE` ou `EM_REVISAO` e `bloqueia_publicacao = 1`;
+- divergências já decididas como `ACEITO`, `REJEITADO`, `CORRIGIDO` ou
+  `REVERTIDO` não bloqueiam a publicação por esse critério, ainda que tenham
+  `bloqueia_publicacao = 1` como característica técnica;
+- `ACEITO` continua significando apenas decisão humana registrada. A API não
+  aplica decisão ao `planoAplicacao`.
+
+Classificação das decisões:
+
+- decisões resolutivas: `ACEITO`, `REJEITADO`, `CORRIGIDO`, `REVERTIDO`;
+- comentário: `COMENTAR`;
+- em revisão: `EM_REVISAO`.
+
+A listagem `GET /api/profor-2022/revisao/divergencias` aceita também os filtros
+`semDecisaoResolutiva=true|false` e
+`comDecisaoResolutiva=true|false`, além de `bloqueiaPublicacao=true|false`.
+
+Esta etapa não cria migration, não implementa front-end, não reconstrói o
+`planoAplicacao`, não altera a origem ativa, não publica e não aplica decisões.
+
 ---
 
 ## 17. Fases de implementação recomendadas

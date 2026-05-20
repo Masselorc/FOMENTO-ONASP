@@ -14,12 +14,17 @@ function executar() {
   const { estatisticas, ultimoLote } = auditoria;
 
   console.log("Auditoria da fila de revisão PAD x memória PROFOR 2022");
-  console.log(`Total de divergências: ${estatisticas.total}`);
-  console.log(`Total pendentes: ${estatisticas.pendentes}`);
-  console.log(`Total impeditivas: ${estatisticas.impeditivas}`);
-  console.log(`Total que bloqueia publicação: ${estatisticas.bloqueiamPublicacao}`);
-  console.log(`Divergências sem decisão: ${auditoria.divergenciasSemDecisao}`);
-  console.log(`Divergências com decisão: ${auditoria.divergenciasComDecisao}`);
+  console.log(`Total de divergências: ${estatisticas.totalDivergencias}`);
+  console.log(`Total pendentes: ${estatisticas.totalPendentes}`);
+  console.log(`Total em revisão: ${estatisticas.totalEmRevisao}`);
+  console.log(`Total impeditivas: ${estatisticas.totalImpeditivas}`);
+  console.log(`Total que bloqueia publicação: ${estatisticas.totalBloqueiamPublicacao}`);
+  console.log(`Pendentes que bloqueiam publicação: ${estatisticas.totalPendentesQueBloqueiamPublicacao}`);
+  console.log(`Em revisão que bloqueiam publicação: ${estatisticas.totalEmRevisaoQueBloqueiamPublicacao}`);
+  console.log(`Divergências com decisão resolutiva: ${auditoria.divergenciasComDecisaoResolutiva}`);
+  console.log(`Divergências com comentário: ${auditoria.divergenciasComComentario}`);
+  console.log(`Divergências sem decisão resolutiva: ${auditoria.divergenciasSemDecisaoResolutiva}`);
+  console.log(`Publicação liberada: ${estatisticas.publicacaoLiberada ? "sim" : "não"}`);
   imprimirLista("Por status:", estatisticas.porStatus);
   imprimirLista("Por nível:", estatisticas.porNivel);
   imprimirLista("Por tipo:", estatisticas.porTipo);

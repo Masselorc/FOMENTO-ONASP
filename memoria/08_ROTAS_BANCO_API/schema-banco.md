@@ -763,6 +763,31 @@ auditada por `npm run profor:pad:auditar-fila-revisao`. A regeneração preserva
 `UNIQUE`); divergências antigas não reapresentadas não são apagadas — apenas
 registradas em log.
 
+**Auditoria operacional (Etapa 5.4.1).** A auditoria é calculada por consultas
+SQL sobre as tabelas existentes, sem migration adicional. A API
+`GET /api/profor-2022/revisao/auditoria` expõe:
+
+- `totalDivergencias`;
+- `totalPendentes`;
+- `totalEmRevisao`;
+- `totalImpeditivas`;
+- `totalBloqueiamPublicacao`;
+- `totalPendentesQueBloqueiamPublicacao`;
+- `totalEmRevisaoQueBloqueiamPublicacao`;
+- `totalComDecisaoResolutiva`;
+- `totalComComentario`;
+- `totalSemDecisaoResolutiva`;
+- `publicacaoLiberada`.
+
+Decisões resolutivas são `ACEITO`, `REJEITADO`, `CORRIGIDO` e `REVERTIDO`.
+`COMENTAR` é comentário e `EM_REVISAO` mantém a divergência em revisão. A
+publicação fica liberada apenas quando não existir divergência com status
+`PENDENTE` ou `EM_REVISAO` e `bloqueia_publicacao = 1`. `ACEITO` é decisão
+humana registrada, sem aplicação automática ao `planoAplicacao`.
+
+Filtros adicionais de listagem: `bloqueiaPublicacao=true|false`,
+`semDecisaoResolutiva=true|false` e `comDecisaoResolutiva=true|false`.
+
 **Pendência futura.** A Etapa 5.3 **não aplica decisões**. A aplicação das
 decisões ao `planoAplicacao`, a tela SISTEMA de revisão e a publicação com
 dados saneados continuam pendentes. Quando forem planejadas, devem reaproveitar

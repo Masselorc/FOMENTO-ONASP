@@ -400,9 +400,9 @@ function gerarFilaRevisao(opcoes = {}) {
 
     const estatisticas = repo.obterEstatisticasAuditoria();
     repo.atualizarTotaisLote(loteId, {
-      totalDivergencias: estatisticas.total,
-      totalPendentes: estatisticas.pendentes,
-      totalImpeditivas: estatisticas.impeditivas,
+      totalDivergencias: estatisticas.totalDivergencias,
+      totalPendentes: estatisticas.totalPendentes,
+      totalImpeditivas: estatisticas.totalImpeditivas,
     });
     repo.registrarLog({
       entidadeTipo: "lote",
@@ -449,7 +449,10 @@ function auditarFilaRevisao() {
   return {
     estatisticas,
     divergenciasComDecisao: comDecisao,
-    divergenciasSemDecisao: estatisticas.semDecisao,
+    divergenciasComDecisaoResolutiva: estatisticas.totalComDecisaoResolutiva,
+    divergenciasComComentario: estatisticas.totalComComentario,
+    divergenciasSemDecisaoResolutiva: estatisticas.totalSemDecisaoResolutiva,
+    divergenciasSemDecisao: estatisticas.totalSemDecisaoResolutiva,
     ultimoLote,
     criadasUltimoLote,
     atualizadasUltimoLote,

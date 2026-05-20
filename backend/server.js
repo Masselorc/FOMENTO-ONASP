@@ -881,6 +881,12 @@ async function rotearApi(req, res, pathname) {
       if (sp.has("bloqueiaPublicacao")) {
         filtros.bloqueiaPublicacao = sp.get("bloqueiaPublicacao") === "true";
       }
+      if (sp.has("semDecisaoResolutiva")) {
+        filtros.semDecisaoResolutiva = sp.get("semDecisaoResolutiva") === "true";
+      }
+      if (sp.has("comDecisaoResolutiva")) {
+        filtros.comDecisaoResolutiva = sp.get("comDecisaoResolutiva") === "true";
+      }
       enviarJson(res, 200, { success: true, ...revisaoDecisaoService.listarDivergencias(filtros) });
       return;
     }

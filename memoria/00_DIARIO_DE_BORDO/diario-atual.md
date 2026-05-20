@@ -1,5 +1,50 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.4.1 - Auditoria operacional da revisão assistida
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo.
+- Objetivo: ajustar a auditoria operacional da fila persistente de revisão PAD x memória para alimentar corretamente a futura tela SISTEMA > Revisão de divergências.
+- Mudanças realizadas:
+  - **`profor-pad-revisao-repository.js`**: novos contadores SQL para pendentes, em revisão, bloqueios de publicação, decisões resolutivas, comentários e cálculo de `publicacaoLiberada`; filtros `semDecisaoResolutiva` e `comDecisaoResolutiva`.
+  - **`profor-pad-revisao-decisao-service.js`**: `auditarPendencias()` passou a expor os novos campos mantendo aliases legados.
+  - **`profor-pad-revisao-service.js`** e **`auditar-fila-revisao-pad-profor-2022.js`**: relatório CLI atualizado para decisões resolutivas, comentários e regra de liberação.
+  - **`backend/server.js`**: rota de listagem aceita os novos filtros.
+  - Documentação: `profor-2022-automacao-planos-aplicacao.md` e `schema-banco.md`.
+- Regra final de publicação:
+  - `publicacaoLiberada=true` somente quando não houver divergência com `status` `PENDENTE` ou `EM_REVISAO` e `bloqueia_publicacao = 1`.
+- Classificação de decisões:
+  - resolutivas: `ACEITO`, `REJEITADO`, `CORRIGIDO`, `REVERTIDO`;
+  - comentário: `COMENTAR`;
+  - em revisão: `EM_REVISAO`.
+- Resultado da auditoria local:
+  - `totalDivergencias=146`;
+  - `totalPendentes=144`;
+  - `totalEmRevisao=0`;
+  - `totalImpeditivas=44`;
+  - `totalBloqueiamPublicacao=48`;
+  - `totalPendentesQueBloqueiamPublicacao=47`;
+  - `totalEmRevisaoQueBloqueiamPublicacao=0`;
+  - `totalComDecisaoResolutiva=1`;
+  - `totalComComentario=0`;
+  - `totalSemDecisaoResolutiva=145`;
+  - `publicacaoLiberada=false`.
+- Validações executadas:
+  - `node --check` nos arquivos JS alterados;
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `GET /api/profor-2022/revisao/auditoria`;
+  - `GET /api/profor-2022/revisao/divergencias?bloqueiaPublicacao=true&semDecisaoResolutiva=true&limite=3`;
+  - `GET /api/profor-2022/revisao/divergencias?comDecisaoResolutiva=true&limite=5`.
+- Restrições preservadas:
+  - sem migration;
+  - sem alteração de banco estrutural;
+  - sem alteração de frontend;
+  - sem alteração de `frontend/data/publicados`;
+  - sem publicação;
+  - sem reconstrução do `planoAplicacao`;
+  - sem alteração de origem ativa;
+  - nenhuma decisão foi aplicada ao plano.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.4 - Camada backend/API de revisão assistida
 
 - Branch atual: `main`.

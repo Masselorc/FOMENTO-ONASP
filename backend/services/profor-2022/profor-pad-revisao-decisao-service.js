@@ -131,19 +131,27 @@ function listarLogsDaDivergencia(id) {
 function auditarPendencias() {
   const estatisticas = repo.obterEstatisticasAuditoria();
   return {
-    total: estatisticas.total,
-    pendentes: estatisticas.pendentes,
-    impeditivas: estatisticas.impeditivas,
-    bloqueiamPublicacao: estatisticas.bloqueiamPublicacao,
-    semDecisao: estatisticas.semDecisao,
+    totalDivergencias: estatisticas.totalDivergencias,
+    totalPendentes: estatisticas.totalPendentes,
+    totalEmRevisao: estatisticas.totalEmRevisao,
+    totalImpeditivas: estatisticas.totalImpeditivas,
+    totalBloqueiamPublicacao: estatisticas.totalBloqueiamPublicacao,
+    totalPendentesQueBloqueiamPublicacao: estatisticas.totalPendentesQueBloqueiamPublicacao,
+    totalEmRevisaoQueBloqueiamPublicacao: estatisticas.totalEmRevisaoQueBloqueiamPublicacao,
+    totalComDecisaoResolutiva: estatisticas.totalComDecisaoResolutiva,
+    totalComComentario: estatisticas.totalComComentario,
+    totalSemDecisaoResolutiva: estatisticas.totalSemDecisaoResolutiva,
+    publicacaoLiberada: estatisticas.publicacaoLiberada,
+    // Aliases legados mantidos para consumidores locais existentes.
+    total: estatisticas.totalDivergencias,
+    pendentes: estatisticas.totalPendentes,
+    impeditivas: estatisticas.totalImpeditivas,
+    bloqueiamPublicacao: estatisticas.totalBloqueiamPublicacao,
+    semDecisao: estatisticas.totalSemDecisaoResolutiva,
     porStatus: estatisticas.porStatus,
     porNivel: estatisticas.porNivel,
     porTipo: estatisticas.porTipo,
     porConvenio: estatisticas.porConvenio,
-    // A reconstrução/publicação permanece bloqueada enquanto houver impeditiva pendente.
-    publicacaoLiberada: estatisticas.pendentes === 0 || estatisticas.impeditivas === 0
-      ? estatisticas.impeditivas === 0
-      : false,
   };
 }
 
