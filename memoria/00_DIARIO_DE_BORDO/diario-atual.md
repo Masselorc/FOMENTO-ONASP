@@ -1,5 +1,28 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Regra futura de revisão assistida e auditoria de divergências
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da consolidação documental das regras de leitura PAD.
+- Objetivo: registrar na memória técnica uma regra futura de interface (revisão assistida de divergências PAD x memória) e a auditoria obrigatória das decisões. Alteração estritamente documental — sem implementação.
+- Mudanças realizadas:
+  - **`profor-2022-automacao-planos-aplicacao.md`**: nova seção §16.2 (Revisão assistida de divergências — funcionalidade futura), com regra de revisão assistida, padrão visual, ações disponíveis, regra de aplicação; §16.2.1 (17 tipos mínimos de alerta de revisão); §16.2.2 (campos previstos por alerta — tipo, nível, status, campo afetado, valores, fontes, diferença, motivo, ação sugerida, impacto, bloqueia publicação); §16.2.3 (regra de log/auditoria obrigatória, com a lista de itens rastreáveis e os 15 casos de aplicação).
+  - **`schema-banco.md`**: nova seção "Pendência futura: modelo de auditoria da revisão assistida de divergências PAD" — marca a necessidade futura de modelo de persistência de auditoria, sem criar tabela, coluna ou migration.
+- Decisões registradas:
+  - Definida a regra futura de revisão assistida de divergências PAD x memória.
+  - A aplicação deverá exibir alertas no front-end com valor anterior, valor novo, diferença, motivo provável e ações de decisão (aceitar, rejeitar, manter anterior, corrigir, revisar depois, ver detalhes).
+  - Nenhuma divergência será aplicada silenciosamente; o dado bruto da fonte não é sobrescrito sem decisão validada.
+  - Toda aceitação, rejeição, correção, postergação, aplicação de lote, rollback ou publicação baseada em dados saneados deverá gerar log/auditoria.
+  - A reconstrução do `planoAplicacao` só deverá usar dados aceitos, saneados e auditáveis.
+  - Não houve implementação de front-end, componentes visuais, banco, migration ou aplicação de decisões nesta etapa.
+- Avaliação dos documentos: a regra foi registrada no documento principal da migração PAD (`profor-2022-automacao-planos-aplicacao.md`) e, como pendência futura de modelo de dados, em `schema-banco.md`. `profor-2022.md` (visão geral) e `profor-2022-operacao.md` (fluxo operacional `banco-cache`) não foram alterados, pois a regra não pertence ao escopo deles.
+- Validações executadas:
+  - `npm run validar:syntax` → OK (41 arquivos) — nenhum código alterado, validação por garantia.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+  - Confirmado que apenas arquivos de documentação/memória foram alterados.
+- Risco: Nulo. Alteração estritamente documental; nenhum código, banco, migration, frontend, publicação, origem ativa do planoAplicacao ou decisão de saneamento foi tocado.
+- Rollback: `git revert` do commit; ou `git restore` dos 3 arquivos de memória.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Consolidação documental das regras de leitura PAD
 
 - Branch atual: `main`.

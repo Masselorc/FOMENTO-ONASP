@@ -692,6 +692,127 @@ Validações da tela:
 - não permitir publicar plano com pendência crítica;
 - exibir diferença de centavos quando houver ajuste residual.
 
+### 16.2. Revisão assistida de divergências (funcionalidade futura)
+
+Esta seção define uma regra **futura**. A funcionalidade não deve ser
+implementada agora no front-end, e nenhum componente visual deve ser criado
+nesta etapa.
+
+**Regra de revisão assistida.** A aplicação deverá futuramente exibir
+divergências entre a memória atual e os dados novos do PAD em formato de
+revisão assistida, com indicação do campo afetado, valor anterior, valor novo,
+diferença, motivo provável e ações disponíveis ao usuário. A experiência
+esperada é semelhante a um controle de alterações: o usuário poderá aceitar a
+atualização, rejeitar, manter o valor anterior, corrigir manualmente ou marcar
+para revisão posterior.
+
+Exemplo: se a memória antiga possui o valor R$ 10,98 e o PAD atualizado traz
+R$ 10,99, a aplicação deve exibir a divergência em um balão/pop-up de revisão.
+O usuário visualiza o valor anterior, o valor novo, a diferença e a causa
+provável, e decide expressamente o que fazer.
+
+**Padrão visual recomendado.** Ícone no campo divergente, balão explicativo e
+botões de decisão. O balão deve mostrar: valor anterior, valor novo,
+diferença, explicação curta e as ações disponíveis.
+
+**Ações disponíveis ao usuário**, conforme o caso:
+
+- aceitar atualização;
+- rejeitar atualização;
+- manter valor anterior;
+- corrigir manualmente;
+- marcar para revisar depois;
+- ver detalhes técnicos.
+
+**Regra de aplicação.** Nenhuma atualização saneada deve ser aplicada de forma
+silenciosa. O dado bruto da fonte não deve ser sobrescrito silenciosamente. O
+dado novo só prevalece quando houver decisão validada. A decisão do usuário
+funciona como camada de saneamento/validação. A reconstrução futura do
+`planoAplicacao` e a eventual publicação só devem considerar alterações
+aceitas, saneadas e auditáveis. Toda alteração efetiva deve estar vinculada a
+uma decisão validada e a um evento de auditoria.
+
+#### 16.2.1. Tipos mínimos de alerta de revisão
+
+| Tipo de alerta |
+| --- |
+| `valor_diferente` |
+| `quantidade_diferente` |
+| `valor_unitario_diferente` |
+| `descricao_divergente` |
+| `item_novo_sem_rateio` |
+| `item_ausente_no_pad` |
+| `item_substituido` |
+| `item_nao_apto` |
+| `natureza_divergente` |
+| `area_pendente` |
+| `saldo_inconsistente` |
+| `quantidade_valor_unitario_inconsistente` |
+| `equivalencia_por_descricao_normalizada` |
+| `rateio_novo` |
+| `correcao_de_rateio` |
+| `rollback_de_saneamento` |
+| `publicacao_com_dados_saneados` |
+
+#### 16.2.2. Campos previstos por alerta de revisão
+
+Cada alerta deve prever, no desenho futuro:
+
+- `tipo`;
+- `nivel`: `info`, `aviso` ou `impeditivo`;
+- `status`: `pendente`, `aceito`, `rejeitado`, `em_revisao`, `corrigido`,
+  `aplicado` ou `revertido`;
+- `campoAfetado`;
+- `valorAnterior`;
+- `valorNovo`;
+- `fonteAnterior`;
+- `fonteNova`;
+- `diferenca`;
+- `motivoProvavel`;
+- `acaoSugerida`;
+- `impactoReconstrucao` (impacto na reconstrução do `planoAplicacao`);
+- `bloqueiaPublicacao`: sim/não.
+
+#### 16.2.3. Regra de log/auditoria obrigatória
+
+Toda decisão tomada na revisão assistida de divergências deve gerar registro
+de log/auditoria. O dado não deve ser simplesmente substituído. O registro
+deve permitir rastrear posteriormente por que determinado dado foi aceito,
+rejeitado, mantido, corrigido ou substituído.
+
+Cada registro de auditoria deve manter rastreabilidade completa de:
+
+- alerta gerado;
+- tipo do alerta;
+- nível do alerta;
+- campo afetado;
+- valor anterior;
+- valor novo;
+- fonte anterior;
+- fonte nova;
+- diferença identificada;
+- motivo provável apresentado ao usuário;
+- ação tomada pelo usuário (aceitar, rejeitar, manter anterior, revisar
+  depois, corrigir manualmente);
+- justificativa, quando aplicável;
+- usuário responsável;
+- data e hora da decisão;
+- lote de saneamento/importação;
+- impacto na reconstrução do `planoAplicacao`;
+- eventual rollback;
+- status final da decisão.
+
+A regra de auditoria vale, no mínimo, para: divergência de valor; divergência
+de quantidade; divergência de valor unitário; divergência de descrição; item
+novo; item ausente; item substituído; item não apto liberado; rateio novo;
+correção de rateio; aceitação de equivalência; rejeição de equivalência;
+aplicação de lote de saneamento; rollback de lote; e publicação futura baseada
+em dados saneados.
+
+> Modelo de persistência da auditoria: ver pendência futura registrada em
+> `memoria/08_ROTAS_BANCO_API/schema-banco.md`. Nenhuma tabela ou migration
+> deve ser criada nesta etapa.
+
 ---
 
 ## 17. Fases de implementação recomendadas

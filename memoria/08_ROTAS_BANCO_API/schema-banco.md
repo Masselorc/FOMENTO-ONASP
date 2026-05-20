@@ -685,6 +685,44 @@ Não executadas nesta tarefa documental, mas recomendadas para mudança real de 
 - Histórico completo de migrations anteriores além do estado atual codificado em `init-db.js`.
 - Política de retenção de backups em `backend/data/backups/`.
 
+## Pendência futura: modelo de auditoria da revisão assistida de divergências PAD
+
+Esta é uma **pendência futura de modelo de dados**, ainda não implementada. Não
+há tabela, coluna ou migration criada para isso no estado atual; nenhuma deve
+ser criada antes de a funcionalidade ser efetivamente planejada para execução.
+
+Contexto: a regra de revisão assistida de divergências PAD x memória está
+definida em
+`memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`,
+seção 16.2. Essa regra exige que toda decisão do usuário (aceitar, rejeitar,
+manter anterior, corrigir, postergar) e todo evento de saneamento (aplicação
+de lote, rollback, publicação com dados saneados) gerem registro de auditoria
+rastreável.
+
+Quando a funcionalidade for implementada, será necessário um modelo de
+persistência (tabela aditiva, no padrão `garantirColuna`/`CREATE TABLE IF NOT
+EXISTS` já usado em `init-db.js`) capaz de registrar, por evento:
+
+- alerta gerado, tipo e nível;
+- campo afetado;
+- valor anterior e valor novo;
+- fonte anterior e fonte nova;
+- diferença identificada;
+- motivo provável apresentado ao usuário;
+- ação tomada pelo usuário;
+- justificativa, quando aplicável;
+- usuário responsável e data/hora da decisão;
+- lote de saneamento/importação relacionado;
+- impacto na reconstrução do `planoAplicacao`;
+- eventual rollback;
+- status final da decisão.
+
+O desenho desse modelo deve reaproveitar, no que couber, o padrão das tabelas
+de saneamento já previstas para a Etapa E (`profor_2022_saneamento_lotes`,
+`profor_2022_saneamento_decisoes`) e da tabela `logs_operacionais`. Esta seção
+serve apenas como marcação da pendência — o esquema definitivo será detalhado
+quando a etapa for planejada.
+
 ## Critérios para atualizar este arquivo
 
 Atualizar este arquivo quando houver:
