@@ -1,785 +1,785 @@
-# Planejamento Macro — Automação do Plano de Aplicação dos Convênios
+# PROFOR 2022 — Orientação para Substituição das Abas por UF pelo Relatório PAD
 
 ## 1. Finalidade deste documento
 
-Este documento orienta agentes de IA, Codex, revisores técnicos e desenvolvedores na implementação gradual da nova sistemática de alimentação dos dados do plano de aplicação detalhado dos convênios acompanhados pela aplicação FOMENTO-ONASP.
+Este documento orienta agentes de IA, Codex, revisores técnicos e desenvolvedores na implementação da substituição das abas/guias por UF da planilha antiga de gestão financeira pela nova sistemática baseada em relatórios PAD (`RelatorioItensDespesasPAD_*.xls`).
 
-A mudança pretendida consiste em substituir, de forma controlada e incremental, a dependência atual de uma planilha única com abas por UF por um novo fluxo baseado em múltiplos arquivos Excel, um por instrumento/convênio. Cada arquivo Excel deverá conter os dados do plano de aplicação detalhado daquele instrumento, incluindo itens, quantidades, valores previstos, valores executados e demais campos necessários aos cálculos da aplicação.
+O objetivo é permitir que a aplicação FOMENTO-ONASP deixe de depender das abas/guias por UF para alimentar o `planoAplicacao`, preservando a divisão manual já existente dos itens entre áreas como `OUVIDORIA`, `CORREGEDORIA`, `ESCOLA PENAL`, `N/A` ou outras classificações institucionais.
 
-O objetivo não é alterar a interface inicialmente. O objetivo é criar uma nova origem de dados normalizada, validada e compatível com os cálculos e telas já existentes.
-
----
-
-## 2. Contexto atual da aplicação
-
-A aplicação FOMENTO-ONASP possui arquitetura híbrida:
-
-- frontend em HTML, CSS e JavaScript;
-- backend local em Node.js;
-- banco SQLite local;
-- serviços backend para leitura, normalização, persistência e publicação;
-- modo local/API editável;
-- modo estático/GitHub Pages somente leitura;
-- publicação de dados em JSONs derivados dentro de `frontend/data/publicados/`.
-
-A aplicação não deve ser tratada como uma simples página estática. Qualquer alteração em dados de convênios deve respeitar o pipeline existente de leitura, normalização, cálculo, publicação e validação.
-
-### 2.1. Arquivos relevantes já identificados
-
-Arquivos centrais:
-
-- `package.json`
-- `backend/server.js`
-- `backend/data/aplicacao.json`
-- `backend/services/data-service.js`
-- `backend/services/dashboard-publication-service.js`
-- `backend/services/static-publication-service.js`
-- `backend/services/profor-2022/profor-consolidado-service.js`
-- `backend/services/profor-2022/profor-plano-aplicacao-service.js`
-- `backend/services/profor-2022/profor-calculos-service.js`
-- `backend/db/init-db.js`
-- `frontend/js/app.js`
-- `frontend/data/publicados/aplicacao.json`
-- `frontend/data/publicados/dashboard-geral.json`
-- `frontend/data/publicados/resumo-publicacao.json`
-- `scripts/validar-json-publicados.js`
-
-Arquivos de memória/documentação relevantes:
-
-- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
-- `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md`
-- `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md`
-- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
-- `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`
-- `memoria/08_ROTAS_BANCO_API/rotas.md`
-- `memoria/08_ROTAS_BANCO_API/schema-banco.md`
-- `memoria/10_TESTES/checklist-validacao.md`
+Este documento não trata da antiga aba `Geral`. A aba `Geral` já foi substituída por outras fontes e está fora do escopo desta frente.
 
 ---
 
-## 3. Situação atual dos dados de convênios
+## 2. Escopo desta frente
 
-Atualmente, a origem principal dos dados de convênios está configurada em:
+### 2.1. Dentro do escopo
 
-```text
-backend/data/aplicacao.json
-```
+Esta frente trata de:
 
-Campo:
+- substituir as abas/guias por UF da planilha antiga como fonte do `planoAplicacao`;
+- ler relatórios PAD em formato `.xls`;
+- extrair itens agregados dos relatórios PAD;
+- identificar o convênio pelo conteúdo interno do relatório;
+- deduzir UF, ano e instrumento a partir da carteira monitorada;
+- preservar a memória de rateio dos itens entre áreas;
+- permitir classificação e rateio manual de novos itens pela aplicação;
+- detectar itens novos;
+- detectar itens ausentes em atualizações futuras;
+- emitir alertas de pendência de rateio e validação de exclusão;
+- reconstruir o `planoAplicacao` em linhas por área;
+- validar fechamento financeiro por item e por convênio;
+- integrar a nova origem somente por flag, preservando fallback.
 
-```json
-{
-  "configuracao": {
-    "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx"
-  }
-}
-```
+### 2.2. Fora do escopo
 
-A planilha atual contém:
+Não fazem parte desta frente:
 
-- uma aba `Geral`;
-- abas por UF;
-- dados de itens dos instrumentos;
-- dados de execução;
-- recortes por área, como `OUVIDORIA`;
-- valores previstos, executados, saldos e totais.
-
-O serviço `backend/services/dashboard-publication-service.js` lê essa planilha, extrai os dados das abas por UF, consolida os dados de convênio, monta os dados PROFOR 2022 e gera as estruturas consumidas pelo dashboard e pela publicação estática.
-
-### 3.1. Problema atual
-
-A manutenção dos dados depende de edição manual da planilha única. Isso gera riscos:
-
-- erro manual em células;
-- dificuldade de rastrear origem de cada alteração;
-- risco de quebra de fórmula;
-- dependência de abas por UF;
-- dificuldade de atualização por instrumento;
-- dificuldade de automação futura via Transferegov;
-- possibilidade de divergência entre aba `Geral` e abas estaduais;
-- baixa rastreabilidade do arquivo-fonte de cada item.
-
-### 3.2. Mudança desejada
-
-A nova sistemática deverá permitir que a aplicação receba múltiplos arquivos Excel, um para cada convênio/instrumento.
-
-Exemplo conceitual:
-
-```text
-Planilhas/profor-2022/instrumentos/
-├── AC_937782_2022.xlsx
-├── AL_937221_2022.xlsx
-├── AM_937592_2022.xlsx
-├── GO_937216_2022.xlsx
-└── ...
-```
-
-Cada arquivo deverá ser lido, normalizado e incorporado ao plano de aplicação consolidado.
+- substituição da aba `Geral`;
+- dados cadastrais gerais do convênio já migrados para carteira monitorada, DETRU/cache ou Transferegov/cache;
+- processo SEI, vencimento, quantidade de TA, valor global, repasse, contrapartida, desembolsado, rendimento aprovado e saldo de rendimentos atual;
+- alteração inicial da interface pública;
+- publicação automática sem validação;
+- automação direta do Transferegov;
+- login, credenciais, cookies fixos, captcha, scraping autenticado ou área restrita.
 
 ---
 
-## 4. Objetivo técnico da alteração
+## 3. Arquivos e serviços que agentes devem ler antes de implementar
 
-Criar uma nova camada backend de importação e normalização dos planos de aplicação detalhados, capaz de:
+Antes de qualquer alteração nesta frente, o agente deve ler:
 
-1. ler múltiplos arquivos Excel;
-2. identificar UF, número do convênio e ano;
-3. mapear colunas com nomes diferentes;
-4. normalizar os dados para o schema canônico já usado pela aplicação;
-5. validar inconsistências;
-6. gerar relatório de importação;
-7. comparar a nova origem com a origem antiga;
-8. alimentar o compositor PROFOR 2022;
-9. preservar fallback para a planilha atual;
-10. permitir futura substituição por extração automática do Transferegov.
+- `AGENTS.md`;
+- `memoria/INDEX.md`;
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`;
+- este arquivo;
+- `backend/data/aplicacao.json`;
+- `backend/services/dashboard-publication-service.js`;
+- `backend/services/profor-2022/profor-consolidado-service.js`;
+- `backend/services/profor-2022/profor-plano-aplicacao-service.js`;
+- `backend/services/static-publication-service.js`;
+- `backend/server.js`.
 
-A interface não deve ser alterada na primeira etapa, salvo necessidade pontual de exibir origem, diagnóstico ou alerta em etapa posterior.
+Quando houver persistência, ler também:
 
----
-
-## 5. Princípios obrigatórios para agentes de IA
-
-### 5.1. Não quebrar o fluxo existente
-
-Não remover a origem atual baseada em:
-
-```text
-Planilhas/gestao_financeira_ouvidoria.xlsx
-```
-
-A origem antiga deve permanecer como fallback até validação completa da nova origem.
-
-### 5.2. Não fazer leitura direta pelo frontend
-
-O frontend não deve ler os novos arquivos Excel diretamente.
-
-O fluxo correto é:
-
-```text
-Excel bruto
-↓
-serviço backend de importação
-↓
-schema canônico
-↓
-compositor/cálculos
-↓
-JSON publicado
-↓
-frontend
-```
-
-### 5.3. Não editar manualmente JSON publicado
-
-Os arquivos em:
-
-```text
-frontend/data/publicados/
-```
-
-são derivados. Não devem ser editados manualmente, salvo justificativa excepcional e registrada.
-
-A publicação deve ocorrer por:
-
-```bash
-npm run publicar:dados
-```
-
-apenas quando houver alteração material de dados.
-
-### 5.4. Não inventar campos, rotas ou tabelas
-
-Antes de sugerir código, o agente deve verificar a estrutura real do repositório. Não presumir arquivos, funções, tabelas, endpoints ou colunas inexistentes.
-
-### 5.5. Preferir mudanças pequenas e reversíveis
-
-Cada etapa deve ser pequena, testável e compatível com rollback.
-
-### 5.6. Manter rastreabilidade
-
-Toda alteração relevante deve ser registrada no diário de bordo e, quando afetar arquitetura ou fluxo de dados, nos documentos de memória correspondentes.
+- `backend/db/init-db.js`;
+- `backend/db/database.js`;
+- `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
 
 ---
 
-## 6. Schema canônico dos itens do plano de aplicação
+## 4. Origem antiga a ser substituída
 
-A nova importação deve produzir itens compatíveis com o formato já usado pela aplicação.
+A origem antiga desta frente são as abas/guias por UF da planilha original, usadas para alimentar o `planoAplicacao`.
 
-Campos canônicos esperados:
+No código atual, o plano de aplicação é estruturado com campos equivalentes a:
 
 ```js
 {
-  uf: "AC",
-  instrumento: "Convênio",
-  numero: "937782",
-  ano: "2022",
-  area: "OUVIDORIA",
-  natureza: "CAPITAL",
-  descricao: "Descrição do item",
-  quantidade: 1,
-  valorUnitario: 1000.00,
-  valorPrevisto: 1000.00,
-  valorExecutado: 0.00,
-  saldo: 1000.00,
-  saldoEconomicidade: 0.00,
-  percentualExecucao: 0
+  uf,
+  instrumento,
+  numero,
+  ano,
+  area,
+  natureza,
+  descricao,
+  quantidade,
+  valorUnitario,
+  valorPrevisto,
+  valorExecutado,
+  saldo,
+  saldoEconomicidade,
+  percentualExecucao
 }
 ```
 
-### 6.1. Campos obrigatórios
+A planilha antiga podia conter o mesmo item repetido em várias linhas, com a mesma descrição, mas distribuído entre áreas diferentes.
 
-- `uf`
-- `numero`
-- `ano`
-- `descricao`
-- `quantidade`
-- `valorPrevisto`
-- `valorExecutado`
+Exemplo antigo:
 
-### 6.2. Campos recomendados
+| Descrição | Área | Quantidade |
+| --- | --- | ---: |
+| Notebook | OUVIDORIA | 3 |
+| Notebook | CORREGEDORIA | 3 |
+| Notebook | ESCOLA PENAL | 3 |
 
-- `instrumento`
-- `area`
-- `natureza`
-- `valorUnitario`
-- `saldo`
-- `saldoEconomicidade`
-- `percentualExecucao`
+Na nova origem PAD, esse mesmo item pode vir agregado em uma única linha:
 
-### 6.3. Campos calculáveis
+| Descrição | Quantidade |
+| --- | ---: |
+| Notebook | 9 |
 
-Podem ser calculados pelo importador ou pelo compositor:
-
-- `saldo = valorPrevisto - valorExecutado`
-- `percentualExecucao = valorExecutado / valorPrevisto * 100`
-- `saldoEconomicidade`, quando houver regra segura
-
-Não inventar regra de economicidade quando ela não estiver clara.
+Portanto, a substituição não é linha por linha. O sistema deve reconstruir as linhas por área com base em uma memória de rateio manual.
 
 ---
 
-## 7. Mapeamento de colunas
+## 5. Nova origem principal: relatório PAD
 
-Os novos arquivos Excel podem ter cabeçalhos diferentes. O importador deve reconhecer variações e convertê-las para os campos canônicos.
+A nova fonte dos itens será composta por arquivos do tipo:
 
-Exemplo de equivalências:
+```text
+RelatorioItensDespesasPAD_*.xls
+```
 
-| Campo canônico | Possíveis nomes na planilha |
+O arquivo é um `.xls` antigo, não `.xlsx`. O importador deve testar explicitamente a leitura com a biblioteca `xlsx` já usada pelo projeto.
+
+### 5.1. Identificação do convênio
+
+A identificação do convênio não deve depender do nome do arquivo.
+
+A fonte principal é o conteúdo interno da planilha, especialmente:
+
+```text
+Código do Instrumento
+```
+
+O nome da aba pode conter o número do instrumento e pode ser usado como validação auxiliar, mas não deve ser a fonte principal.
+
+### 5.2. Estrutura esperada do relatório PAD
+
+O relatório PAD observado possui estrutura semelhante a:
+
+```text
+Código do Instrumento
+Concedente
+Convenente
+Situação
+Valor Total Previsto
+Valor Previsto Custeio
+Valor Previsto Investimento
+Valor Total Executado
+Valor Executado Custeio
+Valor Executado Investimento
+Saldo Total
+Saldo Custeio
+Saldo Investimento
+Data/hora de geração
+Tabela de itens
+Total Geral
+```
+
+Colunas esperadas da tabela de itens:
+
+| Coluna no PAD | Significado |
 | --- | --- |
-| `descricao` | `Descrição`, `Item`, `Objeto`, `Descrição do Item`, `Especificação` |
-| `quantidade` | `Qtd`, `Quantidade`, `Qtde` |
-| `valorUnitario` | `Valor Unitário`, `Valor Unit.`, `Vl Unitário`, `Preço Unitário` |
-| `valorPrevisto` | `Valor Total`, `Valor Previsto`, `Total Previsto`, `Valor Global do Item` |
-| `valorExecutado` | `Valor Executado`, `Executado`, `Vl Executado`, `Pago`, `Liquidado` |
-| `area` | `Área`, `Classificação`, `Setor`, `Unidade Beneficiária` |
-| `natureza` | `Natureza`, `Capital/Custeio`, `Grupo de Despesa`, `Categoria Econômica` |
-| `numero` | `Convênio`, `Nº Convênio`, `Número do Convênio`, `Instrumento` |
-| `ano` | `Ano`, `Exercício` |
-| `uf` | `UF`, `Estado`, `Unidade Federativa` |
-
-O mapeamento deve ficar concentrado em serviço específico. Não espalhar regras de cabeçalho por múltiplos arquivos.
+| `Tipo Despesa` | Tipo de despesa informado no relatório. |
+| `Descrição` | Nome do item. |
+| `Cód. Nat. Despesa` | Código da natureza da despesa. |
+| `Unid` | Unidade. |
+| `Quantidade` | Quantidade agregada do item. |
+| `Valor Unit` | Valor unitário. |
+| `Valor Total Previsto` | Valor total previsto agregado. |
+| `Valor Total Executado` | Valor total executado agregado. |
+| `Saldo` | Saldo agregado do item. |
 
 ---
 
-## 8. Identificação do convênio
+## 6. Matriz de associação entre origem antiga e nova origem
 
-A identificação do convênio pode vir de três fontes:
+| Campo atual nas abas por UF | Nova fonte | Regra de obtenção |
+| --- | --- | --- |
+| `uf` | Carteira monitorada | Deduzir pelo `numero_convenio` extraído do PAD. |
+| `instrumento` | Carteira monitorada | Deduzir pelo `numero_convenio`; fallback controlado: `Convênio`. |
+| `numero` | Relatório PAD | Extrair de `Código do Instrumento`. |
+| `ano` | Carteira monitorada | Deduzir pelo `numero_convenio`. Não usar data de geração do relatório. |
+| `area` | Base de rateio manual | Reconstruir por rateio/classificação salva. Não vem do PAD. |
+| `natureza` | Derivação do `Cód. Nat. Despesa` | `33` = `CUSTEIO`; `44` = `CAPITAL`. |
+| `descricao` | Relatório PAD | Coluna `Descrição`. Chave principal de identificação do item. |
+| `quantidade` | Relatório PAD + rateio | PAD traz quantidade agregada; aplicação distribui por área. |
+| `valorUnitario` | Relatório PAD | Coluna `Valor Unit`. |
+| `valorPrevisto` | Relatório PAD + rateio | PAD traz total agregado; aplicação distribui por área. |
+| `valorExecutado` | Relatório PAD + rateio | PAD traz total agregado; aplicação distribui por área. |
+| `saldo` | Relatório PAD + rateio | PAD traz saldo agregado; aplicação distribui por área e valida contra `valorPrevisto - valorExecutado`. |
+| `saldoEconomicidade` | Cálculo interno/regra vigente | Não vem do PAD. Não inventar regra nova nesta frente. |
+| `percentualExecucao` | Cálculo interno | `valorExecutado / valorPrevisto * 100`, quando `valorPrevisto > 0`. |
 
-1. nome do arquivo;
-2. conteúdo da planilha;
-3. carteira monitorada no banco local.
+---
 
-### 8.1. Padrão recomendado de nome de arquivo
+## 7. Campos novos necessários
 
-Adotar um padrão previsível, preferencialmente:
+A nova origem deve carregar campos adicionais para rastreabilidade, rateio e controle de ciclo de vida.
+
+| Campo novo | Fonte | Finalidade |
+| --- | --- | --- |
+| `tipoDespesa` | PAD | Preservar classificação original do relatório. |
+| `codigoNaturezaDespesa` | PAD | Derivar `natureza` e reduzir ambiguidades. |
+| `unidade` | PAD | Apoiar identificação e conferência do item. |
+| `descricaoNormalizada` | Calculado | Chave técnica para reaproveitamento de rateio. |
+| `arquivoOrigem` | Nome do arquivo | Rastreabilidade. |
+| `geradoEmRelatorio` | Cabeçalho do PAD | Data/hora da extração. |
+| `statusItem` | Sistema | Controlar item ativo, novo, ausente, excluído, substituído ou reativado. |
+| `classificacaoOrigem` | Sistema | Indicar se rateio foi reaproveitado, criado manualmente, pendente ou validado. |
+| `pendenteRateio` | Sistema | Indicar item novo sem rateio. |
+| `pendenteValidacaoExclusao` | Sistema | Indicar item conhecido ausente no PAD atual. |
+
+---
+
+## 8. Regras definidas pelo usuário
+
+### 8.1. Escopo
+
+1. A aba `Geral` já foi integralmente substituída.
+2. A aba `Geral` não é objeto desta frente.
+3. O trabalho atual trata apenas da substituição das abas/guias por UF.
+4. A planilha original com abas/guias deve ser descontinuada/removida ao final do processo.
+5. A nova fonte será composta por relatórios PAD `.xls`, um para cada convênio.
+
+### 8.2. Identificação do convênio
+
+6. O convênio não será identificado pelo nome do arquivo.
+7. O convênio será identificado pelos dados internos da planilha PAD.
+8. O campo principal é `Código do Instrumento`.
+9. O nome da aba pode ser usado apenas como validação auxiliar.
+10. O ano será deduzido pelo número do convênio.
+11. O ano não deve ser extraído da data de geração do relatório.
+12. A UF também deve ser deduzida pela carteira monitorada a partir do número do convênio.
+
+### 8.3. Natureza de despesa
+
+13. Se `Cód. Nat. Despesa` iniciar por `33`, a natureza será `CUSTEIO`.
+14. Se `Cód. Nat. Despesa` iniciar por `44`, a natureza será `CAPITAL`.
+15. O código deve ser tratado como texto.
+16. Caracteres não numéricos podem ser removidos antes de verificar o prefixo.
+17. Códigos que não iniciem por `33` nem `44` devem gerar alerta de natureza não classificada.
+
+### 8.4. Identificação dos itens
+
+18. A identificação de item coincidente será feita pelo nome do item.
+19. Se o nome do item for exatamente igual, trata-se do mesmo item.
+20. O sistema não deve usar similaridade aproximada para considerar itens iguais.
+21. Não usar regra do tipo “parecido com”, “contém”, “começa com” ou distância textual.
+22. O sistema pode normalizar tecnicamente o texto para remover ruídos de espaços, entidades HTML e quebras de linha.
+23. A normalização não deve alterar semanticamente a descrição.
+24. Se o item reaparecer com o mesmo nome em atualização futura, deve manter o rateio salvo.
+
+### 8.5. Classificação e rateio por área
+
+25. A área não vem do relatório PAD.
+26. A área foi classificada manualmente na planilha antiga.
+27. Essa classificação deve ser preservada pela aplicação.
+28. O dado correto a persistir não é apenas `item -> area`, mas `item -> rateio entre áreas`.
+29. Um mesmo item pode ter sido duplicado ou triplicado na planilha antiga por distribuição entre áreas.
+30. Exemplo: 9 notebooks podem estar divididos em 3 para Ouvidoria, 3 para Corregedoria e 3 para Escola Penal.
+31. O relatório PAD novo virá com o item agregado, exemplo: 9 notebooks em uma linha.
+32. A aplicação deve manter a divisão feita entre as áreas.
+33. A aplicação deve reconstruir múltiplas linhas do `planoAplicacao` a partir de um item agregado do PAD.
+34. A aplicação deve permitir fazer esse rateio manual futuramente.
+35. Uma vez feito o rateio, ele deve ser mantido nas próximas atualizações.
+36. A classificação não deve ser preenchida automaticamente como `OUVIDORIA` para todos os itens.
+
+### 8.6. Itens novos
+
+37. Se surgirem novos itens nas atualizações, o sistema deve emitir alerta de pendência para classificação/rateio.
+38. O sistema não deve classificar automaticamente item novo.
+39. Item novo deve ficar pendente até validação/classificação pelo usuário.
+40. Depois de classificado/rateado, o item novo passa a manter essa classificação/rateio nas próximas atualizações.
+
+### 8.7. Itens desaparecidos
+
+41. Se um item desaparecer em atualização futura, significa que ele foi excluído do plano ou provavelmente substituído por outro.
+42. O sistema não deve apagar automaticamente item desaparecido.
+43. O sistema deve emitir alerta para o usuário validar a exclusão.
+44. A validação de exclusão deve ser feita pelo usuário.
+45. O sistema deve permitir distinguir item excluído, item substituído e item apenas ausente temporariamente.
+46. Se item ausente reaparecer depois, o sistema deve alertar reativação/reentrada e reaplicar o rateio salvo.
+
+### 8.8. Publicação e bloqueios
+
+47. O modo dry-run pode listar pendências sem bloquear.
+48. A publicação não deve ocorrer se houver item novo sem rateio.
+49. A publicação não deve ocorrer se houver item ausente sem validação de exclusão.
+50. A publicação não deve ocorrer se houver divergência financeira crítica.
+51. A publicação só deve ocorrer quando todos os relatórios estiverem lidos, validados, cruzados com a carteira e sem pendências críticas.
+52. Os JSONs publicados não devem ser editados manualmente.
+53. A aplicação deve preservar modo local/API e modo estático/GitHub Pages.
+
+### 8.9. Fechamento financeiro e cálculo
+
+54. O valor previsto do PAD é o valor agregado do item.
+55. O valor executado do PAD é o valor agregado do item.
+56. O saldo do PAD é o saldo agregado do item.
+57. A aplicação deve ratear esses valores conforme o rateio salvo.
+58. A soma das linhas geradas por área deve bater com o total do PAD.
+59. Diferenças de centavos devem ser ajustadas de forma controlada.
+60. O percentual de execução deve ser calculado internamente.
+61. O saldo deve ser validado contra `valorPrevisto - valorExecutado`.
+
+---
+
+## 9. Modelo de persistência recomendado
+
+A aplicação deverá preservar três memórias operacionais:
+
+1. memória de rateio;
+2. memória de existência do item;
+3. memória de validação pelo usuário.
+
+### 9.1. Tabela de itens conhecidos
+
+Tabela sugerida:
 
 ```text
-UF_NUMERO_ANO.xlsx
+profor_pad_itens_conhecidos
 ```
 
-Exemplo:
+Campos recomendados:
 
 ```text
-AC_937782_2022.xlsx
+id
+numero_convenio
+descricao_normalizada
+descricao_original_referencia
+codigo_natureza_despesa
+unidade
+status_item
+ultima_ocorrencia_em
+ultima_ausencia_em
+validacao_exclusao
+item_substituido_id
+motivo_substituicao
+observacao_substituicao
+validado_por
+validado_em
+observacao
+criado_em
+atualizado_em
+```
+
+### 9.2. Tabela de rateio por área
+
+Tabela sugerida:
+
+```text
+profor_pad_item_rateios
+```
+
+Campos recomendados:
+
+```text
+id
+item_conhecido_id
+area
+quantidade_referencia
+percentual_quantidade
+percentual_valor
+ativo
+criado_em
+atualizado_em
+```
+
+### 9.3. Exportação/importação de backup
+
+Embora a fonte operacional recomendada seja SQLite, deve existir exportação/importação JSON para backup e rastreabilidade.
+
+Arquivo possível:
+
+```text
+Planilhas/profor-2022/rateio-itens-plano-aplicacao.json
 ```
 
 ou:
 
 ```text
-937782_2022_AC.xlsx
+backend/data/profor-2022-rateio-itens.json
 ```
 
-O padrão escolhido deve ser documentado e validado pelo script.
-
-### 8.2. Regra de segurança
-
-Se o nome do arquivo indicar um convênio e o conteúdo interno indicar outro, o importador deve bloquear a importação daquele arquivo ou registrar erro crítico.
-
-Não aceitar divergência silenciosa.
+A escolha final deve respeitar `.gitignore`, segurança e política de versionamento do projeto.
 
 ---
 
-## 9. Nova estrutura proposta de arquivos
+## 10. Estados dos itens
 
-### 9.1. Pasta de entrada
+| Estado | Descrição | Ação |
+| --- | --- | --- |
+| `ATIVO` | Item conhecido e presente no PAD atual | Aplicar rateio automaticamente. |
+| `PENDENTE_RATEIO` | Item novo sem rateio | Gerar alerta e aguardar classificação/rateio. |
+| `AUSENTE_NO_PAD` | Item conhecido não apareceu no relatório atual | Gerar alerta de possível exclusão/substituição. |
+| `EXCLUSAO_VALIDADA` | Usuário confirmou exclusão | Não gerar linha ativa no plano. |
+| `SUBSTITUIDO` | Usuário vinculou item antigo a item novo | Manter rastreabilidade da substituição. |
+| `REATIVADO` | Item ausente voltou a aparecer | Alertar e reaplicar rateio salvo. |
+| `INATIVO` | Item desativado no controle interno | Não usar na reconstrução, salvo reativação manual. |
 
-Sugestão inicial:
+---
+
+## 11. Regra de reconstrução do plano de aplicação
+
+Para cada item agregado do PAD:
+
+1. extrair `numeroConvenio`;
+2. buscar UF, ano e instrumento na carteira monitorada;
+3. normalizar a descrição;
+4. buscar item conhecido;
+5. se item conhecido e ativo, buscar rateios ativos;
+6. se houver rateio, gerar uma linha do `planoAplicacao` para cada área;
+7. se não houver rateio, gerar pendência;
+8. calcular quantidade, valor previsto, valor executado e saldo por área;
+9. calcular percentual de execução por linha;
+10. validar fechamento financeiro contra o total agregado do PAD.
+
+### 11.1. Exemplo
+
+PAD:
+
+| Descrição | Quantidade | Valor previsto | Valor executado | Saldo |
+| --- | ---: | ---: | ---: | ---: |
+| Notebook | 9 | 45.000,00 | 15.000,00 | 30.000,00 |
+
+Rateio salvo:
+
+| Área | Quantidade referência | Percentual |
+| --- | ---: | ---: |
+| OUVIDORIA | 3 | 33,333333% |
+| CORREGEDORIA | 3 | 33,333333% |
+| ESCOLA PENAL | 3 | 33,333333% |
+
+Linhas reconstruídas:
+
+| Descrição | Área | Quantidade | Valor previsto | Valor executado | Saldo |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Notebook | OUVIDORIA | 3 | 15.000,00 | 5.000,00 | 10.000,00 |
+| Notebook | CORREGEDORIA | 3 | 15.000,00 | 5.000,00 | 10.000,00 |
+| Notebook | ESCOLA PENAL | 3 | 15.000,00 | 5.000,00 | 10.000,00 |
+
+---
+
+## 12. Regra de rateio financeiro
+
+Regra recomendada:
 
 ```text
-Planilhas/profor-2022/instrumentos/
+valor por área = valor agregado do PAD × percentual_valor da área
 ```
 
-### 9.2. Serviço de importação
+Quando `percentual_valor` não existir e houver `percentual_quantidade`, usar `percentual_quantidade` como fallback controlado.
 
-Sugestão de novo arquivo:
+Se o item tiver valor unitário uniforme, percentual por quantidade e percentual por valor tendem a coincidir.
+
+### 12.1. Arredondamento
+
+Para evitar divergências de centavos:
+
+1. calcular todos os rateios em centavos;
+2. arredondar cada linha para duas casas decimais;
+3. calcular diferença residual;
+4. lançar eventual diferença na última linha ativa do rateio;
+5. validar que a soma das linhas reconstruídas bate com o total do PAD.
+
+---
+
+## 13. Ciclo de vida dos itens em cada atualização
+
+A cada nova rodada de relatórios PAD, o sistema deve comparar:
 
 ```text
-backend/services/profor-2022/profor-plano-aplicacao-import-service.js
+itens conhecidos na base
+×
+itens encontrados no PAD atual
 ```
 
-Responsabilidades:
-
-- localizar arquivos Excel;
-- ler workbooks;
-- detectar layout;
-- localizar cabeçalho;
-- mapear colunas;
-- normalizar valores;
-- validar dados;
-- gerar itens canônicos;
-- gerar diagnóstico da importação.
-
-### 9.3. Script de execução
-
-Sugestão de novo arquivo:
+Regras:
 
 ```text
-backend/scripts/importar-planos-aplicacao-profor-2022.js
+Se está no PAD e tem rateio salvo:
+  aplicar rateio automaticamente.
+
+Se está no PAD e não tem rateio salvo:
+  criar pendência de classificação/rateio.
+
+Se não está no PAD, mas existe na base de itens conhecidos:
+  criar alerta de possível exclusão ou substituição.
+
+Se estava ausente e voltou a constar no PAD:
+  alertar reativação e reaplicar rateio salvo.
 ```
 
-Possíveis comandos no `package.json`:
+---
 
-```json
-{
-  "scripts": {
-    "importar:planos-profor-2022": "node backend/scripts/importar-planos-aplicacao-profor-2022.js",
-    "importar:planos-profor-2022:dry-run": "node backend/scripts/importar-planos-aplicacao-profor-2022.js --dry-run"
-  }
-}
-```
+## 14. Alertas e pendências
 
-### 9.4. Relatório de importação
-
-Sugestão:
+O relatório de importação deve ter, no mínimo:
 
 ```text
-backend/data/relatorios/importacao-planos-profor-2022.json
+pendenciasRateio
+alertasExclusao
+alertasReativacao
+alertasNatureza
+alertasFechamentoFinanceiro
+errosCriticos
 ```
 
-ou, se não for para versionar:
+### 14.1. Pendência de rateio
+
+Gerar quando item aparece no PAD atual, mas não existe na base ou não possui rateio ativo.
+
+Dados mínimos:
 
 ```text
-Dados/relatorios/importacao-planos-profor-2022.json
+numeroConvenio
+uf
+ano
+descricao
+descricaoNormalizada
+codigoNaturezaDespesa
+unidade
+quantidadeTotalPad
+valorPrevistoTotalPad
+valorExecutadoTotalPad
+saldoTotalPad
 ```
 
-Antes de definir o local, verificar `.gitignore` e a política do projeto para arquivos gerados.
+### 14.2. Alerta de exclusão
 
----
+Gerar quando item conhecido não aparece no PAD atual.
 
-## 10. Resolvedor de origem do plano de aplicação
-
-Criar uma camada que escolha a origem do plano de aplicação.
-
-Sugestão conceitual:
-
-```js
-resolverPlanoAplicacaoProfor2022(catalogoAplicacao, opcoes)
-```
-
-Origens possíveis:
+Ações possíveis para o usuário:
 
 ```text
-planilha-unica
-arquivos-instrumentos
+confirmar exclusão
+manter em observação
+vincular a item substituto
+ignorar nesta atualização
 ```
 
-### 10.1. Flag de ambiente recomendada
+### 14.3. Alerta de reativação
+
+Gerar quando item anteriormente ausente volta a aparecer em relatório futuro.
+
+---
+
+## 15. Regras de bloqueio
+
+### 15.1. Modo dry-run
+
+Pode listar pendências e alertas sem bloquear.
+
+### 15.2. Modo local/API
+
+Deve permitir visualizar pendências, corrigir rateios, validar exclusões e reprocessar.
+
+### 15.3. Modo publicação
+
+Bloquear publicação se houver:
+
+- item novo sem rateio;
+- item ausente sem validação de exclusão;
+- relatório ausente para convênio esperado;
+- convênio do PAD não encontrado na carteira monitorada;
+- divergência financeira crítica;
+- natureza não classificada, se afetar totalização;
+- erro de leitura do relatório.
+
+---
+
+## 16. Interface futura de gestão de rateio
+
+A aplicação deve permitir ratear itens futuramente.
+
+Funcionalidades mínimas:
+
+- listar itens importados do PAD;
+- listar itens já rateados;
+- listar itens pendentes de rateio;
+- abrir item agregado;
+- distribuir quantidade e/ou percentual por área;
+- salvar rateio;
+- editar rateio existente;
+- inativar rateio;
+- validar exclusão de item ausente;
+- vincular item substituído a novo item;
+- reprocessar plano de aplicação;
+- visualizar prévia das linhas geradas;
+- exportar/importar backup dos rateios.
+
+### 16.1. Tela de rateio sugerida
+
+Para cada item pendente, exibir:
 
 ```text
-PROFOR_2022_ORIGEM_PLANO_APLICACAO=planilha-unica
+Convênio
+UF
+Ano
+Descrição
+Quantidade total no PAD
+Valor previsto total
+Valor executado total
+Saldo total
+Código da natureza de despesa
+Natureza derivada
 ```
 
-ou:
+Permitir preenchimento por área:
+
+| Área | Quantidade | Percentual | Valor previsto calculado | Valor executado calculado |
+| --- | ---: | ---: | ---: | ---: |
+| OUVIDORIA |  |  |  |  |
+| CORREGEDORIA |  |  |  |  |
+| ESCOLA PENAL |  |  |  |  |
+| N/A |  |  |  |  |
+
+Validações da tela:
+
+- soma das quantidades deve bater com quantidade total ou soma dos percentuais deve bater com 100%;
+- soma dos valores calculados deve bater com total do PAD;
+- não permitir salvar linha sem área;
+- não permitir publicar plano com pendência crítica;
+- exibir diferença de centavos quando houver ajuste residual.
+
+---
+
+## 17. Fases de implementação recomendadas
+
+### Fase 1 — Diagnóstico do plano antigo por linhas
+
+Objetivo: entender como os itens aparecem hoje nas abas/guias por UF e identificar itens repetidos por descrição.
+
+Entrega:
+
+- relatório de itens por convênio;
+- itens com nomes repetidos;
+- áreas associadas;
+- quantidades por área;
+- valores previstos por área;
+- percentuais de rateio por área.
+
+### Fase 2 — Extrator de rateio inicial da planilha antiga
+
+Objetivo: usar a planilha antiga uma última vez para criar a memória inicial de rateio.
+
+Entrega:
+
+- serviço/script que lê as abas por UF;
+- gera base de itens conhecidos;
+- gera base de rateios por área;
+- não altera JSON publicado;
+- não altera frontend.
+
+### Fase 3 — Persistência dos itens conhecidos e rateios
+
+Objetivo: criar tabelas SQLite ou estrutura equivalente para persistir itens conhecidos e rateios.
+
+Entrega:
+
+- migration aditiva;
+- serviço backend de CRUD;
+- exportação/importação JSON como backup, se aplicável.
+
+### Fase 4 — Leitor dos relatórios PAD
+
+Objetivo: ler arquivos `RelatorioItensDespesasPAD_*.xls`.
+
+Entrega:
+
+- extrair cabeçalho;
+- extrair itens;
+- validar total geral;
+- emitir relatório de leitura.
+
+### Fase 5 — Dedução de UF, ano e instrumento
+
+Objetivo: cruzar número do convênio extraído do PAD com carteira monitorada.
+
+Entrega:
+
+- erro crítico se convênio não existir na carteira;
+- UF/ano/instrumento preenchidos por carteira.
+
+### Fase 6 — Casamento entre PAD e itens conhecidos
+
+Objetivo: aplicar rateio existente a itens conhecidos e gerar pendências para novos itens.
+
+Entrega:
+
+- comparação por `numeroConvenio + descricaoNormalizada`;
+- validação auxiliar por código de natureza e unidade;
+- alerta se houver ambiguidade.
+
+### Fase 7 — Controle de ciclo de vida
+
+Objetivo: identificar itens novos, ausentes e reativados.
+
+Entrega:
+
+- pendências de rateio;
+- alertas de exclusão;
+- alertas de reativação;
+- status atualizado sem apagar dados automaticamente.
+
+### Fase 8 — Reconstrução do `planoAplicacao`
+
+Objetivo: transformar itens agregados do PAD em linhas por área.
+
+Entrega:
+
+- gerar uma linha por área do rateio;
+- calcular valores rateados;
+- validar fechamento financeiro;
+- manter formato compatível com os cálculos atuais.
+
+### Fase 9 — Comparador entre origem antiga e nova
+
+Objetivo: comparar plano antigo e plano reconstruído.
+
+Comparar:
+
+- total por convênio;
+- total por área;
+- total por natureza;
+- total por descrição;
+- quantidade de linhas;
+- itens sem rateio;
+- itens ausentes;
+- divergências financeiras.
+
+### Fase 10 — Integração por flag
+
+Criar origem controlada:
 
 ```text
-PROFOR_2022_ORIGEM_PLANO_APLICACAO=arquivos-instrumentos
+PROFOR_2022_ORIGEM_PLANO_APLICACAO=abas-uf
+PROFOR_2022_ORIGEM_PLANO_APLICACAO=relatorios-pad-rateados
 ```
 
-O padrão deve permanecer:
+Padrão inicial obrigatório:
 
 ```text
-planilha-unica
+abas-uf
 ```
 
-A nova origem só deve ser ativada com flag explícita.
+### Fase 11 — Interface local/API de rateio
 
----
+Objetivo: permitir que o usuário classifique/rateie novos itens e valide exclusões pela aplicação.
 
-## 11. Fluxo futuro desejado
+Entrega:
 
-```text
-Arquivos Excel individuais
-↓
-Serviço de importação
-↓
-Normalização para schema canônico
-↓
-Relatório de validação
-↓
-Comparador com origem antiga
-↓
-Resolvedor de origem
-↓
-Compositor PROFOR 2022
-↓
-Cálculos internos
-↓
-API local
-↓
-Publicação estática
-↓
-Frontend/GitHub Pages
-```
+- tela ou painel administrativo;
+- rotas locais/API;
+- validações;
+- prévia das linhas reconstruídas.
 
----
+### Fase 12 — Publicação controlada
 
-## 12. Fases de implementação
+Objetivo: publicar somente quando não houver pendências críticas.
 
-## Fase 1 — Consolidar contrato de dados
-
-### Objetivo
-
-Formalizar o schema canônico dos itens do plano de aplicação.
-
-### Arquivos prováveis
-
-- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
-- `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`
-- novo documento específico, se necessário
-
-### Entrega esperada
-
-Documento curto com:
-
-- campos obrigatórios;
-- campos opcionais;
-- campos calculados;
-- regras de validação;
-- exemplo de item normalizado.
-
-### Critérios de aceite
-
-- O schema é compatível com `profor-consolidado-service.js`.
-- O schema é compatível com `profor-plano-aplicacao-service.js`.
-- Nenhum código funcional é alterado nesta fase, salvo documentação.
-
----
-
-## Fase 2 — Criar leitor isolado dos arquivos Excel
-
-### Objetivo
-
-Criar serviço backend capaz de ler múltiplos arquivos Excel sem integrar ainda com a aplicação.
-
-### Arquivos prováveis
-
-- `backend/services/profor-2022/profor-plano-aplicacao-import-service.js`
-- `backend/scripts/importar-planos-aplicacao-profor-2022.js`
-- `package.json`
-
-### Entrega esperada
-
-Script executável em modo dry-run:
-
-```bash
-npm run importar:planos-profor-2022:dry-run
-```
-
-### Critérios de aceite
-
-- O script encontra arquivos `.xlsx`.
-- O script ignora arquivos temporários, como `~$arquivo.xlsx`.
-- O script lê os workbooks.
-- O script não altera JSON publicado.
-- O script não altera banco.
-- O script exibe relatório básico no console.
-
----
-
-## Fase 3 — Mapear e normalizar colunas
-
-### Objetivo
-
-Transformar os dados brutos dos Excel no schema canônico.
-
-### Entrega esperada
-
-Funções de normalização para:
-
-- texto;
-- UF;
-- número do convênio;
-- ano;
-- valores monetários;
-- quantidade;
-- área;
-- natureza;
-- descrição.
-
-### Critérios de aceite
-
-- Cabeçalhos com variações comuns são reconhecidos.
-- Valores em formato brasileiro são convertidos corretamente.
-- Linhas vazias são ignoradas.
-- Totais de rodapé não são tratados como item.
-- Cabeçalhos repetidos no meio da planilha são ignorados.
-- Itens inválidos são reportados, não importados silenciosamente.
-
----
-
-## Fase 4 — Gerar relatório de validação
-
-### Objetivo
-
-Criar diagnóstico da importação antes de qualquer integração com a aplicação.
-
-### Relatório mínimo
-
-- arquivos lidos;
-- arquivos com erro;
-- arquivos ignorados;
-- convênios identificados;
-- UF identificada;
-- quantidade de itens por convênio;
-- total previsto por convênio;
-- total executado por convênio;
-- itens sem descrição;
-- valores inválidos;
-- divergência entre `quantidade * valorUnitario` e `valorPrevisto`;
-- valor executado maior que valor previsto;
-- duplicidade de convênio;
-- divergência entre nome do arquivo e conteúdo interno.
-
-### Critérios de aceite
-
-- O relatório permite identificar o arquivo e a linha do problema.
-- Erros críticos bloqueiam a importação.
-- Alertas não críticos são listados separadamente.
-- Nenhum dado é publicado nesta fase.
-
----
-
-## Fase 5 — Comparar origem antiga e nova
-
-### Objetivo
-
-Comparar os dados extraídos da planilha única atual com os dados extraídos dos novos arquivos individuais.
-
-### Comparações obrigatórias
-
-Por convênio:
-
-- total de itens;
-- valor previsto total;
-- valor executado total;
-- previsto da área OUVIDORIA;
-- executado da área OUVIDORIA;
-- previsto CAPITAL;
-- previsto CUSTEIO;
-- executado CAPITAL;
-- executado CUSTEIO;
-- saldo;
-- percentual de execução.
-
-### Critérios de aceite
-
-- Divergências são listadas por convênio.
-- Divergências são classificadas como:
-  - erro crítico;
-  - divergência esperada;
-  - alerta;
-  - diferença de arredondamento.
-- A nova origem não é ativada automaticamente.
-
----
-
-## Fase 6 — Integrar com resolvedor de origem
-
-### Objetivo
-
-Permitir que o compositor PROFOR 2022 use a origem nova mediante flag.
-
-### Arquivos prováveis
-
-- `backend/services/dashboard-publication-service.js`
-- `backend/services/profor-2022/profor-consolidado-service.js`
-- novo resolvedor de origem do plano
-- `.env.example`
-
-### Critérios de aceite
-
-- Origem padrão continua sendo a planilha única.
-- Nova origem só funciona com flag explícita.
-- Em caso de falha da nova origem, a aplicação consegue voltar para a origem antiga.
-- A interface continua funcionando.
-
----
-
-## Fase 7 — Testar em modo local/API
-
-### Objetivo
-
-Validar a aplicação localmente antes da publicação estática.
-
-### Comandos mínimos
-
-```bash
-npm start
-npm run validar:json
-npm run validar:syntax
-npm run validar:services
-```
-
-Quando afetar tela:
-
-```bash
-npm run validar:agente
-```
-
-### Testes manuais
-
-- abrir Dashboard;
-- abrir PROFOR 2022;
-- abrir detalhe de convênio;
-- conferir filtros por UF;
-- conferir total previsto;
-- conferir total executado;
-- conferir percentuais;
-- conferir cards de OUVIDORIA;
-- conferir se GitHub Pages continua somente leitura;
-- conferir console do navegador;
-- conferir logs do backend.
-
----
-
-## Fase 8 — Publicação estática controlada
-
-### Objetivo
-
-Gerar JSONs publicados apenas após validação local.
-
-### Comando
+Comandos esperados:
 
 ```bash
 npm run publicar:dados
-```
-
-### Validações após publicação
-
-```bash
 npm run validar:json
 git diff -- frontend/data/publicados/
 ```
 
-### Critérios de aceite
-
-- `aplicacao.json` publicado continua válido.
-- `dashboard-geral.json` publicado continua válido.
-- `resumo-publicacao.json` reflete os totais esperados.
-- Não há alteração indevida por simples churn de data, sem mudança material.
-
 ---
 
-## Fase 9 — Ajuste visual opcional
+## 18. Testes obrigatórios
 
-### Objetivo
-
-Somente se necessário, exibir na interface informações sobre a origem dos dados.
-
-Possíveis exibições:
-
-- origem do plano de aplicação;
-- data da última importação;
-- quantidade de arquivos importados;
-- quantidade de alertas;
-- aviso de fallback;
-- link ou botão local para relatório de importação.
-
-### Critérios de aceite
-
-- Modo estático não permite edição.
-- Interface não expõe caminhos locais sensíveis.
-- Mensagens são claras e não poluem a tela principal.
-
----
-
-## Fase 10 — Automação futura via Transferegov
-
-### Objetivo
-
-Criar, em etapa futura, rotina que gere automaticamente os mesmos dados hoje fornecidos pelos arquivos Excel individuais.
-
-### Regra central
-
-A automação Transferegov não deve criar um segundo modelo de dados.
-
-O fluxo futuro deve ser:
-
-```text
-Transferegov
-↓
-extrator
-↓
-mesmo schema canônico
-↓
-mesmo compositor
-↓
-mesma publicação
-↓
-mesma interface
-```
-
-### Fora do escopo atual
-
-- login em área restrita;
-- uso de credenciais;
-- bypass de captcha;
-- uso de cookies fixos;
-- automação em ambiente autenticado;
-- scraping frágil sem validação.
-
----
-
-## 13. Testes obrigatórios por tipo de alteração
-
-### 13.1. Alteração em script de importação
-
-Executar:
+### 18.1. Alteração em script de importação
 
 ```bash
 npm run importar:planos-profor-2022:dry-run
 npm run validar:syntax
-```
-
-Conferir:
-
-```bash
 git diff --check
 ```
 
-### 13.2. Alteração em serviço backend
-
-Executar:
+### 18.2. Alteração em backend
 
 ```bash
 npm run validar:syntax
@@ -787,9 +787,31 @@ npm run validar:services
 npm start
 ```
 
-### 13.3. Alteração em publicação estática
+### 18.3. Alteração em banco
 
-Executar:
+- verificar migration aditiva;
+- não apagar dados;
+- prever backup;
+- documentar rollback;
+- atualizar `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+
+### 18.4. Alteração em interface
+
+```bash
+npm run validar:agente
+```
+
+Testar manualmente:
+
+- Dashboard;
+- PROFOR 2022;
+- tela/painel de rateio;
+- detalhe do convênio;
+- filtros por UF;
+- console do navegador;
+- logs do backend.
+
+### 18.5. Alteração em publicação
 
 ```bash
 npm run publicar:dados
@@ -797,53 +819,41 @@ npm run validar:json
 git diff -- frontend/data/publicados/
 ```
 
-### 13.4. Alteração que afete interface
-
-Executar:
-
-```bash
-npm run validar:agente
-```
-
-E testar manualmente:
-
-- Dashboard;
-- PROFOR 2022;
-- detalhe de convênio;
-- status do sistema;
-- modo local/API;
-- modo estático.
-
 ---
 
-## 14. Riscos principais
+## 19. Riscos principais
 
 | Risco | Impacto | Mitigação |
 | --- | --- | --- |
-| Quebra dos cálculos existentes | Alto | Preservar schema canônico atual |
-| Divergência entre origem antiga e nova | Alto | Criar comparador antes de ativar |
-| Arquivo Excel com layout inesperado | Alto | Detectar layout e bloquear erro crítico |
-| Mistura de dados de convênios da mesma UF | Alto | Exigir número do convênio no filtro |
-| Publicação estática incorreta | Alto | Validar JSONs e revisar diff |
-| Edição manual indevida de JSON publicado | Médio | Usar apenas pipeline de publicação |
-| Duplicidade de convênio | Médio | Validar número + ano + UF |
-| Valores monetários mal convertidos | Alto | Testar formatos brasileiros e numéricos |
-| Churn de `publicadoEm` sem mudança material | Baixo/Médio | Evitar publicação desnecessária |
-| Automação futura gerar formato diferente | Alto | Reutilizar mesmo schema canônico |
+| Perder rateio manual da planilha antiga | Alto | Extrair memória de rateio antes de descontinuar a planilha. |
+| Classificar item novo automaticamente errado | Alto | Gerar pendência e exigir ação do usuário. |
+| Apagar item que desapareceu do PAD | Alto | Gerar alerta de exclusão e exigir validação. |
+| Misturar itens parecidos | Alto | Identificação por nome exato/normalizado, sem fuzzy matching. |
+| Divergência de centavos no rateio | Médio | Ajuste residual controlado na última linha. |
+| Publicar com item sem rateio | Alto | Bloqueio em modo publicação. |
+| Convênio PAD não localizado na carteira | Alto | Erro crítico. |
+| Natureza não classificada | Médio | Alerta e validação antes da publicação. |
+| Quebrar cálculos existentes | Alto | Preservar formato final do `planoAplicacao`. |
 
 ---
 
-## 15. Rollback
+## 20. Rollback
 
-Durante toda a transição, manter a origem antiga como padrão.
-
-Rollback lógico:
+Enquanto a origem nova não estiver validada, manter origem antiga por flag:
 
 ```text
-PROFOR_2022_ORIGEM_PLANO_APLICACAO=planilha-unica
+PROFOR_2022_ORIGEM_PLANO_APLICACAO=abas-uf
 ```
 
-Rollback por Git:
+Rollback operacional:
+
+1. voltar flag para `abas-uf`;
+2. ignorar relatórios PAD na composição;
+3. restaurar base anterior, se necessário;
+4. rodar validações;
+5. publicar novamente apenas se necessário.
+
+Rollback Git:
 
 ```bash
 git status --short
@@ -852,91 +862,37 @@ git revert <hash_do_commit>
 git push origin HEAD
 ```
 
-Rollback operacional:
-
-1. voltar flag para origem antiga;
-2. restaurar planilha atual se necessário;
-3. rodar publicação com origem antiga;
-4. validar JSONs publicados;
-5. testar Dashboard e PROFOR 2022.
-
 ---
 
-## 16. Checklist antes de commit
-
-Antes de qualquer commit relacionado a esta mudança:
-
-```bash
-git status --short
-git diff --check
-npm run validar:syntax
-```
-
-Se alterar JSONs publicados:
-
-```bash
-npm run validar:json
-git diff -- frontend/data/publicados/
-```
-
-Se alterar backend:
-
-```bash
-npm run validar:services
-```
-
-Se alterar interface:
-
-```bash
-npm run validar:agente
-```
-
-Atualizar, quando aplicável:
-
-- `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
-- `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md`
-- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
-- `memoria/08_ROTAS_BANCO_API/fluxo-dados.md`
-- `memoria/08_ROTAS_BANCO_API/rotas.md`
-- `memoria/08_ROTAS_BANCO_API/schema-banco.md`
-- `memoria/10_TESTES/checklist-validacao.md`
-
-Mensagem de commit sugerida:
-
-```text
-feat(profor-2022): adiciona importação controlada de planos de aplicação
-```
-
-ou, para etapa documental:
-
-```text
-docs(profor-2022): documenta planejamento da nova origem de planos
-```
-
----
-
-## 17. Prompt base para Codex/IA executar cada etapa
-
-Use este modelo ao acionar Codex ou outra IA no VS Code.
+## 21. Prompt base para Codex/IA
 
 ```text
 Tarefa:
-Implementar a etapa [NOME DA ETAPA] do planejamento de automação do plano de aplicação dos convênios PROFOR 2022.
+Implementar a etapa [NOME DA ETAPA] da substituição das abas/guias por UF pelo fluxo de relatórios PAD rateados do PROFOR 2022.
 
 Contexto:
-A aplicação FOMENTO-ONASP possui backend Node, frontend SPA, banco SQLite local e publicação estática em JSONs. A origem atual dos planos de aplicação dos convênios é a planilha única `Planilhas/gestao_financeira_ouvidoria.xlsx`, configurada em `backend/data/aplicacao.json`. A nova sistemática deverá permitir leitura de múltiplos arquivos Excel, um por instrumento, sem quebrar o fluxo atual.
+A aba Geral está fora do escopo, pois já foi substituída. O trabalho atual é substituir apenas as abas/guias por UF que alimentavam o planoAplicacao. A nova origem é composta por relatórios PAD .xls, carteira monitorada, base de itens conhecidos, base de rateio manual por área e cálculos internos. O relatório PAD traz itens agregados; a aplicação deve reconstruir linhas por área usando rateio salvo.
 
-Arquivos-alvo:
-[Listar arquivos específicos da etapa.]
+Arquivos obrigatórios de leitura:
+- AGENTS.md
+- memoria/INDEX.md
+- memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md
+- memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md
+- backend/services/dashboard-publication-service.js
+- backend/services/profor-2022/profor-plano-aplicacao-service.js
+- backend/services/profor-2022/profor-consolidado-service.js
+- backend/server.js
 
 Restrições:
-- Não remover a origem atual.
-- Não editar manualmente `frontend/data/publicados/*.json`.
-- Não alterar a interface se a etapa for apenas backend.
-- Não criar dependências novas sem justificativa.
-- Não inventar campos, rotas, tabelas ou arquivos.
-- Manter fallback para a origem antiga.
-- Preservar o schema canônico dos itens do plano de aplicação.
+- Não tratar a aba Geral nesta tarefa.
+- Não editar manualmente frontend/data/publicados/*.json.
+- Não remover a origem antiga antes de validação.
+- Não fazer o frontend ler arquivos Excel diretamente.
+- Não classificar item novo automaticamente.
+- Não apagar item ausente automaticamente.
+- Não usar fuzzy matching para identificar itens.
+- Preservar o formato final do planoAplicacao.
+- Preservar modo local/API e modo estático/GitHub Pages.
 
 Entrega esperada:
 [Descrever entrega concreta da etapa.]
@@ -945,32 +901,38 @@ Critérios de aceite:
 [Listar critérios objetivos.]
 
 Testes:
-Executar:
-- `git diff --check`
-- `npm run validar:syntax`
-- outros comandos aplicáveis à etapa.
-
-Risco de regressão:
-Avaliar impacto em Dashboard, PROFOR 2022, detalhe de convênio, publicação estática e modo GitHub Pages.
+Executar validações proporcionais ao risco:
+- git diff --check
+- npm run validar:syntax
+- npm run validar:services, quando backend for alterado
+- npm run validar:json, quando publicação for afetada
 
 Rollback:
-A alteração deve permitir retorno à origem antiga sem perda de dados.
+A origem antiga por abas/guias deve permanecer disponível até validação final.
 ```
 
 ---
 
-## 18. Conclusão técnica
+## 22. Conclusão técnica
 
-A alteração deve ser implementada como evolução do pipeline backend de dados, não como adaptação direta do frontend.
+A nova planilha PAD será fonte dos valores agregados dos itens. A aplicação será responsável por preservar a memória institucional de rateio entre áreas.
 
-A estratégia correta é:
+Modelo final:
 
-1. criar uma nova origem normalizada para os planos de aplicação;
-2. preservar o contrato de dados consumido pelos cálculos atuais;
-3. validar a nova origem contra a planilha atual;
-4. ativar a nova origem por flag;
-5. publicar somente após comparação e validação;
-6. manter fallback para rollback;
-7. preparar o caminho para automação futura via Transferegov usando o mesmo schema canônico.
+```text
+Relatórios PAD .xls
++
+carteira monitorada
++
+base de itens conhecidos
++
+base de rateio manual por área
++
+controle de ciclo de vida dos itens
++
+cálculos internos
+=
+planoAplicacao reconstruído
+```
 
-Nenhuma IA ou agente deve iniciar a implementação criando tela, rota pública ou alteração visual ampla. A primeira etapa é consolidar o contrato de dados e criar o importador isolado em modo dry-run.
+A implementação correta não substitui linhas antigas por linhas novas. Ela transforma cada item agregado do PAD em uma ou mais linhas por área, preservando os rateios manuais, alertando itens novos, alertando itens ausentes e bloqueando publicação quando houver pendências críticas.
