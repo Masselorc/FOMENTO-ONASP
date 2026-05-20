@@ -1,5 +1,49 @@
 # Diário de bordo
 
+## 19/05/2026 - Correções de Contrastes, Alinhamento de Bandeiras e Sintaxe (Etapa 3.10)
+
+- Branch atual: `main`.
+- Estado inicial: Modificações realizadas em `frontend/css/app.css`, `frontend/js/app.js` e `index.html`.
+- Solicitação do usuário: Corrigir erro impeditivo (banco de dados/aplicação inoperantes por quebra de JS), alinhar verticalmente as bandeiras dos estados e corrigir o contraste dos badges e backgrounds no painel de Formalização.
+- Mudanças realizadas:
+  - **Sintaxe (`app.js`)**:
+    - Removida crase com escape (`\`\``) inserida acidentalmente dentro de uma template string na renderização da seção de Formalização que causou um `SyntaxError` (o qual impedia os event listeners do menu e do aplicativo de iniciarem).
+  - **Alinhamento de Bandeiras (`app.js`)**:
+    - Garantido o correto alinhamento e aplicação de layout condicional do Espírito Santo (ES) na tabela, bem como o alinhamento vertical flexbox das bandeiras dentro dos cards.
+  - **Contraste de Tema Nativo (`app.css`)**:
+    - Descoberta estrutural: A aplicação não possui modo claro. As variáveis padrão (`--color-surface`, etc.) já assumem cores escuras, logo, seletores restritivos como `[data-theme="dark"]` não engatilhavam.
+    - O prefixo `[data-theme="dark"]` foi totalmente removido das implementações feitas na sessão, permitindo que as regras CSS anexadas no rodapé de `app.css` apliquem os fundos adequados a componentes `.formalizacao-alert-item`, `.custom-progress-pill`, `.formalizacao-card-check-toggle` e `.formalizacao-stage-pill`. Cores estáticas/hardcoded da versão base (brancos e cinzas claros) foram suprimidas globalmente na seção.
+  - **Forçamento de Cache (`index.html`)**:
+    - Atributos cache-buster do arquivo CSS foram atualizados de `v=20260519-39-instrumentos` para `v=20260519-41-formalizacao` forçando a renovação local.
+- Validações executadas:
+  - `node --check frontend/js/app.js` → OK (erro `SyntaxError` removido).
+  - O aplicativo voltou a renderizar e carregar normalmente após a correção.
+- Risco: Baixo. O estilo é restrito a classes da própria `.app-view` e resolve um erro sintático.
+- Rollback: `git restore frontend/css/app.css frontend/js/app.js index.html`.
+
+## 19/05/2026 - Compactação de Tabelas e Cards de Estado (Etapa 3.9)
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` modificado (`frontend/css/app.css`, `frontend/js/app.js`, `index.html` de alterações da etapa anterior).
+- Solicitação do usuário: compactar as linhas dos itens financeiros (tabelas) e estender a compactação visual para todas as telas (incluindo cards de estado e tabelas de orçamento/formalização), usando fonte menor e visual limpo.
+- Mudanças realizadas:
+  - **Tabelas compactas em todas as views**:
+    - Tamanho de fonte reduzido para `0.76rem !important` (aproximando-se do tamanho dos cards compactos da home).
+    - Padding de células (`td` e `th`) reduzido para `0.28rem 0.45rem !important` globalmente.
+    - Badges, pílulas de progresso e botões em tabelas ajustados para dimensões menores (`font-size: 0.65rem`, padding `0.12rem 0.32rem`, etc.).
+  - **Cards de estado compactados**:
+    - Padding dos cards de Formalização reduzido para `0.7rem 0.8rem` e gap reduzido para `0.5rem`.
+    - Caixas de métricas internas dos cards com padding reduzido para `0.45rem 0.55rem` e gap reduzido para `0.12rem`.
+    - Fonte dos valores reduzida para `0.78rem` e pílulas de progresso encolhidas para `0.65rem`.
+  - **Margens**: Redução adicional de margens verticais (`mb-4` para `0.75rem` e `mb-3` para `0.55rem`).
+- Validações executadas:
+  - `node --check frontend/js/app.js` → OK
+  - `node scripts/validar-syntax.js` → OK (25 arquivos)
+  - `node scripts/validar-json-publicados.js` → OK
+- Smoke test manual: Confirmado via Chrome DevTools com navegação e screenshots das telas de Visão Geral, Orçamento e Formalização. Todas exibiram alta densidade de informação e harmonia de design.
+- Risco: Baixo. O estilo é restrito a classes específicas do layout SPA (`.app-view`).
+- Rollback: `git restore frontend/css/app.css`.
+
 ## 19/05/2026 - Padronização final (Etapa 3.8): filtros recolhíveis, neon global, header da Orçamento removido
 
 - Branch atual: `main`.

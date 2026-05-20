@@ -359,9 +359,14 @@ function renderActionButton({
         ? `<span class="visually-hidden">${escapeHtml(label)}</span>`
         : `<span>${escapeHtml(label)}</span>`;
 
+    let finalVariant = variant;
+    if (type === 'cancel' && (variant === 'outline-secondary' || variant === 'secondary' || variant === 'outline-primary')) {
+        finalVariant = 'danger';
+    }
+
     return `
         <button type="button"
-            class="btn btn-${size} btn-${variant} ${iconOnly ? 'btn-icon-only' : 'btn-icon-text'} ${extraClass}"
+            class="btn btn-${size} btn-${finalVariant} ${iconOnly ? 'btn-icon-only' : 'btn-icon-text'} ${extraClass}"
             ${idAttr}
             ${onClickAttr}
             ${backendAttr}
@@ -2526,7 +2531,7 @@ async function carregarLogoParaPDF() {
                                 <td data-label="Executado" class="text-end font-monospace align-middle ${valExec > 0 ? 'text-success fw-bold' : ''}">${formatMoney(valExec)}</td>
                                 <td data-label="%" class="text-center align-middle progress-cell" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
                                     <div class="custom-progress-pill">
-                                        <div class="pill-fill" style="width: ${getProgressWidth(pct)}%; background-color: ${getProgressColor(pct)}"></div>
+                                        <div class="pill-fill" style="width: ${getProgressWidth(pct)}%; background: ${getProgressGradient(pct)}"></div>
                                         <div class="pill-text">${formatPercent(pct)}</div>
                                     </div>
                                 </td>
@@ -2854,7 +2859,7 @@ async function carregarLogoParaPDF() {
                     <tr class="profor-row" data-profor-uf="${safeUf}" role="button" tabindex="0">
                         <td data-label="Convênio" class="align-middle">
                             <div class="profor-convenio-cell">
-                                <span class="badge bg-secondary badge-uf">${safeUf}</span>
+                                <span class="uf-flag-inline">${renderizarBandeiraCardFormalizacao({uf: convenio.uf})}<span class="badge bg-secondary badge-uf">${safeUf}</span></span>
                                 <div>
                                     <strong>Convênio Nº ${safeNumero}/${safeAno}</strong>
                                 </div>
@@ -2866,13 +2871,11 @@ async function carregarLogoParaPDF() {
                         <td data-label="Previsto Ouvidoria" class="align-middle text-end font-monospace">${formatMoney(convenio.previstoOuvidoria)}</td>
                         <td data-label="Execução Ouvidoria" class="align-middle progress-cell">
                             <div class="custom-progress-pill">
-                                <div class="pill-fill" style="width: ${getProgressWidth(execucao)}%; background-color: ${getProgressColor(execucao)}"></div>
+                                <div class="pill-fill" style="width: ${getProgressWidth(execucao)}%; background: ${getProgressGradient(execucao)}"></div>
                                 <div class="pill-text">${formatPercent(execucao)}</div>
                             </div>
                         </td>
-                        <td data-label="Sinais de gestão" class="align-middle">
-                            <div class="profor-alert-list">${renderizarBadgesAlertaProfor(convenio)}</div>
-                        </td>
+
                     </tr>
                 `;
             }).join('');
@@ -2988,7 +2991,7 @@ async function carregarLogoParaPDF() {
                 <tr class="${c.ativo === 0 ? 'text-muted' : ''}">
                     <td class="fw-medium">${escapeHtml(c.numeroConvenio)}</td>
                     <td class="text-center">${escapeHtml(c.ano || '—')}</td>
-                    <td class="text-center">${escapeHtml(c.uf || '—')}</td>
+                    <td class="text-center"><span class="uf-flag-inline">${renderizarBandeiraCardFormalizacao({uf: c.uf})}<span>${escapeHtml(c.uf || '—')}</span></span></td>
                     <td>${escapeHtml(normalizarInstrumento(c.instrumento) || '—')}</td>
                     <td class="text-center">${c.ativo !== 0
                         ? '<span class="badge bg-success-subtle text-success-emphasis">Ativo</span>'
@@ -3387,7 +3390,7 @@ async function carregarLogoParaPDF() {
                                     <th class="text-end">Valor Global</th>
                                     <th class="text-end">Previsto Ouvidoria</th>
                                     <th class="text-center">Execução Ouvidoria</th>
-                                    <th>Sinais de gestão</th>
+
                                 </tr>
                             </thead>
                             <tbody id="profor-table-body"></tbody>
@@ -3551,7 +3554,7 @@ async function carregarLogoParaPDF() {
                         <td data-label="Economicidade" class="text-end font-monospace align-middle">${formatMoney(item.saldoEconomicidade)}</td>
                         <td data-label="%" class="text-center align-middle progress-cell" title="${execucaoAcimaPrevisto ? 'Execução acima do valor previsto' : ''}">
                             <div class="custom-progress-pill">
-                                <div class="pill-fill" style="width: ${getProgressWidth(percentualItem)}%; background-color: ${getProgressColor(percentualItem)}"></div>
+                                <div class="pill-fill" style="width: ${getProgressWidth(percentualItem)}%; background: ${getProgressGradient(percentualItem)}"></div>
                                 <div class="pill-text">${formatPercent(percentualItem)}</div>
                             </div>
                         </td>
@@ -3615,7 +3618,6 @@ async function carregarLogoParaPDF() {
                                 </div>
                             </div>
                         </div>
-                        <div class="profor-alert-list">${renderizarBadgesAlertaProfor(convenio, 8)}</div>
                     </section>
 
                     <section class="row my-4 row-cols-1 row-cols-md-2 row-cols-xl-4 g-3" aria-label="Detalhes financeiros do convênio">
@@ -4178,7 +4180,7 @@ async function carregarLogoParaPDF() {
                 const percentual = Number(item.percentualExecucao) || 0;
                 return `
                     <tr class="profor-row" tabindex="0" data-faf-uf="${escapeHtml(item.uf)}" data-faf2021-item-id="${escapeHtml(item.itemId)}">
-                        <td data-label="UF" class="align-middle"><span class="badge badge-uf">${escapeHtml(item.uf)}</span></td>
+                        <td data-label="UF" class="align-middle"><span class="uf-flag-inline">${renderizarBandeiraCardFormalizacao({uf: item.uf})}<span class="badge badge-uf">${escapeHtml(item.uf)}</span></span></td>
                         <td data-label="Objeto" class="align-middle"><span class="truncate-text">${escapeHtml(item.objeto)}</span></td>
                         <td data-label="Qtd." class="text-center align-middle">${formatarQuantidadeProfor(item.quantidade)}</td>
                         <td data-label="Valor unit." class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
@@ -4187,11 +4189,11 @@ async function carregarLogoParaPDF() {
                         <td data-label="Saldo" class="text-end font-monospace align-middle ${saldo < 0 ? 'text-danger fw-bold' : ''}">${formatMoney(saldo)}</td>
                         <td data-label="%" class="text-center align-middle progress-cell">
                             <div class="custom-progress-pill">
-                                <div class="pill-fill" style="width: ${getProgressWidth(percentual)}%; background-color: ${getProgressColor(percentual)}"></div>
+                                <div class="pill-fill" style="width: ${getProgressWidth(percentual)}%; background: ${getProgressGradient(percentual)}"></div>
                                 <div class="pill-text">${formatPercent(percentual)}</div>
                             </div>
                         </td>
-                        <td data-label="Sinais" class="align-middle"><div class="profor-alert-list">${renderizarBadgesFaf(item)}</div></td>
+
                         <td data-label="Ações" class="text-center align-middle faf2021-actions-cell">
                             ${renderizarBotaoEdicaoFaf2021(item)}
                         </td>
@@ -4335,7 +4337,7 @@ async function carregarLogoParaPDF() {
                                 <tr>
                                     <th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit.</th>
                                     <th class="text-end">Previsto</th><th class="text-end">Executado</th><th class="text-end">Saldo</th>
-                                    <th class="text-center">%</th><th>Sinais de gestão</th><th class="text-center">Ações</th>
+                                    <th class="text-center">%</th><th class="text-center">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="faf-table-body"></tbody>
@@ -4413,7 +4415,7 @@ async function carregarLogoParaPDF() {
                                                 <td data-label="Saldo" class="text-end font-monospace">${formatMoney(item.saldo)}</td>
                                                 <td data-label="%" class="text-center progress-cell">
                                                     <div class="custom-progress-pill">
-                                                        <div class="pill-fill" style="width: ${getProgressWidth(percentual)}%; background-color: ${getProgressColor(percentual)}"></div>
+                                                        <div class="pill-fill" style="width: ${getProgressWidth(percentual)}%; background: ${getProgressGradient(percentual)}"></div>
                                                         <div class="pill-text">${formatPercent(percentual)}</div>
                                                     </div>
                                                 </td>
@@ -4462,7 +4464,7 @@ async function carregarLogoParaPDF() {
 
             tbody.innerHTML = itensOrdenados.map((item) => `
                 <tr class="profor-row" tabindex="0" data-doacoes-uf="${escapeHtml(item.uf)}">
-                    <td data-label="UF" class="align-middle"><span class="badge badge-uf">${escapeHtml(item.uf)}</span></td>
+                    <td data-label="UF" class="align-middle"><span class="uf-flag-inline">${renderizarBandeiraCardFormalizacao({uf: item.uf})}<span class="badge badge-uf">${escapeHtml(item.uf)}</span></span></td>
                     <td data-label="Objeto" class="align-middle"><span class="truncate-text">${escapeHtml(item.objeto)}</span></td>
                     <td data-label="Qtd." class="text-center align-middle">${formatarQuantidadeProfor(item.quantidade)}</td>
                     <td data-label="Valor unit." class="text-end font-monospace small align-middle">${formatMoney(item.valorUnitario)}</td>
@@ -4695,7 +4697,7 @@ async function carregarLogoParaPDF() {
             const valor = getProgressWidth(percentual);
             return `
                 <div class="custom-progress-pill formalizacao-progress" title="${escapeHtml(rotulo || formatPercent(valor))}">
-                    <div class="pill-fill" style="width: ${valor}%; background-color: ${getProgressColor(valor)}"></div>
+                    <div class="pill-fill" style="width: ${valor}%; background: ${getProgressGradient(valor)}"></div>
                     <div class="pill-text">${formatPercent(valor)}</div>
                 </div>
             `;
@@ -4761,8 +4763,10 @@ async function carregarLogoParaPDF() {
         }
 
         function renderizarBandeiraCardFormalizacao(proposta) {
-            const flagUrl = catalogoAplicacao.imagensBandeiras?.[proposta.uf] || '';
-            const safeUf = escapeHtml(proposta.uf);
+            const ufOriginal = proposta.uf || '';
+            const ufLimpa = ufOriginal.split('_')[0];
+            const flagUrl = catalogoAplicacao.imagensBandeiras?.[ufLimpa] || '';
+            const safeUf = escapeHtml(ufOriginal);
 
             if (!flagUrl) {
                 return `<span class="formalizacao-card-flag-placeholder" aria-label="Bandeira ${safeUf}"><i class="fas fa-flag" aria-hidden="true"></i></span>`;
@@ -5064,25 +5068,39 @@ async function carregarLogoParaPDF() {
 
             if (selectedSummary) {
                 selectedSummary.innerHTML = `
-                    <div class="budget-insight-card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-filter" aria-hidden="true"></i>UFs na seleção</div>
-                        <div class="kpi-value">${propostas.length}</div>
-                        <div class="kpi-desc">de ${dados.resumo.totalPropostas} propostas</div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'UFs na seleção',
+                            valor: propostas.length,
+                            descricao: `de ${dados.resumo.totalPropostas} propostas`,
+                            icon: 'fa-filter'
+                        })}
                     </div>
-                    <div class="budget-insight-card kpi-card">
-                        <div class="kpi-title"><i class="fas fa-scale-balanced" aria-hidden="true"></i>Valor Global</div>
-                        <div class="kpi-value text-money">${formatMoney(resumoSelecao.valorGlobal)}</div>
-                        <div class="kpi-desc">repasse + contrapartida</div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Valor Global',
+                            valor: `<span class="text-money">${formatMoney(resumoSelecao.valorGlobal)}</span>`,
+                            descricao: 'repasse + contrapartida',
+                            icon: 'fa-scale-balanced'
+                        })}
                     </div>
-                    <div class="budget-insight-card kpi-card ${resumoSelecao.alertasCriticos ? 'kpi-card-warning' : 'kpi-card-success'}">
-                        <div class="kpi-title"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i>Alertas críticos</div>
-                        <div class="kpi-value">${resumoSelecao.alertasCriticos}</div>
-                        <div class="kpi-desc">${resumoSelecao.aptas} apta(s) à celebração</div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Alertas críticos',
+                            valor: resumoSelecao.alertasCriticos,
+                            descricao: `${resumoSelecao.aptas} apta(s) à celebração`,
+                            icon: 'fa-triangle-exclamation',
+                            variant: resumoSelecao.alertasCriticos ? 'warning' : 'success'
+                        })}
                     </div>
-                    <div class="budget-insight-card kpi-card kpi-card-info">
-                        <div class="kpi-title"><i class="fas fa-chart-line" aria-hidden="true"></i>Progresso médio</div>
-                        <div class="kpi-value">${formatPercent(progressoMedio)}</div>
-                        <div class="kpi-desc">${resumoSelecao.planosOk} plano(s) compatíveis</div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Progresso médio',
+                            valor: formatPercent(progressoMedio),
+                            descricao: `${resumoSelecao.planosOk} plano(s) compatíveis`,
+                            icon: 'fa-chart-line',
+                            variant: 'info'
+                        })}
                     </div>
                 `;
             }
@@ -5110,7 +5128,7 @@ async function carregarLogoParaPDF() {
                     <tr class="profor-row ${alertasCriticos.length ? 'profor-row-risk' : ''}" tabindex="0" data-formalizacao-uf="${escapeHtml(proposta.uf)}">
                         <td data-label="UF" class="align-middle">
                             <div class="profor-convenio-cell">
-                                <span class="badge badge-uf">${escapeHtml(proposta.uf)}</span>
+                                <span class="uf-flag-inline">${renderizarBandeiraCardFormalizacao(proposta)}<span class="badge badge-uf">${escapeHtml(proposta.uf)}</span></span>
                                 <div>
                                     <strong>${escapeHtml(proposta.estado)}</strong>
                                     <span>${escapeHtml(proposta.numeroProposta || proposta.idProposta)}</span>
@@ -8774,14 +8792,6 @@ async function carregarLogoParaPDF() {
 
                 ${renderizarAcoesOrcamento()}
 
-                <section class="budget-summary-section mb-4" aria-label="Seção Orçamento 2026">
-                    <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Seção 1</p>
-                            <h2>Orçamento 2026</h2>
-                        </div>
-                    </div>
-                </section>
                 <section class="row mb-2 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores orçamentários">
                     <div class="col">
                         ${renderKpiCard({
@@ -8828,9 +8838,7 @@ async function carregarLogoParaPDF() {
                         })}
                     </div>
                 </section>
-                <div class="budget-management-note mb-4">
-                    Considera processos autuados com valor de pesquisa de preço informado, excluídos itens cancelados ou suspensos.
-                </div>
+                <div class="mt-2"></div>
 
                 <section class="filter-section budget-filter-bar mb-3" aria-label="Filtros da tabela de orçamento">
                     <div class="budget-filter-bar-title">
@@ -9852,11 +9860,15 @@ async function carregarLogoParaPDF() {
                 parametrosMinimosEditorAtivo = null;
             }
 
+            if (!parametrosMinimosEditorAtivo && !totalAlteracoes) {
+                return '';
+            }
+
             return `
-                <section class="diagnostico-action-bar diagnostico-block" aria-label="Ações dos parâmetros mínimos">
+                <section class="diagnostico-action-bar diagnostico-block mb-3" aria-label="Ações dos parâmetros mínimos">
                     <div>
-                        <p class="section-eyebrow mb-1">Atualização</p>
-                        <h2>Parâmetros mínimos</h2>
+                        <p class="section-eyebrow mb-1">Alterações Pendentes</p>
+                        <h2>Modo Edição Ativo</h2>
                         ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
                     </div>
                     <div class="diagnostico-action-buttons">
@@ -9871,24 +9883,8 @@ async function carregarLogoParaPDF() {
                         ${renderActionButton({
                             id: 'btnCancelarParametrosMinimos',
                             type: 'cancel',
-                            label: 'Cancelar alterações',
-                            variant: 'outline-secondary',
-                            backend: true,
-                            disabled: modoEstatico || !totalAlteracoes
-                        })}
-                        ${renderActionButton({
-                            id: 'btnExportarParametrosMinimos',
-                            type: 'exportExcel',
-                            label: 'Exportar Excel',
-                            variant: 'export',
-                            backend: true,
-                            disabled: modoEstatico
-                        })}
-                        ${renderActionButton({
-                            id: 'btnHistoricoParametrosMinimos',
-                            type: 'history',
-                            label: 'Histórico',
-                            variant: 'admin',
+                            label: 'Cancelar',
+                            variant: 'danger',
                             backend: true,
                             disabled: modoEstatico
                         })}
@@ -10108,33 +10104,30 @@ async function carregarLogoParaPDF() {
                         <table class="table table-sm table-hover w-100 app-data-table diagnostico-table">
                             <thead>
                                 <tr>
-                                    <th>UF</th>
+                                    <th class="text-center" style="width: 100px;">UF</th>
                                     <th>Checklist</th>
                                     <th class="text-center">Pendências</th>
                                     <th class="text-center">Validar</th>
-                                    <th>Status</th>
+                                    <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${respostasFiltradas.map((resposta) => {
                                     const resumoUf = resposta.resumoParametrosMinimos || {};
                                     return `
-                                        <tr>
-                                            <td data-label="UF"><strong>${escapeHtml(resposta.uf || '-')}</strong></td>
+                                        <tr class="cursor-pointer" data-diagnostico-uf="${escapeHtml(resposta.uf || '')}" title="Clique para ver os detalhes da UF">
+                                            <td data-label="UF" class="text-center"><span class="uf-flag-inline justify-content-center">${renderizarBandeiraCardFormalizacao({uf: resposta.uf})}<strong>${escapeHtml(resposta.uf || '-')}</strong></span></td>
                                             <td data-label="Checklist">${escapeHtml(`${resumoUf.parametrosAtendidos || 0}/${resumoUf.total || 0} parâmetros atendidos`)}</td>
                                             <td data-label="Pendências" class="text-center">${escapeHtml(String(resumoUf.pendencias || 0))}</td>
                                             <td data-label="Validar" class="text-center">${escapeHtml(String(resumoUf.itensParaValidar || 0))}</td>
-                                            <td data-label="Status">${renderizarBadgeDiagnostico(resposta.statusGeralParametrosMinimos)}</td>
+                                            <td data-label="Status" class="text-center">${renderizarBadgeDiagnostico(resposta.statusGeralParametrosMinimos)}</td>
                                         </tr>
                                     `;
                                 }).join('')}
                             </tbody>
                         </table>
                     </div>
-                    <div class="diagnostico-general-callout">
-                        <i class="fas fa-filter" aria-hidden="true"></i>
-                            <span>Selecione uma UF nos botões acima para abrir os parâmetros mínimos validados daquela ouvidoria.</span>
-                    </div>
+
                 </section>
             `;
         }
@@ -11198,6 +11191,8 @@ async function carregarLogoParaPDF() {
                 ? `<div class="alert alert-info"><i class="fas fa-circle-info me-2" aria-hidden="true"></i>${escapeHtml(dados.diagnostico.aviso)}</div>`
                 : '';
 
+            const modoEstatico = dadosPaginaEmModoEstatico('parametrosMinimos');
+
             container.innerHTML = `
                 <section class="dashboard-intro diagnostico-intro">
                     <div>
@@ -11208,6 +11203,24 @@ async function carregarLogoParaPDF() {
                         <span><i class="fas fa-file-excel" aria-hidden="true"></i> Parametros_Minimos.xlsx</span>
                         <span><i class="fas fa-clipboard-check" aria-hidden="true"></i> ${dados.resumo.totalRespostas} registro(s)</span>
                         <span><i class="fas fa-scale-balanced" aria-hidden="true"></i> Validação ONASP</span>
+                    </div>
+                    <div class="intro-actions" aria-label="Ações">
+                        ${renderActionButton({
+                            id: 'btnExportarParametrosMinimos',
+                            type: 'exportExcel',
+                            label: 'Exportar Excel',
+                            variant: 'export',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
+                        ${renderActionButton({
+                            id: 'btnHistoricoParametrosMinimos',
+                            type: 'history',
+                            label: 'Histórico',
+                            variant: 'admin',
+                            backend: true,
+                            disabled: modoEstatico
+                        })}
                     </div>
                 </section>
 
@@ -12318,10 +12331,17 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
         const getProgressWidth = (p) => Math.max(0, Math.min(100, Number.isFinite(p) ? p : 0));
         
         const getProgressColor = (p) => {
-            if (p <= 0.1) return '#bdc3c7'; // Cinza para 0%
-            if (p < 50) return '#f39c12'; // Laranja/Amarelo para < 50%
-            if (p < 100) return '#3498db'; // Azul para < 100%
-            return '#1abc9c'; // Verde para 100%
+            if (p <= 0.1) return '#94a3b8'; // Slate 400
+            if (p < 50) return '#fbbf24'; // Amber 400
+            if (p < 100) return '#60a5fa'; // Blue 400
+            return '#34d399'; // Emerald 400
+        };
+
+        const getProgressGradient = (p) => {
+            if (p <= 0.1) return 'linear-gradient(90deg, #64748b 0%, #475569 100%)'; // Cinza metálico
+            if (p < 50) return 'linear-gradient(90deg, #fbbf24 0%, #d97706 100%)'; // Amarelo/Laranja metálico
+            if (p < 100) return 'linear-gradient(90deg, #60a5fa 0%, #2563eb 100%)'; // Azul neon/metálico
+            return 'linear-gradient(90deg, #34d399 0%, #059669 100%)'; // Verde neon/metálico
         };
 
         function gerarCoresVariadas(count) {
@@ -12500,7 +12520,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
                     </td>
                     <td data-label="%" class="text-center align-middle" title="${execucaoAcimaPrevisto ? 'Execucao acima do valor previsto' : ''}">
                         <div class="custom-progress-pill">
-                            <div class="pill-fill" style="width: ${getProgressWidth(percent)}%; background-color: ${getProgressColor(percent)}"></div>
+                            <div class="pill-fill" style="width: ${getProgressWidth(percent)}%; background: ${getProgressGradient(percent)}"></div>
                             <div class="pill-text">${formatPercent(percent)}</div>
                         </div>
                     </td>
