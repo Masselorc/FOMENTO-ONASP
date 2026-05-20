@@ -59,6 +59,17 @@ function carregarCarteiraMonitorada() {
   ]));
 }
 
+function interpretarJsonArray(valor) {
+  if (Array.isArray(valor)) return valor;
+  if (typeof valor !== "string" || !valor.trim()) return [];
+  try {
+    const interpretado = JSON.parse(valor);
+    return Array.isArray(interpretado) ? interpretado : [];
+  } catch {
+    return [];
+  }
+}
+
 function carregarItensConhecidos() {
   const linhas = db.prepare(`
     SELECT
@@ -69,6 +80,8 @@ function carregarItensConhecidos() {
       i.descricao_original_referencia,
       i.uf,
       i.ano,
+      i.valor_unitario_referencia,
+      i.naturezas_encontradas_json,
       i.apto_para_importacao_futura,
       i.possui_pendencia_impeditiva,
       i.status_item,
@@ -88,6 +101,7 @@ function carregarItensConhecidos() {
   const todos = [];
 
   for (const linha of linhas) {
+    const valorUnitario = Number(linha.valor_unitario_referencia);
     const item = {
       id: linha.id,
       chaveItem: linha.chave_item,
@@ -97,6 +111,8 @@ function carregarItensConhecidos() {
       descricaoOriginalReferencia: linha.descricao_original_referencia,
       uf: linha.uf,
       ano: linha.ano,
+      valorUnitarioReferencia: Number.isFinite(valorUnitario) ? valorUnitario : null,
+      naturezasEncontradas: interpretarJsonArray(linha.naturezas_encontradas_json),
       aptoParaImportacaoFutura: linha.apto_para_importacao_futura === 1,
       possuiPendenciaImpedativa: linha.possui_pendencia_impeditiva === 1,
       statusItem: linha.status_item,
@@ -129,9 +145,40 @@ function montarItemPadConferido(item, carteira, chaveItem, descricaoNormalizada,
     codigoNaturezaDespesa: item.codigoNaturezaDespesa,
     unidade: item.unidade,
     quantidade: item.quantidade,
+    valorUnitario: item.valorUnitario,
     valorTotalPrevisto: item.valorTotalPrevisto,
     valorTotalExecutado: item.valorTotalExecutado,
     saldo: item.saldo,
+  };
+}
+
+// Tolerância para considerar dois valores unitários coincidentes (centavos).
+const TOLERANCIA_VALOR_UNITARIO = 0.01;
+
+/**
+ * Compara o valor unitário do item PAD com o valor unitário de referência da
+ * memória. É apenas um indício para decisão humana — NÃO autoriza equivalência
+ * automática.
+ */
+function compararValorUnitario(valorUnitarioPad, valorUnitarioMemoria) {
+  const pad = Number(valorUnitarioPad);
+  const memoria = Number(valorUnitarioMemoria);
+  const padValido = Number.isFinite(pad);
+  const memoriaValida = Number.isFinite(memoria);
+  if (!padValido || !memoriaValida) {
+    return {
+      valorUnitarioPad: padValido ? pad : null,
+      valorUnitarioReferenciaMemoria: memoriaValida ? memoria : null,
+      valorUnitarioCoincide: null,
+      diferencaValorUnitario: null,
+    };
+  }
+  const diferenca = Math.round((pad - memoria + Number.EPSILON) * 100) / 100;
+  return {
+    valorUnitarioPad: pad,
+    valorUnitarioReferenciaMemoria: memoria,
+    valorUnitarioCoincide: Math.abs(diferenca) <= TOLERANCIA_VALOR_UNITARIO,
+    diferencaValorUnitario: diferenca,
   };
 }
 
@@ -192,15 +239,33 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
       ? itensConhecidos.porChaveNormalizada.get(chaveItem)
       : null;
     if (!itemConhecido) {
-      itensPadSemRateio.push({
+      const registroSemRateio = {
         ...itemPad,
         motivo: itemComMesmaChaveNormalizada
           ? "descricao_original_divergente_da_memoria_rateio"
           : "item_pad_nao_existe_na_memoria_rateio",
         itemConhecidoNormalizadoId: itemComMesmaChaveNormalizada?.id || null,
         descricaoOriginalReferencia: itemComMesmaChaveNormalizada?.descricaoOriginalReferencia || null,
-      });
-      alertas.push(criarAlerta({
+      };
+
+      // Para coincidências apenas por descrição normalizada, anexa o indício de
+      // valor unitário e natureza. É evidência para decisão humana, não autoriza
+      // equivalência automática.
+      let indicioValorUnitario = null;
+      if (itemComMesmaChaveNormalizada) {
+        indicioValorUnitario = compararValorUnitario(
+          itemPad.valorUnitario,
+          itemComMesmaChaveNormalizada.valorUnitarioReferencia
+        );
+        registroSemRateio.indicioEquivalencia = {
+          ...indicioValorUnitario,
+          naturezaPad: itemPad.natureza || null,
+          naturezasEncontradasMemoria: itemComMesmaChaveNormalizada.naturezasEncontradas || [],
+        };
+      }
+      itensPadSemRateio.push(registroSemRateio);
+
+      const alerta = criarAlerta({
         tipo: itemComMesmaChaveNormalizada
           ? "item_pad_coincide_apenas_por_descricao_normalizada"
           : "item_pad_sem_rateio",
@@ -214,7 +279,16 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
           ? "Item PAD coincide pela descrição normalizada, mas a descrição original diverge da referência persistida; não foi considerado rateado."
           : "Item PAD não existe em profor_2022_itens_conhecidos.",
         origem: { arquivo: item.arquivo, aba: item.aba, linha: item.linha },
-      }));
+      });
+      if (itemComMesmaChaveNormalizada) {
+        alerta.valorUnitarioPad = indicioValorUnitario.valorUnitarioPad;
+        alerta.valorUnitarioReferenciaMemoria = indicioValorUnitario.valorUnitarioReferenciaMemoria;
+        alerta.valorUnitarioCoincide = indicioValorUnitario.valorUnitarioCoincide;
+        alerta.diferencaValorUnitario = indicioValorUnitario.diferencaValorUnitario;
+        alerta.naturezaPad = itemPad.natureza || null;
+        alerta.naturezasEncontradasMemoria = itemComMesmaChaveNormalizada.naturezasEncontradas || [];
+      }
+      alertas.push(alerta);
       continue;
     }
 

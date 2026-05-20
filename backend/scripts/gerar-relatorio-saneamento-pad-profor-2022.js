@@ -72,9 +72,22 @@ function agruparPorConvenioUf({ itensPadSemRateio, coincidenciasApenasNormalizad
     .sort((a, b) => String(a.numeroConvenio || "").localeCompare(String(b.numeroConvenio || ""), "pt-BR"));
 }
 
+function descreverIndicioValorUnitario(indicio) {
+  if (!indicio) return "";
+  const { valorUnitarioCoincide, valorUnitarioPad, valorUnitarioReferenciaMemoria } = indicio;
+  if (valorUnitarioCoincide === true) {
+    return ` Indício adicional: o valor unitário previsto coincide (PAD ${valorUnitarioPad} = memória ${valorUnitarioReferenciaMemoria}), reforçando a hipótese de mesmo item — ainda assim exige validação humana.`;
+  }
+  if (valorUnitarioCoincide === false) {
+    return ` Atenção: o valor unitário previsto NÃO coincide (PAD ${valorUnitarioPad} vs memória ${valorUnitarioReferenciaMemoria}, diferença ${indicio.diferencaValorUnitario}), o que enfraquece a hipótese de mesmo item.`;
+  }
+  return " Valor unitário não pôde ser comparado (ausente em uma das fontes).";
+}
+
 function montarRecomendacaoItemPadSemRateio(item) {
   if (item?.motivo === "descricao_original_divergente_da_memoria_rateio") {
-    return "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização.";
+    return "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      + descreverIndicioValorUnitario(item?.indicioEquivalencia);
   }
   return "Criar ou validar memória de rateio para este item antes de permitir reconstrução automática.";
 }
@@ -222,6 +235,46 @@ function montarTabelaItens(titulo, itens, obterDescricao) {
   return linhas;
 }
 
+function rotularCoincidenciaValorUnitario(indicio) {
+  if (!indicio || indicio.valorUnitarioCoincide === null || indicio.valorUnitarioCoincide === undefined) {
+    return "não comparável";
+  }
+  return indicio.valorUnitarioCoincide ? "coincide" : "diverge";
+}
+
+function montarTabelaCoincidenciasNormalizadas(itens) {
+  const linhas = [
+    "## Itens PAD que coincidem apenas por descrição normalizada",
+    "",
+    "Coincidência apenas por descrição normalizada não autoriza equivalência automática.",
+    "O valor unitário previsto é exibido como indício adicional para a decisão humana.",
+    "",
+    linhaTabela([
+      "Convênio", "UF", "Descrição",
+      "Valor unit. PAD", "Valor unit. memória", "Valor unit.", "Diferença",
+      "Natureza PAD", "Naturezas memória", "Providência",
+    ]),
+    linhaTabela(["---", "---", "---", "---", "---", "---", "---", "---", "---", "---"]),
+  ];
+  for (const item of itens) {
+    const indicio = item.indicioEquivalencia || {};
+    linhas.push(linhaTabela([
+      item.numeroConvenio,
+      item.uf,
+      item.descricaoOriginal,
+      indicio.valorUnitarioPad ?? "-",
+      indicio.valorUnitarioReferenciaMemoria ?? "-",
+      rotularCoincidenciaValorUnitario(indicio),
+      indicio.diferencaValorUnitario ?? "-",
+      indicio.naturezaPad ?? "-",
+      (indicio.naturezasEncontradasMemoria || []).join(", ") || "-",
+      item.recomendacao,
+    ]));
+  }
+  linhas.push("");
+  return linhas;
+}
+
 function montarMarkdown(relatorio) {
   const { resumo } = relatorio;
   const linhas = [
@@ -262,7 +315,7 @@ function montarMarkdown(relatorio) {
 
   linhas.push("");
   linhas.push(...montarTabelaItens("Itens PAD sem rateio", relatorio.itensPadSemRateio, (item) => item.descricaoOriginal));
-  linhas.push(...montarTabelaItens("Itens PAD que coincidem apenas por descrição normalizada", relatorio.itensPadCoincidemApenasPorDescricaoNormalizada, (item) => item.descricaoOriginal));
+  linhas.push(...montarTabelaCoincidenciasNormalizadas(relatorio.itensPadCoincidemApenasPorDescricaoNormalizada));
   linhas.push(...montarTabelaItens("Itens conhecidos não aptos", relatorio.itensConhecidosNaoAptos, (item) => item.descricaoOriginal));
   linhas.push(...montarTabelaItens("Itens conhecidos ausentes no PAD", relatorio.itensConhecidosAusentesNoPad, (item) => item.descricaoOriginalReferencia));
 

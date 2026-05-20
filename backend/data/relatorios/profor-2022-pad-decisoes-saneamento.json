@@ -2,7 +2,7 @@
   "metadados": {
     "versaoEsquema": 1,
     "geradoEm": "2026-05-20T18:50:07.464Z",
-    "atualizadoEm": "2026-05-20T18:50:07.464Z",
+    "atualizadoEm": "2026-05-20T19:12:11.235Z",
     "origem": "relatorio-saneamento-pad",
     "observacao": "Template para decisões humanas de saneamento PAD x rateios. Não edite o campo 'id'. 'decisao' deve permanecer 'PENDENTE' até validação humana. 'sugestaoRateio' é informativo e não substitui a decisão.",
     "fonteSaneamento": "backend/data/relatorios/profor-2022-pad-saneamento.json",
@@ -25,6 +25,16 @@
       "descricaoPad": "Meia militar",
       "descricaoItemConhecido": "Meia Militar",
       "itemConhecidoNormalizadoId": 154,
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 37.59,
+        "valorUnitarioReferenciaMemoria": 37.15,
+        "valorUnitarioCoincide": false,
+        "diferencaValorUnitario": 0.44,
+        "naturezaPad": "CUSTEIO",
+        "naturezasEncontradasMemoria": [
+          "CUSTEIO"
+        ]
+      },
       "decisao": "PENDENTE",
       "acao": null,
       "justificativa": "",
@@ -38,6 +48,16 @@
       "descricaoPad": "Desktop para edição de vídeo",
       "descricaoItemConhecido": "Desktop para edição de video",
       "itemConhecidoNormalizadoId": 97,
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 14849,
+        "valorUnitarioReferenciaMemoria": 14849,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "decisao": "PENDENTE",
       "acao": null,
       "justificativa": "",
@@ -51,6 +71,16 @@
       "descricaoPad": "Smartphone mínimo de 128gb de memória in",
       "descricaoItemConhecido": "Smartphone minimo de 128gb de memória in",
       "itemConhecidoNormalizadoId": 111,
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 2341.24,
+        "valorUnitarioReferenciaMemoria": 2341.24,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "decisao": "PENDENTE",
       "acao": null,
       "justificativa": "",
@@ -64,6 +94,16 @@
       "descricaoPad": "Switcher de vídeo",
       "descricaoItemConhecido": "Switcher de video",
       "itemConhecidoNormalizadoId": 112,
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 3901,
+        "valorUnitarioReferenciaMemoria": 3901,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "decisao": "PENDENTE",
       "acao": null,
       "justificativa": "",

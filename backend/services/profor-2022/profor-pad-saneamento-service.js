@@ -410,6 +410,24 @@ function derivarSugestaoArea(descricao) {
   return encontradas[0];
 }
 
+/**
+ * Resume o indício de equivalência (valor unitário + natureza) de um item PAD,
+ * em formato seguro para o template. É evidência informativa para decisão
+ * humana — nunca decisão automática.
+ */
+function resumirIndicioEquivalencia(item) {
+  const indicio = item && item.indicioEquivalencia;
+  if (!indicio || typeof indicio !== "object") return null;
+  return {
+    valorUnitarioPad: indicio.valorUnitarioPad ?? null,
+    valorUnitarioReferenciaMemoria: indicio.valorUnitarioReferenciaMemoria ?? null,
+    valorUnitarioCoincide: indicio.valorUnitarioCoincide ?? null,
+    diferencaValorUnitario: indicio.diferencaValorUnitario ?? null,
+    naturezaPad: indicio.naturezaPad ?? null,
+    naturezasEncontradasMemoria: garantirArray(indicio.naturezasEncontradasMemoria),
+  };
+}
+
 /** Monta as entradas de equivalência (4 coincidências apenas normalizadas). */
 function montarEntradasEquivalencias(saneamento) {
   return garantirArray(saneamento.itensPadCoincidemApenasPorDescricaoNormalizada)
@@ -420,6 +438,7 @@ function montarEntradasEquivalencias(saneamento) {
       descricaoPad: item.descricaoOriginal || null,
       descricaoItemConhecido: item.descricaoOriginalReferencia || null,
       itemConhecidoNormalizadoId: item.itemConhecidoNormalizadoId || null,
+      indicioEquivalencia: resumirIndicioEquivalencia(item),
       decisao: DECISAO_PENDENTE,
       acao: null,
       justificativa: "",

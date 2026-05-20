@@ -1,6 +1,6 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-20T18:40:29.535Z",
+    "geradoEm": "2026-05-20T19:12:10.863Z",
     "fonte": "backend/data/relatorios/profor-2022-pad-rateios-dry-run.json",
     "totalItensPadSemRateio": 27,
     "totalCoincidenciasApenasNormalizadas": 4,
@@ -116,6 +116,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 10,
+      "valorUnitario": 9501,
       "valorTotalPrevisto": 9501,
       "valorTotalExecutado": 0,
       "saldo": 9501,
@@ -141,6 +142,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 20,
+      "valorUnitario": 1870,
       "valorTotalPrevisto": 3740,
       "valorTotalExecutado": 0,
       "saldo": 3740,
@@ -166,6 +168,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 4560,
       "valorTotalPrevisto": 4560,
       "valorTotalExecutado": 0,
       "saldo": 4560,
@@ -191,6 +194,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 20,
+      "valorUnitario": 1349.62,
       "valorTotalPrevisto": 2699.24,
       "valorTotalExecutado": 0,
       "saldo": 2699.24,
@@ -216,6 +220,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 20,
+      "valorUnitario": 300,
       "valorTotalPrevisto": 600,
       "valorTotalExecutado": 0,
       "saldo": 600,
@@ -241,6 +246,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 30,
+      "valorUnitario": 8106.75,
       "valorTotalPrevisto": 24320.25,
       "valorTotalExecutado": 0,
       "saldo": 24320.25,
@@ -266,6 +272,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 30,
+      "valorUnitario": 350,
       "valorTotalPrevisto": 1050,
       "valorTotalExecutado": 0,
       "saldo": 1050,
@@ -291,6 +298,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 10,
+      "valorUnitario": 726,
       "valorTotalPrevisto": 726,
       "valorTotalExecutado": 0,
       "saldo": 726,
@@ -316,6 +324,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 10,
+      "valorUnitario": 500,
       "valorTotalPrevisto": 500,
       "valorTotalExecutado": 0,
       "saldo": 500,
@@ -341,6 +350,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 20,
+      "valorUnitario": 1710,
       "valorTotalPrevisto": 3420,
       "valorTotalExecutado": 0,
       "saldo": 3420,
@@ -366,6 +376,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 10,
+      "valorUnitario": 800,
       "valorTotalPrevisto": 800,
       "valorTotalExecutado": 0,
       "saldo": 800,
@@ -391,6 +402,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 20,
+      "valorUnitario": 3050,
       "valorTotalPrevisto": 6100,
       "valorTotalExecutado": 0,
       "saldo": 6100,
@@ -416,6 +428,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 10,
+      "valorUnitario": 1254.79,
       "valorTotalPrevisto": 1254.79,
       "valorTotalExecutado": 0,
       "saldo": 1254.79,
@@ -441,6 +454,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 60,
+      "valorUnitario": 700,
       "valorTotalPrevisto": 4200,
       "valorTotalExecutado": 0,
       "saldo": 4200,
@@ -466,6 +480,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 40,
+      "valorUnitario": 5500,
       "valorTotalPrevisto": 22000,
       "valorTotalExecutado": 0,
       "saldo": 22000,
@@ -491,6 +506,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 30,
+      "valorUnitario": 1065.4,
       "valorTotalPrevisto": 3196.2,
       "valorTotalExecutado": 0,
       "saldo": 3196.2,
@@ -516,6 +532,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 20,
+      "valorUnitario": 1422,
       "valorTotalPrevisto": 2844,
       "valorTotalExecutado": 0,
       "saldo": 2844,
@@ -541,6 +558,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 10,
+      "valorUnitario": 9506.54,
       "valorTotalPrevisto": 9506.54,
       "valorTotalExecutado": 0,
       "saldo": 9506.54,
@@ -566,6 +584,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 2000,
       "valorTotalPrevisto": 2000,
       "valorTotalExecutado": 0,
       "saldo": 2000,
@@ -591,6 +610,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 30,
+      "valorUnitario": 2174.86,
       "valorTotalPrevisto": 6524.58,
       "valorTotalExecutado": 0,
       "saldo": 6524.58,
@@ -616,14 +636,25 @@
       "codigoNaturezaDespesa": "33903099",
       "unidade": "un",
       "quantidade": 570,
+      "valorUnitario": 37.59,
       "valorTotalPrevisto": 2142.35,
       "valorTotalExecutado": 0,
       "saldo": 2142.35,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 154,
       "descricaoOriginalReferencia": "Meia Militar",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 37.59,
+        "valorUnitarioReferenciaMemoria": 37.15,
+        "valorUnitarioCoincide": false,
+        "diferencaValorUnitario": 0.44,
+        "naturezaPad": "CUSTEIO",
+        "naturezasEncontradasMemoria": [
+          "CUSTEIO"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Atenção: o valor unitário previsto NÃO coincide (PAD 37.59 vs memória 37.15, diferença 0.44), o que enfraquece a hipótese de mesmo item."
     },
     {
       "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
@@ -641,6 +672,7 @@
       "codigoNaturezaDespesa": "33903799",
       "unidade": "MÊS",
       "quantidade": 120,
+      "valorUnitario": 7461,
       "valorTotalPrevisto": 89532,
       "valorTotalExecutado": 0,
       "saldo": 89532,
@@ -666,6 +698,7 @@
       "codigoNaturezaDespesa": "33903799",
       "unidade": "MES",
       "quantidade": 120,
+      "valorUnitario": 8514,
       "valorTotalPrevisto": 102168,
       "valorTotalExecutado": 0,
       "saldo": 102168,
@@ -691,14 +724,25 @@
       "codigoNaturezaDespesa": "44905200",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 14849,
       "valorTotalPrevisto": 14849,
       "valorTotalExecutado": 0,
       "saldo": 14849,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 97,
       "descricaoOriginalReferencia": "Desktop para edição de video",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 14849,
+        "valorUnitarioReferenciaMemoria": 14849,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     },
     {
       "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
@@ -716,6 +760,7 @@
       "codigoNaturezaDespesa": "44905200",
       "unidade": "UN",
       "quantidade": 20,
+      "valorUnitario": 3599.99,
       "valorTotalPrevisto": 7199.98,
       "valorTotalExecutado": 6229.86,
       "saldo": 970.12,
@@ -741,14 +786,25 @@
       "codigoNaturezaDespesa": "44905200",
       "unidade": "UN",
       "quantidade": 20,
+      "valorUnitario": 2341.24,
       "valorTotalPrevisto": 4682.48,
       "valorTotalExecutado": 1900,
       "saldo": 2782.48,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 111,
       "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 2341.24,
+        "valorUnitarioReferenciaMemoria": 2341.24,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     },
     {
       "chaveItem": "937782::SWITCHER DE VIDEO",
@@ -766,14 +822,25 @@
       "codigoNaturezaDespesa": "44905200",
       "unidade": "UN",
       "quantidade": 20,
+      "valorUnitario": 3901,
       "valorTotalPrevisto": 7802,
       "valorTotalExecutado": 7802,
       "saldo": 0,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 112,
       "descricaoOriginalReferencia": "Switcher de video",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 3901,
+        "valorUnitarioReferenciaMemoria": 3901,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     }
   ],
   "itensPadCoincidemApenasPorDescricaoNormalizada": [
@@ -793,14 +860,25 @@
       "codigoNaturezaDespesa": "33903099",
       "unidade": "un",
       "quantidade": 570,
+      "valorUnitario": 37.59,
       "valorTotalPrevisto": 2142.35,
       "valorTotalExecutado": 0,
       "saldo": 2142.35,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 154,
       "descricaoOriginalReferencia": "Meia Militar",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 37.59,
+        "valorUnitarioReferenciaMemoria": 37.15,
+        "valorUnitarioCoincide": false,
+        "diferencaValorUnitario": 0.44,
+        "naturezaPad": "CUSTEIO",
+        "naturezasEncontradasMemoria": [
+          "CUSTEIO"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Atenção: o valor unitário previsto NÃO coincide (PAD 37.59 vs memória 37.15, diferença 0.44), o que enfraquece a hipótese de mesmo item."
     },
     {
       "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
@@ -818,14 +896,25 @@
       "codigoNaturezaDespesa": "44905200",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 14849,
       "valorTotalPrevisto": 14849,
       "valorTotalExecutado": 0,
       "saldo": 14849,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 97,
       "descricaoOriginalReferencia": "Desktop para edição de video",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 14849,
+        "valorUnitarioReferenciaMemoria": 14849,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     },
     {
       "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
@@ -843,14 +932,25 @@
       "codigoNaturezaDespesa": "44905200",
       "unidade": "UN",
       "quantidade": 20,
+      "valorUnitario": 2341.24,
       "valorTotalPrevisto": 4682.48,
       "valorTotalExecutado": 1900,
       "saldo": 2782.48,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 111,
       "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 2341.24,
+        "valorUnitarioReferenciaMemoria": 2341.24,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     },
     {
       "chaveItem": "937782::SWITCHER DE VIDEO",
@@ -868,14 +968,25 @@
       "codigoNaturezaDespesa": "44905200",
       "unidade": "UN",
       "quantidade": 20,
+      "valorUnitario": 3901,
       "valorTotalPrevisto": 7802,
       "valorTotalExecutado": 7802,
       "saldo": 0,
       "motivo": "descricao_original_divergente_da_memoria_rateio",
       "itemConhecidoNormalizadoId": 112,
       "descricaoOriginalReferencia": "Switcher de video",
+      "indicioEquivalencia": {
+        "valorUnitarioPad": 3901,
+        "valorUnitarioReferenciaMemoria": 3901,
+        "valorUnitarioCoincide": true,
+        "diferencaValorUnitario": 0,
+        "naturezaPad": "CAPITAL",
+        "naturezasEncontradasMemoria": [
+          "CAPITAL"
+        ]
+      },
       "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização."
+      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     }
   ],
   "itensConhecidosNaoAptos": [
@@ -895,6 +1006,7 @@
       "codigoNaturezaDespesa": "44905233",
       "unidade": "UN",
       "quantidade": 40,
+      "valorUnitario": 1805.33,
       "valorTotalPrevisto": 7221.32,
       "valorTotalExecutado": 3270.64,
       "saldo": 3950.68,
@@ -920,6 +1032,7 @@
       "codigoNaturezaDespesa": "44905235",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 3949.83,
       "valorTotalPrevisto": 3949.83,
       "valorTotalExecutado": 3750,
       "saldo": 199.83,
@@ -945,6 +1058,7 @@
       "codigoNaturezaDespesa": "44905235",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 5263.33,
       "valorTotalPrevisto": 5263.33,
       "valorTotalExecutado": 10394.56,
       "saldo": -5131.23,
@@ -970,6 +1084,7 @@
       "codigoNaturezaDespesa": "33903016",
       "unidade": "UN",
       "quantidade": 300,
+      "valorUnitario": 330.53,
       "valorTotalPrevisto": 9915.8,
       "valorTotalExecutado": 0,
       "saldo": 9915.8,
@@ -995,6 +1110,7 @@
       "codigoNaturezaDespesa": "33903016",
       "unidade": "UN",
       "quantidade": 300,
+      "valorUnitario": 209.13,
       "valorTotalPrevisto": 6273.98,
       "valorTotalExecutado": 0,
       "saldo": 6273.98,
@@ -1020,6 +1136,7 @@
       "codigoNaturezaDespesa": "33903016",
       "unidade": "UN",
       "quantidade": 200,
+      "valorUnitario": 356.2,
       "valorTotalPrevisto": 7124,
       "valorTotalExecutado": 0,
       "saldo": 7124,
@@ -1045,6 +1162,7 @@
       "codigoNaturezaDespesa": "44905287",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 3890,
       "valorTotalPrevisto": 3890,
       "valorTotalExecutado": 2999.99,
       "saldo": 890.01,
@@ -1070,6 +1188,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 30,
+      "valorUnitario": 448,
       "valorTotalPrevisto": 1344,
       "valorTotalExecutado": 1344,
       "saldo": 0,
@@ -1095,6 +1214,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 30,
+      "valorUnitario": 448,
       "valorTotalPrevisto": 1344,
       "valorTotalExecutado": 1344,
       "saldo": 0,
@@ -1120,6 +1240,7 @@
       "codigoNaturezaDespesa": "44905235",
       "unidade": "un",
       "quantidade": 70,
+      "valorUnitario": 3124,
       "valorTotalPrevisto": 21868,
       "valorTotalExecutado": 0,
       "saldo": 21868,
@@ -1145,6 +1266,7 @@
       "codigoNaturezaDespesa": "33903099",
       "unidade": "UN",
       "quantidade": 200,
+      "valorUnitario": 217,
       "valorTotalPrevisto": 4340.07,
       "valorTotalExecutado": 0,
       "saldo": 4340.07,
@@ -1170,6 +1292,7 @@
       "codigoNaturezaDespesa": "33903099",
       "unidade": "un",
       "quantidade": 100,
+      "valorUnitario": 113.43,
       "valorTotalPrevisto": 1134.27,
       "valorTotalExecutado": 0,
       "saldo": 1134.27,
@@ -1195,6 +1318,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 4287.7,
       "valorTotalPrevisto": 4287.7,
       "valorTotalExecutado": 0,
       "saldo": 4287.7,
@@ -1220,6 +1344,7 @@
       "codigoNaturezaDespesa": "33903999",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 505000,
       "valorTotalPrevisto": 505000,
       "valorTotalExecutado": 0,
       "saldo": 505000,
@@ -1245,6 +1370,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "un",
       "quantidade": 120,
+      "valorUnitario": 2524.35,
       "valorTotalPrevisto": 30292.2,
       "valorTotalExecutado": 0,
       "saldo": 30292.2,
@@ -1270,6 +1396,7 @@
       "codigoNaturezaDespesa": "44905299",
       "unidade": "UN",
       "quantidade": 120,
+      "valorUnitario": 1024.8,
       "valorTotalPrevisto": 12297.6,
       "valorTotalExecutado": 0,
       "saldo": 12297.6,
@@ -1295,6 +1422,7 @@
       "codigoNaturezaDespesa": "33903099",
       "unidade": "un",
       "quantidade": 10,
+      "valorUnitario": 71.36,
       "valorTotalPrevisto": 71.36,
       "valorTotalExecutado": 0,
       "saldo": 71.36,
@@ -1320,6 +1448,7 @@
       "codigoNaturezaDespesa": "33903999",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 426666.67,
       "valorTotalPrevisto": 426666.67,
       "valorTotalExecutado": 0,
       "saldo": 426666.67,
@@ -1345,6 +1474,7 @@
       "codigoNaturezaDespesa": "33903099",
       "unidade": "UN",
       "quantidade": 10,
+      "valorUnitario": 5924.45,
       "valorTotalPrevisto": 5924.45,
       "valorTotalExecutado": 0,
       "saldo": 5924.45,
@@ -1365,6 +1495,10 @@
       "descricaoOriginalReferencia": "Ar condicionado Split 24000 BTUs (CORREG",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 6368.24,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1382,6 +1516,10 @@
       "descricaoOriginalReferencia": "Ar condicionado Split 36000 BTUs (ESCOLA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 8168.19,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1399,6 +1537,10 @@
       "descricaoOriginalReferencia": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 1349.62,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1416,6 +1558,10 @@
       "descricaoOriginalReferencia": "Cadeira Longarina plástica 03 Lugares -",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 703.26,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1433,6 +1579,10 @@
       "descricaoOriginalReferencia": "Cadeira Secretária Fixa, Preta, pé palit",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 145.59,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1450,6 +1600,10 @@
       "descricaoOriginalReferencia": "Cafeteira Elétrica Tradicional Industria",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 844.06,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1467,6 +1621,10 @@
       "descricaoOriginalReferencia": "Computador Desktop (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 1455.49,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1484,6 +1642,10 @@
       "descricaoOriginalReferencia": "Forno de Microondas - 20L Branco (OUVID",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 482.36,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1501,6 +1663,10 @@
       "descricaoOriginalReferencia": "Forno de Microondas - 32 litros - Branco",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 726,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1518,6 +1684,10 @@
       "descricaoOriginalReferencia": "Frigobar 71L (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 929.63,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1535,6 +1705,10 @@
       "descricaoOriginalReferencia": "Geladeira frost free duplex 400 litros (",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 3490.71,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1552,6 +1726,10 @@
       "descricaoOriginalReferencia": "Gravador de áudio digital 32GB (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 537.68,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1569,6 +1747,10 @@
       "descricaoOriginalReferencia": "HD Externo 2TB (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 696.94,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1586,6 +1768,10 @@
       "descricaoOriginalReferencia": "Impressora multifuncional Tanque de Tin",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 1589.1,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1603,6 +1789,10 @@
       "descricaoOriginalReferencia": "Kit videoconferência (CORREGEDORIA - 03",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 8106.75,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1620,6 +1810,10 @@
       "descricaoOriginalReferencia": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 492.51,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1637,6 +1831,10 @@
       "descricaoOriginalReferencia": "Nobreak 1200VA (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 1220.91,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1654,6 +1852,10 @@
       "descricaoOriginalReferencia": "Notebook (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 2020.5,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1671,6 +1873,10 @@
       "descricaoOriginalReferencia": "Pen drive 64Gb (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 237.74,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1688,6 +1894,10 @@
       "descricaoOriginalReferencia": "Poltronas (CORREGEDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 627.4,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1705,6 +1915,10 @@
       "descricaoOriginalReferencia": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 7133.77,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1722,6 +1936,10 @@
       "descricaoOriginalReferencia": "Quadro lousa branca 250x120cm (ESCOLA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 1065.4,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1739,6 +1957,10 @@
       "descricaoOriginalReferencia": "Tela de projeção 2x2 retrátil com tripé",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 1047.97,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1756,6 +1978,10 @@
       "descricaoOriginalReferencia": "Televisão 50 (CORREGEDORIA - 03 UN. E OU",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 2174.86,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1773,6 +1999,10 @@
       "descricaoOriginalReferencia": "Webcam full HD (OUVIDORIA)",
       "uf": "AL",
       "ano": "2022",
+      "valorUnitarioReferencia": 245.54,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1790,6 +2020,10 @@
       "descricaoOriginalReferencia": "Contratação de Bolsa - Aluno Ouvidoria I",
       "uf": "AC",
       "ano": "2022",
+      "valorUnitarioReferencia": 14400,
+      "naturezasEncontradas": [
+        "CUSTEIO"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1807,6 +2041,10 @@
       "descricaoOriginalReferencia": "Contratação de Bolsa -Coordenador Ouvid",
       "uf": "AC",
       "ano": "2022",
+      "valorUnitarioReferencia": 1200,
+      "naturezasEncontradas": [
+        "CUSTEIO"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1824,6 +2062,10 @@
       "descricaoOriginalReferencia": "Contratação de Bolsa -Pesquisador Ouvid",
       "uf": "AC",
       "ano": "2022",
+      "valorUnitarioReferencia": 1500,
+      "naturezasEncontradas": [
+        "CUSTEIO"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1841,6 +2083,10 @@
       "descricaoOriginalReferencia": "Desktop para edição de video",
       "uf": "AC",
       "ano": "2022",
+      "valorUnitarioReferencia": 14849,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1858,6 +2104,10 @@
       "descricaoOriginalReferencia": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
       "uf": "AC",
       "ano": "2022",
+      "valorUnitarioReferencia": 3599.99,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1875,6 +2125,10 @@
       "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
       "uf": "AC",
       "ano": "2022",
+      "valorUnitarioReferencia": 2341.24,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
@@ -1892,6 +2146,10 @@
       "descricaoOriginalReferencia": "Switcher de video",
       "uf": "AC",
       "ano": "2022",
+      "valorUnitarioReferencia": 3901,
+      "naturezasEncontradas": [
+        "CAPITAL"
+      ],
       "aptoParaImportacaoFutura": true,
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",

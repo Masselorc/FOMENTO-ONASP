@@ -1,6 +1,6 @@
 # PROFOR 2022 - Relatório de saneamento PAD x rateios
 
-Gerado em: 2026-05-20T18:40:29.535Z
+Gerado em: 2026-05-20T19:12:10.863Z
 
 ## Resumo
 
@@ -52,22 +52,25 @@ Convênios afetados: 937216, 937221, 937265, 937468, 937782, 937817, 938128, 938
 | 937221 | AL | Saldo Residual | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
 | 937221 | AL | Televisão Smart LED, mínimo de 50 polega | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
 | 937221 | AL | Televisão smart LED, minimo de 50 polegadas | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
-| 937265 | MS | Meia militar | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
+| 937265 | MS | Meia militar | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Atenção: o valor unitário previsto NÃO coincide (PAD 37.59 vs memória 37.15, diferença 0.44), o que enfraquece a hipótese de mesmo item. |
 | 937782 | AC | Contratação de 01 (um) Supervisor por 12 | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
 | 937782 | AC | Contratação de 02 (dois) Auxiliares Admi | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
-| 937782 | AC | Desktop para edição de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
+| 937782 | AC | Desktop para edição de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
 | 937782 | AC | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
-| 937782 | AC | Smartphone mínimo de 128gb de memória in | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
-| 937782 | AC | Switcher de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
+| 937782 | AC | Smartphone mínimo de 128gb de memória in | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
+| 937782 | AC | Switcher de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
 
 ## Itens PAD que coincidem apenas por descrição normalizada
 
-| Convênio | UF | Descrição | Providência |
-| --- | --- | --- | --- |
-| 937265 | MS | Meia militar | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
-| 937782 | AC | Desktop para edição de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
-| 937782 | AC | Smartphone mínimo de 128gb de memória in | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
-| 937782 | AC | Switcher de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. |
+Coincidência apenas por descrição normalizada não autoriza equivalência automática.
+O valor unitário previsto é exibido como indício adicional para a decisão humana.
+
+| Convênio | UF | Descrição | Valor unit. PAD | Valor unit. memória | Valor unit. | Diferença | Natureza PAD | Naturezas memória | Providência |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 937265 | MS | Meia militar | 37.59 | 37.15 | diverge | 0.44 | CUSTEIO | CUSTEIO | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Atenção: o valor unitário previsto NÃO coincide (PAD 37.59 vs memória 37.15, diferença 0.44), o que enfraquece a hipótese de mesmo item. |
+| 937782 | AC | Desktop para edição de vídeo | 14849 | 14849 | coincide | 0 | CAPITAL | CAPITAL | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
+| 937782 | AC | Smartphone mínimo de 128gb de memória in | 2341.24 | 2341.24 | coincide | 0 | CAPITAL | CAPITAL | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
+| 937782 | AC | Switcher de vídeo | 3901 | 3901 | coincide | 0 | CAPITAL | CAPITAL | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
 
 ## Itens conhecidos não aptos
 

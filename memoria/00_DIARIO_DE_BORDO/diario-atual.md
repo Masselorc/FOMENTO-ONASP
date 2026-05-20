@@ -1,5 +1,29 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Valor unitário como indício de equivalência
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da Etapa D.
+- Objetivo: para os alertas `item_pad_coincide_apenas_por_descricao_normalizada`, comparar o valor unitário previsto do item PAD com o `valor_unitario_referencia` da memória, como indício adicional de equivalência. Não altera a regra de matching automático — é apenas evidência para decisão humana.
+- Mudanças realizadas:
+  - **`profor-pad-matching-service.js`**: `carregarItensConhecidos` agora traz `valor_unitario_referencia` e `naturezas_encontradas_json`; `montarItemPadConferido` inclui `valorUnitario` do item PAD; nova função `compararValorUnitario` (tolerância 0,01); para coincidências apenas normalizadas, o item e o alerta recebem `indicioEquivalencia` com `valorUnitarioPad`, `valorUnitarioReferenciaMemoria`, `valorUnitarioCoincide`, `diferencaValorUnitario`, `naturezaPad`, `naturezasEncontradasMemoria`.
+  - **`gerar-relatorio-saneamento-pad-profor-2022.js`**: nova tabela dedicada para a seção de coincidências normalizadas, com colunas de valor unitário PAD/memória, coincidência, diferença e naturezas; a recomendação descreve o indício.
+  - **`profor-pad-saneamento-service.js`**: `montarEntradasEquivalencias` inclui `indicioEquivalencia` no template (campo descritivo — o merge idempotente o reatualiza a cada regeneração, sem sobrescrever decisão humana).
+- Resultado dos 4 casos de coincidência normalizada:
+  - 937782 / Desktop para edição de vídeo → valor unitário **coincide** (R$ 14.849 = R$ 14.849).
+  - 937782 / Smartphone 128gb → valor unitário **coincide** (R$ 2.341,24 = R$ 2.341,24).
+  - 937782 / Switcher de vídeo → valor unitário **coincide** (R$ 3.901 = R$ 3.901).
+  - 937265 / Meia militar → valor unitário **diverge** (PAD R$ 37,59 vs memória R$ 37,15, diferença R$ 0,44).
+- Validações executadas:
+  - `node --check` nos 3 arquivos alterados → OK. `npm run validar:syntax` → OK (41 arquivos).
+  - `npm run profor:pad:conferir-rateios:dry-run` → 27 sem rateio (inalterado).
+  - `npm run profor:pad:relatorio-saneamento` → 4 coincidências normalizadas (inalterado).
+  - `npm run profor:pad:gerar-template-decisoes-saneamento` → merge preservando decisões; 4 equivalências com `indicioEquivalencia`.
+  - `npm run profor:pad:validar-decisoes-saneamento` → 0 erros, 78 pendentes, arquivo válido.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+- Risco: Baixo. Apenas leitura no banco; regra de matching automático inalterada (coincidência de valor unitário é só evidência). Nenhuma escrita em SQLite, frontend ou publicação.
+- Rollback: `git revert` do commit; ou `git restore` dos 3 arquivos de código e regeneração dos relatórios.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Validador do arquivo de decisões (Etapa D)
 
 - Branch atual: `main`.
