@@ -39,6 +39,7 @@ const ARQUIVOS = [
   "backend/scripts/gerar-fila-revisao-pad-profor-2022.js",
   "backend/scripts/auditar-fila-revisao-pad-profor-2022.js",
   "backend/scripts/limpar-divergencias-teste-revisao-pad-profor-2022.js",
+  "backend/scripts/sanear-status-orfaos-revisao-pad-profor-2022.js",
   "backend/scripts/testar-decisao-revisao-pad-profor-2022.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",

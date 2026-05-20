@@ -1,5 +1,70 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.5.1 - Ajustes pós-interface
+
+- Branch atual: `main`.
+- Objetivo: sanear status resolutivo órfão na fila de revisão PAD x memória, atualizar cache-busters da interface e corrigir a exibição monetária do card Antes x Depois.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-revisao-repository.js`;
+  - `backend/scripts/sanear-status-orfaos-revisao-pad-profor-2022.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `frontend/js/app.js`;
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Status resolutivos órfãos:
+  - status resolutivos considerados: `ACEITO`, `REJEITADO`, `CORRIGIDO`, `REVERTIDO`;
+  - decisão resolutiva exigida: `ACEITO`, `REJEITADO`, `CORRIGIDO` ou `REVERTIDO`;
+  - encontrado 1 órfão real: id `24`, chave `equivalencia_por_descricao_normalizada:a666445f21fca80d`, convênio `937265`, UF `MS`, status anterior `ACEITO`;
+  - saneado 1 órfão: status revertido para `PENDENTE`;
+  - registrado log `status_resolutivo_orfao_saneado` com usuário `sistema-saneamento`;
+  - nenhuma decisão falsa foi criada.
+- Comando criado:
+  - `npm run profor:pad:revisao:sanear-status-orfaos`;
+  - `npm run profor:pad:revisao:sanear-status-orfaos -- --dry-run`.
+- Auditoria:
+  - antes documentado na Etapa 5.5: `totalDivergencias=145`, `totalPendentes=144`, `totalComDecisaoResolutiva=0`, `totalSemDecisaoResolutiva=145`, `publicacaoLiberada=false`, 1 divergência real em `ACEITO` sem decisão resolutiva;
+  - depois do saneamento: `totalDivergencias=145`, `totalPendentes=145`, `totalComDecisaoResolutiva=0`, `totalSemDecisaoResolutiva=145`, `publicacaoLiberada=false`;
+  - `totalPendentesQueBloqueiamPublicacao` passou para `48`.
+- Cache-busters:
+  - `frontend/css/app.css?v=20260520-01-revisao-pad`;
+  - `frontend/js/app.js?v=20260520-01-revisao-pad`.
+- Formatação monetária:
+  - `formatarValorRevisao()` passou a usar normalização numérica específica para a tela de revisão;
+  - strings como `37.59`, `37,59`, `1.234,56` e `1,234.56` passam a ser exibidas corretamente quando o rótulo indica campo monetário;
+  - textos não numéricos permanecem texto.
+- Confirmações de escopo:
+  - nenhuma decisão aplicada ao `planoAplicacao`;
+  - nenhuma reconstrução do plano;
+  - nenhuma publicação;
+  - nenhuma alteração de origem ativa;
+  - nenhuma alteração em `frontend/data/publicados`;
+  - nenhuma migration;
+  - nenhum `*.sqlite`, `*.sqlite-wal` ou `*.sqlite-shm` versionado.
+- Validações executadas:
+  - `node --check backend/services/profor-2022/profor-pad-revisao-repository.js`;
+  - `node --check backend/scripts/sanear-status-orfaos-revisao-pad-profor-2022.js`;
+  - `node --check frontend/js/app.js`;
+  - `npm run validar:syntax`;
+  - `npm run profor:pad:revisao:limpar-testes`;
+  - `npm run profor:pad:revisao:sanear-status-orfaos -- --dry-run`;
+  - `npm run profor:pad:revisao:sanear-status-orfaos`;
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `GET /api/profor-2022/revisao/auditoria`;
+  - `GET /api/profor-2022/revisao/divergencias?status=PENDENTE&limite=5`;
+  - `GET /api/profor-2022/revisao/divergencias?comDecisaoResolutiva=true&limite=5`;
+  - smoke Playwright em `http://127.0.0.1:8790/index.html` confirmando auditoria, filtros, detalhe, log de saneamento e valores monetários;
+  - `git diff --check`;
+  - `git status --short frontend/data/publicados`;
+  - `git ls-files "*.sqlite" "*.sqlite-wal" "*.sqlite-shm"`.
+- Riscos e rollback:
+  - o saneamento altera o SQLite local para coerência da fila; rollback operacional possível por restauração de backup local do banco;
+  - rollback de código por `git revert` remove script, helper de exibição e cache-busters;
+  - divergências não reapresentadas e aplicação material de decisões seguem fora desta etapa.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.5 - Interface de revisão PAD x memória
 
 - Branch atual: `main`.

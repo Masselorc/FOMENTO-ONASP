@@ -12,6 +12,7 @@ const STATUS_VALIDOS = [
 const NIVEIS_VALIDOS = ["info", "aviso", "impeditivo"];
 const DECISOES_RESOLUTIVAS = ["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"];
 const DECISAO_COMENTARIO = "COMENTAR";
+const STATUS_RESOLUTIVOS = ["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"];
 
 function agoraIso() {
   return new Date().toISOString();
@@ -440,11 +441,86 @@ function limparDivergenciasTeste() {
   return executar();
 }
 
+/** Lista divergências com status resolutivo sem decisão resolutiva auditável. */
+function listarStatusResolutivosOrfaos() {
+  const statusSql = STATUS_RESOLUTIVOS.map(() => "?").join(", ");
+  const decisoesSql = DECISOES_RESOLUTIVAS.map(() => "?").join(", ");
+  return db.prepare(`
+    SELECT ${COLUNAS_DIVERGENCIA}
+    FROM profor_2022_revisao_divergencias d
+    WHERE d.status IN (${statusSql})
+      AND d.chave_divergencia NOT LIKE 'revisao_teste:%'
+      AND NOT EXISTS (
+        SELECT 1
+        FROM profor_2022_revisao_decisoes x
+        WHERE x.divergencia_id = d.id
+          AND x.decisao IN (${decisoesSql})
+      )
+    ORDER BY d.id
+  `).all(...STATUS_RESOLUTIVOS, ...DECISOES_RESOLUTIVAS);
+}
+
+/**
+ * Reverte para PENDENTE status resolutivo sem decisão correspondente.
+ * Não cria decisão falsa e preserva divergências, decisões existentes e logs.
+ */
+function sanearStatusResolutivosOrfaos() {
+  const executar = db.transaction(() => {
+    const orfaos = listarStatusResolutivosOrfaos();
+    if (!orfaos.length) {
+      return { totalEncontrados: 0, totalSaneados: 0, divergencias: [] };
+    }
+
+    const agora = agoraIso();
+    const update = db.prepare(`
+      UPDATE profor_2022_revisao_divergencias
+      SET status = 'PENDENTE', atualizado_em = ?
+      WHERE id = ? AND status = ?
+    `);
+    const insertLog = db.prepare(`
+      INSERT INTO profor_2022_revisao_logs (
+        entidade_tipo, entidade_id, evento, estado_anterior_json, estado_novo_json,
+        usuario, detalhe, criado_em
+      ) VALUES ('divergencia', ?, 'status_resolutivo_orfao_saneado', ?, ?, ?, ?, ?)
+    `);
+
+    let totalSaneados = 0;
+    for (const divergencia of orfaos) {
+      const info = update.run(agora, divergencia.id, divergencia.status);
+      if (!info.changes) continue;
+
+      insertLog.run(
+        divergencia.id,
+        JSON.stringify({
+          status: divergencia.status,
+          chaveDivergencia: divergencia.chave_divergencia,
+          tipoAlerta: divergencia.tipo_alerta,
+          motivo: "Status resolutivo sem decisão resolutiva auditável.",
+        }),
+        JSON.stringify({ status: "PENDENTE" }),
+        "sistema-saneamento",
+        "Status resolutivo não possuía decisão resolutiva auditável e foi revertido para PENDENTE.",
+        agora
+      );
+      totalSaneados += 1;
+    }
+
+    return {
+      totalEncontrados: orfaos.length,
+      totalSaneados,
+      divergencias: orfaos,
+    };
+  });
+
+  return executar();
+}
+
 module.exports = {
   STATUS_VALIDOS,
   NIVEIS_VALIDOS,
   DECISOES_RESOLUTIVAS,
   DECISAO_COMENTARIO,
+  STATUS_RESOLUTIVOS,
   criarLoteRevisao,
   atualizarTotaisLote,
   buscarDivergenciaPorChave,
@@ -461,4 +537,6 @@ module.exports = {
   listarLogsDaDivergencia,
   registrarDecisao,
   limparDivergenciasTeste,
+  listarStatusResolutivosOrfaos,
+  sanearStatusResolutivosOrfaos,
 };

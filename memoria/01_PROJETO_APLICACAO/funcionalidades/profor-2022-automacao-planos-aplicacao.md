@@ -1099,6 +1099,36 @@ Pendências ainda fora desta etapa:
 - desenhar aplicação material das decisões ao plano em etapa posterior, com
   rollback específico.
 
+#### 16.2.10. Saneamento pós-interface (Etapa 5.5.1 — implementada)
+
+A Etapa 5.5.1 corrigiu a consistência operacional da fila após a criação da
+interface, sem aplicar decisões ao `planoAplicacao`.
+
+Escopo implementado:
+
+- rotina `listarStatusResolutivosOrfaos()` para localizar divergências com
+  status resolutivo (`ACEITO`, `REJEITADO`, `CORRIGIDO`, `REVERTIDO`) sem
+  decisão resolutiva correspondente em `profor_2022_revisao_decisoes`;
+- rotina `sanearStatusResolutivosOrfaos()` para reverter esses status para
+  `PENDENTE`, com transação e log de auditoria;
+- script `backend/scripts/sanear-status-orfaos-revisao-pad-profor-2022.js`;
+- comando `npm run profor:pad:revisao:sanear-status-orfaos`;
+- modo de conferência `npm run profor:pad:revisao:sanear-status-orfaos -- --dry-run`.
+
+Regras de saneamento:
+
+- não apaga divergência real;
+- não apaga logs;
+- não apaga decisões;
+- não cria decisão falsa;
+- ignora chaves de teste `revisao_teste:%`;
+- registra log `status_resolutivo_orfao_saneado` com usuário
+  `sistema-saneamento`.
+
+Também foram atualizados os cache-busters de `app.css` e `app.js` e corrigida
+a exibição monetária do Antes x Depois para tratar corretamente strings como
+`37.59`, `37,59`, `1.234,56` e `1,234.56`.
+
 ---
 
 ## 17. Fases de implementação recomendadas

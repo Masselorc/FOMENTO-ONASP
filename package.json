@@ -24,6 +24,7 @@
     "profor:pad:gerar-fila-revisao": "node backend/scripts/gerar-fila-revisao-pad-profor-2022.js",
     "profor:pad:auditar-fila-revisao": "node backend/scripts/auditar-fila-revisao-pad-profor-2022.js",
     "profor:pad:revisao:limpar-testes": "node backend/scripts/limpar-divergencias-teste-revisao-pad-profor-2022.js",
+    "profor:pad:revisao:sanear-status-orfaos": "node backend/scripts/sanear-status-orfaos-revisao-pad-profor-2022.js",
     "profor:pad:revisao:teste-decisao": "node backend/scripts/testar-decisao-revisao-pad-profor-2022.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",

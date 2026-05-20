@@ -799,6 +799,11 @@ Comandos relacionados:
 - `npm run profor:pad:revisao:limpar-testes` — remove de forma transacional
   somente divergências controladas com `chave_divergencia LIKE 'revisao_teste:%'`,
   suas decisões e seus logs. Lotes de revisão são preservados.
+- `npm run profor:pad:revisao:sanear-status-orfaos` — reverte para `PENDENTE`
+  divergências reais com status resolutivo sem decisão resolutiva auditável,
+  registrando log `status_resolutivo_orfao_saneado`.
+- `npm run profor:pad:revisao:sanear-status-orfaos -- --dry-run` — lista os
+  status resolutivos órfãos sem alterar o banco.
 
 Validação de filtros:
 

@@ -1908,6 +1908,48 @@ async function carregarLogoParaPDF() {
             return formatarDataStatusSistema(valor);
         }
 
+        function normalizarNumeroRevisao(valor) {
+            if (typeof valor === 'number') {
+                return Number.isFinite(valor) ? valor : null;
+            }
+
+            const textoOriginal = String(valor ?? '').trim();
+            if (!textoOriginal) return null;
+
+            const texto = textoOriginal
+                .replace(/\s+/g, '')
+                .replace(/^R\$/i, '');
+            const apenasNumero = texto.replace(/[^\d,.-]/g, '');
+            if (apenasNumero !== texto || !/^-?\d+(?:[.,]\d+)*(?:[.,]\d+)?$/.test(apenasNumero)) {
+                return null;
+            }
+
+            const ultimoPonto = apenasNumero.lastIndexOf('.');
+            const ultimaVirgula = apenasNumero.lastIndexOf(',');
+            let normalizado = apenasNumero;
+
+            if (ultimoPonto >= 0 && ultimaVirgula >= 0) {
+                const separadorDecimal = ultimoPonto > ultimaVirgula ? '.' : ',';
+                const separadorMilhar = separadorDecimal === '.' ? ',' : '.';
+                normalizado = apenasNumero
+                    .replace(new RegExp(`\\${separadorMilhar}`, 'g'), '')
+                    .replace(separadorDecimal, '.');
+            } else if (ultimaVirgula >= 0) {
+                const partes = apenasNumero.split(',');
+                const ehMilhar = partes.length > 1
+                    && partes.slice(1).every((parte) => /^\d{3}$/.test(parte));
+                normalizado = ehMilhar ? partes.join('') : apenasNumero.replace(',', '.');
+            } else if (ultimoPonto >= 0) {
+                const partes = apenasNumero.split('.');
+                const ehMilhar = partes.length > 2
+                    || (partes.length === 2 && /^-?\d{1,3}$/.test(partes[0]) && /^\d{3}$/.test(partes[1]));
+                normalizado = ehMilhar ? partes.join('') : apenasNumero;
+            }
+
+            const numero = Number(normalizado);
+            return Number.isFinite(numero) ? numero : null;
+        }
+
         function formatarValorRevisao(valor, rotulo = '') {
             if (valor === null || valor === undefined || valor === '') return '-';
             const campoMonetario = /valor|saldo|diferença|diferenca/i.test(String(rotulo || ''));
@@ -1919,8 +1961,8 @@ async function carregarLogoParaPDF() {
             }
             const texto = String(valor).trim();
             if (!texto) return '-';
-            const numero = Number(texto.replace(/\./g, '').replace(',', '.'));
-            if (Number.isFinite(numero) && /^-?\d+([.,]\d+)?$/.test(texto)) {
+            const numero = normalizarNumeroRevisao(texto);
+            if (numero !== null) {
                 return campoMonetario
                     ? formatMoney(numero)
                     : numero.toLocaleString('pt-BR', { maximumFractionDigits: 6 });
@@ -1991,9 +2033,27 @@ async function carregarLogoParaPDF() {
 
         function obterAntesDepoisRevisao(divergencia) {
             const payload = divergencia?.payload || {};
+            const antesPlano = {
+                descricao: payload.descricaoMemoria ?? payload.descricaoAnterior ?? payload.descricaoOriginalReferencia,
+                natureza: payload.naturezaMemoria ?? payload.naturezaAnterior,
+                quantidade: payload.quantidadeMemoria ?? payload.quantidadeAnterior,
+                valorUnitario: payload.valorUnitarioMemoria ?? payload.valorUnitarioAnterior,
+                valorPrevisto: payload.valorPrevistoMemoria ?? payload.valorPrevistoAnterior,
+                valorExecutado: payload.valorExecutadoMemoria ?? payload.valorExecutadoAnterior,
+                saldo: payload.saldoMemoria ?? payload.saldoAnterior
+            };
+            const depoisPlano = {
+                descricao: payload.descricaoPad ?? payload.descricaoNova,
+                natureza: payload.naturezaPad ?? payload.naturezaNova,
+                quantidade: payload.quantidadePad ?? payload.quantidadeNova,
+                valorUnitario: payload.valorUnitarioPad ?? payload.valorUnitarioNovo,
+                valorPrevisto: payload.valorPrevistoPad ?? payload.valorPrevistoNovo,
+                valorExecutado: payload.valorExecutadoPad ?? payload.valorExecutadoNovo,
+                saldo: payload.saldoPad ?? payload.saldoNovo
+            };
             return {
-                antes: payload.antes || payload.memoria || payload.itemConhecido || payload.anterior || {},
-                depois: payload.depois || payload.pad || payload.itemPad || payload.novo || {}
+                antes: payload.antes || payload.memoria || payload.itemConhecido || payload.anterior || antesPlano,
+                depois: payload.depois || payload.pad || payload.itemPad || payload.novo || depoisPlano
             };
         }
 
