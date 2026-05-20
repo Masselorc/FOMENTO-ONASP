@@ -1,5 +1,22 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Auditoria inicial PAD x rateios (Etapa A)
+
+- Branch atual: `main`.
+- Estado inicial: `git status --short` limpo.
+- Solicitação do usuário: continuar a migração da origem do `planoAplicacao` do PROFOR 2022 (abas por UF → relatórios PAD `.xls`), executando as Etapas A–D de saneamento das pendências, sem alteração no banco nesta rodada.
+- Auditoria executada (Etapa A, sem alteração de código):
+  - `npm run validar:syntax` → OK (36 arquivos).
+  - `npm run profor:pad:conferir-rateios:dry-run` → 15 relatórios PAD, 525 itens conferidos, 498 com rateio, 27 sem rateio, 32 conhecidos ausentes no PAD, 19 conhecidos não aptos, 0 instrumentos fora da carteira, 84 alertas (25 impeditivos).
+  - `npm run profor:pad:relatorio-saneamento` → 27 sem rateio, 4 coincidências apenas por descrição normalizada, 19 não aptos, 32 ausentes, 3 possíveis pares por descrição normalizada, 8 convênios afetados (937216, 937221, 937265, 937468, 937782, 937817, 938128, 938277).
+- Conferências:
+  - `frontend/data/publicados/` sem alteração desta tarefa (confirmado por `git status --short frontend/data/publicados` vazio).
+  - `.gitignore` cobre `backend/data/onasp.sqlite*`, `*.sqlite`, `*.sqlite-wal`, `*.sqlite-shm` — banco/WAL/SHM não entram em commit.
+  - Único impacto no working tree: regeneração de `profor-2022-pad-saneamento.{json,md}` (diff apenas no campo `geradoEm`).
+- Próximas etapas (B–D) alterarão: `backend/services/profor-2022/profor-pad-saneamento-service.js` (novo), `backend/services/profor-2022/profor-pad-decisoes-saneamento-service.js` (novo), `backend/scripts/gerar-relatorio-saneamento-detalhado-pad-profor-2022.js` (novo), `backend/scripts/gerar-template-decisoes-saneamento-pad-profor-2022.js` (novo), `backend/scripts/validar-decisoes-saneamento-pad-profor-2022.js` (novo), `package.json`, `scripts/validar-syntax.js`.
+- Risco: Nulo. Etapa A é somente leitura/diagnóstico; nenhum código alterado.
+- Rollback: `git restore backend/data/relatorios/profor-2022-pad-saneamento.json backend/data/relatorios/profor-2022-pad-saneamento.md`.
+
 ## 19/05/2026 - Correções de Contrastes, Alinhamento de Bandeiras e Sintaxe (Etapa 3.10)
 
 - Branch atual: `main`.
