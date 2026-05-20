@@ -1132,6 +1132,79 @@ Também foram atualizados os cache-busters de `app.css` e `app.js` e corrigida
 a exibição monetária do Antes x Depois para tratar corretamente strings como
 `37.59`, `37,59`, `1.234,56` e `1,234.56`.
 
+#### 16.2.11. Reconstrução dry-run do plano e comparador antigo × novo (Etapa 5.6 + 6 + 7 — implementada)
+
+A camada técnica que reconstrói o `planoAplicacao` pelos relatórios PAD e o
+comparador entre origem antiga e reconstrução foram implementados **somente em
+dry-run**. Esta etapa não altera a origem ativa, não publica e não aplica
+decisões materialmente ao `planoAplicacao`.
+
+Serviços criados:
+
+- `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js` —
+  reconstrói, em memória, o `planoAplicacao` a partir dos itens PAD lidos, dos
+  itens conhecidos e dos rateios ativos persistidos no SQLite;
+- `backend/services/profor-2022/profor-pad-plano-comparador-service.js` —
+  compara o `planoAplicacao` da origem antiga com o reconstruído.
+
+Comandos criados:
+
+- `npm run profor:pad:reconstruir-plano:dry-run` — gera a reconstrução e salva
+  `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`;
+- `npm run profor:pad:comparar-plano:dry-run` — executa a reconstrução e o
+  comparador e salva `profor-2022-pad-plano-comparacao-dry-run.json` e
+  `.md` em `backend/data/relatorios`.
+
+**Regras de reconstrução.**
+
+1. `Valor Total Previsto`, `Valor Total Executado` e `Saldo` do PAD são a fonte
+   de verdade financeira; o `Valor Unit` do PAD é referência auxiliar e nunca
+   recalcula o total previsto.
+2. Para cada item PAD com rateio ativo é gerada uma linha por área/natureza;
+   `valorPrevistoRateado` e `valorExecutadoRateado` vêm dos totais do PAD
+   aplicando `percentual_valor` (fallback controlado: valores de referência;
+   último recurso: distribuição igual, que registra impedimento).
+3. A `quantidade` é rateada por `percentual_quantidade`.
+4. `saldo = valorPrevistoRateado − valorExecutadoRateado`;
+   `percentualExecucao = valorExecutadoRateado ÷ valorPrevistoRateado × 100`
+   com proteção contra divisão por zero;
+   `valorUnitario = valorPrevistoRateado ÷ quantidadeRateada` quando a
+   quantidade rateada é maior que zero — caso contrário usa o `Valor Unit` do
+   PAD como referência auxiliar, sem recalcular o total.
+5. Arredondamento controlado em centavos; diferença residual lançada na última
+   linha ativa do rateio, com alerta técnico `ajuste_residual_arredondamento`.
+6. A origem antiga é representada pela memória de rateio persistida (itens
+   conhecidos + rateios ativos), que captura as abas por UF agregadas por
+   item/área/natureza; a planilha antiga não é relida.
+
+**Regras de bloqueio e aptidão.**
+
+- `aptoParaAtivacao = true` somente se: não houver divergência PENDENTE/EM_REVISAO
+  com `bloqueia_publicacao = 1`; não houver item PAD sem rateio; não houver item
+  conhecido não apto usado na reconstrução; não houver convênio PAD fora da
+  carteira; não houver erro crítico de leitura.
+- `aptoParaPublicacao = true` somente se: `aptoParaAtivacao = true`;
+  `publicacaoLiberada = true` na auditoria; e o comparador não encontrar
+  diferença crítica.
+- A reconstrução é executável mesmo com pendências: gera diagnóstico e
+  comparador, registra impedimentos e mantém `aptoParaAtivacao` e
+  `aptoParaPublicacao` como `false` enquanto houver pendências.
+
+**Regras de comparação.** O comparador usa chave estável
+`numeroConvenio + descrição + área + natureza` (exata, sem fuzzy matching),
+não consolida itens ambíguos silenciosamente (registra como `itens ambíguos`)
+e classifica diferenças como `critica`, `aviso`,
+`diferenca_esperada_por_atualizacao_pad` ou `diferenca_por_pendencia_de_decisao`.
+Gera itens iguais, novos, ausentes, divergentes por quantidade/valor/saldo,
+área e natureza, totais por convênio/UF/área/natureza e a diferença total
+origem antiga × reconstrução PAD.
+
+Na base atual (145 divergências pendentes, 48 bloqueando publicação), a
+reconstrução produz `aptoParaAtivacao = false` e `aptoParaPublicacao = false`,
+com impedimentos listados. Esta etapa não cria migration, não cria API, não
+implementa front-end, não reconstrói materialmente o `planoAplicacao` publicado
+e não altera a origem ativa.
+
 ---
 
 ## 17. Fases de implementação recomendadas

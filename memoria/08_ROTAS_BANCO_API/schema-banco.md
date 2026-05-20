@@ -817,6 +817,28 @@ pendentes. Quando forem planejadas, devem reaproveitar estas tabelas e o padrão
 das tabelas de saneamento previstas para a Etapa E
 (`profor_2022_saneamento_lotes`, `profor_2022_saneamento_decisoes`).
 
+**Reconstrução dry-run e comparador (Etapa 5.6 + 6 + 7).** Foram criados dois
+serviços de leitura — `profor-pad-plano-reconstrucao-service.js` e
+`profor-pad-plano-comparador-service.js` — e dois comandos:
+
+- `npm run profor:pad:reconstruir-plano:dry-run`;
+- `npm run profor:pad:comparar-plano:dry-run`.
+
+Esses comandos **não criam tabela, coluna, constraint nem qualquer estrutura
+persistida**. Apenas leem, em modo somente leitura, as tabelas
+`profor_2022_itens_conhecidos`, `profor_2022_item_rateios`,
+`profor_2022_revisao_divergencias`, `profor_2022_revisao_decisoes` e
+`profor_convenios_monitorados`, além dos relatórios PAD em `Planilhas/`. A
+saída é gravada apenas em arquivos de relatório, fora do SQLite:
+
+- `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`;
+- `backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json`;
+- `backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md`.
+
+A etapa não altera a origem ativa do `planoAplicacao`, não publica e não aplica
+decisões materialmente; mantém `aptoParaAtivacao` e `aptoParaPublicacao` como
+`false` enquanto houver divergências pendentes/bloqueantes.
+
 ## Critérios para atualizar este arquivo
 
 Atualizar este arquivo quando houver:

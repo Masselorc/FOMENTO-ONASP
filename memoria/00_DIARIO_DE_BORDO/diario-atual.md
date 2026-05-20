@@ -1,5 +1,114 @@
 # Diário de bordo
 
+## 20/05/2026 - PROFOR 2022: Etapa 5.6 + 6 + 7 - Reconstrução dry-run do plano PAD e comparador antigo × novo
+
+- Branch atual: `main`.
+- Objetivo: criar a camada técnica de reconstrução dry-run do `planoAplicacao`
+  por relatórios PAD + itens conhecidos + rateios, e o comparador entre o plano
+  da origem antiga e o plano reconstruído. Tudo em dry-run, sem alterar a
+  origem ativa, sem publicar e sem aplicar decisões materialmente.
+- Arquivos criados:
+  - `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`;
+  - `backend/services/profor-2022/profor-pad-plano-comparador-service.js`;
+  - `backend/scripts/reconstruir-plano-pad-profor-2022.js`;
+  - `backend/scripts/comparar-plano-pad-profor-2022.js`.
+- Arquivos alterados:
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Comandos criados:
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`.
+- Relatórios gerados em `backend/data/relatorios`:
+  - `profor-2022-pad-plano-reconstruido-dry-run.json`;
+  - `profor-2022-pad-plano-comparacao-dry-run.json`;
+  - `profor-2022-pad-plano-comparacao-dry-run.md`.
+- Regras de reconstrução:
+  - itens PAD lidos/normalizados são cruzados com itens conhecidos e rateios
+    ativos persistidos no SQLite; para cada item PAD com rateio é gerada uma
+    linha por área/natureza;
+  - `Valor Total Previsto`, `Valor Total Executado` e `Saldo` do PAD são a
+    fonte de verdade; o rateio aplica `percentual_valor` (fallback controlado:
+    valores de referência; último recurso: distribuição igual com impedimento);
+  - `quantidade` é rateada por `percentual_quantidade`;
+  - `valorUnitario` da linha é derivado de `valorPrevistoRateado ÷ quantidadeRateada`
+    (quantidade 0 mantém o `Valor Unit` do PAD como referência auxiliar, sem
+    recalcular total);
+  - arredondamento controlado em centavos; diferença residual lançada na última
+    linha ativa do rateio, com alerta técnico `ajuste_residual_arredondamento`.
+- Regras de bloqueio: `aptoParaAtivacao` exige fila de revisão sem divergência
+  PENDENTE/EM_REVISAO com `bloqueia_publicacao = 1`, nenhum item PAD sem rateio,
+  nenhum item conhecido não apto usado, nenhum convênio PAD fora da carteira e
+  nenhum erro crítico de leitura. `aptoParaPublicacao` exige `aptoParaAtivacao`,
+  `publicacaoLiberada = true` e nenhuma diferença crítica no comparador.
+- Resultado da reconstrução dry-run:
+  - relatórios PAD lidos: `15`; itens PAD processados: `525`;
+  - itens PAD com rateio aplicado: `498`; itens PAD sem rateio: `27`;
+  - linhas reconstruídas: `598`; convênios reconstruídos: `15`;
+  - impedimentos: `47` (`item_pad_sem_rateio` 27, `item_conhecido_nao_apto_usado`
+    19, `divergencias_revisao_bloqueiam_publicacao` 1);
+  - alertas: `106` (`quantidade_valor_unitario_inconsistente` 67,
+    `item_pad_duplicado_na_reconstrucao` 24, `ajuste_residual_arredondamento` 15);
+  - valor previsto reconstruído: `10326096.83`; executado: `3201807.64`;
+    saldo: `7124289.19`;
+  - `aptoParaAtivacao = false`; `aptoParaPublicacao = false`.
+- Resultado do comparador antigo × novo:
+  - linhas origem antiga: `567`; linhas reconstruídas: `598`;
+  - itens iguais: `93`; itens novos: `0`; itens ausentes: `34`;
+  - quantidade divergente: `387`; valor previsto divergente: `13`;
+    valor executado divergente: `13`; saldo divergente: `26`;
+  - área divergente: `0`; natureza divergente: `0`; itens ambíguos: `49`;
+  - diferenças críticas: `0`; avisos: `99`; esperadas por atualização PAD: `4`;
+    por pendência de decisão: `322`;
+  - totais antigo: previsto `10664015.48`, executado `3202695.90`, saldo
+    `7461319.58`;
+  - totais novo: previsto `10326096.83`, executado `3201807.64`, saldo
+    `7124289.19`;
+  - diferença total: previsto `-337918.65`, executado `-888.26`, saldo
+    `-337030.39`;
+  - `aptoParaAtivacao = false`; `aptoParaPublicacao = false`.
+- Auditoria da revisão (baseline mantido): `totalDivergencias=145`,
+  `totalPendentes=145`, `totalEmRevisao=0`, `totalImpeditivas=44`,
+  `totalBloqueiamPublicacao=48`, `totalPendentesQueBloqueiamPublicacao=48`,
+  `totalComDecisaoResolutiva=0`, `totalSemDecisaoResolutiva=145`,
+  `publicacaoLiberada=false`.
+- Observações operacionais:
+  - a origem antiga foi representada pela memória de rateio persistida (itens
+    conhecidos + rateios ativos), que captura as abas por UF agregadas por
+    item/área/natureza; a planilha antiga não foi relida;
+  - `item_pad_duplicado_na_reconstrucao` (24) indica itens com a mesma
+    descrição/convênio repetidos nos relatórios PAD; a reconstrução não
+    consolida silenciosamente e o comparador registra `itens ambíguos` (49);
+  - a base atual não está apta porque há 48 divergências pendentes que bloqueiam
+    publicação e 46 impedimentos de rateio/aptidão na reconstrução.
+- Validações executadas:
+  - `node --check` nos 4 arquivos criados;
+  - `npm run validar:syntax` (53 arquivos);
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `git diff --check` (apenas avisos de fim de linha LF/CRLF);
+  - `git status --short frontend/data/publicados` (sem alterações);
+  - `git ls-files "*.sqlite" "*.sqlite-wal" "*.sqlite-shm"` (nada versionado);
+  - `npm rebuild better-sqlite3` foi necessário por incompatibilidade de ABI do
+    Node nesta máquina; não altera código versionado.
+- Confirmações de escopo:
+  - nenhuma decisão aplicada ao `planoAplicacao`;
+  - nenhuma origem ativa alterada;
+  - nenhuma publicação;
+  - nenhuma alteração em `frontend/data/publicados`;
+  - nenhuma migration nem nova estrutura persistida;
+  - nenhuma API criada; nenhuma dependência nova;
+  - interface de revisão não modificada; testes E2E não afetados.
+- Riscos e rollback:
+  - risco baixo: serviços e scripts apenas leem SQLite e relatórios PAD e
+    escrevem JSON/MD em `backend/data/relatorios`;
+  - rollback por `git revert`/remoção dos 4 arquivos criados e reversão de
+    `package.json` e `scripts/validar-syntax.js`; os relatórios em
+    `backend/data/relatorios` podem ser apagados sem impacto.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.5.1 - Ajustes pós-interface
 
 - Branch atual: `main`.
