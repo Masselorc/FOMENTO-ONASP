@@ -931,6 +931,47 @@ impacto funcional. Para evitar ambiguidade na implementação futura:
   permanecem em caixa baixa por já serem o padrão usado nos relatórios e
   alertas PAD existentes.
 
+#### 16.2.6. Fila persistente de revisão (Etapa 5.3 — implementada)
+
+A fila persistente de divergências PAD x memória foi implementada no SQLite, em
+quatro tabelas aditivas (criadas por `garantirTabelasRevisaoProfor2022()` em
+`backend/db/init-db.js`):
+
+- `profor_2022_revisao_lotes` — registra cada geração da fila;
+- `profor_2022_revisao_divergencias` — fila de divergências, com
+  `chave_divergencia` estável (`UNIQUE`) e `payload_json` suficiente para o
+  card Antes × Depois;
+- `profor_2022_revisao_decisoes` — decisões humanas (estrutura pronta; ainda
+  não alimentada);
+- `profor_2022_revisao_logs` — trilha de auditoria das gerações.
+
+A finalidade da fila é **preparar a futura tela SISTEMA > Revisão de
+divergências** descrita nas §16.2.1–16.2.5 — a deliberação não precisa mais ser
+feita manualmente no JSON de decisões.
+
+Distinção dos três conceitos:
+
+- **divergência detectada** — registro técnico em `profor_2022_revisao_divergencias`,
+  gerado a partir dos relatórios de saneamento e do leitor PAD;
+- **decisão humana** — futura escolha do usuário (aceitar, rejeitar, etc.),
+  registrada em `profor_2022_revisao_decisoes`;
+- **log/auditoria** — trilha imutável de cada geração/atualização em
+  `profor_2022_revisao_logs`.
+
+Comandos:
+
+- `npm run profor:pad:gerar-fila-revisao` — gera/regenera a fila em uma
+  transação única; cria um lote, transforma os relatórios atuais em
+  divergências, preserva `status` e decisões já tomadas quando a mesma
+  `chave_divergencia` reaparece, registra logs e atualiza os totais do lote;
+- `npm run profor:pad:auditar-fila-revisao` — relatório de auditoria somente
+  leitura (totais por status, nível, tipo e convênio; pendentes; impeditivas;
+  bloqueio de publicação; último lote).
+
+A Etapa 5.3 **não aplica decisões**, não reconstrói o `planoAplicacao`, não
+altera a origem ativa e não publica. A publicação e a reconstrução permanecem
+bloqueadas enquanto houver divergência impeditiva pendente na fila.
+
 ---
 
 ## 17. Fases de implementação recomendadas

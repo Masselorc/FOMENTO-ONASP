@@ -82,6 +82,7 @@ function inicializarBanco() {
   garantirTabelaTransferegovRendimentosConsultasProfor2022();
   garantirTabelaLogsOperacionais();
   garantirTabelasRateioInicialProfor2022();
+  garantirTabelasRevisaoProfor2022();
 }
 
 function garantirColunasOrcamentoRastreio() {
@@ -391,6 +392,91 @@ function garantirTabelasRateioInicialProfor2022() {
     CREATE UNIQUE INDEX IF NOT EXISTS idx_rateio_ativo_unico
       ON profor_2022_item_rateios(item_conhecido_id, area, natureza)
       WHERE ativo = 1;
+  `);
+}
+
+function garantirTabelasRevisaoProfor2022() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS profor_2022_revisao_lotes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      origem TEXT NOT NULL,
+      arquivo_origem TEXT,
+      hash_origem TEXT,
+      status TEXT NOT NULL DEFAULT 'ABERTO',
+      total_divergencias INTEGER NOT NULL DEFAULT 0,
+      total_pendentes INTEGER NOT NULL DEFAULT 0,
+      total_impeditivas INTEGER NOT NULL DEFAULT 0,
+      criado_em TEXT NOT NULL,
+      atualizado_em TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS profor_2022_revisao_divergencias (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lote_revisao_id INTEGER NOT NULL,
+      chave_divergencia TEXT NOT NULL,
+      numero_convenio TEXT,
+      uf TEXT,
+      chave_item TEXT,
+      tipo_alerta TEXT NOT NULL,
+      nivel TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDENTE',
+      campo_afetado TEXT,
+      valor_anterior TEXT,
+      valor_novo TEXT,
+      fonte_anterior TEXT,
+      fonte_nova TEXT,
+      diferenca TEXT,
+      motivo_provavel TEXT,
+      acao_sugerida TEXT,
+      impacto_reconstrucao TEXT,
+      bloqueia_publicacao INTEGER NOT NULL DEFAULT 0,
+      payload_json TEXT NOT NULL DEFAULT '{}',
+      criado_em TEXT NOT NULL,
+      atualizado_em TEXT NOT NULL,
+      UNIQUE(chave_divergencia),
+      FOREIGN KEY(lote_revisao_id) REFERENCES profor_2022_revisao_lotes(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS profor_2022_revisao_decisoes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      divergencia_id INTEGER NOT NULL,
+      decisao TEXT NOT NULL,
+      valor_aplicado TEXT,
+      justificativa TEXT,
+      usuario TEXT,
+      decidido_em TEXT NOT NULL,
+      lote_saneamento_id INTEGER,
+      payload_decisao_json TEXT NOT NULL DEFAULT '{}',
+      criado_em TEXT NOT NULL,
+      FOREIGN KEY(divergencia_id) REFERENCES profor_2022_revisao_divergencias(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS profor_2022_revisao_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      entidade_tipo TEXT NOT NULL,
+      entidade_id INTEGER,
+      evento TEXT NOT NULL,
+      estado_anterior_json TEXT,
+      estado_novo_json TEXT,
+      usuario TEXT,
+      detalhe TEXT,
+      criado_em TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_revisao_divergencias_status
+      ON profor_2022_revisao_divergencias(status);
+    CREATE INDEX IF NOT EXISTS idx_revisao_divergencias_tipo
+      ON profor_2022_revisao_divergencias(tipo_alerta);
+    CREATE INDEX IF NOT EXISTS idx_revisao_divergencias_nivel
+      ON profor_2022_revisao_divergencias(nivel);
+    CREATE INDEX IF NOT EXISTS idx_revisao_divergencias_convenio
+      ON profor_2022_revisao_divergencias(numero_convenio);
+    CREATE INDEX IF NOT EXISTS idx_revisao_divergencias_chave_item
+      ON profor_2022_revisao_divergencias(chave_item);
+    CREATE INDEX IF NOT EXISTS idx_revisao_decisoes_divergencia
+      ON profor_2022_revisao_decisoes(divergencia_id);
+    CREATE INDEX IF NOT EXISTS idx_revisao_logs_entidade
+      ON profor_2022_revisao_logs(entidade_tipo, entidade_id);
   `);
 }
 

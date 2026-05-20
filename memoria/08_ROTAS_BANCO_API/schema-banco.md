@@ -581,6 +581,56 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 **Índices confirmados:** `idx_alertas_lote`, `idx_alertas_tipo_nivel`.
 
+### profor_2022_revisao_lotes
+
+**Finalidade:** rastrear cada geração da fila de revisão assistida de divergências PAD x memória (Etapa 5.3), com origem, hash e totais.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRevisaoProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/profor-pad-revisao-repository.js`, `backend/services/profor-2022/profor-pad-revisao-service.js`.
+
+**Scripts relacionados:** `backend/scripts/gerar-fila-revisao-pad-profor-2022.js`, `backend/scripts/auditar-fila-revisao-pad-profor-2022.js`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `origem TEXT NOT NULL`, `status TEXT NOT NULL DEFAULT 'ABERTO'`, `criado_em TEXT NOT NULL`, `atualizado_em TEXT NOT NULL`.
+
+### profor_2022_revisao_divergencias
+
+**Finalidade:** fila persistente das divergências PAD x memória, com payload técnico suficiente para o futuro card Antes × Depois. `status` em caixa alta (`PENDENTE`, `ACEITO`, `REJEITADO`, `EM_REVISAO`, `CORRIGIDO`, `APLICADO`, `REVERTIDO`); `nivel` em caixa baixa (`info`, `aviso`, `impeditivo`).
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRevisaoProfor2022()`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `UNIQUE(chave_divergencia)` (chave estável que evita duplicação na regeneração), `lote_revisao_id INTEGER NOT NULL`, `tipo_alerta TEXT NOT NULL`, `nivel TEXT NOT NULL`, `status TEXT NOT NULL DEFAULT 'PENDENTE'`, `payload_json TEXT NOT NULL DEFAULT '{}'`, FK para `profor_2022_revisao_lotes(id)`.
+
+**Índices confirmados:** `idx_revisao_divergencias_status`, `idx_revisao_divergencias_tipo`, `idx_revisao_divergencias_nivel`, `idx_revisao_divergencias_convenio`, `idx_revisao_divergencias_chave_item`.
+
+### profor_2022_revisao_decisoes
+
+**Finalidade:** registrar as decisões humanas tomadas sobre cada divergência (uma divergência pode acumular histórico de decisões). Etapa futura — nenhuma decisão é gravada nesta etapa pelo fluxo automático.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRevisaoProfor2022()`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `divergencia_id INTEGER NOT NULL`, `decisao TEXT NOT NULL`, `decidido_em TEXT NOT NULL`, `payload_decisao_json TEXT NOT NULL DEFAULT '{}'`, FK para `profor_2022_revisao_divergencias(id)`.
+
+**Índices confirmados:** `idx_revisao_decisoes_divergencia`.
+
+### profor_2022_revisao_logs
+
+**Finalidade:** trilha de auditoria da fila de revisão — criação/atualização de divergências, divergências não reapresentadas e geração de lotes.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRevisaoProfor2022()`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `entidade_tipo TEXT NOT NULL`, `evento TEXT NOT NULL`, `criado_em TEXT NOT NULL`.
+
+**Índices confirmados:** `idx_revisao_logs_entidade`.
+
 ## Evolução incremental de schema
 
 `backend/db/init-db.js` usa `garantirColuna(tabela, coluna, definicao)` para evolução incremental.
@@ -685,43 +735,35 @@ Não executadas nesta tarefa documental, mas recomendadas para mudança real de 
 - Histórico completo de migrations anteriores além do estado atual codificado em `init-db.js`.
 - Política de retenção de backups em `backend/data/backups/`.
 
-## Pendência futura: modelo de auditoria da revisão assistida de divergências PAD
+## Modelo de auditoria da revisão assistida de divergências PAD
 
-Esta é uma **pendência futura de modelo de dados**, ainda não implementada. Não
-há tabela, coluna ou migration criada para isso no estado atual; nenhuma deve
-ser criada antes de a funcionalidade ser efetivamente planejada para execução.
-
-Contexto: a regra de revisão assistida de divergências PAD x memória está
-definida em
+A regra de revisão assistida de divergências PAD x memória está definida em
 `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`,
-seção 16.2. Essa regra exige que toda decisão do usuário (aceitar, rejeitar,
-manter anterior, corrigir, postergar) e todo evento de saneamento (aplicação
-de lote, rollback, publicação com dados saneados) gerem registro de auditoria
-rastreável.
+seção 16.2.
 
-Quando a funcionalidade for implementada, será necessário um modelo de
-persistência (tabela aditiva, no padrão `garantirColuna`/`CREATE TABLE IF NOT
-EXISTS` já usado em `init-db.js`) capaz de registrar, por evento:
+**Estado atual (Etapa 5.3 — fila persistente).** O modelo de persistência foi
+implementado de forma aditiva nas quatro tabelas `profor_2022_revisao_*`
+documentadas acima:
 
-- alerta gerado, tipo e nível;
-- campo afetado;
-- valor anterior e valor novo;
-- fonte anterior e fonte nova;
-- diferença identificada;
-- motivo provável apresentado ao usuário;
-- ação tomada pelo usuário;
-- justificativa, quando aplicável;
-- usuário responsável e data/hora da decisão;
-- lote de saneamento/importação relacionado;
-- impacto na reconstrução do `planoAplicacao`;
-- eventual rollback;
-- status final da decisão.
+- `profor_2022_revisao_lotes` — geração da fila;
+- `profor_2022_revisao_divergencias` — fila de divergências com payload para o
+  card Antes × Depois;
+- `profor_2022_revisao_decisoes` — decisões humanas (estrutura pronta; nenhuma
+  decisão é gravada pelo fluxo automático);
+- `profor_2022_revisao_logs` — trilha de auditoria de criação/atualização de
+  divergências e geração de lotes.
 
-O desenho desse modelo deve reaproveitar, no que couber, o padrão das tabelas
-de saneamento já previstas para a Etapa E (`profor_2022_saneamento_lotes`,
-`profor_2022_saneamento_decisoes`) e da tabela `logs_operacionais`. Esta seção
-serve apenas como marcação da pendência — o esquema definitivo será detalhado
-quando a etapa for planejada.
+A fila é gerada/regenerada por `npm run profor:pad:gerar-fila-revisao` e
+auditada por `npm run profor:pad:auditar-fila-revisao`. A regeneração preserva
+`status` e decisões já registradas (chave estável `chave_divergencia` com
+`UNIQUE`); divergências antigas não reapresentadas não são apagadas — apenas
+registradas em log.
+
+**Pendência futura.** A Etapa 5.3 **não aplica decisões**. A aplicação das
+decisões ao `planoAplicacao`, a tela SISTEMA de revisão e a publicação com
+dados saneados continuam pendentes. Quando forem planejadas, devem reaproveitar
+estas tabelas e o padrão das tabelas de saneamento previstas para a Etapa E
+(`profor_2022_saneamento_lotes`, `profor_2022_saneamento_decisoes`).
 
 ## Critérios para atualizar este arquivo
 

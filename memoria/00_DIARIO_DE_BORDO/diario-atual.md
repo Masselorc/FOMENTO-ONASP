@@ -1,5 +1,29 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.3 - Fila persistente de revisão de divergências
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da padronização de caixa do status.
+- Objetivo: criar uma fila persistente no SQLite para armazenar as divergências PAD x memória, permitindo deliberação posterior pela interface (tela SISTEMA futura). A etapa não implementa front-end nem aplica decisões.
+- Mudanças realizadas:
+  - **`backend/db/init-db.js`**: migration aditiva `garantirTabelasRevisaoProfor2022()` — 4 tabelas (`profor_2022_revisao_lotes`, `profor_2022_revisao_divergencias`, `profor_2022_revisao_decisoes`, `profor_2022_revisao_logs`) e 7 índices. `CREATE TABLE IF NOT EXISTS`, idempotente.
+  - **Novo** `backend/services/profor-2022/profor-pad-revisao-repository.js`: acesso transacional ao SQLite — criar lote, upsert de divergência por `chave_divergencia` (preserva `status` e nunca toca decisões), registrar log, consultas de auditoria.
+  - **Novo** `backend/services/profor-2022/profor-pad-revisao-service.js`: transforma os relatórios de saneamento, detalhado e leitor PAD em divergências; `chave_divergencia` estável (numeroConvenio + tipo_alerta + chave_item/descrição + campo + hash); geração da fila em transação única; auditoria somente leitura.
+  - **Novos scripts** `backend/scripts/gerar-fila-revisao-pad-profor-2022.js` e `auditar-fila-revisao-pad-profor-2022.js`.
+  - `package.json`: comandos `profor:pad:gerar-fila-revisao` e `profor:pad:auditar-fila-revisao`.
+  - `scripts/validar-syntax.js`: adicionados os 4 arquivos novos.
+  - Documentação: `schema-banco.md` (4 tabelas documentadas; seção de auditoria atualizada de pendência para implementada); `profor-2022-automacao-planos-aplicacao.md` (nova §16.2.6 — fila persistente, distinção divergência/decisão/log, comandos).
+- Resultado da geração: **145 divergências** persistidas — 67 `quantidade_valor_unitario_inconsistente`, 32 `item_ausente_no_pad`, 23 `item_novo_sem_rateio`, 19 `item_nao_apto`, 4 `equivalencia_por_descricao_normalizada`. Por nível: 101 aviso, 44 impeditivo. Todas com status PENDENTE; 48 bloqueiam publicação. 13 convênios afetados.
+- Mapeamento de divergências: itens PAD sem rateio → `item_novo_sem_rateio`; coincidências normalizadas → `equivalencia_por_descricao_normalizada`; não aptos → `item_nao_apto`; ausentes → `item_ausente_no_pad`; alertas do leitor PAD → `quantidade_valor_unitario_inconsistente` / `saldo_inconsistente` / `natureza_divergente`.
+- Regeneração idempotente verificada: simulada uma decisão (status ACEITO + registro em `profor_2022_revisao_decisoes`); ao regenerar a fila, 0 criadas / 145 atualizadas, status ACEITO e decisão preservados; divergências antigas não apagadas.
+- Validações executadas:
+  - `node --check` nos 4 arquivos novos → OK. `npm run validar:syntax` → OK (45 arquivos).
+  - `npm run init-db` → 4 tabelas e 7 índices criados.
+  - `npm run profor:pad:gerar-fila-revisao` → 145 divergências. `npm run profor:pad:auditar-fila-revisao` → totais conferidos.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio. `*.sqlite/-wal/-shm` aparecem como ignorados (`!!`), não versionados.
+- Risco: Baixo. Migration estritamente aditiva e idempotente; escrita transacional; nenhuma decisão aplicada; nenhuma exclusão física. Não toca frontend, publicação, origem ativa do planoAplicacao nem reconstrução.
+- Rollback: `git revert` do commit (remove tabelas do `init-db.js`, serviços e scripts); as tabelas já criadas no SQLite local permanecem vazias e inertes — podem ser descartadas recriando o banco, se necessário, sem impacto nas demais.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Padronização da caixa do status da revisão assistida
 
 - Branch atual: `main`.

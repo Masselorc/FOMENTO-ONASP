@@ -21,6 +21,8 @@
     "profor:pad:relatorio-saneamento-detalhado": "node backend/scripts/gerar-relatorio-saneamento-detalhado-pad-profor-2022.js",
     "profor:pad:gerar-template-decisoes-saneamento": "node backend/scripts/gerar-template-decisoes-saneamento-pad-profor-2022.js",
     "profor:pad:validar-decisoes-saneamento": "node backend/scripts/validar-decisoes-saneamento-pad-profor-2022.js",
+    "profor:pad:gerar-fila-revisao": "node backend/scripts/gerar-fila-revisao-pad-profor-2022.js",
+    "profor:pad:auditar-fila-revisao": "node backend/scripts/auditar-fila-revisao-pad-profor-2022.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",
