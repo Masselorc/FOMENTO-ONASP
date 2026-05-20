@@ -8953,6 +8953,7 @@ table.dataTable tbody tr:hover td {
     padding: 0.3rem 0.6rem !important;
     font-size: 0.8rem !important;
     box-shadow: none !important;
+    outline: 0 !important;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
@@ -8960,6 +8961,7 @@ table.dataTable tbody tr:hover td {
     background: rgba(59, 130, 246, 0.18) !important;
     border-color: rgba(96, 165, 250, 0.45) !important;
     color: var(--color-text) !important;
+    box-shadow: none !important;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button.current,
@@ -8976,6 +8978,18 @@ table.dataTable tbody tr:hover td {
     background: rgba(20, 28, 39, 0.5) !important;
     color: rgba(148, 163, 184, 0.5) !important;
     border-color: rgba(148, 163, 184, 0.1) !important;
+}
+
+.pagination .page-link:focus,
+.pagination .page-link:active,
+.dataTables_wrapper .dataTables_paginate .paginate_button:focus,
+.dataTables_wrapper .dataTables_paginate .paginate_button:active {
+    box-shadow: none !important;
+    outline: 0 !important;
+}
+
+.pagination .page-item {
+    background: transparent !important;
 }
 
 .dataTables_wrapper .dataTables_info,
