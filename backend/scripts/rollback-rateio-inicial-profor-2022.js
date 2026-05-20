@@ -23,6 +23,7 @@ function executar() {
   console.log(`Lote ${resultado.loteId} marcado como rollback.`);
   console.log(`Itens inativados: ${resultado.itensInativados}`);
   console.log(`Rateios inativados: ${resultado.rateiosInativados}`);
+  console.log(`Rateios anteriores reativados: ${resultado.rateiosReativados}`);
   console.log(`Rollback em: ${resultado.rollbackEm}`);
   console.log(`Motivo: ${resultado.motivo}`);
 }

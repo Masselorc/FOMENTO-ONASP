@@ -162,7 +162,10 @@ function importarRateioInicialJson(opcoes = {}) {
         apto_para_importacao_futura = excluded.apto_para_importacao_futura,
         ultima_ocorrencia_em = excluded.ultima_ocorrencia_em,
         ativo = excluded.ativo,
-        lote_importacao_id = excluded.lote_importacao_id,
+        lote_importacao_id = CASE
+          WHEN profor_2022_itens_conhecidos.ativo = 0 THEN excluded.lote_importacao_id
+          ELSE profor_2022_itens_conhecidos.lote_importacao_id
+        END,
         atualizado_em = excluded.atualizado_em
     `);
     const selectItemId = db.prepare("SELECT id FROM profor_2022_itens_conhecidos WHERE chave_item = ?");
@@ -291,6 +294,47 @@ function importarRateioInicialJson(opcoes = {}) {
   return executarImportacao();
 }
 
+function reativarRateiosAnterioresDoLote(loteId, agora) {
+  const combinacoes = db.prepare(`
+    SELECT DISTINCT item_conhecido_id, area, natureza
+    FROM profor_2022_item_rateios
+    WHERE lote_importacao_id = ?
+  `).all(loteId);
+  const obterAnterior = db.prepare(`
+    SELECT r.id
+    FROM profor_2022_item_rateios r
+    JOIN profor_2022_rateio_import_lotes l ON l.id = r.lote_importacao_id
+    WHERE r.item_conhecido_id = ?
+      AND r.area = ?
+      AND r.natureza = ?
+      AND r.lote_importacao_id <> ?
+      AND r.ativo = 0
+      AND l.status <> ?
+    ORDER BY r.id DESC
+    LIMIT 1
+  `);
+  const reativar = db.prepare(`
+    UPDATE profor_2022_item_rateios
+    SET ativo = 1, atualizado_em = ?
+    WHERE id = ?
+  `);
+
+  let totalReativados = 0;
+  for (const combinacao of combinacoes) {
+    const anterior = obterAnterior.get(
+      combinacao.item_conhecido_id,
+      combinacao.area,
+      combinacao.natureza,
+      loteId,
+      STATUS_LOTE_ROLLBACK
+    );
+    if (!anterior?.id) continue;
+    totalReativados += reativar.run(agora, anterior.id).changes;
+  }
+
+  return totalReativados;
+}
+
 function rollbackLoteRateioInicial(opcoes = {}) {
   const loteId = Number(opcoes.loteId);
   if (!Number.isFinite(loteId) || loteId <= 0) {
@@ -319,6 +363,7 @@ function rollbackLoteRateioInicial(opcoes = {}) {
       SET ativo = 0, atualizado_em = ?
       WHERE lote_importacao_id = ? AND ativo = 1
     `).run(agora, loteId);
+    const rateiosReativados = reativarRateiosAnterioresDoLote(loteId, agora);
 
     const itensInativados = db.prepare(`
       UPDATE profor_2022_itens_conhecidos
@@ -331,6 +376,7 @@ function rollbackLoteRateioInicial(opcoes = {}) {
       lotesAtualizados: loteAtualizado.changes,
       itensInativados: itensInativados.changes,
       rateiosInativados: rateiosInativados.changes,
+      rateiosReativados,
       rollbackEm: agora,
       motivo,
     };
