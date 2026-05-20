@@ -667,6 +667,10 @@ Riscos:
 | `profor_detru_atualizacoes` | `backend/services/profor-2022/profor-detru-cache-service.js` | nenhuma rota pública criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
 | `profor_transferegov_rendimentos_cache` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
 | `profor_transferegov_rendimentos_consultas` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
+| `profor_2022_revisao_divergencias` | `profor-pad-revisao-repository.js`, `profor-pad-revisao-decisao-service.js` | `GET /api/profor-2022/revisao/divergencias`, `GET /api/profor-2022/revisao/divergencias/:id`, `GET /api/profor-2022/revisao/auditoria` | nenhuma publicação estática criada nesta etapa. |
+| `profor_2022_revisao_decisoes` | `profor-pad-revisao-decisao-service.js` | `POST /api/profor-2022/revisao/divergencias/:id/decisoes` | nenhuma publicação estática criada nesta etapa. |
+| `profor_2022_revisao_logs` | `profor-pad-revisao-repository.js` | `GET /api/profor-2022/revisao/divergencias/:id/logs` (leitura); escrita em toda decisão | nenhuma publicação estática criada nesta etapa. |
+| `profor_2022_revisao_lotes` | `profor-pad-revisao-repository.js`, `profor-pad-revisao-service.js` | nenhuma rota direta; gerado por `profor:pad:gerar-fila-revisao` | nenhuma publicação estática criada nesta etapa. |
 
 Relações operacionais confirmadas:
 

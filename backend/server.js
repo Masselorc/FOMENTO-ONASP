@@ -50,6 +50,7 @@ const {
 const {
   calcularUltimaAtualizacaoDadosProfor2022
 } = require("./services/profor-2022/profor-atualizacao-meta-service");
+const revisaoDecisaoService = require("./services/profor-2022/profor-pad-revisao-decisao-service");
 const {
   montarDadosProfor2022Publicacao,
   extrairPlanoAplicacaoProforDoWorkbook
@@ -864,6 +865,58 @@ async function rotearApi(req, res, pathname) {
       }
       enviarJson(res, 200, { success: true, log });
       return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/revisao/divergencias") {
+      const sp = new URL(req.url, `http://${req.headers.host || "localhost"}`).searchParams;
+      const filtros = {
+        status: sp.get("status") || undefined,
+        nivel: sp.get("nivel") || undefined,
+        tipo: sp.get("tipo") || undefined,
+        convenio: sp.get("convenio") || undefined,
+        uf: sp.get("uf") || undefined,
+        limite: sp.get("limite") || undefined,
+        offset: sp.get("offset") || undefined,
+      };
+      if (sp.has("bloqueiaPublicacao")) {
+        filtros.bloqueiaPublicacao = sp.get("bloqueiaPublicacao") === "true";
+      }
+      enviarJson(res, 200, { success: true, ...revisaoDecisaoService.listarDivergencias(filtros) });
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/revisao/auditoria") {
+      enviarJson(res, 200, { success: true, auditoria: revisaoDecisaoService.auditarPendencias() });
+      return;
+    }
+
+    if (pathname.startsWith("/api/profor-2022/revisao/divergencias/")) {
+      const resto = pathname.slice("/api/profor-2022/revisao/divergencias/".length);
+
+      if (req.method === "GET" && /^\d+\/logs$/.test(resto)) {
+        const id = Number(resto.split("/")[0]);
+        enviarJson(res, 200, {
+          success: true,
+          logs: revisaoDecisaoService.listarLogsDaDivergencia(id),
+        });
+        return;
+      }
+
+      if (req.method === "POST" && /^\d+\/decisoes$/.test(resto)) {
+        const id = Number(resto.split("/")[0]);
+        const payload = await lerJsonBody(req);
+        const resultado = revisaoDecisaoService.registrarDecisao(id, payload);
+        enviarJson(res, 201, { success: true, decisao: resultado });
+        return;
+      }
+
+      if (req.method === "GET" && /^\d+$/.test(resto)) {
+        enviarJson(res, 200, {
+          success: true,
+          divergencia: revisaoDecisaoService.obterDivergencia(Number(resto)),
+        });
+        return;
+      }
     }
 
     enviarJson(res, 404, { success: false, message: "Endpoint não encontrado." });

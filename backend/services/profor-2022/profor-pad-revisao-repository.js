@@ -196,6 +196,146 @@ function obterEstatisticasAuditoria() {
   };
 }
 
+/* --------------------------- consultas da API --------------------------- */
+
+const COLUNAS_DIVERGENCIA = `
+  id, lote_revisao_id, chave_divergencia, numero_convenio, uf, chave_item,
+  tipo_alerta, nivel, status, campo_afetado, valor_anterior, valor_novo,
+  fonte_anterior, fonte_nova, diferenca, motivo_provavel, acao_sugerida,
+  impacto_reconstrucao, bloqueia_publicacao, payload_json, criado_em, atualizado_em
+`;
+
+/**
+ * Lista divergências com filtros opcionais (status, nivel, tipo_alerta,
+ * numero_convenio, uf, bloqueia_publicacao) e paginação.
+ */
+function listarDivergencias(filtros = {}) {
+  const condicoes = [];
+  const parametros = [];
+  const mapaFiltro = {
+    status: "status",
+    nivel: "nivel",
+    tipo: "tipo_alerta",
+    convenio: "numero_convenio",
+    uf: "uf",
+  };
+  for (const [chaveFiltro, coluna] of Object.entries(mapaFiltro)) {
+    if (filtros[chaveFiltro] !== undefined && filtros[chaveFiltro] !== null && filtros[chaveFiltro] !== "") {
+      condicoes.push(`${coluna} = ?`);
+      parametros.push(String(filtros[chaveFiltro]));
+    }
+  }
+  if (filtros.bloqueiaPublicacao !== undefined && filtros.bloqueiaPublicacao !== null) {
+    condicoes.push("bloqueia_publicacao = ?");
+    parametros.push(filtros.bloqueiaPublicacao ? 1 : 0);
+  }
+
+  const where = condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : "";
+  const limite = Math.min(Math.max(Number(filtros.limite) || 100, 1), 500);
+  const offset = Math.max(Number(filtros.offset) || 0, 0);
+
+  const total = db.prepare(
+    `SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias ${where}`
+  ).get(...parametros).t;
+
+  const linhas = db.prepare(`
+    SELECT ${COLUNAS_DIVERGENCIA}
+    FROM profor_2022_revisao_divergencias
+    ${where}
+    ORDER BY (nivel = 'impeditivo') DESC, numero_convenio, id
+    LIMIT ? OFFSET ?
+  `).all(...parametros, limite, offset);
+
+  return { total, limite, offset, divergencias: linhas };
+}
+
+/** Busca uma divergência por id. */
+function buscarDivergenciaPorId(id) {
+  return db.prepare(`
+    SELECT ${COLUNAS_DIVERGENCIA}
+    FROM profor_2022_revisao_divergencias WHERE id = ?
+  `).get(Number(id)) || null;
+}
+
+/** Lista as decisões registradas para uma divergência (mais recentes primeiro). */
+function listarDecisoesDaDivergencia(divergenciaId) {
+  return db.prepare(`
+    SELECT id, divergencia_id, decisao, valor_aplicado, justificativa, usuario,
+           decidido_em, lote_saneamento_id, payload_decisao_json, criado_em
+    FROM profor_2022_revisao_decisoes
+    WHERE divergencia_id = ?
+    ORDER BY id DESC
+  `).all(Number(divergenciaId));
+}
+
+/** Lista os logs de uma divergência (mais recentes primeiro). */
+function listarLogsDaDivergencia(divergenciaId) {
+  return db.prepare(`
+    SELECT id, entidade_tipo, entidade_id, evento, estado_anterior_json,
+           estado_novo_json, usuario, detalhe, criado_em
+    FROM profor_2022_revisao_logs
+    WHERE entidade_tipo = 'divergencia' AND entidade_id = ?
+    ORDER BY id DESC
+  `).all(Number(divergenciaId));
+}
+
+/**
+ * Registra uma decisão sobre uma divergência, de forma transacional:
+ * insere em profor_2022_revisao_decisoes, atualiza o status da divergência
+ * (quando o status mudar) e grava log com estado anterior e novo.
+ * NÃO aplica a decisão ao planoAplicacao.
+ */
+function registrarDecisao({ divergencia, decisao, novoStatus, valorAplicado, justificativa, usuario, payloadDecisao }) {
+  const executar = db.transaction(() => {
+    const agora = agoraIso();
+    const statusAnterior = divergencia.status;
+
+    const infoDecisao = db.prepare(`
+      INSERT INTO profor_2022_revisao_decisoes (
+        divergencia_id, decisao, valor_aplicado, justificativa, usuario,
+        decidido_em, lote_saneamento_id, payload_decisao_json, criado_em
+      ) VALUES (?, ?, ?, ?, ?, ?, NULL, ?, ?)
+    `).run(
+      divergencia.id,
+      decisao,
+      valorAplicado === undefined ? null : valorAplicado,
+      justificativa || null,
+      usuario || null,
+      agora,
+      JSON.stringify(payloadDecisao || {}),
+      agora
+    );
+    const decisaoId = Number(infoDecisao.lastInsertRowid);
+
+    if (novoStatus && novoStatus !== statusAnterior) {
+      db.prepare(`
+        UPDATE profor_2022_revisao_divergencias
+        SET status = ?, atualizado_em = ?
+        WHERE id = ?
+      `).run(novoStatus, agora, divergencia.id);
+    }
+
+    registrarLog({
+      entidadeTipo: "divergencia",
+      entidadeId: divergencia.id,
+      evento: "decisao_registrada",
+      estadoAnterior: { status: statusAnterior },
+      estadoNovo: {
+        status: novoStatus || statusAnterior,
+        decisao,
+        decisaoId,
+        valorAplicado: valorAplicado === undefined ? null : valorAplicado,
+      },
+      usuario: usuario || null,
+      detalhe: `Decisão '${decisao}' registrada na divergência ${divergencia.id}.`,
+    });
+
+    return { decisaoId, statusAnterior, statusNovo: novoStatus || statusAnterior, decididoEm: agora };
+  });
+
+  return executar();
+}
+
 /** Retorna o último lote de revisão registrado. */
 function obterUltimoLote() {
   return db.prepare(`
@@ -225,4 +365,9 @@ module.exports = {
   obterEstatisticasAuditoria,
   obterUltimoLote,
   contarEventosDoLote,
+  listarDivergencias,
+  buscarDivergenciaPorId,
+  listarDecisoesDaDivergencia,
+  listarLogsDaDivergencia,
+  registrarDecisao,
 };

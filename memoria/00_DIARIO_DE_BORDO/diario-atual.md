@@ -1,5 +1,28 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.4 - Camada backend/API de revisão assistida
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da Etapa 5.3.
+- Objetivo: criar serviços e rotas backend para consultar divergências e registrar decisões humanas, sem aplicar essas decisões ao planoAplicacao.
+- Mudanças realizadas:
+  - **`profor-pad-revisao-repository.js`** estendido: `listarDivergencias` (filtros status/nível/tipo/convênio/UF/bloqueio + paginação), `buscarDivergenciaPorId`, `listarDecisoesDaDivergencia`, `listarLogsDaDivergencia`, `registrarDecisao` (transacional — insere decisão, atualiza status, grava log com estado anterior/novo).
+  - **Novo** `backend/services/profor-2022/profor-pad-revisao-decisao-service.js`: regras da decisão (status permitidos, justificativa obrigatória), parse de `payload_json`, formatação para API, `RevisaoDecisaoError` (HTTP 400).
+  - **`backend/server.js`**: 5 rotas em `rotearApi`, no padrão `http` nativo do projeto — `GET /api/profor-2022/revisao/divergencias`, `GET .../divergencias/:id`, `GET .../divergencias/:id/logs`, `GET .../auditoria`, `POST .../divergencias/:id/decisoes`.
+  - **Novo script** `backend/scripts/testar-decisao-revisao-pad-profor-2022.js` (comando `profor:pad:revisao:teste-decisao`): usa uma divergência CONTROLADA de teste (chave `revisao_teste:...`), não contamina as 145 reais.
+  - `package.json` e `scripts/validar-syntax.js` atualizados.
+  - Documentação: `profor-2022-automacao-planos-aplicacao.md` (nova §16.2.7) e `schema-banco.md` (tabela de relação tabelas/serviços/rotas).
+- Regras da decisão: decisões aceitas `ACEITO`/`REJEITADO`/`EM_REVISAO`/`CORRIGIDO`/`REVERTIDO`/`COMENTAR` (esta mantém `PENDENTE`); `ACEITO`/`REJEITADO`/`CORRIGIDO`/`REVERTIDO` exigem justificativa; toda decisão exige `usuario`; nova decisão sobre divergência já decidida acrescenta linha sem apagar a anterior; **`ACEITO` é apenas decisão registrada — a API nunca aplica ao planoAplicacao**.
+- Testes executados (servidor local, porta 8799):
+  - `npm run profor:pad:revisao:teste-decisao` → decisão EM_REVISAO gravada, log com estado anterior/novo, `aplicadaAoPlano=false`.
+  - `GET .../divergencias?nivel=impeditivo` → 44 impeditivas, impeditivo primeiro.
+  - `GET .../auditoria` → totais por status/nível/tipo/convênio.
+  - `GET .../divergencias/1` → payload parseado + decisões + logs.
+  - `POST .../divergencias/146/decisoes` sem justificativa → HTTP 400; com justificativa → HTTP 201 (EM_REVISAO → ACEITO); decisão inválida → HTTP 400; divergência inexistente → HTTP 404.
+- Validações: `node --check` nos arquivos novos/alterados → OK; `npm run validar:syntax` → OK (47 arquivos); `npm run profor:pad:auditar-fila-revisao` → OK; `git diff --check` → limpo; `git status --short frontend/data/publicados` → vazio; `*.sqlite/-wal/-shm` ignorados, não versionados.
+- Risco: Baixo. Escrita transacional; nenhuma decisão aplicada ao planoAplicacao; nenhuma exclusão; não toca frontend, publicação nem origem ativa. A divergência de teste (id 146) vive apenas no SQLite local ignorado pelo git.
+- Rollback: `git revert` do commit (remove serviço, script, rotas e exports); as linhas de teste no SQLite local são inertes.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Etapa 5.3 - Fila persistente de revisão de divergências
 
 - Branch atual: `main`.

@@ -972,6 +972,44 @@ A Etapa 5.3 **não aplica decisões**, não reconstrói o `planoAplicacao`, não
 altera a origem ativa e não publica. A publicação e a reconstrução permanecem
 bloqueadas enquanto houver divergência impeditiva pendente na fila.
 
+#### 16.2.7. Camada backend/API de revisão (Etapa 5.4 — implementada)
+
+A camada backend/API para consultar divergências e registrar decisões humanas
+foi implementada, ainda **sem aplicar** as decisões ao `planoAplicacao`.
+
+Serviço: `backend/services/profor-2022/profor-pad-revisao-decisao-service.js`
+(regras e formatação), apoiado por `profor-pad-revisao-repository.js` (acesso
+transacional ao SQLite). Rotas registradas em `backend/server.js`:
+
+- `GET /api/profor-2022/revisao/divergencias` — lista com filtros opcionais
+  (`status`, `nivel`, `tipo`, `convenio`, `uf`, `bloqueiaPublicacao`, `limite`,
+  `offset`); impeditivas vêm primeiro;
+- `GET /api/profor-2022/revisao/divergencias/:id` — divergência com
+  `payload` parseado, `decisoes` e `logs`;
+- `GET /api/profor-2022/revisao/divergencias/:id/logs` — logs da divergência;
+- `GET /api/profor-2022/revisao/auditoria` — totais por status/nível/tipo/
+  convênio, pendentes, impeditivas e bloqueio de publicação;
+- `POST /api/profor-2022/revisao/divergencias/:id/decisoes` — registra uma
+  decisão humana.
+
+Regras da decisão:
+
+- decisões aceitas: `ACEITO`, `REJEITADO`, `EM_REVISAO`, `CORRIGIDO`,
+  `REVERTIDO` e `COMENTAR` (esta mantém o status `PENDENTE`, apenas registra
+  comentário/log);
+- `ACEITO`, `REJEITADO`, `CORRIGIDO` e `REVERTIDO` exigem justificativa;
+  `EM_REVISAO` e `COMENTAR` aceitam justificativa opcional;
+- toda decisão exige `usuario` responsável;
+- cada decisão grava uma linha em `profor_2022_revisao_decisoes`, atualiza o
+  `status` da divergência e registra log com estado anterior e novo;
+- uma nova decisão sobre divergência já decidida **acrescenta** linha — não
+  apaga decisões anteriores;
+- **`ACEITO` significa apenas "decisão humana registrada"** — a API nunca
+  aplica a decisão ao `planoAplicacao`; a aplicação material é etapa posterior.
+
+A Etapa 5.4 não implementa front-end, não reconstrói o `planoAplicacao`, não
+altera a origem ativa e não publica.
+
 ---
 
 ## 17. Fases de implementação recomendadas
