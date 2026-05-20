@@ -35,6 +35,7 @@ Arquivos temáticos existentes nesta árvore:
 - `memoria/01_PROJETO_APLICACAO/arquitetura-atual.md`
 - `memoria/01_PROJETO_APLICACAO/decisoes-tecnicas.md`
 - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`
 - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-auditoria-aba-geral.md`
 - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-divergencias.md`
 - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`
@@ -202,6 +203,19 @@ Dados, planilhas, importações e dashboards:
 - Ler serviços de importação, normalização e publicação diretamente relacionados.
 - Não inventar métricas, valores, UFs, processos ou bases.
 - Calcular apenas a partir das fontes reais fornecidas ou integradas.
+
+PROFOR 2022, planos de aplicação, itens de convênio e automação por instrumento:
+
+- Ler obrigatoriamente `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`.
+- Ler obrigatoriamente `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`.
+- Ler `backend/data/aplicacao.json`.
+- Ler `backend/services/dashboard-publication-service.js`.
+- Ler `backend/services/profor-2022/profor-consolidado-service.js`.
+- Ler `backend/services/profor-2022/profor-plano-aplicacao-service.js`.
+- Ler `backend/services/static-publication-service.js`, quando houver publicação estática.
+- Não remover a origem atual baseada em `Planilhas/gestao_financeira_ouvidoria.xlsx` antes de validação comparativa.
+- Não fazer o frontend ler arquivos Excel diretamente.
+- Preservar fallback, modo local/API e modo estático/GitHub Pages.
 
 Git, branch, PR, merge e rollback:
 
