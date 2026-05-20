@@ -3511,3 +3511,28 @@ Logs operacionais gravados:
 - Pendências:
   - validação manual restrita no navegador da exportação (agrupamento visual e cópia).
 
+---
+
+## 20/05/2026 - Orçamento 2026: exibição de remanejamento no valor previsto
+
+- Objetivo:
+  - restaurar a leitura visível das informações de remanejamento de valores previstos entre itens na coluna `Previsto`.
+- Diagnóstico:
+  - os dados de movimentação estavam sendo carregados pela API e calculados no front-end;
+  - o DOM já continha os detalhes do envelope (`Orig.`, `Ced.`, `Rec.`), mas a apresentação estava discreta demais no tema escuro e em coluna estreita.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `frontend/css/app.css`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção aplicada:
+  - rótulos abreviados do resumo visual foram trocados por `Original`, `Cedido`, `Recebido` e `Vinculado`;
+  - detalhes do envelope passaram a ser exibidos como marcadores compactos, com contraste próprio para tema claro e escuro;
+  - marcadores foram ajustados para separar rótulo e valor em linhas internas, evitando sobreposição com a coluna `Execução` em telas estreitas;
+  - mantida a regra existente de cálculo do envelope visual ajustado, sem alteração de backend, banco, saldo, alocação ou persistência.
+- Validações previstas:
+  - `node --check frontend/js/app.js`;
+  - `git diff --check`;
+  - smoke visual restrito na tela Orçamento 2026.
+- Pendências:
+  - validação manual pelo usuário em outros computadores da rede local, se necessário.
+

@@ -2473,30 +2473,94 @@ table.dataTable thead td,
 
 /* Envelope visual ajustado — detalhe discreto na coluna Valor previsto */
 .budget-balance-detail {
-    color: var(--color-muted);
-    display: flex;
-    flex-wrap: wrap;
-    font-size: 0.7rem;
-    font-weight: 400;
-    gap: 0.2rem 0.4rem;
-    justify-content: flex-end;
-    margin-top: 0.2rem;
+    align-items: flex-end;
+    color: var(--color-text);
+    display: grid;
+    font-size: 0.64rem;
+    font-weight: 700;
+    gap: 0.16rem;
+    justify-items: end;
+    line-height: 1.05;
+    margin-top: 0.28rem;
+    max-width: 100%;
+    white-space: normal;
 }
 
 .budget-balance-detail-item {
+    background: rgba(23, 74, 124, 0.08);
+    border: 1px solid rgba(23, 74, 124, 0.18);
+    border-radius: var(--radius-sm);
+    color: var(--color-primary-strong);
+    display: grid;
+    justify-items: end;
+    max-width: 100%;
+    min-width: 0;
+    padding: 0.08rem 0.22rem;
+    text-align: right;
+    width: 100%;
+    white-space: normal;
+}
+
+.budget-balance-detail-label {
+    font-family: var(--font-sans, inherit);
+    font-size: 0.58rem;
+    line-height: 1;
+    max-width: 100%;
+    opacity: 0.9;
+    overflow: hidden;
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.budget-balance-detail-value {
+    display: block;
+    font-size: 0.65rem;
+    line-height: 1.05;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .budget-balance-detail-positive {
-    color: #198754;
+    background: rgba(25, 135, 84, 0.1);
+    border-color: rgba(25, 135, 84, 0.3);
+    color: #146c43;
 }
 
 .budget-balance-detail-negative {
-    color: #e67700;
+    background: rgba(214, 81, 12, 0.11);
+    border-color: rgba(214, 81, 12, 0.32);
+    color: #b54708;
 }
 
 .budget-balance-alert {
     color: #dc3545;
+}
+
+.theme-dark .budget-balance-detail-item,
+body.dark-mode .budget-balance-detail-item,
+[data-theme="dark"] .budget-balance-detail-item {
+    background: rgba(148, 163, 184, 0.13);
+    border-color: rgba(203, 213, 225, 0.28);
+    color: #e2e8f0;
+}
+
+.theme-dark .budget-balance-detail-positive,
+body.dark-mode .budget-balance-detail-positive,
+[data-theme="dark"] .budget-balance-detail-positive {
+    background: rgba(20, 184, 166, 0.16);
+    border-color: rgba(45, 212, 191, 0.4);
+    color: #99f6e4;
+}
+
+.theme-dark .budget-balance-detail-negative,
+body.dark-mode .budget-balance-detail-negative,
+[data-theme="dark"] .budget-balance-detail-negative {
+    background: rgba(245, 158, 11, 0.16);
+    border-color: rgba(251, 191, 36, 0.42);
+    color: #fde68a;
 }
 
 .budget-row-action-edit {

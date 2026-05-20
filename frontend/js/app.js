@@ -7338,17 +7338,23 @@ async function carregarLogoParaPDF() {
         function renderizarDetalheEnvelopeOrcamento(resumo) {
             if (!resumo || (!resumo.temMovimentacao && !resumo.temFilhos && !resumo.temAlerta)) return '';
             const partes = [];
+            const montarMarcador = (rotulo, valor, classe = '') => `
+                <span class="budget-balance-detail-item${classe ? ` ${classe}` : ''}">
+                    <span class="budget-balance-detail-label">${rotulo}</span>
+                    <span class="budget-balance-detail-value">${formatMoney(valor)}</span>
+                </span>
+            `;
             if (resumo.valorOriginal !== resumo.envelopeVisualAjustado) {
-                partes.push(`<span class="budget-balance-detail-item">Orig. ${formatMoney(resumo.valorOriginal)}</span>`);
+                partes.push(montarMarcador('Original', resumo.valorOriginal));
             }
             if (resumo.valorRecebidoPorAlocacao > 0) {
-                partes.push(`<span class="budget-balance-detail-item budget-balance-detail-positive">Rec. ${formatMoney(resumo.valorRecebidoPorAlocacao)}</span>`);
+                partes.push(montarMarcador('Recebido', resumo.valorRecebidoPorAlocacao, 'budget-balance-detail-positive'));
             }
             if (resumo.valorCedidoPorAlocacao > 0) {
-                partes.push(`<span class="budget-balance-detail-item budget-balance-detail-negative">Ced. ${formatMoney(resumo.valorCedidoPorAlocacao)}</span>`);
+                partes.push(montarMarcador('Cedido', resumo.valorCedidoPorAlocacao, 'budget-balance-detail-negative'));
             }
             if (resumo.valorDistribuidoParaFilhos > 0) {
-                partes.push(`<span class="budget-balance-detail-item">Vinc. ${formatMoney(resumo.valorDistribuidoParaFilhos)}</span>`);
+                partes.push(montarMarcador('Vinculado', resumo.valorDistribuidoParaFilhos));
             }
             if (!partes.length && !resumo.temAlerta) return '';
             return `<div class="budget-balance-detail${resumo.temAlerta ? ' budget-balance-alert' : ''}">${partes.join('')}</div>`;
