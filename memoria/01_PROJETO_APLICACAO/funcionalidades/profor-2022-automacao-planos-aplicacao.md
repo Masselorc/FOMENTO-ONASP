@@ -1015,19 +1015,22 @@ altera a origem ativa e não publica.
 A auditoria da fila de revisão foi ajustada para preparar a futura tela
 SISTEMA > Revisão de divergências. A rota
 `GET /api/profor-2022/revisao/auditoria` passou a retornar, além dos
-agrupamentos por status/nível/tipo/convênio, os seguintes contadores:
+agrupamentos por status, nível, tipo de alerta e convênio (observação:
+a agregação/agrupamento por UF ainda não está implementada; a UF é apenas
+deduzida via carteira monitorada pelo número do convênio), os seguintes
+contadores com seus respectivos valores baseline na carga inicial:
 
-- `totalDivergencias`;
-- `totalPendentes`;
-- `totalEmRevisao`;
-- `totalImpeditivas`;
-- `totalBloqueiamPublicacao`;
-- `totalPendentesQueBloqueiamPublicacao`;
-- `totalEmRevisaoQueBloqueiamPublicacao`;
-- `totalComDecisaoResolutiva`;
-- `totalComComentario`;
-- `totalSemDecisaoResolutiva`;
-- `publicacaoLiberada`.
+- `totalDivergencias`: 145 (todas no status `PENDENTE` na carga inicial);
+- `totalPendentes`: 145;
+- `totalEmRevisao`: 0;
+- `totalImpeditivas`: 44 (divergências de gravidade alta/impeditiva);
+- `totalBloqueiamPublicacao`: 48 (divergências que impedem publicação);
+- `totalPendentesQueBloqueiamPublicacao`: 48;
+- `totalEmRevisaoQueBloqueiamPublicacao`: 0;
+- `totalComDecisaoResolutiva`: 0;
+- `totalComComentario`: 0;
+- `totalSemDecisaoResolutiva`: 145;
+- `publicacaoLiberada`: false.
 
 Regra operacional de liberação:
 

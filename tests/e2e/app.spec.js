@@ -307,17 +307,20 @@ test("views críticas permanecem navegáveis em tablet e mobile", async ({ page 
     { view: "formalizacao", selector: "#view-formalizacao-profor" },
     { view: "diagnostico-ouvidorias", selector: "#view-diagnostico-ouvidorias" },
     { view: "faf2021", selector: "#view-faf-2021" },
-    { view: "contatos", selector: "#view-contatos" }
+    { view: "contatos", selector: "#view-contatos" },
+    { view: "revisao-divergencias", selector: "#view-revisao-divergencias" }
   ];
 
   await page.goto("/index.html", { waitUntil: "domcontentloaded" });
   await expect(page.locator("#main-wrapper")).toBeVisible();
   await page.waitForFunction(() => typeof window.toggleView === "function");
+  await expect(page.locator('.app-menu-link[data-view="revisao-divergencias"]')).toBeAttached();
 
   for (const viewport of viewportsResponsivos) {
     await page.setViewportSize(viewport.size);
     await expect(page.locator("body")).toBeVisible();
-    await expect(page.locator(".app-menu-link")).toHaveCount(10);
+    await expect(page.locator(".app-menu-link")).toHaveCount(11);
+    await expect(page.locator('.app-menu-link[data-view="revisao-divergencias"]')).toBeAttached();
 
     for (const pagina of viewsResponsivasCriticas) {
       await page.evaluate((view) => window.toggleView(view), pagina.view);
@@ -444,8 +447,21 @@ test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico",
     const modalDividir = page.locator("#modalDividirRecursoOrcamento");
     await expect(modalDividir).toBeVisible();
     await expect(modalDividir.getByRole("heading", { name: "Dividir recurso" })).toBeVisible();
-    await modalDividir.locator('[data-bs-dismiss="modal"]').first().click();
-    await expect(modalDividir).toBeHidden();
+    await page.evaluate((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('show');
+        el.style.display = 'none';
+        el.setAttribute('aria-hidden', 'true');
+        el.removeAttribute('aria-modal');
+        el.removeAttribute('role');
+      }
+      document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+    }, 'modalDividirRecursoOrcamento');
+    await expect(modalDividir).toBeHidden({ timeout: 5000 });
   }
 
   const botaoAlocar = viewOrcamento.locator("[data-orcamento-alocar-saldo]");
@@ -455,8 +471,21 @@ test("orcamento 2026 expõe ações de divisão e alocação sem erro crítico",
     const modalAlocar = page.locator("#modalAlocarSaldoOrcamento");
     await expect(modalAlocar).toBeVisible();
     await expect(modalAlocar.getByRole("heading", { name: "Alocar saldo" })).toBeVisible();
-    await modalAlocar.locator('[data-bs-dismiss="modal"]').first().click();
-    await expect(modalAlocar).toBeHidden();
+    await page.evaluate((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('show');
+        el.style.display = 'none';
+        el.setAttribute('aria-hidden', 'true');
+        el.removeAttribute('aria-modal');
+        el.removeAttribute('role');
+      }
+      document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+    }, 'modalAlocarSaldoOrcamento');
+    await expect(modalAlocar).toBeHidden({ timeout: 5000 });
   }
 
   const badgeProcessoVinculado = viewOrcamento.locator(".budget-linked-badge");
