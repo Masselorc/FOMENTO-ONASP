@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Padronização da caixa do status da revisão assistida
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit do detalhamento visual.
+- Ponto de atenção: a §16.2.2 listava o `status` em caixa baixa (`pendente`, `aceito`, ...), enquanto a §16.2.4 usava caixa alta (`PENDENTE`, `ACEITO`, ...). Diferença apenas de apresentação, sem erro funcional.
+- Mudanças realizadas (estritamente documentais):
+  - **`profor-2022-automacao-planos-aplicacao.md`**: §16.2.2 passou a listar o `status` em caixa alta; nova subseção §16.2.5 (Convenção de caixa do campo `status`) fixando caixa alta como valor canônico no SQLite e na API — alinhado às tabelas e comandos de saneamento já desenhados. A interface pode exibir o rótulo com qualquer capitalização, mas grava/compara o valor canônico. Níveis (`info`/`aviso`/`impeditivo`) permanecem em caixa baixa, por já serem o padrão dos relatórios e alertas PAD existentes.
+- Decisão registrada: o `status` da revisão assistida é canônico em caixa alta (PENDENTE, ACEITO, REJEITADO, EM_REVISAO, CORRIGIDO, APLICADO, REVERTIDO).
+- Validações executadas:
+  - `npm run validar:syntax` → OK (41 arquivos) — nenhum código alterado.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+- Risco: Nulo. Alteração estritamente documental; nenhum código, banco, migration, frontend, publicação, origem ativa ou decisão de saneamento foi tocado.
+- Rollback: `git revert` do commit; ou `git restore` dos 2 arquivos de memória.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Detalhamento visual da revisão de divergências PAD x memória
 
 - Branch atual: `main`.

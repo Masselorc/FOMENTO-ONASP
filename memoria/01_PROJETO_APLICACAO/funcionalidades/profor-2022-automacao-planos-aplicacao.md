@@ -760,8 +760,8 @@ Cada alerta deve prever, no desenho futuro:
 
 - `tipo`;
 - `nivel`: `info`, `aviso` ou `impeditivo`;
-- `status`: `pendente`, `aceito`, `rejeitado`, `em_revisao`, `corrigido`,
-  `aplicado` ou `revertido`;
+- `status`: `PENDENTE`, `ACEITO`, `REJEITADO`, `EM_REVISAO`, `CORRIGIDO`,
+  `APLICADO` ou `REVERTIDO` (ver convenção em §16.2.5);
 - `campoAfetado`;
 - `valorAnterior`;
 - `valorNovo`;
@@ -904,6 +904,32 @@ Regras transversais do detalhamento visual:
 | Item novo sem rateio | `item_novo_sem_rateio` / `rateio_novo` | Card marca ausência de rateio; ações: definir rateio, revisar depois; bloqueia publicação enquanto pendente. |
 | Item ausente no PAD | `item_ausente_no_pad` / `item_substituido` | Card mostra o item da memória sem correspondência no PAD; ações: confirmar exclusão, vincular substituto, manter em observação, revisar depois. |
 | Quantidade × valor unitário inconsistente | `quantidade_valor_unitario_inconsistente` | Card mostra quantidade, valor unitário e valor previsto; diagnóstico indica possível truncamento do valor unitário exibido (ver §5.4); ação sugerida não altera os totais do PAD. |
+
+#### 16.2.5. Convenção de caixa do campo `status`
+
+O campo `status` da revisão assistida usa **caixa alta** como valor canônico no
+SQLite e na API, alinhado às demais tabelas e comandos de saneamento que vêm
+sendo desenhados. Valores canônicos:
+
+```text
+PENDENTE
+ACEITO
+REJEITADO
+EM_REVISAO
+CORRIGIDO
+APLICADO
+REVERTIDO
+```
+
+A diferença de caixa entre seções anteriores era apenas de apresentação, sem
+impacto funcional. Para evitar ambiguidade na implementação futura:
+
+- o valor persistido e trafegado pela API é sempre em caixa alta;
+- a interface pode exibir o rótulo com a capitalização que preferir, mas deve
+  comparar e gravar o valor canônico em caixa alta;
+- o mesmo critério se aplica aos níveis (`info`, `aviso`, `impeditivo`), que
+  permanecem em caixa baixa por já serem o padrão usado nos relatórios e
+  alertas PAD existentes.
 
 ---
 
