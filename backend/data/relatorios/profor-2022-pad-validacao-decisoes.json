@@ -1,6 +1,6 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-20T19:12:11.614Z",
+    "geradoEm": "2026-05-20T19:26:14.897Z",
     "fonteDecisoes": "backend/data/relatorios/profor-2022-pad-decisoes-saneamento.json",
     "fonteRelatorioPad": "backend/data/relatorios/profor-2022-pad-rateios-dry-run.json",
     "totalErros": 0,

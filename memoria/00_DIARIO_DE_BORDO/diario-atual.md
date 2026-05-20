@@ -1,5 +1,27 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Correção da normalização da coluna Quantidade
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit do indício de valor unitário.
+- Problema: a coluna Quantidade dos arquivos `RelatorioItensDespesasPAD_*.xls` chega como string no formato `"1.0"`, `"57.0"`, `"5700.0"` (ponto = separador decimal). O leitor usava `converterNumeroPad` (normalizador monetário), que trata todo ponto como separador de milhar — inflando `"1.0"` para 10, `"57.0"` para 570, `"5700.0"` para 57000.
+- Mudanças realizadas:
+  - **`profor-pad-normalizacao-service.js`**: nova função `converterQuantidadePad`, separada do normalizador monetário. Trata o ponto (e a vírgula) como separador decimal, sem separador de milhar; aceita número direto, string vazia e valores inválidos. Exportada no módulo.
+  - **`profor-pad-report-reader.js`**: a coluna Quantidade passa a usar `converterQuantidadePad`; Valor Unit, Valor Total Previsto, Valor Total Executado e Saldo continuam com `converterNumeroPad` (inalterados). Nova validação de consistência `quantidade x valorUnitario ≈ valorTotalPrevisto` — alerta `quantidade_valor_unitario_inconsistente`, nível `aviso` para diferença até R$ 1,00 e `impeditivo` acima disso.
+- Critérios de aceite confirmados (itens dos convênios 937782 e 937265):
+  - Desktop para edição de vídeo: quantidade 10 → **1**.
+  - Smartphone mínimo de 128gb: quantidade 20 → **2**.
+  - Switcher de vídeo (937782, linha 47): quantidade 20 → **2**.
+  - Meia militar (937265, linha 51): quantidade 570 → **57**.
+  - Valores unitários e totais previstos inalterados; comparação `valorUnitario` PAD x memória segue funcionando (3 coincidências exatas no 937782, divergência mantida na Meia militar).
+- Contagens após regeneração: 525 itens PAD, 27 sem rateio, 4 coincidências normalizadas, 19 não aptos, 32 ausentes, 8 convênios afetados (inalteradas). Alertas do leitor PAD: 67 — 67 de `quantidade_valor_unitario_inconsistente` (65 avisos de centavos, 2 impeditivos no convênio 937698 com divergência de ~R$ 19). Template: 78 decisões, todas PENDENTE; merge preservou substituições/observações.
+- Validações executadas:
+  - `node --check` nos 2 arquivos alterados → OK; teste unitário de `converterQuantidadePad` (1.0→1, 57.0→57, 5700.0→5700, etc.) → todos OK.
+  - `npm run profor:pad:ler-relatorios:dry-run`, `conferir-rateios:dry-run`, `relatorio-saneamento`, `gerar-template-decisoes-saneamento`, `validar-decisoes-saneamento` → todos OK; validação 0 erros, 78 pendentes.
+  - `npm run validar:syntax` → OK (41 arquivos). `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+- Risco: Baixo. Correção restrita à leitura da coluna Quantidade; demais campos numéricos intactos. Nenhuma escrita em SQLite, frontend, publicação; nenhuma decisão aplicada; origem ativa do planoAplicacao inalterada.
+- Rollback: `git revert` do commit; ou `git restore` dos 2 arquivos de código e regeneração dos relatórios.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Valor unitário como indício de equivalência
 
 - Branch atual: `main`.

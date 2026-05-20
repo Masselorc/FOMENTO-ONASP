@@ -58,6 +58,38 @@ function converterNumeroPad(valor) {
   };
 }
 
+/**
+ * Converte a coluna Quantidade dos relatórios PAD.
+ *
+ * Diferente de converterNumeroPad (uso monetário), aqui o ponto é SEMPRE
+ * separador decimal — os arquivos RelatorioItensDespesasPAD_*.xls exportam a
+ * quantidade no formato "1.0", "57.0", "5700.0", sem separador de milhar.
+ * Tratar o ponto como milhar (como faz a normalização monetária) inflaria
+ * "1.0" para 10, "57.0" para 570, etc.
+ */
+function converterQuantidadePad(valor) {
+  if (valor === null || valor === undefined || valor === "") {
+    return { valor: 0, valido: true };
+  }
+  if (typeof valor === "number") {
+    return { valor: Number.isFinite(valor) ? valor : 0, valido: Number.isFinite(valor) };
+  }
+
+  const texto = limparTextoPad(valor);
+  if (!texto) return { valor: 0, valido: true };
+
+  // Mantém apenas dígitos, ponto, vírgula e sinal; vírgula é tratada como
+  // separador decimal (equivalente ao ponto), sem separador de milhar.
+  const limpo = texto.replace(/[^\d.,-]/g, "").replace(",", ".");
+  const possuiDigito = /\d/.test(limpo);
+  const numero = Number(limpo);
+  const valido = possuiDigito && Number.isFinite(numero);
+  return {
+    valor: valido ? numero : 0,
+    valido,
+  };
+}
+
 function converterDataPad(valor) {
   if (valor instanceof Date && !Number.isNaN(valor.getTime())) {
     return valor.toISOString();
@@ -71,5 +103,6 @@ module.exports = {
   normalizarCodigoNaturezaPad,
   derivarNaturezaPad,
   converterNumeroPad,
+  converterQuantidadePad,
   converterDataPad,
 };

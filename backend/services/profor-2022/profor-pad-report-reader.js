@@ -8,6 +8,7 @@ const {
   normalizarCodigoNaturezaPad,
   derivarNaturezaPad,
   converterNumeroPad,
+  converterQuantidadePad,
   converterDataPad,
 } = require("./profor-pad-normalizacao-service");
 
@@ -208,7 +209,9 @@ function extrairItens(linhas, tabela, contexto, alertas) {
     const codigoNaturezaDespesa = limparTextoPad(linha[tabela.colunas.codigoNaturezaDespesa]);
     const codigoNaturezaNormalizado = normalizarCodigoNaturezaPad(codigoNaturezaDespesa);
     const natureza = derivarNaturezaPad(codigoNaturezaDespesa);
-    const quantidade = converterNumeroPad(linha[tabela.colunas.quantidade]);
+    // Quantidade usa normalizador próprio: nos relatórios PAD o ponto é
+    // separador decimal, não de milhar (ver converterQuantidadePad).
+    const quantidade = converterQuantidadePad(linha[tabela.colunas.quantidade]);
     const valorUnitario = converterNumeroPad(linha[tabela.colunas.valorUnitario]);
     const valorPrevisto = converterNumeroPad(linha[tabela.colunas.valorTotalPrevisto]);
     const valorExecutado = converterNumeroPad(linha[tabela.colunas.valorTotalExecutado]);
@@ -217,6 +220,20 @@ function extrairItens(linhas, tabela, contexto, alertas) {
 
     validarCampoNumerico(alertas, "valorTotalPrevisto", valorPrevisto, { ...contexto, linha: linhaPlanilha });
     validarCampoNumerico(alertas, "valorTotalExecutado", valorExecutado, { ...contexto, linha: linhaPlanilha });
+
+    // Consistência quantidade x valor unitário x valor total previsto.
+    const previstoCalculado = arredondar(quantidade.valor * valorUnitario.valor);
+    const diferencaPrevisto = Math.abs(previstoCalculado - valorPrevisto.valor);
+    if (quantidade.valor > 0 && valorUnitario.valor > 0 && diferencaPrevisto > TOLERANCIA_CENTAVOS) {
+      alertas.push(criarAlerta({
+        tipo: "quantidade_valor_unitario_inconsistente",
+        nivel: diferencaPrevisto <= LIMITE_AVISO_DIFERENCA ? "aviso" : "impeditivo",
+        ...contexto,
+        linha: linhaPlanilha,
+        detalhe: `Quantidade (${quantidade.valor}) x valor unitário (${valorUnitario.valor}) = `
+          + `${previstoCalculado}, diverge do valor total previsto informado (${valorPrevisto.valor}).`,
+      }));
+    }
 
     if (natureza === "NAO_CLASSIFICADO") {
       alertas.push(criarAlerta({
