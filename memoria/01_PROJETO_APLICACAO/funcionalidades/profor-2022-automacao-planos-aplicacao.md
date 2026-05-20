@@ -813,6 +813,98 @@ em dados saneados.
 > `memoria/08_ROTAS_BANCO_API/schema-banco.md`. Nenhuma tabela ou migration
 > deve ser criada nesta etapa.
 
+#### 16.2.4. Detalhamento visual — SISTEMA > Revisão de divergências PAD x memória
+
+Esta seção detalha o **padrão visual futuro** da funcionalidade. Continua sendo
+funcionalidade futura: não deve haver implementação de front-end nem criação de
+componentes nesta etapa.
+
+A interface deverá trabalhar em **três níveis**:
+
+1. lista resumida de alertas;
+2. card comparativo Antes × Depois;
+3. balão/pop-up ou painel lateral de decisão.
+
+**Nível 1 — Lista resumida de alertas.**
+
+A lista deve permitir filtros por: `status`, `nivel`, convênio, UF, `tipo` e
+bloqueio de publicação. Cada divergência exibe:
+
+- status visual: `PENDENTE`, `ACEITO`, `REJEITADO`, `EM_REVISAO`, `CORRIGIDO`,
+  `APLICADO` ou `REVERTIDO`;
+- nível: `info`, `aviso` ou `impeditivo`.
+
+**Nível 2 — Card comparativo Antes × Depois.**
+
+O card principal compara lado a lado:
+
+- `ANTES` — memória atual;
+- `DEPOIS` — PAD novo.
+
+Campos exibidos no card:
+
+```text
+convênio
+UF
+item
+campo divergente
+valor anterior
+valor novo
+diferença
+fonte anterior
+fonte nova
+natureza
+quantidade
+valor unitário
+valor previsto
+valor executado
+saldo
+impacto na reconstrução
+bloqueia publicação (sim/não)
+```
+
+O card deve conter um bloco de **diagnóstico automático**:
+
+- tipo do alerta;
+- motivo provável;
+- evidências;
+- risco de falso positivo;
+- ação sugerida.
+
+**Nível 3 — Painel/balão de decisão.**
+
+O painel lateral (ou balão/pop-up) deve permitir as ações, conforme o tipo do
+alerta:
+
+- aceitar atualização;
+- rejeitar atualização;
+- manter valor anterior;
+- corrigir manualmente;
+- definir rateio;
+- vincular item antigo;
+- confirmar exclusão;
+- vincular substituto;
+- revisar depois;
+- ver detalhes técnicos.
+
+Regras transversais do detalhamento visual:
+
+- toda decisão deve exigir ou permitir justificativa, conforme o tipo e o
+  nível do alerta;
+- toda decisão gera log/auditoria (ver §16.2.3);
+- a experiência visual esperada é semelhante a um controle de alterações:
+  valor anterior, valor novo, explicação curta e botões de decisão.
+
+**Exemplos de uso da interface:**
+
+| Cenário | Tipo de alerta | Comportamento esperado |
+| --- | --- | --- |
+| Descrição diverge só por acentuação | `descricao_divergente` / `equivalencia_por_descricao_normalizada` | Card mostra ANTES e DEPOIS da descrição; diagnóstico aponta risco de falso positivo (acentuação); ações: aceitar equivalência, rejeitar, vincular item antigo, revisar depois. |
+| Valor diverge entre memória e PAD | `valor_diferente` | Card mostra valor anterior, valor novo e diferença; ações: aceitar atualização, manter valor anterior, corrigir manualmente. |
+| Item novo sem rateio | `item_novo_sem_rateio` / `rateio_novo` | Card marca ausência de rateio; ações: definir rateio, revisar depois; bloqueia publicação enquanto pendente. |
+| Item ausente no PAD | `item_ausente_no_pad` / `item_substituido` | Card mostra o item da memória sem correspondência no PAD; ações: confirmar exclusão, vincular substituto, manter em observação, revisar depois. |
+| Quantidade × valor unitário inconsistente | `quantidade_valor_unitario_inconsistente` | Card mostra quantidade, valor unitário e valor previsto; diagnóstico indica possível truncamento do valor unitário exibido (ver §5.4); ação sugerida não altera os totais do PAD. |
+
 ---
 
 ## 17. Fases de implementação recomendadas

@@ -1,5 +1,25 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Detalhamento visual da revisão de divergências PAD x memória
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da regra futura de revisão assistida e auditoria.
+- Objetivo: detalhar o padrão visual futuro da funcionalidade SISTEMA > Revisão de divergências PAD x memória. Alteração estritamente documental — sem implementação.
+- Mudanças realizadas:
+  - **`profor-2022-automacao-planos-aplicacao.md`**: nova subseção §16.2.4 (Detalhamento visual). Registra a interface futura em três níveis: (1) lista resumida de alertas com filtros por status/nível/convênio/UF/tipo/bloqueio e status visual em 7 estados; (2) card comparativo Antes × Depois, com todos os campos a exibir e bloco de diagnóstico automático (tipo, motivo provável, evidências, risco de falso positivo, ação sugerida); (3) painel/balão de decisão com as 10 ações. Inclui regras transversais (justificativa conforme tipo/nível, log/auditoria, experiência tipo controle de alterações) e uma tabela com 5 exemplos de uso (descrição por acentuação, valor, item novo sem rateio, item ausente, quantidade × valor unitário).
+- Decisões registradas:
+  - Definido que a interface futura trabalhará em três níveis: lista resumida, card comparativo Antes × Depois e painel/balão de decisão.
+  - A lista permite filtros por status, nível, convênio, UF, tipo e bloqueio de publicação; cada divergência exibe status visual (PENDENTE/ACEITO/REJEITADO/EM_REVISAO/CORRIGIDO/APLICADO/REVERTIDO) e nível (info/aviso/impeditivo).
+  - O card compara ANTES (memória) × DEPOIS (PAD) e traz diagnóstico automático.
+  - O painel expõe as ações de decisão; toda decisão exige ou permite justificativa e gera log/auditoria.
+  - Não houve implementação de front-end, componentes, banco, migration ou aplicação de decisões nesta etapa.
+- Validações executadas:
+  - `npm run validar:syntax` → OK (41 arquivos) — nenhum código alterado, validação por garantia.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+  - Confirmado que apenas arquivos de documentação/memória foram alterados.
+- Risco: Nulo. Alteração estritamente documental; nenhum código, banco, migration, frontend, publicação, origem ativa do planoAplicacao ou decisão de saneamento foi tocado.
+- Rollback: `git revert` do commit; ou `git restore` dos 2 arquivos de memória.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Regra futura de revisão assistida e auditoria de divergências
 
 - Branch atual: `main`.
