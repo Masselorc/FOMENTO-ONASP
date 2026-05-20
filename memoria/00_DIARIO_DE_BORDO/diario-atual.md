@@ -1,5 +1,29 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Template editável de decisões (Etapa C)
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da Etapa B.
+- Objetivo: criar um arquivo editável por humano para registrar decisões de saneamento, pré-preenchido com as pendências atuais e sem nenhuma decisão automática.
+- Mudanças realizadas:
+  - **Serviço** `profor-pad-saneamento-service.js` estendido com a geração/merge do template: `derivarSugestaoArea`, `montarEntradasEquivalencias/RateiosNovos/Correcoes/Ausencias`, `mesclarLista` e `gerarTemplateDecisoesSaneamento`.
+  - **Novo script** `backend/scripts/gerar-template-decisoes-saneamento-pad-profor-2022.js`.
+  - `package.json`: novo script `profor:pad:gerar-template-decisoes-saneamento`.
+  - `scripts/validar-syntax.js`: adicionado o novo script.
+- Arquivo gerado: `backend/data/relatorios/profor-2022-pad-decisoes-saneamento.json` (78 entradas: 4 equivalências, 23 rateios novos, 19 correções de não aptos, 32 ausências; substituições/observações vazias — criadas só pelo humano).
+- Decisões de design:
+  - Os 4 itens de coincidência apenas normalizada vão para `equivalenciasConfirmadas` e são **excluídos** de `rateiosNovos` (27 sem rateio = 4 equivalências + 23 rateios novos), pois não devem receber rateio novo antes da equivalência ser decidida.
+  - `sugestaoRateio` preenchido (7 de 23) quando a descrição contém uma única área (OUVIDORIA/CORREGEDORIA/ESCOLA) — campo informativo; `decisao` permanece `PENDENTE`.
+  - As 19 correções recebem `alertasOriginais` vindos do relatório detalhado da Etapa B.
+  - Merge idempotente por `id`: regeneração preserva `decisao`/`acao`/`justificativa`/`rateio`/`rateiosCorrigidos`/`descricaoItemPadSubstituto`/`validadoPor`/`validadoEm`; entradas obsoletas não são apagadas, vão para `metadados.entradasObsoletas`. `geradoEm` fixo, `atualizadoEm` por execução.
+- Validações executadas:
+  - `node --check` no script novo → OK. `npm run validar:syntax` → OK (39 arquivos).
+  - `npm run profor:pad:gerar-template-decisoes-saneamento` → 4/23/19/32, tudo PENDENTE.
+  - Teste de idempotência: editada uma decisão à mão e regenerado → decisão, rateio e `validadoPor` preservados; `geradoEm` mantido; `atualizadoEm` avançou. Template restaurado ao estado limpo antes do commit.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+- Risco: Baixo. Geração de arquivo de dados; serviço somente leitura no banco. Nenhuma escrita em SQLite, frontend ou publicação.
+- Rollback: `git revert` do commit da Etapa C.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Relatório detalhado com causa original (Etapa B)
 
 - Branch atual: `main`.

@@ -2,10 +2,23 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const db = require("../../db/database");
+const { normalizarTextoProfor } = require("./profor-plano-aplicacao-service");
 
 const CAMINHO_SANEAMENTO_PADRAO = "backend/data/relatorios/profor-2022-pad-saneamento.json";
+const CAMINHO_SANEAMENTO_DETALHADO_PADRAO = "backend/data/relatorios/profor-2022-pad-saneamento-detalhado.json";
+const CAMINHO_DECISOES_PADRAO = "backend/data/relatorios/profor-2022-pad-decisoes-saneamento.json";
 
 const ORDEM_NIVEL_ALERTA = { impeditivo: 0, aviso: 1, info: 2 };
+
+const VERSAO_ESQUEMA_DECISOES = 1;
+const DECISAO_PENDENTE = "PENDENTE";
+
+// Áreas reconhecidas em descrições de itens PAD para sugestão (nunca decisão final).
+const PALAVRAS_AREA = [
+  { regex: /\bOUVIDORIA\b/, area: "OUVIDORIA" },
+  { regex: /\bCORREGEDORIA\b/, area: "CORREGEDORIA" },
+  { regex: /\bESCOLA\b/, area: "ESCOLA PENAL" },
+];
 
 function repoRootPadrao() {
   return path.resolve(__dirname, "../../..");
@@ -379,8 +392,272 @@ function salvarSaneamentoDetalhado(relatorio, { caminhoJson, caminhoMd }) {
   fs.writeFileSync(caminhoMd, montarMarkdownDetalhado(relatorio), "utf8");
 }
 
+/* ------------------------------------------------------------------ *
+ * Etapa C — Template de decisões de saneamento
+ * ------------------------------------------------------------------ */
+
+/**
+ * Sugere uma área de rateio quando a descrição contém claramente o nome de
+ * uma área. É APENAS sugestão informativa — nunca decisão final.
+ */
+function derivarSugestaoArea(descricao) {
+  const normalizada = normalizarTextoProfor(descricao);
+  if (!normalizada) return null;
+  const encontradas = PALAVRAS_AREA
+    .filter((item) => item.regex.test(normalizada))
+    .map((item) => item.area);
+  if (encontradas.length !== 1) return null; // ambíguo ou nenhum → sem sugestão
+  return encontradas[0];
+}
+
+/** Monta as entradas de equivalência (4 coincidências apenas normalizadas). */
+function montarEntradasEquivalencias(saneamento) {
+  return garantirArray(saneamento.itensPadCoincidemApenasPorDescricaoNormalizada)
+    .map((item) => ({
+      id: chaveItemNormalizada(item.chaveItem),
+      numeroConvenio: item.numeroConvenio || null,
+      uf: item.uf || null,
+      descricaoPad: item.descricaoOriginal || null,
+      descricaoItemConhecido: item.descricaoOriginalReferencia || null,
+      itemConhecidoNormalizadoId: item.itemConhecidoNormalizadoId || null,
+      decisao: DECISAO_PENDENTE,
+      acao: null,
+      justificativa: "",
+      validadoPor: null,
+      validadoEm: null,
+    }))
+    .sort((a, b) => String(a.id).localeCompare(String(b.id), "pt-BR"));
+}
+
+/**
+ * Monta as entradas de rateios novos para itens PAD sem rateio.
+ * Exclui os itens de coincidência apenas normalizada (tratados em
+ * equivalenciasConfirmadas — não recebem rateio novo até a equivalência decidida).
+ */
+function montarEntradasRateiosNovos(saneamento) {
+  return garantirArray(saneamento.itensPadSemRateio)
+    .filter((item) => item.motivo !== "descricao_original_divergente_da_memoria_rateio")
+    .map((item) => ({
+      id: chaveItemNormalizada(item.chaveItem),
+      numeroConvenio: item.numeroConvenio || null,
+      uf: item.uf || null,
+      descricaoPad: item.descricaoOriginal || null,
+      natureza: item.natureza || null,
+      codigoNaturezaDespesa: item.codigoNaturezaDespesa || null,
+      quantidadePad: item.quantidade ?? null,
+      valorTotalPrevistoPad: item.valorTotalPrevisto ?? null,
+      sugestaoRateio: derivarSugestaoArea(item.descricaoOriginal),
+      decisao: DECISAO_PENDENTE,
+      acao: null,
+      rateio: [],
+      justificativa: "",
+      validadoPor: null,
+      validadoEm: null,
+    }))
+    .sort((a, b) => String(a.id).localeCompare(String(b.id), "pt-BR"));
+}
+
+/** Monta as entradas de correção de itens não aptos (19), com alertas da Etapa B. */
+function montarEntradasCorrecoes(saneamento, detalhadoPorChave) {
+  return garantirArray(saneamento.itensConhecidosNaoAptos)
+    .map((item) => {
+      const chave = chaveItemNormalizada(item.chaveItem);
+      const detalhado = detalhadoPorChave.get(chave) || null;
+      return {
+        id: chave,
+        numeroConvenio: item.numeroConvenio || null,
+        uf: item.uf || null,
+        descricaoItemConhecido: item.descricaoOriginal || null,
+        itemConhecidoId: item.itemConhecidoId || detalhado?.itemConhecidoId || null,
+        possuiPendenciaImpeditiva: Boolean(
+          item.possuiPendenciaImpedativa ?? detalhado?.possuiPendenciaImpeditiva
+        ),
+        alertasOriginais: detalhado ? detalhado.alertasOriginais : [],
+        decisao: DECISAO_PENDENTE,
+        acao: null,
+        rateiosCorrigidos: [],
+        justificativa: "",
+        validadoPor: null,
+        validadoEm: null,
+      };
+    })
+    .sort((a, b) => String(a.id).localeCompare(String(b.id), "pt-BR"));
+}
+
+/** Monta as entradas de validação de ausências (32 itens conhecidos ausentes no PAD). */
+function montarEntradasAusencias(saneamento) {
+  return garantirArray(saneamento.itensConhecidosAusentesNoPad)
+    .map((item) => ({
+      id: chaveItemNormalizada(item.chaveItem),
+      numeroConvenio: item.numeroConvenio || null,
+      uf: item.uf || null,
+      descricaoItemConhecido: item.descricaoOriginalReferencia || null,
+      itemConhecidoId: item.id || null,
+      totalRateiosAtivos: item.totalRateiosAtivos ?? null,
+      decisao: DECISAO_PENDENTE,
+      acao: null,
+      descricaoItemPadSubstituto: null,
+      justificativa: "",
+      validadoPor: null,
+      validadoEm: null,
+    }))
+    .sort((a, b) => String(a.id).localeCompare(String(b.id), "pt-BR"));
+}
+
+/** Campos preenchidos pelo humano que o merge deve preservar entre regenerações. */
+const CAMPOS_DECISAO_HUMANA = [
+  "decisao",
+  "acao",
+  "justificativa",
+  "rateio",
+  "rateiosCorrigidos",
+  "descricaoItemPadSubstituto",
+  "validadoPor",
+  "validadoEm",
+];
+
+/**
+ * Mescla uma lista recém-gerada com a lista existente, por `id`.
+ * Preserva os campos de decisão humana; atualiza apenas campos descritivos.
+ * Devolve { lista, obsoletas } — entradas existentes sem correspondência viram obsoletas.
+ */
+function mesclarLista(secao, listaNova, listaExistente) {
+  const existentePorId = new Map(
+    garantirArray(listaExistente).map((item) => [String(item?.id ?? ""), item])
+  );
+  const idsNovos = new Set(listaNova.map((item) => String(item.id)));
+
+  const lista = listaNova.map((entradaNova) => {
+    const anterior = existentePorId.get(String(entradaNova.id));
+    if (!anterior) return entradaNova;
+    const mesclada = { ...entradaNova };
+    for (const campo of CAMPOS_DECISAO_HUMANA) {
+      if (Object.prototype.hasOwnProperty.call(anterior, campo) && anterior[campo] !== undefined) {
+        mesclada[campo] = anterior[campo];
+      }
+    }
+    return mesclada;
+  });
+
+  const obsoletas = garantirArray(listaExistente)
+    .filter((item) => !idsNovos.has(String(item?.id ?? "")))
+    .map((item) => ({
+      secao,
+      id: item?.id ?? null,
+      decisao: item?.decisao ?? null,
+      justificativa: item?.justificativa ?? null,
+      motivo: "Entrada não corresponde a nenhuma pendência do saneamento atual.",
+    }));
+
+  return { lista, obsoletas };
+}
+
+/**
+ * Gera (ou atualiza, de forma idempotente) o template de decisões de saneamento.
+ * Se já existir um arquivo, preserva as decisões humanas mesclando por `id`.
+ */
+function gerarTemplateDecisoesSaneamento(opcoes = {}) {
+  const repoRoot = opcoes.repoRoot || repoRootPadrao();
+  const base = carregarSaneamentoBase({ repoRoot, caminhoSaneamento: opcoes.caminhoSaneamento });
+  const saneamento = base.dados;
+
+  // Relatório detalhado (Etapa B) é opcional: fornece os alertasOriginais.
+  const caminhoDetalhado = path.join(
+    repoRoot,
+    opcoes.caminhoSaneamentoDetalhado || CAMINHO_SANEAMENTO_DETALHADO_PADRAO
+  );
+  const detalhadoPorChave = new Map();
+  let fonteSaneamentoDetalhado = null;
+  if (fs.existsSync(caminhoDetalhado)) {
+    const detalhado = lerJson(caminhoDetalhado);
+    fonteSaneamentoDetalhado = opcoes.caminhoSaneamentoDetalhado || CAMINHO_SANEAMENTO_DETALHADO_PADRAO;
+    for (const item of garantirArray(detalhado.itensNaoAptosDetalhados)) {
+      detalhadoPorChave.set(chaveItemNormalizada(item.chaveItem), item);
+    }
+  }
+
+  const caminhoDecisoes = path.join(repoRoot, opcoes.caminhoDecisoes || CAMINHO_DECISOES_PADRAO);
+  const existente = fs.existsSync(caminhoDecisoes) ? lerJson(caminhoDecisoes) : null;
+
+  const equivalencias = mesclarLista(
+    "equivalenciasConfirmadas",
+    montarEntradasEquivalencias(saneamento),
+    existente?.equivalenciasConfirmadas
+  );
+  const rateiosNovos = mesclarLista(
+    "rateiosNovos",
+    montarEntradasRateiosNovos(saneamento),
+    existente?.rateiosNovos
+  );
+  const correcoes = mesclarLista(
+    "correcoesItensNaoAptos",
+    montarEntradasCorrecoes(saneamento, detalhadoPorChave),
+    existente?.correcoesItensNaoAptos
+  );
+  const ausencias = mesclarLista(
+    "ausenciasValidadas",
+    montarEntradasAusencias(saneamento),
+    existente?.ausenciasValidadas
+  );
+
+  // substituicoes e observacoes são criadas só pelo humano: nunca pré-populadas.
+  const substituicoes = garantirArray(existente?.substituicoes);
+  const observacoes = garantirArray(existente?.observacoes);
+
+  const entradasObsoletas = [
+    ...equivalencias.obsoletas,
+    ...rateiosNovos.obsoletas,
+    ...correcoes.obsoletas,
+    ...ausencias.obsoletas,
+  ];
+
+  const agora = new Date().toISOString();
+  const metadados = {
+    versaoEsquema: VERSAO_ESQUEMA_DECISOES,
+    geradoEm: existente?.metadados?.geradoEm || agora,
+    atualizadoEm: agora,
+    origem: "relatorio-saneamento-pad",
+    observacao: "Template para decisões humanas de saneamento PAD x rateios. "
+      + "Não edite o campo 'id'. 'decisao' deve permanecer 'PENDENTE' até validação humana. "
+      + "'sugestaoRateio' é informativo e não substitui a decisão.",
+    fonteSaneamento: base.caminhoRelativo,
+    fonteSaneamentoDetalhado,
+    totais: {
+      equivalenciasConfirmadas: equivalencias.lista.length,
+      rateiosNovos: rateiosNovos.lista.length,
+      correcoesItensNaoAptos: correcoes.lista.length,
+      ausenciasValidadas: ausencias.lista.length,
+      substituicoes: substituicoes.length,
+      observacoes: observacoes.length,
+    },
+    entradasObsoletas,
+  };
+
+  return {
+    caminhoDecisoes,
+    template: {
+      metadados,
+      equivalenciasConfirmadas: equivalencias.lista,
+      rateiosNovos: rateiosNovos.lista,
+      correcoesItensNaoAptos: correcoes.lista,
+      ausenciasValidadas: ausencias.lista,
+      substituicoes,
+      observacoes,
+    },
+  };
+}
+
+/** Persiste o template de decisões em JSON. */
+function salvarTemplateDecisoes(caminhoDecisoes, template) {
+  escreverArquivoJson(caminhoDecisoes, template);
+}
+
 module.exports = {
   CAMINHO_SANEAMENTO_PADRAO,
+  CAMINHO_SANEAMENTO_DETALHADO_PADRAO,
+  CAMINHO_DECISOES_PADRAO,
+  VERSAO_ESQUEMA_DECISOES,
+  DECISAO_PENDENTE,
   carregarSaneamentoBase,
   carregarAlertasPorChaveItem,
   carregarItensConhecidosPorChave,
@@ -389,4 +666,7 @@ module.exports = {
   montarSaneamentoDetalhado,
   montarMarkdownDetalhado,
   salvarSaneamentoDetalhado,
+  derivarSugestaoArea,
+  gerarTemplateDecisoesSaneamento,
+  salvarTemplateDecisoes,
 };

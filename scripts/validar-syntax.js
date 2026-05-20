@@ -30,6 +30,7 @@ const ARQUIVOS = [
   "backend/scripts/conferir-itens-pad-rateios-profor-2022.js",
   "backend/scripts/gerar-relatorio-saneamento-pad-profor-2022.js",
   "backend/scripts/gerar-relatorio-saneamento-detalhado-pad-profor-2022.js",
+  "backend/scripts/gerar-template-decisoes-saneamento-pad-profor-2022.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
   "frontend/js/core/ui-components.js",

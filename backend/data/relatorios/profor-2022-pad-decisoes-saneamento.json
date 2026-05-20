@@ -1,0 +1,1544 @@
+{
+  "metadados": {
+    "versaoEsquema": 1,
+    "geradoEm": "2026-05-20T18:50:07.464Z",
+    "atualizadoEm": "2026-05-20T18:50:07.464Z",
+    "origem": "relatorio-saneamento-pad",
+    "observacao": "Template para decisões humanas de saneamento PAD x rateios. Não edite o campo 'id'. 'decisao' deve permanecer 'PENDENTE' até validação humana. 'sugestaoRateio' é informativo e não substitui a decisão.",
+    "fonteSaneamento": "backend/data/relatorios/profor-2022-pad-saneamento.json",
+    "fonteSaneamentoDetalhado": "backend/data/relatorios/profor-2022-pad-saneamento-detalhado.json",
+    "totais": {
+      "equivalenciasConfirmadas": 4,
+      "rateiosNovos": 23,
+      "correcoesItensNaoAptos": 19,
+      "ausenciasValidadas": 32,
+      "substituicoes": 0,
+      "observacoes": 0
+    },
+    "entradasObsoletas": []
+  },
+  "equivalenciasConfirmadas": [
+    {
+      "id": "937265::MEIA MILITAR",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoPad": "Meia militar",
+      "descricaoItemConhecido": "Meia Militar",
+      "itemConhecidoNormalizadoId": 154,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoPad": "Desktop para edição de vídeo",
+      "descricaoItemConhecido": "Desktop para edição de video",
+      "itemConhecidoNormalizadoId": 97,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoPad": "Smartphone mínimo de 128gb de memória in",
+      "descricaoItemConhecido": "Smartphone minimo de 128gb de memória in",
+      "itemConhecidoNormalizadoId": 111,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::SWITCHER DE VIDEO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoPad": "Switcher de vídeo",
+      "descricaoItemConhecido": "Switcher de video",
+      "itemConhecidoNormalizadoId": 112,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    }
+  ],
+  "rateiosNovos": [
+    {
+      "id": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 9501,
+      "sugestaoRateio": "ESCOLA PENAL",
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Ar condicionado split, capacidade de 12.",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 20,
+      "valorTotalPrevistoPad": 3740,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Ar condicionado tipo split, capacidade 3",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 4560,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Ar-condicionado tipo Split, capacidade d",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 20,
+      "valorTotalPrevistoPad": 2699.24,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Cafeteira elétrica 1,0 litros bivolt",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 20,
+      "valorTotalPrevistoPad": 600,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 30,
+      "valorTotalPrevistoPad": 24320.25,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Equipamentos de rede (switches e roteado",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 30,
+      "valorTotalPrevistoPad": 1050,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Forno de Micro-ondas a partir de- 32 lit",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 726,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Forno de Microondas - 20L - (OUVIDORIA)",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 500,
+      "sugestaoRateio": "OUVIDORIA",
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Fragmentadora e papel - Corregedoria",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 20,
+      "valorTotalPrevistoPad": 3420,
+      "sugestaoRateio": "CORREGEDORIA",
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 800,
+      "sugestaoRateio": "OUVIDORIA",
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Impressora multifuncional (OUVIDORIA)",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 20,
+      "valorTotalPrevistoPad": 6100,
+      "sugestaoRateio": "OUVIDORIA",
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "kit com 2 Poltronas (CORREGEDORIA).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 1254.79,
+      "sugestaoRateio": "CORREGEDORIA",
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 60,
+      "valorTotalPrevistoPad": 4200,
+      "sugestaoRateio": "OUVIDORIA",
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 40,
+      "valorTotalPrevistoPad": 22000,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::QUADRO LOUSA BRANCA",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Quadro Lousa branca",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 30,
+      "valorTotalPrevistoPad": 3196.2,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Refrigerador frigobar, com capacidade no",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 20,
+      "valorTotalPrevistoPad": 2844,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::SALDO RESIDUAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Saldo Residual",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 9506.54,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Televisão Smart LED, mínimo de 50 polega",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 10,
+      "valorTotalPrevistoPad": 2000,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoPad": "Televisão smart LED, minimo de 50 polegadas",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidadePad": 30,
+      "valorTotalPrevistoPad": 6524.58,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoPad": "Contratação de 01 (um) Supervisor por 12",
+      "natureza": "CUSTEIO",
+      "codigoNaturezaDespesa": "33903799",
+      "quantidadePad": 120,
+      "valorTotalPrevistoPad": 89532,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoPad": "Contratação de 02 (dois) Auxiliares Admi",
+      "natureza": "CUSTEIO",
+      "codigoNaturezaDespesa": "33903799",
+      "quantidadePad": 120,
+      "valorTotalPrevistoPad": 102168,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoPad": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905200",
+      "quantidadePad": 20,
+      "valorTotalPrevistoPad": 7199.98,
+      "sugestaoRateio": null,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateio": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    }
+  ],
+  "correcoesItensNaoAptos": [
+    {
+      "id": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "descricaoItemConhecido": "Monitor LED, mínimo 27, conexões DVI-D (",
+      "itemConhecidoId": 34,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (3950.68) diverge do saldo da planilha (7221.32).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "GO",
+            "linha": 23
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "descricaoItemConhecido": "Notebook; Sistema Operacional: Proprietá",
+      "itemConhecidoId": 48,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (199.83) diverge do saldo da planilha (3949.83).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "GO",
+            "linha": 37
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "descricaoItemConhecido": "Tablet, Display Super AMOLED 14,6, TFT,",
+      "itemConhecidoId": 49,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (-5131.23) diverge do saldo da planilha (83.33).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "GO",
+            "linha": 38
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937265::CALCA TATICA",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoItemConhecido": "Calça Tática",
+      "itemConhecidoId": 131,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (6610.53) diverge do saldo da planilha (9915.8).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 8
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (9915.8) diverge do saldo da planilha (6610.53).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 9
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937265::CINTO TATICO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoItemConhecido": "Cinto Tático",
+      "itemConhecidoId": 135,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (6273.98) diverge do saldo da planilha (4182.65).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 13
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (4182.65) diverge do saldo da planilha (6273.98).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 14
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937265::COTURNO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoItemConhecido": "Coturno",
+      "itemConhecidoId": 136,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (10686) diverge do saldo da planilha (7124).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 15
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (7124) diverge do saldo da planilha (10686).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 16
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoItemConhecido": "Geladeira minimo 410L Frost Free 110v Branca",
+      "itemConhecidoId": 164,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (890.01) diverge do saldo da planilha (3890).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 57
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (890.01) diverge do saldo da planilha (3890).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 58
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "descricaoItemConhecido": "ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp",
+      "itemConhecidoId": 370,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (0) diverge do saldo da planilha (1344).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "TO",
+            "linha": 38
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "descricaoItemConhecido": "ETAPA 2 - CORREGEDORIA - Nobreak: Peça/",
+      "itemConhecidoId": 375,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (0) diverge do saldo da planilha (1344).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "TO",
+            "linha": 44
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "descricaoItemConhecido": "ETAPA 2 - CORREGEDORIA - Tablet, tela su",
+      "itemConhecidoId": 386,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (21868) diverge do saldo da planilha (2422).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "TO",
+            "linha": 56
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937817::CAPACETE PROTETOR",
+      "numeroConvenio": "937817",
+      "uf": "RJ",
+      "descricaoItemConhecido": "CAPACETE PROTETOR",
+      "itemConhecidoId": 393,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (4340.07) diverge do saldo da planilha (-539.73).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "RJ",
+            "linha": 8
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938128::AGENDA PLANNER",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoItemConhecido": "Agenda Planner",
+      "itemConhecidoId": 214,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 42
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 42
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoItemConhecido": "Câmera Digital, para a Ouvidoria",
+      "itemConhecidoId": 217,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 46
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoItemConhecido": "Contratação de serviços de digitalização",
+      "itemConhecidoId": 215,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 44
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 44
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoItemConhecido": "Estação de Trabalho (Mesa em L), para Ou",
+      "itemConhecidoId": 218,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 47
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938128::GAVETEIROS, OUVIDORIA",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoItemConhecido": "Gaveteiros, Ouvidoria",
+      "itemConhecidoId": 219,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 48
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938128::SALDO RESIDUAL",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoItemConhecido": "Saldo Residual",
+      "itemConhecidoId": 212,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 43
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 43
+          }
+        },
+        {
+          "tipo": "valor_unitario_divergente_na_mesma_chave",
+          "nivel": "aviso",
+          "detalhe": "Mesma chave operacional apareceu com valores unitarios diferentes: 22279.73, 71.36.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 40
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoItemConhecido": "Serviço de operacionalização de sistema",
+      "itemConhecidoId": 216,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 45
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 45
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "938277::SALDO REMANESCENTE",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "descricaoItemConhecido": "SALDO REMANESCENTE",
+      "itemConhecidoId": 231,
+      "possuiPendenciaImpeditiva": true,
+      "alertasOriginais": [
+        {
+          "tipo": "natureza_conflitante",
+          "nivel": "impeditivo",
+          "detalhe": "Mesma descricao apareceu com naturezas diferentes.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MA",
+            "linha": 13
+          }
+        },
+        {
+          "tipo": "valor_unitario_divergente_na_mesma_chave",
+          "nivel": "aviso",
+          "detalhe": "Mesma chave operacional apareceu com valores unitarios diferentes: 5924.45, 7267.88.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MA",
+            "linha": 13
+          }
+        }
+      ],
+      "decisao": "PENDENTE",
+      "acao": null,
+      "rateiosCorrigidos": [],
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    }
+  ],
+  "ausenciasValidadas": [
+    {
+      "id": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Ar condicionado Split 24000 BTUs (CORREG",
+      "itemConhecidoId": 449,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Ar condicionado Split 36000 BTUs (ESCOLA)",
+      "itemConhecidoId": 450,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
+      "itemConhecidoId": 447,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Cadeira Longarina plástica 03 Lugares -",
+      "itemConhecidoId": 451,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Cadeira Secretária Fixa, Preta, pé palit",
+      "itemConhecidoId": 452,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::CAFETEIRA ELETRICA TRADICIONAL INDUSTRIA",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Cafeteira Elétrica Tradicional Industria",
+      "itemConhecidoId": 453,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::COMPUTADOR DESKTOP (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Computador Desktop (OUVIDORIA)",
+      "itemConhecidoId": 454,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::FORNO DE MICROONDAS - 20L BRANCO (OUVID",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Forno de Microondas - 20L Branco (OUVID",
+      "itemConhecidoId": 455,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Forno de Microondas - 32 litros - Branco",
+      "itemConhecidoId": 456,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::FRIGOBAR 71L (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Frigobar 71L (OUVIDORIA)",
+      "itemConhecidoId": 458,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::GELADEIRA FROST FREE DUPLEX 400 LITROS (",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Geladeira frost free duplex 400 litros (",
+      "itemConhecidoId": 459,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::GRAVADOR DE AUDIO DIGITAL 32GB (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Gravador de áudio digital 32GB (OUVIDORIA)",
+      "itemConhecidoId": 460,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::HD EXTERNO 2TB (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "HD Externo 2TB (OUVIDORIA)",
+      "itemConhecidoId": 461,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::IMPRESSORA MULTIFUNCIONAL TANQUE DE TIN",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Impressora multifuncional Tanque de Tin",
+      "itemConhecidoId": 462,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::KIT VIDEOCONFERENCIA (CORREGEDORIA - 03",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Kit videoconferência (CORREGEDORIA - 03",
+      "itemConhecidoId": 464,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::MESA ESCRITORIO REDONDA - 1,20M (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
+      "itemConhecidoId": 465,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::NOBREAK 1200VA (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Nobreak 1200VA (OUVIDORIA)",
+      "itemConhecidoId": 467,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::NOTEBOOK (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Notebook (OUVIDORIA)",
+      "itemConhecidoId": 468,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::PEN DRIVE 64GB (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Pen drive 64Gb (OUVIDORIA)",
+      "itemConhecidoId": 469,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::POLTRONAS (CORREGEDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Poltronas (CORREGEDORIA)",
+      "itemConhecidoId": 470,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::PROJETOR MULTIMIDIA 3.000 LUMENS (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
+      "itemConhecidoId": 471,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::QUADRO LOUSA BRANCA 250X120CM (ESCOLA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Quadro lousa branca 250x120cm (ESCOLA)",
+      "itemConhecidoId": 472,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::TELA DE PROJECAO 2X2 RETRATIL COM TRIPE",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Tela de projeção 2x2 retrátil com tripé",
+      "itemConhecidoId": 476,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::TELEVISAO 50 (CORREGEDORIA - 03 UN. E OU",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Televisão 50 (CORREGEDORIA - 03 UN. E OU",
+      "itemConhecidoId": 477,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937221::WEBCAM FULL HD (OUVIDORIA)",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoItemConhecido": "Webcam full HD (OUVIDORIA)",
+      "itemConhecidoId": 478,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::CONTRATACAO DE BOLSA - ALUNO OUVIDORIA I",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoItemConhecido": "Contratação de Bolsa - Aluno Ouvidoria I",
+      "itemConhecidoId": 115,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::CONTRATACAO DE BOLSA -COORDENADOR OUVID",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoItemConhecido": "Contratação de Bolsa -Coordenador Ouvid",
+      "itemConhecidoId": 116,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::CONTRATACAO DE BOLSA -PESQUISADOR OUVID",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoItemConhecido": "Contratação de Bolsa -Pesquisador Ouvid",
+      "itemConhecidoId": 117,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoItemConhecido": "Desktop para edição de video",
+      "itemConhecidoId": 97,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoItemConhecido": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+      "itemConhecidoId": 109,
+      "totalRateiosAtivos": 2,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoItemConhecido": "Smartphone minimo de 128gb de memória in",
+      "itemConhecidoId": 111,
+      "totalRateiosAtivos": 2,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    },
+    {
+      "id": "937782::SWITCHER DE VIDEO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoItemConhecido": "Switcher de video",
+      "itemConhecidoId": 112,
+      "totalRateiosAtivos": 1,
+      "decisao": "PENDENTE",
+      "acao": null,
+      "descricaoItemPadSubstituto": null,
+      "justificativa": "",
+      "validadoPor": null,
+      "validadoEm": null
+    }
+  ],
+  "substituicoes": [],
+  "observacoes": []
+}
