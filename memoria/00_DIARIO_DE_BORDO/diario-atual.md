@@ -3696,3 +3696,73 @@ Logs operacionais gravados:
   - sem integração com rateios;
   - sem ativação de nova origem de `planoAplicacao`.
 
+---
+
+## 20/05/2026 - PROFOR 2022: Etapa 5 (conferência PAD x carteira x rateios)
+
+- Branch: `main`.
+- Objetivo:
+  - cruzar os itens dos relatórios PAD atuais com a carteira monitorada e com a memória de rateio persistida no SQLite, sem aplicar rateio e sem integrar com o compositor.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-matching-service.js`;
+  - `backend/scripts/conferir-itens-pad-rateios-profor-2022.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `backend/data/relatorios/profor-2022-pad-rateios-dry-run.json`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Comando criado:
+  - `npm run profor:pad:conferir-rateios:dry-run`.
+- Resultado do dry-run:
+  - relatórios PAD lidos: `15`;
+  - itens PAD conferidos: `525`;
+  - itens PAD com rateio: `502`;
+  - itens PAD sem rateio: `23`;
+  - itens conhecidos ausentes no PAD: `29`;
+  - itens conhecidos não aptos: `19`;
+  - instrumentos não encontrados na carteira: `0`;
+  - alertas: `77`;
+  - alertas impeditivos: `25`.
+- Alertas encontrados:
+  - `item_conhecido_nao_apto`: `25` impeditivos;
+  - `item_pad_sem_rateio`: `23` avisos;
+  - `item_conhecido_ausente_no_pad`: `29` avisos.
+- Restrições preservadas:
+  - sem alteração de banco;
+  - sem alteração de frontend;
+  - sem publicação;
+  - sem ativação de nova origem de `planoAplicacao`;
+  - sem integração com compositor PROFOR;
+  - sem aplicação financeira dos rateios.
+
+---
+
+## 20/05/2026 - PROFOR 2022: Etapa 5 (ajuste de chave por descrição original)
+
+- Branch: `main`.
+- Objetivo:
+  - impedir que item PAD seja considerado rateado apenas por coincidência de descrição normalizada.
+- Ajuste realizado:
+  - a conferência PAD x rateios passou a procurar item conhecido por `numero_convenio` + `descricao_original_referencia` limpa, preservando a `chave_item` normalizada apenas como metadado/diagnóstico;
+  - coincidências somente por descrição normalizada são registradas como aviso `item_pad_coincide_apenas_por_descricao_normalizada` e não contam como rateio reconhecido.
+- Resultado do dry-run após ajuste:
+  - itens PAD conferidos: `525`;
+  - itens PAD com rateio: `498`;
+  - itens PAD sem rateio: `27`;
+  - itens conhecidos ausentes no PAD: `32`;
+  - itens conhecidos não aptos: `19`;
+  - instrumentos não encontrados na carteira: `0`;
+  - alertas: `84`;
+  - alertas impeditivos: `25`.
+- Alertas por tipo:
+  - `item_conhecido_nao_apto`: `25` impeditivos;
+  - `item_pad_sem_rateio`: `23` avisos;
+  - `item_pad_coincide_apenas_por_descricao_normalizada`: `4` avisos;
+  - `item_conhecido_ausente_no_pad`: `32` avisos.
+- Restrições preservadas:
+  - sem alteração de banco;
+  - sem alteração de frontend;
+  - sem publicação;
+  - sem ativação de nova origem de `planoAplicacao`;
+  - sem integração com compositor PROFOR;
+  - sem aplicação financeira dos rateios.
+

@@ -16,6 +16,7 @@
     "profor:rateio:importar-json": "node backend/scripts/importar-rateio-inicial-profor-2022.js",
     "profor:rateio:rollback-lote": "node backend/scripts/rollback-rateio-inicial-profor-2022.js",
     "profor:pad:ler-relatorios:dry-run": "node backend/scripts/ler-relatorios-pad-profor-2022.js",
+    "profor:pad:conferir-rateios:dry-run": "node backend/scripts/conferir-itens-pad-rateios-profor-2022.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",
