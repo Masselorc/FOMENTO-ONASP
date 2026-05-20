@@ -1,0 +1,937 @@
+{
+  "resumo": {
+    "geradoEm": "2026-05-20T18:43:29.194Z",
+    "fonteSaneamento": "backend/data/relatorios/profor-2022-pad-saneamento.json",
+    "totalItensNaoAptos": 19,
+    "totalItensNaoAptosComAlertaOrigem": 19,
+    "totalItensNaoAptosSemAlertaOrigem": 0,
+    "totalAlertasImpeditivosVinculados": 27
+  },
+  "itensNaoAptosDetalhados": [
+    {
+      "chaveItem": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
+      "chaveDescricaoOriginal": "937216::Monitor LED, mínimo 27, conexões DVI-D (",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "ano": "2022",
+      "descricaoOriginal": "Monitor LED, mínimo 27, conexões DVI-D (",
+      "descricaoNormalizada": "MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
+      "itemConhecidoId": 34,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (3950.68) diverge do saldo da planilha (7221.32).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "GO",
+            "linha": 23
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 40,
+          "valorPrevistoReferencia": 7221.32,
+          "valorExecutadoReferencia": 3270.64,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
+      "chaveDescricaoOriginal": "937216::Notebook; Sistema Operacional: Proprietá",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "ano": "2022",
+      "descricaoOriginal": "Notebook; Sistema Operacional: Proprietá",
+      "descricaoNormalizada": "NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
+      "itemConhecidoId": 48,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (199.83) diverge do saldo da planilha (3949.83).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "GO",
+            "linha": 37
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 3949.83,
+          "valorExecutadoReferencia": 3750,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
+      "chaveDescricaoOriginal": "937216::Tablet, Display Super AMOLED 14,6, TFT,",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "ano": "2022",
+      "descricaoOriginal": "Tablet, Display Super AMOLED 14,6, TFT,",
+      "descricaoNormalizada": "TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
+      "itemConhecidoId": 49,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (-5131.23) diverge do saldo da planilha (83.33).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "GO",
+            "linha": 38
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 5263.33,
+          "valorExecutadoReferencia": 10394.56,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937265::CALCA TATICA",
+      "chaveDescricaoOriginal": "937265::Calça Tática",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "ano": "2022",
+      "descricaoOriginal": "Calça Tática",
+      "descricaoNormalizada": "CALCA TATICA",
+      "itemConhecidoId": 131,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (6610.53) diverge do saldo da planilha (9915.8).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 8
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (9915.8) diverge do saldo da planilha (6610.53).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 9
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 300,
+          "valorPrevistoReferencia": 9915.8,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 60,
+          "percentualValor": 60.000012
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 200,
+          "valorPrevistoReferencia": 6610.53,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 40,
+          "percentualValor": 39.999988
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937265::CINTO TATICO",
+      "chaveDescricaoOriginal": "937265::Cinto Tático",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "ano": "2022",
+      "descricaoOriginal": "Cinto Tático",
+      "descricaoNormalizada": "CINTO TATICO",
+      "itemConhecidoId": 135,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (6273.98) diverge do saldo da planilha (4182.65).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 13
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (4182.65) diverge do saldo da planilha (6273.98).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 14
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 300,
+          "valorPrevistoReferencia": 6273.98,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 60,
+          "percentualValor": 60.000019
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 200,
+          "valorPrevistoReferencia": 4182.65,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 40,
+          "percentualValor": 39.999981
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937265::COTURNO",
+      "chaveDescricaoOriginal": "937265::Coturno",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "ano": "2022",
+      "descricaoOriginal": "Coturno",
+      "descricaoNormalizada": "COTURNO",
+      "itemConhecidoId": 136,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (10686) diverge do saldo da planilha (7124).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 15
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (7124) diverge do saldo da planilha (10686).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 16
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 300,
+          "valorPrevistoReferencia": 10686,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 60,
+          "percentualValor": 60
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 200,
+          "valorPrevistoReferencia": 7124,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 40,
+          "percentualValor": 40
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "chaveDescricaoOriginal": "937265::Geladeira minimo 410L Frost Free 110v Branca",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "ano": "2022",
+      "descricaoOriginal": "Geladeira minimo 410L Frost Free 110v Branca",
+      "descricaoNormalizada": "GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "itemConhecidoId": 164,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (890.01) diverge do saldo da planilha (3890).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 57
+          }
+        },
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (890.01) diverge do saldo da planilha (3890).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MS",
+            "linha": 58
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 3890,
+          "valorExecutadoReferencia": 2999.99,
+          "percentualQuantidade": 50,
+          "percentualValor": 50
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 3890,
+          "valorExecutadoReferencia": 2999.99,
+          "percentualQuantidade": 50,
+          "percentualValor": 50
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
+      "chaveDescricaoOriginal": "937468::ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "ano": "2022",
+      "descricaoOriginal": "ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp",
+      "descricaoNormalizada": "ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
+      "itemConhecidoId": 370,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (0) diverge do saldo da planilha (1344).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "TO",
+            "linha": 38
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 30,
+          "valorPrevistoReferencia": 1344,
+          "valorExecutadoReferencia": 1344,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
+      "chaveDescricaoOriginal": "937468::ETAPA 2 - CORREGEDORIA - Nobreak: Peça/",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "ano": "2022",
+      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Nobreak: Peça/",
+      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
+      "itemConhecidoId": 375,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (0) diverge do saldo da planilha (1344).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "TO",
+            "linha": 44
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 30,
+          "valorPrevistoReferencia": 1344,
+          "valorExecutadoReferencia": 1344,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
+      "chaveDescricaoOriginal": "937468::ETAPA 2 - CORREGEDORIA - Tablet, tela su",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "ano": "2022",
+      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Tablet, tela su",
+      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
+      "itemConhecidoId": 386,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (21868) diverge do saldo da planilha (2422).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "TO",
+            "linha": 56
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 7,
+          "valorPrevistoReferencia": 21868,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "937817::CAPACETE PROTETOR",
+      "chaveDescricaoOriginal": "937817::CAPACETE PROTETOR",
+      "numeroConvenio": "937817",
+      "uf": "RJ",
+      "ano": "2022",
+      "descricaoOriginal": "CAPACETE PROTETOR",
+      "descricaoNormalizada": "CAPACETE PROTETOR",
+      "itemConhecidoId": 393,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "fechamento_valor_inconsistente",
+          "nivel": "impeditivo",
+          "detalhe": "Saldo calculado (4340.07) diverge do saldo da planilha (-539.73).",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "RJ",
+            "linha": 8
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 200,
+          "valorPrevistoReferencia": 4340.07,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [fechamento_valor_inconsistente] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938128::AGENDA PLANNER",
+      "chaveDescricaoOriginal": "938128::Agenda Planner",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "ano": "2022",
+      "descricaoOriginal": "Agenda Planner",
+      "descricaoNormalizada": "AGENDA PLANNER",
+      "itemConhecidoId": 214,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 42
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 42
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "NAO INFORMADO",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 1134.3,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [linha_sem_numero_ano_uf, area_vazia] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
+      "chaveDescricaoOriginal": "938128::Câmera Digital, para a Ouvidoria",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "ano": "2022",
+      "descricaoOriginal": "Câmera Digital, para a Ouvidoria",
+      "descricaoNormalizada": "CAMERA DIGITAL, PARA A OUVIDORIA",
+      "itemConhecidoId": 217,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 46
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 4287.7,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [linha_sem_numero_ano_uf] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
+      "chaveDescricaoOriginal": "938128::Contratação de serviços de digitalização",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "ano": "2022",
+      "descricaoOriginal": "Contratação de serviços de digitalização",
+      "descricaoNormalizada": "CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
+      "itemConhecidoId": 215,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 44
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 44
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "NAO INFORMADO",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 505000,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [linha_sem_numero_ano_uf, area_vazia] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
+      "chaveDescricaoOriginal": "938128::Estação de Trabalho (Mesa em L), para Ou",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "ano": "2022",
+      "descricaoOriginal": "Estação de Trabalho (Mesa em L), para Ou",
+      "descricaoNormalizada": "ESTACAO DE TRABALHO (MESA EM L), PARA OU",
+      "itemConhecidoId": 218,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 47
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 12,
+          "valorPrevistoReferencia": 30292.2,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [linha_sem_numero_ano_uf] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938128::GAVETEIROS, OUVIDORIA",
+      "chaveDescricaoOriginal": "938128::Gaveteiros, Ouvidoria",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "ano": "2022",
+      "descricaoOriginal": "Gaveteiros, Ouvidoria",
+      "descricaoNormalizada": "GAVETEIROS, OUVIDORIA",
+      "itemConhecidoId": 219,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 1,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 48
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 12,
+          "valorPrevistoReferencia": 12297.6,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [linha_sem_numero_ano_uf] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "chaveDescricaoOriginal": "938128::Saldo Residual",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "ano": "2022",
+      "descricaoOriginal": "Saldo Residual",
+      "descricaoNormalizada": "SALDO RESIDUAL",
+      "itemConhecidoId": 212,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 3,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 43
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 43
+          }
+        },
+        {
+          "tipo": "valor_unitario_divergente_na_mesma_chave",
+          "nivel": "aviso",
+          "detalhe": "Mesma chave operacional apareceu com valores unitarios diferentes: 22279.73, 71.36.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 40
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "N/A",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 22279.73,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 90.909091,
+          "percentualValor": 99.680731
+        },
+        {
+          "area": "NAO INFORMADO",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 71.36,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 9.090909,
+          "percentualValor": 0.319269
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [linha_sem_numero_ano_uf, area_vazia] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
+      "chaveDescricaoOriginal": "938128::Serviço de operacionalização de sistema",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "ano": "2022",
+      "descricaoOriginal": "Serviço de operacionalização de sistema",
+      "descricaoNormalizada": "SERVICO DE OPERACIONALIZACAO DE SISTEMA",
+      "itemConhecidoId": 216,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 2,
+      "alertasOriginais": [
+        {
+          "tipo": "linha_sem_numero_ano_uf",
+          "nivel": "impeditivo",
+          "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 45
+          }
+        },
+        {
+          "tipo": "area_vazia",
+          "nivel": "impeditivo",
+          "detalhe": "Linha da aba UF sem area classificada.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "SP",
+            "linha": 45
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "NAO INFORMADO",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 426666.67,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [linha_sem_numero_ano_uf, area_vazia] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    },
+    {
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "chaveDescricaoOriginal": "938277::SALDO REMANESCENTE",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "ano": "2022",
+      "descricaoOriginal": "SALDO REMANESCENTE",
+      "descricaoNormalizada": "SALDO REMANESCENTE",
+      "itemConhecidoId": 231,
+      "statusItem": "ATIVO",
+      "possuiPendenciaImpeditiva": true,
+      "loteImportacaoOrigem": 1,
+      "totalAlertasOriginais": 2,
+      "totalAlertasImpeditivos": 1,
+      "alertasOriginais": [
+        {
+          "tipo": "natureza_conflitante",
+          "nivel": "impeditivo",
+          "detalhe": "Mesma descricao apareceu com naturezas diferentes.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MA",
+            "linha": 13
+          }
+        },
+        {
+          "tipo": "valor_unitario_divergente_na_mesma_chave",
+          "nivel": "aviso",
+          "detalhe": "Mesma chave operacional apareceu com valores unitarios diferentes: 5924.45, 7267.88.",
+          "loteImportacaoId": 1,
+          "origem": {
+            "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+            "aba": "MA",
+            "linha": 13
+          }
+        }
+      ],
+      "rateiosAtivos": [
+        {
+          "area": "N/A",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 7267.88,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 50,
+          "percentualValor": 55.091709
+        },
+        {
+          "area": "N/A",
+          "natureza": "CUSTEIO",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 5924.45,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 50,
+          "percentualValor": 44.908291
+        }
+      ],
+      "providenciaRecomendada": "Resolver o(s) alerta(s) impeditivo(s) [natureza_conflitante] herdado(s) do lote de importação 1 antes de liberar o item para reconstrução."
+    }
+  ],
+  "itensSemAlertaOrigem": []
+}

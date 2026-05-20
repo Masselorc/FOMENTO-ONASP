@@ -1,5 +1,24 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Relatório detalhado com causa original (Etapa B)
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da Etapa A.
+- Objetivo: para os 19 itens conhecidos não aptos, expor a causa original — qual alerta da importação inicial gerou a não aptidão.
+- Mudanças realizadas:
+  - **Novo serviço** `backend/services/profor-2022/profor-pad-saneamento-service.js`: lê `profor-2022-pad-saneamento.json` e cruza, **por igualdade exata de `chave_item`** (sem fuzzy), com `profor_2022_rateio_import_alertas`, `profor_2022_itens_conhecidos` e `profor_2022_item_rateios`. Para cada item não apto resolve `alertasOriginais[]` (tipo/nível/detalhe/origem arquivo-aba-linha), `rateiosAtivos[]`, `loteImportacaoOrigem` e `providenciaRecomendada`. Mantém lista defensiva `itensSemAlertaOrigem[]`.
+  - **Novo script** `backend/scripts/gerar-relatorio-saneamento-detalhado-pad-profor-2022.js`: orquestra a geração e grava JSON + Markdown.
+  - `package.json`: novo script `profor:pad:relatorio-saneamento-detalhado`.
+  - `scripts/validar-syntax.js`: adicionados o serviço e o script à lista hardcoded `ARQUIVOS`.
+- Saídas geradas: `backend/data/relatorios/profor-2022-pad-saneamento-detalhado.{json,md}`.
+- Validações executadas:
+  - `node --check` nos 2 arquivos novos → OK.
+  - `npm run validar:syntax` → OK (38 arquivos).
+  - `npm run profor:pad:relatorio-saneamento-detalhado` → 19 itens não aptos, 19 com alerta de origem identificado, 0 sem alerta, 27 alertas impeditivos vinculados.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+- Risco: Baixo. Serviço somente leitura no banco (apenas SELECT); nenhuma escrita em SQLite, frontend ou publicação.
+- Rollback: `git revert` do commit da Etapa B; ou remover os arquivos novos e reverter `package.json`/`scripts/validar-syntax.js`.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Auditoria inicial PAD x rateios (Etapa A)
 
 - Branch atual: `main`.
