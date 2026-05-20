@@ -27,6 +27,7 @@ const COLUNAS_PLANO_PROFOR = {
 
 const ORIGEM_RATEIO_INICIAL = "planilha-antiga";
 const TOLERANCIA_MOEDA = 0.01;
+const LIMITE_AVISO_FECHAMENTO_VALOR = 1;
 
 function limparTexto(valor) {
   return String(valor ?? "").replace(/\s+/g, " ").trim();
@@ -167,6 +168,7 @@ function adicionarAlertasLinha(linha, alertas) {
       chaveItem: linha.chaveItem,
       linha,
       detalhe: "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+      nivel: "impeditivo",
     }));
   }
 
@@ -175,6 +177,7 @@ function adicionarAlertasLinha(linha, alertas) {
       tipo: "descricao_vazia",
       linha,
       detalhe: "Linha da aba UF sem descricao do item.",
+      nivel: "impeditivo",
     }));
   }
 
@@ -184,6 +187,7 @@ function adicionarAlertasLinha(linha, alertas) {
       chaveItem: linha.chaveItem,
       linha,
       detalhe: "Linha da aba UF sem area classificada.",
+      nivel: "impeditivo",
     }));
   }
 
@@ -193,6 +197,7 @@ function adicionarAlertasLinha(linha, alertas) {
       chaveItem: linha.chaveItem,
       linha,
       detalhe: "Linha da aba UF sem natureza classificada.",
+      nivel: "impeditivo",
     }));
   }
 
@@ -202,15 +207,18 @@ function adicionarAlertasLinha(linha, alertas) {
       chaveItem: linha.chaveItem,
       linha,
       detalhe: "Linha com quantidade zero e valor previsto positivo.",
+      nivel: "aviso",
     }));
   }
 
-  if (Math.abs(linha.saldoCalculado - linha.saldoPlanilha) > TOLERANCIA_MOEDA) {
+  const diferencaAbsoluta = Math.abs(linha.saldoCalculado - linha.saldoPlanilha);
+  if (diferencaAbsoluta > TOLERANCIA_MOEDA) {
     alertas.push(criarAlerta({
       tipo: "fechamento_valor_inconsistente",
       chaveItem: linha.chaveItem,
       linha,
       detalhe: `Saldo calculado (${linha.saldoCalculado}) diverge do saldo da planilha (${linha.saldoPlanilha}).`,
+      nivel: diferencaAbsoluta <= LIMITE_AVISO_FECHAMENTO_VALOR ? "aviso" : "impeditivo",
     }));
   }
 }
@@ -291,6 +299,7 @@ function adicionarAlertasGrupo(chaveItem, grupo, alertas) {
       chaveItem,
       linha: referencia,
       detalhe: "Mesma descricao apareceu com naturezas diferentes.",
+      nivel: "impeditivo",
     }));
   }
 
@@ -300,6 +309,7 @@ function adicionarAlertasGrupo(chaveItem, grupo, alertas) {
       chaveItem,
       linha: referencia,
       detalhe: `Mesma chave operacional apareceu com valores unitarios diferentes: ${valoresUnitarios.join(", ")}.`,
+      nivel: "aviso",
     }));
   }
 }

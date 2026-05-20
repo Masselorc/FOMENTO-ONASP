@@ -173,8 +173,8 @@
       "unidadesEncontradas": [],
       "valorUnitarioReferencia": 108156,
       "origem": "planilha-antiga",
-      "possuiPendenciaImpedativa": true,
-      "aptoParaImportacaoFutura": false
+      "possuiPendenciaImpedativa": false,
+      "aptoParaImportacaoFutura": true
     },
     {
       "chaveItem": "937698::NOBREAK, ALIMENTADOR AUTOMATICO DE TENSA",
@@ -1181,8 +1181,8 @@
       "unidadesEncontradas": [],
       "valorUnitarioReferencia": 51133.66,
       "origem": "planilha-antiga",
-      "possuiPendenciaImpedativa": true,
-      "aptoParaImportacaoFutura": false
+      "possuiPendenciaImpedativa": false,
+      "aptoParaImportacaoFutura": true
     },
     {
       "chaveItem": "937871::VIATURA DESCARACTERIZADA (SUV)",
@@ -2461,8 +2461,8 @@
       "unidadesEncontradas": [],
       "valorUnitarioReferencia": 37.15,
       "origem": "planilha-antiga",
-      "possuiPendenciaImpedativa": true,
-      "aptoParaImportacaoFutura": false
+      "possuiPendenciaImpedativa": false,
+      "aptoParaImportacaoFutura": true
     },
     {
       "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
@@ -4254,8 +4254,8 @@
       "unidadesEncontradas": [],
       "valorUnitarioReferencia": 2464,
       "origem": "planilha-antiga",
-      "possuiPendenciaImpedativa": true,
-      "aptoParaImportacaoFutura": false
+      "possuiPendenciaImpedativa": false,
+      "aptoParaImportacaoFutura": true
     },
     {
       "chaveItem": "937818::NOTEBOOK TIPO III PROCESSADOR: AMD RYZE",
@@ -5838,8 +5838,8 @@
       "unidadesEncontradas": [],
       "valorUnitarioReferencia": 3933.72,
       "origem": "planilha-antiga",
-      "possuiPendenciaImpedativa": true,
-      "aptoParaImportacaoFutura": false
+      "possuiPendenciaImpedativa": false,
+      "aptoParaImportacaoFutura": true
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - CPU: MICROCOMPUTAD",
@@ -13677,7 +13677,7 @@
   "alertas": [
     {
       "tipo": "fechamento_valor_inconsistente",
-      "nivel": "impeditivo",
+      "nivel": "aviso",
       "chaveItem": "937698::VEICULO TRANSPORTE PESSOAL, CAMBIO: MANU",
       "numeroConvenio": "937698",
       "uf": "MT",
@@ -14082,7 +14082,7 @@
     },
     {
       "tipo": "valor_unitario_divergente_na_mesma_chave",
-      "nivel": "impeditivo",
+      "nivel": "aviso",
       "chaveItem": "937871::VEICULO TIPO SUV",
       "numeroConvenio": "937871",
       "uf": "PR",
@@ -14097,7 +14097,7 @@
     },
     {
       "tipo": "valor_unitario_divergente_na_mesma_chave",
-      "nivel": "impeditivo",
+      "nivel": "aviso",
       "chaveItem": "937265::MEIA MILITAR",
       "numeroConvenio": "937265",
       "uf": "MS",
@@ -14112,7 +14112,7 @@
     },
     {
       "tipo": "valor_unitario_divergente_na_mesma_chave",
-      "nivel": "impeditivo",
+      "nivel": "aviso",
       "chaveItem": "938128::SALDO RESIDUAL",
       "numeroConvenio": "938128",
       "uf": "SP",
@@ -14142,7 +14142,7 @@
     },
     {
       "tipo": "valor_unitario_divergente_na_mesma_chave",
-      "nivel": "impeditivo",
+      "nivel": "aviso",
       "chaveItem": "938277::SALDO REMANESCENTE",
       "numeroConvenio": "938277",
       "uf": "MA",
@@ -14157,7 +14157,7 @@
     },
     {
       "tipo": "valor_unitario_divergente_na_mesma_chave",
-      "nivel": "impeditivo",
+      "nivel": "aviso",
       "chaveItem": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
       "numeroConvenio": "937818",
       "uf": "PB",
@@ -14172,7 +14172,7 @@
     },
     {
       "tipo": "valor_unitario_divergente_na_mesma_chave",
-      "nivel": "impeditivo",
+      "nivel": "aviso",
       "chaveItem": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
       "numeroConvenio": "937468",
       "uf": "TO",
@@ -14209,7 +14209,7 @@
     "totalItensConhecidos": 500,
     "totalRateios": 567,
     "totalAlertas": 34,
-    "totalAlertasImpedativos": 34,
+    "totalAlertasImpedativos": 27,
     "totalNaturezasConflitantes": 1
   }
 }

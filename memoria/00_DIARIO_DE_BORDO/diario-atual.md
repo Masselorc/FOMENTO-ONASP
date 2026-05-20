@@ -3574,3 +3574,51 @@ Logs operacionais gravados:
   - sem alteração em `frontend/data/publicados/*.json`;
   - sem uso de `saldoEconomicidade` para critério de rateio.
 
+---
+
+## 20/05/2026 - PROFOR 2022: Etapa 3 (persistência SQLite de itens/rateios)
+
+- Branch: `main`.
+- Objetivo:
+  - persistir no SQLite local a memória inicial de rateio (itens conhecidos, rateios, lotes e alertas) gerada na Etapa 2, com rastreabilidade e rollback lógico por lote.
+- Arquivos alterados:
+  - `backend/db/init-db.js`;
+  - `backend/services/profor-2022/profor-rateio-import-service.js`;
+  - `backend/scripts/importar-rateio-inicial-profor-2022.js`;
+  - `backend/scripts/rollback-rateio-inicial-profor-2022.js`;
+  - `scripts/validar-syntax.js`;
+  - `package.json`;
+  - `memoria/08_ROTAS_BANCO_API/schema-banco.md`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Tabelas aditivas criadas:
+  - `profor_2022_rateio_import_lotes`;
+  - `profor_2022_itens_conhecidos`;
+  - `profor_2022_item_rateios`;
+  - `profor_2022_rateio_import_alertas`.
+- Regras implementadas:
+  - importação em transação com criação de lote, upsert de item por `chave_item`, inativação de rateio ativo anterior por combinação `item/area/natureza`, inserção de novo rateio ativo, inserção de alertas e atualização de totais do lote;
+  - controle de reimportação por `hash_arquivo_json` com bloqueio padrão e opção explícita `--forcar`;
+  - itens com `aptoParaImportacaoFutura=false` persistem normalmente com `apto_para_importacao_futura=0`;
+  - rollback por lote sem exclusão física: marca lote com status `rollback` e inativa itens/rateios vinculados ao lote.
+- Scripts npm adicionados:
+  - `npm run profor:rateio:importar:dry-run-json`;
+  - `npm run profor:rateio:importar-json`;
+  - `npm run profor:rateio:rollback-lote`.
+- Execução validada:
+  - `npm run init-db`;
+  - `npm run profor:rateio:importar:dry-run-json`;
+  - `npm run profor:rateio:importar-json`;
+  - resultado da importação real: lote `1`, `500` itens, `567` rateios, `34` alertas (`27` impeditivos).
+- Validações executadas:
+  - `node --check backend/db/init-db.js`;
+  - `node --check backend/services/profor-2022/profor-rateio-import-service.js`;
+  - `node --check backend/scripts/importar-rateio-inicial-profor-2022.js`;
+  - `node --check backend/scripts/rollback-rateio-inicial-profor-2022.js`;
+  - `npm run validar:syntax`;
+  - `git diff --check`.
+- Restrições preservadas:
+  - sem alteração de frontend;
+  - sem alteração de `frontend/data/publicados/*.json`;
+  - sem ativação de nova origem de `planoAplicacao`;
+  - sem integração com PAD nesta etapa.
+

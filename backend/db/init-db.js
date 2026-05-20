@@ -81,6 +81,7 @@ function inicializarBanco() {
   garantirTabelaTransferegovRendimentosCacheProfor2022();
   garantirTabelaTransferegovRendimentosConsultasProfor2022();
   garantirTabelaLogsOperacionais();
+  garantirTabelasRateioInicialProfor2022();
 }
 
 function garantirColunasOrcamentoRastreio() {
@@ -277,6 +278,119 @@ function garantirTabelaLogsOperacionais() {
     CREATE INDEX IF NOT EXISTS idx_logs_operacionais_criado_em ON logs_operacionais(criado_em DESC);
     CREATE INDEX IF NOT EXISTS idx_logs_operacionais_tipo_evento ON logs_operacionais(tipo_evento);
     CREATE INDEX IF NOT EXISTS idx_logs_operacionais_status ON logs_operacionais(status);
+  `);
+}
+
+function garantirTabelasRateioInicialProfor2022() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS profor_2022_rateio_import_lotes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      arquivo_origem TEXT NOT NULL,
+      arquivo_json_dry_run TEXT NOT NULL,
+      hash_arquivo_json TEXT,
+      status TEXT NOT NULL,
+      total_itens INTEGER NOT NULL DEFAULT 0,
+      total_rateios INTEGER NOT NULL DEFAULT 0,
+      total_alertas INTEGER NOT NULL DEFAULT 0,
+      total_alertas_impeditivos INTEGER NOT NULL DEFAULT 0,
+      observacao TEXT,
+      rollback_em TEXT,
+      rollback_motivo TEXT,
+      criado_em TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS profor_2022_itens_conhecidos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      chave_item TEXT NOT NULL,
+      numero_convenio TEXT NOT NULL,
+      descricao_normalizada TEXT NOT NULL,
+      descricao_original_referencia TEXT,
+      uf TEXT,
+      ano TEXT,
+      naturezas_encontradas_json TEXT NOT NULL DEFAULT '[]',
+      unidades_encontradas_json TEXT NOT NULL DEFAULT '[]',
+      valor_unitario_referencia REAL NOT NULL DEFAULT 0,
+      origem TEXT NOT NULL DEFAULT 'planilha-antiga',
+      possui_pendencia_impeditiva INTEGER NOT NULL DEFAULT 0,
+      apto_para_importacao_futura INTEGER NOT NULL DEFAULT 1,
+      status_item TEXT NOT NULL DEFAULT 'ATIVO',
+      ultima_ocorrencia_em TEXT,
+      ultima_ausencia_em TEXT,
+      validacao_exclusao TEXT,
+      item_substituido_id INTEGER,
+      motivo_substituicao TEXT,
+      observacao_substituicao TEXT,
+      validado_por TEXT,
+      validado_em TEXT,
+      ativo INTEGER NOT NULL DEFAULT 1,
+      lote_importacao_id INTEGER,
+      criado_em TEXT NOT NULL,
+      atualizado_em TEXT NOT NULL,
+      UNIQUE(chave_item),
+      FOREIGN KEY(item_substituido_id) REFERENCES profor_2022_itens_conhecidos(id),
+      FOREIGN KEY(lote_importacao_id) REFERENCES profor_2022_rateio_import_lotes(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS profor_2022_item_rateios (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      item_conhecido_id INTEGER NOT NULL,
+      chave_item TEXT NOT NULL,
+      area TEXT NOT NULL,
+      natureza TEXT NOT NULL,
+      quantidade_referencia REAL NOT NULL DEFAULT 0,
+      valor_previsto_referencia REAL NOT NULL DEFAULT 0,
+      valor_executado_referencia REAL NOT NULL DEFAULT 0,
+      percentual_quantidade REAL NOT NULL DEFAULT 0,
+      percentual_valor REAL NOT NULL DEFAULT 0,
+      ativo INTEGER NOT NULL DEFAULT 1,
+      lote_importacao_id INTEGER,
+      criado_em TEXT NOT NULL,
+      atualizado_em TEXT NOT NULL,
+      UNIQUE(item_conhecido_id, area, natureza, lote_importacao_id),
+      FOREIGN KEY(item_conhecido_id) REFERENCES profor_2022_itens_conhecidos(id),
+      FOREIGN KEY(lote_importacao_id) REFERENCES profor_2022_rateio_import_lotes(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS profor_2022_rateio_import_alertas (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lote_importacao_id INTEGER NOT NULL,
+      chave_item TEXT,
+      tipo TEXT NOT NULL,
+      nivel TEXT NOT NULL,
+      numero_convenio TEXT,
+      uf TEXT,
+      ano TEXT,
+      descricao TEXT,
+      detalhe TEXT,
+      origem_arquivo TEXT,
+      origem_aba TEXT,
+      origem_linha INTEGER,
+      criado_em TEXT NOT NULL,
+      FOREIGN KEY(lote_importacao_id) REFERENCES profor_2022_rateio_import_lotes(id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_itens_numero_convenio
+      ON profor_2022_itens_conhecidos(numero_convenio);
+    CREATE INDEX IF NOT EXISTS idx_itens_numero_descricao
+      ON profor_2022_itens_conhecidos(numero_convenio, descricao_normalizada);
+    CREATE INDEX IF NOT EXISTS idx_itens_apto
+      ON profor_2022_itens_conhecidos(apto_para_importacao_futura);
+    CREATE INDEX IF NOT EXISTS idx_itens_status_item
+      ON profor_2022_itens_conhecidos(status_item);
+
+    CREATE INDEX IF NOT EXISTS idx_rateios_item
+      ON profor_2022_item_rateios(item_conhecido_id);
+    CREATE INDEX IF NOT EXISTS idx_rateios_chave_item
+      ON profor_2022_item_rateios(chave_item);
+
+    CREATE INDEX IF NOT EXISTS idx_alertas_lote
+      ON profor_2022_rateio_import_alertas(lote_importacao_id);
+    CREATE INDEX IF NOT EXISTS idx_alertas_tipo_nivel
+      ON profor_2022_rateio_import_alertas(tipo, nivel);
+
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_rateio_ativo_unico
+      ON profor_2022_item_rateios(item_conhecido_id, area, natureza)
+      WHERE ativo = 1;
   `);
 }
 

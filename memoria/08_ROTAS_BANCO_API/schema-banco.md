@@ -525,6 +525,62 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 **Observações de manutenção:** a tabela é estritamente aditiva (INSERT-only); não há UPDATE/DELETE no serviço. Limite padrão de consulta é 50 e máximo 200; limite padrão de exportação é 500 e máximo 2000. Toda escrita passa por `sanitizarPayloadLog`.
 
+### profor_2022_rateio_import_lotes
+
+**Finalidade aparente:** rastrear cada importação da memória inicial de rateio PROFOR 2022 a partir do JSON da Etapa 2, com hash, totais e status de rollback lógico.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRateioInicialProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/profor-rateio-import-service.js`.
+
+**Scripts relacionados:** `backend/scripts/importar-rateio-inicial-profor-2022.js`, `backend/scripts/rollback-rateio-inicial-profor-2022.js`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `arquivo_origem TEXT NOT NULL`, `arquivo_json_dry_run TEXT NOT NULL`, `status TEXT NOT NULL`, `criado_em TEXT NOT NULL`.
+
+### profor_2022_itens_conhecidos
+
+**Finalidade aparente:** persistir a memória operacional de itens conhecidos por `chave_item` (`numeroConvenio + descricaoNormalizada`), incluindo aptidão para uso futuro e flags impeditivas.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRateioInicialProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/profor-rateio-import-service.js`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `UNIQUE(chave_item)`, `numero_convenio TEXT NOT NULL`, `descricao_normalizada TEXT NOT NULL`, FKs para `profor_2022_rateio_import_lotes(id)` e autorreferência em `item_substituido_id`.
+
+**Índices confirmados:** `idx_itens_numero_convenio`, `idx_itens_numero_descricao`, `idx_itens_apto`, `idx_itens_status_item`.
+
+### profor_2022_item_rateios
+
+**Finalidade aparente:** persistir os rateios por área/natureza vinculados a item conhecido, preservando histórico por lote e ativo/inativo sem exclusão física.
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRateioInicialProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/profor-rateio-import-service.js`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `UNIQUE(item_conhecido_id, area, natureza, lote_importacao_id)` e FK para `profor_2022_itens_conhecidos(id)`.
+
+**Índices confirmados:** `idx_rateios_item`, `idx_rateios_chave_item`, `idx_rateio_ativo_unico` (índice único parcial por `ativo = 1`).
+
+### profor_2022_rateio_import_alertas
+
+**Finalidade aparente:** registrar os alertas do JSON de importação por lote, com tipo, nível e origem (arquivo/aba/linha).
+
+**Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRateioInicialProfor2022()`.
+
+**Serviços relacionados:** `backend/services/profor-2022/profor-rateio-import-service.js`.
+
+**Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
+
+**Constraints confirmadas:** `lote_importacao_id INTEGER NOT NULL`, `tipo TEXT NOT NULL`, `nivel TEXT NOT NULL`, FK para `profor_2022_rateio_import_lotes(id)`.
+
+**Índices confirmados:** `idx_alertas_lote`, `idx_alertas_tipo_nivel`.
+
 ## Evolução incremental de schema
 
 `backend/db/init-db.js` usa `garantirColuna(tabela, coluna, definicao)` para evolução incremental.
