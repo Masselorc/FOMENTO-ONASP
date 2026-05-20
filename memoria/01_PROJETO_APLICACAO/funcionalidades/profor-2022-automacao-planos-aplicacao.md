@@ -171,6 +171,46 @@ Colunas esperadas da tabela de itens:
 | `Valor Total Executado` | Valor total executado agregado. |
 | `Saldo` | Saldo agregado do item. |
 
+### 5.3. Regra de leitura da coluna Quantidade
+
+A coluna `Quantidade` possui normalização própria, separada do normalizador
+monetário. Nos arquivos `RelatorioItensDespesasPAD_*.xls` exportados do
+Transferegov, o ponto eventualmente presente na quantidade deve ser
+interpretado como separador decimal, não como separador de milhar. Assim,
+valores como `1.0`, `2.0`, `57.0` e `5700.0` devem ser lidos como `1`, `2`,
+`57` e `5700`, respectivamente.
+
+Tratar o ponto como separador de milhar (como faz o normalizador de moeda)
+inflaria `1.0` para `10`, `57.0` para `570` e `5700.0` para `57000`.
+
+Essa regra não se aplica aos campos monetários (`Valor Unit`, `Valor Total
+Previsto`, `Valor Total Executado`, `Saldo`), que seguem o normalizador de
+moeda. A coluna `Quantidade` trata tanto o ponto quanto a vírgula como
+separador decimal e não admite separador de milhar.
+
+### 5.4. Valor Unit como referência auxiliar
+
+O `Valor Unit` exibido no relatório PAD pode estar arredondado ou truncado
+para apresentação, enquanto o `Valor Total Previsto` preserva a precisão
+original. Portanto, o `Valor Unit` exibido é referência auxiliar e indício de
+equivalência — não deve ser usado para recalcular o `Valor Total Previsto`.
+
+Exemplos observados no convênio 937698:
+
+- Cartilhas: quantidade `5700`, `Valor Unit` exibido `7,32`, `Valor Total
+  Previsto` `41.743,00`. O valor unitário implícito (`previsto ÷ quantidade`)
+  é `7,323333...`.
+- Folders: quantidade `5713`, `Valor Unit` exibido `4,12`, `Valor Total
+  Previsto` `23.556,60`. O valor unitário implícito é `4,123333...`.
+
+Nesses casos, `quantidade × Valor Unit exibido` diverge do `Valor Total
+Previsto` por truncamento do valor unitário exibido, não por erro de
+quantidade ou de total.
+
+A comparação `Valor Unit` do PAD contra `valor_unitario_referencia` da memória
+de rateio continua sendo apenas indício de equivalência para decisão humana —
+nunca critério de matching automático.
+
 ---
 
 ## 6. Matriz de associação entre origem antiga e nova origem
@@ -184,8 +224,8 @@ Colunas esperadas da tabela de itens:
 | `area` | Base de rateio manual | Reconstruir por rateio/classificação salva. Não vem do PAD. |
 | `natureza` | Derivação do `Cód. Nat. Despesa` | `33` = `CUSTEIO`; `44` = `CAPITAL`. |
 | `descricao` | Relatório PAD | Coluna `Descrição`. Chave principal de identificação do item. |
-| `quantidade` | Relatório PAD + rateio | PAD traz quantidade agregada; aplicação distribui por área. |
-| `valorUnitario` | Relatório PAD | Coluna `Valor Unit`. |
+| `quantidade` | Relatório PAD + rateio | PAD traz quantidade agregada (ver §5.3); aplicação distribui por área. |
+| `valorUnitario` | Relatório PAD (auxiliar) / derivação | Coluna `Valor Unit` como referência auxiliar (ver §5.4); na linha reconstruída, derivar de `valorPrevistoRateado ÷ quantidadeRateada` (ver §12.2). |
 | `valorPrevisto` | Relatório PAD + rateio | PAD traz total agregado; aplicação distribui por área. |
 | `valorExecutado` | Relatório PAD + rateio | PAD traz total agregado; aplicação distribui por área. |
 | `saldo` | Relatório PAD + rateio | PAD traz saldo agregado; aplicação distribui por área e valida contra `valorPrevisto - valorExecutado`. |
@@ -462,6 +502,35 @@ Para evitar divergências de centavos:
 3. calcular diferença residual;
 4. lançar eventual diferença na última linha ativa do rateio;
 5. validar que a soma das linhas reconstruídas bate com o total do PAD.
+
+### 12.2. Fonte de verdade financeira
+
+Na reconstrução do `planoAplicacao`, o dado financeiro confiável é o `Valor
+Total Previsto`, o `Valor Total Executado` e o `Saldo` informados no PAD. Os
+valores financeiros devem ser reconstruídos a partir desses totais, não de
+`quantidade × Valor Unit`.
+
+Regras:
+
+1. os valores financeiros são rateados a partir dos totais do PAD, aplicando
+   `percentual_valor` de cada área;
+2. a quantidade é rateada separadamente, usando `percentual_quantidade`;
+3. o `Valor Unit` exibido no PAD não deve ser usado para recalcular o `Valor
+   Total Previsto`;
+4. o `valorUnitario` de uma linha reconstruída, quando necessário, deve ser
+   derivado depois: `valorPrevistoRateado ÷ quantidadeRateada`, somente quando
+   `quantidadeRateada > 0`.
+
+### 12.3. Alertas de quantidade × valor unitário
+
+O alerta `quantidade_valor_unitario_inconsistente` indica divergência entre
+`quantidade × Valor Unit exibido` e o `Valor Total Previsto`. Deve ser tratado
+como alerta de consistência da fonte.
+
+Quando os totais do relatório permanecem coerentes (cabeçalho, soma dos itens
+e `Total Geral`), essa divergência pode indicar apenas truncamento ou
+arredondamento do `Valor Unit` exibido, e não erro do `Valor Total Previsto`.
+Por si só, o alerta não deve alterar os totais financeiros do PAD.
 
 ---
 

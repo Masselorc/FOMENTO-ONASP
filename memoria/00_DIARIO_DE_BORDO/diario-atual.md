@@ -1,5 +1,27 @@
 # Diário de bordo
 
+## 20/05/2026 - Saneamento PROFOR 2022: Consolidação documental das regras de leitura PAD
+
+- Branch atual: `main`.
+- Estado inicial: working tree limpo após o commit da correção da coluna Quantidade.
+- Objetivo: registrar na memória técnica as regras consolidadas sobre leitura dos relatórios PAD, normalização de quantidade e uso do valor unitário. Alteração estritamente documental.
+- Mudanças realizadas:
+  - **`profor-2022-automacao-planos-aplicacao.md`**: nova subseção §5.3 (regra de leitura da coluna Quantidade — normalizador próprio, ponto/vírgula como separador decimal, sem separador de milhar); nova subseção §5.4 (Valor Unit como referência auxiliar — pode estar truncado/arredondado, com os exemplos do convênio 937698); novas subseções §12.2 (fonte de verdade financeira — totais do PAD, valorUnitario derivado de valorPrevistoRateado ÷ quantidadeRateada) e §12.3 (alertas de quantidade × valor unitário como consistência da fonte). Ajustada a matriz §6 para `quantidade` e `valorUnitario` referenciarem as novas regras.
+- Decisões consolidadas registradas:
+  - A correção da leitura de Quantidade foi consolidada (`converterQuantidadePad`, separado do normalizador monetário).
+  - O ponto na coluna Quantidade dos relatórios PAD é separador decimal — `1.0`/`2.0`/`57.0`/`5700.0` → `1`/`2`/`57`/`5700`.
+  - O `Valor Unit` exibido no PAD pode estar truncado/arredondado para exibição.
+  - A reconstrução financeira futura usará `Valor Total Previsto`, `Valor Total Executado` e `Saldo` do PAD como fonte de verdade; valores rateados por `percentual_valor`, quantidade por `percentual_quantidade`.
+  - O `Valor Unit` é referência auxiliar/indício de equivalência, não base para recalcular total financeiro; a linha reconstruída deriva o valorUnitario de `valorPrevistoRateado ÷ quantidadeRateada` quando `quantidadeRateada > 0`.
+  - Foram identificados dois exemplos no convênio 937698 (Cartilhas e Folders) em que a divergência decorre de truncamento do valor unitário exibido, não de erro do total.
+- Avaliação dos demais documentos: `profor-2022.md` (visão geral — PAD detalhado descrito como etapa futura, sem seção de regras técnicas de leitura) e `schema-banco.md` (documenta tabelas, não o fluxo de leitura PAD) não foram alterados, pois as regras não se encaixam no escopo deles. `profor-2022-operacao.md` trata do fluxo operacional `banco-cache` atual, não da migração PAD — não alterado. `profor-2022-pad-saneamento.md` é relatório gerado automaticamente — não editado manualmente.
+- Validações executadas:
+  - `npm run validar:syntax` → OK (41 arquivos) — nenhum código alterado, validação por garantia.
+  - `git diff --check` → limpo. `git status --short frontend/data/publicados` → vazio.
+  - Confirmado que apenas arquivos de documentação/memória foram alterados.
+- Risco: Nulo. Alteração estritamente documental; nenhum código, banco, frontend, publicação, origem ativa do planoAplicacao ou decisão de saneamento foi tocado.
+- Rollback: `git revert` do commit; ou `git restore` dos 2 arquivos de memória.
+
 ## 20/05/2026 - Saneamento PROFOR 2022: Correção da normalização da coluna Quantidade
 
 - Branch atual: `main`.
