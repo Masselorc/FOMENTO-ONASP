@@ -77,6 +77,22 @@ Ao trabalhar com dados, planilhas, dashboards, publicação ou modo estático:
 
 Não rodar `npm run publicar:dados` por hábito. Rodar apenas quando a tarefa depender de regenerar os JSONs publicados. Em commits que não tratem de dados, usar `SKIP_PUBLICAR_DADOS=1` quando necessário para impedir republicação automática pelo hook local.
 
+## PROFOR 2022 — Planos de Aplicação
+
+Quando a tarefa envolver PROFOR 2022, itens de convênio, plano de aplicação detalhado, planilhas Excel, importação de múltiplos arquivos por instrumento ou automação futura via Transferegov, ler obrigatoriamente:
+
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`
+- `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`
+
+Antes de alterar código, conferir também os arquivos reais diretamente afetados, especialmente:
+
+- `backend/data/aplicacao.json`
+- `backend/services/dashboard-publication-service.js`
+- `backend/services/profor-2022/profor-consolidado-service.js`
+- `backend/services/profor-2022/profor-plano-aplicacao-service.js`
+- `backend/services/static-publication-service.js`
+- `backend/server.js`
+
 ## Diagnóstico
 
 Ao revisar, corrigir ou implementar algo, apresentar quando aplicável:
