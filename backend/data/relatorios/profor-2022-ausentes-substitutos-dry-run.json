@@ -1,0 +1,401 @@
+{
+  "resumo": {
+    "geradoEm": "2026-05-21T21:23:17.304Z",
+    "modo": "dry-run",
+    "totalAusentesAnalisados": 32,
+    "substituto_compativel": 0,
+    "possivel_substituto_com_divergencia": 2,
+    "ausencia_real_sem_substituto": 23,
+    "dados_insuficientes": 0,
+    "ja_decidido": 7
+  },
+  "vinculosSugeridos": [],
+  "analisados": [
+    {
+      "id": 47,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Ar condicionado Split 24000 BTUs (CORREG",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 48,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Ar condicionado Split 36000 BTUs (ESCOLA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 49,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 50,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Cadeira Longarina plástica 03 Lugares -",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 51,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Cadeira Secretária Fixa, Preta, pé palit",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 52,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CAFETEIRA ELETRICA TRADICIONAL INDUSTRIA",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Cafeteira Elétrica Tradicional Industria",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 53,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::COMPUTADOR DESKTOP (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Computador Desktop (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 54,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L BRANCO (OUVID",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Forno de Microondas - 20L Branco (OUVID",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 55,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Forno de Microondas - 32 litros - Branco",
+      "classificacao": "possivel_substituto_com_divergencia",
+      "motivo": "Há candidato a substituto (#8), mas com divergência material — exige revisão humana.",
+      "substituto": {
+        "divergenciaSubstitutaId": 8,
+        "tipoSubstituto": "item_novo_sem_rateio",
+        "statusSubstituto": "PENDENTE",
+        "descricaoPadSubstituta": "Forno de Micro-ondas a partir de- 32 lit",
+        "decisaoSubstitutaJaAceita": false,
+        "criterios": {
+          "mesmoConvenio": true,
+          "mesmaUf": true,
+          "naturezaCompativel": true,
+          "quantidadeCompativel": false,
+          "valorUnitarioCompativel": true,
+          "valorPrevistoCompativel": true,
+          "valorExecutadoCompativel": true,
+          "saldoCompativel": true,
+          "descricaoCompativel": false
+        }
+      }
+    },
+    {
+      "id": 56,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRIGOBAR 71L (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Frigobar 71L (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 57,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::GELADEIRA FROST FREE DUPLEX 400 LITROS (",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Geladeira frost free duplex 400 litros (",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 58,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::GRAVADOR DE AUDIO DIGITAL 32GB (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Gravador de áudio digital 32GB (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 59,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::HD EXTERNO 2TB (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "HD Externo 2TB (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 60,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL TANQUE DE TIN",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Impressora multifuncional Tanque de Tin",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 61,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::KIT VIDEOCONFERENCIA (CORREGEDORIA - 03",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Kit videoconferência (CORREGEDORIA - 03",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 62,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::MESA ESCRITORIO REDONDA - 1,20M (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 63,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOBREAK 1200VA (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Nobreak 1200VA (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 64,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOTEBOOK (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Notebook (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 65,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::PEN DRIVE 64GB (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Pen drive 64Gb (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 66,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::POLTRONAS (CORREGEDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Poltronas (CORREGEDORIA)",
+      "classificacao": "possivel_substituto_com_divergencia",
+      "motivo": "Há candidato a substituto (#13), mas com divergência material — exige revisão humana.",
+      "substituto": {
+        "divergenciaSubstitutaId": 13,
+        "tipoSubstituto": "item_novo_sem_rateio",
+        "statusSubstituto": "PENDENTE",
+        "descricaoPadSubstituta": "kit com 2 Poltronas (CORREGEDORIA).",
+        "decisaoSubstitutaJaAceita": false,
+        "criterios": {
+          "mesmoConvenio": true,
+          "mesmaUf": true,
+          "naturezaCompativel": true,
+          "quantidadeCompativel": false,
+          "valorUnitarioCompativel": false,
+          "valorPrevistoCompativel": true,
+          "valorExecutadoCompativel": true,
+          "saldoCompativel": true,
+          "descricaoCompativel": false
+        }
+      }
+    },
+    {
+      "id": 67,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::PROJETOR MULTIMIDIA 3.000 LUMENS (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 68,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::QUADRO LOUSA BRANCA 250X120CM (ESCOLA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Quadro lousa branca 250x120cm (ESCOLA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 69,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELA DE PROJECAO 2X2 RETRATIL COM TRIPE",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Tela de projeção 2x2 retrátil com tripé",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 70,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO 50 (CORREGEDORIA - 03 UN. E OU",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Televisão 50 (CORREGEDORIA - 03 UN. E OU",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 71,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::WEBCAM FULL HD (OUVIDORIA)",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Webcam full HD (OUVIDORIA)",
+      "classificacao": "ausencia_real_sem_substituto",
+      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "substituto": null
+    },
+    {
+      "id": 72,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE BOLSA - ALUNO OUVIDORIA I",
+      "status": "ACEITO",
+      "descricaoMemoria": "Contratação de Bolsa - Aluno Ouvidoria I",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
+      "substituto": null
+    },
+    {
+      "id": 73,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE BOLSA -COORDENADOR OUVID",
+      "status": "ACEITO",
+      "descricaoMemoria": "Contratação de Bolsa -Coordenador Ouvid",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
+      "substituto": null
+    },
+    {
+      "id": 74,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE BOLSA -PESQUISADOR OUVID",
+      "status": "ACEITO",
+      "descricaoMemoria": "Contratação de Bolsa -Pesquisador Ouvid",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
+      "substituto": null
+    },
+    {
+      "id": 75,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "status": "CORRIGIDO",
+      "descricaoMemoria": "Desktop para edição de video",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "substituto": null
+    },
+    {
+      "id": 76,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+      "status": "CORRIGIDO",
+      "descricaoMemoria": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "substituto": null
+    },
+    {
+      "id": 77,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "status": "CORRIGIDO",
+      "descricaoMemoria": "Smartphone minimo de 128gb de memória in",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "substituto": null
+    },
+    {
+      "id": 78,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "status": "CORRIGIDO",
+      "descricaoMemoria": "Switcher de video",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "substituto": null
+    }
+  ]
+}

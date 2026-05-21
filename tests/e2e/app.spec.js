@@ -559,6 +559,135 @@ test("item ausente no PAD não exibe descrição em valor anterior e mostra valo
   expect(falhasCriticas).toEqual([]);
 });
 
+test("item ausente com substituto no PAD exibe vínculo e não sugere confirmar ausência", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+  let houvePostDecisao = false;
+
+  // Divergência #76: item_ausente_no_pad já saneada com vínculo ao substituto #23.
+  const divergencia = {
+    id: 76,
+    status: "CORRIGIDO",
+    nivel: "aviso",
+    numeroConvenio: "937782",
+    uf: "AC",
+    chaveItem: "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+    tipoAlerta: "item_ausente_no_pad",
+    campoAfetado: "existencia",
+    valorAnterior: "presente_na_memoria",
+    valorNovo: "ausente_no_pad",
+    fonteAnterior: "memoria",
+    fonteNova: "pad",
+    diferenca: "item conhecido não apareceu no PAD atual",
+    bloqueiaPublicacao: false,
+    reapresentada: true,
+    payload: {
+      campoAfetado: "existencia",
+      numeroConvenio: "937782",
+      uf: "AC",
+      descricaoMemoria: "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+      naturezaMemoria: "CAPITAL",
+      quantidadeMemoria: 2,
+      valorUnitarioMemoria: 3599.99,
+      valorPrevistoMemoria: 7199.98,
+      valorExecutadoMemoria: 6229.86,
+      saldoMemoria: 970.12,
+      totalRateiosAtivosMemoria: 2,
+      saneadoPorDiacritico: false,
+    },
+    decisoes: [
+      {
+        id: 90,
+        decisao: "CORRIGIDO",
+        usuario: "sistema-saneamento-substituto-pad",
+        payloadDecisao: {
+          origem: "saneamento-ausente-com-substituto",
+          tipoSaneamento: "vinculo_item_substituto",
+          divergenciaAusenteId: 76,
+          divergenciaSubstitutaId: 23,
+          descricaoMemoria: "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+          descricaoPadSubstituta: "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+          aplicadaAoPlano: false,
+        },
+      },
+    ],
+    logs: [],
+  };
+
+  await page.route("**/api/profor-2022/revisao/**", async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (request.method().toUpperCase() === "POST") {
+      houvePostDecisao = true;
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ success: false, message: "POST não deveria ocorrer neste smoke." }),
+      });
+      return;
+    }
+    if (url.pathname.endsWith("/auditoria")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          auditoria: {
+            publicacaoLiberada: true,
+            totalDivergencias: 1,
+            totalPendentes: 0,
+            totalEmRevisao: 0,
+            totalImpeditivas: 0,
+            totalBloqueiamPublicacao: 0,
+            totalPendentesQueBloqueiamPublicacao: 0,
+            totalEmRevisaoQueBloqueiamPublicacao: 0,
+            totalComDecisaoResolutiva: 1,
+            totalComComentario: 0,
+            totalSemDecisaoResolutiva: 0,
+            porTipo: [{ chave: "item_ausente_no_pad", total: 1 }],
+          },
+        }),
+      });
+      return;
+    }
+    if (url.pathname.endsWith("/divergencias/76")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ success: true, divergencia }),
+      });
+      return;
+    }
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, total: 1, divergencias: [divergencia] }),
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("revisao-divergencias"));
+
+  const view = page.locator("#view-revisao-divergencias");
+  await expect(view).toBeVisible();
+  // Item já saneado: aparece em modo auditoria.
+  await view.locator("#revisao-filtro-mostrar-saneados").check();
+  await view.getByRole("button", { name: "Revisar" }).click();
+
+  // Bloco "Item substituído no PAD" exibido, com vínculo à #23.
+  const substituto = view.locator(".revisao-substituto-box");
+  await expect(substituto).toBeVisible();
+  await expect(substituto).toContainText("#23");
+  await expect(substituto).toContainText("Notebook 4 núcleos 4.2ghz ram ddr 4 8gb");
+
+  // "Confirmar ausência" NÃO é a ação principal (primeiro chip).
+  const primeiroChip = view.locator("#revisao-acoes-rapidas [data-revisao-preset]").first();
+  await expect(primeiroChip).not.toHaveText(/Confirmar ausência/i);
+  // A ação de vínculo com substituto está disponível.
+  await expect(view.locator('[data-revisao-preset="confirmar_vinculo_substituto"]')).toBeVisible();
+
+  expect(houvePostDecisao).toBe(false);
+  expect(falhasCriticas).toEqual([]);
+});
+
 test("parâmetros mínimos faz fallback para JSON publicado quando API local falha", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);

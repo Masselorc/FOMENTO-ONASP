@@ -10870,6 +10870,26 @@ table.dataTable thead th {
     padding: .75rem .9rem;
 }
 
+/* Bloco "Item substituído no PAD": vínculo ausente -> item novo. */
+.revisao-substituto-box {
+    background: var(--color-info-soft);
+    border: 1px solid rgba(74, 210, 255, .28);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    margin-bottom: .85rem;
+    padding: .75rem .9rem;
+}
+
+.revisao-substituto-box.is-saneado {
+    background: var(--color-success-soft);
+    border-color: rgba(21, 197, 141, .3);
+}
+
+.revisao-substituto-box strong {
+    display: block;
+    margin-bottom: .35rem;
+}
+
 .revisao-payload-box {
     background: var(--color-surface);
     border: 1px solid var(--color-border);

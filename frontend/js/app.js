@@ -2140,6 +2140,36 @@ async function carregarLogoParaPDF() {
             return divergencia?.payload?.saneadoPorDiacritico === true;
         }
 
+        // Para item_ausente_no_pad: detecta vínculo com item substituto no PAD.
+        // O vínculo é registrado por decisão (payloadDecisao.tipoSaneamento =
+        // 'vinculo_item_substituto'); o payload da divergência também pode
+        // trazê-lo. Retorna { divergenciaSubstitutaId, descricaoPadSubstituta,
+        // saneado } ou null.
+        function obterVinculoSubstitutoRevisao(divergencia) {
+            const payloadDiv = divergencia?.payload || {};
+            // 1) Decisão de vínculo já registrada nesta divergência.
+            const decisoes = Array.isArray(divergencia?.decisoes) ? divergencia.decisoes : [];
+            for (const dec of decisoes) {
+                const pd = dec?.payloadDecisao || {};
+                if (pd.tipoSaneamento === 'vinculo_item_substituto' && pd.divergenciaSubstitutaId) {
+                    return {
+                        divergenciaSubstitutaId: pd.divergenciaSubstitutaId,
+                        descricaoPadSubstituta: pd.descricaoPadSubstituta || null,
+                        saneado: true
+                    };
+                }
+            }
+            // 2) Vínculo sugerido no próprio payload da divergência (auditoria).
+            if (payloadDiv.substituto && payloadDiv.substituto.divergenciaSubstitutaId) {
+                return {
+                    divergenciaSubstitutaId: payloadDiv.substituto.divergenciaSubstitutaId,
+                    descricaoPadSubstituta: payloadDiv.substituto.descricaoPadSubstituta || null,
+                    saneado: false
+                };
+            }
+            return null;
+        }
+
         function obterPresetsDecisaoRevisao(divergencia) {
             const categoria = obterCategoriaSaneamentoRevisao(divergencia);
             const revisarDepois = {
@@ -2230,6 +2260,24 @@ async function carregarLogoParaPDF() {
                     decisao: 'REJEITADO',
                     justificativa: 'Ausência não confirmada; item pode ter substituto a vincular em revisão posterior.'
                 };
+                // Quando há item substituto compatível no PAD, "Confirmar ausência"
+                // NÃO é a ação principal — não há ausência real. A ação primária
+                // é confirmar o vínculo com o substituto.
+                const vinculoSubstituto = obterVinculoSubstitutoRevisao(divergencia);
+                if (vinculoSubstituto) {
+                    const refSub = `#${vinculoSubstituto.divergenciaSubstitutaId}`;
+                    return [
+                        {
+                            id: 'confirmar_vinculo_substituto',
+                            label: 'Confirmar vínculo com substituto',
+                            variante: 'primary',
+                            decisao: 'CORRIGIDO',
+                            justificativa: `Item não está ausente: foi reapresentado no PAD como item substituto (divergência ${refSub}), com convênio, natureza, quantidade e valores compatíveis.`
+                        },
+                        revisarDepois,
+                        confirmarAusencia
+                    ];
+                }
                 // Quando há evidência de saneamento por diacrítico, "Confirmar ausência"
                 // NÃO é a ação principal — o item existe no PAD apenas com outra
                 // acentuação. A ação primária passa a ser não confirmar.
@@ -2379,23 +2427,45 @@ async function carregarLogoParaPDF() {
                 // campoAfetado = 'existencia': não exibir "Valor anterior/novo" como
                 // descrição. Mostrar Estado anterior/novo e valores financeiros reais.
                 const saneadoDiacritico = payload.saneadoPorDiacritico === true;
-                conteudo = renderListaSaneamentoRevisao([
+                const vinculoSubstituto = obterVinculoSubstitutoRevisao(divergencia);
+                const linhas = [
                     ['Item da memória', payload.descricaoMemoria],
                     ['Convênio', divergencia.numeroConvenio || payload.numeroConvenio],
                     ['UF', divergencia.uf || payload.uf],
                     ['Estado anterior', 'Presente na memória'],
-                    ['Estado novo', 'Ausente no PAD'],
+                    ['Estado novo', vinculoSubstituto ? 'Reapresentado no PAD (substituto)' : 'Ausente no PAD'],
                     ['Natureza', payload.naturezaMemoria || payload.natureza],
                     ['Quantidade (memória)', valorOuNaoInformadoRevisao(payload.quantidadeMemoria)],
                     ['Valor unitário (memória)', valorOuNaoInformadoRevisao(payload.valorUnitarioMemoria)],
                     ['Valor previsto (memória)', valorOuNaoInformadoRevisao(payload.valorPrevistoMemoria)],
                     ['Valor executado (memória)', valorOuNaoInformadoRevisao(payload.valorExecutadoMemoria)],
                     ['Saldo (memória)', valorOuNaoInformadoRevisao(payload.saldoMemoria)],
-                    ['Rateios ativos na memória', valorOuNaoInformadoRevisao(payload.totalRateiosAtivosMemoria)],
-                    ['Alerta', saneadoDiacritico
+                    ['Rateios ativos na memória', valorOuNaoInformadoRevisao(payload.totalRateiosAtivosMemoria)]
+                ];
+                if (!vinculoSubstituto) {
+                    linhas.push(['Alerta', saneadoDiacritico
                         ? 'Há item correspondente no PAD com diferença apenas de acentuação/diacrítico. Não confirme ausência: trata-se de saneamento textual.'
-                        : 'O item não apareceu no PAD atual. Avalie exclusão, substituição ou observação.']
-                ]);
+                        : 'O item não apareceu no PAD atual. Avalie exclusão, substituição ou observação.']);
+                }
+                let blocoSubstituto = '';
+                if (vinculoSubstituto) {
+                    // Bloco "Item substituído no PAD": evita confirmação de ausência falsa.
+                    const subDesc = vinculoSubstituto.descricaoPadSubstituta
+                        ? escapeHtml(vinculoSubstituto.descricaoPadSubstituta)
+                        : '(item novo correspondente no PAD)';
+                    const subId = escapeHtml(String(vinculoSubstituto.divergenciaSubstitutaId));
+                    blocoSubstituto = `
+                        <div class="revisao-substituto-box ${vinculoSubstituto.saneado ? 'is-saneado' : ''}">
+                            <strong>${vinculoSubstituto.saneado ? 'Vínculo com substituto saneado' : 'Item possivelmente substituído no PAD'}</strong>
+                            <p class="mb-1">Substituto: ${subDesc}.</p>
+                            <p class="mb-1">Divergência vinculada: <strong>#${subId}</strong>.</p>
+                            <p class="mb-0 text-muted small">Os valores materiais fecham com o item novo. ${vinculoSubstituto.saneado
+                                ? 'O vínculo já foi saneado automaticamente — não há ausência real.'
+                                : 'Não confirme ausência: trata-se de substituição/atualização de especificação.'}</p>
+                        </div>
+                    `;
+                }
+                conteudo = blocoSubstituto + renderListaSaneamentoRevisao(linhas);
             } else if (categoria === 'nao_apto') {
                 titulo = 'Item conhecido não apto';
                 conteudo = renderListaSaneamentoRevisao([

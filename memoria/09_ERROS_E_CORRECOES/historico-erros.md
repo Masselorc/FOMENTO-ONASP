@@ -345,6 +345,34 @@ Critério operacional: se não houver evidência concreta, registrar como risco,
 
 **Rollback:** reverter o commit `fix(profor-2022): saneia pendencias residuais de diacritico`. Como o saneamento usa o serviço de decisão sem SQL direto e o banco não é versionado, não há rollback de schema.
 
+### CA-005 — `item_ausente_no_pad` apresentado como ausência real quando há item substituto no PAD
+
+**Classificação:** correção aplicada
+
+**Contexto:** tela `SISTEMA > Revisão de divergências PAD x memória`, PROFOR 2022.
+
+**Problema:** a divergência #76 (`item_ausente_no_pad`, "Notebook 2.4ghz") aparecia como item ausente com ação "Confirmar ausência", mas era o espelho antigo da #23 (item novo "Notebook 4.2ghz" já `ACEITO`). O item não estava ausente — foi reapresentado no PAD com atualização de especificação. A tela podia induzir confirmação de ausência falsa.
+
+**Evidência:** payloads de #76 e #23 com convênio, UF, natureza, quantidade e todos os valores idênticos; a decisão `ACEITO` da #23 tem `payloadDecisao.itemMemoria.chaveItem` igual à `chave_item` da #76; relatório `backend/data/relatorios/profor-2022-ausentes-substitutos-dry-run.md`.
+
+**Causa provável:** não havia regra cruzando `item_ausente_no_pad` com o item novo correspondente no PAD; a fila tratava ausência e item novo como divergências independentes.
+
+**Correção aplicada:** novo serviço puro de auditoria de substitutos com travas materiais (convênio, natureza, quantidade, valores dentro de R$ 0,01, descrição por alteração controlada — sem fuzzy amplo); auditoria dry-run `profor:pad:ausentes:auditar-substitutos`; saneamento `profor:pad:ausentes:sanear-substitutos` que registra o vínculo via `registrarDecisao`. O frontend passou a exibir o bloco "Item substituído no PAD" e a não sugerir "Confirmar ausência" quando há substituto.
+
+**Por que funcionou:** o vínculo só é firmado quando todas as travas materiais e financeiras batem; a decisão registra a relação ausente→substituto sem confirmar ausência nem alterar o item novo aceito.
+
+**Como prevenir:** ao gerar `item_ausente_no_pad`, cruzar com itens novos do PAD antes de tratar como ausência; nunca confirmar ausência automaticamente.
+
+**Boa prática reutilizável:** classificar ausências por auditoria dry-run com travas materiais antes de qualquer saneamento; manter o saneamento idempotente e protegido contra divergências já decididas.
+
+**Aplicável a futuras aplicações:** sim.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-substituto-auditoria-service.js`, `backend/scripts/auditar-ausentes-com-substituto-pad-profor-2022.js`, `backend/scripts/sanear-ausentes-com-substituto-pad-profor-2022.js`, `frontend/js/app.js`.
+
+**Validações recomendadas:** `npm run validar:services`, `npm run profor:pad:ausentes:auditar-substitutos`, suíte E2E e `validar-decisao-estruturada-ponta-a-ponta.js`.
+
+**Rollback:** reverter o commit `fix(profor-2022): vincula ausentes a substitutos PAD`. O saneamento usa o serviço de decisão sem SQL direto e o banco não é versionado; não há rollback de schema.
+
 ## Riscos recorrentes
 
 ### RR-001 — Workspace sujo antes de iniciar nova tarefa

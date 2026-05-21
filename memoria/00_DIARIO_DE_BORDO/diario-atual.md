@@ -1,5 +1,57 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Vínculo de Itens Ausentes a Substitutos no PAD (#76 → #23)
+
+- **Status**: Implementado e Validado.
+- **Tipo de mudança**: Backend (serviço puro + 2 scripts) + frontend/UX + testes. Não houve publicação, alteração de origem ativa, de `frontend/data/publicados`, do `planoAplicacao` oficial, criação de migration ou de dependência. Nenhum SQLite é versionado.
+
+### Problema observado na #76
+
+A tela `SISTEMA > Revisão de divergências` apresentava a divergência **#76** (`item_ausente_no_pad`, convênio 937782/AC, "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb") como simples item ausente, com PAD novo "não informado" e ação sugerida "Confirmar ausência". Isso é incorreto: o item não está ausente — foi reapresentado no PAD com atualização de especificação técnica.
+
+### Causa
+
+A #76 é o **espelho antigo** da divergência **#23** (`item_novo_sem_rateio`, "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb"), já `ACEITO`. Não havia regra que cruzasse `item_ausente_no_pad` com o item novo correspondente no PAD. A tela poderia induzir o usuário a confirmar ausência falsa.
+
+### Diagnóstico do vínculo #76 → #23
+
+Confirmado por dados materiais e prova documental. Todos os campos batem: convênio 937782, UF AC, natureza CAPITAL, quantidade 2, valor unitário R$ 3.599,99, valor previsto R$ 7.199,98, valor executado R$ 6.229,86, saldo R$ 970,12. As descrições diferem apenas na especificação técnica `2.4ghz` x `4.2ghz`. **Prova documental**: a decisão `ACEITO` da #23 (id 85) tem `payloadDecisao.itemMemoria.chaveItem = "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB"` — exatamente a `chave_item` da #76; o rateio antigo da #23 veio da memória da #76.
+
+### Regra de vínculo com substituto
+
+Novo serviço puro `profor-pad-substituto-auditoria-service.js` (testável sem banco). Uma divergência `item_ausente_no_pad` só é `substituto_compativel` quando há item novo no PAD com: mesmo convênio; mesma UF (se disponível); natureza compatível; quantidade igual; valor unitário, valor previsto, valor executado e saldo compatíveis dentro de R$ 0,01; e descrição compatível por **alteração controlada** — iguais após normalização OU divergindo em no máximo UM token e esse token contém dígitos (ex.: frequência). Sem fuzzy amplo. Classificações: `substituto_compativel`, `possivel_substituto_com_divergencia`, `ausencia_real_sem_substituto`, `dados_insuficientes`, `ja_decidido`.
+
+### Auditoria e saneamento
+
+- `npm run profor:pad:ausentes:auditar-substitutos` (script `auditar-ausentes-com-substituto-pad-profor-2022.js`): auditoria dry-run; gera `profor-2022-ausentes-substitutos-dry-run.{json,md}`.
+- `npm run profor:pad:ausentes:sanear-substitutos` (script `sanear-ausentes-com-substituto-pad-profor-2022.js`): registra decisão resolutiva **apenas** para `substituto_compativel`, via serviço existente `registrarDecisao` (sem SQL direto). Decisão `CORRIGIDO`, usuário `sistema-saneamento-substituto-pad`, `aplicadaAoPlano=false`, snapshot `_segurancaPreAtivacao` e log automáticos, `payloadDecisao.tipoSaneamento = "vinculo_item_substituto"`. Proteção: nunca registra sobre divergência já resolutiva.
+
+### IDs saneados e mantidos
+
+- Auditoria: 32 ausentes analisados — **1 substituto compatível (#76 → #23)**, 2 possíveis substitutos com divergência (#55, #66 — quantidade/descrição divergem, mantidos para revisão humana), 23 ausências reais sem substituto, 6 já decididas.
+- Saneamento: **#76 saneada**, `PENDENTE → CORRIGIDO`, vinculada à #23. Re-auditoria: `substituto_compativel` 1 → 0, `ja_decidido` 6 → 7 (idempotente).
+- **#23 permanece `ACEITO` e inalterada.** Nenhuma ausência real foi saneada; nenhuma decisão falsa de ausência foi criada (a decisão registra o vínculo, não confirma ausência).
+
+### Frontend
+
+Quando há vínculo de substituto (detectado pela decisão `vinculo_item_substituto` ou por payload), a tela: (a) exibe o bloco "Item substituído no PAD" / "Vínculo com substituto saneado" com a divergência vinculada; (b) substitui "Confirmar ausência" como ação principal pela ação "Confirmar vínculo com substituto"; (c) mostra "Reapresentado no PAD (substituto)" no estado. Itens realmente ausentes, sem substituto, continuam com `item_ausente_no_pad` e "Confirmar ausência" — Tarefa F preservada.
+
+### Impacto na auditoria / segurança / reconstrução / comparador
+
+- `auditar-fila-revisao`: 145 divergências, 120 pendentes.
+- `seguranca-pre-ativacao` (dry-run): `payloadAlteradoAposDecisao: 4` — são #72/#73/#74, pré-existentes de ciclos anteriores; **a #76 não está entre os alterados nem nos bloqueios** (snapshot íntegro).
+- `reconstruir-plano` (dry-run): 607 linhas; `comparar-plano` (dry-run): 9 diferenças críticas. A decisão `vinculo_item_substituto` **não é interpretada pelo motor de aplicação** (`profor-pad-decisao-aplicacao-service.js` não a referencia) — é puramente de auditoria/rastreabilidade, não gera linha de plano. A variação ante o ciclo anterior decorre da regeneração natural da fila, não do vínculo; a 9ª crítica é "Ar condicionado 60.000 BTUs" do convênio 937221, sem relação com #76/#23.
+- `validar-decisao-estruturada-ponta-a-ponta.js`: SUCESSO absoluto, retorno ao baseline validado.
+
+### Testes
+
+- `tests/services/profor-pad-substituto-auditoria.test.js` (15 testes): substituição de especificação como alteração controlada, rejeição de fuzzy amplo, travas materiais, classificação #76 → #23, rejeição de candidatos com quantidade/valor/natureza divergente, `ja_decidido`, `dados_insuficientes`.
+- `tests/e2e/app.spec.js`: novo smoke "item ausente com substituto no PAD exibe vínculo e não sugere confirmar ausência". Suíte E2E completa: 15/15. `validar:services`: 71 testes OK.
+
+### Confirmação
+
+Sem publicação, sem alterar origem ativa, `frontend/data/publicados` ou o `planoAplicacao` oficial. Nenhuma decisão falsa de ausência criada. Nenhuma decisão/log apagado.
+
 ## 21/05/2026 - PROFOR 2022: Rateio por Quantidade por Setor e Decisão por Ação Sugerida
 
 - **Status**: Implementado e Validado.

@@ -1640,6 +1640,52 @@ preset da ação sugerida. O fluxo é: clicar na ação sugerida (chip) e em
 **Confirmação.** Mudança apenas de frontend/UX; sem alteração de backend, banco,
 migration, dependência, publicação, origem ativa ou `planoAplicacao` oficial.
 
+#### 16.2.18. Vínculo de itens ausentes a substitutos no PAD (Etapa 9.5 — implementada)
+
+A Etapa 9.5 trata o caso em que uma divergência `item_ausente_no_pad` não é, na
+verdade, ausência real: o item foi reapresentado no PAD com alteração de
+descrição/especificação (ex.: "Notebook 2.4ghz" → "Notebook 4.2ghz"), gerando um
+item novo correspondente — possivelmente já tratado/aceito noutra divergência.
+Sem essa regra, a tela induzia o usuário a confirmar ausência falsa.
+
+**Regra de vínculo.** O serviço puro `profor-pad-substituto-auditoria-service.js`
+classifica cada `item_ausente_no_pad` buscando um item novo no PAD
+(`item_novo_sem_rateio`, `item_pad_sem_rateio` etc.). Só é `substituto_compativel`
+quando: mesmo convênio; mesma UF; natureza compatível; quantidade igual; valor
+unitário, valor previsto, valor executado e saldo compatíveis dentro de R$ 0,01;
+e descrição compatível por **alteração controlada** — iguais após normalização ou
+divergindo em no máximo um token que contenha dígitos. Sem fuzzy amplo: sem essas
+travas materiais o caso vira `possivel_substituto_com_divergencia` (revisão
+humana) ou `ausencia_real_sem_substituto`.
+
+**Auditoria dry-run.** `npm run profor:pad:ausentes:auditar-substitutos` gera
+`profor-2022-ausentes-substitutos-dry-run.{json,md}` com a lista de vínculos
+sugeridos. Não altera o banco.
+
+**Saneamento assistido.** `npm run profor:pad:ausentes:sanear-substitutos`
+registra decisão resolutiva apenas para `substituto_compativel`, via serviço
+existente `registrarDecisao` (sem SQL direto): decisão `CORRIGIDO`, usuário
+`sistema-saneamento-substituto-pad`, `aplicadaAoPlano=false`,
+`payloadDecisao.tipoSaneamento = "vinculo_item_substituto"`, snapshot
+`_segurancaPreAtivacao` e log automáticos. A decisão registra o **vínculo**, não
+confirma ausência. O motor de aplicação de decisões não interpreta esse tipo de
+saneamento — é puramente de auditoria/rastreabilidade, não gera linha de plano.
+
+**Interface.** Quando há vínculo de substituto, a tela exibe o bloco "Item
+substituído no PAD" / "Vínculo com substituto saneado", indicando a divergência
+vinculada; "Confirmar ausência" deixa de ser a ação principal, substituída por
+"Confirmar vínculo com substituto". Itens realmente ausentes, sem substituto,
+continuam como `item_ausente_no_pad` com a opção de confirmar ausência.
+
+**Caso #76 → #23.** A divergência #76 ("Notebook 2.4ghz") era o espelho antigo da
+#23 ("Notebook 4.2ghz", já `ACEITO`): mesmos convênio, UF, natureza, quantidade e
+todos os valores; a decisão da #23 declara `itemMemoria.chaveItem` igual à
+`chave_item` da #76. O saneamento vinculou a #76 à #23 (`PENDENTE → CORRIGIDO`); a
+#23 permanece `ACEITO` e inalterada.
+
+**Confirmação.** Sem publicação, sem alterar origem ativa, `frontend/data/publicados`
+ou o `planoAplicacao` oficial; sem migration; nenhuma decisão falsa de ausência.
+
 ---
 
 ## 17. Fases de implementação recomendadas
