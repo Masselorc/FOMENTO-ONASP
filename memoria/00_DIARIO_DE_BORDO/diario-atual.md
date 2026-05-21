@@ -3,52 +3,41 @@
 ## 21/05/2026 - PROFOR 2022: Diagnóstico e Análise das 4 Diferenças Críticas no Comparador (Pós-divergência #23)
 
 - **Status**: Diagnóstico concluído.
-- **Objetivo**: Analisar as 4 diferenças críticas geradas pelo comparador após a aplicação da decisão assistida de rateio na divergência `#23`.
-- **Diagnóstico geral**:
-  - As 4 críticas do comparador são **efeito esperado** do ciclo de vida das divergências e das decisões aplicadas em dry-run;
-  - Não indicam regressão no motor de reconstrução ou no comparador;
-  - Não há falsos positivos no comparador. O tratamento de ambiguidade e duplicidades de linhas pelo comparador está 100% correto;
-  - Não há necessidade de alteração de código.
+- **Objetivo**: Analisar detalhadamente as 4 diferenças críticas geradas pelo comparador após a aplicação da decisão assistida de rateio na divergência `#23`.
 
-### Detalhamento das 4 Diferenças Críticas (Convênio 937782 / AC)
+### 1. Detalhamento e Classificação das 4 Diferenças Críticas (Convênio 937782 / AC)
 
-1. **Contratação de 01 (um) Supervisor por 12** (`OUVIDORIA / CUSTEIO`)
-   - **Valor antigo**: `R$ 0,00`
-   - **Valor reconstruído**: `R$ 89.532,00`
-   - **Diferença**: `+R$ 89.532,00`
-   - **Classificação**: `critica` (situação: `novo`)
-   - **Relação**: Divergência `#21` (`item_novo_sem_rateio`), aceita com 100% Ouvidoria/Custeio. Por ser um item novo adicionado ao PAD e inexistente na memória antiga, é correto que apareça como novo/crítico até a homologação final.
-2. **Contratação de 02 (dois) Auxiliares Admi** (`OUVIDORIA / CUSTEIO`)
-   - **Valor antigo**: `R$ 0,00`
-   - **Valor reconstruído**: `R$ 102.168,00`
-   - **Diferença**: `+R$ 102.168,00`
-   - **Classificação**: `critica` (situação: `novo`)
-   - **Relação**: Divergência `#22` (`item_novo_sem_rateio`), aceita com 100% Ouvidoria/Custeio. Mesma justificativa do item 1.
-3. **Notebook 4 núcleos 4.2ghz ram ddr 4 8gb** (`OUVIDORIA / CAPITAL`)
-   - **Valor antigo**: `R$ 0,00` (referente a esta chave exata)
-   - **Valor reconstruído**: `R$ 3.599,99`
-   - **Diferença**: `+R$ 3.599,99`
-   - **Classificação**: `critica` (situação: `novo`)
-   - **Relação**: Divergência `#23` (`item_novo_sem_rateio`), aceita com o rateio de 50% Ouvidoria / 50% Corregedoria.
-4. **Notebook 4 núcleos 4.2ghz ram ddr 4 8gb** (`CORREGEDORIA / CAPITAL`)
-   - **Valor antigo**: `R$ 0,00` (referente a esta chave exata)
-   - **Valor reconstruído**: `R$ 3.599,99`
-   - **Diferença**: `+R$ 3.599,99`
-   - **Classificação**: `critica` (situação: `novo`)
-   - **Relação**: Divergência `#23`.
+| Item | Convênio / UF | Descrição | Área | Natureza | Campo Divergente | Valor Antigo (Prev / Exec / Saldo) | Valor Reconstruído PAD (Prev / Exec / Saldo) | Diferença | Classificação | Categoria de Análise | Relação e Motivo da Criticidade |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | 937782 / AC | Contratação de 01 (um) Supervisor por 12 | OUVIDORIA | CUSTEIO | Situação (`novo`) | R$ 0,00 / R$ 0,00 / R$ 0,00 | R$ 89.532,00 / R$ 0,00 / R$ 89.532,00 | +R$ 89.532,00 | `critica` | `efeito_esperado_da_decisao` | Originado da divergência `#21` (`item_novo_sem_rateio`). É uma nova linha adicionada ao PAD. Como o item é novo e não possui correspondente na memória antiga, o comparador o aponta como nova diferença crítica até a homologação final. |
+| **2** | 937782 / AC | Contratação de 02 (dois) Auxiliares Admi | OUVIDORIA | CUSTEIO | Situação (`novo`) | R$ 0,00 / R$ 0,00 / R$ 0,00 | R$ 102.168,00 / R$ 0,00 / R$ 102.168,00 | +R$ 102.168,00 | `critica` | `efeito_esperado_da_decisao` | Originado da divergência `#22` (`item_novo_sem_rateio`). Mesma justificativa do item 1. |
+| **3** | 937782 / AC | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb | OUVIDORIA | CAPITAL | Situação (`novo`) | R$ 0,00 / R$ 0,00 / R$ 0,00 | R$ 3.599,99 / R$ 3.114,93 / R$ 485,06 | +R$ 3.599,99 | `critica` | `efeito_esperado_da_decisao` | Originado da divergência `#23` (`item_novo_sem_rateio`), que foi aceita com a aplicação do rateio antigo (50% Ouvidoria / 50% Corregedoria). A chave exata de `4.2ghz` não existe na antiga memória, pois o item anterior tinha descrição com `2.4ghz`. |
+| **4** | 937782 / AC | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb | CORREGEDORIA | CAPITAL | Situação (`novo`) | R$ 0,00 / R$ 0,00 / R$ 0,00 | R$ 3.599,99 / R$ 3.114,93 / R$ 485,06 | +R$ 3.599,99 | `critica` | `efeito_esperado_da_decisao` | Originado da divergência `#23`. Mesma justificativa do item 3 (linha de rateio da Corregedoria). |
 
-### Análise da Origem dos Notebooks (Itens 3 e 4) e Tratamento do Comparador
+### 2. Validação Específica da Decisão #23 (Notebook 4.2GHz)
 
-- **Mudança de Descrição**: O PAD atualizou o item alterando a frequência de `2.4ghz` para `4.2ghz`. Por isso, o matching gerou um novo item (`#23`) e a ausência do antigo (`#76`).
-- **Estado do Saneamento**:
-  - A divergência `#23` (item novo) foi aceita com a aplicação do rateio antigo (50% Ouvidoria / 50% Corregedoria), gerando as duas novas linhas reconstruídas (itens 3 e 4).
-  - No entanto, a divergência `#76` (ausência do notebook `2.4ghz`) permanece `PENDENTE`. As linhas antigas de `2.4ghz` no valor total de `R$ 7.199,98` ainda são importadas no plano antigo.
-  - Como a ausência do item de `2.4ghz` ainda não foi confirmada por decisão resolutiva, o comparador aponta as duas linhas antigas como `ausente` (com classificação `diferenca_por_pendencia_de_decisao`) e as duas novas como `novo` (com classificação `critica`).
-  - **Conclusão**: O comportamento é o esperado. Quando a divergência `#76` for decidida como `ACEITO` (homologando a ausência do notebook antigo `2.4ghz` substituído), a diferença crítica e os alertas correspondentes serão saneados.
+A aplicação assistida da decisão resolutiva para a divergência `#23` (`item_novo_sem_rateio` sob o convênio `937782/AC`) utilizou o rateio antigo validado da memória. Esta decisão gerou **exatamente duas linhas** de aplicação na reconstrução do plano do PAD:
+1. **Ouvidoria / Capital / 50%**: Quantidade `1`, Previsto `R$ 3.599,99`, Executado `R$ 3.114,93` e Saldo `R$ 485,06`.
+2. **Corregedoria / Capital / 50%**: Quantidade `1`, Previsto `R$ 3.599,99`, Executado `R$ 3.114,93` e Saldo `R$ 485,06`.
 
-### Validação de Ambiguidade e Duplicidades
+#### Confronto com Valores Consolidados do PAD:
+- **Valores Consolidados no PAD**: Quantidade total `2`, Valor Previsto total `R$ 7.199,98`, Executado total `R$ 6.229,86` e Saldo total `R$ 970,12`.
+- **Soma das duas linhas rateadas**:
+  - Quantidade: `1 + 1 = 2` (100% de consistência)
+  - Previsto: `R$ 3.599,99 + R$ 3.599,99 = R$ 7.199,98` (100% de consistência)
+  - Executado: `R$ 3.114,93 + R$ 3.114,93 = R$ 6.229,86` (100% de consistência)
+  - Saldo: `R$ 485,06 + R$ 485,06 = R$ 970,12` (100% de consistência)
 
-- O comparador utiliza a chave composta `numeroConvenio::descricao::area::natureza`. Caso uma mesma chave apareça mais de uma vez em qualquer um dos planos (ex: múltiplos ar condicionados na mesma área e natureza no convênio `937265`), o comparador rejeita qualquer consolidação ou correspondência às cegas e classifica os itens no grupo `itensAmbiguos` (total de 49 no baseline). Esse comportamento é essencial para evitar o mascaramento de divergências materiais em itens repetidos e está correto.
+### 3. Comparação contra a Memória Antiga e Análise de Granularidades
+
+- **Correspondência Material**: A reconstrução reproduziu a memória antiga de forma perfeitamente idêntica. Na antiga base de rateio, o item correspondente (`Notebook 4 núcleos 2.4ghz ram ddr 4 8gb`) estava dividido exatamente com os mesmos quantitativos e áreas (uma linha para Ouvidoria com Qtd `1` / Previsto `3.599,99` / Executado `3.114,93` e outra idêntica para a Corregedoria).
+- **Granularidade**: O PAD consolidou as duas linhas originais em uma única linha (Notebook `4.2ghz` com Qtd `2`), enquanto o plano reconstruído, após a aplicação da decisão assistida de rateio da divergência `#23`, dividiu adequadamente em duas linhas de rateio, restaurando a granularidade da memória antiga.
+- **Divergência de Descrição e Comportamento do Comparador**: A única diferença reside na descrição do item (`2.4ghz` na memória antiga vs. `4.2ghz` no PAD). Devido a essa atualização de especificação técnica pelo gestor do convênio, o comparador classificou a remoção do notebook antigo (`2.4ghz`) como `ausente` (classificação: `diferenca_por_pendencia_de_decisao` — aviso, já que a divergência de ausência `#76` continua pendente) e a inclusão do notebook novo (`4.2ghz`) como `novo` (classificação: `critica`).
+- **Validação de Ambiguidade / Duplicidades**: O comparador utiliza a chave de pareamento composta `numeroConvenio::descricao::area::natureza` para realizar a conciliação. Não há flagging de ambiguidade ou duplicação indevida para estes itens (elas são exclusivas). O comparador aponta a divergência apenas pela incompatibilidade nominal do campo `descricao` (`2.4ghz` vs `4.2ghz`), tratando-se de uma substituição técnica cujo fechamento ocorrerá com a resolução do status pendente da divergência `#76`. Não existe nenhuma duplicidade ocultando divergências materiais.
+
+### 4. Origem e Relação com Outras Decisões (Itens 1 e 2)
+
+As diferenças críticas 1 e 2 originam-se das divergências `#21` e `#22` (`item_novo_sem_rateio`), respectivamente. Ambas foram saneadas com decisão resolutiva de aceite de 100% de destinação à Ouvidoria (Custeio). Como esses itens não existiam em nenhuma forma (mesmo descrições alternativas) no plano de aplicação antigo, a sua correta reconstrução gera linhas com valor unitário unitizado no PAD e sem contrapartida no histórico. A classificação como nova linha crítica é correta e é o efeito esperado dessas novas adições ao convênio.
 
 ---
 
