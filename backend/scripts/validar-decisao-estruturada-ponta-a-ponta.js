@@ -36,8 +36,6 @@ function executar() {
   console.log("  [INFO] Esses valores serão adotados como o baseline dinâmico da execução.");
   
   // Validação mínima de sanidade e estrutura do baseline (Tarefa C)
-  assert.ok(typeof estatisticasAntes.totalDivergencias === "number" && estatisticasAntes.totalDivergencias >= 0, "totalDivergencias do baseline inválido (deve ser número >= 0).");
-
   const contadores = [
     "totalDivergencias",
     "totalPendentes",
@@ -51,8 +49,18 @@ function executar() {
     "publicacaoLiberada"
   ];
   for (const campo of contadores) {
-    if (estatisticasAntes[campo] === undefined) {
-      throw new Error(`Campo essencial de auditoria '${campo}' está ausente ou undefined no baseline.`);
+    const valor = estatisticasAntes[campo];
+    if (valor === undefined || valor === null) {
+      throw new Error(`Campo essencial de auditoria '${campo}' está ausente, undefined ou null no baseline.`);
+    }
+    if (campo === "publicacaoLiberada") {
+      if (typeof valor !== "boolean") {
+        throw new Error(`Campo '${campo}' deve ser um boolean, mas é ${typeof valor}.`);
+      }
+    } else {
+      if (typeof valor !== "number" || isNaN(valor)) {
+        throw new Error(`Campo '${campo}' deve ser um número, mas é ${typeof valor}.`);
+      }
     }
   }
 
