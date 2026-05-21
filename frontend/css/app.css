@@ -10845,7 +10845,7 @@ table.dataTable thead th {
     border-radius: var(--radius);
     display: grid;
     gap: .65rem;
-    grid-template-columns: minmax(140px, 1.1fr) minmax(120px, 1fr) minmax(90px, .65fr) minmax(110px, .75fr) minmax(160px, 1.2fr) auto;
+    grid-template-columns: minmax(160px, 1.6fr) minmax(110px, .9fr) auto;
     padding: .7rem;
 }
 

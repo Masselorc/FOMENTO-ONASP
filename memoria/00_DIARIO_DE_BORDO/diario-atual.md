@@ -1,5 +1,52 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Rateio por Quantidade por Setor e Decisão por Ação Sugerida
+
+- **Status**: Implementado e Validado.
+- **Tipo de mudança**: **Somente frontend/UX** (`frontend/js/app.js`, `frontend/css/app.css`, cache-buster em `index.html`, teste E2E). Não houve alteração de backend, banco, migration, dependências, publicação, origem ativa, `frontend/data/publicados` ou do `planoAplicacao` oficial.
+
+### Problema de UX
+
+O painel "Rateio manual" da tela `SISTEMA > Revisão de divergências` exigia digitação de percentuais (`% valor` e `% quantidade`), tinha campos de observação por linha e observação geral, pedia a natureza por digitação, e o formulário de decisão exibia "Usuário responsável" e o dropdown "Motivo da decisão". O usuário não trabalha com percentuais nem com rateio de valor: ele classifica o item entre os setores OUVIDORIA, CORREGEDORIA e ESCOLA PENAL e atribui **quantidades inteiras** a cada um.
+
+### Correção (rateio por quantidade)
+
+- Cada linha de rateio passou a ter **apenas dois campos**: **Setor** (`<select>` fixo com OUVIDORIA, CORREGEDORIA, ESCOLA PENAL — sem digitação livre) e **Quantidade** (inteiro).
+- **Removidos das linhas**: `% valor`, `% quantidade`, `Observação`. **Removido** o campo "Observação geral do rateio".
+- **Natureza**: não é mais digitada — vem automaticamente do PAD (`payload.naturezaPad`) e é exibida como referência no cabeçalho do editor.
+- **Quantidade total do item**: usada do PAD (`payload.quantidadePad`) quando disponível; quando o PAD não traz, há um campo para o usuário informá-la. Um indicador "Atribuído: X de Y" mostra o saldo em tempo real.
+- "Adicionar linha" / "Remover" continuam, para ratear entre 2 ou 3 setores.
+
+### Conversão para o backend (sem tocar no backend)
+
+O backend (`profor-pad-decisao-aplicacao-service.js`, `validarRateioManual`) espera `percentualQuantidade` somando 100 e `area`/`natureza` por linha. Em `montarPayloadDecisaoRevisao` (categoria `rateio`), a quantidade de cada setor é **convertida em `percentualQuantidade`** = `quantidadeDaLinha / somaDasQuantidades × 100`. Cada item de `payloadDecisao.rateio` carrega `area`, `natureza` (do PAD), `quantidade` (absoluta, para rastreabilidade) e `percentualQuantidade`. `percentualValor` deixou de ser enviado. O payload exibido continua idêntico ao do POST.
+
+### Validação de rateio (cliente)
+
+`validarPayloadDecisaoRevisao` foi reescrita para a categoria `rateio`: toda linha exige setor e quantidade > 0; não permite setor repetido; a soma das quantidades deve fechar o total do item quando conhecido.
+
+### Simplificação do formulário de decisão
+
+- **Removido o campo "Usuário responsável"** da tela. O usuário é sempre o mesmo: usado silenciosamente do `localStorage` (`profor2022:revisao:usuarioResponsavel`, fallback `usuario-local`). O POST continua enviando `usuario`.
+- **Removido o dropdown "Motivo da decisão"**. A justificativa vem inteiramente do preset da ação sugerida clicada. Basta clicar no chip da ação (ex.: "Informar rateio manual", "Aceitar equivalência") e em "Registrar decisão".
+- Mantidos: chips de ação rápida, observação adicional opcional recolhida, opções avançadas e payload técnico recolhível.
+
+### Bug corrigido durante a implementação
+
+Detectado e corrigido `Unexpected token '||'`: a expressão `a ?? b || null` é erro de sintaxe no motor do navegador (mistura de `??` e `||` sem parênteses) — embora `node --check` a aceitasse. Substituída por condicional explícita.
+
+### Validações
+
+- `node --check frontend/js/app.js` — OK.
+- `npm run validar:syntax` — 61 arquivos OK.
+- `npm run validar:services` — 56 testes OK.
+- Suíte E2E Playwright completa — 14/14, incluindo o teste de rateio atualizado para o novo fluxo (setor + quantidade, ausência de percentuais/observação/usuário/motivo, payload com `percentualQuantidade`).
+- `git diff --check` sem erros; `frontend/data/publicados` sem alterações; nenhum SQLite versionado.
+
+### Confirmação
+
+Mudança exclusivamente de frontend/UX; backend, banco e contrato de API intactos. Sem publicação, sem alterar origem ativa ou `planoAplicacao` oficial. Nenhuma decisão real registrada durante os testes.
+
 ## 21/05/2026 - PROFOR 2022: Saneamento Sistêmico de Pendências Residuais de Diacrítico e Correção do `item_ausente_no_pad`
 
 - **Status**: Implementado e Validado.

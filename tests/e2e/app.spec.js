@@ -267,13 +267,25 @@ test("revisão de divergências exibe decisão estruturada sem registrar decisã
   await expect(view).toBeVisible();
   await view.getByRole("button", { name: "Revisar" }).click();
   await expect(view.getByRole("heading", { name: /Rateio manual do item/i })).toBeVisible();
-  // Rateio manual continua funcionando: editor e payload preservados.
+  // Editor de rateio por quantidade: setor (select fixo) + quantidade, sem percentuais.
   await expect(view.locator("[data-revisao-rateio-editor]")).toBeVisible();
-  await expect(view.locator("#revisao-payload-resumo")).toContainText("rateio_manual");
+  await expect(view.locator('[data-revisao-rateio-campo="area"]').first()).toBeVisible();
+  await expect(view.locator('[data-revisao-rateio-campo="quantidade"]').first()).toBeVisible();
+  // Campos antigos removidos: percentuais, observação, usuário e motivo.
+  await expect(view.locator('[data-revisao-rateio-campo="percentualValor"]')).toHaveCount(0);
+  await expect(view.locator('[data-revisao-rateio-campo="percentualQuantidade"]')).toHaveCount(0);
+  await expect(view.locator('[data-revisao-rateio-campo="observacao"]')).toHaveCount(0);
+  await expect(view.locator("#revisao-rateio-observacao")).toHaveCount(0);
+  await expect(view.locator("#revisao-usuario")).toHaveCount(0);
+  await expect(view.locator("#revisao-motivo")).toHaveCount(0);
 
-  // Decisão assistida: chips de ação rápida disponíveis e usuário pré-preenchido.
+  // Setor é select com os 3 setores fixos.
+  await expect(view.locator('[data-revisao-rateio-campo="area"]').first().locator("option")).toHaveText([
+    "Selecione…", "OUVIDORIA", "CORREGEDORIA", "ESCOLA PENAL"
+  ]);
+
+  // Chips de ação rápida disponíveis.
   await expect(view.locator("#revisao-acoes-rapidas [data-revisao-preset]").first()).toBeVisible();
-  await expect(view.locator("#revisao-usuario")).toHaveValue("usuario-local");
 
   // Adicionar/remover linha de rateio continua operando.
   await view.locator("[data-revisao-rateio-adicionar]").click();
@@ -281,11 +293,18 @@ test("revisão de divergências exibe decisão estruturada sem registrar decisã
   await view.locator("[data-revisao-rateio-remover]").last().click();
   await expect(view.locator("[data-revisao-rateio-row]")).toHaveCount(1);
 
-  // Selecionar a ação "Informar rateio manual" preenche o motivo automaticamente.
+  // Rateio: selecionar setor e quantidade total (10) numa única linha.
+  await view.locator('[data-revisao-rateio-campo="area"]').first().selectOption("OUVIDORIA");
+  await view.locator('[data-revisao-rateio-campo="quantidade"]').first().fill("10");
+
+  // Ação "Informar rateio manual" prepara a decisão; payload usa percentualQuantidade.
   await view.locator('[data-revisao-preset="informar_rateio_manual"]').click();
-  await expect(view.locator("#revisao-motivo")).toHaveValue("informar_rateio_manual");
   await expect(view.locator("#revisao-motivo-decisao")).toContainText("Rateio informado manualmente");
   await expect(view.locator("#revisao-decisao")).toHaveValue("ACEITO");
+  const payloadTecnico = await view.locator("#revisao-payload-tecnico").textContent();
+  expect(payloadTecnico).toContain("\"percentualQuantidade\": 100");
+  expect(payloadTecnico).toContain("\"area\": \"OUVIDORIA\"");
+  expect(payloadTecnico).not.toContain("percentualValor");
 
   expect(houvePostDecisao).toBe(false);
   expect(falhasCriticas).toEqual([]);
@@ -386,7 +405,9 @@ test("revisão de equivalência por descrição normalizada usa decisão assisti
   await view.locator('[data-revisao-preset="aceitar_equivalencia"]').click();
 
   // Justificativa padronizada é aplicada automaticamente (campo livre não exigido).
-  await expect(view.locator("#revisao-motivo")).toHaveValue("aceitar_equivalencia");
+  // Não há dropdown de motivo nem campo de usuário — só a ação sugerida.
+  await expect(view.locator("#revisao-motivo")).toHaveCount(0);
+  await expect(view.locator("#revisao-usuario")).toHaveCount(0);
   await expect(view.locator("#revisao-motivo-decisao")).toContainText("normalização textual");
   await expect(view.locator("#revisao-decisao")).toHaveValue("ACEITO");
 

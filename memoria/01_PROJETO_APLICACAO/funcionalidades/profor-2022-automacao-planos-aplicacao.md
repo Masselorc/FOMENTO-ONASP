@@ -1596,6 +1596,50 @@ sistêmico registra 0 decisões. A divergência #24 ("Meia militar", convênio
 937265) permanece `PENDENTE` por divergência material de valor unitário. Nenhuma
 decisão falsa de ausência foi criada; nenhuma decisão ou log foi apagado.
 
+#### 16.2.17. Rateio por quantidade por setor (Etapa 9.4 — implementada)
+
+A Etapa 9.4 reformulou o painel de rateio da tela `SISTEMA > Revisão de
+divergências` para refletir como o usuário realmente trabalha: classificar o
+item entre os setores e atribuir quantidades inteiras. É mudança
+**exclusivamente de frontend/UX**; o backend, o banco e o contrato de API não
+foram alterados.
+
+**Rateio por quantidade.** Cada linha do rateio passou a ter apenas dois campos:
+**Setor** — `<select>` fixo com `OUVIDORIA`, `CORREGEDORIA` e `ESCOLA PENAL`, sem
+digitação livre — e **Quantidade** (inteiro). Foram removidos os campos de
+percentual (`% valor`, `% quantidade`), a observação por linha e a observação
+geral do rateio. Não há mais rateio de valor: o que se divide é a quantidade.
+
+**Natureza automática.** A natureza do item não é digitada — vem do PAD
+(`payload.naturezaPad`) e é exibida como referência. O PAD novo traz a natureza
+de todos os itens.
+
+**Quantidade total.** Usa `payload.quantidadePad` quando disponível; quando o PAD
+não traz, a tela pede a quantidade total em campo próprio. Um indicador mostra,
+em tempo real, "Atribuído: X de Y" e se o rateio fechou.
+
+**Conversão para o backend.** O backend (`validarRateioManual` em
+`profor-pad-decisao-aplicacao-service.js`) continua esperando `percentualQuantidade`
+somando 100 e `area`/`natureza` por linha. Em `montarPayloadDecisaoRevisao`, a
+quantidade de cada setor é convertida em `percentualQuantidade`
+(`quantidadeDaLinha ÷ somaDasQuantidades × 100`); cada item de
+`payloadDecisao.rateio` carrega `area`, `natureza` (do PAD), `quantidade`
+absoluta (rastreabilidade) e `percentualQuantidade`. `percentualValor` deixou de
+ser enviado. O backend não foi tocado.
+
+**Validação.** Toda linha exige setor e quantidade maior que zero; setor não pode
+repetir; a soma das quantidades deve fechar o total do item quando conhecido.
+
+**Formulário de decisão simplificado.** O campo "Usuário responsável" foi
+removido da tela — o usuário é sempre o mesmo, usado silenciosamente do
+`localStorage` (fallback `usuario-local`); o POST continua enviando `usuario`. O
+dropdown "Motivo da decisão" foi removido — a justificativa vem inteiramente do
+preset da ação sugerida. O fluxo é: clicar na ação sugerida (chip) e em
+"Registrar decisão".
+
+**Confirmação.** Mudança apenas de frontend/UX; sem alteração de backend, banco,
+migration, dependência, publicação, origem ativa ou `planoAplicacao` oficial.
+
 ---
 
 ## 17. Fases de implementação recomendadas

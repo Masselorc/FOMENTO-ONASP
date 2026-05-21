@@ -2437,51 +2437,71 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        // Setores fixos para o rateio por quantidade (PROFOR 2022).
+        const REVISAO_SETORES_RATEIO = ['OUVIDORIA', 'CORREGEDORIA', 'ESCOLA PENAL'];
+
+        // Uma linha de rateio: apenas Setor (select fixo) + Quantidade (inteiro).
+        // A natureza vem do PAD e não é digitada; percentuais não são digitados.
         function renderLinhaRateioRevisao(rateio = {}) {
+            const opcoes = REVISAO_SETORES_RATEIO.map((setor) => {
+                const selecionado = String(rateio.area || '').toUpperCase() === setor ? ' selected' : '';
+                return `<option value="${setor}"${selecionado}>${setor}</option>`;
+            }).join('');
             return `
                 <div class="revisao-rateio-row" data-revisao-rateio-row>
                     <label>
-                        <span>Área</span>
-                        <input class="form-control form-control-sm" data-revisao-rateio-campo="area" maxlength="120" value="${escapeHtml(rateio.area || '')}" placeholder="OUVIDORIA">
+                        <span>Setor</span>
+                        <select class="form-select form-select-sm" data-revisao-rateio-campo="area">
+                            <option value="">Selecione…</option>
+                            ${opcoes}
+                        </select>
                     </label>
                     <label>
-                        <span>Natureza</span>
-                        <input class="form-control form-control-sm" data-revisao-rateio-campo="natureza" maxlength="80" value="${escapeHtml(rateio.natureza || '')}" placeholder="CUSTEIO ou CAPITAL">
-                    </label>
-                    <label>
-                        <span>% valor</span>
-                        <input class="form-control form-control-sm" data-revisao-rateio-campo="percentualValor" inputmode="decimal" value="${escapeHtml(rateio.percentualValor ?? '')}" placeholder="100">
-                    </label>
-                    <label>
-                        <span>% quantidade</span>
-                        <input class="form-control form-control-sm" data-revisao-rateio-campo="percentualQuantidade" inputmode="decimal" value="${escapeHtml(rateio.percentualQuantidade ?? '')}" placeholder="100">
-                    </label>
-                    <label>
-                        <span>Observação</span>
-                        <input class="form-control form-control-sm" data-revisao-rateio-campo="observacao" maxlength="255" value="${escapeHtml(rateio.observacao || '')}" placeholder="opcional">
+                        <span>Quantidade</span>
+                        <input class="form-control form-control-sm" data-revisao-rateio-campo="quantidade" type="number" min="0" step="1" inputmode="numeric" value="${escapeHtml(rateio.quantidade ?? '')}" placeholder="0">
                     </label>
                     <button type="button" class="btn btn-sm btn-outline-danger" data-revisao-rateio-remover>Remover</button>
                 </div>
             `;
         }
 
+        // Quantidade total do item PAD para o rateio. Quando o PAD não traz a
+        // quantidade, o usuário a informa em campo próprio.
+        function obterQuantidadeTotalRateioRevisao(divergencia) {
+            const payload = divergencia?.payload || {};
+            const candidatos = [payload.quantidadePad, payload.quantidade, divergencia?.quantidade];
+            for (const valor of candidatos) {
+                const numero = Number(valor);
+                if (Number.isFinite(numero) && numero > 0) return numero;
+            }
+            return null;
+        }
+
         function renderEditorPayloadDecisaoRevisao(divergencia) {
             const categoria = obterCategoriaSaneamentoRevisao(divergencia);
             if (categoria === 'rateio') {
+                const payload = divergencia?.payload || {};
+                const natureza = payload.naturezaPad || payload.natureza || divergencia?.campoAfetado || '—';
+                const quantidadeTotal = obterQuantidadeTotalRateioRevisao(divergencia);
+                const totalConhecido = quantidadeTotal !== null;
+                const blocoTotalManual = totalConhecido
+                    ? `<input type="hidden" id="revisao-rateio-total" value="${escapeHtml(quantidadeTotal)}">`
+                    : `<label class="form-label mt-2" for="revisao-rateio-total">Quantidade total do item</label>
+                       <input class="form-control form-control-sm" id="revisao-rateio-total" type="number" min="1" step="1" inputmode="numeric" placeholder="Informe a quantidade total do item">`;
                 return `
                     <div class="revisao-payload-editor" data-revisao-rateio-editor>
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                             <div>
-                                <strong>Rateio manual</strong>
-                                <p class="text-muted small mb-0">Informe área, natureza e percentuais. A soma de % valor deve fechar 100.</p>
+                                <strong>Rateio por quantidade</strong>
+                                <p class="text-muted small mb-0">Selecione o setor e a quantidade. A natureza (<strong>${escapeHtml(natureza)}</strong>) vem do PAD. Some uma linha por setor; a soma das quantidades deve fechar o total do item.</p>
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-primary" data-revisao-rateio-adicionar>Adicionar linha</button>
                         </div>
-                        <div class="revisao-rateio-list" id="revisao-rateio-list">
-                            ${renderLinhaRateioRevisao({ percentualValor: 100, percentualQuantidade: 100 })}
+                        ${blocoTotalManual}
+                        <div class="revisao-rateio-list mt-2" id="revisao-rateio-list">
+                            ${renderLinhaRateioRevisao()}
                         </div>
-                        <label class="form-label mt-2" for="revisao-rateio-observacao">Observação geral do rateio</label>
-                        <input class="form-control" id="revisao-rateio-observacao" maxlength="500" placeholder="opcional">
+                        <p class="text-muted small mb-0 mt-2" id="revisao-rateio-saldo" aria-live="polite"></p>
                     </div>
                 `;
             }
@@ -2503,22 +2523,23 @@ async function carregarLogoParaPDF() {
             return numero === null ? Number.NaN : numero;
         }
 
+        // Coleta as linhas de rateio: setor + quantidade absoluta.
         function coletarRateiosFormularioRevisao() {
             return Array.from(document.querySelectorAll('[data-revisao-rateio-row]')).map((linha) => {
                 const ler = (campo) => linha.querySelector(`[data-revisao-rateio-campo="${campo}"]`)?.value?.trim?.() || '';
-                const percentualValorTexto = ler('percentualValor');
-                const percentualQuantidadeTexto = ler('percentualQuantidade');
-                const rateio = {
+                const quantidadeTexto = ler('quantidade');
+                return {
                     area: ler('area'),
-                    natureza: ler('natureza'),
-                    percentualValor: percentualValorTexto ? lerNumeroFormularioRevisao(percentualValorTexto) : null,
-                    percentualQuantidade: percentualQuantidadeTexto ? lerNumeroFormularioRevisao(percentualQuantidadeTexto) : null,
-                    observacao: ler('observacao')
+                    quantidade: quantidadeTexto ? lerNumeroFormularioRevisao(quantidadeTexto) : null
                 };
-                return rateio;
-            }).filter((rateio) => (
-                rateio.area || rateio.natureza || rateio.percentualValor !== null || rateio.percentualQuantidade !== null || rateio.observacao
-            ));
+            }).filter((rateio) => rateio.area || rateio.quantidade !== null);
+        }
+
+        // Quantidade total do item informada na tela (campo ou hidden do PAD).
+        function obterTotalRateioFormularioRevisao() {
+            const texto = document.getElementById('revisao-rateio-total')?.value?.trim?.() || '';
+            const numero = texto ? lerNumeroFormularioRevisao(texto) : null;
+            return Number.isFinite(numero) && numero > 0 ? numero : null;
         }
 
         function montarPayloadDecisaoRevisao(divergencia, decisao) {
@@ -2558,21 +2579,30 @@ async function carregarLogoParaPDF() {
                         decisao
                     };
                 }
-                const rateio = coletarRateiosFormularioRevisao().map((item) => ({
+                // A natureza vem do PAD (não é digitada).
+                const naturezaPad = payload.naturezaPad || payload.natureza || '';
+                const linhas = coletarRateiosFormularioRevisao();
+                // Soma das quantidades informadas; base para converter em percentual.
+                const somaQuantidades = linhas.reduce((total, item) => (
+                    total + (Number.isFinite(item.quantidade) ? Number(item.quantidade) : 0)
+                ), 0);
+                // O backend (validarRateioManual) espera percentualQuantidade somando
+                // 100; convertemos a quantidade de cada setor em percentual aqui.
+                // A quantidade absoluta segue no payload para rastreabilidade.
+                const rateio = linhas.map((item) => ({
                     area: item.area,
-                    natureza: item.natureza,
-                    percentualValor: item.percentualValor,
-                    percentualQuantidade: item.percentualQuantidade
+                    natureza: naturezaPad,
+                    quantidade: item.quantidade,
+                    percentualQuantidade: somaQuantidades > 0 && Number.isFinite(item.quantidade)
+                        ? Number(((Number(item.quantidade) / somaQuantidades) * 100).toFixed(6))
+                        : null
                 }));
-                const observacoesLinhas = coletarRateiosFormularioRevisao()
-                    .map((item) => item.observacao)
-                    .filter(Boolean);
-                const observacaoGeral = document.getElementById('revisao-rateio-observacao')?.value?.trim?.() || '';
+                const totalInformado = obterTotalRateioFormularioRevisao();
                 return {
                     ...base,
                     tipoSaneamento: 'rateio_manual',
-                    rateio,
-                    observacao: [observacaoGeral, ...observacoesLinhas].filter(Boolean).join(' | ') || undefined
+                    quantidadeTotalItem: totalInformado !== null ? totalInformado : (somaQuantidades || null),
+                    rateio
                 };
             }
 
@@ -2671,34 +2701,34 @@ async function carregarLogoParaPDF() {
             if (categoria === 'rateio' && ['ACEITO', 'CORRIGIDO'].includes(decisao)) {
                 const rateios = Array.isArray(payloadDecisao.rateio) ? payloadDecisao.rateio : [];
                 if (!rateios.length) {
-                    erros.push('Informe ao menos uma linha de rateio.');
+                    erros.push('Adicione ao menos uma linha de rateio (setor e quantidade).');
                 }
-                let somaValor = 0;
                 let somaQuantidade = 0;
-                let quantidadePreenchida = false;
+                const setoresVistos = new Set();
                 rateios.forEach((rateio, indice) => {
                     const linha = indice + 1;
-                    if (!rateio.area) erros.push(`Linha ${linha}: informe a área.`);
-                    if (!rateio.natureza) erros.push(`Linha ${linha}: informe a natureza.`);
-                    if (rateio.percentualValor === null || rateio.percentualValor === undefined || Number.isNaN(Number(rateio.percentualValor))) {
-                        erros.push(`Linha ${linha}: informe o percentual de valor.`);
+                    if (!rateio.area) {
+                        erros.push(`Linha ${linha}: selecione o setor.`);
+                    } else if (setoresVistos.has(rateio.area)) {
+                        erros.push(`Setor "${rateio.area}" repetido: use uma linha por setor.`);
                     } else {
-                        somaValor += Number(rateio.percentualValor);
+                        setoresVistos.add(rateio.area);
                     }
-                    if (rateio.percentualQuantidade !== null && rateio.percentualQuantidade !== undefined && rateio.percentualQuantidade !== '') {
-                        if (Number.isNaN(Number(rateio.percentualQuantidade))) {
-                            erros.push(`Linha ${linha}: percentual de quantidade inválido.`);
-                        } else {
-                            quantidadePreenchida = true;
-                            somaQuantidade += Number(rateio.percentualQuantidade);
-                        }
+                    const quantidade = Number(rateio.quantidade);
+                    if (!Number.isFinite(quantidade) || quantidade <= 0) {
+                        erros.push(`Linha ${linha}: informe uma quantidade maior que zero.`);
+                    } else {
+                        somaQuantidade += quantidade;
                     }
                 });
-                if (rateios.length && Math.abs(somaValor - 100) > 0.5) {
-                    erros.push(`A soma de percentualValor deve ser 100. Soma atual: ${somaValor.toLocaleString('pt-BR')}.`);
-                }
-                if (quantidadePreenchida && Math.abs(somaQuantidade - 100) > 0.5) {
-                    erros.push(`A soma de percentualQuantidade deve ser 100 quando preenchida. Soma atual: ${somaQuantidade.toLocaleString('pt-BR')}.`);
+                // A soma das quantidades deve fechar o total do item, quando conhecido.
+                const totalItem = Number(payloadDecisao.quantidadeTotalItem);
+                if (rateios.length && Number.isFinite(totalItem) && totalItem > 0) {
+                    if (Math.abs(somaQuantidade - totalItem) > 0.001) {
+                        erros.push(`A soma das quantidades (${somaQuantidade}) deve fechar o total do item (${totalItem}).`);
+                    }
+                } else if (rateios.length && somaQuantidade <= 0) {
+                    erros.push('Informe quantidades válidas para o rateio.');
                 }
             }
 
@@ -2753,19 +2783,38 @@ async function carregarLogoParaPDF() {
             // "Valor aplicado" só é relevante para CORRIGIDO; oculto por padrão.
             const valorAplicadoWrapper = document.getElementById('revisao-valor-aplicado-wrapper');
             if (valorAplicadoWrapper) valorAplicadoWrapper.hidden = decisao !== 'CORRIGIDO';
+
+            // Saldo do rateio: total do item vs. soma das quantidades por setor.
+            const saldoEl = document.getElementById('revisao-rateio-saldo');
+            if (saldoEl && categoria === 'rateio') {
+                const linhas = coletarRateiosFormularioRevisao();
+                const somaQtd = linhas.reduce((t, l) => t + (Number.isFinite(l.quantidade) ? Number(l.quantidade) : 0), 0);
+                const total = obterTotalRateioFormularioRevisao();
+                if (total !== null) {
+                    const resta = total - somaQtd;
+                    saldoEl.textContent = `Atribuído: ${somaQtd} de ${total} · ${resta === 0 ? 'rateio completo' : (resta > 0 ? `faltam ${resta}` : `excedeu em ${Math.abs(resta)}`)}`;
+                    saldoEl.classList.toggle('text-danger', resta !== 0);
+                    saldoEl.classList.toggle('text-success', resta === 0);
+                } else {
+                    saldoEl.textContent = `Atribuído: ${somaQtd}. Informe a quantidade total do item.`;
+                    saldoEl.classList.remove('text-success');
+                    saldoEl.classList.remove('text-danger');
+                }
+            }
         }
 
-        // Aplica um preset: preenche decisão técnica e motivo, sem registrar.
+        // Aplica um preset (clique na ação sugerida): preenche a decisão técnica
+        // e a justificativa padrão, sem registrar. Não há mais dropdown de motivo;
+        // a justificativa vem inteiramente do preset escolhido.
         function aplicarPresetDecisaoRevisao(divergencia, presetId) {
             const preset = obterPresetDecisaoRevisaoPorId(divergencia, presetId);
             if (!preset) return;
-            const selectMotivo = document.getElementById('revisao-motivo');
             const selectDecisao = document.getElementById('revisao-decisao');
             const motivoTexto = document.getElementById('revisao-motivo-decisao');
-            if (selectMotivo && selectMotivo.value !== preset.id) selectMotivo.value = preset.id;
             if (selectDecisao) selectDecisao.value = preset.decisao;
             if (motivoTexto) {
                 motivoTexto.dataset.justificativa = preset.justificativa || '';
+                motivoTexto.dataset.presetId = preset.id;
                 motivoTexto.textContent = preset.justificativa
                     ? `Decisão ${preset.decisao}: ${preset.justificativa}`
                     : '';
@@ -2908,7 +2957,6 @@ async function carregarLogoParaPDF() {
         function renderFormularioDecisaoRevisao(divergencia) {
             const decisoes = obterDecisoesPermitidasRevisao(divergencia);
             const presets = obterPresetsDecisaoRevisao(divergencia);
-            const usuarioPadrao = obterUsuarioResponsavelRevisao();
             const chips = presets.map((preset) => `
                 <button type="button"
                     class="revisao-acao-chip revisao-acao-chip--${escapeHtml(preset.variante || 'secondary')}"
@@ -2916,9 +2964,6 @@ async function carregarLogoParaPDF() {
                     title="${escapeHtml(preset.justificativa || '')}">
                     ${escapeHtml(preset.label)}
                 </button>
-            `).join('');
-            const opcoesMotivo = presets.map((preset) => `
-                <option value="${escapeHtml(preset.id)}">${escapeHtml(preset.label)}</option>
             `).join('');
             return `
                 <section class="revisao-detail-section revisao-decision-panel">
@@ -2929,20 +2974,8 @@ async function carregarLogoParaPDF() {
                         <div class="revisao-acao-rapida" id="revisao-acoes-rapidas" role="group" aria-label="Ações rápidas de decisão">
                             ${chips}
                         </div>
+                        <p class="revisao-motivo-decisao text-muted small mb-0 mt-1" id="revisao-motivo-decisao" hidden></p>
                         <div class="row g-2 mt-1">
-                            <div class="col-12">
-                                <label class="form-label" for="revisao-motivo">Motivo da decisão</label>
-                                <select class="form-select form-select-sm" id="revisao-motivo" required>
-                                    <option value="">Selecione uma ação ou motivo…</option>
-                                    ${opcoesMotivo}
-                                </select>
-                                <p class="revisao-motivo-decisao text-muted small mb-0" id="revisao-motivo-decisao" hidden></p>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label" for="revisao-usuario">Usuário responsável</label>
-                                <input class="form-control form-control-sm" id="revisao-usuario" maxlength="120" placeholder="nome.sobrenome" value="${escapeHtml(usuarioPadrao)}">
-                                <p class="text-muted small mb-0" style="font-size:0.68rem;">O nome informado fica salvo neste navegador para as próximas decisões.</p>
-                            </div>
                             <div class="col-12" id="revisao-editor-wrapper">
                                 ${renderEditorPayloadDecisaoRevisao(divergencia)}
                             </div>
@@ -3396,17 +3429,7 @@ async function carregarLogoParaPDF() {
             if (!form) return;
             const atualizarPrevia = () => atualizarPreviaPayloadDecisaoRevisao(divergencia);
             form.addEventListener('input', atualizarPrevia);
-            form.addEventListener('change', (event) => {
-                // Trocar o "Motivo da decisão" reaplica o preset correspondente.
-                if (event.target && event.target.id === 'revisao-motivo') {
-                    const presetId = event.target.value;
-                    if (presetId) {
-                        aplicarPresetDecisaoRevisao(divergencia, presetId);
-                        return;
-                    }
-                }
-                atualizarPrevia();
-            });
+            form.addEventListener('change', atualizarPrevia);
             form.addEventListener('click', (event) => {
                 // Chips de ação rápida — apenas preparam a decisão, não registram.
                 const chip = event.target.closest('[data-revisao-preset]');
@@ -3441,19 +3464,18 @@ async function carregarLogoParaPDF() {
                 event.preventDefault();
                 const id = form.dataset.divergenciaId;
                 const decisao = document.getElementById('revisao-decisao')?.value || '';
-                const usuario = document.getElementById('revisao-usuario')?.value?.trim?.() || '';
-                const motivoId = document.getElementById('revisao-motivo')?.value || '';
-                // Justificativa enviada = texto padrão do motivo + observação adicional opcional.
+                // Usuário responsável é sempre o mesmo: vem do padrão/localStorage,
+                // não é exibido nem digitado na tela.
+                const usuario = obterUsuarioResponsavelRevisao();
+                const presetId = document.getElementById('revisao-motivo-decisao')?.dataset?.presetId || '';
+                // Justificativa enviada = texto padrão do preset + observação adicional opcional.
                 const justificativa = comporJustificativaDecisaoRevisao();
                 const valorAplicado = document.getElementById('revisao-valor-aplicado')?.value?.trim?.() || undefined;
                 const exigeJustificativa = ['ACEITO', 'REJEITADO', 'CORRIGIDO', 'REVERTIDO'].includes(decisao);
                 const payloadDecisao = montarPayloadDecisaoRevisao(divergencia, decisao);
                 const erros = [];
-                if (!usuario) {
-                    erros.push('Informe o usuário responsável pela decisão.');
-                }
-                if (exigeJustificativa && !motivoId && !justificativa) {
-                    erros.push('Selecione uma ação ou motivo para a decisão.');
+                if (exigeJustificativa && !presetId && !justificativa) {
+                    erros.push('Clique em uma ação sugerida para preparar a decisão.');
                 }
                 erros.push(...validarPayloadDecisaoRevisao(divergencia, decisao, payloadDecisao));
                 if (erros.length) {
