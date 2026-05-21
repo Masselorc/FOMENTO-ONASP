@@ -166,6 +166,114 @@ test("formalização PROFOR faz fallback para JSON publicado quando API local fa
   expect(falhasNaoEsperadas).toEqual([]);
 });
 
+test("revisão de divergências exibe decisão estruturada sem registrar decisão real", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+  let houvePostDecisao = false;
+
+  const divergencia = {
+    id: 101,
+    status: "PENDENTE",
+    nivel: "impeditivo",
+    numeroConvenio: "937782",
+    uf: "AC",
+    chaveItem: "937782::NOTEBOOK",
+    tipoAlerta: "item_novo_sem_rateio",
+    campoAfetado: "rateio",
+    valorAnterior: null,
+    valorNovo: "Aquisição de notebooks",
+    fonteAnterior: "memoria",
+    fonteNova: "pad",
+    diferenca: "item PAD sem rateio na memória",
+    motivoProvavel: "Item presente no PAD não tem rateio persistido na memória.",
+    acaoSugerida: "Definir rateio por área para o item antes da reconstrução.",
+    impactoReconstrucao: "Impede a reconstrução automática da linha do planoAplicacao.",
+    bloqueiaPublicacao: true,
+    payload: {
+      campoAfetado: "rateio",
+      numeroConvenio: "937782",
+      uf: "AC",
+      chaveItem: "937782::NOTEBOOK",
+      descricaoPad: "Aquisição de notebooks",
+      naturezaPad: "CUSTEIO",
+      quantidadePad: 10,
+      valorUnitarioPad: 5000,
+      valorPrevistoPad: 50000,
+      saldoPad: 50000,
+      bloqueiaPublicacao: true
+    },
+    decisoes: [],
+    logs: []
+  };
+
+  await page.route("**/api/profor-2022/revisao/**", async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (request.method().toUpperCase() === "POST") {
+      houvePostDecisao = true;
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ success: false, message: "POST não deveria ocorrer neste smoke." })
+      });
+      return;
+    }
+
+    if (url.pathname.endsWith("/auditoria")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          auditoria: {
+            publicacaoLiberada: false,
+            totalDivergencias: 1,
+            totalPendentes: 1,
+            totalEmRevisao: 0,
+            totalImpeditivas: 1,
+            totalBloqueiamPublicacao: 1,
+            totalPendentesQueBloqueiamPublicacao: 1,
+            totalEmRevisaoQueBloqueiamPublicacao: 0,
+            totalComDecisaoResolutiva: 0,
+            totalComComentario: 0,
+            totalSemDecisaoResolutiva: 1,
+            porTipo: [{ chave: "item_novo_sem_rateio", total: 1 }]
+          }
+        })
+      });
+      return;
+    }
+
+    if (url.pathname.endsWith("/divergencias/101")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ success: true, divergencia })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, total: 1, divergencias: [divergencia] })
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.toggleView("revisao-divergencias"));
+
+  const view = page.locator("#view-revisao-divergencias");
+  await expect(view).toBeVisible();
+  await view.getByRole("button", { name: "Revisar" }).click();
+  await expect(view.getByRole("heading", { name: /Rateio manual do item/i })).toBeVisible();
+  await expect(view.locator("[data-revisao-rateio-editor]")).toBeVisible();
+  await expect(view.locator("#revisao-payload-resumo")).toContainText("rateio_manual");
+
+  await view.getByRole("button", { name: /Registrar decisão/i }).click();
+  await expect(view.locator("#revisao-form-erros")).toContainText("Informe o usuário responsável");
+  expect(houvePostDecisao).toBe(false);
+  expect(falhasCriticas).toEqual([]);
+});
+
 test("parâmetros mínimos faz fallback para JSON publicado quando API local falha", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);

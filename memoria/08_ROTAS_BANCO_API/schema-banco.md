@@ -609,7 +609,15 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 
 ### profor_2022_revisao_decisoes
 
-**Finalidade:** registrar as decisões humanas tomadas sobre cada divergência (uma divergência pode acumular histórico de decisões). Etapa futura — nenhuma decisão é gravada nesta etapa pelo fluxo automático.
+**Finalidade:** registrar as decisões humanas tomadas sobre cada divergência (uma divergência pode acumular histórico de decisões). O fluxo automático não grava decisão; a tela de revisão pode registrar decisão humana auditada via API.
+
+**Contrato atual de payload:** `payload_decisao_json` recebe o objeto
+`payloadDecisao` enviado por `POST /api/profor-2022/revisao/divergencias/:id/decisoes`.
+A interface avançada de saneamento PAD/PROFOR 2022 envia payload estruturado
+para equivalência por descrição normalizada, rateio manual, ausência confirmada,
+liberação de item não apto em dry-run, consistência quantidade x valor unitário
+e divergências genéricas de campo. O serviço acrescenta o snapshot
+`_segurancaPreAtivacao` ao mesmo JSON. Não há coluna, tabela ou constraint nova.
 
 **Arquivo de criação/evolução:** `backend/db/init-db.js`, por `garantirTabelasRevisaoProfor2022()`.
 

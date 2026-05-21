@@ -1,6 +1,6 @@
 # PROFOR 2022 — Segurança pré-ativação PAD (dry-run)
 
-Gerado em: 2026-05-21T00:34:14.171Z
+Gerado em: 2026-05-21T02:05:25.344Z
 Modo: dry-run
 
 ## Resumo
@@ -13,6 +13,7 @@ Modo: dry-run
 - Divergências existentes: 145
 - Divergências reapresentadas: 145
 - Divergências não reapresentadas: 0
+- Divergências com reapresentação indeterminada: 0
 - Bloqueios de ativação: 0
 - Avisos: 0
 - Geração atual da fila disponível: sim
@@ -27,6 +28,10 @@ Modo: dry-run
 - (nenhum)
 
 ## Divergências não reapresentadas
+
+- (nenhum)
+
+## Divergências com reapresentação indeterminada
 
 - (nenhum)
 

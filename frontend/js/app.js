@@ -2031,6 +2031,486 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        function obterTipoAlertaRevisao(divergencia) {
+            return String(divergencia?.tipoAlerta || '').trim();
+        }
+
+        function obterCampoAfetadoRevisao(divergencia) {
+            return String(divergencia?.campoAfetado || divergencia?.payload?.campoAfetado || '').trim();
+        }
+
+        function obterCategoriaSaneamentoRevisao(divergencia) {
+            const tipo = obterTipoAlertaRevisao(divergencia);
+            if (tipo === 'equivalencia_por_descricao_normalizada') return 'equivalencia';
+            if (['item_pad_sem_rateio', 'item_novo_sem_rateio', 'rateio_novo', 'correcao_de_rateio'].includes(tipo)) return 'rateio';
+            if (['item_ausente_no_pad', 'item_substituido'].includes(tipo)) return 'ausencia';
+            if (['item_nao_apto', 'item_conhecido_nao_apto', 'item_conhecido_nao_apto_usado'].includes(tipo)) return 'nao_apto';
+            if (tipo === 'quantidade_valor_unitario_inconsistente') return 'consistencia';
+            if ([
+                'valor_diferente',
+                'quantidade_diferente',
+                'saldo_inconsistente',
+                'descricao_divergente',
+                'natureza_divergente',
+                'valor_unitario_diferente'
+            ].includes(tipo)) return 'campo';
+            return 'generico';
+        }
+
+        function obterTipoSaneamentoPayloadRevisao(divergencia) {
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            const mapa = {
+                equivalencia: 'equivalencia_por_descricao_normalizada',
+                rateio: 'rateio_manual',
+                ausencia: 'ausencia_confirmada',
+                nao_apto: 'liberacao_item_nao_apto',
+                consistencia: 'consistencia_quantidade_valor_unitario',
+                campo: 'campo_pad_aceito',
+                generico: obterTipoAlertaRevisao(divergencia) || 'generico'
+            };
+            return mapa[categoria] || 'generico';
+        }
+
+        function obterDecisoesPermitidasRevisao(divergencia) {
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            if (categoria === 'rateio') return ['ACEITO', 'CORRIGIDO', 'REJEITADO', 'EM_REVISAO', 'COMENTAR'];
+            if (categoria === 'campo') return ['ACEITO', 'CORRIGIDO', 'REJEITADO', 'EM_REVISAO', 'COMENTAR'];
+            if (['equivalencia', 'ausencia', 'nao_apto', 'consistencia'].includes(categoria)) {
+                return ['ACEITO', 'REJEITADO', 'EM_REVISAO', 'COMENTAR'];
+            }
+            return ['ACEITO', 'REJEITADO', 'EM_REVISAO', 'CORRIGIDO', 'REVERTIDO', 'COMENTAR'];
+        }
+
+        function exigePayloadEstruturadoRevisao(divergencia) {
+            return obterCategoriaSaneamentoRevisao(divergencia) !== 'generico';
+        }
+
+        function obterValorPayloadRevisao(divergencia, caminhos = []) {
+            const payload = divergencia?.payload || {};
+            return obterValorAninhadoRevisao(payload, caminhos);
+        }
+
+        function renderCampoSaneamentoRevisao(rotulo, valor) {
+            return `
+                <div>
+                    <dt>${escapeHtml(rotulo)}</dt>
+                    <dd>${escapeHtml(formatarValorRevisao(valor, rotulo))}</dd>
+                </div>
+            `;
+        }
+
+        function renderListaSaneamentoRevisao(campos) {
+            const linhas = campos
+                .filter(([, valor]) => valor !== null && valor !== undefined && valor !== '')
+                .map(([rotulo, valor]) => renderCampoSaneamentoRevisao(rotulo, valor))
+                .join('');
+            return linhas
+                ? `<dl class="revisao-keyvalue-list revisao-structured-list">${linhas}</dl>`
+                : '<p class="text-muted mb-0">Payload sem detalhes estruturados suficientes.</p>';
+        }
+
+        function renderSaneamentoEstruturadoRevisao(divergencia) {
+            const payload = divergencia?.payload || {};
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            const alerta = divergencia.bloqueiaPublicacao
+                ? 'Esta divergência bloqueia publicação enquanto permanecer pendente ou em revisão.'
+                : 'Esta divergência não bloqueia publicação, mas a decisão fica registrada em auditoria.';
+            let titulo = 'Decisão estruturada';
+            let conteudo = '';
+
+            if (categoria === 'equivalencia') {
+                titulo = 'Equivalência por descrição normalizada';
+                conteudo = renderListaSaneamentoRevisao([
+                    ['Item PAD', payload.descricaoPad || divergencia.valorNovo],
+                    ['Item/memória provável', payload.descricaoMemoria || divergencia.valorAnterior],
+                    ['Chave do item equivalente', payload.chaveItem || divergencia.chaveItem],
+                    ['Valor unitário PAD', payload.valorUnitarioPad],
+                    ['Valor unitário memória', payload.valorUnitarioMemoria],
+                    ['Diferença', payload.evidencias?.diferencaValorUnitario ?? divergencia.diferenca],
+                    ['Natureza PAD', payload.naturezaPad],
+                    ['Naturezas da memória', payload.naturezaMemoria],
+                    ['Motivo provável', divergencia.motivoProvavel]
+                ]);
+            } else if (categoria === 'rateio') {
+                titulo = 'Rateio manual do item';
+                conteudo = renderListaSaneamentoRevisao([
+                    ['Item PAD', payload.descricaoPad || divergencia.valorNovo],
+                    ['Convênio', divergencia.numeroConvenio || payload.numeroConvenio],
+                    ['UF', divergencia.uf || payload.uf],
+                    ['Natureza PAD', payload.naturezaPad],
+                    ['Quantidade PAD', payload.quantidadePad],
+                    ['Valor unitário PAD', payload.valorUnitarioPad],
+                    ['Valor previsto PAD', payload.valorPrevistoPad],
+                    ['Saldo PAD', payload.saldoPad],
+                    ['Motivo provável', divergencia.motivoProvavel]
+                ]);
+            } else if (categoria === 'ausencia') {
+                titulo = 'Item ausente no PAD';
+                conteudo = renderListaSaneamentoRevisao([
+                    ['Item da memória', payload.descricaoMemoria || divergencia.valorAnterior],
+                    ['Convênio', divergencia.numeroConvenio || payload.numeroConvenio],
+                    ['UF', divergencia.uf || payload.uf],
+                    ['Área', payload.area || payload.areaMemoria],
+                    ['Natureza', payload.natureza || payload.naturezaMemoria],
+                    ['Valores antigos', divergencia.valorAnterior],
+                    ['Alerta', 'O item não apareceu no PAD atual.']
+                ]);
+            } else if (categoria === 'nao_apto') {
+                titulo = 'Item conhecido não apto';
+                conteudo = renderListaSaneamentoRevisao([
+                    ['Item', payload.descricaoPad || payload.descricaoMemoria || divergencia.valorNovo],
+                    ['Motivo original de não aptidão', divergencia.motivoProvavel],
+                    ['Alertas vinculados', Array.isArray(payload.alertasOriginais) ? `${payload.alertasOriginais.length} alerta(s)` : 'não informado'],
+                    ['Impacto na reconstrução', divergencia.impactoReconstrucao],
+                    ['Rateios ativos', Array.isArray(payload.rateiosAtivos) ? `${payload.rateiosAtivos.length} rateio(s)` : 'não informado']
+                ]);
+            } else if (categoria === 'consistencia') {
+                titulo = 'Inconsistência quantidade x valor unitário';
+                const alertaOriginal = Array.isArray(payload.alertasOriginais) ? payload.alertasOriginais[0] || {} : {};
+                conteudo = renderListaSaneamentoRevisao([
+                    ['Quantidade', payload.quantidadePad || alertaOriginal.quantidade],
+                    ['Valor unitário', payload.valorUnitarioPad || alertaOriginal.valorUnitario],
+                    ['Valor total previsto', payload.valorPrevistoPad || alertaOriginal.valorTotalPrevisto],
+                    ['Quantidade x valor unitário', payload.evidencias?.calculo || payload.evidencias?.detalhe || divergencia.diferenca],
+                    ['Diferença', payload.diferenca || divergencia.diferenca],
+                    ['Diagnóstico provável', divergencia.motivoProvavel || 'Possível truncamento/arredondamento do valor unitário exibido.']
+                ]);
+            } else {
+                titulo = 'Divergência de campo';
+                conteudo = renderListaSaneamentoRevisao([
+                    ['Campo afetado', obterCampoAfetadoRevisao(divergencia)],
+                    ['Valor anterior', divergencia.valorAnterior],
+                    ['Valor PAD/novo', divergencia.valorNovo],
+                    ['Diferença', divergencia.diferenca],
+                    ['Motivo provável', divergencia.motivoProvavel]
+                ]);
+            }
+
+            return `
+                <section class="revisao-detail-section revisao-structured-panel">
+                    <div class="revisao-structured-header">
+                        <div>
+                            <p class="section-eyebrow mb-1">Saneamento assistido</p>
+                            <h3>${escapeHtml(titulo)}</h3>
+                        </div>
+                        ${exigePayloadEstruturadoRevisao(divergencia) ? renderBadgeRevisao('Exige payload estruturado', 'warning') : ''}
+                    </div>
+                    <div class="revisao-structured-alert ${divergencia.bloqueiaPublicacao ? 'is-blocking' : ''}">
+                        ${escapeHtml(alerta)}
+                    </div>
+                    ${conteudo}
+                </section>
+            `;
+        }
+
+        function renderLinhaRateioRevisao(rateio = {}) {
+            return `
+                <div class="revisao-rateio-row" data-revisao-rateio-row>
+                    <label>
+                        <span>Área</span>
+                        <input class="form-control form-control-sm" data-revisao-rateio-campo="area" maxlength="120" value="${escapeHtml(rateio.area || '')}" placeholder="OUVIDORIA">
+                    </label>
+                    <label>
+                        <span>Natureza</span>
+                        <input class="form-control form-control-sm" data-revisao-rateio-campo="natureza" maxlength="80" value="${escapeHtml(rateio.natureza || '')}" placeholder="CUSTEIO ou CAPITAL">
+                    </label>
+                    <label>
+                        <span>% valor</span>
+                        <input class="form-control form-control-sm" data-revisao-rateio-campo="percentualValor" inputmode="decimal" value="${escapeHtml(rateio.percentualValor ?? '')}" placeholder="100">
+                    </label>
+                    <label>
+                        <span>% quantidade</span>
+                        <input class="form-control form-control-sm" data-revisao-rateio-campo="percentualQuantidade" inputmode="decimal" value="${escapeHtml(rateio.percentualQuantidade ?? '')}" placeholder="100">
+                    </label>
+                    <label>
+                        <span>Observação</span>
+                        <input class="form-control form-control-sm" data-revisao-rateio-campo="observacao" maxlength="255" value="${escapeHtml(rateio.observacao || '')}" placeholder="opcional">
+                    </label>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-revisao-rateio-remover>Remover</button>
+                </div>
+            `;
+        }
+
+        function renderEditorPayloadDecisaoRevisao(divergencia) {
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            if (categoria === 'rateio') {
+                return `
+                    <div class="revisao-payload-editor" data-revisao-rateio-editor>
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                            <div>
+                                <strong>Rateio manual</strong>
+                                <p class="text-muted small mb-0">Informe área, natureza e percentuais. A soma de % valor deve fechar 100.</p>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-revisao-rateio-adicionar>Adicionar linha</button>
+                        </div>
+                        <div class="revisao-rateio-list" id="revisao-rateio-list">
+                            ${renderLinhaRateioRevisao({ percentualValor: 100, percentualQuantidade: 100 })}
+                        </div>
+                        <label class="form-label mt-2" for="revisao-rateio-observacao">Observação geral do rateio</label>
+                        <input class="form-control" id="revisao-rateio-observacao" maxlength="500" placeholder="opcional">
+                    </div>
+                `;
+            }
+            if (categoria === 'campo') {
+                return `
+                    <div class="revisao-payload-editor" id="revisao-campo-corrigido-wrapper" hidden>
+                        <label class="form-label" for="revisao-valor-corrigido">Valor/campo corrigido</label>
+                        <input class="form-control" id="revisao-valor-corrigido" maxlength="500" placeholder="Informe o valor corrigido para decisão CORRIGIDO">
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        function lerNumeroFormularioRevisao(valor) {
+            const texto = String(valor ?? '').trim();
+            if (!texto) return null;
+            const numero = normalizarNumeroRevisao(texto);
+            return numero === null ? Number.NaN : numero;
+        }
+
+        function coletarRateiosFormularioRevisao() {
+            return Array.from(document.querySelectorAll('[data-revisao-rateio-row]')).map((linha) => {
+                const ler = (campo) => linha.querySelector(`[data-revisao-rateio-campo="${campo}"]`)?.value?.trim?.() || '';
+                const percentualValorTexto = ler('percentualValor');
+                const percentualQuantidadeTexto = ler('percentualQuantidade');
+                const rateio = {
+                    area: ler('area'),
+                    natureza: ler('natureza'),
+                    percentualValor: percentualValorTexto ? lerNumeroFormularioRevisao(percentualValorTexto) : null,
+                    percentualQuantidade: percentualQuantidadeTexto ? lerNumeroFormularioRevisao(percentualQuantidadeTexto) : null,
+                    observacao: ler('observacao')
+                };
+                return rateio;
+            }).filter((rateio) => (
+                rateio.area || rateio.natureza || rateio.percentualValor !== null || rateio.percentualQuantidade !== null || rateio.observacao
+            ));
+        }
+
+        function montarPayloadDecisaoRevisao(divergencia, decisao) {
+            const payload = divergencia?.payload || {};
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            const base = {
+                origem: 'interface-revisao-divergencias',
+                tipoSaneamento: obterTipoSaneamentoPayloadRevisao(divergencia)
+            };
+
+            if (categoria === 'equivalencia') {
+                if (!['ACEITO', 'REJEITADO'].includes(decisao)) {
+                    return {
+                        ...base,
+                        tipoSaneamento: 'equivalencia_por_descricao_normalizada',
+                        decisao
+                    };
+                }
+                return {
+                    ...base,
+                    tipoSaneamento: 'equivalencia_por_descricao_normalizada',
+                    equivalenciaAceita: decisao === 'ACEITO',
+                    chaveItemEquivalente: payload.chaveItem || divergencia.chaveItem || null,
+                    descricaoPad: payload.descricaoPad || divergencia.valorNovo || null,
+                    descricaoMemoria: payload.descricaoMemoria || divergencia.valorAnterior || null,
+                    motivo: decisao === 'ACEITO'
+                        ? 'equivalência validada por decisão humana'
+                        : 'equivalência não validada por decisão humana'
+                };
+            }
+
+            if (categoria === 'rateio') {
+                if (!['ACEITO', 'CORRIGIDO'].includes(decisao)) {
+                    return {
+                        ...base,
+                        tipoSaneamento: 'rateio_manual',
+                        decisao
+                    };
+                }
+                const rateio = coletarRateiosFormularioRevisao().map((item) => ({
+                    area: item.area,
+                    natureza: item.natureza,
+                    percentualValor: item.percentualValor,
+                    percentualQuantidade: item.percentualQuantidade
+                }));
+                const observacoesLinhas = coletarRateiosFormularioRevisao()
+                    .map((item) => item.observacao)
+                    .filter(Boolean);
+                const observacaoGeral = document.getElementById('revisao-rateio-observacao')?.value?.trim?.() || '';
+                return {
+                    ...base,
+                    tipoSaneamento: 'rateio_manual',
+                    rateio,
+                    observacao: [observacaoGeral, ...observacoesLinhas].filter(Boolean).join(' | ') || undefined
+                };
+            }
+
+            if (categoria === 'ausencia') {
+                if (!['ACEITO', 'REJEITADO'].includes(decisao)) {
+                    return {
+                        ...base,
+                        tipoSaneamento: 'ausencia_confirmada',
+                        decisao
+                    };
+                }
+                return {
+                    ...base,
+                    tipoSaneamento: 'ausencia_confirmada',
+                    ausenciaConfirmada: decisao === 'ACEITO',
+                    motivo: decisao === 'ACEITO'
+                        ? 'item não reapresentado no PAD atual e ausência confirmada pelo usuário'
+                        : 'ausência não confirmada por decisão humana'
+                };
+            }
+
+            if (categoria === 'nao_apto') {
+                if (!['ACEITO', 'REJEITADO'].includes(decisao)) {
+                    return {
+                        ...base,
+                        tipoSaneamento: 'liberacao_item_nao_apto',
+                        decisao
+                    };
+                }
+                return {
+                    ...base,
+                    tipoSaneamento: 'liberacao_item_nao_apto',
+                    liberarUsoDryRun: decisao === 'ACEITO',
+                    motivo: decisao === 'ACEITO'
+                        ? 'liberação validada por decisão humana'
+                        : 'impedimento mantido por decisão humana'
+                };
+            }
+
+            if (categoria === 'consistencia') {
+                if (!['ACEITO', 'REJEITADO'].includes(decisao)) {
+                    return {
+                        ...base,
+                        tipoSaneamento: 'consistencia_quantidade_valor_unitario',
+                        decisao
+                    };
+                }
+                return {
+                    ...base,
+                    tipoSaneamento: 'consistencia_quantidade_valor_unitario',
+                    manterTotaisPad: decisao === 'ACEITO',
+                    valorUnitarioApenasReferencia: decisao === 'ACEITO',
+                    motivo: decisao === 'ACEITO'
+                        ? 'total PAD mantido como fonte de verdade'
+                        : 'inconsistência mantida para revisão'
+                };
+            }
+
+            if (categoria === 'campo') {
+                const campoAfetado = obterCampoAfetadoRevisao(divergencia);
+                if (decisao === 'CORRIGIDO') {
+                    return {
+                        ...base,
+                        tipoSaneamento: 'campo_corrigido',
+                        campoAfetado,
+                        valorCorrigido: document.getElementById('revisao-valor-corrigido')?.value?.trim?.() || ''
+                    };
+                }
+                if (decisao !== 'ACEITO') {
+                    return {
+                        ...base,
+                        tipoSaneamento: 'campo_sem_alteracao',
+                        campoAfetado,
+                        decisao
+                    };
+                }
+                return {
+                    ...base,
+                    tipoSaneamento: 'campo_pad_aceito',
+                    campoAfetado,
+                    valorAceito: divergencia.valorNovo ?? obterValorPayloadRevisao(divergencia, ['valorNovo', 'valorPrevistoPad', 'valorUnitarioPad', 'quantidadePad', 'naturezaPad', 'descricaoPad']) ?? null,
+                    fonteAceita: 'PAD'
+                };
+            }
+
+            return {
+                ...base,
+                decisao
+            };
+        }
+
+        function validarPayloadDecisaoRevisao(divergencia, decisao, payloadDecisao) {
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            const erros = [];
+
+            if (categoria === 'rateio' && ['ACEITO', 'CORRIGIDO'].includes(decisao)) {
+                const rateios = Array.isArray(payloadDecisao.rateio) ? payloadDecisao.rateio : [];
+                if (!rateios.length) {
+                    erros.push('Informe ao menos uma linha de rateio.');
+                }
+                let somaValor = 0;
+                let somaQuantidade = 0;
+                let quantidadePreenchida = false;
+                rateios.forEach((rateio, indice) => {
+                    const linha = indice + 1;
+                    if (!rateio.area) erros.push(`Linha ${linha}: informe a área.`);
+                    if (!rateio.natureza) erros.push(`Linha ${linha}: informe a natureza.`);
+                    if (rateio.percentualValor === null || rateio.percentualValor === undefined || Number.isNaN(Number(rateio.percentualValor))) {
+                        erros.push(`Linha ${linha}: informe o percentual de valor.`);
+                    } else {
+                        somaValor += Number(rateio.percentualValor);
+                    }
+                    if (rateio.percentualQuantidade !== null && rateio.percentualQuantidade !== undefined && rateio.percentualQuantidade !== '') {
+                        if (Number.isNaN(Number(rateio.percentualQuantidade))) {
+                            erros.push(`Linha ${linha}: percentual de quantidade inválido.`);
+                        } else {
+                            quantidadePreenchida = true;
+                            somaQuantidade += Number(rateio.percentualQuantidade);
+                        }
+                    }
+                });
+                if (rateios.length && Math.abs(somaValor - 100) > 0.5) {
+                    erros.push(`A soma de percentualValor deve ser 100. Soma atual: ${somaValor.toLocaleString('pt-BR')}.`);
+                }
+                if (quantidadePreenchida && Math.abs(somaQuantidade - 100) > 0.5) {
+                    erros.push(`A soma de percentualQuantidade deve ser 100 quando preenchida. Soma atual: ${somaQuantidade.toLocaleString('pt-BR')}.`);
+                }
+            }
+
+            if (categoria === 'campo' && decisao === 'CORRIGIDO' && !payloadDecisao.valorCorrigido) {
+                erros.push('Informe o valor corrigido para decisão CORRIGIDO.');
+            }
+
+            return erros;
+        }
+
+        function renderResumoPayloadDecisaoRevisao(payloadDecisao) {
+            if (!payloadDecisao || typeof payloadDecisao !== 'object') return 'Payload vazio.';
+            const partes = [
+                `Tipo: ${payloadDecisao.tipoSaneamento || '-'}`,
+                Array.isArray(payloadDecisao.rateio) ? `Rateios: ${payloadDecisao.rateio.length}` : '',
+                payloadDecisao.campoAfetado ? `Campo: ${payloadDecisao.campoAfetado}` : '',
+                payloadDecisao.valorCorrigido ? `Valor corrigido: ${payloadDecisao.valorCorrigido}` : '',
+                payloadDecisao.equivalenciaAceita === true ? 'Equivalência aceita: sim' : '',
+                payloadDecisao.ausenciaConfirmada === true ? 'Ausência confirmada: sim' : '',
+                payloadDecisao.liberarUsoDryRun === true ? 'Liberação dry-run: sim' : ''
+            ].filter(Boolean);
+            return partes.join(' | ') || 'Payload técnico será registrado para auditoria.';
+        }
+
+        function definirErrosFormularioDecisaoRevisao(erros = []) {
+            const container = document.getElementById('revisao-form-erros');
+            if (!container) return;
+            container.innerHTML = erros.length
+                ? `<ul class="mb-0">${erros.map((erro) => `<li>${escapeHtml(erro)}</li>`).join('')}</ul>`
+                : '';
+            container.hidden = !erros.length;
+        }
+
+        function atualizarPreviaPayloadDecisaoRevisao(divergencia) {
+            const decisao = document.getElementById('revisao-decisao')?.value || '';
+            const payloadDecisao = montarPayloadDecisaoRevisao(divergencia, decisao);
+            const resumo = document.getElementById('revisao-payload-resumo');
+            const tecnico = document.getElementById('revisao-payload-tecnico');
+            if (resumo) resumo.textContent = renderResumoPayloadDecisaoRevisao(payloadDecisao);
+            if (tecnico) tecnico.textContent = JSON.stringify(payloadDecisao, null, 2);
+
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            const campoCorrigido = document.getElementById('revisao-campo-corrigido-wrapper');
+            if (campoCorrigido) campoCorrigido.hidden = !(categoria === 'campo' && decisao === 'CORRIGIDO');
+        }
+
         function obterAntesDepoisRevisao(divergencia) {
             const payload = divergencia?.payload || {};
             const antesPlano = {
@@ -2148,11 +2628,11 @@ async function carregarLogoParaPDF() {
         }
 
         function renderFormularioDecisaoRevisao(divergencia) {
-            const decisoes = ['ACEITO', 'REJEITADO', 'EM_REVISAO', 'CORRIGIDO', 'REVERTIDO', 'COMENTAR'];
+            const decisoes = obterDecisoesPermitidasRevisao(divergencia);
             return `
                 <section class="revisao-detail-section revisao-decision-panel">
                     <h3>Registrar decisão</h3>
-                    <p class="text-muted small">ACEITO registra decisão humana, mas ainda não aplica a alteração ao planoAplicacao.</p>
+                    <p class="text-muted small">A decisão será registrada e auditada, mas não será aplicada ao planoAplicacao oficial nesta etapa.</p>
                     <form id="form-revisao-decisao" data-divergencia-id="${escapeHtml(String(divergencia.id))}">
                         <div class="row g-2">
                             <div class="col-12 col-md-4">
@@ -2163,16 +2643,28 @@ async function carregarLogoParaPDF() {
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="revisao-usuario">Usuário responsável</label>
-                                <input class="form-control" id="revisao-usuario" required maxlength="120" placeholder="nome.sobrenome">
+                                <input class="form-control" id="revisao-usuario" maxlength="120" placeholder="nome.sobrenome">
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="revisao-valor-aplicado">Valor aplicado (opcional)</label>
                                 <input class="form-control" id="revisao-valor-aplicado" maxlength="255" placeholder="Uso futuro/auditoria">
                             </div>
                             <div class="col-12">
+                                ${renderEditorPayloadDecisaoRevisao(divergencia)}
+                            </div>
+                            <div class="col-12">
                                 <label class="form-label" for="revisao-justificativa">Justificativa ou comentário</label>
                                 <textarea class="form-control" id="revisao-justificativa" rows="3" maxlength="2000" placeholder="Obrigatória para ACEITO, REJEITADO, CORRIGIDO e REVERTIDO."></textarea>
                             </div>
+                        </div>
+                        <div id="revisao-form-erros" class="revisao-form-erros mt-3" hidden></div>
+                        <div class="revisao-payload-box mt-3">
+                            <strong>Resumo do payload</strong>
+                            <p id="revisao-payload-resumo" class="mb-2 text-muted small">Payload técnico será montado conforme a decisão.</p>
+                            <details>
+                                <summary>Ver payload técnico</summary>
+                                <pre id="revisao-payload-tecnico">{}</pre>
+                            </details>
                         </div>
                         <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
                             <button type="submit" class="btn btn-primary btn-icon-text" data-requer-backend="true">
@@ -2192,11 +2684,11 @@ async function carregarLogoParaPDF() {
             container.innerHTML = `
                 <article class="revisao-detail-panel">
                     <div class="revisao-detail-header">
-                        <div>
-                            <p class="section-eyebrow mb-1">Divergência #${escapeHtml(String(divergencia.id))}</p>
-                            <h2>${escapeHtml(divergencia.tipoAlerta || 'Divergência')}</h2>
-                            <div class="revisao-detail-meta">
-                                ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
+                    <div>
+                        <p class="section-eyebrow mb-1">Divergência #${escapeHtml(String(divergencia.id))}</p>
+                        <h2>${escapeHtml(divergencia.tipoAlerta || 'Divergência')}</h2>
+                        <div class="revisao-detail-meta">
+                            ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
                                 ${renderBadgeRevisao(divergencia.nivel, classeNivelRevisao(divergencia.nivel))}
                                 ${renderBadgeRevisao(`Convênio ${divergencia.numeroConvenio || '-'}`, 'secondary')}
                                 ${renderBadgeRevisao(`UF ${divergencia.uf || '-'}`, 'secondary')}
@@ -2206,11 +2698,12 @@ async function carregarLogoParaPDF() {
                     </div>
                     ${renderComparacaoRevisao(divergencia)}
                     ${renderDiagnosticoAutomaticoRevisao(divergencia)}
+                    ${renderSaneamentoEstruturadoRevisao(divergencia)}
                     ${renderLogsDecisoesRevisao(divergencia)}
                     ${renderFormularioDecisaoRevisao(divergencia)}
                 </article>
             `;
-            registrarEventoFormularioDecisaoRevisao();
+            registrarEventoFormularioDecisaoRevisao(divergencia);
             aplicarModoSomenteLeituraControlada();
         }
 
@@ -2470,9 +2963,34 @@ async function carregarLogoParaPDF() {
             });
         }
 
-        function registrarEventoFormularioDecisaoRevisao() {
+        function registrarEventoFormularioDecisaoRevisao(divergencia) {
             const form = document.getElementById('form-revisao-decisao');
             if (!form) return;
+            const atualizarPrevia = () => atualizarPreviaPayloadDecisaoRevisao(divergencia);
+            form.addEventListener('input', atualizarPrevia);
+            form.addEventListener('change', atualizarPrevia);
+            form.addEventListener('click', (event) => {
+                const botaoAdicionar = event.target.closest('[data-revisao-rateio-adicionar]');
+                if (botaoAdicionar) {
+                    event.preventDefault();
+                    document.getElementById('revisao-rateio-list')?.insertAdjacentHTML('beforeend', renderLinhaRateioRevisao());
+                    atualizarPrevia();
+                    return;
+                }
+
+                const botaoRemover = event.target.closest('[data-revisao-rateio-remover]');
+                if (botaoRemover) {
+                    event.preventDefault();
+                    const linha = botaoRemover.closest('[data-revisao-rateio-row]');
+                    linha?.remove();
+                    const lista = document.getElementById('revisao-rateio-list');
+                    if (lista && !lista.querySelector('[data-revisao-rateio-row]')) {
+                        lista.insertAdjacentHTML('beforeend', renderLinhaRateioRevisao());
+                    }
+                    atualizarPrevia();
+                }
+            });
+            atualizarPrevia();
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const id = form.dataset.divergenciaId;
@@ -2481,14 +2999,20 @@ async function carregarLogoParaPDF() {
                 const justificativa = document.getElementById('revisao-justificativa')?.value?.trim?.() || '';
                 const valorAplicado = document.getElementById('revisao-valor-aplicado')?.value?.trim?.() || undefined;
                 const exigeJustificativa = ['ACEITO', 'REJEITADO', 'CORRIGIDO', 'REVERTIDO'].includes(decisao);
+                const payloadDecisao = montarPayloadDecisaoRevisao(divergencia, decisao);
+                const erros = [];
                 if (!usuario) {
-                    alert('Informe o usuário responsável pela decisão.');
-                    return;
+                    erros.push('Informe o usuário responsável pela decisão.');
                 }
                 if (exigeJustificativa && !justificativa) {
-                    alert(`A decisão ${decisao} exige justificativa.`);
+                    erros.push(`A decisão ${decisao} exige justificativa.`);
+                }
+                erros.push(...validarPayloadDecisaoRevisao(divergencia, decisao, payloadDecisao));
+                if (erros.length) {
+                    definirErrosFormularioDecisaoRevisao(erros);
                     return;
                 }
+                definirErrosFormularioDecisaoRevisao([]);
                 const botao = form.querySelector('button[type="submit"]');
                 if (botao) botao.disabled = true;
                 try {
@@ -2500,14 +3024,15 @@ async function carregarLogoParaPDF() {
                             usuario,
                             justificativa,
                             valorAplicado,
-                            payloadDecisao: { origem: 'interface-revisao-divergencias' }
+                            payloadDecisao
                         })
                     });
-                    alert(`Decisão registrada. aplicadaAoPlano=${payload.decisao?.aplicadaAoPlano === true ? 'true' : 'false'}.`);
+                    alert(`Decisão registrada. aplicadaAoPlano=${payload.decisao?.aplicadaAoPlano === true ? 'true' : 'false'}. Reconstrução/publicação não alteradas.`);
                     await carregarAuditoriaRevisao();
                     await carregarListaRevisao();
                     await abrirDetalheRevisao(id);
                 } catch (error) {
+                    definirErrosFormularioDecisaoRevisao([error.message || 'Falha ao registrar decisão.']);
                     alert(error.message || 'Falha ao registrar decisão.');
                 } finally {
                     if (botao) botao.disabled = false;

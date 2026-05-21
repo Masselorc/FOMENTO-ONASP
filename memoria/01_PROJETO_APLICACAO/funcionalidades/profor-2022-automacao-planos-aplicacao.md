@@ -1333,6 +1333,72 @@ segurança e `aptoParaProsseguirAtivacao = true` para esse critério específico
 A reconstrução continua com `aptoParaAtivacao = false` pelas divergências
 pendentes, não pela segurança.
 
+#### 16.2.14. Interface avançada de saneamento PAD (Etapa 9.1 — implementada)
+
+A tela `SISTEMA > Revisão de divergências` passou a montar decisões humanas
+estruturadas para alimentar o motor de aplicação de decisões em dry-run já
+existente. A evolução é incremental no frontend: não cria rota, não cria
+migration, não altera origem ativa, não publica, não toca
+`frontend/data/publicados` e não aplica decisão materialmente ao
+`planoAplicacao` oficial.
+
+**Tipos com painel estruturado.**
+
+- `equivalencia_por_descricao_normalizada`: exibe item PAD, item/memória
+  provável, valores unitários, diferença, naturezas e motivo provável; `ACEITO`
+  envia equivalência aceita e `REJEITADO` envia equivalência recusada.
+- `item_pad_sem_rateio`, `item_novo_sem_rateio`, `rateio_novo` e
+  `correcao_de_rateio`: exibem editor de rateio manual com área, natureza,
+  percentual de valor, percentual de quantidade e observação opcional.
+- `item_ausente_no_pad` e `item_substituido`: exibem item da memória, convênio,
+  UF, natureza/área quando disponível e alerta de ausência no PAD atual.
+- `item_nao_apto`, `item_conhecido_nao_apto` e
+  `item_conhecido_nao_apto_usado`: exibem motivo original, alertas vinculados e
+  impacto na reconstrução.
+- `quantidade_valor_unitario_inconsistente`: exibe quantidade, valor unitário,
+  total previsto, cálculo/diferença e diagnóstico de possível
+  truncamento/arredondamento.
+- divergências de campo (`valor_diferente`, `quantidade_diferente`,
+  `valor_unitario_diferente`, `saldo_inconsistente`, `descricao_divergente`,
+  `natureza_divergente`): permitem aceitar o dado PAD ou informar valor
+  corrigido.
+
+**Payloads enviados em `payloadDecisao`.**
+
+- equivalência aceita:
+  `{ tipoSaneamento: "equivalencia_por_descricao_normalizada", equivalenciaAceita: true, chaveItemEquivalente, descricaoPad, descricaoMemoria, motivo }`;
+- rateio manual:
+  `{ tipoSaneamento: "rateio_manual", rateio: [{ area, natureza, percentualValor, percentualQuantidade }], observacao }`;
+- ausência confirmada:
+  `{ tipoSaneamento: "ausencia_confirmada", ausenciaConfirmada: true, motivo }`;
+- liberação de item não apto em dry-run:
+  `{ tipoSaneamento: "liberacao_item_nao_apto", liberarUsoDryRun: true, motivo }`;
+- consistência quantidade x valor unitário:
+  `{ tipoSaneamento: "consistencia_quantidade_valor_unitario", manterTotaisPad: true, valorUnitarioApenasReferencia: true, motivo }`;
+- campo PAD aceito:
+  `{ tipoSaneamento: "campo_pad_aceito", campoAfetado, valorAceito, fonteAceita: "PAD" }`;
+- campo corrigido:
+  `{ tipoSaneamento: "campo_corrigido", campoAfetado, valorCorrigido }`.
+
+**Validações do frontend antes do POST.** Usuário responsável é obrigatório.
+Justificativa é obrigatória para `ACEITO`, `REJEITADO`, `CORRIGIDO` e
+`REVERTIDO`. Para rateio manual, `ACEITO`/`CORRIGIDO` exigem área e natureza em
+todas as linhas, soma de `percentualValor = 100` com tolerância pequena e soma
+de `percentualQuantidade = 100` quando esse percentual for preenchido. Para
+divergência de campo, `CORRIGIDO` exige `valorCorrigido`.
+
+**Usabilidade e auditoria.** O detalhe da divergência destaca se há bloqueio de
+publicação e se o saneamento exige payload estruturado. O formulário mostra
+resumo do payload e bloco recolhível "Ver payload técnico". Após registro de
+decisão, a tela recarrega auditoria, lista e detalhe, e informa que
+`aplicadaAoPlano=false`, com reconstrução/publicação não alteradas. O serviço de
+decisão continua acrescentando o snapshot `_segurancaPreAtivacao` dentro do
+JSON `payload_decisao_json`, preservando o payload do usuário.
+
+**Limitações remanescentes.** A interface não faz fuzzy matching, não resolve
+divergência automaticamente, não cria rateio no banco, não limpa divergências e
+não substitui a auditoria/dry-runs obrigatórios antes de qualquer ativação.
+
 ---
 
 ## 17. Fases de implementação recomendadas

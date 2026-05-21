@@ -1,5 +1,88 @@
 # Diário de bordo
 
+## 20/05/2026 - PROFOR 2022: Etapa 9.1 - interface avançada de saneamento PAD
+
+- Branch atual: `main`.
+- Objetivo:
+  - evoluir a tela `SISTEMA > Revisão de divergências` para registrar decisões
+    humanas com `payloadDecisao` estruturado, consumível pelo motor dry-run já
+    existente, sem aplicar decisão ao `planoAplicacao` oficial.
+- Arquivos alterados:
+  - `frontend/js/app.js`;
+  - `frontend/css/app.css`;
+  - `index.html`;
+  - `tests/e2e/app.spec.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/08_ROTAS_BANCO_API/schema-banco.md`;
+  - relatórios dry-run regenerados por validação em `backend/data/relatorios/profor-2022-pad-*-dry-run.*`.
+- Tipos de divergência suportados pela decisão estruturada:
+  - `equivalencia_por_descricao_normalizada`;
+  - `item_pad_sem_rateio`, `item_novo_sem_rateio`, `rateio_novo`, `correcao_de_rateio`;
+  - `item_ausente_no_pad`, `item_substituido`;
+  - `item_nao_apto`, `item_conhecido_nao_apto`, `item_conhecido_nao_apto_usado`;
+  - `quantidade_valor_unitario_inconsistente`;
+  - `valor_diferente`, `quantidade_diferente`, `valor_unitario_diferente`,
+    `saldo_inconsistente`, `descricao_divergente`, `natureza_divergente`.
+- Payloads implementados:
+  - equivalência aceita ou rejeitada com `tipoSaneamento: "equivalencia_por_descricao_normalizada"`;
+  - rateio manual com `tipoSaneamento: "rateio_manual"` e lista `rateio`;
+  - ausência confirmada com `tipoSaneamento: "ausencia_confirmada"`;
+  - liberação dry-run de item não apto com `tipoSaneamento: "liberacao_item_nao_apto"`;
+  - consistência quantidade x valor unitário com
+    `tipoSaneamento: "consistencia_quantidade_valor_unitario"`;
+  - campo PAD aceito com `tipoSaneamento: "campo_pad_aceito"`;
+  - campo corrigido com `tipoSaneamento: "campo_corrigido"`.
+- Validações de frontend:
+  - usuário responsável obrigatório;
+  - justificativa obrigatória para `ACEITO`, `REJEITADO`, `CORRIGIDO` e `REVERTIDO`;
+  - rateio manual exige área, natureza, soma de `percentualValor = 100` e soma de
+    `percentualQuantidade = 100` quando preenchida;
+  - `CORRIGIDO` em divergência de campo exige `valorCorrigido`;
+  - erros são exibidos sem enviar requisição;
+  - formulário exibe resumo do payload e bloco recolhível com JSON técnico.
+- Usabilidade:
+  - detalhe da divergência passa a destacar bloqueio de publicação;
+  - divergências com saneamento estruturado exibem badge de payload estruturado;
+  - painel estruturado mostra os dados relevantes por tipo de alerta;
+  - após decisão registrada, a mensagem informa `aplicadaAoPlano=false` e que
+    reconstrução/publicação não foram alteradas.
+- Backend:
+  - não alterado; o serviço existente já preserva `payloadDecisao`, grava
+    snapshot `_segurancaPreAtivacao` e mantém `aplicadaAoPlano=false`.
+- Validações realizadas:
+  - `node --check frontend/js/app.js`;
+  - `node --check tests/e2e/app.spec.js`;
+  - `npm run validar:syntax` (59 arquivos);
+  - `npm run validar:services` (31 testes);
+  - `npm run profor:pad:auditar-fila-revisao` (145 divergências, 48 bloqueiam publicação);
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run` (0 bloqueios de segurança);
+  - `npm run profor:pad:reconstruir-plano:dry-run` (`aptoParaAtivacao=false`, 47 impedimentos existentes);
+  - `npm run profor:pad:comparar-plano:dry-run` (`aptoParaPublicacao=false`, 0 diferenças críticas);
+  - `npx playwright test tests/e2e/app.spec.js --grep "revisão de divergências exibe decisão estruturada"` (1 teste);
+  - `git status --short frontend/data/publicados` (sem alterações);
+  - `git ls-files "*.sqlite*"` (sem arquivos versionados).
+- Decisão de teste:
+  - nenhuma decisão real ou controlada foi registrada; o smoke Playwright usou API mockada e validou que o POST não ocorreu.
+- Restrições preservadas:
+  - sem publicação;
+  - sem alteração de origem ativa;
+  - sem alteração de `frontend/data/publicados`;
+  - sem aplicação ao `planoAplicacao` oficial;
+  - sem migration, sem dependência nova e sem fuzzy matching.
+- Pendências:
+  - validação manual com divergência real/controlada pode ser feita depois, se for necessário registrar decisão de teste e limpar em seguida.
+- Risco de regressão:
+  - moderado no frontend da revisão de divergências, principalmente na montagem do payload por tipo e na validação de rateio;
+  - baixo no backend, pois não houve alteração de serviços/rotas.
+- Rollback:
+  - reverter `frontend/js/app.js`, `frontend/css/app.css`, `index.html`,
+    `tests/e2e/app.spec.js` e os registros de memória remove a interface
+    avançada e restaura o formulário genérico anterior; relatórios dry-run podem
+    ser regenerados novamente pelos scripts correspondentes.
+
+---
+
 ## 20/05/2026 - PROFOR 2022: Etapa 8.2 - Segurança pré-ativação PAD
 
 - Branch atual: `main`.
