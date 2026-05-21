@@ -2820,11 +2820,41 @@ async function carregarLogoParaPDF() {
         async function abrirDetalheRevisao(id) {
             const container = document.getElementById('revisao-divergencia-detalhe');
             if (container) {
-                container.innerHTML = '<div class="revisao-detail-panel text-muted">Carregando detalhe da divergência…</div>';
+                container.innerHTML = '<div class="revisao-detail-panel text-muted">Carregando detalhe da divergência...</div>';
             }
-            const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias/${encodeURIComponent(id)}`);
-            revisaoDivergenciasEstado.detalheAtualId = Number(id);
-            renderDetalheDivergenciaRevisao(payload.divergencia);
+
+            const botao = document.querySelector(`[data-revisao-abrir="${id}"]`);
+            let originalTexto = '';
+            let tr = null;
+
+            if (botao) {
+                originalTexto = botao.innerHTML;
+                botao.disabled = true;
+                botao.textContent = 'Carregando...';
+                tr = botao.closest('tr');
+                if (tr) {
+                    const tbody = tr.closest('tbody');
+                    if (tbody) {
+                        tbody.querySelectorAll('tr').forEach(r => r.classList.remove('table-active'));
+                    }
+                    tr.classList.add('table-active');
+                }
+            }
+
+            try {
+                const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias/${encodeURIComponent(id)}`);
+                revisaoDivergenciasEstado.detalheAtualId = Number(id);
+                renderDetalheDivergenciaRevisao(payload.divergencia);
+
+                if (container) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } finally {
+                if (botao) {
+                    botao.disabled = false;
+                    botao.innerHTML = originalTexto;
+                }
+            }
         }
 
         function renderFiltrosRevisao() {
