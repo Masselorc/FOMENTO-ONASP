@@ -4692,3 +4692,36 @@ Logs operacionais gravados:
   - sem ativação de nova origem de `planoAplicacao`;
   - sem integração com compositor PROFOR;
   - sem aplicação financeira dos rateios.
+
+---
+
+## 21/05/2026 - PROFOR 2022: Etapa 9.2 (Validação ponta a ponta da decisão estruturada)
+
+- Branch: `main`.
+- Objetivo:
+  - Validar de forma controlada e ponta a ponta o fluxo de decisões estruturadas para as divergências do PAD/PROFOR 2022, assegurando a gravação e a interpretação correta de payloads no dry-run sem alterar os dados reais de produção.
+- Arquivos alterados:
+  - `backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`.
+- Implementação e ajustes:
+  - Modificado o script de teste para chamar a função correta de segurança `auditarSegurancaPreAtivacaoDryRun` ao invés de `auditarPayloadDecisoes` (que não é exportada).
+  - Incluído o utilitário `path` e configurada a resolução de `repoRoot` apropriadamente para a chamada do validador de segurança.
+  - Adicionada rotina de pré-limpeza autolimpante ao script para que resíduos de testes anteriores (de eventuais interrupções/falhas) sejam limpos antes de verificar o baseline.
+  - Adicionado assert para verificar que nenhum bloqueio ou aviso com prefixo `revisao_teste:` é reportado pela auditoria de segurança de produção.
+- Execução e resultados do teste:
+  - Baseline verificado com êxito: 145 divergências reais, todas pendentes, 44 impeditivas, 48 bloqueantes.
+  - Inserção de 6 divergências de teste controladas e gravação transacional de suas decisões simuladas com sucesso.
+  - Verificação de gravação estruturada com geração estável do hash no nó `_segurancaPreAtivacao` concluída com êxito.
+  - Execução dos motores dry-run de reconstrução e comparação interpretando com êxito as decisões de teste (6 carregadas, 6 interpretadas e 5 com efeito na reconstrução).
+  - Limpeza executada com êxito absoluto, removendo 6 divergências de teste, 6 decisões de teste, 6 logs de teste e o lote temporário, retornando o banco SQLite perfeitamente ao baseline original de 145/145/48.
+- Validações complementares executadas:
+  - `npm run validar:syntax` -> OK (59 arquivos validados);
+  - `node --test tests/services/*.test.js` -> OK (31 testes passados, 0 falhas);
+  - `node backend/scripts/auditar-fila-revisao-pad-profor-2022.js` -> OK (banco íntegro no baseline de 145);
+  - `node backend/scripts/reconstruir-plano-pad-profor-2022.js` -> OK (modo dry-run ativo);
+  - `node backend/scripts/comparar-plano-pad-profor-2022.js` -> OK (modo dry-run ativo);
+  - `node backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js` -> OK (0 bloqueios, apto para ativação).
+- Restrições preservadas:
+  - sem alteração em dados de produção (divergências de teste usam prefixo `revisao_teste:`);
+  - sem ativação ou publicação de nova origem.

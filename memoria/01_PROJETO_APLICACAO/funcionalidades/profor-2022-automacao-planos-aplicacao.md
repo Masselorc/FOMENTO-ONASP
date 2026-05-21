@@ -1712,3 +1712,38 @@ planoAplicacao reconstruído
 ```
 
 A implementação correta não substitui linhas antigas por linhas novas. Ela transforma cada item agregado do PAD em uma ou mais linhas por área, preservando os rateios manuais, alertando itens novos, alertando itens ausentes e bloqueando publicação quando houver pendências críticas.
+
+---
+
+## 23. Validação Ponta a Ponta (Etapa 9.2)
+
+Em 21/05/2026, foi implementada e executada com sucesso a validação controlada ponta a ponta das decisões estruturadas para o PAD/PROFOR 2022.
+
+### 23.1. Objetivos da Validação
+1. Validar que a interface monta o payloadDecisao estruturado correto.
+2. Confirmar que o registro via API (POST real) grava a decisão preservando o payload do usuário.
+3. Garantir que o backend gera automaticamente o nó de integridade `_segurancaPreAtivacao`.
+4. Assegurar que os logs de auditoria correspondentes são criados.
+5. Confirmar que a resposta da API retorna `aplicadaAoPlano=false` (sinalizando dry-run).
+6. Validar que o motor de aplicação interpreta e aplica as decisões corretas em modo dry-run na reconstrução e comparação.
+7. Assegurar que o validador de segurança em produção ignora os casos de teste.
+8. Confirmar que a rotina de limpeza remove os registros de teste e retorna o banco exatamente ao baseline.
+
+### 23.2. Script de Validação
+O script `backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js` foi criado e executado. Ele insere 6 divergências controladas de teste (usando o prefixo `revisao_teste:`) cobrindo todos os tipos de saneamento estruturado mínimos:
+- Equivalência normalizada (`equivalencia_por_descricao_normalizada`) -> status ACEITO
+- Rateio manual (`rateio_manual` para `item_novo_sem_rateio`) -> status ACEITO
+- Ausência confirmada (`ausencia_confirmada` para `item_ausente_no_pad`) -> status ACEITO
+- Liberação de item não apto (`liberacao_item_nao_apto` para `item_conhecido_nao_apto`) -> status ACEITO
+- Inconsistência de cálculo (`consistencia_quantidade_valor_unitario`) -> status ACEITO
+- Campo corrigido (`campo_corrigido` para `valor_diferente`) -> status CORRIGIDO
+
+### 23.3. Resultados Obtidos
+- Baseline verificado com sucesso (145 divergências reais, todas pendentes, 44 impeditivas, 48 bloqueantes).
+- As 6 divergências e decisões correspondentes foram inseridas e persistidas com sucesso.
+- O nó `_segurancaPreAtivacao` foi gerado perfeitamente com hash SHA-256 estável do payload da divergência.
+- A auditoria pré-ativação de produção ignorou corretamente as decisões com prefixo `revisao_teste:`.
+- Os motores dry-run de reconstrução e comparação interpretaram corretamente as 6 decisões.
+- A limpeza removeu as 6 divergências de teste, decisões e logs vinculados, excluindo também o lote temporário.
+- O banco SQLite de produção retornou exatamente ao baseline original de 145 divergências reais pendentes.
+
