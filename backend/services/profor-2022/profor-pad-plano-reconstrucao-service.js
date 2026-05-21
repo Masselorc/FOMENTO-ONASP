@@ -10,6 +10,10 @@ const {
   arredondarMoedaProfor,
   calcularEconomicidadeItem,
 } = require("./profor-plano-aplicacao-service");
+const { criarChaveDivergencia } = require("./profor-pad-revisao-service");
+const {
+  carregarAplicacaoDecisoesDryRun,
+} = require("./profor-pad-decisao-aplicacao-service");
 
 // Caminho padrão do relatório dry-run de reconstrução.
 const CAMINHO_RELATORIO_RECONSTRUCAO =
@@ -26,8 +30,6 @@ const TIPOS_ERRO_CRITICO_LEITURA = new Set([
   "natureza_nao_classificada",
   "total_geral_divergente",
 ]);
-
-const DECISOES_RESOLUTIVAS = ["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"];
 
 function agoraIso() {
   return new Date().toISOString();
@@ -105,37 +107,6 @@ function carregarMemoriaRateios() {
   return porItem;
 }
 
-/**
- * Carrega as decisões resolutivas já registradas na revisão assistida.
- * Esta etapa apenas considera tecnicamente a decisão (registra no relatório);
- * nunca aplica a decisão materialmente ao planoAplicacao.
- */
-function carregarDecisoesResolutivas() {
-  const placeholders = DECISOES_RESOLUTIVAS.map(() => "?").join(", ");
-  const linhas = db.prepare(`
-    SELECT d.id, d.numero_convenio, d.chave_item, d.tipo_alerta, d.status, d.campo_afetado
-    FROM profor_2022_revisao_divergencias d
-    WHERE EXISTS (
-      SELECT 1 FROM profor_2022_revisao_decisoes x
-      WHERE x.divergencia_id = d.id AND x.decisao IN (${placeholders})
-    )
-    ORDER BY d.id
-  `).all(...DECISOES_RESOLUTIVAS);
-
-  const porChaveItem = new Map();
-  for (const linha of linhas) {
-    if (!linha.chave_item) continue;
-    if (!porChaveItem.has(linha.chave_item)) porChaveItem.set(linha.chave_item, []);
-    porChaveItem.get(linha.chave_item).push({
-      divergenciaId: linha.id,
-      tipoAlerta: linha.tipo_alerta,
-      status: linha.status,
-      campoAfetado: linha.campo_afetado,
-    });
-  }
-  return { porChaveItem, total: linhas.length };
-}
-
 function montarImpedimento({ tipo, nivel = "impeditivo", numeroConvenio = null, uf = null, descricao = null, chaveItem = null, detalhe }) {
   return { tipo, nivel, numeroConvenio, uf, descricao, chaveItem, detalhe };
 }
@@ -144,14 +115,130 @@ function montarAlerta({ tipo, nivel = "aviso", numeroConvenio = null, uf = null,
   return { tipo, nivel, numeroConvenio, uf, descricao, chaveItem, detalhe };
 }
 
+/** Resumo serializável da decisão aplicada a uma linha reconstruída. */
+function resumoDecisao(registro) {
+  if (!registro) return null;
+  return {
+    divergenciaId: registro.divergenciaId,
+    chaveDivergencia: registro.chaveDivergencia,
+    decisao: registro.decisao,
+    efeito: registro.efeito ? registro.efeito.tipo : null,
+  };
+}
+
+/**
+ * Gera as linhas reconstruídas de um item PAD a partir de um conjunto de
+ * rateios, aplicando os totais financeiros do PAD como fonte de verdade.
+ */
+function gerarLinhasItem(itemPad, rateios, contexto = {}) {
+  const alertasItem = [];
+  const impedimentosItem = [];
+  const linhas = [];
+
+  const pesosValor = obterPesosRateio(rateios, "percentual_valor", "valor_previsto_referencia");
+  const pesosQuantidade = obterPesosRateio(rateios, "percentual_quantidade", "quantidade_referencia");
+  const previstos = distribuirTotal(itemPad.valorTotalPrevisto, pesosValor.pesos, arredondarMoedaProfor);
+  const executados = distribuirTotal(itemPad.valorTotalExecutado, pesosValor.pesos, arredondarMoedaProfor);
+  const quantidades = distribuirTotal(itemPad.quantidade, pesosQuantidade.pesos, arredondarQuantidadeProfor);
+  const houveAjusteResidual = previstos.residuo !== 0
+    || executados.residuo !== 0
+    || quantidades.residuo !== 0;
+
+  rateios.forEach((rateio, indice) => {
+    const valorPrevisto = previstos.valores[indice];
+    const valorExecutado = executados.valores[indice];
+    const quantidade = quantidades.valores[indice];
+    const saldo = arredondarMoedaProfor(valorPrevisto - valorExecutado);
+    const valorUnitarioDerivado = derivarValorUnitario(valorPrevisto, quantidade);
+    const percentualExecucao = valorPrevisto > 0
+      ? Math.round((valorExecutado / valorPrevisto) * 10000) / 100
+      : 0;
+
+    const linha = {
+      uf: itemPad.uf || null,
+      instrumento: itemPad.instrumento || null,
+      numero: itemPad.numeroConvenio || null,
+      ano: itemPad.ano || null,
+      area: rateio.area,
+      natureza: rateio.natureza,
+      descricao: itemPad.descricaoOriginal,
+      quantidade,
+      // Valor Unit do PAD permanece referência auxiliar quando a quantidade
+      // rateada é zero; nunca é usado para recalcular o total previsto.
+      valorUnitario: valorUnitarioDerivado !== null
+        ? valorUnitarioDerivado
+        : (Number(itemPad.valorUnitario) || 0),
+      valorPrevisto,
+      valorExecutado,
+      saldo,
+      saldoEconomicidade: 0,
+      percentualExecucao,
+    };
+    linha.saldoEconomicidade = calcularEconomicidadeItem(linha, []);
+
+    // Metadados de rastreabilidade da reconstrução (não fazem parte do formato
+    // financeiro consumido pelos cálculos do planoAplicacao).
+    linha.origemReconstrucao = contexto.fonteRateio || "relatorios-pad-rateados";
+    linha.chaveItem = itemPad.chaveItem;
+    linha.itemConhecidoId = contexto.itemConhecidoId ?? null;
+    linha.codigoNaturezaDespesa = itemPad.codigoNaturezaDespesa || null;
+    linha.unidade = itemPad.unidade || null;
+    linha.valorUnitarioPadReferencia = Number(itemPad.valorUnitario) || 0;
+    linha.valorUnitarioDerivado = valorUnitarioDerivado;
+    linha.baseRateioValor = pesosValor.base;
+    linha.baseRateioQuantidade = pesosQuantidade.base;
+    linha.ajusteResidualAplicado = houveAjusteResidual && indice === rateios.length - 1;
+    linha.itemAptoParaUso = contexto.itemAptoParaUso !== false;
+    linha.liberadoPorDecisao = Boolean(contexto.liberadoPorDecisao);
+    linha.decisaoAplicada = resumoDecisao(contexto.decisaoAplicada);
+    linhas.push(linha);
+  });
+
+  if (houveAjusteResidual) {
+    alertasItem.push(montarAlerta({
+      tipo: "ajuste_residual_arredondamento",
+      nivel: "info",
+      numeroConvenio: itemPad.numeroConvenio,
+      uf: itemPad.uf,
+      descricao: itemPad.descricaoOriginal,
+      chaveItem: itemPad.chaveItem,
+      detalhe: `Diferença residual de arredondamento lançada na última linha ativa do rateio `
+        + `(previsto ${previstos.residuo}, executado ${executados.residuo}, quantidade ${quantidades.residuo}).`,
+    }));
+  }
+  if (pesosValor.base === "valor_referencia") {
+    alertasItem.push(montarAlerta({
+      tipo: "rateio_valor_sem_percentual",
+      numeroConvenio: itemPad.numeroConvenio,
+      uf: itemPad.uf,
+      descricao: itemPad.descricaoOriginal,
+      chaveItem: itemPad.chaveItem,
+      detalhe: "Rateio sem percentual de valor salvo; usados os valores previstos de referência como peso.",
+    }));
+  }
+  if (pesosValor.base === "distribuicao_igual" || pesosQuantidade.base === "distribuicao_igual") {
+    impedimentosItem.push(montarImpedimento({
+      tipo: "rateio_percentual_indefinido",
+      numeroConvenio: itemPad.numeroConvenio,
+      uf: itemPad.uf,
+      descricao: itemPad.descricaoOriginal,
+      chaveItem: itemPad.chaveItem,
+      detalhe: "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória.",
+    }));
+  }
+
+  return { linhas, alertasItem, impedimentosItem };
+}
+
 /**
  * Reconstrói, em dry-run, o planoAplicacao do PROFOR 2022 a partir dos
- * relatórios PAD, dos itens conhecidos e dos rateios persistidos.
+ * relatórios PAD, dos itens conhecidos, dos rateios persistidos e das decisões
+ * resolutivas registradas na revisão assistida.
  *
- * Não altera a origem ativa, não publica e não aplica decisões materialmente.
- * É executável mesmo com divergências pendentes: registra impedimentos e
- * mantém aptoParaAtivacao/aptoParaPublicacao como false enquanto houver
- * pendências.
+ * As decisões são aplicadas apenas na camada dry-run: não alteram a origem
+ * ativa, não publicam e não modificam o banco. É executável mesmo com
+ * divergências pendentes — registra impedimentos e mantém aptoParaAtivacao/
+ * aptoParaPublicacao como false enquanto houver pendências.
  */
 function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
@@ -161,8 +248,9 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     pastaRelativa: opcoes.pastaRelativa,
   });
   const memoria = carregarMemoriaRateios();
-  const decisoes = carregarDecisoesResolutivas();
   const auditoria = repoRevisao.obterEstatisticasAuditoria();
+  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
+  const regras = aplicacaoDecisoes.regras;
 
   const plano = [];
   const impedimentos = [];
@@ -170,7 +258,19 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   const conveniosReconstruidos = new Set();
   const itensNaoAptosUsados = new Set();
   const chavesReconstruidas = new Map();
+  const decisoesEfetivamenteAplicadas = new Set();
 
+  function registrarReconstrucao(itemPad, resultadoLinhas) {
+    plano.push(...resultadoLinhas.linhas);
+    alertas.push(...resultadoLinhas.alertasItem);
+    impedimentos.push(...resultadoLinhas.impedimentosItem);
+    if (itemPad.numeroConvenio) conveniosReconstruidos.add(itemPad.numeroConvenio);
+    if (itemPad.chaveItem) {
+      chavesReconstruidas.set(itemPad.chaveItem, (chavesReconstruidas.get(itemPad.chaveItem) || 0) + 1);
+    }
+  }
+
+  // 1. Itens PAD reconhecidos: já possuem rateio ativo na memória.
   for (const itemPad of conferencia.itensPadReconhecidos) {
     const rateios = memoria.get(itemPad.itemConhecidoId) || [];
     if (!rateios.length) {
@@ -185,127 +285,69 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
       continue;
     }
 
-    chavesReconstruidas.set(itemPad.chaveItem, (chavesReconstruidas.get(itemPad.chaveItem) || 0) + 1);
-
-    const pesosValor = obterPesosRateio(rateios, "percentual_valor", "valor_previsto_referencia");
-    const pesosQuantidade = obterPesosRateio(rateios, "percentual_quantidade", "quantidade_referencia");
-    const previstos = distribuirTotal(itemPad.valorTotalPrevisto, pesosValor.pesos, arredondarMoedaProfor);
-    const executados = distribuirTotal(itemPad.valorTotalExecutado, pesosValor.pesos, arredondarMoedaProfor);
-    const quantidades = distribuirTotal(itemPad.quantidade, pesosQuantidade.pesos, arredondarQuantidadeProfor);
-    const houveAjusteResidual = previstos.residuo !== 0
-      || executados.residuo !== 0
-      || quantidades.residuo !== 0;
-    const decisoesItem = decisoes.porChaveItem.get(itemPad.chaveItem) || [];
     const itemApto = itemPad.aptoParaImportacaoFutura !== false;
+    const liberacao = !itemApto ? regras.naoAptoLiberado.get(itemPad.chaveItem) : null;
+    const liberadoPorDecisao = Boolean(liberacao);
 
-    rateios.forEach((rateio, indice) => {
-      const valorPrevisto = previstos.valores[indice];
-      const valorExecutado = executados.valores[indice];
-      const quantidade = quantidades.valores[indice];
-      const saldo = arredondarMoedaProfor(valorPrevisto - valorExecutado);
-      const valorUnitarioDerivado = derivarValorUnitario(valorPrevisto, quantidade);
-      const percentualExecucao = valorPrevisto > 0
-        ? Math.round((valorExecutado / valorPrevisto) * 10000) / 100
-        : 0;
-
-      const linha = {
-        uf: itemPad.uf || null,
-        instrumento: itemPad.instrumento || null,
-        numero: itemPad.numeroConvenio || null,
-        ano: itemPad.ano || null,
-        area: rateio.area,
-        natureza: rateio.natureza,
-        descricao: itemPad.descricaoOriginal,
-        quantidade,
-        // Valor Unit do PAD permanece referência auxiliar quando a quantidade
-        // rateada é zero; nunca é usado para recalcular o total previsto.
-        valorUnitario: valorUnitarioDerivado !== null
-          ? valorUnitarioDerivado
-          : (Number(itemPad.valorUnitario) || 0),
-        valorPrevisto,
-        valorExecutado,
-        saldo,
-        saldoEconomicidade: 0,
-        percentualExecucao,
-      };
-      linha.saldoEconomicidade = calcularEconomicidadeItem(linha, []);
-
-      // Metadados de rastreabilidade da reconstrução (não fazem parte do
-      // formato financeiro consumido pelos cálculos do planoAplicacao).
-      linha.origemReconstrucao = "relatorios-pad-rateados";
-      linha.chaveItem = itemPad.chaveItem;
-      linha.itemConhecidoId = itemPad.itemConhecidoId;
-      linha.codigoNaturezaDespesa = itemPad.codigoNaturezaDespesa || null;
-      linha.unidade = itemPad.unidade || null;
-      linha.valorUnitarioPadReferencia = Number(itemPad.valorUnitario) || 0;
-      linha.valorUnitarioDerivado = valorUnitarioDerivado;
-      linha.baseRateioValor = pesosValor.base;
-      linha.baseRateioQuantidade = pesosQuantidade.base;
-      linha.ajusteResidualAplicado = houveAjusteResidual && indice === rateios.length - 1;
-      linha.itemAptoParaUso = itemApto;
-      linha.decisoesResolutivasConsideradas = decisoesItem;
-      plano.push(linha);
+    const resultado = gerarLinhasItem(itemPad, rateios, {
+      fonteRateio: "relatorios-pad-rateados",
+      itemConhecidoId: itemPad.itemConhecidoId,
+      itemAptoParaUso: itemApto || liberadoPorDecisao,
+      liberadoPorDecisao,
+      decisaoAplicada: liberacao,
     });
+    registrarReconstrucao(itemPad, resultado);
 
-    if (itemPad.numeroConvenio) conveniosReconstruidos.add(itemPad.numeroConvenio);
-
-    if (houveAjusteResidual) {
-      alertas.push(montarAlerta({
-        tipo: "ajuste_residual_arredondamento",
-        nivel: "info",
-        numeroConvenio: itemPad.numeroConvenio,
-        uf: itemPad.uf,
-        descricao: itemPad.descricaoOriginal,
-        chaveItem: itemPad.chaveItem,
-        detalhe: `Diferença residual de arredondamento lançada na última linha ativa do rateio `
-          + `(previsto ${previstos.residuo}, executado ${executados.residuo}, quantidade ${quantidades.residuo}).`,
-      }));
-    }
-    if (pesosValor.base === "valor_referencia") {
-      alertas.push(montarAlerta({
-        tipo: "rateio_valor_sem_percentual",
-        numeroConvenio: itemPad.numeroConvenio,
-        uf: itemPad.uf,
-        descricao: itemPad.descricaoOriginal,
-        chaveItem: itemPad.chaveItem,
-        detalhe: "Rateio sem percentual de valor salvo; usados os valores previstos de referência como peso.",
-      }));
-    }
-    if (pesosValor.base === "distribuicao_igual" || pesosQuantidade.base === "distribuicao_igual") {
-      impedimentos.push(montarImpedimento({
-        tipo: "rateio_percentual_indefinido",
-        numeroConvenio: itemPad.numeroConvenio,
-        uf: itemPad.uf,
-        descricao: itemPad.descricaoOriginal,
-        chaveItem: itemPad.chaveItem,
-        detalhe: "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória.",
-      }));
-    }
-    if (!itemApto && !itensNaoAptosUsados.has(itemPad.chaveItem)) {
-      itensNaoAptosUsados.add(itemPad.chaveItem);
-      impedimentos.push(montarImpedimento({
-        tipo: "item_conhecido_nao_apto_usado",
-        numeroConvenio: itemPad.numeroConvenio,
-        uf: itemPad.uf,
-        descricao: itemPad.descricaoOriginal,
-        chaveItem: itemPad.chaveItem,
-        detalhe: "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão.",
-      }));
+    if (!itemApto) {
+      if (liberadoPorDecisao) {
+        decisoesEfetivamenteAplicadas.add(liberacao.divergenciaId);
+      } else if (!itensNaoAptosUsados.has(itemPad.chaveItem)) {
+        itensNaoAptosUsados.add(itemPad.chaveItem);
+        impedimentos.push(montarImpedimento({
+          tipo: "item_conhecido_nao_apto_usado",
+          numeroConvenio: itemPad.numeroConvenio,
+          uf: itemPad.uf,
+          descricao: itemPad.descricaoOriginal,
+          chaveItem: itemPad.chaveItem,
+          detalhe: "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão.",
+        }));
+      }
     }
   }
 
-  for (const [chaveItem, ocorrencias] of chavesReconstruidas.entries()) {
-    if (ocorrencias > 1) {
-      alertas.push(montarAlerta({
-        tipo: "item_pad_duplicado_na_reconstrucao",
-        chaveItem,
-        detalhe: `Item com a mesma chave apareceu ${ocorrencias} vezes nos relatórios PAD; verifique duplicidade na fonte.`,
-      }));
-    }
-  }
-
-  // Itens PAD sem rateio: não geram linha reconstruída e impedem a ativação.
+  // 2. Itens PAD sem rateio: tenta aplicar equivalência ou rateio manual
+  //    proveniente de decisão resolutiva antes de registrar impedimento.
+  const itensPadSemRateioRemanescentes = [];
   for (const item of conferencia.itensPadSemRateio) {
+    const equivalencia = regras.equivalenciasAceitas.get(item.chaveItem);
+    const rateioManual = regras.rateiosManuais.get(item.chaveItem);
+    const rateiosEquivalentes = equivalencia
+      && item.itemConhecidoNormalizadoId
+      && memoria.get(item.itemConhecidoNormalizadoId);
+
+    if (equivalencia && rateiosEquivalentes && rateiosEquivalentes.length) {
+      const resultado = gerarLinhasItem(item, rateiosEquivalentes, {
+        fonteRateio: "equivalencia_por_decisao",
+        itemConhecidoId: item.itemConhecidoNormalizadoId,
+        decisaoAplicada: equivalencia,
+      });
+      registrarReconstrucao(item, resultado);
+      decisoesEfetivamenteAplicadas.add(equivalencia.divergenciaId);
+      continue;
+    }
+
+    if (rateioManual && rateioManual.efeito && Array.isArray(rateioManual.efeito.rateios)) {
+      const resultado = gerarLinhasItem(item, rateioManual.efeito.rateios, {
+        fonteRateio: "rateio_manual_por_decisao",
+        itemConhecidoId: item.itemConhecidoId ?? null,
+        decisaoAplicada: rateioManual,
+      });
+      registrarReconstrucao(item, resultado);
+      decisoesEfetivamenteAplicadas.add(rateioManual.divergenciaId);
+      continue;
+    }
+
+    itensPadSemRateioRemanescentes.push(item);
     impedimentos.push(montarImpedimento({
       tipo: "item_pad_sem_rateio",
       numeroConvenio: item.numeroConvenio,
@@ -318,7 +360,18 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     }));
   }
 
-  // Convênios do PAD fora da carteira monitorada.
+  // 3. Duplicidade de itens PAD na reconstrução.
+  for (const [chaveItem, ocorrencias] of chavesReconstruidas.entries()) {
+    if (ocorrencias > 1) {
+      alertas.push(montarAlerta({
+        tipo: "item_pad_duplicado_na_reconstrucao",
+        chaveItem,
+        detalhe: `Item com a mesma chave apareceu ${ocorrencias} vezes nos relatórios PAD; verifique duplicidade na fonte.`,
+      }));
+    }
+  }
+
+  // 4. Convênios do PAD fora da carteira monitorada.
   for (const instrumento of conferencia.instrumentosNaoEncontradosNaCarteira) {
     impedimentos.push(montarImpedimento({
       tipo: "instrumento_fora_da_carteira",
@@ -327,7 +380,7 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     }));
   }
 
-  // Erros críticos de leitura dos relatórios PAD.
+  // 5. Erros críticos de leitura dos relatórios PAD.
   const errosCriticosLeitura = (conferencia.alertas || []).filter(
     (alerta) => alerta.nivel === "impeditivo" && TIPOS_ERRO_CRITICO_LEITURA.has(alerta.tipo)
   );
@@ -339,19 +392,48 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     }));
   }
 
-  // Alertas de consistência da fonte (não bloqueiam reconstrução).
+  // 6. Alertas de consistência da fonte: marca como saneado quando há decisão
+  //    resolutiva ACEITO correspondente na revisão assistida.
+  let totalConsistenciaSaneadaPorDecisao = 0;
   for (const alerta of conferencia.alertas || []) {
-    if (alerta.tipo === "quantidade_valor_unitario_inconsistente") {
-      alertas.push(montarAlerta({
+    if (alerta.tipo !== "quantidade_valor_unitario_inconsistente") continue;
+    const origem = alerta.origem || {};
+    const chaveDivergencia = criarChaveDivergencia({
+      numeroConvenio: alerta.instrumento,
+      tipoAlerta: "quantidade_valor_unitario_inconsistente",
+      chaveItemOuDescricao: `${origem.aba || "sem-aba"}:linha-${origem.linha ?? "?"}`,
+      campoAfetado: alerta.tipo,
+    });
+    const decisaoSaneamento = regras.consistenciaSaneadaPorDivergencia.get(chaveDivergencia);
+    const saneado = Boolean(decisaoSaneamento);
+    if (saneado) {
+      totalConsistenciaSaneadaPorDecisao += 1;
+      decisoesEfetivamenteAplicadas.add(decisaoSaneamento.divergenciaId);
+    }
+    alertas.push({
+      ...montarAlerta({
         tipo: "quantidade_valor_unitario_inconsistente",
-        nivel: alerta.nivel === "impeditivo" ? "impeditivo" : "aviso",
+        nivel: saneado ? "info" : (alerta.nivel === "impeditivo" ? "impeditivo" : "aviso"),
         numeroConvenio: alerta.instrumento || null,
         detalhe: alerta.detalhe,
-      }));
-    }
+      }),
+      saneadoPorDecisao: saneado,
+      decisaoAplicada: saneado ? resumoDecisao(decisaoSaneamento) : null,
+    });
   }
 
-  // Divergências pendentes/em revisão que bloqueiam publicação.
+  // 7. Impedimentos por decisões resolutivas não aplicáveis.
+  for (const decisao of aplicacaoDecisoes.decisoesNaoAplicaveis) {
+    impedimentos.push(montarImpedimento({
+      tipo: `decisao_nao_aplicavel:${decisao.efeito ? decisao.efeito.tipo : "desconhecido"}`,
+      numeroConvenio: decisao.numeroConvenio,
+      chaveItem: decisao.chaveItem,
+      detalhe: decisao.motivoNaoAplicavel
+        || "Decisão resolutiva registrada não pôde ser aplicada em dry-run.",
+    }));
+  }
+
+  // 8. Divergências pendentes/em revisão que bloqueiam publicação.
   const divergenciasBloqueantes = Number(auditoria.totalPendentesQueBloqueiamPublicacao || 0)
     + Number(auditoria.totalEmRevisaoQueBloqueiamPublicacao || 0);
   if (divergenciasBloqueantes > 0) {
@@ -363,10 +445,11 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   }
 
   const aptoParaAtivacao = auditoria.publicacaoLiberada === true
-    && conferencia.itensPadSemRateio.length === 0
+    && itensPadSemRateioRemanescentes.length === 0
     && itensNaoAptosUsados.size === 0
     && conferencia.instrumentosNaoEncontradosNaCarteira.length === 0
-    && errosCriticosLeitura.length === 0;
+    && errosCriticosLeitura.length === 0
+    && aplicacaoDecisoes.decisoesNaoAplicaveis.length === 0;
 
   const valorPrevistoTotal = arredondarMoedaProfor(
     plano.reduce((total, linha) => total + linha.valorPrevisto, 0)
@@ -381,6 +464,9 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     totalItensPadProcessados: conferencia.resumo.totalItensPadConferidos,
     totalItensPadComRateioAplicado: conferencia.resumo.totalItensPadComRateio,
     totalItensPadSemRateio: conferencia.resumo.totalItensPadSemRateio,
+    totalItensPadSemRateioRemanescentes: itensPadSemRateioRemanescentes.length,
+    totalItensPadSemRateioReconstruidoPorDecisao:
+      conferencia.itensPadSemRateio.length - itensPadSemRateioRemanescentes.length,
     totalLinhasReconstruidas: plano.length,
     totalConveniosReconstruidos: conveniosReconstruidos.size,
     totalItensConhecidosNaoAptosUsados: itensNaoAptosUsados.size,
@@ -388,7 +474,11 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     totalErrosCriticosLeitura: errosCriticosLeitura.length,
     totalImpedimentos: impedimentos.length,
     totalAlertas: alertas.length,
-    totalDecisoesResolutivasConsideradas: decisoes.total,
+    totalDecisoesResolutivasEncontradas: aplicacaoDecisoes.totalDecisoesResolutivasEncontradas,
+    totalDecisoesAplicadasDryRun: aplicacaoDecisoes.totalDecisoesAplicadasDryRun,
+    totalDecisoesNaoAplicaveis: aplicacaoDecisoes.totalDecisoesNaoAplicaveis,
+    totalDecisoesEfetivamenteAplicadasNaReconstrucao: decisoesEfetivamenteAplicadas.size,
+    totalConsistenciaSaneadaPorDecisao,
     valorPrevistoReconstruidoTotal: valorPrevistoTotal,
     valorExecutadoReconstruidoTotal: valorExecutadoTotal,
     saldoReconstruidoTotal: saldoTotal,
@@ -416,6 +506,9 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     resumo,
     impedimentos,
     alertas,
+    decisoesResolutivasEncontradas: aplicacaoDecisoes.decisoesResolutivasEncontradas,
+    decisoesAplicadasDryRun: aplicacaoDecisoes.decisoesAplicadasDryRun,
+    decisoesNaoAplicaveis: aplicacaoDecisoes.decisoesNaoAplicaveis,
     auditoriaRevisao,
     // O comparador antigo × novo preenche este campo; vazio na reconstrução isolada.
     comparacao: {},

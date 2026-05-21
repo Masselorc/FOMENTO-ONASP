@@ -9,6 +9,13 @@ const {
   arredondarMoedaProfor,
   normalizarNumeroConvenio,
 } = require("./profor-plano-aplicacao-service");
+const {
+  criarChaveItemRateioProfor,
+  normalizarDescricaoRateioProfor,
+} = require("./profor-rateio-extracao-service");
+const {
+  carregarAplicacaoDecisoesDryRun,
+} = require("./profor-pad-decisao-aplicacao-service");
 
 // Caminhos padrão dos relatórios dry-run de comparação.
 const CAMINHO_RELATORIO_COMPARACAO_JSON =
@@ -190,6 +197,13 @@ function diferencaConjuntos(setA, setB) {
   return { apenasAntigo: apenasA, apenasNovo: apenasB };
 }
 
+/** Recria a chave_item (numeroConvenio + descrição normalizada) de uma linha. */
+function chaveItemDeLinha(numeroConvenio, descricao) {
+  const numero = normalizarNumeroConvenio(numeroConvenio);
+  if (!numero) return null;
+  return criarChaveItemRateioProfor(numero, normalizarDescricaoRateioProfor(descricao));
+}
+
 /**
  * Compara, em dry-run, o planoAplicacao da origem antiga com o planoAplicacao
  * reconstruído pelos relatórios PAD. Não usa fuzzy matching, não consolida
@@ -203,6 +217,8 @@ function compararPlanosPadDryRun(opcoes = {}) {
   const planoAntigo = montarPlanoOrigemAntiga();
   const planoNovo = reconstrucao.planoAplicacaoReconstruido;
   const conveniosComPendencia = carregarConveniosComPendenciaBloqueante();
+  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
+  const regras = aplicacaoDecisoes.regras;
 
   const indiceAntigo = indexarPorChave(planoAntigo);
   const indiceNovo = indexarPorChave(planoNovo);
@@ -248,13 +264,19 @@ function compararPlanosPadDryRun(opcoes = {}) {
     };
 
     if (antigo && !novo) {
+      const chaveItem = chaveItemDeLinha(numeroConvenio, base.descricao);
+      const ausenciaConfirmada = chaveItem && regras.ausenciasConfirmadas.has(chaveItem);
       const registro = {
         ...base,
         situacao: "ausente",
         valorPrevistoAntigo: antigo.valorPrevisto,
         valorExecutadoAntigo: antigo.valorExecutado,
-        classificacao: temPendencia ? "diferenca_por_pendencia_de_decisao" : "aviso",
-        observacao: "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item.",
+        classificacao: ausenciaConfirmada
+          ? "ausencia_confirmada_por_decisao"
+          : (temPendencia ? "diferenca_por_pendencia_de_decisao" : "aviso"),
+        observacao: ausenciaConfirmada
+          ? "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+          : "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item.",
       };
       itensAusentes.push(registro);
       diferencas.push(registro);
@@ -311,8 +333,13 @@ function compararPlanosPadDryRun(opcoes = {}) {
     }
 
     const temCampoFinanceiro = campos.some((campo) => campo.campo !== "quantidade");
+    const chaveItemDivergente = chaveItemDeLinha(numeroConvenio, base.descricao);
+    const saneadoPorDecisao = chaveItemDivergente
+      && regras.camposSaneadosPorChaveItem.has(chaveItemDivergente);
     let classificacao;
-    if (temPendencia) {
+    if (saneadoPorDecisao) {
+      classificacao = "diferenca_saneada_por_decisao";
+    } else if (temPendencia) {
       classificacao = "diferenca_por_pendencia_de_decisao";
     } else if (temCampoFinanceiro) {
       classificacao = "diferenca_esperada_por_atualizacao_pad";
@@ -399,6 +426,15 @@ function compararPlanosPadDryRun(opcoes = {}) {
     totalDiferencasPorPendenciaDeDecisao: diferencas.filter(
       (item) => item.classificacao === "diferenca_por_pendencia_de_decisao"
     ).length,
+    totalDiferencasSaneadasPorDecisao: diferencas.filter(
+      (item) => item.classificacao === "diferenca_saneada_por_decisao"
+    ).length,
+    totalAusenciasConfirmadasPorDecisao: diferencas.filter(
+      (item) => item.classificacao === "ausencia_confirmada_por_decisao"
+    ).length,
+    totalDecisoesResolutivasEncontradas: aplicacaoDecisoes.totalDecisoesResolutivasEncontradas,
+    totalDecisoesAplicadasDryRun: aplicacaoDecisoes.totalDecisoesAplicadasDryRun,
+    totalDecisoesNaoAplicaveis: aplicacaoDecisoes.totalDecisoesNaoAplicaveis,
   };
 
   const conclusaoOperacional = montarConclusaoOperacional({
@@ -440,7 +476,16 @@ function compararPlanosPadDryRun(opcoes = {}) {
     itensAmbiguos,
     diferencasCriticas,
     avisos,
+    diferencasSaneadasPorDecisao: diferencas.filter(
+      (item) => item.classificacao === "diferenca_saneada_por_decisao"
+    ),
+    ausenciasConfirmadasPorDecisao: diferencas.filter(
+      (item) => item.classificacao === "ausencia_confirmada_por_decisao"
+    ),
     amostraDivergencias: diferencas.slice(0, 50),
+    decisoesResolutivasEncontradas: aplicacaoDecisoes.decisoesResolutivasEncontradas,
+    decisoesAplicadasDryRun: aplicacaoDecisoes.decisoesAplicadasDryRun,
+    decisoesNaoAplicaveis: aplicacaoDecisoes.decisoesNaoAplicaveis,
     auditoriaRevisao: reconstrucao.auditoriaRevisao,
     reconstrucaoResumo: reconstrucao.resumo,
     impedimentosReconstrucao: reconstrucao.impedimentos,
@@ -503,7 +548,15 @@ function montarMarkdownComparacao(resultado) {
   linhas.push(`- Avisos: ${resumo.totalAvisos}`);
   linhas.push(`- Diferenças esperadas por atualização PAD: ${resumo.totalDiferencasEsperadasPorAtualizacaoPad}`);
   linhas.push(`- Diferenças por pendência de decisão: ${resumo.totalDiferencasPorPendenciaDeDecisao}`);
+  linhas.push(`- Diferenças saneadas por decisão (dry-run): ${resumo.totalDiferencasSaneadasPorDecisao}`);
+  linhas.push(`- Ausências confirmadas por decisão (dry-run): ${resumo.totalAusenciasConfirmadasPorDecisao}`);
   linhas.push(`- Itens ambíguos: ${resumo.totalItensAmbiguos}`);
+  linhas.push("");
+  linhas.push("## Decisões de revisão (dry-run)");
+  linhas.push("");
+  linhas.push(`- Decisões resolutivas encontradas: ${resumo.totalDecisoesResolutivasEncontradas}`);
+  linhas.push(`- Decisões aplicadas em dry-run: ${resumo.totalDecisoesAplicadasDryRun}`);
+  linhas.push(`- Decisões não aplicáveis: ${resumo.totalDecisoesNaoAplicaveis}`);
   linhas.push("");
   linhas.push("## Totais origem antiga × reconstrução PAD");
   linhas.push("");

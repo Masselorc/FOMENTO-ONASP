@@ -27,6 +27,7 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-pad-revisao-decisao-service.js",
   "backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js",
   "backend/services/profor-2022/profor-pad-plano-comparador-service.js",
+  "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/data-service.js",
   "backend/services/analytics.js",
   "backend/scripts/extrair-rateios-profor-2022.js",
@@ -45,6 +46,7 @@ const ARQUIVOS = [
   "backend/scripts/testar-decisao-revisao-pad-profor-2022.js",
   "backend/scripts/reconstruir-plano-pad-profor-2022.js",
   "backend/scripts/comparar-plano-pad-profor-2022.js",
+  "backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
   "frontend/js/core/ui-components.js",
@@ -53,7 +55,8 @@ const ARQUIVOS = [
   "scripts/configurar-git-hooks.js",
   "playwright.config.js",
   "tests/e2e/app.spec.js",
-  "tests/services/validacoes-services.test.js"
+  "tests/services/validacoes-services.test.js",
+  "tests/services/profor-pad-decisao-aplicacao.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {

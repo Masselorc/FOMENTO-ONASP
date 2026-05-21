@@ -22,6 +22,9 @@ function imprimirResumo(resultado, arquivoSaidaRelativo) {
   console.log(`Itens PAD sem rateio: ${resumo.totalItensPadSemRateio}`);
   console.log(`Linhas reconstruídas: ${resumo.totalLinhasReconstruidas}`);
   console.log(`Convênios reconstruídos: ${resumo.totalConveniosReconstruidos}`);
+  console.log(`Decisões resolutivas encontradas: ${resumo.totalDecisoesResolutivasEncontradas}`);
+  console.log(`Decisões aplicadas em dry-run: ${resumo.totalDecisoesAplicadasDryRun}`);
+  console.log(`Decisões não aplicáveis: ${resumo.totalDecisoesNaoAplicaveis}`);
   console.log(`Itens não aptos usados: ${resumo.totalItensConhecidosNaoAptosUsados}`);
   console.log(`Instrumentos fora da carteira: ${resumo.totalInstrumentosForaCarteira}`);
   console.log(`Erros críticos de leitura: ${resumo.totalErrosCriticosLeitura}`);

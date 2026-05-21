@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-20T23:36:31.984Z",
+  "geradoEm": "2026-05-21T00:05:13.518Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
@@ -20,7 +20,12 @@
     "totalDiferencasCriticas": 0,
     "totalAvisos": 99,
     "totalDiferencasEsperadasPorAtualizacaoPad": 4,
-    "totalDiferencasPorPendenciaDeDecisao": 322
+    "totalDiferencasPorPendenciaDeDecisao": 322,
+    "totalDiferencasSaneadasPorDecisao": 0,
+    "totalAusenciasConfirmadasPorDecisao": 0,
+    "totalDecisoesResolutivasEncontradas": 0,
+    "totalDecisoesAplicadasDryRun": 0,
+    "totalDecisoesNaoAplicaveis": 0
   },
   "totaisAntigoNovo": {
     "antigo": {
@@ -11575,6 +11580,8 @@
       "classificacao": "aviso"
     }
   ],
+  "diferencasSaneadasPorDecisao": [],
+  "ausenciasConfirmadasPorDecisao": [],
   "amostraDivergencias": [
     {
       "chave": "937216::Apresentador/Passador de slides, sem fio::ESCOLA PENAL::CAPITAL",
@@ -12427,6 +12434,9 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     }
   ],
+  "decisoesResolutivasEncontradas": [],
+  "decisoesAplicadasDryRun": [],
+  "decisoesNaoAplicaveis": [],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
     "totalPendentes": 145,
@@ -12445,6 +12455,8 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 498,
     "totalItensPadSemRateio": 27,
+    "totalItensPadSemRateioRemanescentes": 27,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 0,
     "totalLinhasReconstruidas": 598,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 19,
@@ -12452,7 +12464,11 @@
     "totalErrosCriticosLeitura": 0,
     "totalImpedimentos": 47,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasConsideradas": 0,
+    "totalDecisoesResolutivasEncontradas": 0,
+    "totalDecisoesAplicadasDryRun": 0,
+    "totalDecisoesNaoAplicaveis": 0,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 0,
+    "totalConsistenciaSaneadaPorDecisao": 0,
     "valorPrevistoReconstruidoTotal": 10326096.83,
     "valorExecutadoReconstruidoTotal": 3201807.64,
     "saldoReconstruidoTotal": 7124289.19

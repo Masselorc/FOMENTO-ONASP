@@ -1205,6 +1205,68 @@ com impedimentos listados. Esta etapa não cria migration, não cria API, não
 implementa front-end, não reconstrói materialmente o `planoAplicacao` publicado
 e não altera a origem ativa.
 
+#### 16.2.12. Motor de aplicação de decisões em dry-run (Etapa 8.1 — implementada)
+
+O motor que interpreta as decisões resolutivas registradas na revisão assistida
+e as transforma em regras técnicas de reconstrução foi implementado **somente
+em dry-run**. Não altera a origem ativa, não publica, não toca
+`frontend/data/publicados` e não modifica nenhuma tabela do SQLite.
+
+Serviço criado:
+`backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js`. Comando
+de auditoria somente leitura: `npm run profor:pad:decisoes:auditar-aplicacao-dry-run`.
+
+**Decisões resolutivas suportadas.** `ACEITO`, `REJEITADO`, `CORRIGIDO` e
+`REVERTIDO`. `COMENTAR` e `EM_REVISAO` não são resolutivas e não geram aplicação
+material.
+
+**Efeitos técnicos por tipo de alerta.**
+
+- `equivalencia_por_descricao_normalizada`: `ACEITO` usa o rateio do item
+  equivalente da memória na reconstrução; `REJEITADO`/`REVERTIDO` mantêm o item
+  sem rateio.
+- `item_pad_sem_rateio` / `item_novo_sem_rateio` / `rateio_novo` /
+  `correcao_de_rateio`: `ACEITO`/`CORRIGIDO` com rateio válido no
+  `payloadDecisao` geram as linhas pelo rateio informado (validando áreas,
+  naturezas e soma de percentuais); sem rateio no payload → impedimento
+  `decisao_sem_rateio_aplicavel`; rateio inválido → `decisao_rateio_invalido`;
+  `REJEITADO`/`REVERTIDO` recusam o rateio.
+- `item_ausente_no_pad` / `item_substituido`: `ACEITO` confirma a ausência (o
+  comparador a classifica como `ausencia_confirmada_por_decisao`);
+  `REJEITADO`/`REVERTIDO` mantêm o alerta de ausência. O item não é apagado da
+  memória.
+- `item_nao_apto` / `item_conhecido_nao_apto`: `ACEITO`/`CORRIGIDO` liberam o
+  uso do item na reconstrução dry-run, sem alterar `apto_para_importacao_futura`
+  no banco; `REJEITADO`/`REVERTIDO` mantêm o impedimento.
+- `quantidade_valor_unitario_inconsistente`: `ACEITO` marca a inconsistência
+  como saneada em dry-run, mantendo os totais do PAD como fonte de verdade, sem
+  recalcular o total previsto.
+- `valor_diferente`, `quantidade_diferente`, `valor_unitario_diferente`,
+  `saldo_inconsistente`, `descricao_divergente`, `natureza_divergente`:
+  `ACEITO` aceita o campo do PAD como fonte; `CORRIGIDO` aplica o valor
+  corrigido do `payloadDecisao` (sem valor → `decisao_corrigido_sem_valor`);
+  `REJEITADO`/`REVERTIDO` não substituem o PAD automaticamente.
+
+**Decisões ainda não aplicáveis.** Decisões `CORRIGIDO` sem rateio/valor no
+payload, rateios inválidos e tipos de alerta sem efeito definido são listados em
+`decisoesNaoAplicaveis`, com motivo técnico, e geram impedimento na reconstrução.
+
+**Campos adicionados aos relatórios.** A reconstrução
+(`profor-2022-pad-plano-reconstruido-dry-run.json`) passou a conter
+`decisoesResolutivasEncontradas`, `decisoesAplicadasDryRun`,
+`decisoesNaoAplicaveis` e os totais `resumo.totalDecisoesResolutivasEncontradas`,
+`resumo.totalDecisoesAplicadasDryRun` e `resumo.totalDecisoesNaoAplicaveis`. O
+comparador (`profor-2022-pad-plano-comparacao-dry-run.json`/`.md`) passou a
+conter `totalDiferencasSaneadasPorDecisao`, `totalAusenciasConfirmadasPorDecisao`,
+`totalDecisoesAplicadasDryRun`, `totalDecisoesNaoAplicaveis` e as listas
+correspondentes.
+
+Na base atual não há decisões resolutivas registradas: o motor encontra `0`
+decisões, aplica `0` e os relatórios da Etapa 5.6+6+7 permanecem com os mesmos
+números. `aptoParaAtivacao` e `aptoParaPublicacao` continuam `false`. Esta etapa
+não cria migration, não cria estrutura persistida nova, não cria front-end e não
+aplica decisão materialmente ao `planoAplicacao` oficial.
+
 ---
 
 ## 17. Fases de implementação recomendadas

@@ -839,6 +839,19 @@ A etapa não altera a origem ativa do `planoAplicacao`, não publica e não apli
 decisões materialmente; mantém `aptoParaAtivacao` e `aptoParaPublicacao` como
 `false` enquanto houver divergências pendentes/bloqueantes.
 
+**Motor de aplicação de decisões em dry-run (Etapa 8.1).** Foi criado o serviço
+`profor-pad-decisao-aplicacao-service.js` e o comando somente leitura
+`npm run profor:pad:decisoes:auditar-aplicacao-dry-run`. O serviço lê as tabelas
+`profor_2022_revisao_divergencias` e `profor_2022_revisao_decisoes` para
+interpretar as decisões resolutivas (`ACEITO`, `REJEITADO`, `CORRIGIDO`,
+`REVERTIDO`) e transformá-las em regras técnicas de reconstrução aplicadas
+apenas em dry-run. **Não cria tabela, coluna, constraint nem estrutura
+persistida** e **não escreve em nenhuma tabela** — em particular, não altera
+`status` de divergências, `apto_para_importacao_futura` de itens conhecidos nem
+os rateios. A reconstrução e o comparador dry-run passaram a consumir essas
+regras e a registrar `decisoesAplicadasDryRun`/`decisoesNaoAplicaveis` nos
+relatórios. Nenhuma decisão é aplicada materialmente ao `planoAplicacao`.
+
 ## Critérios para atualizar este arquivo
 
 Atualizar este arquivo quando houver:

@@ -1,5 +1,104 @@
 # Diário de bordo
 
+## 20/05/2026 - PROFOR 2022: Etapa 8.1 - Motor de aplicação material das decisões de revisão em dry-run
+
+- Branch atual: `main`.
+- Objetivo: criar o motor que interpreta decisões resolutivas registradas na
+  revisão assistida e as transforma em regras técnicas de reconstrução,
+  aplicadas somente na camada dry-run. Não altera a origem ativa, não publica,
+  não toca `frontend/data/publicados` e não modifica nenhuma tabela do SQLite.
+- Serviço criado:
+  - `backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js`.
+- Arquivos criados:
+  - `backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js`;
+  - `tests/services/profor-pad-decisao-aplicacao.test.js`.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`;
+  - `backend/services/profor-2022/profor-pad-plano-comparador-service.js`;
+  - `backend/scripts/reconstruir-plano-pad-profor-2022.js`;
+  - `backend/scripts/comparar-plano-pad-profor-2022.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Comando criado:
+  - `npm run profor:pad:decisoes:auditar-aplicacao-dry-run` (somente leitura).
+- Decisões resolutivas suportadas: `ACEITO`, `REJEITADO`, `CORRIGIDO`,
+  `REVERTIDO`. `COMENTAR` e `EM_REVISAO` não são resolutivas.
+- Regras de aplicação implementadas (por tipo de alerta):
+  - `equivalencia_por_descricao_normalizada`: ACEITO usa o rateio do item
+    equivalente da memória; REJEITADO/REVERTIDO mantêm sem rateio;
+  - `item_pad_sem_rateio` / `item_novo_sem_rateio` / `rateio_novo` /
+    `correcao_de_rateio`: ACEITO/CORRIGIDO com rateio válido no `payloadDecisao`
+    geram linhas pelo rateio informado; sem rateio → não aplicável
+    (`decisao_sem_rateio_aplicavel`); rateio inválido → `decisao_rateio_invalido`;
+    REJEITADO/REVERTIDO recusam o rateio;
+  - `item_ausente_no_pad` / `item_substituido`: ACEITO confirma a ausência;
+    REJEITADO/REVERTIDO mantêm o alerta de ausência;
+  - `item_nao_apto` / `item_conhecido_nao_apto`: ACEITO/CORRIGIDO liberam o uso
+    do item na reconstrução dry-run (sem alterar `apto_para_importacao_futura`);
+    REJEITADO/REVERTIDO mantêm o impedimento;
+  - `quantidade_valor_unitario_inconsistente`: ACEITO marca a inconsistência
+    como saneada em dry-run, sem recalcular o total previsto;
+  - `valor_diferente`, `quantidade_diferente`, `valor_unitario_diferente`,
+    `saldo_inconsistente`, `descricao_divergente`, `natureza_divergente`:
+    ACEITO aceita o campo do PAD; CORRIGIDO aplica o valor corrigido do
+    `payloadDecisao` (sem valor → `decisao_corrigido_sem_valor`);
+    REJEITADO/REVERTIDO não substituem o PAD automaticamente.
+- Integração com a reconstrução dry-run: antes de classificar item como sem
+  rateio, verifica equivalência/rateio aceito; antes de bloquear item não apto,
+  verifica liberação por decisão; alertas de quantidade × valor unitário com
+  decisão ACEITO são marcados `saneadoPorDecisao`. O relatório passou a conter
+  `decisoesResolutivasEncontradas`, `decisoesAplicadasDryRun`,
+  `decisoesNaoAplicaveis` e os totais correspondentes no `resumo`.
+- Integração com o comparador: novas classificações `diferenca_saneada_por_decisao`
+  e `ausencia_confirmada_por_decisao`; `diferenca_por_pendencia_de_decisao`
+  mantida para divergências ainda pendentes; novos contadores
+  `totalDiferencasSaneadasPorDecisao`, `totalAusenciasConfirmadasPorDecisao`,
+  `totalDecisoesAplicadasDryRun` e `totalDecisoesNaoAplicaveis`.
+- Resultado com a base atual (0 decisões resolutivas registradas):
+  - decisões resolutivas encontradas: `0`; aplicadas em dry-run: `0`;
+    não aplicáveis: `0`;
+  - reconstrução: impedimentos `47`, alertas `106`, linhas `598`,
+    `aptoParaAtivacao = false`, `aptoParaPublicacao = false` (sem mudança de
+    comportamento — o motor de decisões não altera os números sem decisões);
+  - comparador: itens iguais `93`, novos `0`, ausentes `34`, quantidade
+    divergente `387`, valor previsto `13`, valor executado `13`, saldo `26`,
+    ambíguos `49`, críticas `0`, avisos `99`, esperadas por atualização PAD `4`,
+    por pendência de decisão `322`, saneadas por decisão `0`, ausências
+    confirmadas por decisão `0`;
+  - totais e diferença total inalterados (previsto `-337918.65`, executado
+    `-888.26`, saldo `-337030.39`).
+- Teste controlado: optou-se por teste unitário com objetos simulados
+  (`tests/services/profor-pad-decisao-aplicacao.test.js`, 14 casos, todos
+  aprovados), exercitando `interpretarDecisaoRevisao`, `validarRateioManual` e
+  `extrairRateioManual`. Não foi criada divergência/decisão de teste no banco,
+  para não tocar a base real.
+- Validações executadas:
+  - `node --check` nos 7 arquivos criados/alterados;
+  - `npm run validar:syntax` (56 arquivos);
+  - `npm run validar:services` (19 testes aprovados, incluindo os 14 novos);
+  - `npm run profor:pad:auditar-fila-revisao` (baseline mantido: 145/145/0/44/48);
+  - `npm run profor:pad:decisoes:auditar-aplicacao-dry-run` (0 decisões);
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `git diff --check` (apenas avisos de fim de linha LF/CRLF);
+  - `git status --short frontend/data/publicados` (sem alterações);
+  - `git ls-files "*.sqlite" "*.sqlite-wal" "*.sqlite-shm"` (nada versionado).
+- Confirmações de escopo:
+  - nenhuma decisão aplicada materialmente ao `planoAplicacao` oficial;
+  - nenhuma origem ativa alterada; nenhuma publicação;
+  - nenhuma alteração em `frontend/data/publicados`;
+  - nenhuma migration nem nova estrutura persistida; nenhuma API nova;
+  - nenhuma dependência nova; interface SISTEMA não modificada;
+  - nenhuma divergência, decisão ou log apagado; E2E não afetado.
+- Riscos e rollback:
+  - risco baixo: o motor apenas lê o SQLite e produz regras em memória/relatório;
+  - como a base não tem decisões resolutivas, o motor não altera os números;
+  - rollback por `git revert`/remoção dos 3 arquivos criados e reversão dos
+    serviços/scripts/`package.json`/`scripts/validar-syntax.js`.
+
 ## 20/05/2026 - PROFOR 2022: Etapa 5.6 + 6 + 7 - Reconstrução dry-run do plano PAD e comparador antigo × novo
 
 - Branch atual: `main`.
