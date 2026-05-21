@@ -1243,6 +1243,16 @@ material.
   `item_conhecido_nao_apto_usado` (impedimento interno da reconstrução) são
   aceitos como aliases, para evitar incompatibilidade futura caso a fila receba
   uma divergência com esse rótulo.
+  O payload da fila deve trazer o lado `ANTES — memória atual` explicitamente em
+  `payload.memoria` e `payload.antes`, além dos campos planos
+  `descricaoMemoria`, `areaMemoria`, `naturezaMemoria`, `quantidadeMemoria`,
+  `valorUnitarioMemoria`, `valorPrevistoMemoria`, `valorExecutadoMemoria` e
+  `saldoMemoria`. Esses valores são resumidos dos rateios ativos do item
+  conhecido: áreas/naturezas únicas, valores previstos/executados somados,
+  `saldo = valorPrevisto - valorExecutado` e `valorUnitarioReferencia` da
+  memória quando disponível para exibição do valor unitário/quantidade. Sem
+  rateio ativo, os campos quantitativos/financeiros permanecem nulos e a
+  divergência segue impedindo uso automático até saneamento humano.
 - `quantidade_valor_unitario_inconsistente`: `ACEITO` marca a inconsistência
   como saneada em dry-run, mantendo os totais do PAD como fonte de verdade, sem
   recalcular o total previsto.

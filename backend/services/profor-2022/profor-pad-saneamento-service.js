@@ -148,6 +148,7 @@ function carregarItensConhecidosPorChave() {
       descricao_original_referencia,
       uf,
       ano,
+      valor_unitario_referencia,
       possui_pendencia_impeditiva,
       apto_para_importacao_futura,
       status_item,
@@ -166,6 +167,7 @@ function carregarItensConhecidosPorChave() {
       descricaoOriginalReferencia: linha.descricao_original_referencia,
       uf: linha.uf,
       ano: linha.ano,
+      valorUnitarioReferencia: linha.valor_unitario_referencia,
       possuiPendenciaImpeditiva: linha.possui_pendencia_impeditiva === 1,
       aptoParaImportacaoFutura: linha.apto_para_importacao_futura === 1,
       statusItem: linha.status_item,
@@ -249,6 +251,7 @@ function enriquecerItensNaoAptos(itensNaoAptos, contexto) {
       ano: item.ano || itemBanco?.ano || null,
       descricaoOriginal: item.descricaoOriginal || itemBanco?.descricaoOriginalReferencia || null,
       descricaoNormalizada: item.descricaoNormalizada || itemBanco?.descricaoNormalizada || null,
+      valorUnitarioReferencia: itemBanco?.valorUnitarioReferencia ?? null,
       itemConhecidoId,
       statusItem: itemBanco?.statusItem || null,
       possuiPendenciaImpeditiva: Boolean(

@@ -150,6 +150,95 @@ function divergenciasEquivalencias(saneamento) {
     });
 }
 
+function numeroOuZero(valor) {
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : 0;
+}
+
+function arredondarValorMonetario(valor) {
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return null;
+  return Math.round((numero + Number.EPSILON) * 100) / 100;
+}
+
+function arredondarQuantidade(valor) {
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return null;
+  return Math.round((numero + Number.EPSILON) * 1000000) / 1000000;
+}
+
+function juntarUnicosNaoVazios(valores) {
+  const unicos = [];
+  const vistos = new Set();
+  for (const valor of valores) {
+    const textoValor = texto(valor)?.trim();
+    if (!textoValor) continue;
+    const chave = textoValor.toLocaleUpperCase("pt-BR");
+    if (vistos.has(chave)) continue;
+    vistos.add(chave);
+    unicos.push(textoValor);
+  }
+  return unicos.length ? unicos.join(", ") : null;
+}
+
+function resumirMemoriaItemNaoApto(item, detalhado) {
+  const rateiosAtivos = garantirArray(detalhado?.rateiosAtivos);
+  const descricao = texto(
+    detalhado?.descricaoOriginal
+    || item?.descricaoOriginal
+    || item?.descricaoOriginalReferencia
+  );
+  const valorUnitarioReferencia = Number(detalhado?.valorUnitarioReferencia ?? item?.valorUnitarioReferencia);
+
+  if (!rateiosAtivos.length) {
+    return {
+      descricao,
+      area: null,
+      natureza: null,
+      quantidade: null,
+      valorUnitario: Number.isFinite(valorUnitarioReferencia)
+        ? arredondarValorMonetario(valorUnitarioReferencia)
+        : null,
+      valorPrevisto: null,
+      valorExecutado: null,
+      saldo: null,
+      totalRateiosAtivos: 0,
+    };
+  }
+
+  const quantidade = rateiosAtivos.reduce(
+    (total, rateio) => total + numeroOuZero(rateio.quantidadeReferencia),
+    0
+  );
+  const valorPrevisto = rateiosAtivos.reduce(
+    (total, rateio) => total + numeroOuZero(rateio.valorPrevistoReferencia),
+    0
+  );
+  const valorExecutado = rateiosAtivos.reduce(
+    (total, rateio) => total + numeroOuZero(rateio.valorExecutadoReferencia),
+    0
+  );
+  const saldo = valorPrevisto - valorExecutado;
+  const valorUnitario = Number.isFinite(valorUnitarioReferencia) && valorUnitarioReferencia > 0
+    ? valorUnitarioReferencia
+    : (quantidade > 0 ? valorPrevisto / quantidade : null);
+  const quantidadeMemoria = valorPrevisto > 0 && Number.isFinite(valorUnitario) && valorUnitario > 0
+    ? valorPrevisto / valorUnitario
+    : quantidade;
+
+  return {
+    descricao,
+    area: juntarUnicosNaoVazios(rateiosAtivos.map((rateio) => rateio.area)),
+    natureza: juntarUnicosNaoVazios(rateiosAtivos.map((rateio) => rateio.natureza)),
+    quantidade: arredondarQuantidade(quantidadeMemoria),
+    valorUnitario: arredondarValorMonetario(valorUnitario),
+    valorPrevisto: arredondarValorMonetario(valorPrevisto),
+    valorExecutado: arredondarValorMonetario(valorExecutado),
+    saldo: arredondarValorMonetario(saldo),
+    totalRateiosAtivos: rateiosAtivos.length,
+  };
+}
+
 /** Itens conhecidos não aptos → item_nao_apto. */
 function divergenciasNaoAptos(saneamento, detalhadoPorChave) {
   return garantirArray(saneamento.itensConhecidosNaoAptos)
@@ -157,6 +246,16 @@ function divergenciasNaoAptos(saneamento, detalhadoPorChave) {
       const tipoAlerta = "item_nao_apto";
       const chave = String(item.chaveItem || "").trim();
       const detalhado = detalhadoPorChave.get(chave) || null;
+      const memoria = resumirMemoriaItemNaoApto(item, detalhado);
+      const pad = {
+        descricao: item.descricaoOriginal ?? null,
+        natureza: item.natureza ?? null,
+        quantidade: item.quantidade ?? null,
+        valorUnitario: item.valorUnitario ?? null,
+        valorPrevisto: item.valorTotalPrevisto ?? null,
+        valorExecutado: item.valorTotalExecutado ?? null,
+        saldo: item.saldo ?? null,
+      };
       return {
         chaveDivergencia: criarChaveDivergencia({
           numeroConvenio: item.numeroConvenio,
@@ -186,13 +285,26 @@ function divergenciasNaoAptos(saneamento, detalhadoPorChave) {
           numeroConvenio: item.numeroConvenio,
           uf: item.uf,
           chaveItem: item.chaveItem,
-          descricaoMemoria: item.descricaoOriginal,
-          descricaoPad: item.descricaoOriginal,
-          quantidadePad: item.quantidade,
-          valorUnitarioPad: item.valorUnitario,
-          valorPrevistoPad: item.valorTotalPrevisto,
-          valorExecutadoPad: item.valorTotalExecutado,
-          saldoPad: item.saldo,
+          memoria,
+          antes: memoria,
+          pad,
+          depois: pad,
+          descricaoMemoria: memoria.descricao,
+          areaMemoria: memoria.area,
+          naturezaMemoria: memoria.natureza,
+          quantidadeMemoria: memoria.quantidade,
+          valorUnitarioMemoria: memoria.valorUnitario,
+          valorPrevistoMemoria: memoria.valorPrevisto,
+          valorExecutadoMemoria: memoria.valorExecutado,
+          saldoMemoria: memoria.saldo,
+          totalRateiosAtivosMemoria: memoria.totalRateiosAtivos,
+          descricaoPad: pad.descricao,
+          naturezaPad: pad.natureza,
+          quantidadePad: pad.quantidade,
+          valorUnitarioPad: pad.valorUnitario,
+          valorPrevistoPad: pad.valorPrevisto,
+          valorExecutadoPad: pad.valorExecutado,
+          saldoPad: pad.saldo,
           alertasOriginais: detalhado ? detalhado.alertasOriginais : [],
           rateiosAtivos: detalhado ? detalhado.rateiosAtivos : [],
           riscoFalsoPositivo: "baixo",

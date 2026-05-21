@@ -2982,7 +2982,7 @@
   ],
   "dadosProfor2022": {
     "origemDados": "banco-cache",
-    "geradoEm": "2026-05-20T17:34:59.847Z",
+    "geradoEm": "2026-05-21T17:08:46.153Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -12860,7 +12860,7 @@
     }
   },
   "metadadosPublicacao": {
-    "publicadoEm": "2026-05-20T17:34:59.754Z",
+    "publicadoEm": "2026-05-21T17:08:46.084Z",
     "fonteDadosBase": "dados consolidados da Home local",
     "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx"
   }

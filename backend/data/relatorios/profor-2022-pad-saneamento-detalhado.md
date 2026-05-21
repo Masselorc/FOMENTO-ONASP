@@ -1,6 +1,6 @@
 # PROFOR 2022 - Saneamento PAD detalhado (causa original dos itens não aptos)
 
-Gerado em: 2026-05-20T18:43:29.194Z
+Gerado em: 2026-05-21T16:57:09.392Z
 Fonte: backend/data/relatorios/profor-2022-pad-saneamento.json
 
 ## Resumo

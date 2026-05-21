@@ -1,5 +1,98 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: exibição da memória em `item_nao_apto`
+
+- Branch atual: `main`.
+- Objetivo:
+  - corrigir o painel `Antes x Depois` da tela `SISTEMA > Revisão de divergências`
+    para divergências `item_nao_apto`, fazendo o lado `ANTES — memória atual`
+    exibir os dados quantitativos e financeiros existentes na memória/rateios.
+- Problema observado:
+  - a divergência real #28 (`937216`, GO, Monitor LED) mostrava `-` no lado
+    ANTES para quantidade, valor unitário, valor previsto, valor executado e
+    saldo, embora a memória/planilha antiga tivesse esses valores.
+- Causa técnica confirmada:
+  - `divergenciasNaoAptos()` montava o payload com campos PAD
+    (`quantidadePad`, `valorUnitarioPad`, `valorPrevistoPad`,
+    `valorExecutadoPad`, `saldoPad`), mas não enviava a estrutura
+    `payload.memoria`/`payload.antes` nem os campos planos `*Memoria`
+    correspondentes.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-revisao-service.js`;
+  - `backend/services/profor-2022/profor-pad-saneamento-service.js`;
+  - `frontend/js/app.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - relatórios dry-run/detalhados regenerados em `backend/data/relatorios/profor-2022-pad-*.json` e `.md`.
+- Correção aplicada:
+  - criado resumo local da memória para `item_nao_apto` a partir dos
+    `rateiosAtivos`;
+  - `payload.memoria` e `payload.antes` passaram a conter descrição, área,
+    natureza, quantidade, valor unitário, valor previsto, valor executado e saldo;
+  - adicionados campos planos de compatibilidade: `descricaoMemoria`,
+    `areaMemoria`, `naturezaMemoria`, `quantidadeMemoria`,
+    `valorUnitarioMemoria`, `valorPrevistoMemoria`, `valorExecutadoMemoria`,
+    `saldoMemoria` e `totalRateiosAtivosMemoria`;
+  - `payload.pad` e `payload.depois` preservam os dados PAD equivalentes;
+  - o relatório detalhado de saneamento passou a carregar
+    `valorUnitarioReferencia` do item conhecido, usado apenas para exibição do
+    resumo da memória;
+  - o comparador visual passou a exibir também a linha `Área`.
+- Regra de cálculo do lado ANTES:
+  - área e natureza são agregadas por valores únicos dos rateios ativos;
+  - valor previsto e valor executado são somas dos rateios ativos;
+  - saldo = valor previsto - valor executado;
+  - valor unitário usa `valorUnitarioReferencia` da memória quando disponível;
+  - quantidade exibida é derivada de `valorPrevisto / valorUnitarioReferencia`
+    quando essa referência existe; caso contrário, usa a soma de
+    `quantidadeReferencia`;
+  - sem rateio ativo, campos quantitativos/financeiros ficam `null` e
+    `totalRateiosAtivos = 0`.
+- Validação visual:
+  - em `http://127.0.0.1:8790/index.html`, tela `SISTEMA > Revisão de
+    divergências`, filtro `tipo=item_nao_apto`, `status=PENDENTE`,
+    `convênio=937216`, divergência #28;
+  - a aba `Comparação antes x depois` passou a mostrar no lado ANTES:
+    `ESCOLA PENAL`, `CAPITAL`, quantidade `4`, valor unitário `R$ 1.805,33`,
+    valor previsto `R$ 7.221,32`, valor executado `R$ 3.270,64` e saldo
+    `R$ 3.950,68`;
+  - smoke Playwright headless sem erro de console.
+- Validações realizadas:
+  - `node --check backend/services/profor-2022/profor-pad-revisao-service.js`;
+  - `node --check backend/services/profor-2022/profor-pad-saneamento-service.js`;
+  - `node --check frontend/js/app.js`;
+  - `npm run validar:syntax` (59 arquivos);
+  - `npm run profor:pad:relatorio-saneamento-detalhado`;
+  - `npm run profor:pad:gerar-fila-revisao` (lote 12, 145 atualizadas, 0 criadas);
+  - `npm run profor:pad:auditar-fila-revisao` (145 pendentes, 48 bloqueiam publicação);
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run` (0 bloqueios);
+  - `npm run profor:pad:reconstruir-plano:dry-run` (`aptoParaAtivacao=false`, 47 impedimentos existentes);
+  - `npm run profor:pad:comparar-plano:dry-run` (`aptoParaPublicacao=false`, 0 diferenças críticas);
+  - `node backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js` (decisões controladas `revisao_teste:%` criadas e removidas ao final);
+  - `git status --short frontend/data/publicados` (sem alterações);
+  - `git ls-files "*.sqlite*"` (sem arquivos versionados).
+- Confirmações de escopo:
+  - nenhuma decisão real registrada;
+  - nenhuma publicação executada;
+  - nenhuma origem ativa alterada;
+  - `frontend/data/publicados` não foi alterado;
+  - `planoAplicacao` oficial não foi alterado;
+  - nenhuma migration ou dependência nova criada.
+- Pendências:
+  - o SQLite local continua armazenando `quantidade_referencia` original dos
+    rateios; esta correção ajusta a exibição resumida do payload de revisão,
+    sem reimportar nem alterar fisicamente a memória persistida.
+- Risco de regressão:
+  - baixo a moderado na exibição de `item_nao_apto`, pois o payload foi
+    enriquecido e a tela passou a mostrar a linha `Área`;
+  - baixo no motor de decisão/reconstrução, pois nenhuma regra de aplicação de
+    decisão foi alterada.
+- Rollback:
+  - reverter os três arquivos de código e regenerar a fila retorna o payload
+    anterior; relatórios dry-run podem ser regenerados novamente pelos scripts.
+
+---
+
 ## 20/05/2026 - PROFOR 2022: Etapa 9.1 - interface avançada de saneamento PAD
 
 - Branch atual: `main`.
