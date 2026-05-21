@@ -1,5 +1,62 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: reauditoria e saneamento da divergência `#55` com substituto `#8`
+
+- Objetivo:
+  - reauditar `#55` (`item_ausente_no_pad`, `937221/AL`) após correção do parser
+    de quantidade e, se materialmente compatível, registrar decisão resolutiva
+    auditável sem confirmar ausência falsa.
+- Reauditoria:
+  - comando: `npm run profor:pad:ausentes:auditar-substitutos`;
+  - `#55` permaneceu com classificação automática
+    `possivel_substituto_com_divergencia`, porém com critérios materiais
+    totalmente compatíveis com o substituto `#8`:
+    - `mesmoConvenio=true`, `mesmaUf=true`, `naturezaCompativel=true`;
+    - `quantidadeCompativel=true` (`1 x 1`);
+    - `valorUnitarioCompativel=true` (`726 x 726`);
+    - `valorPrevistoCompativel=true` (`726 x 726`);
+    - `valorExecutadoCompativel=true` (`0 x 0`);
+    - `saldoCompativel=true` (`726 x 726`);
+    - `descricaoCompativel=false` (alteração/truncamento textual).
+- Classificação operacional adotada:
+  - `substituto_compativel_com_descricao_alterada`.
+- Decisão registrada:
+  - divergência `#55`: `CORRIGIDO`;
+  - decisão `#183`;
+  - usuário: `sistema-saneamento-substituto-pad`;
+  - serviço usado: `registrarDecisao` (`profor-pad-revisao-decisao-service`);
+  - `aplicadaAoPlano=false`;
+  - snapshot `_segurancaPreAtivacao` confirmado no payload da decisão;
+  - log `decisao_registrada` confirmado;
+  - divergência `#8` preservada (`ACEITO`, decisão `#140`), sem alteração.
+- Payload de decisão aplicado na `#55`:
+  - `origem`: `saneamento-ausente-com-substituto`;
+  - `tipoSaneamento`: `vinculo_item_substituto`;
+  - vínculo explícito `divergenciaAusenteId=55` e `divergenciaSubstitutaId=8`;
+  - critérios materiais todos `true` e `decisaoSubstitutaJaAceita=true`.
+- Revalidação pós-decisão:
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `git status --short frontend/data/publicados`;
+  - `git ls-files "*.sqlite*"`.
+- Impacto observado:
+  - pendências: `77 -> 76`;
+  - decisões resolutivas: `68 -> 69`;
+  - `CORRIGIDO`: `4 -> 5`;
+  - pendentes que bloqueiam publicação: mantido em `11`;
+  - bloqueios de segurança pré-ativação: mantidos (`35`), com pendências
+    remanescentes fora do escopo desta ação.
+- Escopo respeitado:
+  - nenhuma publicação;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - nenhuma exclusão de divergência, decisão ou log.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: correção do parser de quantidade (`"1.0"` -> `1`) + auditoria de impacto
 
 - Branch atual: `main`.

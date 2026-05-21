@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T22:15:18.634Z",
+  "geradoEm": "2026-05-21T22:23:45.276Z",
   "modo": "dry-run",
   "payloadAlteradoAposDecisao": [
     {
@@ -880,8 +880,8 @@
   ],
   "avisos": [],
   "resumo": {
-    "totalDecisoesResolutivasAuditadas": 69,
-    "totalPayloadPreservado": 41,
+    "totalDecisoesResolutivasAuditadas": 70,
+    "totalPayloadPreservado": 42,
     "totalPayloadAlteradoAposDecisao": 28,
     "totalDecisoesSemSnapshotPayload": 0,
     "totalDecisoesComDivergenciaNaoEncontrada": 0,

@@ -1,6 +1,6 @@
 # PROFOR 2022 — Comparação planoAplicacao antigo × reconstruído PAD (dry-run)
 
-Gerado em: 2026-05-21T22:15:18.986Z
+Gerado em: 2026-05-21T22:23:45.750Z
 Modo: dry-run
 Origem antiga: memoria-rateio-persistida (abas-uf capturadas)
 Origem nova: relatorios-pad-rateados
@@ -28,11 +28,11 @@ Origem nova: relatorios-pad-rateados
 
 ## Decisões de revisão (dry-run)
 
-- Decisões resolutivas encontradas: 68
+- Decisões resolutivas encontradas: 69
 - Decisões interpretadas em dry-run: 64
 - Decisões com efeito na reconstrução: 37
 - Decisões sem efeito na reconstrução: 27
-- Decisões não aplicáveis: 4
+- Decisões não aplicáveis: 5
 - Bloqueios de segurança pré-ativação: 35
 
 ## Totais origem antiga × reconstrução PAD
@@ -50,7 +50,7 @@ Origem nova: relatorios-pad-rateados
 
 ## Conclusão operacional
 
-- Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).
+- Reconstrução NÃO apta para ativação: 35 impedimento(s) registrado(s).
 - Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.
 - Diferença total origem antiga × reconstrução PAD: previsto -2142.59, executado 15043.6, saldo -17186.19.
 - Diferenças críticas: 30. Itens ambíguos: 49.

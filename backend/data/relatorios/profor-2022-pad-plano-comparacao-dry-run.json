@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T22:15:18.986Z",
+  "geradoEm": "2026-05-21T22:23:45.750Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
@@ -23,10 +23,10 @@
     "totalDiferencasPorPendenciaDeDecisao": 19,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 27,
-    "totalDecisoesResolutivasEncontradas": 68,
+    "totalDecisoesResolutivasEncontradas": 69,
     "totalDecisoesInterpretadasDryRun": 64,
     "totalDecisoesAplicadasDryRun": 64,
-    "totalDecisoesNaoAplicaveis": 4,
+    "totalDecisoesNaoAplicaveis": 5,
     "totalDecisoesComEfeitoNaReconstrucao": 37,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
     "totalBloqueiosSegurancaPreAtivacao": 35
@@ -5363,6 +5363,13 @@
       "decisaoId": 160
     },
     {
+      "divergenciaId": 55,
+      "chaveDivergencia": "item_ausente_no_pad:27e43486e8eb1131",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "CORRIGIDO",
+      "decisaoId": 183
+    },
+    {
       "divergenciaId": 56,
       "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
       "tipoAlerta": "item_ausente_no_pad",
@@ -7115,6 +7122,26 @@
   ],
   "decisoesNaoAplicaveis": [
     {
+      "divergenciaId": 55,
+      "chaveDivergencia": "item_ausente_no_pad:27e43486e8eb1131",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 183,
+      "usuario": "sistema-saneamento-substituto-pad",
+      "decididoEm": "2026-05-21T22:23:33.988Z",
+      "efeito": {
+        "tipo": "decisao_sem_efeito_definido",
+        "afetaReconstrucao": false
+      },
+      "aplicavel": false,
+      "motivoNaoAplicavel": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
       "divergenciaId": 75,
       "chaveDivergencia": "item_ausente_no_pad:ce97612ee9b9e3ce",
       "numeroConvenio": "937782",
@@ -7197,22 +7224,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 77,
+    "totalPendentes": 76,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
     "totalPendentesQueBloqueiamPublicacao": 11,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 68,
+    "totalComDecisaoResolutiva": 69,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 77,
+    "totalSemDecisaoResolutiva": 76,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T22:15:18.966Z",
+    "geradoEm": "2026-05-21T22:23:45.732Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 69,
-      "totalPayloadPreservado": 41,
+      "totalDecisoesResolutivasAuditadas": 70,
+      "totalPayloadPreservado": 42,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -7541,12 +7568,12 @@
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 34,
+    "totalImpedimentos": 35,
     "totalAlertas": 107,
-    "totalDecisoesResolutivasEncontradas": 68,
+    "totalDecisoesResolutivasEncontradas": 69,
     "totalDecisoesInterpretadasDryRun": 64,
     "totalDecisoesAplicadasDryRun": 64,
-    "totalDecisoesNaoAplicaveis": 4,
+    "totalDecisoesNaoAplicaveis": 5,
     "totalDecisoesComEfeitoNaReconstrucao": 37,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
     "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 33,
@@ -7821,6 +7848,15 @@
     {
       "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
       "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
       "numeroConvenio": "937782",
       "uf": null,
       "descricao": null,
@@ -7865,7 +7901,7 @@
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 35 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
     "Diferença total origem antiga × reconstrução PAD: previsto -2142.59, executado 15043.6, saldo -17186.19.",
     "Diferenças críticas: 30. Itens ambíguos: 49.",
