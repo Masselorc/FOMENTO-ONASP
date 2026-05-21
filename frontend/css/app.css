@@ -10909,3 +10909,291 @@ table.dataTable thead th {
         display: block;
     }
 }
+
+/* ============================================================ */
+/* UX & UI Enhancements for Divergencia Review Details Panel   */
+/* ============================================================ */
+.revisao-detail-body-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.revisao-detail-left,
+.revisao-detail-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+    .revisao-detail-body-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 1.5rem;
+        align-items: start;
+    }
+}
+
+/* Custom Tabs styling to match modern dark theme */
+.revisao-nav-tabs {
+    border-bottom: 2px solid var(--color-border) !important;
+    gap: 0.25rem;
+    padding-bottom: 0px;
+}
+
+.revisao-nav-tabs .nav-item {
+    margin-bottom: -2px;
+}
+
+.revisao-nav-tabs .nav-link {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    color: var(--color-muted) !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.6rem 0.95rem;
+    transition: all 0.2s ease;
+    border-radius: 0 !important;
+}
+
+.revisao-nav-tabs .nav-link:hover {
+    color: var(--color-text) !important;
+    border-bottom-color: var(--color-border-strong) !important;
+}
+
+.revisao-nav-tabs .nav-link.active {
+    color: var(--color-primary) !important;
+    border-bottom-color: var(--color-primary) !important;
+    font-weight: 700;
+}
+
+.revisao-tab-content {
+    border: none !important;
+    padding: 0;
+}
+
+.revisao-tab-content .revisao-detail-section {
+    border-top: none !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+.revisao-tab-content .revisao-detail-section + .revisao-detail-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    margin-top: 1rem !important;
+    padding-top: 1rem !important;
+}
+
+/* Make diagnostics and keyvalue lists display in a compact responsive grid */
+.revisao-diagnostic-list,
+.revisao-keyvalue-list,
+.revisao-structured-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 0.5rem !important;
+}
+
+/* Style cards inside the key-value/diagnostic/structured lists with a subtle left border color indicator */
+.revisao-diagnostic-list div,
+.revisao-keyvalue-list div,
+.revisao-history-item,
+.revisao-structured-list > div {
+    background: rgba(30, 41, 59, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-left: 3px solid var(--color-primary-strong) !important;
+    border-radius: 4px !important;
+    padding: 0.45rem 0.6rem !important;
+    transition: background 0.2s ease, border-color 0.2s ease !important;
+}
+
+.revisao-diagnostic-list div:hover,
+.revisao-keyvalue-list div:hover,
+.revisao-history-item:hover {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    border-left-width: 3px !important;
+}
+
+/* Color indicator for diagnostics based on index */
+.revisao-diagnostic-list div:nth-child(1) { border-left-color: var(--color-danger) !important; }      /* Motivo provável */
+.revisao-diagnostic-list div:nth-child(2) { border-left-color: var(--color-muted) !important; }       /* Evidências */
+.revisao-diagnostic-list div:nth-child(3) { border-left-color: var(--color-warning) !important; }     /* Risco de falso positivo */
+.revisao-diagnostic-list div:nth-child(4) { border-left-color: var(--color-success) !important; }     /* Ação sugerida */
+.revisao-diagnostic-list div:nth-child(5) { border-left-color: var(--color-info) !important; }        /* Impacto na reconstrução */
+
+/* Color indicator for history logs vs decisions */
+.revisao-history-grid .revisao-history-item {
+    border-left-color: var(--color-success) !important; /* Decisions */
+}
+.revisao-history-grid div:nth-child(2) .revisao-history-item {
+    border-left-color: var(--color-muted) !important; /* Logs */
+}
+
+.revisao-diagnostic-list dt,
+.revisao-keyvalue-list dt {
+    color: var(--color-primary-strong, #93c5fd) !important;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.revisao-diagnostic-list dd,
+.revisao-keyvalue-list dd {
+    color: #e2e8f0 !important;
+    font-size: 0.76rem !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+}
+
+/* Polishing headings and layout */
+.revisao-detail-panel {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+.revisao-detail-panel h2 {
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.4rem !important;
+    color: #ffffff !important;
+}
+
+.revisao-detail-header {
+    border-bottom: 1px solid var(--color-border) !important;
+    margin-bottom: 0.75rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+.revisao-detail-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    margin-top: 0.5rem !important;
+    padding-top: 0.75rem !important;
+}
+
+.revisao-detail-section h3 {
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    color: #f1f5f9 !important;
+    margin-bottom: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.revisao-detail-section h3::before {
+    content: '' !important;
+    display: inline-block !important;
+    width: 4px !important;
+    height: 12px !important;
+    background: var(--color-primary, #3b82f6) !important;
+    border-radius: 2px !important;
+}
+
+/* Nav tabs polish */
+.revisao-nav-tabs .nav-link {
+    font-size: 0.78rem !important;
+    padding: 0.45rem 0.8rem !important;
+}
+
+/* Comparacao grid polish */
+.revisao-comparacao-grid {
+    background: rgba(15, 23, 42, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 8px !important;
+    font-size: 0.75rem !important;
+}
+
+.revisao-comparacao-header {
+    background: rgba(30, 41, 59, 0.8) !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding: 0.45rem 0.6rem !important;
+}
+
+.revisao-comparacao-row {
+    padding: 0.35rem 0.6rem !important;
+    transition: background-color 0.15s ease !important;
+}
+
+.revisao-comparacao-row:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.revisao-comparacao-row span {
+    color: #94a3b8 !important;
+    font-weight: 600 !important;
+}
+
+.revisao-comparacao-row strong {
+    color: #f1f5f9 !important;
+    font-weight: 400 !important;
+}
+
+/* Highlight row when values differ */
+.revisao-comparacao-row.is-different {
+    background-color: rgba(75, 143, 255, 0.05) !important;
+    border-left: 2px solid var(--color-primary, #3b82f6) !important;
+}
+
+.revisao-comparacao-row.is-different strong:last-child {
+    color: var(--color-primary-strong, #8ebdff) !important;
+    font-weight: 600 !important;
+}
+
+/* Form fields layout */
+.revisao-decision-panel {
+    background: rgba(30, 41, 59, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-radius: 8px !important;
+    padding: 0.75rem !important;
+}
+
+.revisao-decision-panel label {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    color: #cbd5e1 !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.revisao-decision-panel .form-control,
+.revisao-decision-panel .form-select {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f1f5f9 !important;
+    font-size: 0.78rem !important;
+    padding: 0.28rem 0.45rem !important;
+}
+
+.revisao-decision-panel .form-control:focus,
+.revisao-decision-panel .form-select:focus {
+    background-color: rgba(15, 23, 42, 0.8) !important;
+    border-color: var(--color-primary, #3b82f6) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
+}
+
+.revisao-decision-panel textarea {
+    font-size: 0.78rem !important;
+}
+
+/* Structured panel / alert polish */
+.revisao-structured-panel {
+    padding: 0.75rem !important;
+}
+
+.revisao-structured-alert {
+    font-size: 0.78rem !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0.45rem 0.6rem !important;
+}
+
+.revisao-history-item summary {
+    color: var(--color-primary-strong, #8ebdff) !important;
+    cursor: pointer;
+}
+
+

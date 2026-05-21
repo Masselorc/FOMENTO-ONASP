@@ -2006,8 +2006,10 @@ async function carregarLogoParaPDF() {
             const valorAntes = formatarValorRevisao(antes, rotulo);
             const valorDepois = formatarValorRevisao(depois, rotulo);
             if (valorAntes === '-' && valorDepois === '-') return '';
+            const isDifferent = valorAntes !== valorDepois;
+            const diffClass = isDifferent ? 'is-different' : '';
             return `
-                <div class="revisao-comparacao-row">
+                <div class="revisao-comparacao-row ${diffClass}">
                     <span>${escapeHtml(rotulo)}</span>
                     <strong>${escapeHtml(valorAntes)}</strong>
                     <strong>${escapeHtml(valorDepois)}</strong>
@@ -2607,7 +2609,7 @@ async function carregarLogoParaPDF() {
                                 <article class="revisao-history-item">
                                     <div><strong>${escapeHtml(decisao.decisao || '-')}</strong> por ${escapeHtml(decisao.usuario || '-')}</div>
                                     <small>${escapeHtml(formatarDataHoraRevisao(decisao.decididoEm || decisao.criadoEm))}</small>
-                                    ${decisao.justificativa ? `<p>${escapeHtml(decisao.justificativa)}</p>` : ''}
+                                    ${decisao.justificativa ? `<p class="mb-0 mt-1">${escapeHtml(decisao.justificativa)}</p>` : ''}
                                 </article>
                             `).join('') : '<p class="text-muted mb-0">Nenhuma decisão registrada.</p>'}
                         </div>
@@ -2617,8 +2619,11 @@ async function carregarLogoParaPDF() {
                                 <article class="revisao-history-item">
                                     <div><strong>${escapeHtml(log.evento || '-')}</strong> por ${escapeHtml(log.usuario || '-')}</div>
                                     <small>${escapeHtml(formatarDataHoraRevisao(log.criadoEm))}</small>
-                                    ${log.detalhe ? `<p>${escapeHtml(log.detalhe)}</p>` : ''}
-                                    <code>${escapeHtml(JSON.stringify({ anterior: log.estadoAnterior, novo: log.estadoNovo }))}</code>
+                                    ${log.detalhe ? `<p class="mb-1 mt-1">${escapeHtml(log.detalhe)}</p>` : ''}
+                                    <details class="mt-1">
+                                        <summary class="text-muted small" style="cursor: pointer; font-size: 0.68rem;">Ver detalhes do estado</summary>
+                                        <pre class="mb-0 mt-1 scrollable-json" style="font-size: 0.68rem; max-height: 80px; overflow-y: auto; background: rgba(0,0,0,0.25); padding: 0.25rem; border-radius: 4px;">${escapeHtml(JSON.stringify({ anterior: log.estadoAnterior, novo: log.estadoNovo }, null, 2))}</pre>
+                                    </details>
                                 </article>
                             `).join('') : '<p class="text-muted mb-0">Nenhum log registrado.</p>'}
                         </div>
@@ -2635,43 +2640,43 @@ async function carregarLogoParaPDF() {
                     <p class="text-muted small">A decisão será registrada e auditada, mas não será aplicada ao planoAplicacao oficial nesta etapa.</p>
                     <form id="form-revisao-decisao" data-divergencia-id="${escapeHtml(String(divergencia.id))}">
                         <div class="row g-2">
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-6">
                                 <label class="form-label" for="revisao-decisao">Decisão</label>
-                                <select class="form-select" id="revisao-decisao" required>
+                                <select class="form-select form-select-sm" id="revisao-decisao" required>
                                     ${decisoes.map((decisao) => `<option value="${decisao}">${decisao}</option>`).join('')}
                                 </select>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-6">
                                 <label class="form-label" for="revisao-usuario">Usuário responsável</label>
-                                <input class="form-control" id="revisao-usuario" maxlength="120" placeholder="nome.sobrenome">
+                                <input class="form-control form-control-sm" id="revisao-usuario" maxlength="120" placeholder="nome.sobrenome">
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12">
                                 <label class="form-label" for="revisao-valor-aplicado">Valor aplicado (opcional)</label>
-                                <input class="form-control" id="revisao-valor-aplicado" maxlength="255" placeholder="Uso futuro/auditoria">
+                                <input class="form-control form-control-sm" id="revisao-valor-aplicado" maxlength="255" placeholder="Uso futuro/auditoria">
                             </div>
                             <div class="col-12">
                                 ${renderEditorPayloadDecisaoRevisao(divergencia)}
                             </div>
                             <div class="col-12">
                                 <label class="form-label" for="revisao-justificativa">Justificativa ou comentário</label>
-                                <textarea class="form-control" id="revisao-justificativa" rows="3" maxlength="2000" placeholder="Obrigatória para ACEITO, REJEITADO, CORRIGIDO e REVERTIDO."></textarea>
+                                <textarea class="form-control" id="revisao-justificativa" rows="2" maxlength="2000" placeholder="Obrigatória para ACEITO, REJEITADO, CORRIGIDO e REVERTIDO."></textarea>
                             </div>
                         </div>
-                        <div id="revisao-form-erros" class="revisao-form-erros mt-3" hidden></div>
-                        <div class="revisao-payload-box mt-3">
+                        <div id="revisao-form-erros" class="revisao-form-erros mt-2" hidden></div>
+                        <div class="revisao-payload-box mt-2">
                             <strong>Resumo do payload</strong>
-                            <p id="revisao-payload-resumo" class="mb-2 text-muted small">Payload técnico será montado conforme a decisão.</p>
+                            <p id="revisao-payload-resumo" class="mb-1 text-muted small" style="font-size: 0.72rem;">Payload técnico será montado conforme a decisão.</p>
                             <details>
-                                <summary>Ver payload técnico</summary>
-                                <pre id="revisao-payload-tecnico">{}</pre>
+                                <summary style="font-size: 0.72rem; color: var(--color-primary-strong); cursor: pointer;">Ver payload técnico</summary>
+                                <pre id="revisao-payload-tecnico" style="font-size: 0.72rem; max-height: 80px; overflow-y: auto; background: rgba(0,0,0,0.25); padding: 0.25rem; border-radius: 4px; margin-top: 0.25rem;">{}</pre>
                             </details>
                         </div>
-                        <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
-                            <button type="submit" class="btn btn-primary btn-icon-text" data-requer-backend="true">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                            <button type="submit" class="btn btn-primary btn-sm btn-icon-text" data-requer-backend="true">
                                 <i class="fas fa-check" aria-hidden="true"></i>
                                 <span>Registrar decisão</span>
                             </button>
-                            <span class="text-muted small">Esta tela é de revisão e saneamento; não publica dados.</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">Esta tela é de revisão e saneamento; não publica dados.</span>
                         </div>
                     </form>
                 </section>
@@ -2683,12 +2688,12 @@ async function carregarLogoParaPDF() {
             if (!container) return;
             container.innerHTML = `
                 <article class="revisao-detail-panel">
-                    <div class="revisao-detail-header">
-                    <div>
-                        <p class="section-eyebrow mb-1">Divergência #${escapeHtml(String(divergencia.id))}</p>
-                        <h2>${escapeHtml(divergencia.tipoAlerta || 'Divergência')}</h2>
-                        <div class="revisao-detail-meta">
-                            ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
+                    <div class="revisao-detail-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div>
+                            <p class="section-eyebrow mb-1">Divergência #${escapeHtml(String(divergencia.id))}</p>
+                            <h2>${escapeHtml(divergencia.tipoAlerta || 'Divergência')}</h2>
+                            <div class="revisao-detail-meta">
+                                ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
                                 ${renderBadgeRevisao(divergencia.nivel, classeNivelRevisao(divergencia.nivel))}
                                 ${renderBadgeRevisao(`Convênio ${divergencia.numeroConvenio || '-'}`, 'secondary')}
                                 ${renderBadgeRevisao(`UF ${divergencia.uf || '-'}`, 'secondary')}
@@ -2696,11 +2701,42 @@ async function carregarLogoParaPDF() {
                             </div>
                         </div>
                     </div>
-                    ${renderComparacaoRevisao(divergencia)}
-                    ${renderDiagnosticoAutomaticoRevisao(divergencia)}
-                    ${renderSaneamentoEstruturadoRevisao(divergencia)}
-                    ${renderLogsDecisoesRevisao(divergencia)}
-                    ${renderFormularioDecisaoRevisao(divergencia)}
+                    <div class="revisao-detail-body-grid">
+                        <div class="revisao-detail-left">
+                            <ul class="nav nav-tabs revisao-nav-tabs" id="revisaoDetailTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="diagnostico-tab" data-bs-toggle="tab" data-bs-target="#diagnostico-pane" type="button" role="tab" aria-controls="diagnostico-pane" aria-selected="true">
+                                        <i class="fas fa-stethoscope me-2"></i>Diagnóstico & Saneamento
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="comparacao-tab" data-bs-toggle="tab" data-bs-target="#comparacao-pane" type="button" role="tab" aria-controls="comparacao-pane" aria-selected="false">
+                                        <i class="fas fa-columns me-2"></i>Comparação antes x depois
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico-pane" type="button" role="tab" aria-controls="historico-pane" aria-selected="false">
+                                        <i class="fas fa-history me-2"></i>Histórico & Logs (${(divergencia.decisoes?.length || 0) + (divergencia.logs?.length || 0)})
+                                    </button>
+                                </li>
+                            </ul>
+                            <div class="tab-content revisao-tab-content mt-3" id="revisaoDetailTabsContent">
+                                <div class="tab-pane fade show active" id="diagnostico-pane" role="tabpanel" aria-labelledby="diagnostico-tab" tabindex="0">
+                                    ${renderSaneamentoEstruturadoRevisao(divergencia)}
+                                    ${renderDiagnosticoAutomaticoRevisao(divergencia)}
+                                </div>
+                                <div class="tab-pane fade" id="comparacao-pane" role="tabpanel" aria-labelledby="comparacao-tab" tabindex="0">
+                                    ${renderComparacaoRevisao(divergencia)}
+                                </div>
+                                <div class="tab-pane fade" id="historico-pane" role="tabpanel" aria-labelledby="historico-tab" tabindex="0">
+                                    ${renderLogsDecisoesRevisao(divergencia)}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="revisao-detail-right">
+                            ${renderFormularioDecisaoRevisao(divergencia)}
+                        </div>
+                    </div>
                 </article>
             `;
             registrarEventoFormularioDecisaoRevisao(divergencia);
