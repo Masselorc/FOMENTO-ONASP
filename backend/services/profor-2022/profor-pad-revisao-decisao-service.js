@@ -99,22 +99,53 @@ function formatarLog(linha) {
 /* ------------------------------- consultas ------------------------------- */
 
 function listarDivergencias(filtros = {}) {
+  const revisaoService = require("./profor-pad-revisao-service");
   const resultado = repo.listarDivergencias(filtros);
+  
+  let chavesGeradas = null;
+  try {
+    const path = require("node:path");
+    const repoRoot = path.resolve(__dirname, "../../..");
+    const { divergencias } = revisaoService.coletarDivergencias(repoRoot);
+    chavesGeradas = new Set(divergencias.map(d => d.chaveDivergencia));
+  } catch (err) {
+    // ignore
+  }
+
   return {
     total: resultado.total,
     limite: resultado.limite,
     offset: resultado.offset,
-    divergencias: resultado.divergencias.map(formatarDivergencia),
+    divergencias: resultado.divergencias.map(linha => {
+      const d = formatarDivergencia(linha);
+      if (chavesGeradas) {
+        d.reapresentada = chavesGeradas.has(d.chaveDivergencia);
+      } else {
+        d.reapresentada = true;
+      }
+      return d;
+    }),
   };
 }
 
 /** Retorna a divergência com payload parseado, decisões e logs. */
 function obterDivergencia(id) {
+  const revisaoService = require("./profor-pad-revisao-service");
   const linha = repo.buscarDivergenciaPorId(id);
   if (!linha) {
     throw Object.assign(new Error("Divergência não encontrada."), { statusCode: 404 });
   }
   const divergencia = formatarDivergencia(linha);
+
+  try {
+    const path = require("node:path");
+    const repoRoot = path.resolve(__dirname, "../../..");
+    const { divergencias } = revisaoService.coletarDivergencias(repoRoot);
+    divergencia.reapresentada = divergencias.some(d => d.chaveDivergencia === divergencia.chaveDivergencia);
+  } catch (err) {
+    divergencia.reapresentada = true;
+  }
+
   return {
     ...divergencia,
     decisoes: repo.listarDecisoesDaDivergencia(divergencia.id).map(formatarDecisao),

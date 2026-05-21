@@ -319,9 +319,41 @@ function divergenciasNaoAptos(saneamento, detalhadoPorChave) {
 
 /** Itens conhecidos ausentes no PAD → item_ausente_no_pad. */
 function divergenciasAusentes(saneamento) {
+  const diacriticoSaneados = saneamento.equivalenciasDiacriticoSaneadas || [];
+  const stripDiacritics = (str) => {
+    return String(str ?? "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
   return garantirArray(saneamento.itensConhecidosAusentesNoPad)
     .map((item) => {
       const tipoAlerta = "item_ausente_no_pad";
+      const memoria = {
+        descricao: item.descricaoOriginalReferencia ?? null,
+        natureza: Array.isArray(item.naturezasEncontradas) ? item.naturezasEncontradas.join(", ") : null,
+        quantidade: item.quantidadeReferencia !== undefined ? arredondarQuantidade(item.quantidadeReferencia) : null,
+        valorUnitario: item.valorUnitarioReferencia !== undefined ? arredondarValorMonetario(item.valorUnitarioReferencia) : null,
+        valorPrevisto: item.valorPrevistoReferencia !== undefined ? arredondarValorMonetario(item.valorPrevistoReferencia) : null,
+        valorExecutado: item.valorExecutadoReferencia !== undefined ? arredondarValorMonetario(item.valorExecutadoReferencia) : null,
+        saldo: item.saldoReferencia !== undefined ? arredondarValorMonetario(item.saldoReferencia) : null,
+        totalRateiosAtivos: item.totalRateiosAtivos ?? null,
+      };
+
+      const descMemoria = item.descricaoOriginalReferencia;
+      let saneadoPorDiacritico = false;
+      if (descMemoria) {
+        const chaveSaneada = `${item.numeroConvenio}::${stripDiacritics(descMemoria).toLowerCase()}`;
+        const correspondente = diacriticoSaneados.find(x => 
+          `${x.numeroConvenio}::${stripDiacritics(x.descricaoOriginalMemoria).toLowerCase()}` === chaveSaneada
+        );
+        if (correspondente) {
+          saneadoPorDiacritico = true;
+        }
+      }
+
       return {
         chaveDivergencia: criarChaveDivergencia({
           numeroConvenio: item.numeroConvenio,
@@ -335,8 +367,8 @@ function divergenciasAusentes(saneamento) {
         tipoAlerta,
         nivel: "aviso",
         campoAfetado: "existencia",
-        valorAnterior: texto(item.descricaoOriginalReferencia),
-        valorNovo: null,
+        valorAnterior: "presente_na_memoria",
+        valorNovo: "ausente_no_pad",
         fonteAnterior: "memoria",
         fonteNova: "pad",
         diferenca: "item conhecido não apareceu no PAD atual",
@@ -349,12 +381,22 @@ function divergenciasAusentes(saneamento) {
           numeroConvenio: item.numeroConvenio,
           uf: item.uf,
           chaveItem: item.chaveItem,
-          descricaoMemoria: item.descricaoOriginalReferencia,
+          descricaoMemoria: memoria.descricao,
+          naturezaMemoria: memoria.natureza,
+          quantidadeMemoria: memoria.quantidade,
+          valorUnitarioMemoria: memoria.valorUnitario,
+          valorPrevistoMemoria: memoria.valorPrevisto,
+          valorExecutadoMemoria: memoria.valorExecutado,
+          saldoMemoria: memoria.saldo,
+          totalRateiosAtivosMemoria: memoria.totalRateiosAtivos,
+          memoria,
+          antes: memoria,
           itemConhecidoId: item.id ?? null,
           totalRateiosAtivos: item.totalRateiosAtivos ?? null,
           riscoFalsoPositivo: "medio",
           acaoSugerida: "validar_ciclo_de_vida",
           bloqueiaPublicacao: false,
+          saneadoPorDiacritico,
         },
       };
     });
