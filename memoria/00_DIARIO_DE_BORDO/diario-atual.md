@@ -1,5 +1,43 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Saneamento da Classificação do PAD AL — Convênio 937221 (a partir do ExtratoProposta.pdf)
+
+- **Status**: Implementado e Validado.
+- **Tipo de mudança**: Novo script de saneamento + comando npm. Registra decisões via serviço existente `registrarDecisao` (sem SQL direto). Não houve publicação, alteração de origem ativa, de `frontend/data/publicados`, do `planoAplicacao` oficial, migration ou dependência. Nenhum SQLite versionado.
+
+### Contexto
+
+O documento oficial `ExtratoProposta.pdf` (Plano de Aplicação Detalhado do convênio 937221/AL) traz, na descrição/observação de cada item, a área destinatária (OUVIDORIA, CORREGEDORIA ou ESCOLA). A partir dele foi feita a curadoria humana da classificação dos itens novos do PAD e a confirmação de quais itens da memória antiga realmente não foram reapresentados.
+
+### O que foi saneado
+
+O convênio 937221 tinha 39 divergências `PENDENTE`. Foram resolvidas **37**, restando **2** pendentes:
+
+- **14 `item_novo_sem_rateio`** → decisão `ACEITO` com `payloadDecisao.rateio` por área. 13 itens têm área única no extrato (rateio 100%); o item "Saldo Residual" (localização "Ouvidoria, escola, corregedoria" no PDF) foi rateado igualmente entre as três áreas (33,33% cada).
+- **23 `item_ausente_no_pad`** sem substituto → decisão `ACEITO` confirmando ausência: itens da memória antiga que não constam do PAD novo, substituídos por outros itens na nova proposta.
+- **2 mantidas `PENDENTE`** (#55 "Forno de Microondas 32 litros", #66 "Poltronas") — classificadas pela auditoria de substitutos como `possivel_substituto_com_divergencia` (têm candidato no PAD, mas com divergência de quantidade); exigem revisão humana e não foram saneadas automaticamente.
+
+### Implementação
+
+Script `backend/scripts/sanear-classificacao-pad-al-937221-profor-2022.js`, comando `npm run profor:pad:al-937221:sanear-classificacao` (suporta `--dry-run`). O mapeamento área↔item está embutido no script como dado de origem documental (curadoria do `ExtratoProposta.pdf`), identificando cada divergência pela `chave_item` (estável). As decisões usam usuário `sistema-saneamento-pad-al-937221`, `payloadDecisao` com `fonteClassificacao: "ExtratoProposta.pdf"`, snapshot `_segurancaPreAtivacao` e log automáticos. Idempotente: ignora divergências já resolutivas.
+
+### Validações
+
+- `node --check` e `npm run validar:syntax` (61 arquivos) — OK.
+- `seguranca-pre-ativacao` (dry-run): 68 decisões auditadas; `payloadAlteradoAposDecisao` permanece **apenas #72/#73/#74** (pré-existentes) — nenhuma das 37 novas decisões alterou payload.
+- `reconstruir-plano` (dry-run): 628 linhas (era 607; +21 dos itens novos do 937221 que passaram a ter rateio).
+- `comparar-plano` (dry-run): 30 diferenças críticas (era 9; +21 do convênio 937221) — **efeito esperado**: itens novos do PAD que recebem rateio entram na reconstrução e aparecem como diferença ante a origem antiga até a homologação final; não é regressão.
+- `validar-decisao-estruturada-ponta-a-ponta.js`: SUCESSO absoluto.
+- `git diff --check` limpo; `frontend/data/publicados` sem alterações; nenhum SQLite versionado.
+
+### Impacto na fila
+
+Convênio 937221: de 39 → 2 pendências. Fila total PROFOR 2022: 120 → 78 pendentes.
+
+### Confirmação
+
+Sem publicação, sem alterar origem ativa, `frontend/data/publicados` ou o `planoAplicacao` oficial. Nenhuma decisão/log apagado. As decisões de ausência foram registradas com base no documento oficial, não confirmadas automaticamente sem fonte.
+
 ## 21/05/2026 - PROFOR 2022: Vínculo de Itens Ausentes a Substitutos no PAD (#76 → #23)
 
 - **Status**: Implementado e Validado.

@@ -20,6 +20,7 @@
     "profor:pad:diacritico:sanear-pendencias": "node backend/scripts/sanear-pendencias-diacritico-pad-profor-2022.js",
     "profor:pad:ausentes:auditar-substitutos": "node backend/scripts/auditar-ausentes-com-substituto-pad-profor-2022.js",
     "profor:pad:ausentes:sanear-substitutos": "node backend/scripts/sanear-ausentes-com-substituto-pad-profor-2022.js",
+    "profor:pad:al-937221:sanear-classificacao": "node backend/scripts/sanear-classificacao-pad-al-937221-profor-2022.js",
     "profor:pad:conferir-rateios:dry-run": "node backend/scripts/conferir-itens-pad-rateios-profor-2022.js",
     "profor:pad:relatorio-saneamento": "node backend/scripts/gerar-relatorio-saneamento-pad-profor-2022.js",
     "profor:pad:relatorio-saneamento-detalhado": "node backend/scripts/gerar-relatorio-saneamento-detalhado-pad-profor-2022.js",
