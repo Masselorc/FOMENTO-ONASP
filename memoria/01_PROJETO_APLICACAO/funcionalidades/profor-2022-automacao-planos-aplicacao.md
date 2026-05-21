@@ -211,6 +211,30 @@ A comparação `Valor Unit` do PAD contra `valor_unitario_referencia` da memóri
 de rateio continua sendo apenas indício de equivalência para decisão humana —
 nunca critério de matching automático.
 
+### 5.5. Regra de equivalência por acentuação/diacrítico
+
+Quando o item do PAD e o item da memória não possuem uma correspondência exata por descrição original (o que normalmente geraria a divergência `equivalencia_por_descricao_normalizada` na fila de revisão), o sistema aplica uma regra de saneamento automático se as únicas diferenças entre os textos forem acentuação/diacríticos e caixa alta/baixa, e se todos os dados materiais forem compatíveis.
+
+#### 5.5.1. Critério de diferença de descrição
+1. Textos originais são diferentes.
+2. Após normalizar espaços duplicados, converter para caixa baixa, e remover acentuação/diacríticos (por exemplo, usando `.normalize("NFD").replace(/[\u0300-\u036f]/g, "")`), as descrições ficam idênticas.
+3. Não são removidos números nem tokens técnicos (ex: "2.4ghz" e "4.2ghz" continuam divergindo).
+
+#### 5.5.2. Critério material obrigatório
+O saneamento automático por diacrítico só é aplicado se todos os seguintes dados materiais de controle coincidirem:
+- Mesmo número de convênio.
+- Naturezas de despesa compatíveis (normalizando e agrupando `CUSTEIO` / `CORRENTE` vs `CAPITAL`).
+- Valor unitário idêntico ou com diferença menor ou igual a R$ 0,01.
+- Caso haja rateios ativos na memória (referência), a quantidade rateada, valor previsto rateado, valor executado rateado e saldo rateado também não devem divergir materialmente (tolerância de 0.0001 para quantidade e R$ 0,01 para valores monetários).
+
+Caso algum desses critérios não seja atendido, a divergência é mantida na fila de revisão como pendência operacional com bloqueio ativo (`bloqueia_publicacao = 1`) para decisão humana.
+
+#### 5.5.3. Efeito na Fila de Revisão e Segurança Pré-Ativação
+Os itens que se enquadrarem nos critérios de saneamento de diacrítico:
+- Não geram uma nova pendência impeditiva `equivalencia_por_descricao_normalizada` na geração atual.
+- Divergências pendentes antigas desses mesmos itens registradas em lotes anteriores têm o campo `bloqueia_publicacao` alterado para `0` (desbloqueado/saneado automaticamente), liberando a segurança pré-ativação de forma automática.
+- São listadas como `equivalenciasDiacriticoSaneadas` no relatório de saneamento e no log de auditoria com nível `info`.
+
 ---
 
 ## 6. Matriz de associação entre origem antiga e nova origem

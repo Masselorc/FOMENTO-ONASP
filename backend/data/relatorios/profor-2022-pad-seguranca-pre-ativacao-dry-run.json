@@ -1,13 +1,135 @@
 {
-  "geradoEm": "2026-05-21T19:11:39.375Z",
+  "geradoEm": "2026-05-21T19:32:14.083Z",
   "modo": "dry-run",
   "payloadAlteradoAposDecisao": [],
   "decisoesSemSnapshotPayload": [],
   "decisoesComDivergenciaNaoEncontrada": [],
-  "divergenciasNaoReapresentadas": [],
+  "divergenciasNaoReapresentadas": [
+    {
+      "divergenciaId": 25,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "status": "PENDENTE",
+      "bloqueiaPublicacao": false,
+      "temDecisaoResolutiva": false,
+      "reapresentada": false,
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "bloqueia": false
+    },
+    {
+      "divergenciaId": 26,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:f812a27863b7408a",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "status": "PENDENTE",
+      "bloqueiaPublicacao": false,
+      "temDecisaoResolutiva": false,
+      "reapresentada": false,
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "bloqueia": false
+    },
+    {
+      "divergenciaId": 27,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a55de103e70ebde1",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "status": "PENDENTE",
+      "bloqueiaPublicacao": false,
+      "temDecisaoResolutiva": false,
+      "reapresentada": false,
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "bloqueia": false
+    },
+    {
+      "divergenciaId": 75,
+      "chaveDivergencia": "item_ausente_no_pad:ce97612ee9b9e3ce",
+      "tipoAlerta": "item_ausente_no_pad",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "status": "PENDENTE",
+      "bloqueiaPublicacao": false,
+      "temDecisaoResolutiva": false,
+      "reapresentada": false,
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "bloqueia": false
+    },
+    {
+      "divergenciaId": 77,
+      "chaveDivergencia": "item_ausente_no_pad:48844ea18c1d3543",
+      "tipoAlerta": "item_ausente_no_pad",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "status": "PENDENTE",
+      "bloqueiaPublicacao": false,
+      "temDecisaoResolutiva": false,
+      "reapresentada": false,
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "bloqueia": false
+    },
+    {
+      "divergenciaId": 78,
+      "chaveDivergencia": "item_ausente_no_pad:d8099a1f5573201b",
+      "tipoAlerta": "item_ausente_no_pad",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "status": "PENDENTE",
+      "bloqueiaPublicacao": false,
+      "temDecisaoResolutiva": false,
+      "reapresentada": false,
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "bloqueia": false
+    }
+  ],
   "divergenciasReapresentacaoIndeterminada": [],
   "bloqueiosAtivacao": [],
-  "avisos": [],
+  "avisos": [
+    {
+      "origem": "divergencia_nao_reapresentada",
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "divergenciaId": 25,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
+      "detalhe": "Divergência não reapresentada na geração atual; não bloqueia, mas exige conferência."
+    },
+    {
+      "origem": "divergencia_nao_reapresentada",
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "divergenciaId": 26,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:f812a27863b7408a",
+      "detalhe": "Divergência não reapresentada na geração atual; não bloqueia, mas exige conferência."
+    },
+    {
+      "origem": "divergencia_nao_reapresentada",
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "divergenciaId": 27,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a55de103e70ebde1",
+      "detalhe": "Divergência não reapresentada na geração atual; não bloqueia, mas exige conferência."
+    },
+    {
+      "origem": "divergencia_nao_reapresentada",
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "divergenciaId": 75,
+      "chaveDivergencia": "item_ausente_no_pad:ce97612ee9b9e3ce",
+      "detalhe": "Divergência não reapresentada na geração atual; não bloqueia, mas exige conferência."
+    },
+    {
+      "origem": "divergencia_nao_reapresentada",
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "divergenciaId": 77,
+      "chaveDivergencia": "item_ausente_no_pad:48844ea18c1d3543",
+      "detalhe": "Divergência não reapresentada na geração atual; não bloqueia, mas exige conferência."
+    },
+    {
+      "origem": "divergencia_nao_reapresentada",
+      "classificacao": "nao_reapresentada_sem_decisao",
+      "divergenciaId": 78,
+      "chaveDivergencia": "item_ausente_no_pad:d8099a1f5573201b",
+      "detalhe": "Divergência não reapresentada na geração atual; não bloqueia, mas exige conferência."
+    }
+  ],
   "resumo": {
     "totalDecisoesResolutivasAuditadas": 14,
     "totalPayloadPreservado": 14,
@@ -15,11 +137,11 @@
     "totalDecisoesSemSnapshotPayload": 0,
     "totalDecisoesComDivergenciaNaoEncontrada": 0,
     "totalDivergenciasExistentes": 145,
-    "totalDivergenciasReapresentadas": 145,
-    "totalDivergenciasNaoReapresentadas": 0,
+    "totalDivergenciasReapresentadas": 139,
+    "totalDivergenciasNaoReapresentadas": 6,
     "totalDivergenciasReapresentacaoIndeterminada": 0,
     "totalBloqueiosAtivacao": 0,
-    "totalAvisos": 0,
+    "totalAvisos": 6,
     "geracaoAtualDisponivel": true,
     "aptoParaProsseguirAtivacao": true
   }

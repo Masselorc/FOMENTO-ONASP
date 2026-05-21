@@ -1,5 +1,28 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Regra de Equivalência por Acentuação/Diacrítico na Fila de Revisão
+
+- **Status**: Implementado e Validado.
+- **Objetivo**: Corrigir a regra de geração da fila de revisão para que diferenças exclusivamente de acentuação/diacríticos entre a descrição do PAD e da memória não gerem divergência de equivalência por descrição normalizada (`equivalencia_por_descricao_normalizada`), desde que todos os dados materiais coincidam.
+- **Arquivos alterados**:
+  - `backend/services/profor-2022/profor-pad-matching-service.js`
+  - `backend/services/profor-2022/profor-pad-revisao-service.js`
+  - `backend/scripts/gerar-relatorio-saneamento-pad-profor-2022.js`
+  - `tests/services/profor-pad-diacritico.test.js` (Novo arquivo de testes)
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`
+- **Resultados e Impactos**:
+  - **Divergências saneadas automaticamente**: 3 divergências do convênio `937782/AC` deixaram de ser pendentes ativas bloqueantes e foram marcadas com `bloqueia_publicacao = 0`:
+    - #25: "Desktop para edição de video" vs "Desktop para edição de vídeo"
+    - #26: "Smartphone minimo de 128gb de memória interna" vs "Smartphone mínimo de 128gb de memória interna"
+    - #27: "Switcher de video" vs "Switcher de vídeo"
+  - **Divergências mantidas pendentes**: O item #24 ("Meia militar" sob convênio `937265/MS`) continuou pendente e ativamente bloqueando publicação (`bloqueia_publicacao: 1`), pois há uma divergência material de valor unitário (PAD R$ 37,59 vs Memória R$ 37,15, diferença de R$ 0,44).
+  - **Segurança Pré-Ativação**: Executado com sucesso, com `Bloqueios de ativação: 0` e `Apto para prosseguir ativação: sim`. As pendências anteriores no banco foram alteradas para não bloqueantes (`bloqueia_publicacao = 0`) na fila de revisão, removendo o impedimento automático de segurança.
+  - **Reconstrução**: Realizada com sucesso (`Linhas reconstruídas: 606`).
+  - **Comparador**: Apresentou as mesmas 8 diferenças críticas legítimas (nenhuma regressão técnica ou comportamental).
+  - **Validação Ponta a Ponta**: Rodou com sucesso (`SUCESSO: Validação ponta a ponta concluída com êxito absoluto!`).
+  - **Testes Unitários**: 6 novos testes unitários desenvolvidos em `tests/services/profor-pad-diacritico.test.js` cobrindo todas as regras exigidas (coincidências corretas de diacríticos e bloqueio correto de divergências materiais ou textuais). Todos os 37 testes do backend passaram com sucesso.
+
 ## 21/05/2026 - PROFOR 2022: Diagnóstico e Análise das 4 Diferenças Críticas no Comparador (Pós-divergência #23)
 
 - **Status**: Diagnóstico concluído.

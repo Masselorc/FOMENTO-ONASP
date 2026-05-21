@@ -86,7 +86,10 @@ function carregarItensConhecidos() {
       i.possui_pendencia_impeditiva,
       i.status_item,
       i.ativo,
-      COUNT(r.id) AS total_rateios_ativos
+      COUNT(r.id) AS total_rateios_ativos,
+      SUM(COALESCE(r.quantidade_referencia, 0)) AS quantidade_referencia_soma,
+      SUM(COALESCE(r.valor_previsto_referencia, 0)) AS valor_previsto_referencia_soma,
+      SUM(COALESCE(r.valor_executado_referencia, 0)) AS valor_executado_referencia_soma
     FROM profor_2022_itens_conhecidos i
     LEFT JOIN profor_2022_item_rateios r
       ON r.item_conhecido_id = i.id
@@ -104,7 +107,7 @@ function carregarItensConhecidos() {
     const valorUnitario = Number(linha.valor_unitario_referencia);
     const item = {
       id: linha.id,
-      chaveItem: linha.chave_item,
+      chaveItem: inlineChaveItem(linha.chave_item),
       chaveDescricaoOriginal: criarChaveDescricaoOriginal(linha.numero_convenio, linha.descricao_original_referencia),
       numeroConvenio: linha.numero_convenio,
       descricaoNormalizada: linha.descricao_normalizada,
@@ -118,6 +121,10 @@ function carregarItensConhecidos() {
       statusItem: linha.status_item,
       ativo: linha.ativo === 1,
       totalRateiosAtivos: Number(linha.total_rateios_ativos) || 0,
+      quantidadeReferencia: Number(linha.quantidade_referencia_soma) || 0,
+      valorPrevistoReferencia: Number(linha.valor_previsto_referencia_soma) || 0,
+      valorExecutadoReferencia: Number(linha.valor_executado_referencia_soma) || 0,
+      saldoReferencia: (Number(linha.valor_previsto_referencia_soma) || 0) - (Number(linha.valor_executado_referencia_soma) || 0),
     };
 
     todos.push(item);
@@ -126,6 +133,10 @@ function carregarItensConhecidos() {
   }
 
   return { porDescricaoOriginal, porChaveNormalizada, todos };
+}
+
+function inlineChaveItem(val) {
+  return val;
 }
 
 function montarItemPadConferido(item, carteira, chaveItem, descricaoNormalizada, chaveDescricaoOriginal) {
@@ -182,6 +193,78 @@ function compararValorUnitario(valorUnitarioPad, valorUnitarioMemoria) {
   };
 }
 
+function diferencaApenasAcentuacaoOuDiacritico(a, b) {
+  const cleanA = String(a ?? "").replace(/\s+/g, " ").trim();
+  const cleanB = String(b ?? "").replace(/\s+/g, " ").trim();
+  if (cleanA === cleanB) return false;
+
+  const stripDiacritics = (str) => {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  };
+  return stripDiacritics(cleanA).toLowerCase() === stripDiacritics(cleanB).toLowerCase();
+}
+
+function mapearNatureza(nat) {
+  const n = String(nat ?? "").toUpperCase().trim();
+  if (n.includes("CAPITAL")) return "CAPITAL";
+  if (n.includes("CUSTEIO") || n.includes("CORRENTE")) return "CUSTEIO";
+  return n;
+}
+
+function naturezasCompativeis(naturezaPad, naturezasMemoria) {
+  const padMapped = mapearNatureza(naturezaPad);
+  if (!padMapped) return true; // Se o PAD não tem natureza especificada, consideramos compatível
+  if (!Array.isArray(naturezasMemoria) || naturezasMemoria.length === 0) return true; // Se a memória não tem, compatível
+  const memoriaMapped = naturezasMemoria.map(mapearNatureza);
+  return memoriaMapped.includes(padMapped);
+}
+
+function dadosMateriaisCompativeis(itemPad, itemMemoria) {
+  // 1. Mesmo número de convênio
+  if (itemPad.numeroConvenio !== itemMemoria.numeroConvenio) return false;
+
+  // 2. Natureza compatível
+  if (!naturezasCompativeis(itemPad.natureza, itemMemoria.naturezasEncontradas)) return false;
+
+  // 3. Valor unitário igual ou diferença <= R$ 0,01
+  const vuPad = Number(itemPad.valorUnitario);
+  const vuMemoria = Number(itemMemoria.valorUnitarioReferencia);
+  if (Number.isFinite(vuPad) && Number.isFinite(vuMemoria)) {
+    if (Math.abs(vuPad - vuMemoria) > 0.01) return false;
+  }
+
+  // 4. Quantidade: se disponível na memória (total rateios ativos > 0)
+  if (itemMemoria.totalRateiosAtivos > 0) {
+    const qPad = Number(itemPad.quantidade);
+    const qMemoria = Number(itemMemoria.quantidadeReferencia);
+    if (Number.isFinite(qPad) && Number.isFinite(qMemoria) && qMemoria > 0) {
+      if (Math.abs(qPad - qMemoria) > 0.0001) return false;
+    }
+
+    const prevPad = Number(itemPad.valorTotalPrevisto);
+    const prevMemoria = Number(itemMemoria.valorPrevistoReferencia);
+    if (Number.isFinite(prevPad) && Number.isFinite(prevMemoria) && prevMemoria > 0) {
+      if (Math.abs(prevPad - prevMemoria) > 0.01) return false;
+    }
+
+    const execPad = Number(itemPad.valorTotalExecutado);
+    const execMemoria = Number(itemMemoria.valorExecutadoReferencia);
+    if (Number.isFinite(execPad) && Number.isFinite(execMemoria) && execMemoria > 0) {
+      if (Math.abs(execPad - execMemoria) > 0.01) return false;
+    }
+
+    const saldoPad = Number(itemPad.saldo);
+    const saldoMemoria = Number(itemMemoria.saldoReferencia);
+    if (Number.isFinite(saldoPad) && Number.isFinite(saldoMemoria) && saldoMemoria > 0) {
+      if (Math.abs(saldoPad - saldoMemoria) > 0.01) return false;
+    }
+  }
+
+  return true;
+}
+
 function registrarInstrumentoNaoEncontrado(registro, instrumentosNaoEncontrados, alertas, chavesInstrumentosSemCarteira) {
   const instrumento = registro.numeroConvenio || registro.instrumento || null;
   if (!instrumento || chavesInstrumentosSemCarteira.has(instrumento)) return;
@@ -213,6 +296,7 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
   const itensPadSemRateio = [];
   const itensConhecidosNaoAptos = [];
   const instrumentosNaoEncontradosNaCarteira = [];
+  const equivalenciasDiacriticoSaneadas = [];
   const alertas = [...leituraPad.alertas];
   const idsItensConhecidosPad = new Set();
   const chavesNaoAptas = new Set();
@@ -232,12 +316,46 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
       registrarInstrumentoNaoEncontrado(itemPad, instrumentosNaoEncontradosNaCarteira, alertas, instrumentosSemCarteira);
     }
 
-    const itemConhecido = chaveDescricaoOriginal
+    let itemConhecido = chaveDescricaoOriginal
       ? itensConhecidos.porDescricaoOriginal.get(chaveDescricaoOriginal)
       : null;
     const itemComMesmaChaveNormalizada = chaveItem
       ? itensConhecidos.porChaveNormalizada.get(chaveItem)
       : null;
+
+    let saneadoPorDiacritico = false;
+    if (!itemConhecido && itemComMesmaChaveNormalizada) {
+      if (
+        diferencaApenasAcentuacaoOuDiacritico(itemPad.descricaoOriginal, itemComMesmaChaveNormalizada.descricaoOriginalReferencia) &&
+        dadosMateriaisCompativeis(itemPad, itemComMesmaChaveNormalizada)
+      ) {
+        itemConhecido = itemComMesmaChaveNormalizada;
+        saneadoPorDiacritico = true;
+
+        equivalenciasDiacriticoSaneadas.push({
+          numeroConvenio,
+          uf: carteira?.uf || null,
+          descricaoOriginalMemoria: itemComMesmaChaveNormalizada.descricaoOriginalReferencia,
+          descricaoOriginalPad: itemPad.descricaoOriginal,
+          valorUnitario: itemPad.valorUnitario,
+          natureza: itemPad.natureza,
+          origem: { arquivo: item.arquivo, aba: item.aba, linha: item.linha }
+        });
+
+        alertas.push(criarAlerta({
+          tipo: "equivalencia_por_diacritico_saneada_automaticamente",
+          nivel: "info",
+          chaveItem,
+          instrumento: numeroConvenio,
+          uf: carteira?.uf || null,
+          ano: carteira?.ano || null,
+          descricao: item.descricao,
+          detalhe: `A diferença na descrição de '${itemComMesmaChaveNormalizada.descricaoOriginalReferencia}' x '${itemPad.descricaoOriginal}' é apenas de acentuação/diacríticos e os dados materiais são compatíveis. Saneado automaticamente.`,
+          origem: { arquivo: item.arquivo, aba: item.aba, linha: item.linha },
+        }));
+      }
+    }
+
     if (!itemConhecido) {
       const registroSemRateio = {
         ...itemPad,
@@ -323,6 +441,7 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
         itemConhecidoId: itemConhecido.id,
         aptoParaImportacaoFutura: itemConhecido.aptoParaImportacaoFutura,
         totalRateiosAtivos: itemConhecido.totalRateiosAtivos,
+        saneadoPorDiacritico,
       });
     } else {
       itensPadSemRateio.push({
@@ -369,6 +488,7 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
     totalItensConhecidosAusentesNoPad: itensConhecidosAusentesNoPad.length,
     totalItensConhecidosNaoAptos: itensConhecidosNaoAptos.length,
     totalInstrumentosNaoEncontradosNaCarteira: instrumentosNaoEncontradosNaCarteira.length,
+    totalEquivalenciasDiacriticoSaneadas: equivalenciasDiacriticoSaneadas.length,
     totalAlertas: alertas.length,
     totalAlertasImpeditivos: alertas.filter((alerta) => alerta.nivel === "impeditivo").length,
   };
@@ -379,6 +499,7 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
     itensConhecidosAusentesNoPad,
     itensConhecidosNaoAptos,
     instrumentosNaoEncontradosNaCarteira,
+    equivalenciasDiacriticoSaneadas,
     alertas,
     resumo,
   };
@@ -392,4 +513,7 @@ function salvarConferenciaPadRateios(resultado, caminhoSaida) {
 module.exports = {
   conferirItensPadComRateiosProfor2022,
   salvarConferenciaPadRateios,
+  diferencaApenasAcentuacaoOuDiacritico,
+  dadosMateriaisCompativeis,
+  naturezasCompativeis,
 };

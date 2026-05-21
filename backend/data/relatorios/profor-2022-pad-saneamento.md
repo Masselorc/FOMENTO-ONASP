@@ -1,16 +1,17 @@
 # PROFOR 2022 - Relatório de saneamento PAD x rateios
 
-Gerado em: 2026-05-20T19:26:14.075Z
+Gerado em: 2026-05-21T19:32:04.725Z
 
 ## Resumo
 
 | Indicador | Quantidade |
 | --- | --- |
-| Itens PAD sem rateio | 27 |
-| Coincidências apenas por descrição normalizada | 4 |
+| Itens PAD sem rateio | 24 |
+| Coincidências apenas por descrição normalizada | 1 |
 | Itens conhecidos não aptos | 19 |
-| Itens conhecidos ausentes no PAD | 32 |
-| Possíveis pares por descrição normalizada | 3 |
+| Itens conhecidos ausentes no PAD | 29 |
+| Possíveis pares por descrição normalizada | 0 |
+| Equivalências por diacrítico saneadas automaticamente | 3 |
 | Convênios afetados | 8 |
 
 Convênios afetados: 937216, 937221, 937265, 937468, 937782, 937817, 938128, 938277
@@ -23,7 +24,7 @@ Convênios afetados: 937216, 937221, 937265, 937468, 937782, 937817, 938128, 938
 | 937221 | AL | 20 | 0 | 0 | 25 | 45 |
 | 937265 | MS | 1 | 1 | 4 | 0 | 5 |
 | 937468 | TO | 0 | 0 | 3 | 0 | 3 |
-| 937782 | AC | 6 | 3 | 0 | 7 | 13 |
+| 937782 | AC | 3 | 0 | 0 | 4 | 7 |
 | 937817 | RJ | 0 | 0 | 1 | 0 | 1 |
 | 938128 | SP | 0 | 0 | 7 | 0 | 7 |
 | 938277 | MA | 0 | 0 | 1 | 0 | 1 |
@@ -55,10 +56,7 @@ Convênios afetados: 937216, 937221, 937265, 937468, 937782, 937817, 938128, 938
 | 937265 | MS | Meia militar | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Atenção: o valor unitário previsto NÃO coincide (PAD 37.59 vs memória 37.15, diferença 0.44), o que enfraquece a hipótese de mesmo item. |
 | 937782 | AC | Contratação de 01 (um) Supervisor por 12 | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
 | 937782 | AC | Contratação de 02 (dois) Auxiliares Admi | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
-| 937782 | AC | Desktop para edição de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
 | 937782 | AC | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb | Criar ou validar memória de rateio para este item antes de permitir reconstrução automática. |
-| 937782 | AC | Smartphone mínimo de 128gb de memória in | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
-| 937782 | AC | Switcher de vídeo | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
 
 ## Itens PAD que coincidem apenas por descrição normalizada
 
@@ -68,9 +66,6 @@ O valor unitário previsto é exibido como indício adicional para a decisão hu
 | Convênio | UF | Descrição | Valor unit. PAD | Valor unit. memória | Valor unit. | Diferença | Natureza PAD | Naturezas memória | Providência |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 937265 | MS | Meia militar | 37.59 | 37.15 | diverge | 0.44 | CUSTEIO | CUSTEIO | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Atenção: o valor unitário previsto NÃO coincide (PAD 37.59 vs memória 37.15, diferença 0.44), o que enfraquece a hipótese de mesmo item. |
-| 937782 | AC | Desktop para edição de vídeo | 14849 | 14849 | coincide | 0 | CAPITAL | CAPITAL | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
-| 937782 | AC | Smartphone mínimo de 128gb de memória in | 2341.24 | 2341.24 | coincide | 0 | CAPITAL | CAPITAL | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
-| 937782 | AC | Switcher de vídeo | 3901 | 3901 | coincide | 0 | CAPITAL | CAPITAL | Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana. |
 
 ## Itens conhecidos não aptos
 
@@ -128,18 +123,23 @@ O valor unitário previsto é exibido como indício adicional para a decisão hu
 | 937782 | AC | Contratação de Bolsa - Aluno Ouvidoria I | Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente. |
 | 937782 | AC | Contratação de Bolsa -Coordenador Ouvid | Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente. |
 | 937782 | AC | Contratação de Bolsa -Pesquisador Ouvid | Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente. |
-| 937782 | AC | Desktop para edição de video | Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente. |
 | 937782 | AC | Notebook 4 núcleos 2.4ghz ram ddr 4 8gb | Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente. |
-| 937782 | AC | Smartphone minimo de 128gb de memória in | Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente. |
-| 937782 | AC | Switcher de video | Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente. |
+
+## Equivalências por acentuação/diacrítico saneadas automaticamente
+
+Itens cuja única diferença era acentuação ou diacríticos nas descrições, e cujos dados materiais são plenamente compatíveis.
+Esses itens foram saneados automaticamente sem gerar divergências pendentes.
+
+| Convênio | UF | Descrição PAD | Descrição Memória | Valor unitário | Natureza |
+| --- | --- | --- | --- | --- | --- |
+| 937782 | AC | Desktop para edição de vídeo | Desktop para edição de video | 14849 | CAPITAL |
+| 937782 | AC | Smartphone mínimo de 128gb de memória in | Smartphone minimo de 128gb de memória in | 2341.24 | CAPITAL |
+| 937782 | AC | Switcher de vídeo | Switcher de video | 3901 | CAPITAL |
 
 ## Possíveis pares por descrição normalizada
 
 | Convênio | UF | Item PAD | Item conhecido ausente | Providência |
 | --- | --- | --- | --- | --- |
-| 937782 | AC | Desktop para edição de vídeo | Desktop para edição de video | Possível relação por descrição normalizada. Exige validação humana porque a descrição original não é critério automático de equivalência. |
-| 937782 | AC | Smartphone mínimo de 128gb de memória in | Smartphone minimo de 128gb de memória in | Possível relação por descrição normalizada. Exige validação humana porque a descrição original não é critério automático de equivalência. |
-| 937782 | AC | Switcher de vídeo | Switcher de video | Possível relação por descrição normalizada. Exige validação humana porque a descrição original não é critério automático de equivalência. |
 
 ## Itens que impedem a Etapa 6
 

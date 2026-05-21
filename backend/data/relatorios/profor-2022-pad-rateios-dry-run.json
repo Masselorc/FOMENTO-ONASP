@@ -22,7 +22,8 @@
       "saldo": 8170,
       "itemConhecidoId": 1,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::SERVICO DE CONFECCAO DE BANNER, 90X120CM",
@@ -46,7 +47,8 @@
       "saldo": 15702.04,
       "itemConhecidoId": 2,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::SERVICO DE CONFECCAO DE FOLDERS, 45X45CM",
@@ -70,7 +72,8 @@
       "saldo": 22128.35,
       "itemConhecidoId": 3,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::** TA CONTRAPARTIDA - COMPUTADOR DESKTOP",
@@ -94,7 +97,8 @@
       "saldo": 0,
       "itemConhecidoId": 4,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::** TA CONTRAPARTIDA - FONE OUVIDO TIPO:",
@@ -118,7 +122,8 @@
       "saldo": 42.88,
       "itemConhecidoId": 5,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::CELULARES SMARTPHONE, 128GB-5G - OCTA-CO",
@@ -142,7 +147,8 @@
       "saldo": 314.93,
       "itemConhecidoId": 6,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::FONE OUVIDO TIPO: FECHADO, DINAMICO , IM",
@@ -166,7 +172,8 @@
       "saldo": -42.88,
       "itemConhecidoId": 7,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::WEBCAN FULL HD PARA CHAMADAS E GRAVACOES",
@@ -190,7 +197,8 @@
       "saldo": 2181.05,
       "itemConhecidoId": 8,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::** CONTRAPARTIDA - COMPUTADOR DESKTOP BA",
@@ -214,7 +222,8 @@
       "saldo": 0,
       "itemConhecidoId": 9,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::** - CONTRAPARTIDA - AMBULANCIA TIPO FIO",
@@ -238,7 +247,8 @@
       "saldo": 0,
       "itemConhecidoId": 10,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::VEICULO TRANSPORTE PESSOAL, CAMBIO: MANU",
@@ -262,7 +272,8 @@
       "saldo": 6189.31,
       "itemConhecidoId": 11,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937698::NOBREAK, ALIMENTADOR AUTOMATICO DE TENSA",
@@ -286,7 +297,8 @@
       "saldo": 370.16,
       "itemConhecidoId": 12,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::COLA PARA ESPUMA ACUSTICA, COLA DE CONTA",
@@ -310,7 +322,8 @@
       "saldo": 0,
       "itemConhecidoId": 13,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::ESPUMA ACUSTICA ANTICHAMAS, 10 PLACAS, 5",
@@ -334,7 +347,8 @@
       "saldo": 0,
       "itemConhecidoId": 14,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::JOGO DE PILHAS RECARREGAVEL 1000 MAH AAA",
@@ -358,7 +372,8 @@
       "saldo": 0,
       "itemConhecidoId": 15,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::JOGO DE PILHAS RECARREGAVEL 2700 MAH AA",
@@ -382,7 +397,8 @@
       "saldo": 0,
       "itemConhecidoId": 16,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::MUNICAO CBC 5,56X45 COMUM M193 (TREINA) A",
@@ -406,7 +422,8 @@
       "saldo": 0,
       "itemConhecidoId": 17,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::PLACAS DE ISOPOR, FORRO ISOLAMENTO TERMO",
@@ -430,7 +447,8 @@
       "saldo": 0,
       "itemConhecidoId": 18,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::SALDO REMANESCENTE - CONFORME NOTA TECNI",
@@ -454,7 +472,8 @@
       "saldo": 34033.34,
       "itemConhecidoId": 19,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::APRESENTADOR/PASSADOR DE SLIDES, SEM FIO",
@@ -478,7 +497,8 @@
       "saldo": 128.7,
       "itemConhecidoId": 20,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CAMERA DSLR: COM LENTE EF-S 18-55MM, CAP",
@@ -502,7 +522,8 @@
       "saldo": 663.34,
       "itemConhecidoId": 21,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CAMERA DE VIDEO, GRAVACAO DE VIDEOS EM F",
@@ -526,7 +547,8 @@
       "saldo": 5814.01,
       "itemConhecidoId": 22,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::ESTACAO DE TRABALHO PARA EDICAO DE VIDEO",
@@ -550,7 +572,8 @@
       "saldo": 180,
       "itemConhecidoId": 23,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::GIMBAL ESTABILIZADOR PARA CAMERA DSLR, C",
@@ -574,7 +597,8 @@
       "saldo": 26.68,
       "itemConhecidoId": 24,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::GRAVADOR DE AUDIO PORTATIL, EQUIPADO COM",
@@ -598,7 +622,8 @@
       "saldo": 0.02,
       "itemConhecidoId": 25,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::HEADSET, COM TRANSDUTOR DINAMICO 53MM CO",
@@ -622,7 +647,8 @@
       "saldo": 225,
       "itemConhecidoId": 26,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::KIT NVR COM 4 CAMERAS, FONTE DE ENERGIA,",
@@ -646,7 +672,8 @@
       "saldo": 18.29,
       "itemConhecidoId": 27,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::KIT REFLETOR LED LUZ FRIA PARA ESTUDIO C",
@@ -670,7 +697,8 @@
       "saldo": 0.01,
       "itemConhecidoId": 28,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::KIT TELEPROMPTER (TP), KIT COM ESTRUTURA",
@@ -694,7 +722,8 @@
       "saldo": 27.51,
       "itemConhecidoId": 29,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::KIT DE TRIPE DE VIDEO PROFISSIONAL COM C",
@@ -718,7 +747,8 @@
       "saldo": 19.92,
       "itemConhecidoId": 30,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::LENTE ZOOM TELEFOTO, DISTANCIA FOCAL 70-",
@@ -742,7 +772,8 @@
       "saldo": 0,
       "itemConhecidoId": 31,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::MESA DE SOM COM 6 CANAIS, SENDO 4 CANAIS",
@@ -766,7 +797,8 @@
       "saldo": 9.59,
       "itemConhecidoId": 32,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::MICROFONE SUPER UNI-DIRECIONAL PARA USO",
@@ -790,7 +822,8 @@
       "saldo": 64.02,
       "itemConhecidoId": 33,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
@@ -814,7 +847,8 @@
       "saldo": 3950.68,
       "itemConhecidoId": 34,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::MONITOR DE AUDIO, AMPLIFICADOR COM POTEN",
@@ -838,7 +872,8 @@
       "saldo": 40.66,
       "itemConhecidoId": 35,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::PROJETOR 3.400 LUMENS (NO MINIMO) CONEXA",
@@ -862,7 +897,8 @@
       "saldo": 1659.28,
       "itemConhecidoId": 36,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::SISTEMA DE MICROFONE HEADSET (SEM FIO),",
@@ -886,7 +922,8 @@
       "saldo": 281.78,
       "itemConhecidoId": 37,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::SWITCHER DE VIDEO COM BARRA DE TRANSICAO",
@@ -910,7 +947,8 @@
       "saldo": 600,
       "itemConhecidoId": 38,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::TV 42, RECURSOS/FUNCIONALIDADES, RESOLU",
@@ -934,7 +972,8 @@
       "saldo": 242.7,
       "itemConhecidoId": 39,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::TV 55, 4K UHD, MINIMO 3 ENTRADAS HDMI 2.",
@@ -958,7 +997,8 @@
       "saldo": 839.26,
       "itemConhecidoId": 40,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::TECIDO FUNDO INFINITO VERDE, 3,00M LARGU",
@@ -982,7 +1022,8 @@
       "saldo": 0.02,
       "itemConhecidoId": 41,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::WEBCAM, ESPECIFICACOES: - RESOLUCAO MAXI",
@@ -1006,7 +1047,8 @@
       "saldo": 435.96,
       "itemConhecidoId": 42,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CARTAO DE MEMORIA MICRO SD, 32GB, COM AD",
@@ -1030,7 +1072,8 @@
       "saldo": -5.68,
       "itemConhecidoId": 43,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CARTAO DE MEMORIA SD 32GB, CLASSE 10",
@@ -1054,7 +1097,8 @@
       "saldo": 11.36,
       "itemConhecidoId": 44,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::HD EXTERNO, CARACTERISTICAS: CAPACIDADE:",
@@ -1078,7 +1122,8 @@
       "saldo": 0,
       "itemConhecidoId": 45,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::KIT MOUSE + TECLADO COM FIO, PADRAO ABNT2",
@@ -1102,7 +1147,8 @@
       "saldo": 30.68,
       "itemConhecidoId": 46,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::NOTEBOOK, COM ARQUITETURA X86 CORPORATIV",
@@ -1126,7 +1172,8 @@
       "saldo": 3879.12,
       "itemConhecidoId": 47,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
@@ -1150,7 +1197,8 @@
       "saldo": 199.83,
       "itemConhecidoId": 48,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
@@ -1174,7 +1222,8 @@
       "saldo": -5131.23,
       "itemConhecidoId": 49,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::TABLET, CARACTERISTICAS MINIMAS: PROCESS",
@@ -1198,7 +1247,8 @@
       "saldo": 7308,
       "itemConhecidoId": 50,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::ARMARIO TIPO LOCKER ROUPEIRO 20 PORTAS A",
@@ -1222,7 +1272,8 @@
       "saldo": 20.39,
       "itemConhecidoId": 51,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CADEIRA BASE GIRATORIA COR: PRETO MATERI",
@@ -1246,7 +1297,8 @@
       "saldo": 3235.2,
       "itemConhecidoId": 52,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CADEIRA ESCRITORIO PRESIDENTE GIRATORIA.",
@@ -1270,7 +1322,8 @@
       "saldo": 4644,
       "itemConhecidoId": 53,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CADEIRA FIXA DE PALITO - TUBULAR EM ACO",
@@ -1294,7 +1347,8 @@
       "saldo": 575.25,
       "itemConhecidoId": 54,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CADEIRA TIPO GAMER; ACOMPANHADA DE 1 ALM",
@@ -1318,7 +1372,8 @@
       "saldo": 0.05,
       "itemConhecidoId": 55,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::AUTOMOVEL DE TRANSPORTE DE PASSAGEIROS -",
@@ -1342,7 +1397,8 @@
       "saldo": 0,
       "itemConhecidoId": 56,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::CARREGADOR DE PILHAS RECARREGAVEIS FORMA",
@@ -1366,7 +1422,8 @@
       "saldo": 0,
       "itemConhecidoId": 57,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::FECHADURA ELETRONICA. ESPECIFICACAO TECN",
@@ -1390,7 +1447,8 @@
       "saldo": 963.04,
       "itemConhecidoId": 58,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::FILTRO BEBEDOURO. CARACTERISTICAS, GABIN",
@@ -1414,7 +1472,8 @@
       "saldo": 0.73,
       "itemConhecidoId": 59,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::FONTE ADAPTADOR AC ELIMINADOR DE BATERI",
@@ -1438,7 +1497,8 @@
       "saldo": 0.01,
       "itemConhecidoId": 60,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::FRAGMENTADORA DE PAPEL COM AS SEGUINTES",
@@ -1462,7 +1522,8 @@
       "saldo": 20.68,
       "itemConhecidoId": 61,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937216::MOCHILA PARA TRANSPORTE DE CAMERA, CAPAC",
@@ -1486,7 +1547,8 @@
       "saldo": 21.01,
       "itemConhecidoId": 62,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::* CURSO DE POS GRADUACAO PROCESSO ADMINI",
@@ -1510,7 +1572,8 @@
       "saldo": 51105.53,
       "itemConhecidoId": 63,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::CURSO DE POS GRADUACAO EM COMPLIANCE E L",
@@ -1534,7 +1597,8 @@
       "saldo": 8449.33,
       "itemConhecidoId": 64,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::AR CONDICIONADO",
@@ -1558,7 +1622,8 @@
       "saldo": 17565.76,
       "itemConhecidoId": 65,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::GRAVADOR DE VOZ",
@@ -1582,7 +1647,8 @@
       "saldo": 2312.64,
       "itemConhecidoId": 66,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::SALDO REMANESCENTE DE CAPITAL 44",
@@ -1606,7 +1672,8 @@
       "saldo": 42884.02,
       "itemConhecidoId": 67,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::TELEVISAO",
@@ -1630,7 +1697,8 @@
       "saldo": 3351.47,
       "itemConhecidoId": 68,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::VIVA-VOZ",
@@ -1654,7 +1722,8 @@
       "saldo": 547.12,
       "itemConhecidoId": 69,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::FONE DE OUVIDO",
@@ -1678,7 +1747,8 @@
       "saldo": 0,
       "itemConhecidoId": 70,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::PROJETOR DE VIDEO",
@@ -1702,7 +1772,8 @@
       "saldo": 60877.18,
       "itemConhecidoId": 71,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::WEB CAM",
@@ -1726,7 +1797,8 @@
       "saldo": 4260.8,
       "itemConhecidoId": 72,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::NOTEBOOK",
@@ -1750,7 +1822,8 @@
       "saldo": 0,
       "itemConhecidoId": 73,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::VEICULO TIPO SUV",
@@ -1774,7 +1847,8 @@
       "saldo": 74366.42,
       "itemConhecidoId": 74,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::VEICULO TIPO SUV",
@@ -1798,7 +1872,8 @@
       "saldo": 51133.66,
       "itemConhecidoId": 74,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::VIATURA DESCARACTERIZADA (SUV)",
@@ -1822,7 +1897,8 @@
       "saldo": 0,
       "itemConhecidoId": 75,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::VIATURA DESCARACTERIZADA - (PICK - UP)",
@@ -1846,7 +1922,8 @@
       "saldo": 0,
       "itemConhecidoId": 76,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::TELA DIGITAL",
@@ -1870,7 +1947,8 @@
       "saldo": 19389.93,
       "itemConhecidoId": 77,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937871::TELA ELETRICA",
@@ -1894,7 +1972,8 @@
       "saldo": 36312.5,
       "itemConhecidoId": 78,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::CONTRATACAO DE SERVICO DE PESSOA JURIDIC",
@@ -1918,7 +1997,8 @@
       "saldo": 29175,
       "itemConhecidoId": 79,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::APARELHO AR-CONDICIONADO, 18.000 BTUS",
@@ -1942,7 +2022,8 @@
       "saldo": 327.62,
       "itemConhecidoId": 80,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::CAIXA DE SOM AMPLIFICADA",
@@ -1966,7 +2047,8 @@
       "saldo": 196.64,
       "itemConhecidoId": 81,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::PROJETOR MULTIMIDIA / DATASHOW",
@@ -1990,7 +2072,8 @@
       "saldo": 0,
       "itemConhecidoId": 82,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::MICROCOMPUTADOR, TIPO: ESTACAO DE TRABALHO",
@@ -2014,7 +2097,8 @@
       "saldo": 29876.3,
       "itemConhecidoId": 83,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::NOTEBOOK",
@@ -2038,7 +2122,8 @@
       "saldo": 5340.66,
       "itemConhecidoId": 84,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::CADEIRA FIXA PARA AUDITORIO",
@@ -2062,7 +2147,8 @@
       "saldo": 0,
       "itemConhecidoId": 85,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::CADEIRA FIXA, SEM BRACO, 04 PES, TIPO ES",
@@ -2086,7 +2172,8 @@
       "saldo": 3427.76,
       "itemConhecidoId": 89,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::CADEIRA GIRATORIA, MODELO: SECRETARIA",
@@ -2110,7 +2197,8 @@
       "saldo": 345.04,
       "itemConhecidoId": 86,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::MESA PARA ESCRITORIO, FORMATO: RETANGULAR",
@@ -2134,7 +2222,8 @@
       "saldo": 4376,
       "itemConhecidoId": 87,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937592::MESA PARA ESCRITORIO, TIPO 'L'",
@@ -2158,7 +2247,8 @@
       "saldo": 3335.2,
       "itemConhecidoId": 88,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::APLICACAO DE PALESTRAS COM DIFERENTES TE",
@@ -2182,7 +2272,8 @@
       "saldo": 0,
       "itemConhecidoId": 90,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::APLICACAO DE SEMINARIO COM 2 PALESTRAS C",
@@ -2206,7 +2297,8 @@
       "saldo": 0,
       "itemConhecidoId": 91,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::CURSO DE EDICAO DE VIDEOS",
@@ -2230,7 +2322,8 @@
       "saldo": 14700,
       "itemConhecidoId": 92,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::COLETES DE IDENTIFICACAO",
@@ -2254,7 +2347,8 @@
       "saldo": 5025,
       "itemConhecidoId": 94,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::ARMARIO ALTO COM 02 PORTAS E PRATELEIRAS",
@@ -2278,7 +2372,8 @@
       "saldo": 5600,
       "itemConhecidoId": 119,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::ARMARIO BAIXO 2 PORTAS",
@@ -2302,7 +2397,8 @@
       "saldo": 4100,
       "itemConhecidoId": 120,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::CADEIRA DE ESCRITORIO PARA MESA DE REUNIAO",
@@ -2326,7 +2422,8 @@
       "saldo": 0,
       "itemConhecidoId": 93,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::COMPUTADOR DESKTOP COMPLETO",
@@ -2350,7 +2447,8 @@
       "saldo": 1023.54,
       "itemConhecidoId": 95,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::CAMERA DE VIDEOCONFERENCIA (WEBCAM)",
@@ -2374,7 +2472,33 @@
       "saldo": 2190,
       "itemConhecidoId": 96,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
+    },
+    {
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "chaveDescricaoOriginal": "937782::Desktop para edição de vídeo",
+      "numeroConvenio": "937782",
+      "descricaoNormalizada": "DESKTOP PARA EDICAO DE VIDEO",
+      "descricaoOriginal": "Desktop para edição de vídeo",
+      "uf": "AC",
+      "ano": "2022",
+      "instrumento": "Convênio",
+      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
+      "aba": "937782",
+      "linha": 27,
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905200",
+      "unidade": "UN",
+      "quantidade": 1,
+      "valorUnitario": 14849,
+      "valorTotalPrevisto": 14849,
+      "valorTotalExecutado": 0,
+      "saldo": 14849,
+      "itemConhecidoId": 97,
+      "aptoParaImportacaoFutura": true,
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": true
     },
     {
       "chaveItem": "937782::ESTABILIZADOR 3KVA",
@@ -2398,7 +2522,8 @@
       "saldo": 0,
       "itemConhecidoId": 98,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::ESTABILIZADOR PARA CAMERA",
@@ -2422,7 +2547,8 @@
       "saldo": 3222.12,
       "itemConhecidoId": 99,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::FILMADORA PROFISSIONAL",
@@ -2446,7 +2572,8 @@
       "saldo": 0,
       "itemConhecidoId": 100,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::GRAVADOR E REPRODUTOR DE AUDIO",
@@ -2470,7 +2597,8 @@
       "saldo": 0,
       "itemConhecidoId": 101,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::HD EXTERNO DE 1TB PORTATIL",
@@ -2494,7 +2622,8 @@
       "saldo": 0,
       "itemConhecidoId": 102,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::LOUSA DIGITAL",
@@ -2518,7 +2647,8 @@
       "saldo": 0,
       "itemConhecidoId": 103,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::MESA DE REUNIAO RETANGULAR 2M DE COMPRIMENTO",
@@ -2542,7 +2672,8 @@
       "saldo": 722.12,
       "itemConhecidoId": 104,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::MESA PLATAFORMA SIMPLES - 1 LUGAR",
@@ -2566,7 +2697,8 @@
       "saldo": 2850,
       "itemConhecidoId": 118,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::MICROFONE DIRECIONAL DE MESA",
@@ -2590,7 +2722,8 @@
       "saldo": 0,
       "itemConhecidoId": 105,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::MICROFONE SEM FIO TIPO LAPELA",
@@ -2614,7 +2747,8 @@
       "saldo": 0,
       "itemConhecidoId": 106,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::MONITOR DE LED 18,5 &#039; RESOLUCAO 192",
@@ -2638,7 +2772,8 @@
       "saldo": 8400,
       "itemConhecidoId": 107,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::MONITOR DE LED 18,5' RESOLUCAO 1920X1080",
@@ -2662,7 +2797,8 @@
       "saldo": 0,
       "itemConhecidoId": 108,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::NOTEBOOK COM TELA DE 15'",
@@ -2686,7 +2822,8 @@
       "saldo": 26120,
       "itemConhecidoId": 121,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::PULPITO PARA AUDITORIO",
@@ -2710,7 +2847,8 @@
       "saldo": 2880,
       "itemConhecidoId": 122,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::SALDO DE ECONOMICIDADE",
@@ -2734,7 +2872,33 @@
       "saldo": 9.84,
       "itemConhecidoId": 110,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
+    },
+    {
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "chaveDescricaoOriginal": "937782::Smartphone mínimo de 128gb de memória in",
+      "numeroConvenio": "937782",
+      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
+      "uf": "AC",
+      "ano": "2022",
+      "instrumento": "Convênio",
+      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
+      "aba": "937782",
+      "linha": 44,
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905200",
+      "unidade": "UN",
+      "quantidade": 2,
+      "valorUnitario": 2341.24,
+      "valorTotalPrevisto": 4682.48,
+      "valorTotalExecutado": 1900,
+      "saldo": 2782.48,
+      "itemConhecidoId": 111,
+      "aptoParaImportacaoFutura": true,
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": true
     },
     {
       "chaveItem": "937782::SOFA DE ESPERA, 1(UM) LUGAR",
@@ -2758,7 +2922,8 @@
       "saldo": 4200,
       "itemConhecidoId": 123,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::SOFA DE ESPERA, 2(DOIS) LUGARES",
@@ -2782,7 +2947,33 @@
       "saldo": 5380,
       "itemConhecidoId": 124,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
+    },
+    {
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "chaveDescricaoOriginal": "937782::Switcher de vídeo",
+      "numeroConvenio": "937782",
+      "descricaoNormalizada": "SWITCHER DE VIDEO",
+      "descricaoOriginal": "Switcher de vídeo",
+      "uf": "AC",
+      "ano": "2022",
+      "instrumento": "Convênio",
+      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
+      "aba": "937782",
+      "linha": 47,
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905200",
+      "unidade": "UN",
+      "quantidade": 2,
+      "valorUnitario": 3901,
+      "valorTotalPrevisto": 7802,
+      "valorTotalExecutado": 7802,
+      "saldo": 0,
+      "itemConhecidoId": 112,
+      "aptoParaImportacaoFutura": true,
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": true
     },
     {
       "chaveItem": "937782::TELEPROMPT",
@@ -2806,7 +2997,8 @@
       "saldo": 2159.94,
       "itemConhecidoId": 113,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937782::TRIPE PARA CAMERA",
@@ -2830,7 +3022,8 @@
       "saldo": 398,
       "itemConhecidoId": 114,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ALVO SILHUETA PADRAO SAT/ANP CX COM 1.000",
@@ -2854,7 +3047,8 @@
       "saldo": 2381,
       "itemConhecidoId": 125,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ALVO PERCEPCAO C/ 4 CORES SAT C/100UNID",
@@ -2878,7 +3072,8 @@
       "saldo": 560,
       "itemConhecidoId": 126,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ALVOS METALICOS PLATES",
@@ -2902,7 +3097,8 @@
       "saldo": 3777.87,
       "itemConhecidoId": 127,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ALVOS METALICOS POPPER",
@@ -2926,7 +3122,8 @@
       "saldo": 4338,
       "itemConhecidoId": 128,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CAIXA ARQUIVO EM PLASTICO PP CORRUGADO D",
@@ -2950,7 +3147,8 @@
       "saldo": 150.15,
       "itemConhecidoId": 129,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CAIXA ORGANIZADORA MINIMO 20 L",
@@ -2974,7 +3172,8 @@
       "saldo": 1463,
       "itemConhecidoId": 130,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CALCA TATICA",
@@ -2998,7 +3197,8 @@
       "saldo": 9915.8,
       "itemConhecidoId": 131,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CALCA TATICA",
@@ -3022,7 +3222,8 @@
       "saldo": 6610.53,
       "itemConhecidoId": 131,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CAMISA TATICA",
@@ -3046,7 +3247,8 @@
       "saldo": 5951.5,
       "itemConhecidoId": 132,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CAPACETE PARA TREINO BOXE, ARTES MARCIAI",
@@ -3070,7 +3272,8 @@
       "saldo": 1567.2,
       "itemConhecidoId": 133,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CARTAO DE MEMORIA, COM CAPACIDADE DE ARM",
@@ -3094,7 +3297,8 @@
       "saldo": 475.99,
       "itemConhecidoId": 134,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CINTO TATICO",
@@ -3118,7 +3322,8 @@
       "saldo": 6273.98,
       "itemConhecidoId": 135,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CINTO TATICO",
@@ -3142,7 +3347,8 @@
       "saldo": 4182.65,
       "itemConhecidoId": 135,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::COTURNO",
@@ -3166,7 +3372,8 @@
       "saldo": 7124,
       "itemConhecidoId": 136,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::COTURNO",
@@ -3190,7 +3397,8 @@
       "saldo": 10686,
       "itemConhecidoId": 136,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::KIT LIMPEZA DE ARMAMENTO PISTOLA SW.40",
@@ -3214,7 +3422,8 @@
       "saldo": 1814.67,
       "itemConhecidoId": 137,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::KIT LIMPEZA FUZIL 5.56",
@@ -3238,7 +3447,8 @@
       "saldo": 2332,
       "itemConhecidoId": 138,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::LUVAS DE BOXE PARA TREINO (PARES)",
@@ -3262,7 +3472,8 @@
       "saldo": 1345.35,
       "itemConhecidoId": 139,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::PASTA L",
@@ -3286,7 +3497,8 @@
       "saldo": 798.69,
       "itemConhecidoId": 140,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
@@ -3310,7 +3522,8 @@
       "saldo": 4892.07,
       "itemConhecidoId": 141,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
@@ -3334,7 +3547,8 @@
       "saldo": 4892.06,
       "itemConhecidoId": 141,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CAIXA ORGANIZADORA MINIMO 40 L",
@@ -3358,7 +3572,8 @@
       "saldo": 1776.8,
       "itemConhecidoId": 142,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::EXTRATOR DE GRAMPO",
@@ -3382,7 +3597,8 @@
       "saldo": 19.85,
       "itemConhecidoId": 143,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::FURADORES DE PAPEL",
@@ -3406,7 +3622,8 @@
       "saldo": 119.7,
       "itemConhecidoId": 144,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::GRAMPEADORES 240 FL",
@@ -3430,7 +3647,8 @@
       "saldo": 1324.85,
       "itemConhecidoId": 145,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::PASTA ARQUIVO",
@@ -3454,7 +3672,8 @@
       "saldo": 310.07,
       "itemConhecidoId": 146,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::PEN DRIVE 128GB",
@@ -3478,7 +3697,8 @@
       "saldo": 749.16,
       "itemConhecidoId": 147,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CAMISA TATICA",
@@ -3502,7 +3722,8 @@
       "saldo": 7935.33,
       "itemConhecidoId": 132,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ALGEMAS DE PULSO CROMADA C/CORRENTE COM",
@@ -3526,7 +3747,8 @@
       "saldo": 2222.24,
       "itemConhecidoId": 148,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CAPACETE ANTITUMULTO",
@@ -3550,7 +3772,8 @@
       "saldo": 5459.94,
       "itemConhecidoId": 149,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::DESCANSO PARA PES ERGONOMICO",
@@ -3574,7 +3797,8 @@
       "saldo": 818.87,
       "itemConhecidoId": 150,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ESCUDO ANTITUMULTO EM PLACAS DE POLICARB",
@@ -3598,7 +3822,8 @@
       "saldo": 18548.28,
       "itemConhecidoId": 151,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::TONFA PADRAO 58CM",
@@ -3622,7 +3847,8 @@
       "saldo": 3838.52,
       "itemConhecidoId": 152,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CANELEIRA E JOELHEIRA ANTITUMULTO EM TER",
@@ -3646,7 +3872,8 @@
       "saldo": 7229.53,
       "itemConhecidoId": 153,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::MEIA MILITAR",
@@ -3670,7 +3897,8 @@
       "saldo": 2972,
       "itemConhecidoId": 154,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
@@ -3694,7 +3922,8 @@
       "saldo": 10381.21,
       "itemConhecidoId": 155,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
@@ -3718,7 +3947,8 @@
       "saldo": 7785.91,
       "itemConhecidoId": 155,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
@@ -3742,7 +3972,8 @@
       "saldo": -8538.79,
       "itemConhecidoId": 155,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::AR CONDICIONADO INVERTER 24.000 BTUS",
@@ -3766,7 +3997,8 @@
       "saldo": 8689.78,
       "itemConhecidoId": 156,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::AR CONDICIONADO INVERTER 24.000 BTUS",
@@ -3790,7 +4022,8 @@
       "saldo": -4590.22,
       "itemConhecidoId": 156,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::BEBEDOURO INDUSTRIAL DE ACO INOX MINIMO",
@@ -3814,7 +4047,8 @@
       "saldo": 3471.62,
       "itemConhecidoId": 157,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CADEIRA FIXA",
@@ -3838,7 +4072,8 @@
       "saldo": 5895.84,
       "itemConhecidoId": 158,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CADEIRA FIXA",
@@ -3862,7 +4097,8 @@
       "saldo": 2620.37,
       "itemConhecidoId": 158,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CADEIRA FIXA",
@@ -3886,7 +4122,8 @@
       "saldo": 2620.37,
       "itemConhecidoId": 158,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CADEIRA GIRATORIA COM BRACOS",
@@ -3910,7 +4147,8 @@
       "saldo": 12551.12,
       "itemConhecidoId": 159,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CADEIRA GIRATORIA COM BRACOS",
@@ -3934,7 +4172,8 @@
       "saldo": 22592.01,
       "itemConhecidoId": 159,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CADEIRA GIRATORIA COM BRACOS",
@@ -3958,7 +4197,8 @@
       "saldo": 12551.12,
       "itemConhecidoId": 159,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::CADEIRA UNIVERSITARIA: ESPALDAR MEDIO FI",
@@ -3982,7 +4222,8 @@
       "saldo": 0,
       "itemConhecidoId": 160,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::COMPUTADOR COMPLETO COM MONITOR",
@@ -4006,7 +4247,8 @@
       "saldo": -61088,
       "itemConhecidoId": 161,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::COMPUTADOR COMPLETO COM MONITOR",
@@ -4030,7 +4272,8 @@
       "saldo": 34362,
       "itemConhecidoId": 161,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::COMPUTADOR COMPLETO COM MONITOR",
@@ -4054,7 +4297,8 @@
       "saldo": 26726,
       "itemConhecidoId": 161,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS",
@@ -4078,7 +4322,8 @@
       "saldo": 1080.53,
       "itemConhecidoId": 162,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS",
@@ -4102,7 +4347,8 @@
       "saldo": 1080.53,
       "itemConhecidoId": 162,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::FREEGOBAR MINIMO 45 LITROS",
@@ -4126,7 +4372,8 @@
       "saldo": 3696.71,
       "itemConhecidoId": 163,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
@@ -4150,7 +4397,8 @@
       "saldo": 890.01,
       "itemConhecidoId": 164,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
@@ -4174,7 +4422,8 @@
       "saldo": 890.01,
       "itemConhecidoId": 164,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::LONGARINA COM 3 LUGARES",
@@ -4198,7 +4447,8 @@
       "saldo": 2479.2,
       "itemConhecidoId": 165,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::LONGARINA COM 3 LUGARES",
@@ -4222,7 +4472,8 @@
       "saldo": 3718.8,
       "itemConhecidoId": 165,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C",
@@ -4246,7 +4497,8 @@
       "saldo": 1067.6,
       "itemConhecidoId": 166,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C",
@@ -4270,7 +4522,8 @@
       "saldo": 1067.6,
       "itemConhecidoId": 166,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::MESA EM L",
@@ -4294,7 +4547,8 @@
       "saldo": 0,
       "itemConhecidoId": 167,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::MESA EM L",
@@ -4318,7 +4572,8 @@
       "saldo": 0,
       "itemConhecidoId": 167,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::MESA EM L",
@@ -4342,7 +4597,8 @@
       "saldo": 0,
       "itemConhecidoId": 167,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::MICROONDAS MINIMO 20L. BRANCO 110V",
@@ -4366,7 +4622,8 @@
       "saldo": 1490.86,
       "itemConhecidoId": 168,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::MICROONDAS MINIMO 20L. BRANCO 110V",
@@ -4390,7 +4647,8 @@
       "saldo": 260.86,
       "itemConhecidoId": 168,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::NOTEBOOK",
@@ -4414,7 +4672,8 @@
       "saldo": 7114,
       "itemConhecidoId": 169,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::NOTEBOOK",
@@ -4438,7 +4697,8 @@
       "saldo": -7114,
       "itemConhecidoId": 169,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::GRAVADOR DE TELEFONE DE VOZ DE AUDIO DIGITAL",
@@ -4462,7 +4722,8 @@
       "saldo": 1687.54,
       "itemConhecidoId": 170,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::HEADSET COM IDENTIFICADOR DE CHAMADA",
@@ -4486,7 +4747,8 @@
       "saldo": 1359.15,
       "itemConhecidoId": 171,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::FRAGMENTADORA PAPEL MATERIAL 15 FLS",
@@ -4510,7 +4772,8 @@
       "saldo": 1093.84,
       "itemConhecidoId": 172,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937265::PORTEIRO ELETRONICO COM FECHADURA ELETRONICA",
@@ -4534,7 +4797,8 @@
       "saldo": 1664.54,
       "itemConhecidoId": 173,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO HDMI",
@@ -4558,7 +4822,8 @@
       "saldo": 251.6,
       "itemConhecidoId": 220,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO LW XLR P10",
@@ -4582,7 +4847,8 @@
       "saldo": 87.62,
       "itemConhecidoId": 221,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO NM E-20 P10 MONO/XLR MACHO",
@@ -4606,7 +4872,8 @@
       "saldo": 106.5,
       "itemConhecidoId": 222,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO P10 STEREO XLR FEMEA",
@@ -4630,7 +4897,8 @@
       "saldo": 99.8,
       "itemConhecidoId": 223,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO BALANCEADO XLR2XLR SC20 15M",
@@ -4654,7 +4922,8 @@
       "saldo": 277.8,
       "itemConhecidoId": 224,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO BALANCEADO XLR2XLR SC20 20M",
@@ -4678,7 +4947,8 @@
       "saldo": 347,
       "itemConhecidoId": 225,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO DE MICROFONE XLR/P10 HG",
@@ -4702,7 +4972,8 @@
       "saldo": 116.2,
       "itemConhecidoId": 226,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CABO MICROFONE TX HG P10/XLR",
@@ -4726,7 +4997,8 @@
       "saldo": 145.3,
       "itemConhecidoId": 227,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::HEADPHONE/FONE DE OUVIDO",
@@ -4750,7 +5022,8 @@
       "saldo": 0,
       "itemConhecidoId": 228,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::MICROFONE",
@@ -4774,7 +5047,8 @@
       "saldo": 0,
       "itemConhecidoId": 229,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::MICROFONE DE LAPELA",
@@ -4798,7 +5072,8 @@
       "saldo": 0,
       "itemConhecidoId": 230,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::SALDO REMANESCENTE",
@@ -4822,7 +5097,8 @@
       "saldo": 5924.45,
       "itemConhecidoId": 231,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::SUPORTE FUNDO INFINITO + CHROMA KEY 3X2",
@@ -4846,7 +5122,8 @@
       "saldo": 286,
       "itemConhecidoId": 232,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::TECIDO CHROMA KEY 3X2 PARA ESTUDIO FOTOG",
@@ -4870,7 +5147,8 @@
       "saldo": 79.99,
       "itemConhecidoId": 233,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::ABAFADOR AURICULAR",
@@ -4894,7 +5172,8 @@
       "saldo": 0,
       "itemConhecidoId": 234,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CINTO DE GUARNICAO COM PORTA TONFA, COLD",
@@ -4918,7 +5197,8 @@
       "saldo": 7050,
       "itemConhecidoId": 235,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::COLDRE",
@@ -4942,7 +5222,8 @@
       "saldo": 2190,
       "itemConhecidoId": 236,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::TONFA",
@@ -4966,7 +5247,8 @@
       "saldo": 0,
       "itemConhecidoId": 237,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::OCULOS DE PROTECAO",
@@ -4990,7 +5272,8 @@
       "saldo": 1070,
       "itemConhecidoId": 238,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CURSO DE CAPACITACAO EM VCQB (MODULO I)",
@@ -5014,7 +5297,8 @@
       "saldo": 14884.16,
       "itemConhecidoId": 239,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CURSO: LICITACOES E CONTRATOS CONFORME A",
@@ -5038,7 +5322,8 @@
       "saldo": 10800,
       "itemConhecidoId": 240,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CURSO GESTAO DE RISCO, COMPLIANCE E AUDI",
@@ -5062,7 +5347,8 @@
       "saldo": 10048.6,
       "itemConhecidoId": 241,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CURSO NEGOCIACAO E ADMINISTRACAO DE CONF",
@@ -5086,7 +5372,8 @@
       "saldo": 5880,
       "itemConhecidoId": 242,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::APARELHO DE TV",
@@ -5110,7 +5397,8 @@
       "saldo": 0,
       "itemConhecidoId": 243,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CAIXAS DE SOM",
@@ -5134,7 +5422,8 @@
       "saldo": 0,
       "itemConhecidoId": 244,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CAMERA PARA PC COM MICROFONE COM TECNOLO",
@@ -5158,7 +5447,8 @@
       "saldo": 0,
       "itemConhecidoId": 245,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CARTAO DE MEMORIA 512 GB",
@@ -5182,7 +5472,8 @@
       "saldo": 837,
       "itemConhecidoId": 246,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CAMERA FOTOGRAFICA PROFISSIONAL",
@@ -5206,7 +5497,8 @@
       "saldo": 10998,
       "itemConhecidoId": 247,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::DRONE",
@@ -5230,7 +5522,8 @@
       "saldo": 0,
       "itemConhecidoId": 248,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::FILMADORA PROFISSIONAL",
@@ -5254,7 +5547,8 @@
       "saldo": 12354,
       "itemConhecidoId": 249,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::HD EXTERNO",
@@ -5278,7 +5572,8 @@
       "saldo": 0,
       "itemConhecidoId": 250,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::LENTE: EF 50 MM F/ 1.8 STM",
@@ -5302,7 +5597,8 @@
       "saldo": 999,
       "itemConhecidoId": 251,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::LENTE: EF-S 18-135MM F/3.5-5.6 IS STM",
@@ -5326,7 +5622,8 @@
       "saldo": 3642.19,
       "itemConhecidoId": 252,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::MESA DE SOM",
@@ -5350,7 +5647,8 @@
       "saldo": 3361.9,
       "itemConhecidoId": 253,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::MESA DE VIDEO",
@@ -5374,7 +5672,8 @@
       "saldo": 10091.88,
       "itemConhecidoId": 254,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::MONITOR DE AUDIO",
@@ -5398,7 +5697,8 @@
       "saldo": 0,
       "itemConhecidoId": 255,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::SALDO REMANESCENTE",
@@ -5422,7 +5722,8 @@
       "saldo": 7267.88,
       "itemConhecidoId": 231,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::SCANNER DE MESA",
@@ -5446,7 +5747,8 @@
       "saldo": 33760,
       "itemConhecidoId": 256,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::TELEPROMPTER",
@@ -5470,7 +5772,8 @@
       "saldo": 3480,
       "itemConhecidoId": 257,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::TRIPE PROFISSIONAL COM CABECA SEMI-HIDRA",
@@ -5494,7 +5797,8 @@
       "saldo": 865.18,
       "itemConhecidoId": 258,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::CAIXA DE SOM 600W RMS",
@@ -5518,7 +5822,8 @@
       "saldo": 0,
       "itemConhecidoId": 259,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::COFRE DE ARMAS",
@@ -5542,7 +5847,8 @@
       "saldo": 0,
       "itemConhecidoId": 260,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::COMPUTADOR TIPO BASICO",
@@ -5566,7 +5872,8 @@
       "saldo": 65884,
       "itemConhecidoId": 261,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::DATA SHOW",
@@ -5590,7 +5897,8 @@
       "saldo": 0,
       "itemConhecidoId": 262,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938277::NOTEBOOK BASICO",
@@ -5614,7 +5922,8 @@
       "saldo": 63000,
       "itemConhecidoId": 263,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 3
+      "totalRateiosAtivos": 3,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::CONTRATACAO DE INSTITUICAO DE ENSINO PAR",
@@ -5638,7 +5947,8 @@
       "saldo": 76333.33,
       "itemConhecidoId": 264,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::CAIXA DE SOM AMPLIFICADA COM POTENCIA MA",
@@ -5662,7 +5972,8 @@
       "saldo": 13990,
       "itemConhecidoId": 265,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
@@ -5686,7 +5997,8 @@
       "saldo": 41179.2,
       "itemConhecidoId": 266,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
@@ -5710,7 +6022,8 @@
       "saldo": 46816,
       "itemConhecidoId": 266,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::NOTEBOOK TIPO III PROCESSADOR: AMD RYZE",
@@ -5734,7 +6047,8 @@
       "saldo": 16996,
       "itemConhecidoId": 267,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::PROJETOR MULTIMIDIA 3500 LUMENS 1024 X 7",
@@ -5758,7 +6072,8 @@
       "saldo": 24900.1,
       "itemConhecidoId": 268,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
@@ -5782,7 +6097,8 @@
       "saldo": 0,
       "itemConhecidoId": 269,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
@@ -5806,7 +6122,8 @@
       "saldo": 3790,
       "itemConhecidoId": 269,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
@@ -5830,7 +6147,8 @@
       "saldo": 0,
       "itemConhecidoId": 269,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT, CAPACIDA",
@@ -5854,7 +6172,8 @@
       "saldo": 45990,
       "itemConhecidoId": 270,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::CAMERA PROFISSIONAL DIGITAL DE LENTE CAM",
@@ -5878,7 +6197,8 @@
       "saldo": 11278.56,
       "itemConhecidoId": 271,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::NOTEBOOK AVANCADO COM AS SEGUINTES CARAC",
@@ -5902,7 +6222,8 @@
       "saldo": 5398.9,
       "itemConhecidoId": 272,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937818::SMART TV LED 55, TELEVISOR 55 POLEGADAS,",
@@ -5926,7 +6247,8 @@
       "saldo": 0,
       "itemConhecidoId": 273,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::AGENDA PLANNER",
@@ -5950,7 +6272,8 @@
       "saldo": 1134.27,
       "itemConhecidoId": 214,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CAPA E CASE PROTETORA PARA CAMERA GOPRO",
@@ -5974,7 +6297,8 @@
       "saldo": 224.74,
       "itemConhecidoId": 174,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CARTAO DE MEMORIA DISPOSITIVO DE ARMAZEN",
@@ -5998,7 +6322,8 @@
       "saldo": 381.69,
       "itemConhecidoId": 175,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SALDO RESIDUAL",
@@ -6022,7 +6347,8 @@
       "saldo": 71.36,
       "itemConhecidoId": 212,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
@@ -6046,7 +6372,8 @@
       "saldo": 505000,
       "itemConhecidoId": 215,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CURSO DE POS GRADUACAO DIREITOS HUMANOS",
@@ -6070,7 +6397,8 @@
       "saldo": 354497.68,
       "itemConhecidoId": 176,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CURSO DE POS GRADUACAO EM DIREITO ADMIN",
@@ -6094,7 +6422,8 @@
       "saldo": 457000,
       "itemConhecidoId": 177,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SALDO RESIDUAL SERVICOS EAP",
@@ -6118,7 +6447,8 @@
       "saldo": 46233.82,
       "itemConhecidoId": 178,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SERVICO DE INSTALACAO APARELHO DE AR CON",
@@ -6142,7 +6472,8 @@
       "saldo": 0,
       "itemConhecidoId": 179,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
@@ -6166,7 +6497,8 @@
       "saldo": 426666.67,
       "itemConhecidoId": 216,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::ALGEMA DE PUNHO DOBRADICA DUPLA",
@@ -6190,7 +6522,8 @@
       "saldo": 0,
       "itemConhecidoId": 180,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::ALGEMA DE TORNOZELO",
@@ -6214,7 +6547,8 @@
       "saldo": 0,
       "itemConhecidoId": 181,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SOBRA DE SALDO RESIDUAL",
@@ -6238,7 +6572,8 @@
       "saldo": 32765.74,
       "itemConhecidoId": 182,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::ALGEMAS DE ACO INOX PULSO TREINAMENTOS P",
@@ -6262,7 +6597,8 @@
       "saldo": 300,
       "itemConhecidoId": 183,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::AR CONDICIONADO TETO DAIKIN INVERTER 48K",
@@ -6286,7 +6622,8 @@
       "saldo": 30700.08,
       "itemConhecidoId": 184,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::AR CONDICIONADO DE PAREDE DUAL INVERTER",
@@ -6310,7 +6647,8 @@
       "saldo": 33253,
       "itemConhecidoId": 185,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::ARMARIO DE ESCRITORIO COM 02 PORTAS OUVI",
@@ -6334,7 +6672,8 @@
       "saldo": 7.17,
       "itemConhecidoId": 186,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::BEACONS EDDYSTONE BLE, PARA ESCOLA ADM.",
@@ -6358,7 +6697,8 @@
       "saldo": 28985.67,
       "itemConhecidoId": 187,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CADEIRA GIRATORIA MODELO PRESIDENTE - CO",
@@ -6382,7 +6722,8 @@
       "saldo": 7092.59,
       "itemConhecidoId": 188,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CADEIRA GIRATORIA COM BRACO, PARA ESCOLA",
@@ -6406,7 +6747,8 @@
       "saldo": 7390,
       "itemConhecidoId": 189,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CADEIRA GIRATORIA TIPO POLTRONA - PARA O",
@@ -6430,7 +6772,8 @@
       "saldo": 4342,
       "itemConhecidoId": 190,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CADEIRA UNIVERSITARIA POLIPROPILENO - ES",
@@ -6454,7 +6797,8 @@
       "saldo": 77048,
       "itemConhecidoId": 191,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CIRCULADOR DE AR EBS TURBO 56 CM ECP60",
@@ -6478,7 +6822,8 @@
       "saldo": 2320.28,
       "itemConhecidoId": 192,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CIRCULADOR DE AR 50 - PISO PARA CORREG",
@@ -6502,7 +6847,8 @@
       "saldo": 347.88,
       "itemConhecidoId": 193,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::COMPUTADOR DESKTOP P348 30ER0002BO, PARA",
@@ -6526,7 +6872,8 @@
       "saldo": 18099.18,
       "itemConhecidoId": 194,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
@@ -6550,7 +6897,8 @@
       "saldo": 4287.7,
       "itemConhecidoId": 217,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::ESTANTE DE ACO PARA ARQUIVO MORTO, PARA",
@@ -6574,7 +6922,8 @@
       "saldo": 0,
       "itemConhecidoId": 195,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
@@ -6598,7 +6947,8 @@
       "saldo": 30292.2,
       "itemConhecidoId": 218,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::FORNO MICRO-ONDAS 01 PARA CORREGEDORIA;",
@@ -6622,7 +6972,8 @@
       "saldo": 14.93,
       "itemConhecidoId": 196,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::GSMARTPHONE 128GB MEMORIA INTERNA, 8GB R",
@@ -6646,7 +6997,8 @@
       "saldo": 266.25,
       "itemConhecidoId": 197,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::GAVETEIRO DE 2 GAVETAS E 1 GAVETAO PARA",
@@ -6670,7 +7022,8 @@
       "saldo": -1317.68,
       "itemConhecidoId": 198,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::GAVETEIROS, OUVIDORIA",
@@ -6694,7 +7047,8 @@
       "saldo": 12297.6,
       "itemConhecidoId": 219,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::LIVRO REFORMA DA LEI DE IMPROBABILIDADE",
@@ -6718,7 +7072,8 @@
       "saldo": 126.24,
       "itemConhecidoId": 199,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::LIVRO COMENTARIOS A LEI DE LICITACAO E C",
@@ -6742,7 +7097,8 @@
       "saldo": 354.33,
       "itemConhecidoId": 200,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::LIVRO NOVA LEI DE LICITACOES E CONTRATO",
@@ -6766,7 +7122,8 @@
       "saldo": 142.13,
       "itemConhecidoId": 201,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::LIVROS PARA O ACERVO DA BIBLIOTECA DA ES",
@@ -6790,7 +7147,8 @@
       "saldo": 334737.48,
       "itemConhecidoId": 202,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::LOUSA DIGITAL 55 INTELIGENTE COM CONEXAO",
@@ -6814,7 +7172,8 @@
       "saldo": 0,
       "itemConhecidoId": 203,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::MESA DE CENTRO PARA ESCRITORIO - PARA CO",
@@ -6838,7 +7197,8 @@
       "saldo": 0,
       "itemConhecidoId": 204,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::MESA DE REUNIAO REDONDA PARA ESCRITORIO,",
@@ -6862,7 +7222,8 @@
       "saldo": 0,
       "itemConhecidoId": 205,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::MONITOR DE VIDEO 23,8 61F9KBR1BR, PARA",
@@ -6886,7 +7247,8 @@
       "saldo": 20710.08,
       "itemConhecidoId": 206,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::MONITOR VIDEO 32 - PARA CORREGEDORIA - CASP",
@@ -6910,7 +7272,8 @@
       "saldo": 33273.33,
       "itemConhecidoId": 207,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::POLTRONAS PARA O AUDITORIO COM PRANCHETA",
@@ -6934,7 +7297,8 @@
       "saldo": 218800,
       "itemConhecidoId": 208,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::RADIO PORTATIL HP - PARA ESCOLA ADM PENI",
@@ -6958,7 +7322,8 @@
       "saldo": 57024.4,
       "itemConhecidoId": 209,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SMART TV 55, PARA ESCOLA ADM. PENITENCIARIA",
@@ -6982,7 +7347,8 @@
       "saldo": 12388.05,
       "itemConhecidoId": 210,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SMART TV TELA PLANA 50 POLEGADAS, PARA O",
@@ -7006,7 +7372,8 @@
       "saldo": 493.99,
       "itemConhecidoId": 211,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SALDO RESIDUAL",
@@ -7030,7 +7397,8 @@
       "saldo": 20704.73,
       "itemConhecidoId": 212,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "938128::SOFA DE RECEPCAO 03 LUGARES, PARA OUVIDORIA",
@@ -7054,7 +7422,8 @@
       "saldo": 0,
       "itemConhecidoId": 213,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::ALVO PARA STAND DE TIRO",
@@ -7078,7 +7447,8 @@
       "saldo": 0,
       "itemConhecidoId": 274,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CAMISA MANGA LONGA/INSTRUTOR",
@@ -7102,7 +7472,8 @@
       "saldo": 0,
       "itemConhecidoId": 275,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CAMISETA",
@@ -7126,7 +7497,8 @@
       "saldo": 1610.4,
       "itemConhecidoId": 276,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::BANNER",
@@ -7150,7 +7522,8 @@
       "saldo": 1931.94,
       "itemConhecidoId": 277,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CARTILHA",
@@ -7174,7 +7547,8 @@
       "saldo": 4700,
       "itemConhecidoId": 278,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::FOLDER",
@@ -7198,7 +7572,8 @@
       "saldo": 1040,
       "itemConhecidoId": 279,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::BLUEGUN - G17 - PRO LASER",
@@ -7222,7 +7597,8 @@
       "saldo": 4186.5,
       "itemConhecidoId": 280,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::BLUEGUN - G17 - PRO SHOCK",
@@ -7246,7 +7622,8 @@
       "saldo": 1659.96,
       "itemConhecidoId": 281,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::TATAMES/PLACAS 1MX1MX0,40M.",
@@ -7270,7 +7647,8 @@
       "saldo": 9359,
       "itemConhecidoId": 282,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::URNAS DE ACRILICO",
@@ -7294,7 +7672,8 @@
       "saldo": 3408.8,
       "itemConhecidoId": 283,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CURSO DE POS GRADUACAO LATU SENSU EM PRO",
@@ -7318,7 +7697,8 @@
       "saldo": 16138,
       "itemConhecidoId": 284,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CURSO DE POS-GRADUACAO LATU SENSU EM GES",
@@ -7342,7 +7722,8 @@
       "saldo": 98.2,
       "itemConhecidoId": 285,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::SMARTPHONE",
@@ -7366,7 +7747,8 @@
       "saldo": 7214.66,
       "itemConhecidoId": 286,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::ARMARIO BAIXO 800 X 500 X 740 MM",
@@ -7390,7 +7772,8 @@
       "saldo": 977.22,
       "itemConhecidoId": 287,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CADEIRA FIXA MEDIA COM BRACOS",
@@ -7414,7 +7797,8 @@
       "saldo": 5373.06,
       "itemConhecidoId": 288,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CADEIRA OPERACIONAL ESPALDAR ALTO, COM B",
@@ -7438,7 +7822,8 @@
       "saldo": 4074.99,
       "itemConhecidoId": 289,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::CADEIRA OPERACIONAL ESPALDAR MEDIO, COM",
@@ -7462,7 +7847,8 @@
       "saldo": 5243.6,
       "itemConhecidoId": 290,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::HEADSET FONE",
@@ -7486,7 +7872,8 @@
       "saldo": 765.69,
       "itemConhecidoId": 291,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::LONGARINA DE 2 LUGARES COM BRCAOS",
@@ -7510,7 +7897,8 @@
       "saldo": 5281.11,
       "itemConhecidoId": 292,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::MESA EM L, DIMENSOES: 1400 X 600 X 1400",
@@ -7534,7 +7922,8 @@
       "saldo": 1603.77,
       "itemConhecidoId": 293,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::MESA REUNIAO REDONDA, DIMENSOES: 1200 X",
@@ -7558,7 +7947,8 @@
       "saldo": 1225.53,
       "itemConhecidoId": 294,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::SALDO RESIDUAL APOS O AJUSTE DO PT",
@@ -7582,7 +7972,8 @@
       "saldo": 5.03,
       "itemConhecidoId": 295,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937780::VEICULO ADMINISTRATIVO, MODELO SUV",
@@ -7606,7 +7997,8 @@
       "saldo": 306000,
       "itemConhecidoId": 296,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::DESCANSO ERGONOMICO APOIO DE PUNHO PARA",
@@ -7630,7 +8022,8 @@
       "saldo": 2497.42,
       "itemConhecidoId": 297,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::ADESIVO 60 X 50",
@@ -7654,7 +8047,8 @@
       "saldo": 13200,
       "itemConhecidoId": 298,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::BANNER 0,60 X 0,50",
@@ -7678,7 +8072,8 @@
       "saldo": 870.83,
       "itemConhecidoId": 299,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::PLACA PVC 70 X 60",
@@ -7702,7 +8097,8 @@
       "saldo": 933.33,
       "itemConhecidoId": 300,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::MESA DE ESCRITORIO EM L COM GAVETAS",
@@ -7726,7 +8122,8 @@
       "saldo": 4012.38,
       "itemConhecidoId": 301,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CAIXA AMPLIFICADA DE SOM 300W",
@@ -7750,7 +8147,8 @@
       "saldo": 6871.47,
       "itemConhecidoId": 302,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CAMERA DE VIDEO PROFISSIONAL",
@@ -7774,7 +8172,8 @@
       "saldo": 8322.54,
       "itemConhecidoId": 303,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::GRAVADOR DE AUDIO PORTATIL PROFISSIONAL",
@@ -7798,7 +8197,8 @@
       "saldo": 4492.5,
       "itemConhecidoId": 304,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::MICROFONE DIRECIONAL",
@@ -7822,7 +8222,8 @@
       "saldo": 2423.68,
       "itemConhecidoId": 305,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::MICROFONE DE LAPELA SEM FIO",
@@ -7846,7 +8247,8 @@
       "saldo": 7133.69,
       "itemConhecidoId": 306,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::PROJETOR 3.400 LUMENS, HDMI.",
@@ -7870,7 +8272,8 @@
       "saldo": 9292.36,
       "itemConhecidoId": 307,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::TELEPROMPTER PROFISSIONAL COM LED",
@@ -7894,7 +8297,8 @@
       "saldo": 3634.44,
       "itemConhecidoId": 308,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::TRIPE PARA CAMERA DE VIDEO",
@@ -7918,7 +8322,8 @@
       "saldo": 1295.52,
       "itemConhecidoId": 309,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::MONITOR 23 POLEGADAS",
@@ -7942,7 +8347,8 @@
       "saldo": 8426.64,
       "itemConhecidoId": 310,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::NOTEBOOK CORE I7 8GB 512GB SSD TELA FULL",
@@ -7966,7 +8372,8 @@
       "saldo": 13092.07,
       "itemConhecidoId": 311,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CADEIRA LONGARINA 3 LUGARES",
@@ -7990,7 +8397,8 @@
       "saldo": 3432.11,
       "itemConhecidoId": 312,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::APOIADOR DE PES ERGONOMICO",
@@ -8014,7 +8422,8 @@
       "saldo": 1977.42,
       "itemConhecidoId": 313,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::AR CONDICIONADO SPLIT 30.000 BTUS (INSTA",
@@ -8038,7 +8447,8 @@
       "saldo": 4296.92,
       "itemConhecidoId": 314,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::AR CONDICIONADO SPLIT12.000 BTUS (INSTALADO)",
@@ -8062,7 +8472,8 @@
       "saldo": 9114.98,
       "itemConhecidoId": 315,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::ARMARIO ALTO ORGANIZADO",
@@ -8086,7 +8497,8 @@
       "saldo": 2654.71,
       "itemConhecidoId": 316,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CADEIRA EXECUTIVA GIRATORIA PRESIDENTE",
@@ -8110,7 +8522,8 @@
       "saldo": 6173.64,
       "itemConhecidoId": 317,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CADEIRA EXECUTIVA EM LONGARINA",
@@ -8134,7 +8547,8 @@
       "saldo": 7784.82,
       "itemConhecidoId": 318,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CENTRAL DE AR 12.000 MIL BTUS INVERTER",
@@ -8158,7 +8572,8 @@
       "saldo": 6447,
       "itemConhecidoId": 319,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CENTRAL DE AR 18.000 MIL BTUS INVERTER",
@@ -8182,7 +8597,8 @@
       "saldo": 6959.39,
       "itemConhecidoId": 320,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::COMPUTADOR 8GB DDR4 SSD 240 GB MONITOR 1",
@@ -8206,7 +8622,8 @@
       "saldo": 4859.53,
       "itemConhecidoId": 321,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::COMPUTADOR DE MESA (DESKTOP) PROCESSADOR",
@@ -8230,7 +8647,8 @@
       "saldo": 35140.64,
       "itemConhecidoId": 322,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::CAMERA DIGITAL T100 18MP LENTE 18 55MM W",
@@ -8254,7 +8672,8 @@
       "saldo": 4766.75,
       "itemConhecidoId": 323,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::ESTABILIZADOR",
@@ -8278,7 +8697,8 @@
       "saldo": 2658.45,
       "itemConhecidoId": 324,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::LOUSA DE VIDRO",
@@ -8302,7 +8722,8 @@
       "saldo": 410.67,
       "itemConhecidoId": 325,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::MONITOR WIDESCREEN 24MK430H - 23.8' LED,",
@@ -8326,7 +8747,8 @@
       "saldo": 9300.96,
       "itemConhecidoId": 326,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::NOBREAK 1.200 VA",
@@ -8350,7 +8772,8 @@
       "saldo": 4330.33,
       "itemConhecidoId": 327,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::NOBREAK 1200VA 120V",
@@ -8374,7 +8797,8 @@
       "saldo": 9934.16,
       "itemConhecidoId": 328,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::NOBREAK XNB 720 VA - 120V",
@@ -8398,7 +8822,8 @@
       "saldo": 3511.23,
       "itemConhecidoId": 329,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::SCANNER PORTATIL I940 PRETO USB",
@@ -8422,7 +8847,8 @@
       "saldo": 1399,
       "itemConhecidoId": 330,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::TECLADO E MOUSE SEM FIO MULTI SLIM, ABNT",
@@ -8446,7 +8872,8 @@
       "saldo": 944.76,
       "itemConhecidoId": 331,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::TELEVISOR 43 SMART TV 4K",
@@ -8470,7 +8897,8 @@
       "saldo": 5065.87,
       "itemConhecidoId": 332,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937917::WEBCAM FULL HD 4K MICROFONE CONEXAO",
@@ -8494,7 +8922,8 @@
       "saldo": 2959.8,
       "itemConhecidoId": 333,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::SALDO DE ECONOMICIDADE - DESPESAS DE CUSTEIO",
@@ -8518,7 +8947,8 @@
       "saldo": 13594.58,
       "itemConhecidoId": 334,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - APOIO ERGONOMICO P",
@@ -8542,7 +8972,8 @@
       "saldo": 210,
       "itemConhecidoId": 335,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - CAIXA DE SOM PARA",
@@ -8566,7 +8997,8 @@
       "saldo": 167.31,
       "itemConhecidoId": 336,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - HEADSET MICROFONE",
@@ -8590,7 +9022,8 @@
       "saldo": 499,
       "itemConhecidoId": 337,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - WEBCAM: CAMERA WEB",
@@ -8614,7 +9047,8 @@
       "saldo": 312,
       "itemConhecidoId": 338,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - APOIO ERGONOMIC",
@@ -8638,7 +9072,8 @@
       "saldo": 490,
       "itemConhecidoId": 339,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - FONE DE OUVIDO",
@@ -8662,7 +9097,8 @@
       "saldo": 2575.2,
       "itemConhecidoId": 340,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - HEADSET MICROFONE",
@@ -8686,7 +9122,8 @@
       "saldo": 1164.31,
       "itemConhecidoId": 341,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - WEBCAM: CAMERA",
@@ -8710,7 +9147,8 @@
       "saldo": 728,
       "itemConhecidoId": 342,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - BASTAO POLICIAL PR-24",
@@ -8734,7 +9172,8 @@
       "saldo": 1978.13,
       "itemConhecidoId": 343,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - BATERIA DE PISTOLA AIR",
@@ -8758,7 +9197,8 @@
       "saldo": 2879.7,
       "itemConhecidoId": 344,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - BATERIA P/CARABINA AIR",
@@ -8782,7 +9222,8 @@
       "saldo": 3610.65,
       "itemConhecidoId": 345,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - CADEIRA PLASTICA",
@@ -8806,7 +9247,8 @@
       "saldo": 2450,
       "itemConhecidoId": 346,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - CAIXA DE SOM PORTATIL",
@@ -8830,7 +9272,8 @@
       "saldo": 756.1,
       "itemConhecidoId": 347,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - CARREGADOR BATERIA DE",
@@ -8854,7 +9297,8 @@
       "saldo": 740.9,
       "itemConhecidoId": 348,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - CARREGADOR BATERIA P/C",
@@ -8878,7 +9322,8 @@
       "saldo": 740.9,
       "itemConhecidoId": 349,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - GARRAFA TERMICA DE 20",
@@ -8902,7 +9347,8 @@
       "saldo": 285.48,
       "itemConhecidoId": 350,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - GARRAFA TERMICA DE 5 L",
@@ -8926,7 +9372,8 @@
       "saldo": 219.96,
       "itemConhecidoId": 351,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - HEADFONE-PROFISSIONAL",
@@ -8950,7 +9397,8 @@
       "saldo": 539.4,
       "itemConhecidoId": 352,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - MESA PLASTICA",
@@ -8974,7 +9422,8 @@
       "saldo": 412.5,
       "itemConhecidoId": 353,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - MICROFONES SEM FIOS CO",
@@ -8998,7 +9447,8 @@
       "saldo": 1603.08,
       "itemConhecidoId": 354,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - MUNICAO BBS 6MM PARA A",
@@ -9022,7 +9472,8 @@
       "saldo": 4398,
       "itemConhecidoId": 355,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - PLACA DE MEMORIA RAM 1",
@@ -9046,7 +9497,8 @@
       "saldo": 2069.44,
       "itemConhecidoId": 356,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - PLACA USB 2.0-WIFI",
@@ -9070,7 +9522,8 @@
       "saldo": 483.14,
       "itemConhecidoId": 357,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - RING LIGHT GRANDE COM",
@@ -9094,7 +9547,8 @@
       "saldo": 451.67,
       "itemConhecidoId": 358,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - TOMADA/EXTENSAO PROFIS",
@@ -9118,7 +9572,8 @@
       "saldo": 592,
       "itemConhecidoId": 359,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - TORNIQUETE DE APH TATI",
@@ -9142,7 +9597,8 @@
       "saldo": 8750.1,
       "itemConhecidoId": 360,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - FRIGOBAR COM CA",
@@ -9166,7 +9622,8 @@
       "saldo": 1500,
       "itemConhecidoId": 361,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
@@ -9190,7 +9647,8 @@
       "saldo": 21868,
       "itemConhecidoId": 386,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
@@ -9214,7 +9672,8 @@
       "saldo": 3600,
       "itemConhecidoId": 362,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - GAVETEIRO VOLAN",
@@ -9238,7 +9697,8 @@
       "saldo": 2650,
       "itemConhecidoId": 363,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - MESA COM CREDEN",
@@ -9262,7 +9722,8 @@
       "saldo": 5200,
       "itemConhecidoId": 364,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
@@ -9286,7 +9747,8 @@
       "saldo": 3933.72,
       "itemConhecidoId": 365,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - CPU: MICROCOMPUTAD",
@@ -9310,7 +9772,8 @@
       "saldo": 27490,
       "itemConhecidoId": 366,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - CADEIRA GIRATORIA",
@@ -9334,7 +9797,8 @@
       "saldo": 3600,
       "itemConhecidoId": 367,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - MESA - ESTACAO DE",
@@ -9358,7 +9822,8 @@
       "saldo": 1518.45,
       "itemConhecidoId": 368,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - MONITOR",
@@ -9382,7 +9847,8 @@
       "saldo": -7079.94,
       "itemConhecidoId": 369,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
@@ -9406,7 +9872,8 @@
       "saldo": 0,
       "itemConhecidoId": 370,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOTEBOOK: BATERIA:",
@@ -9430,7 +9897,8 @@
       "saldo": 22338,
       "itemConhecidoId": 371,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - CPU: MICROCOMPU",
@@ -9454,7 +9922,8 @@
       "saldo": 27489.99,
       "itemConhecidoId": 372,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
@@ -9478,7 +9947,8 @@
       "saldo": 19200,
       "itemConhecidoId": 362,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - MESA RETA: ESTA",
@@ -9502,7 +9972,8 @@
       "saldo": 8604.55,
       "itemConhecidoId": 373,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - MONITOR",
@@ -9526,7 +9997,8 @@
       "saldo": 7079.94,
       "itemConhecidoId": 374,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
@@ -9550,7 +10022,8 @@
       "saldo": 0,
       "itemConhecidoId": 375,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TELEVISAO: - 50",
@@ -9574,7 +10047,8 @@
       "saldo": 2332.67,
       "itemConhecidoId": 376,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
@@ -9598,7 +10072,8 @@
       "saldo": 3020.33,
       "itemConhecidoId": 365,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - CAFETEIRA INDUSTRIAL",
@@ -9622,7 +10097,8 @@
       "saldo": 929.38,
       "itemConhecidoId": 377,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - CARABINA AIRSOFT-ELETR",
@@ -9646,7 +10122,8 @@
       "saldo": 11026.2,
       "itemConhecidoId": 378,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - GELADEIRA 340 LITROS",
@@ -9670,7 +10147,8 @@
       "saldo": 0,
       "itemConhecidoId": 379,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - MEGAFONE PROFISSIONAL",
@@ -9694,7 +10172,8 @@
       "saldo": 664.2,
       "itemConhecidoId": 380,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - MICROONDAS",
@@ -9718,7 +10197,8 @@
       "saldo": 0,
       "itemConhecidoId": 381,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - NOTEBOOK: ULTRAPORTATI",
@@ -9742,7 +10222,8 @@
       "saldo": 32686.16,
       "itemConhecidoId": 382,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - PISTOLA AIRSOFT-ELETRI",
@@ -9766,7 +10247,8 @@
       "saldo": 10230.67,
       "itemConhecidoId": 383,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::ETAPA 3 ESCOLA - PROJETOR DE 34000 - EN",
@@ -9790,7 +10272,8 @@
       "saldo": 4998,
       "itemConhecidoId": 384,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937468::SALDO DE ECONOMICIDADE - DESPESAS DE INV",
@@ -9814,7 +10297,8 @@
       "saldo": 2421,
       "itemConhecidoId": 385,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::CONTRATACAO DE SERVICOS DE DESENVOLVIMEN",
@@ -9838,7 +10322,8 @@
       "saldo": 42900,
       "itemConhecidoId": 446,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::AR CONDICIONADO SPLIT 18000 BTUS (ESCOLA)",
@@ -9862,7 +10347,8 @@
       "saldo": 5567.44,
       "itemConhecidoId": 448,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::FRAGMENTADORA DE PAPEL 150 FOLHAS (OUVI",
@@ -9886,7 +10372,8 @@
       "saldo": 3420,
       "itemConhecidoId": 457,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL LASER COLORIDA",
@@ -9910,7 +10397,8 @@
       "saldo": 3526.06,
       "itemConhecidoId": 463,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::MESA DE CENTRO (CORREGEDORIA)",
@@ -9934,7 +10422,8 @@
       "saldo": 1302.24,
       "itemConhecidoId": 466,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::SOFA 3 LUGARES (CORREGEDORIA)",
@@ -9958,7 +10447,8 @@
       "saldo": 3650.84,
       "itemConhecidoId": 473,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::SUPLEMENTACAO DE VALOR - AQUISICAO DE FO",
@@ -9982,7 +10472,8 @@
       "saldo": 3.5,
       "itemConhecidoId": 474,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937221::TAPETE (CORREGEDORIA)",
@@ -10006,7 +10497,8 @@
       "saldo": 1690.82,
       "itemConhecidoId": 475,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::ABAFADOR ELETRONICO TIRO ESPORTIVO",
@@ -10030,7 +10522,8 @@
       "saldo": 1406.15,
       "itemConhecidoId": 387,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::ALVOS SILHUETA HUMANOIDE 100 UNIDADES",
@@ -10054,7 +10547,8 @@
       "saldo": 11705,
       "itemConhecidoId": 388,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::APARADOR DE CHUTE",
@@ -10078,7 +10572,8 @@
       "saldo": 759.73,
       "itemConhecidoId": 389,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::BOLSO MDIVO APH",
@@ -10102,7 +10597,8 @@
       "saldo": -382.53,
       "itemConhecidoId": 390,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::BONECO SIMULDOR DE TREINO",
@@ -10126,7 +10622,8 @@
       "saldo": 3968.1,
       "itemConhecidoId": 391,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::CAIXAS DE GRAMPO COM 4000 UNIDADES",
@@ -10150,7 +10647,8 @@
       "saldo": 263.83,
       "itemConhecidoId": 392,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::CAPACETE PROTETOR",
@@ -10174,7 +10672,8 @@
       "saldo": 4340.07,
       "itemConhecidoId": 393,
       "aptoParaImportacaoFutura": false,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::FACA DE TREINO",
@@ -10198,7 +10697,8 @@
       "saldo": 5086,
       "itemConhecidoId": 394,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::GRAMPEADOR PROFISSIONAL PARA MADEIRA",
@@ -10222,7 +10722,8 @@
       "saldo": -2503.34,
       "itemConhecidoId": 395,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::LUVA DE BOXE",
@@ -10246,7 +10747,8 @@
       "saldo": 1825.51,
       "itemConhecidoId": 396,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::LUVA DE MMA",
@@ -10270,7 +10772,8 @@
       "saldo": 2742,
       "itemConhecidoId": 397,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MACA TATICA TEMS",
@@ -10294,7 +10797,8 @@
       "saldo": -219.93,
       "itemConhecidoId": 398,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MALETA PRIMEIROS SOCORROS",
@@ -10318,7 +10822,8 @@
       "saldo": -38.41,
       "itemConhecidoId": 399,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MANOPLA DE FOCO",
@@ -10342,7 +10847,8 @@
       "saldo": 665.02,
       "itemConhecidoId": 400,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::OCULOS DE PROTECAO TIRO ESPORTIVO",
@@ -10366,7 +10872,8 @@
       "saldo": 2625.3,
       "itemConhecidoId": 401,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::PLACAS DE TATAME DE 40MM",
@@ -10390,7 +10897,8 @@
       "saldo": 16227.33,
       "itemConhecidoId": 402,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::ROLOS DE OBREIA BRANCA",
@@ -10414,7 +10922,8 @@
       "saldo": 2056,
       "itemConhecidoId": 403,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::SIMULACRO DE PISTOLA",
@@ -10438,7 +10947,8 @@
       "saldo": 20970,
       "itemConhecidoId": 404,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::SUPORTE PARA SACO DE PANCADA",
@@ -10462,7 +10972,8 @@
       "saldo": 277.95,
       "itemConhecidoId": 405,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::TONIQUETE",
@@ -10486,7 +10997,8 @@
       "saldo": 7220.4,
       "itemConhecidoId": 406,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::AR CONDICIONADO JANELA 18.000 BTUS",
@@ -10510,7 +11022,8 @@
       "saldo": 15689.73,
       "itemConhecidoId": 407,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::AR CONDICIONADO SPLIT 18.000 BTUS",
@@ -10534,7 +11047,8 @@
       "saldo": 27822.97,
       "itemConhecidoId": 408,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::AR CONDICIONADO SPLIT 50.000 BTUS",
@@ -10558,7 +11072,8 @@
       "saldo": 17282.02,
       "itemConhecidoId": 409,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::ARMARIO ESCRITORIO 2 PORTAS",
@@ -10582,7 +11097,8 @@
       "saldo": 3286,
       "itemConhecidoId": 410,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::ARQUIVO DE FERRO 4 GAVETAS",
@@ -10606,7 +11122,8 @@
       "saldo": 3511.08,
       "itemConhecidoId": 411,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::BEBEDOURO INDUSTRIAL 100L",
@@ -10630,7 +11147,8 @@
       "saldo": 2533.99,
       "itemConhecidoId": 412,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::BEBEDOURO INDUSTRIAL 50L",
@@ -10654,7 +11172,8 @@
       "saldo": 4588.6,
       "itemConhecidoId": 413,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::BEBEDOURO PURIFICADOR COLUNA",
@@ -10678,7 +11197,8 @@
       "saldo": 7688.87,
       "itemConhecidoId": 414,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::BOMBA AUTO ASPIRANTE 2CV",
@@ -10702,7 +11222,8 @@
       "saldo": -300.74,
       "itemConhecidoId": 415,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::CADEIRA ESCRITORIO PRESIDENTE",
@@ -10726,7 +11247,8 @@
       "saldo": 27794,
       "itemConhecidoId": 416,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::CAMERA EOSREBEL SL3 COM LENTE EF-S18-55MM",
@@ -10750,7 +11272,8 @@
       "saldo": 2004.74,
       "itemConhecidoId": 417,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::COLCHAO DESOLTEIRO",
@@ -10774,7 +11297,8 @@
       "saldo": 1245,
       "itemConhecidoId": 418,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::CONJUNTO MESA ECADEIRA ESCOLAR",
@@ -10798,7 +11322,8 @@
       "saldo": 26010,
       "itemConhecidoId": 419,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::DESFIBRILADOR EXTERNO AUTOMATICO DEA)",
@@ -10822,7 +11347,8 @@
       "saldo": 4312.66,
       "itemConhecidoId": 420,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::ESTABILIZADOR",
@@ -10846,7 +11372,8 @@
       "saldo": -2781.8,
       "itemConhecidoId": 421,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::FRIGOBAR",
@@ -10870,7 +11397,8 @@
       "saldo": 9557.17,
       "itemConhecidoId": 422,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::GAVETEIRO 4 GAVETAS",
@@ -10894,7 +11422,8 @@
       "saldo": 4104,
       "itemConhecidoId": 423,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::GRAVADOR ZOOM H4NPRO",
@@ -10918,7 +11447,8 @@
       "saldo": 1216.19,
       "itemConhecidoId": 424,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::LONGARINA 4 LUGARES",
@@ -10942,7 +11472,8 @@
       "saldo": 59220,
       "itemConhecidoId": 425,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MANEQUIM DE TREINAMENTO RCP",
@@ -10966,7 +11497,8 @@
       "saldo": 22951.65,
       "itemConhecidoId": 426,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MANEQUIM DE TREINAMENTO RCPBEBE",
@@ -10990,7 +11522,8 @@
       "saldo": 8785.2,
       "itemConhecidoId": 427,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MESA ESCRITORIOCOM GAVETA",
@@ -11014,7 +11547,8 @@
       "saldo": 17307.81,
       "itemConhecidoId": 428,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MESA REFEITORIO 8 LUGARES",
@@ -11038,7 +11572,8 @@
       "saldo": 2800,
       "itemConhecidoId": 429,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MICROFONE LAPELA",
@@ -11062,7 +11597,8 @@
       "saldo": 606.72,
       "itemConhecidoId": 430,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MICROONDAS",
@@ -11086,7 +11622,8 @@
       "saldo": 262.96,
       "itemConhecidoId": 431,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::MINIBUS PARA ATENDIMENTO DE CIDADOES IN",
@@ -11110,7 +11647,8 @@
       "saldo": 323838.87,
       "itemConhecidoId": 432,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::NOTEBOOK 14'",
@@ -11134,7 +11672,8 @@
       "saldo": 16037.24,
       "itemConhecidoId": 433,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::PICK UP",
@@ -11158,7 +11697,8 @@
       "saldo": 601790.88,
       "itemConhecidoId": 434,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::PLACA PABX 16RAMAIS",
@@ -11182,7 +11722,8 @@
       "saldo": 1024.55,
       "itemConhecidoId": 435,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::PROJETOR INTERATIVO",
@@ -11206,7 +11747,8 @@
       "saldo": 53798,
       "itemConhecidoId": 436,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::RING LIGHT 18' +TRIPE",
@@ -11230,7 +11772,8 @@
       "saldo": 1783.6,
       "itemConhecidoId": 437,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::SALDO DE RENDIMENTO COMPLEMENTACAO DOS V",
@@ -11254,7 +11797,8 @@
       "saldo": 61043.33,
       "itemConhecidoId": 438,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::SALDO REMANESCENTE - AQUISICAO",
@@ -11278,7 +11822,8 @@
       "saldo": 183.4,
       "itemConhecidoId": 439,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::SIMULADORDEA",
@@ -11302,7 +11847,8 @@
       "saldo": 7837,
       "itemConhecidoId": 440,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::TELEFONE SEM FIO",
@@ -11326,7 +11872,8 @@
       "saldo": 703.52,
       "itemConhecidoId": 441,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::TENDAS BRANCAS DE PRAIA 3X3M",
@@ -11350,7 +11897,8 @@
       "saldo": -234.67,
       "itemConhecidoId": 442,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::TRIPE MANFROTTOBEFREE ADVANCEDMK BFRLA4BK-BH",
@@ -11374,7 +11922,8 @@
       "saldo": 1868.38,
       "itemConhecidoId": 443,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::TV SMART 55' 4K",
@@ -11398,7 +11947,8 @@
       "saldo": 1883.3,
       "itemConhecidoId": 444,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937817::VENTILADOR 50 CM PAREDE",
@@ -11422,7 +11972,8 @@
       "saldo": 1775.47,
       "itemConhecidoId": 445,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 002 - EQUIPAMENTO DE CAPTURA DE IMA",
@@ -11446,7 +11997,8 @@
       "saldo": 7200,
       "itemConhecidoId": 479,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 021 - SALDO REMANESCENTE CONSUMO",
@@ -11470,7 +12022,8 @@
       "saldo": 92886.88,
       "itemConhecidoId": 480,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 001 - VEICULO COMPLETO AUTOMATICO,",
@@ -11494,7 +12047,8 @@
       "saldo": 280433.34,
       "itemConhecidoId": 481,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 2
+      "totalRateiosAtivos": 2,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 003 - CAMERA DIGITAL 4K 60 FPS, 6K",
@@ -11518,7 +12072,8 @@
       "saldo": 7000,
       "itemConhecidoId": 482,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 004 - CAMERA DE ACAO HOMONIMA A PRO",
@@ -11542,7 +12097,8 @@
       "saldo": 1795.67,
       "itemConhecidoId": 483,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 005 - AUTOMOVEL ZERO QUILOMETRO, AN",
@@ -11566,7 +12122,8 @@
       "saldo": 97456.67,
       "itemConhecidoId": 484,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 006 - DRONE COM RESOLUCAO DE CAPTUR",
@@ -11590,7 +12147,8 @@
       "saldo": 0,
       "itemConhecidoId": 485,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 007 - FILMADORA PROFISSIONAL 4K COM",
@@ -11614,7 +12172,8 @@
       "saldo": 0,
       "itemConhecidoId": 486,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 008 - GRAVADOR E REPRODUTOR DIGITAL",
@@ -11638,7 +12197,8 @@
       "saldo": 0,
       "itemConhecidoId": 487,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 009 - HEADSET COM MICROFONE, DRIVER",
@@ -11662,7 +12222,8 @@
       "saldo": 0,
       "itemConhecidoId": 488,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 010 - KIT COM 2 SOFTBOX QUADRUPLOS",
@@ -11686,7 +12247,8 @@
       "saldo": 534.18,
       "itemConhecidoId": 489,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 011 - MESA DE SOM 12 CANAIS PROFISS",
@@ -11710,7 +12272,8 @@
       "saldo": 0,
       "itemConhecidoId": 490,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 012 - MICROFONE CONDENSADOR, MICROF",
@@ -11734,7 +12297,8 @@
       "saldo": 0,
       "itemConhecidoId": 491,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 013 - MICROFONE DIRECIONAL ESTEREO",
@@ -11758,7 +12322,8 @@
       "saldo": 1293.86,
       "itemConhecidoId": 492,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 014 - MICROFONE LAPELA SEM FIO OMNI",
@@ -11782,7 +12347,8 @@
       "saldo": 1900,
       "itemConhecidoId": 493,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 015 - MONITOR DE 34 ', RESOLUCAO DE",
@@ -11806,7 +12372,8 @@
       "saldo": 6227.01,
       "itemConhecidoId": 494,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 016 - NOTEBOOK COM PROCESSADOR DE N",
@@ -11830,7 +12397,8 @@
       "saldo": 12500,
       "itemConhecidoId": 495,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 017 - MICROCOMPUTADOR DESKTOP COM P",
@@ -11854,7 +12422,8 @@
       "saldo": 0,
       "itemConhecidoId": 496,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 018 - REFLETOR LED COM SUPORTE TRIP",
@@ -11878,7 +12447,8 @@
       "saldo": 736.64,
       "itemConhecidoId": 497,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 019 - TABLET COM NO MINIMO 512GB DE",
@@ -11902,7 +12472,8 @@
       "saldo": 5200,
       "itemConhecidoId": 498,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 020 - TELEPROMPTER PORTATIL DOBRAVE",
@@ -11926,7 +12497,8 @@
       "saldo": 2470,
       "itemConhecidoId": 499,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     },
     {
       "chaveItem": "937783::ITEM 022 - SALDO REMANESCENTE CAPITAL",
@@ -11950,7 +12522,8 @@
       "saldo": 18488.15,
       "itemConhecidoId": 500,
       "aptoParaImportacaoFutura": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "saneadoPorDiacritico": false
     }
   ],
   "itensPadSemRateio": [
@@ -12003,40 +12576,6 @@
       "descricaoOriginalReferencia": null
     },
     {
-      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Desktop para edição de vídeo",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "DESKTOP PARA EDICAO DE VIDEO",
-      "descricaoOriginal": "Desktop para edição de vídeo",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 27,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 1,
-      "valorUnitario": 14849,
-      "valorTotalPrevisto": 14849,
-      "valorTotalExecutado": 0,
-      "saldo": 14849,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 97,
-      "descricaoOriginalReferencia": "Desktop para edição de video",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 14849,
-        "valorUnitarioReferenciaMemoria": 14849,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      }
-    },
-    {
       "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
       "chaveDescricaoOriginal": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
       "numeroConvenio": "937782",
@@ -12059,74 +12598,6 @@
       "motivo": "item_pad_nao_existe_na_memoria_rateio",
       "itemConhecidoNormalizadoId": null,
       "descricaoOriginalReferencia": null
-    },
-    {
-      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "chaveDescricaoOriginal": "937782::Smartphone mínimo de 128gb de memória in",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 44,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 2,
-      "valorUnitario": 2341.24,
-      "valorTotalPrevisto": 4682.48,
-      "valorTotalExecutado": 1900,
-      "saldo": 2782.48,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 111,
-      "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 2341.24,
-        "valorUnitarioReferenciaMemoria": 2341.24,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      }
-    },
-    {
-      "chaveItem": "937782::SWITCHER DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Switcher de vídeo",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SWITCHER DE VIDEO",
-      "descricaoOriginal": "Switcher de vídeo",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 47,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 2,
-      "valorUnitario": 3901,
-      "valorTotalPrevisto": 7802,
-      "valorTotalExecutado": 7802,
-      "saldo": 0,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 112,
-      "descricaoOriginalReferencia": "Switcher de video",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 3901,
-        "valorUnitarioReferenciaMemoria": 3901,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      }
     },
     {
       "chaveItem": "937265::MEIA MILITAR",
@@ -12661,7 +13132,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 12736.48,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 12736.48
     },
     {
       "id": 450,
@@ -12680,7 +13155,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 8168.19,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 8168.19
     },
     {
       "id": 447,
@@ -12699,7 +13178,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 1349.62,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1349.62
     },
     {
       "id": 451,
@@ -12718,7 +13201,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 703.26,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 703.26
     },
     {
       "id": 452,
@@ -12737,7 +13224,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 582.36,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 582.36
     },
     {
       "id": 453,
@@ -12756,7 +13247,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 844.06,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 844.06
     },
     {
       "id": 454,
@@ -12775,7 +13270,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 1455.49,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1455.49
     },
     {
       "id": 455,
@@ -12794,7 +13293,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 482.36,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 482.36
     },
     {
       "id": 456,
@@ -12813,7 +13316,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 726,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 726
     },
     {
       "id": 458,
@@ -12832,7 +13339,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 1859.26,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1859.26
     },
     {
       "id": 459,
@@ -12851,7 +13362,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 3490.71,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 3490.71
     },
     {
       "id": 460,
@@ -12870,7 +13385,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 2150.72,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 2150.72
     },
     {
       "id": 461,
@@ -12889,7 +13408,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 2787.76,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 2787.76
     },
     {
       "id": 462,
@@ -12908,7 +13431,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 3178.2,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 3178.2
     },
     {
       "id": 464,
@@ -12927,7 +13454,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 32427,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 32427
     },
     {
       "id": 465,
@@ -12946,7 +13477,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 492.51,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 492.51
     },
     {
       "id": 467,
@@ -12965,7 +13500,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 50,
+      "valorPrevistoReferencia": 6104.55,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 6104.55
     },
     {
       "id": 468,
@@ -12984,7 +13523,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 2020.5,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 2020.5
     },
     {
       "id": 469,
@@ -13003,7 +13546,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 80,
+      "valorPrevistoReferencia": 1901.92,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1901.92
     },
     {
       "id": 470,
@@ -13022,7 +13569,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 1254.79,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1254.79
     },
     {
       "id": 471,
@@ -13041,7 +13592,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 7133.77,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 7133.77
     },
     {
       "id": 472,
@@ -13060,7 +13615,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 4261.6,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 4261.6
     },
     {
       "id": 476,
@@ -13079,7 +13638,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 1047.97,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1047.97
     },
     {
       "id": 477,
@@ -13098,7 +13661,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 50,
+      "valorPrevistoReferencia": 10874.3,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 10874.3
     },
     {
       "id": 478,
@@ -13117,7 +13684,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 491.08,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 491.08
     },
     {
       "id": 115,
@@ -13136,7 +13707,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 12,
+      "valorPrevistoReferencia": 172800,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 172800
     },
     {
       "id": 116,
@@ -13155,7 +13730,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 12,
+      "valorPrevistoReferencia": 14400,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 14400
     },
     {
       "id": 117,
@@ -13174,26 +13753,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 1
-    },
-    {
-      "id": 97,
-      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Desktop para edição de video",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "DESKTOP PARA EDICAO DE VIDEO",
-      "descricaoOriginalReferencia": "Desktop para edição de video",
-      "uf": "AC",
-      "ano": "2022",
-      "valorUnitarioReferencia": 14849,
-      "naturezasEncontradas": [
-        "CAPITAL"
-      ],
-      "aptoParaImportacaoFutura": true,
-      "possuiPendenciaImpedativa": false,
-      "statusItem": "ATIVO",
-      "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 3,
+      "valorPrevistoReferencia": 4500,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 4500
     },
     {
       "id": 109,
@@ -13212,45 +13776,11 @@
       "possuiPendenciaImpedativa": false,
       "statusItem": "ATIVO",
       "ativo": true,
-      "totalRateiosAtivos": 2
-    },
-    {
-      "id": 111,
-      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "chaveDescricaoOriginal": "937782::Smartphone minimo de 128gb de memória in",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
-      "uf": "AC",
-      "ano": "2022",
-      "valorUnitarioReferencia": 2341.24,
-      "naturezasEncontradas": [
-        "CAPITAL"
-      ],
-      "aptoParaImportacaoFutura": true,
-      "possuiPendenciaImpedativa": false,
-      "statusItem": "ATIVO",
-      "ativo": true,
-      "totalRateiosAtivos": 2
-    },
-    {
-      "id": 112,
-      "chaveItem": "937782::SWITCHER DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Switcher de video",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SWITCHER DE VIDEO",
-      "descricaoOriginalReferencia": "Switcher de video",
-      "uf": "AC",
-      "ano": "2022",
-      "valorUnitarioReferencia": 3901,
-      "naturezasEncontradas": [
-        "CAPITAL"
-      ],
-      "aptoParaImportacaoFutura": true,
-      "possuiPendenciaImpedativa": false,
-      "statusItem": "ATIVO",
-      "ativo": true,
-      "totalRateiosAtivos": 1
+      "totalRateiosAtivos": 2,
+      "quantidadeReferencia": 2,
+      "valorPrevistoReferencia": 7199.98,
+      "valorExecutadoReferencia": 6229.86,
+      "saldoReferencia": 970.1199999999999
     }
   ],
   "itensConhecidosNaoAptos": [
@@ -13712,6 +14242,47 @@
     }
   ],
   "instrumentosNaoEncontradosNaCarteira": [],
+  "equivalenciasDiacriticoSaneadas": [
+    {
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoOriginalMemoria": "Desktop para edição de video",
+      "descricaoOriginalPad": "Desktop para edição de vídeo",
+      "valorUnitario": 14849,
+      "natureza": "CAPITAL",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
+        "aba": "937782",
+        "linha": 27
+      }
+    },
+    {
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoOriginalMemoria": "Smartphone minimo de 128gb de memória in",
+      "descricaoOriginalPad": "Smartphone mínimo de 128gb de memória in",
+      "valorUnitario": 2341.24,
+      "natureza": "CAPITAL",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
+        "aba": "937782",
+        "linha": 44
+      }
+    },
+    {
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "descricaoOriginalMemoria": "Switcher de video",
+      "descricaoOriginalPad": "Switcher de vídeo",
+      "valorUnitario": 3901,
+      "natureza": "CAPITAL",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
+        "aba": "937782",
+        "linha": 47
+      }
+    }
+  ],
   "alertas": [
     {
       "tipo": "quantidade_valor_unitario_inconsistente",
@@ -14526,27 +15097,19 @@
       }
     },
     {
-      "tipo": "item_pad_coincide_apenas_por_descricao_normalizada",
-      "nivel": "aviso",
+      "tipo": "equivalencia_por_diacritico_saneada_automaticamente",
+      "nivel": "info",
       "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
       "instrumento": "937782",
       "uf": "AC",
       "ano": "2022",
       "descricao": "Desktop para edição de vídeo",
-      "detalhe": "Item PAD coincide pela descrição normalizada, mas a descrição original diverge da referência persistida; não foi considerado rateado.",
+      "detalhe": "A diferença na descrição de 'Desktop para edição de video' x 'Desktop para edição de vídeo' é apenas de acentuação/diacríticos e os dados materiais são compatíveis. Saneado automaticamente.",
       "origem": {
         "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
         "aba": "937782",
         "linha": 27
-      },
-      "valorUnitarioPad": 14849,
-      "valorUnitarioReferenciaMemoria": 14849,
-      "valorUnitarioCoincide": true,
-      "diferencaValorUnitario": 0,
-      "naturezaPad": "CAPITAL",
-      "naturezasEncontradasMemoria": [
-        "CAPITAL"
-      ]
+      }
     },
     {
       "tipo": "item_pad_sem_rateio",
@@ -14564,50 +15127,34 @@
       }
     },
     {
-      "tipo": "item_pad_coincide_apenas_por_descricao_normalizada",
-      "nivel": "aviso",
+      "tipo": "equivalencia_por_diacritico_saneada_automaticamente",
+      "nivel": "info",
       "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
       "instrumento": "937782",
       "uf": "AC",
       "ano": "2022",
       "descricao": "Smartphone mínimo de 128gb de memória in",
-      "detalhe": "Item PAD coincide pela descrição normalizada, mas a descrição original diverge da referência persistida; não foi considerado rateado.",
+      "detalhe": "A diferença na descrição de 'Smartphone minimo de 128gb de memória in' x 'Smartphone mínimo de 128gb de memória in' é apenas de acentuação/diacríticos e os dados materiais são compatíveis. Saneado automaticamente.",
       "origem": {
         "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
         "aba": "937782",
         "linha": 44
-      },
-      "valorUnitarioPad": 2341.24,
-      "valorUnitarioReferenciaMemoria": 2341.24,
-      "valorUnitarioCoincide": true,
-      "diferencaValorUnitario": 0,
-      "naturezaPad": "CAPITAL",
-      "naturezasEncontradasMemoria": [
-        "CAPITAL"
-      ]
+      }
     },
     {
-      "tipo": "item_pad_coincide_apenas_por_descricao_normalizada",
-      "nivel": "aviso",
+      "tipo": "equivalencia_por_diacritico_saneada_automaticamente",
+      "nivel": "info",
       "chaveItem": "937782::SWITCHER DE VIDEO",
       "instrumento": "937782",
       "uf": "AC",
       "ano": "2022",
       "descricao": "Switcher de vídeo",
-      "detalhe": "Item PAD coincide pela descrição normalizada, mas a descrição original diverge da referência persistida; não foi considerado rateado.",
+      "detalhe": "A diferença na descrição de 'Switcher de video' x 'Switcher de vídeo' é apenas de acentuação/diacríticos e os dados materiais são compatíveis. Saneado automaticamente.",
       "origem": {
         "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
         "aba": "937782",
         "linha": 47
-      },
-      "valorUnitarioPad": 3901,
-      "valorUnitarioReferenciaMemoria": 3901,
-      "valorUnitarioCoincide": true,
-      "diferencaValorUnitario": 0,
-      "naturezaPad": "CAPITAL",
-      "naturezasEncontradasMemoria": [
-        "CAPITAL"
-      ]
+      }
     },
     {
       "tipo": "item_conhecido_nao_apto",
@@ -15573,17 +16120,6 @@
     {
       "tipo": "item_conhecido_ausente_no_pad",
       "nivel": "aviso",
-      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
-      "instrumento": "937782",
-      "uf": "AC",
-      "ano": "2022",
-      "descricao": "Desktop para edição de video",
-      "detalhe": "Item conhecido ativo não apareceu nos relatórios PAD atuais; possível exclusão ou substituição exige validação humana.",
-      "origem": null
-    },
-    {
-      "tipo": "item_conhecido_ausente_no_pad",
-      "nivel": "aviso",
       "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
       "instrumento": "937782",
       "uf": "AC",
@@ -15591,39 +16127,18 @@
       "descricao": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
       "detalhe": "Item conhecido ativo não apareceu nos relatórios PAD atuais; possível exclusão ou substituição exige validação humana.",
       "origem": null
-    },
-    {
-      "tipo": "item_conhecido_ausente_no_pad",
-      "nivel": "aviso",
-      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "instrumento": "937782",
-      "uf": "AC",
-      "ano": "2022",
-      "descricao": "Smartphone minimo de 128gb de memória in",
-      "detalhe": "Item conhecido ativo não apareceu nos relatórios PAD atuais; possível exclusão ou substituição exige validação humana.",
-      "origem": null
-    },
-    {
-      "tipo": "item_conhecido_ausente_no_pad",
-      "nivel": "aviso",
-      "chaveItem": "937782::SWITCHER DE VIDEO",
-      "instrumento": "937782",
-      "uf": "AC",
-      "ano": "2022",
-      "descricao": "Switcher de video",
-      "detalhe": "Item conhecido ativo não apareceu nos relatórios PAD atuais; possível exclusão ou substituição exige validação humana.",
-      "origem": null
     }
   ],
   "resumo": {
     "totalRelatoriosPad": 15,
     "totalItensPadConferidos": 525,
-    "totalItensPadComRateio": 498,
-    "totalItensPadSemRateio": 27,
-    "totalItensConhecidosAusentesNoPad": 32,
+    "totalItensPadComRateio": 501,
+    "totalItensPadSemRateio": 24,
+    "totalItensConhecidosAusentesNoPad": 29,
     "totalItensConhecidosNaoAptos": 19,
     "totalInstrumentosNaoEncontradosNaCarteira": 0,
-    "totalAlertas": 151,
+    "totalEquivalenciasDiacriticoSaneadas": 3,
+    "totalAlertas": 148,
     "totalAlertasImpeditivos": 27
   }
 }

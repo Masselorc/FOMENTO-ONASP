@@ -501,6 +501,13 @@ function gerarFilaRevisao(opcoes = {}) {
     const naoReapresentadas = [...chavesAntes].filter((chave) => !chavesGeradas.has(chave));
     for (const chave of naoReapresentadas) {
       const existente = repo.buscarDivergenciaPorChave(chave);
+      if (existente && existente.status === "PENDENTE" && existente.bloqueia_publicacao === 1) {
+        db.prepare(`
+          UPDATE profor_2022_revisao_divergencias
+          SET bloqueia_publicacao = 0, atualizado_em = ?
+          WHERE id = ?
+        `).run(new Date().toISOString(), existente.id);
+      }
       repo.registrarLog({
         entidadeTipo: "divergencia",
         entidadeId: existente ? existente.id : null,

@@ -1,12 +1,13 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-20T19:26:14.075Z",
+    "geradoEm": "2026-05-21T19:32:04.725Z",
     "fonte": "backend/data/relatorios/profor-2022-pad-rateios-dry-run.json",
-    "totalItensPadSemRateio": 27,
-    "totalCoincidenciasApenasNormalizadas": 4,
+    "totalItensPadSemRateio": 24,
+    "totalCoincidenciasApenasNormalizadas": 1,
     "totalItensConhecidosNaoAptos": 19,
-    "totalItensConhecidosAusentesNoPad": 32,
-    "totalParesPossiveisPorDescricaoNormalizada": 3,
+    "totalItensConhecidosAusentesNoPad": 29,
+    "totalParesPossiveisPorDescricaoNormalizada": 0,
+    "totalEquivalenciasDiacriticoSaneadas": 3,
     "totalConveniosAfetados": 8,
     "conveniosAfetados": [
       "937216",
@@ -19,8 +20,8 @@
       "938277"
     ],
     "impedemEtapa6": {
-      "itensPadSemRateio": 27,
-      "coincidenciasApenasNormalizadas": 4,
+      "itensPadSemRateio": 24,
+      "coincidenciasApenasNormalizadas": 1,
       "itensConhecidosNaoAptos": 19,
       "instrumentosNaoEncontradosNaCarteira": 0
     }
@@ -65,11 +66,11 @@
     {
       "numeroConvenio": "937782",
       "uf": "AC",
-      "itensPadSemRateio": 6,
-      "coincidenciasApenasNormalizadas": 3,
+      "itensPadSemRateio": 3,
+      "coincidenciasApenasNormalizadas": 0,
       "itensConhecidosNaoAptos": 0,
-      "itensConhecidosAusentesNoPad": 7,
-      "totalPendencias": 13
+      "itensConhecidosAusentesNoPad": 4,
+      "totalPendencias": 7
     },
     {
       "numeroConvenio": "937817",
@@ -709,42 +710,6 @@
       "recomendacao": "Criar ou validar memória de rateio para este item antes de permitir reconstrução automática."
     },
     {
-      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Desktop para edição de vídeo",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "DESKTOP PARA EDICAO DE VIDEO",
-      "descricaoOriginal": "Desktop para edição de vídeo",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 27,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 1,
-      "valorUnitario": 14849,
-      "valorTotalPrevisto": 14849,
-      "valorTotalExecutado": 0,
-      "saldo": 14849,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 97,
-      "descricaoOriginalReferencia": "Desktop para edição de video",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 14849,
-        "valorUnitarioReferenciaMemoria": 14849,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      },
-      "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
-    },
-    {
       "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
       "chaveDescricaoOriginal": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
       "numeroConvenio": "937782",
@@ -769,78 +734,6 @@
       "descricaoOriginalReferencia": null,
       "bloqueiaEtapa6": true,
       "recomendacao": "Criar ou validar memória de rateio para este item antes de permitir reconstrução automática."
-    },
-    {
-      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "chaveDescricaoOriginal": "937782::Smartphone mínimo de 128gb de memória in",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 44,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 2,
-      "valorUnitario": 2341.24,
-      "valorTotalPrevisto": 4682.48,
-      "valorTotalExecutado": 1900,
-      "saldo": 2782.48,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 111,
-      "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 2341.24,
-        "valorUnitarioReferenciaMemoria": 2341.24,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      },
-      "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
-    },
-    {
-      "chaveItem": "937782::SWITCHER DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Switcher de vídeo",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SWITCHER DE VIDEO",
-      "descricaoOriginal": "Switcher de vídeo",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 47,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 2,
-      "valorUnitario": 3901,
-      "valorTotalPrevisto": 7802,
-      "valorTotalExecutado": 7802,
-      "saldo": 0,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 112,
-      "descricaoOriginalReferencia": "Switcher de video",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 3901,
-        "valorUnitarioReferenciaMemoria": 3901,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      },
-      "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     }
   ],
   "itensPadCoincidemApenasPorDescricaoNormalizada": [
@@ -879,114 +772,6 @@
       },
       "bloqueiaEtapa6": true,
       "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Atenção: o valor unitário previsto NÃO coincide (PAD 37.59 vs memória 37.15, diferença 0.44), o que enfraquece a hipótese de mesmo item."
-    },
-    {
-      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Desktop para edição de vídeo",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "DESKTOP PARA EDICAO DE VIDEO",
-      "descricaoOriginal": "Desktop para edição de vídeo",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 27,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 1,
-      "valorUnitario": 14849,
-      "valorTotalPrevisto": 14849,
-      "valorTotalExecutado": 0,
-      "saldo": 14849,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 97,
-      "descricaoOriginalReferencia": "Desktop para edição de video",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 14849,
-        "valorUnitarioReferenciaMemoria": 14849,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      },
-      "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 14849 = memória 14849), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
-    },
-    {
-      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "chaveDescricaoOriginal": "937782::Smartphone mínimo de 128gb de memória in",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 44,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 2,
-      "valorUnitario": 2341.24,
-      "valorTotalPrevisto": 4682.48,
-      "valorTotalExecutado": 1900,
-      "saldo": 2782.48,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 111,
-      "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 2341.24,
-        "valorUnitarioReferenciaMemoria": 2341.24,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      },
-      "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 2341.24 = memória 2341.24), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
-    },
-    {
-      "chaveItem": "937782::SWITCHER DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Switcher de vídeo",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SWITCHER DE VIDEO",
-      "descricaoOriginal": "Switcher de vídeo",
-      "uf": "AC",
-      "ano": "2022",
-      "instrumento": "Convênio",
-      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
-      "aba": "937782",
-      "linha": 47,
-      "natureza": "CAPITAL",
-      "codigoNaturezaDespesa": "44905200",
-      "unidade": "UN",
-      "quantidade": 2,
-      "valorUnitario": 3901,
-      "valorTotalPrevisto": 7802,
-      "valorTotalExecutado": 7802,
-      "saldo": 0,
-      "motivo": "descricao_original_divergente_da_memoria_rateio",
-      "itemConhecidoNormalizadoId": 112,
-      "descricaoOriginalReferencia": "Switcher de video",
-      "indicioEquivalencia": {
-        "valorUnitarioPad": 3901,
-        "valorUnitarioReferenciaMemoria": 3901,
-        "valorUnitarioCoincide": true,
-        "diferencaValorUnitario": 0,
-        "naturezaPad": "CAPITAL",
-        "naturezasEncontradasMemoria": [
-          "CAPITAL"
-        ]
-      },
-      "bloqueiaEtapa6": true,
-      "recomendacao": "Conferir manualmente o nome original no PAD e na memória; se for o mesmo item, ajustar a memória futura sem aceitar correspondência automática por normalização. Indício adicional: o valor unitário previsto coincide (PAD 3901 = memória 3901), reforçando a hipótese de mesmo item — ainda assim exige validação humana."
     }
   ],
   "itensConhecidosNaoAptos": [
@@ -1504,6 +1289,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 12736.48,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 12736.48,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1525,6 +1314,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 8168.19,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 8168.19,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1546,6 +1339,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 1349.62,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1349.62,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1567,6 +1364,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 703.26,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 703.26,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1588,6 +1389,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 582.36,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 582.36,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1609,6 +1414,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 844.06,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 844.06,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1630,6 +1439,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 1455.49,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1455.49,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1651,6 +1464,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 482.36,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 482.36,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1672,6 +1489,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 726,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 726,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1693,6 +1514,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 1859.26,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1859.26,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1714,6 +1539,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 3490.71,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 3490.71,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1735,6 +1564,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 2150.72,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 2150.72,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1756,6 +1589,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 2787.76,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 2787.76,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1777,6 +1614,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 3178.2,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 3178.2,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1798,6 +1639,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 32427,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 32427,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1819,6 +1664,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 492.51,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 492.51,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1840,6 +1689,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 50,
+      "valorPrevistoReferencia": 6104.55,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 6104.55,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1861,6 +1714,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 2020.5,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 2020.5,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1882,6 +1739,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 80,
+      "valorPrevistoReferencia": 1901.92,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1901.92,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1903,6 +1764,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 1254.79,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1254.79,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1924,6 +1789,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 7133.77,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 7133.77,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1945,6 +1814,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 40,
+      "valorPrevistoReferencia": 4261.6,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 4261.6,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1966,6 +1839,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 10,
+      "valorPrevistoReferencia": 1047.97,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 1047.97,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -1987,6 +1864,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 50,
+      "valorPrevistoReferencia": 10874.3,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 10874.3,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -2008,6 +1889,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 20,
+      "valorPrevistoReferencia": 491.08,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 491.08,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -2029,6 +1914,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 12,
+      "valorPrevistoReferencia": 172800,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 172800,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -2050,6 +1939,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 12,
+      "valorPrevistoReferencia": 14400,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 14400,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -2071,27 +1964,10 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 1,
-      "bloqueiaEtapa6": false,
-      "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
-    },
-    {
-      "id": 97,
-      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Desktop para edição de video",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "DESKTOP PARA EDICAO DE VIDEO",
-      "descricaoOriginalReferencia": "Desktop para edição de video",
-      "uf": "AC",
-      "ano": "2022",
-      "valorUnitarioReferencia": 14849,
-      "naturezasEncontradas": [
-        "CAPITAL"
-      ],
-      "aptoParaImportacaoFutura": true,
-      "possuiPendenciaImpedativa": false,
-      "statusItem": "ATIVO",
-      "ativo": true,
-      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 3,
+      "valorPrevistoReferencia": 4500,
+      "valorExecutadoReferencia": 0,
+      "saldoReferencia": 4500,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     },
@@ -2113,111 +1989,56 @@
       "statusItem": "ATIVO",
       "ativo": true,
       "totalRateiosAtivos": 2,
-      "bloqueiaEtapa6": false,
-      "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
-    },
-    {
-      "id": 111,
-      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "chaveDescricaoOriginal": "937782::Smartphone minimo de 128gb de memória in",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
-      "uf": "AC",
-      "ano": "2022",
-      "valorUnitarioReferencia": 2341.24,
-      "naturezasEncontradas": [
-        "CAPITAL"
-      ],
-      "aptoParaImportacaoFutura": true,
-      "possuiPendenciaImpedativa": false,
-      "statusItem": "ATIVO",
-      "ativo": true,
-      "totalRateiosAtivos": 2,
-      "bloqueiaEtapa6": false,
-      "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
-    },
-    {
-      "id": 112,
-      "chaveItem": "937782::SWITCHER DE VIDEO",
-      "chaveDescricaoOriginal": "937782::Switcher de video",
-      "numeroConvenio": "937782",
-      "descricaoNormalizada": "SWITCHER DE VIDEO",
-      "descricaoOriginalReferencia": "Switcher de video",
-      "uf": "AC",
-      "ano": "2022",
-      "valorUnitarioReferencia": 3901,
-      "naturezasEncontradas": [
-        "CAPITAL"
-      ],
-      "aptoParaImportacaoFutura": true,
-      "possuiPendenciaImpedativa": false,
-      "statusItem": "ATIVO",
-      "ativo": true,
-      "totalRateiosAtivos": 1,
+      "quantidadeReferencia": 2,
+      "valorPrevistoReferencia": 7199.98,
+      "valorExecutadoReferencia": 6229.86,
+      "saldoReferencia": 970.1199999999999,
       "bloqueiaEtapa6": false,
       "recomendacao": "Confirmar se o item foi excluído, substituído ou consolidado no PAD atual; não inativar automaticamente."
     }
   ],
-  "possiveisParesDescricaoNormalizada": [
+  "equivalenciasDiacriticoSaneadas": [
     {
       "numeroConvenio": "937782",
       "uf": "AC",
-      "descricaoNormalizada": "DESKTOP PARA EDICAO DE VIDEO",
-      "itemPad": {
-        "descricaoOriginal": "Desktop para edição de vídeo",
+      "descricaoOriginalMemoria": "Desktop para edição de video",
+      "descricaoOriginalPad": "Desktop para edição de vídeo",
+      "valorUnitario": 14849,
+      "natureza": "CAPITAL",
+      "origem": {
         "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
         "aba": "937782",
-        "linha": 27,
-        "valorTotalPrevisto": 14849
-      },
-      "itemConhecidoAusente": {
-        "id": 97,
-        "descricaoOriginalReferencia": "Desktop para edição de video",
-        "totalRateiosAtivos": 1,
-        "aptoParaImportacaoFutura": true
-      },
-      "recomendacao": "Possível relação por descrição normalizada. Exige validação humana porque a descrição original não é critério automático de equivalência."
+        "linha": 27
+      }
     },
     {
       "numeroConvenio": "937782",
       "uf": "AC",
-      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "itemPad": {
-        "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
+      "descricaoOriginalMemoria": "Smartphone minimo de 128gb de memória in",
+      "descricaoOriginalPad": "Smartphone mínimo de 128gb de memória in",
+      "valorUnitario": 2341.24,
+      "natureza": "CAPITAL",
+      "origem": {
         "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
         "aba": "937782",
-        "linha": 44,
-        "valorTotalPrevisto": 4682.48
-      },
-      "itemConhecidoAusente": {
-        "id": 111,
-        "descricaoOriginalReferencia": "Smartphone minimo de 128gb de memória in",
-        "totalRateiosAtivos": 2,
-        "aptoParaImportacaoFutura": true
-      },
-      "recomendacao": "Possível relação por descrição normalizada. Exige validação humana porque a descrição original não é critério automático de equivalência."
+        "linha": 44
+      }
     },
     {
       "numeroConvenio": "937782",
       "uf": "AC",
-      "descricaoNormalizada": "SWITCHER DE VIDEO",
-      "itemPad": {
-        "descricaoOriginal": "Switcher de vídeo",
+      "descricaoOriginalMemoria": "Switcher de video",
+      "descricaoOriginalPad": "Switcher de vídeo",
+      "valorUnitario": 3901,
+      "natureza": "CAPITAL",
+      "origem": {
         "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls",
         "aba": "937782",
-        "linha": 47,
-        "valorTotalPrevisto": 7802
-      },
-      "itemConhecidoAusente": {
-        "id": 112,
-        "descricaoOriginalReferencia": "Switcher de video",
-        "totalRateiosAtivos": 1,
-        "aptoParaImportacaoFutura": true
-      },
-      "recomendacao": "Possível relação por descrição normalizada. Exige validação humana porque a descrição original não é critério automático de equivalência."
+        "linha": 47
+      }
     }
   ],
+  "possiveisParesDescricaoNormalizada": [],
   "recomendacoesGerais": [
     "Não aplicar rateio automático em itens PAD sem correspondência por descrição original.",
     "Resolver itens conhecidos não aptos antes de reconstruir automaticamente o planoAplicacao.",

@@ -1,13 +1,13 @@
 {
-  "geradoEm": "2026-05-21T19:11:46.288Z",
+  "geradoEm": "2026-05-21T19:32:22.772Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
     "totalLinhasAntigo": 567,
-    "totalLinhasNovo": 602,
+    "totalLinhasNovo": 606,
     "totalItensIguais": 93,
-    "totalItensNovos": 4,
+    "totalItensNovos": 8,
     "totalItensAusentes": 34,
     "totalItensQuantidadeDivergente": 387,
     "totalItensValorPrevistoDivergente": 13,
@@ -16,11 +16,11 @@
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
     "totalItensAmbiguos": 49,
-    "totalDiferencas": 429,
-    "totalDiferencasCriticas": 4,
-    "totalAvisos": 197,
+    "totalDiferencas": 433,
+    "totalDiferencasCriticas": 8,
+    "totalAvisos": 206,
     "totalDiferencasEsperadasPorAtualizacaoPad": 6,
-    "totalDiferencasPorPendenciaDeDecisao": 222,
+    "totalDiferencasPorPendenciaDeDecisao": 213,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 0,
     "totalDecisoesResolutivasEncontradas": 14,
@@ -39,17 +39,17 @@
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 602,
-      "valorPrevisto": 10524996.81,
-      "valorExecutado": 3208037.5,
-      "saldo": 7316959.31
+      "linhas": 606,
+      "valorPrevisto": 10552330.29,
+      "valorExecutado": 3217739.5,
+      "saldo": 7334590.79
     }
   },
   "diferencaTotal": {
-    "linhas": 35,
-    "valorPrevisto": -139018.67,
-    "valorExecutado": 5341.6,
-    "saldo": -144360.27
+    "linhas": 39,
+    "valorPrevisto": -111685.19,
+    "valorExecutado": 15043.6,
+    "saldo": -126728.79
   },
   "diferencasPorConvenio": [
     {
@@ -208,16 +208,16 @@
         "saldo": 299282.16
       },
       "novo": {
-        "linhas": 45,
-        "valorPrevisto": 369090.23,
-        "valorExecutado": 87439.55,
-        "saldo": 281650.68
+        "linhas": 49,
+        "valorPrevisto": 396423.71,
+        "valorExecutado": 97141.55,
+        "saldo": 299282.16
       },
       "diferenca": {
-        "valorPrevisto": -27333.48,
-        "valorExecutado": -9702,
-        "saldo": -17631.48,
-        "linhas": -5
+        "valorPrevisto": 0,
+        "valorExecutado": 0,
+        "saldo": 0,
+        "linhas": -1
       }
     },
     {
@@ -378,16 +378,16 @@
         "saldo": 299282.16
       },
       "novo": {
-        "linhas": 45,
-        "valorPrevisto": 369090.23,
-        "valorExecutado": 87439.55,
-        "saldo": 281650.68
+        "linhas": 49,
+        "valorPrevisto": 396423.71,
+        "valorExecutado": 97141.55,
+        "saldo": 299282.16
       },
       "diferenca": {
-        "valorPrevisto": -27333.48,
-        "valorExecutado": -9702,
-        "saldo": -17631.48,
-        "linhas": -5
+        "valorPrevisto": 0,
+        "valorExecutado": 0,
+        "saldo": 0,
+        "linhas": -1
       }
     },
     {
@@ -695,16 +695,16 @@
         "saldo": 2048720.27
       },
       "novo": {
-        "linhas": 128,
-        "valorPrevisto": 2533546.32,
-        "valorExecutado": 577213.45,
-        "saldo": 1956332.87
+        "linhas": 129,
+        "valorPrevisto": 2535887.56,
+        "valorExecutado": 578163.45,
+        "saldo": 1957724.11
       },
       "diferenca": {
-        "valorPrevisto": -60531.31,
-        "valorExecutado": 31856.09,
-        "saldo": -92387.4,
-        "linhas": 13
+        "valorPrevisto": -58190.07,
+        "valorExecutado": 32806.09,
+        "saldo": -90996.16,
+        "linhas": 14
       }
     },
     {
@@ -716,16 +716,16 @@
         "saldo": 2860899.75
       },
       "novo": {
-        "linhas": 301,
-        "valorPrevisto": 5063660.26,
-        "valorExecutado": 2244137.62,
-        "saldo": 2819522.64
+        "linhas": 303,
+        "valorPrevisto": 5086311.26,
+        "valorExecutado": 2251939.62,
+        "saldo": 2834371.64
       },
       "diferenca": {
-        "valorPrevisto": -37722.5,
-        "valorExecutado": 3654.61,
-        "saldo": -41377.11,
-        "linhas": 14
+        "valorPrevisto": -15071.5,
+        "valorExecutado": 11456.61,
+        "saldo": -26528.11,
+        "linhas": 16
       }
     },
     {
@@ -779,16 +779,16 @@
         "saldo": 1299845.87
       },
       "novo": {
-        "linhas": 150,
-        "valorPrevisto": 1677511.57,
-        "valorExecutado": 386686.43,
-        "saldo": 1290825.14
+        "linhas": 151,
+        "valorPrevisto": 1679852.81,
+        "valorExecutado": 387636.43,
+        "saldo": 1292216.38
       },
       "diferenca": {
-        "valorPrevisto": -39189.83,
-        "valorExecutado": -30169.1,
-        "saldo": -9020.73,
-        "linhas": 4
+        "valorPrevisto": -36848.59,
+        "valorExecutado": -29219.1,
+        "saldo": -7629.49,
+        "linhas": 5
       }
     }
   ],
@@ -802,16 +802,16 @@
         "saldo": 4714987.99
       },
       "novo": {
-        "linhas": 439,
-        "valorPrevisto": 7284922.12,
-        "valorExecutado": 2706250.65,
-        "saldo": 4578671.47
+        "linhas": 443,
+        "valorPrevisto": 7312255.6,
+        "valorExecutado": 2715952.65,
+        "saldo": 4596302.95
       },
       "diferenca": {
-        "valorPrevisto": -136876.32,
-        "valorExecutado": -559.8,
-        "saldo": -136316.52,
-        "linhas": 25
+        "valorPrevisto": -109542.84,
+        "valorExecutado": 9142.2,
+        "saldo": -118685.04,
+        "linhas": 29
       }
     },
     {
@@ -837,6 +837,58 @@
     }
   ],
   "itensNovos": [
+    {
+      "chave": "937782::Desktop para edição de vídeo::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Desktop para edição de vídeo",
+      "situacao": "novo",
+      "valorPrevistoNovo": 14849,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Smartphone mínimo de 128gb de memória in::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Smartphone mínimo de 128gb de memória in",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2341.24,
+      "valorExecutadoNovo": 950,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Smartphone mínimo de 128gb de memória in::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Smartphone mínimo de 128gb de memória in",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2341.24,
+      "valorExecutadoNovo": 950,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Switcher de vídeo::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Switcher de vídeo",
+      "situacao": "novo",
+      "valorPrevistoNovo": 7802,
+      "valorExecutadoNovo": 7802,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
     {
       "chave": "937782::Contratação de 01 (um) Supervisor por 12::OUVIDORIA::CUSTEIO",
       "numeroConvenio": "937782",
@@ -1226,7 +1278,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 172800,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1239,7 +1291,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 14400,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1252,7 +1304,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 4500,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1265,7 +1317,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 14849,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1278,7 +1330,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 3599.99,
       "valorExecutadoAntigo": 3114.93,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1291,7 +1343,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 3599.99,
       "valorExecutadoAntigo": 3114.93,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1304,7 +1356,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 2341.24,
       "valorExecutadoAntigo": 950,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1317,7 +1369,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 2341.24,
       "valorExecutadoAntigo": 950,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1330,7 +1382,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 7802,
       "valorExecutadoAntigo": 7802,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     }
   ],
@@ -9953,6 +10005,58 @@
   ],
   "diferencasCriticas": [
     {
+      "chave": "937782::Desktop para edição de vídeo::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Desktop para edição de vídeo",
+      "situacao": "novo",
+      "valorPrevistoNovo": 14849,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Smartphone mínimo de 128gb de memória in::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Smartphone mínimo de 128gb de memória in",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2341.24,
+      "valorExecutadoNovo": 950,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Smartphone mínimo de 128gb de memória in::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Smartphone mínimo de 128gb de memória in",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2341.24,
+      "valorExecutadoNovo": 950,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Switcher de vídeo::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Switcher de vídeo",
+      "situacao": "novo",
+      "valorPrevistoNovo": 7802,
+      "valorExecutadoNovo": 7802,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
       "chave": "937782::Contratação de 01 (um) Supervisor por 12::OUVIDORIA::CUSTEIO",
       "numeroConvenio": "937782",
       "uf": "AC",
@@ -12164,6 +12268,123 @@
         }
       ],
       "classificacao": "aviso"
+    },
+    {
+      "chave": "937782::Contratação de Bolsa - Aluno Ouvidoria I::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de Bolsa - Aluno Ouvidoria I",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 172800,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Contratação de Bolsa -Coordenador Ouvid::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de Bolsa -Coordenador Ouvid",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 14400,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Contratação de Bolsa -Pesquisador Ouvid::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de Bolsa -Pesquisador Ouvid",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 4500,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Desktop para edição de video::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Desktop para edição de video",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 14849,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 2.4ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 3599.99,
+      "valorExecutadoAntigo": 3114.93,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 2.4ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 3599.99,
+      "valorExecutadoAntigo": 3114.93,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Smartphone minimo de 128gb de memória in::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Smartphone minimo de 128gb de memória in",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 2341.24,
+      "valorExecutadoAntigo": 950,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Smartphone minimo de 128gb de memória in::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Smartphone minimo de 128gb de memória in",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 2341.24,
+      "valorExecutadoAntigo": 950,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Switcher de video::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Switcher de video",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 7802,
+      "valorExecutadoAntigo": 7802,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
       "chave": "937783::Item 002 - Equipamento de captura de ima::CORREGEDORIA::CUSTEIO",
@@ -14640,8 +14861,8 @@
     "totalPendentes": 131,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
-    "totalBloqueiamPublicacao": 48,
-    "totalPendentesQueBloqueiamPublicacao": 34,
+    "totalBloqueiamPublicacao": 45,
+    "totalPendentesQueBloqueiamPublicacao": 31,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
     "totalComDecisaoResolutiva": 14,
     "totalComComentario": 0,
@@ -14649,7 +14870,7 @@
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T19:11:46.272Z",
+    "geradoEm": "2026-05-21T19:32:22.753Z",
     "resumo": {
       "totalDecisoesResolutivasAuditadas": 14,
       "totalPayloadPreservado": 14,
@@ -14657,11 +14878,11 @@
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
       "totalDivergenciasExistentes": 145,
-      "totalDivergenciasReapresentadas": 145,
-      "totalDivergenciasNaoReapresentadas": 0,
+      "totalDivergenciasReapresentadas": 139,
+      "totalDivergenciasNaoReapresentadas": 6,
       "totalDivergenciasReapresentacaoIndeterminada": 0,
       "totalBloqueiosAtivacao": 0,
-      "totalAvisos": 0,
+      "totalAvisos": 6,
       "geracaoAtualDisponivel": true,
       "aptoParaProsseguirAtivacao": true
     },
@@ -14670,16 +14891,16 @@
   "reconstrucaoResumo": {
     "totalRelatoriosPad": 15,
     "totalItensPadProcessados": 525,
-    "totalItensPadComRateioAplicado": 498,
-    "totalItensPadSemRateio": 27,
-    "totalItensPadSemRateioRemanescentes": 24,
+    "totalItensPadComRateioAplicado": 501,
+    "totalItensPadSemRateio": 24,
+    "totalItensPadSemRateioRemanescentes": 21,
     "totalItensPadSemRateioReconstruidoPorDecisao": 3,
-    "totalLinhasReconstruidas": 602,
+    "totalLinhasReconstruidas": 606,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 33,
+    "totalImpedimentos": 30,
     "totalAlertas": 106,
     "totalDecisoesResolutivasEncontradas": 14,
     "totalDecisoesInterpretadasDryRun": 14,
@@ -14690,9 +14911,9 @@
     "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 14,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0,
-    "valorPrevistoReconstruidoTotal": 10524996.81,
-    "valorExecutadoReconstruidoTotal": 3208037.5,
-    "saldoReconstruidoTotal": 7316959.31
+    "valorPrevistoReconstruidoTotal": 10552330.29,
+    "valorExecutadoReconstruidoTotal": 3217739.5,
+    "saldoReconstruidoTotal": 7334590.79
   },
   "impedimentosReconstrucao": [
     {
@@ -14766,33 +14987,6 @@
       "descricao": "CAPACETE PROTETOR",
       "chaveItem": "937817::CAPACETE PROTETOR",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Desktop para edição de vídeo",
-      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
-      "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Smartphone mínimo de 128gb de memória in",
-      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Switcher de vídeo",
-      "chaveItem": "937782::SWITCHER DE VIDEO",
-      "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
     },
     {
       "tipo": "item_pad_sem_rateio",
@@ -14990,14 +15184,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 34 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 31 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 33 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 30 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -139018.67, executado 5341.6, saldo -144360.27.",
-    "Diferenças críticas: 4. Itens ambíguos: 49.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -111685.19, executado 15043.6, saldo -126728.79.",
+    "Diferenças críticas: 8. Itens ambíguos: 49.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

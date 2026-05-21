@@ -24,8 +24,8 @@ function chaveNormalizada(item) {
 function ordenarPorConvenioDescricao(a, b) {
   return String(a.numeroConvenio || "").localeCompare(String(b.numeroConvenio || ""), "pt-BR")
     || String(a.uf || "").localeCompare(String(b.uf || ""), "pt-BR")
-    || String(a.descricaoOriginal || a.descricaoOriginalReferencia || "").localeCompare(
-      String(b.descricaoOriginal || b.descricaoOriginalReferencia || ""),
+    || String(a.descricaoOriginal || a.descricaoOriginalReferencia || a.descricaoOriginalPad || a.descricaoOriginalMemoria || "").localeCompare(
+      String(b.descricaoOriginal || b.descricaoOriginalReferencia || b.descricaoOriginalPad || b.descricaoOriginalMemoria || ""),
       "pt-BR"
     );
 }
@@ -145,6 +145,8 @@ function montarRelatorio(payload) {
   const itensPadSemRateio = garantirArray(payload.itensPadSemRateio).slice().sort(ordenarPorConvenioDescricao);
   const itensConhecidosNaoAptos = garantirArray(payload.itensConhecidosNaoAptos).slice().sort(ordenarPorConvenioDescricao);
   const itensConhecidosAusentesNoPad = garantirArray(payload.itensConhecidosAusentesNoPad).slice().sort(ordenarPorConvenioDescricao);
+  const equivalenciasDiacriticoSaneadas = garantirArray(payload.equivalenciasDiacriticoSaneadas).slice().sort(ordenarPorConvenioDescricao);
+
   const coincidenciasApenasNormalizadas = itensPadSemRateio
     .filter((item) => item.motivo === "descricao_original_divergente_da_memoria_rateio")
     .sort(ordenarPorConvenioDescricao);
@@ -181,6 +183,7 @@ function montarRelatorio(payload) {
     totalItensConhecidosNaoAptos: itensConhecidosNaoAptos.length,
     totalItensConhecidosAusentesNoPad: itensConhecidosAusentesNoPad.length,
     totalParesPossiveisPorDescricaoNormalizada: paresPossiveis.length,
+    totalEquivalenciasDiacriticoSaneadas: equivalenciasDiacriticoSaneadas.length,
     totalConveniosAfetados: conveniosAfetados.length,
     conveniosAfetados,
     impedemEtapa6: {
@@ -202,6 +205,7 @@ function montarRelatorio(payload) {
     })),
     itensConhecidosNaoAptos: naoAptosComProvidencia,
     itensConhecidosAusentesNoPad: ausentesComProvidencia,
+    equivalenciasDiacriticoSaneadas,
     possiveisParesDescricaoNormalizada: paresPossiveis,
     recomendacoesGerais: [
       "Não aplicar rateio automático em itens PAD sem correspondência por descrição original.",
@@ -275,6 +279,30 @@ function montarTabelaCoincidenciasNormalizadas(itens) {
   return linhas;
 }
 
+function montarTabelaDiacriticoSaneados(itens) {
+  const linhas = [
+    "## Equivalências por acentuação/diacrítico saneadas automaticamente",
+    "",
+    "Itens cuja única diferença era acentuação ou diacríticos nas descrições, e cujos dados materiais são plenamente compatíveis.",
+    "Esses itens foram saneados automaticamente sem gerar divergências pendentes.",
+    "",
+    linhaTabela(["Convênio", "UF", "Descrição PAD", "Descrição Memória", "Valor unitário", "Natureza"]),
+    linhaTabela(["---", "---", "---", "---", "---", "---"]),
+  ];
+  for (const item of itens) {
+    linhas.push(linhaTabela([
+      item.numeroConvenio,
+      item.uf,
+      item.descricaoOriginalPad,
+      item.descricaoOriginalMemoria,
+      item.valorUnitario ?? "-",
+      item.natureza ?? "-",
+    ]));
+  }
+  linhas.push("");
+  return linhas;
+}
+
 function montarMarkdown(relatorio) {
   const { resumo } = relatorio;
   const linhas = [
@@ -291,6 +319,7 @@ function montarMarkdown(relatorio) {
     linhaTabela(["Itens conhecidos não aptos", resumo.totalItensConhecidosNaoAptos]),
     linhaTabela(["Itens conhecidos ausentes no PAD", resumo.totalItensConhecidosAusentesNoPad]),
     linhaTabela(["Possíveis pares por descrição normalizada", resumo.totalParesPossiveisPorDescricaoNormalizada]),
+    linhaTabela(["Equivalências por diacrítico saneadas automaticamente", resumo.totalEquivalenciasDiacriticoSaneadas]),
     linhaTabela(["Convênios afetados", resumo.totalConveniosAfetados]),
     "",
     `Convênios afetados: ${resumo.conveniosAfetados.join(", ") || "nenhum"}`,
@@ -318,6 +347,7 @@ function montarMarkdown(relatorio) {
   linhas.push(...montarTabelaCoincidenciasNormalizadas(relatorio.itensPadCoincidemApenasPorDescricaoNormalizada));
   linhas.push(...montarTabelaItens("Itens conhecidos não aptos", relatorio.itensConhecidosNaoAptos, (item) => item.descricaoOriginal));
   linhas.push(...montarTabelaItens("Itens conhecidos ausentes no PAD", relatorio.itensConhecidosAusentesNoPad, (item) => item.descricaoOriginalReferencia));
+  linhas.push(...montarTabelaDiacriticoSaneados(relatorio.equivalenciasDiacriticoSaneadas));
 
   linhas.push("## Possíveis pares por descrição normalizada");
   linhas.push("");
