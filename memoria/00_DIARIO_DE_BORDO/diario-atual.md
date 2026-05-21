@@ -4520,6 +4520,33 @@ Logs operacionais gravados:
 
 ---
 
+## 20/05/2026 - PROFOR 2022: reapresentação indeterminada na segurança pré-ativação
+
+- Branch: `main`.
+- Problema:
+  - se `coletarDivergencias(repoRoot)` falhasse, `geracaoAtualDisponivel` ficava `false`, mas as divergências existentes eram classificadas como não reapresentadas por falta de `chavesGeradasHoje`.
+- Correção aplicada:
+  - divergências auditadas sem geração atual disponível passam a receber `reapresentada: null` e classificação `reapresentacao_indeterminada`;
+  - divergências com reapresentação indeterminada não entram em `divergenciasNaoReapresentadas`;
+  - resumo e Markdown passam a expor `totalDivergenciasReapresentacaoIndeterminada` e seção própria;
+  - avisos detalham divergências não avaliadas quando a geração atual da fila falha.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js`;
+  - `tests/services/profor-pad-seguranca-pre-ativacao.test.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Validações:
+  - `node --check backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js` -> OK;
+  - `node --test tests/services/profor-pad-seguranca-pre-ativacao.test.js` -> OK;
+  - `git diff --check` -> OK.
+- Pendências:
+  - sem validação de dry-run completo nesta etapa.
+- Risco de regressão:
+  - baixo a moderado, restrito ao relatório de segurança pré-ativação e consumidores que leem diretamente o JSON do dry-run.
+- Rollback:
+  - reverter esta etapa restaura a classificação anterior de geração indisponível como não reapresentada.
+
+---
+
 ## 20/05/2026 - PROFOR 2022: relatório de saneamento da Etapa 5
 
 - Branch: `main`.
@@ -4582,4 +4609,3 @@ Logs operacionais gravados:
   - sem ativação de nova origem de `planoAplicacao`;
   - sem integração com compositor PROFOR;
   - sem aplicação financeira dos rateios.
-

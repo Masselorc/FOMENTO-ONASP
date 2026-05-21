@@ -109,6 +109,9 @@ function classificarPayloadDecisao({ temDivergencia, temSnapshot, hashSnapshot, 
  * atual da fila. Função pura.
  */
 function classificarDivergenciaReapresentacao({ reapresentada, status, bloqueiaPublicacao, temDecisaoResolutiva }) {
+  if (reapresentada === null) {
+    return { classificacao: "reapresentacao_indeterminada", bloqueia: false };
+  }
   if (reapresentada) {
     return { classificacao: "reapresentada", bloqueia: false };
   }
@@ -226,7 +229,7 @@ function auditarDivergenciasNaoReapresentadas(repoRoot) {
   const auditadas = existentes.map((divergencia) => {
     const reapresentada = chavesGeradasHoje
       ? chavesGeradasHoje.has(divergencia.chave_divergencia)
-      : false;
+      : null;
     const classificacao = classificarDivergenciaReapresentacao({
       reapresentada,
       status: divergencia.status,
@@ -277,9 +280,12 @@ function auditarSegurancaPreAtivacaoDryRun(opcoes = {}) {
   ).length;
 
   const divergenciasNaoReapresentadas = divergencias.auditadas.filter(
-    (item) => !item.reapresentada
+    (item) => item.reapresentada === false
   );
-  const totalReapresentadas = divergencias.auditadas.length - divergenciasNaoReapresentadas.length;
+  const divergenciasReapresentacaoIndeterminada = divergencias.auditadas.filter(
+    (item) => item.reapresentada === null
+  );
+  const totalReapresentadas = divergencias.auditadas.filter((item) => item.reapresentada === true).length;
 
   const bloqueiosAtivacao = [];
   for (const decisao of decisoesAuditadas) {
@@ -332,6 +338,15 @@ function auditarSegurancaPreAtivacaoDryRun(opcoes = {}) {
       classificacao: "geracao_atual_indisponivel",
       detalhe: `Não foi possível recriar a geração atual da fila: ${divergencias.erroGeracao}.`,
     });
+    for (const divergencia of divergenciasReapresentacaoIndeterminada) {
+      avisos.push({
+        origem: "divergencia_reapresentacao_indeterminada",
+        classificacao: divergencia.classificacao,
+        divergenciaId: divergencia.divergenciaId,
+        chaveDivergencia: divergencia.chaveDivergencia,
+        detalhe: "Reapresentação não avaliada porque a geração atual da fila não ficou disponível.",
+      });
+    }
   }
 
   const resumo = {
@@ -343,6 +358,7 @@ function auditarSegurancaPreAtivacaoDryRun(opcoes = {}) {
     totalDivergenciasExistentes: divergencias.auditadas.length,
     totalDivergenciasReapresentadas: totalReapresentadas,
     totalDivergenciasNaoReapresentadas: divergenciasNaoReapresentadas.length,
+    totalDivergenciasReapresentacaoIndeterminada: divergenciasReapresentacaoIndeterminada.length,
     totalBloqueiosAtivacao: bloqueiosAtivacao.length,
     totalAvisos: avisos.length,
     geracaoAtualDisponivel: divergencias.geracaoDisponivel,
@@ -356,6 +372,7 @@ function auditarSegurancaPreAtivacaoDryRun(opcoes = {}) {
     decisoesSemSnapshotPayload,
     decisoesComDivergenciaNaoEncontrada,
     divergenciasNaoReapresentadas,
+    divergenciasReapresentacaoIndeterminada,
     bloqueiosAtivacao,
     avisos,
     resumo,
@@ -424,6 +441,7 @@ function montarMarkdownSeguranca(resultado) {
   linhas.push(`- Divergências existentes: ${resumo.totalDivergenciasExistentes}`);
   linhas.push(`- Divergências reapresentadas: ${resumo.totalDivergenciasReapresentadas}`);
   linhas.push(`- Divergências não reapresentadas: ${resumo.totalDivergenciasNaoReapresentadas}`);
+  linhas.push(`- Divergências com reapresentação indeterminada: ${resumo.totalDivergenciasReapresentacaoIndeterminada}`);
   linhas.push(`- Bloqueios de ativação: ${resumo.totalBloqueiosAtivacao}`);
   linhas.push(`- Avisos: ${resumo.totalAvisos}`);
   linhas.push(`- Geração atual da fila disponível: ${resumo.geracaoAtualDisponivel ? "sim" : "não"}`);
@@ -443,6 +461,11 @@ function montarMarkdownSeguranca(resultado) {
   linhas.push(...formatarLinhasMd(
     "Divergências não reapresentadas",
     resultado.divergenciasNaoReapresentadas,
+    (item) => `[${item.classificacao}] divergência ${item.divergenciaId} (${item.chaveDivergencia})`
+  ));
+  linhas.push(...formatarLinhasMd(
+    "Divergências com reapresentação indeterminada",
+    resultado.divergenciasReapresentacaoIndeterminada || [],
     (item) => `[${item.classificacao}] divergência ${item.divergenciaId} (${item.chaveDivergencia})`
   ));
   linhas.push("Etapa dry-run: não altera origem ativa, não publica e não aplica decisões ao planoAplicacao.");

@@ -124,6 +124,17 @@ test("divergência existente fora do conjunto atual vira não reapresentada", ()
   assert.equal(resultado.bloqueia, false);
 });
 
+test("falha na geração atual deixa reapresentação indeterminada", () => {
+  const resultado = classificarDivergenciaReapresentacao({
+    reapresentada: null,
+    status: "PENDENTE",
+    bloqueiaPublicacao: true,
+    temDecisaoResolutiva: true,
+  });
+  assert.equal(resultado.classificacao, "reapresentacao_indeterminada");
+  assert.equal(resultado.bloqueia, false);
+});
+
 test("não reapresentada com decisão resolutiva ou bloqueante gera bloqueio", () => {
   const comDecisao = classificarDivergenciaReapresentacao({
     reapresentada: false,
