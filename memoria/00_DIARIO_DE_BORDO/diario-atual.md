@@ -5476,3 +5476,31 @@ Logs operacionais gravados:
 - Restrições preservadas:
   - nenhuma divergência real apagada ou alterada;
   - sem alteração em dados de publicação, origem ativa, frontend/data/publicados ou no planoAplicacao de produção.
+
+---
+
+## 21/05/2026 - PROFOR 2022: Frontend — refatoração de comparação existencia, presets diacrítico e limite de filtro
+
+- Branch: `main`.
+- Objetivo:
+  - Refatorar a UI de revisão de divergências para exibir corretamente estados semânticos (`presente na memória` / `ausente no PAD`) no comparativo de itens com `campoAfetado === 'existencia'`, impedir ação inválida "Confirmar ausência" em itens saneados por diacrítico e aumentar o limite de resultados para evitar falsos vazios.
+- Arquivo alterado:
+  - `frontend/js/app.js`.
+- Alterações realizadas:
+  - **`renderCampoComparacaoRevisao`**: aceita novo parâmetro `isExistencia`; quando `true`, substitui `'-'` por `'não informado'`; para rótulo `'Estado anterior / novo'` (ou `'Valor anterior / novo'` com `isExistencia`), traduz `'presente_na_memoria'` para `'presente na memória'` e `'ausente_no_pad'` para `'ausente no PAD'`.
+  - **`renderComparacaoRevisao`**: extrai `isExistencia` uma vez e passa a todas as chamadas de `renderCampoComparacaoRevisao`; a linha de estado anterior/novo agora renderiza `divergencia.valorAnterior` e `divergencia.valorNovo` do payload real (não mais strings fixas), traduzidos automaticamente pelo helper.
+  - **`obterPresetsDecisaoRevisao`**: na categoria `ausencia`, quando `divergenciaSaneadaPorDiacriticoRevisao(divergencia)` é `true`, a opção `confirmarAusencia` é removida completamente do array de retorno, impedindo ação inválida.
+  - **`obterFiltrosRevisao`**: `limite` alterado de `'100'` para `'500'` para garantir retorno de todos os itens da fila.
+- Validações executadas:
+  - `node --check frontend/js/app.js` -> OK;
+  - `npm run validar:syntax` -> OK (61 arquivos validados);
+  - `npm run validar:services` -> OK (56 testes passados, 0 falhas);
+  - `npm run profor:pad:conferir-rateios:dry-run` -> OK (525 itens, 148 alertas);
+  - `npm run profor:pad:relatorio-saneamento` -> OK;
+  - `npm run profor:pad:gerar-fila-revisao` -> OK (139 divergências, 6 não reapresentadas);
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run` -> executado (10 bloqueios pendentes de decisões anteriores, nenhum novo).
+- Restrições preservadas:
+  - sem alteração de banco;
+  - sem alteração de backend;
+  - sem alteração em frontend/data/publicados;
+  - sem ativação ou publicação de nova origem.

@@ -2008,10 +2008,18 @@ async function carregarLogoParaPDF() {
             return '';
         }
 
-        function renderCampoComparacaoRevisao(rotulo, antes, depois) {
-            const valorAntes = formatarValorRevisao(antes, rotulo);
-            const valorDepois = formatarValorRevisao(depois, rotulo);
+        function renderCampoComparacaoRevisao(rotulo, antes, depois, isExistencia = false) {
+            let valorAntes = formatarValorRevisao(antes, rotulo);
+            let valorDepois = formatarValorRevisao(depois, rotulo);
             if (valorAntes === '-' && valorDepois === '-') return '';
+            if (isExistencia) {
+                if (valorAntes === '-') valorAntes = 'não informado';
+                if (valorDepois === '-') valorDepois = 'não informado';
+            }
+            if (rotulo === 'Estado anterior / novo' || (isExistencia && rotulo === 'Valor anterior / novo')) {
+                if (antes === 'presente_na_memoria' || valorAntes === 'presente_na_memoria') valorAntes = 'presente na memória';
+                if (depois === 'ausente_no_pad' || valorDepois === 'ausente_no_pad') valorDepois = 'ausente no PAD';
+            }
             const isDifferent = valorAntes !== valorDepois;
             const diffClass = isDifferent ? 'is-different' : '';
             return `
@@ -2232,8 +2240,7 @@ async function carregarLogoParaPDF() {
                             label: 'Não é ausência (diferença de acento)',
                             justificativa: 'Não há ausência real: o item correspondente existe no PAD com diferença apenas de acentuação/diacrítico.'
                         },
-                        revisarDepois,
-                        confirmarAusencia
+                        revisarDepois
                     ];
                 }
                 return [confirmarAusencia, naoConfirmar, revisarDepois];
@@ -2855,40 +2862,41 @@ async function carregarLogoParaPDF() {
 
         function renderComparacaoRevisao(divergencia) {
             const { antes, depois } = obterAntesDepoisRevisao(divergencia);
+            const isExistencia = obterCampoAfetadoRevisao(divergencia) === 'existencia';
             const linhas = [
                 renderCampoComparacaoRevisao('Descrição',
                     obterValorAninhadoRevisao(antes, ['descricao', 'descricaoOriginal', 'descricaoOriginalReferencia']),
-                    obterValorAninhadoRevisao(depois, ['descricao', 'descricaoOriginal'])),
+                    obterValorAninhadoRevisao(depois, ['descricao', 'descricaoOriginal']), isExistencia),
                 renderCampoComparacaoRevisao('Área',
                     obterValorAninhadoRevisao(antes, ['area']),
-                    obterValorAninhadoRevisao(depois, ['area'])),
+                    obterValorAninhadoRevisao(depois, ['area']), isExistencia),
                 renderCampoComparacaoRevisao('Natureza',
                     obterValorAninhadoRevisao(antes, ['natureza']),
-                    obterValorAninhadoRevisao(depois, ['natureza'])),
+                    obterValorAninhadoRevisao(depois, ['natureza']), isExistencia),
                 renderCampoComparacaoRevisao('Quantidade',
                     obterValorAninhadoRevisao(antes, ['quantidade', 'quantidadeReferencia']),
-                    obterValorAninhadoRevisao(depois, ['quantidade'])),
+                    obterValorAninhadoRevisao(depois, ['quantidade']), isExistencia),
                 renderCampoComparacaoRevisao('Valor unitário',
                     obterValorAninhadoRevisao(antes, ['valorUnitario', 'valorUnitarioReferencia']),
-                    obterValorAninhadoRevisao(depois, ['valorUnitario'])),
+                    obterValorAninhadoRevisao(depois, ['valorUnitario']), isExistencia),
                 renderCampoComparacaoRevisao('Valor previsto',
                     obterValorAninhadoRevisao(antes, ['valorPrevisto', 'valorPrevistoReferencia']),
-                    obterValorAninhadoRevisao(depois, ['valorPrevisto', 'valorTotalPrevisto'])),
+                    obterValorAninhadoRevisao(depois, ['valorPrevisto', 'valorTotalPrevisto']), isExistencia),
                 renderCampoComparacaoRevisao('Valor executado',
                     obterValorAninhadoRevisao(antes, ['valorExecutado', 'valorExecutadoReferencia']),
-                    obterValorAninhadoRevisao(depois, ['valorExecutado', 'valorTotalExecutado'])),
+                    obterValorAninhadoRevisao(depois, ['valorExecutado', 'valorTotalExecutado']), isExistencia),
                 renderCampoComparacaoRevisao('Saldo',
                     obterValorAninhadoRevisao(antes, ['saldo']),
-                    obterValorAninhadoRevisao(depois, ['saldo'])),
-                renderCampoComparacaoRevisao('Campo afetado', divergencia.campoAfetado, divergencia.campoAfetado),
+                    obterValorAninhadoRevisao(depois, ['saldo']), isExistencia),
+                renderCampoComparacaoRevisao('Campo afetado', divergencia.campoAfetado, divergencia.campoAfetado, isExistencia),
                 // Para campoAfetado = 'existencia', valorAnterior/valorNovo são
                 // marcadores de estado ('presente_na_memoria'/'ausente_no_pad'),
                 // não descrição. Exibe como "Estado anterior/novo" legível.
-                (obterCampoAfetadoRevisao(divergencia) === 'existencia'
-                    ? renderCampoComparacaoRevisao('Estado anterior / novo', 'Presente na memória', 'Ausente no PAD')
-                    : renderCampoComparacaoRevisao('Valor anterior / novo', divergencia.valorAnterior, divergencia.valorNovo)),
-                renderCampoComparacaoRevisao('Diferença', divergencia.diferenca, divergencia.diferenca),
-                renderCampoComparacaoRevisao('Fonte', divergencia.fonteAnterior, divergencia.fonteNova)
+                (isExistencia
+                    ? renderCampoComparacaoRevisao('Estado anterior / novo', divergencia.valorAnterior, divergencia.valorNovo, isExistencia)
+                    : renderCampoComparacaoRevisao('Valor anterior / novo', divergencia.valorAnterior, divergencia.valorNovo, isExistencia)),
+                renderCampoComparacaoRevisao('Diferença', divergencia.diferenca, divergencia.diferenca, isExistencia),
+                renderCampoComparacaoRevisao('Fonte', divergencia.fonteAnterior, divergencia.fonteNova, isExistencia)
             ].filter(Boolean).join('');
 
             return `
@@ -3133,7 +3141,7 @@ async function carregarLogoParaPDF() {
                 convenio: valor('revisao-filtro-convenio'),
                 uf: valor('revisao-filtro-uf').toUpperCase(),
                 bloqueiaPublicacao: valor('revisao-filtro-bloqueia'),
-                limite: '100'
+                limite: '500'
             };
             if (document.getElementById('revisao-filtro-sem-decisao')?.checked) filtros.semDecisaoResolutiva = 'true';
             if (document.getElementById('revisao-filtro-com-decisao')?.checked) filtros.comDecisaoResolutiva = 'true';
