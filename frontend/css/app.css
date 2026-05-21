@@ -10569,6 +10569,55 @@ table.dataTable thead th {
     gap: .65rem;
 }
 
+/* Contador de pendências — destaque no topo da tela de revisão. */
+.revisao-contador {
+    align-items: center;
+    background: var(--color-info-soft);
+    border: 1px solid rgba(74, 210, 255, .3);
+    border-left: 5px solid var(--color-primary);
+    border-radius: var(--radius);
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: .85rem 1.1rem;
+}
+
+.revisao-contador.is-zerado {
+    background: var(--color-success-soft);
+    border-color: rgba(21, 197, 141, .35);
+    border-left-color: #15c58d;
+}
+
+.revisao-contador-numero {
+    color: var(--color-primary-strong);
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1;
+    min-width: 2.5ch;
+    text-align: center;
+}
+
+.revisao-contador.is-zerado .revisao-contador-numero {
+    color: #15c58d;
+}
+
+.revisao-contador-texto {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+}
+
+.revisao-contador-texto strong {
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.revisao-detail-concluido {
+    background: var(--color-success-soft);
+    border: 1px solid rgba(21, 197, 141, .3);
+}
+
 .revisao-warning-stack > div,
 .revisao-publicacao-status {
     background: var(--color-warning-soft);

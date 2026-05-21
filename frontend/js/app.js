@@ -3253,6 +3253,31 @@ async function carregarLogoParaPDF() {
             return true;
         }
 
+        // Atualiza o contador de pendências bem visível no topo da tela.
+        function atualizarContadorPendenciasRevisao(pendentes, ocultadas = 0, mostrarSaneados = false) {
+            const numeroEl = document.getElementById('revisao-contador-numero');
+            const tituloEl = document.getElementById('revisao-contador-titulo');
+            const detalheEl = document.getElementById('revisao-contador-detalhe');
+            const containerEl = document.getElementById('revisao-contador-pendencias');
+            if (!numeroEl || !tituloEl || !detalheEl) return;
+            const total = Number(pendentes) || 0;
+            numeroEl.textContent = String(total);
+            if (mostrarSaneados) {
+                tituloEl.textContent = total === 1 ? 'divergência listada' : 'divergências listadas';
+                detalheEl.textContent = 'Modo auditoria: exibindo também históricos e itens já saneados.';
+            } else {
+                tituloEl.textContent = total === 1 ? 'pendência operacional' : 'pendências operacionais';
+                detalheEl.textContent = total === 0
+                    ? (ocultadas > 0
+                        ? `Nenhuma pendência operacional. ${ocultadas} histórico(s)/saneado(s) oculto(s).`
+                        : 'Nenhuma pendência operacional a revisar.')
+                    : `${total} divergência(s) aguardando decisão${ocultadas > 0 ? ` · ${ocultadas} histórico(s)/saneado(s) oculto(s)` : ''}.`;
+            }
+            if (containerEl) {
+                containerEl.classList.toggle('is-zerado', total === 0 && !mostrarSaneados);
+            }
+        }
+
         async function carregarListaRevisao() {
             const tbody = document.querySelector('#tabela-revisao-divergencias tbody');
             if (!tbody) return;
@@ -3273,6 +3298,7 @@ async function carregarLogoParaPDF() {
                     ? `${visiveis.length} pendência(s) operacional(is) · ${ocultadas} histórico(s)/saneado(s) oculto(s)`
                     : `${visiveis.length} divergência(s)`;
                 document.getElementById('revisao-lista-total').textContent = totalLabel;
+                atualizarContadorPendenciasRevisao(visiveis.length, ocultadas, mostrarSaneados);
                 if (!visiveis.length) {
                     tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-3">Nenhuma pendência operacional para os filtros. Marque "Mostrar históricos/saneados" para auditoria.</td></tr>';
                     return;
@@ -3337,15 +3363,51 @@ async function carregarLogoParaPDF() {
                 const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias/${encodeURIComponent(id)}`);
                 revisaoDivergenciasEstado.detalheAtualId = Number(id);
                 renderDetalheDivergenciaRevisao(payload.divergencia);
-
-                if (container) {
-                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                // Não rola a tela: o detalhe abre na posição atual, junto da
+                // linha clicada — evita o "pulo" incômodo para o rodapé.
             } finally {
                 if (botao) {
                     botao.disabled = false;
                     botao.innerHTML = originalTexto;
                 }
+            }
+        }
+
+        // Após registrar uma decisão, abre automaticamente a próxima pendência
+        // da lista — o usuário não precisa rolar de volta e clicar em "Revisar".
+        // `indiceDecidida` é a posição que a divergência decidida ocupava na
+        // lista anterior; como ela sai da lista, a próxima pendência costuma
+        // assumir esse mesmo índice.
+        function avancarParaProximaPendenciaRevisao(indiceDecidida, idDecidida) {
+            const lista = Array.isArray(revisaoDivergenciasEstado.divergencias)
+                ? revisaoDivergenciasEstado.divergencias
+                : [];
+            const detalhe = document.getElementById('revisao-divergencia-detalhe');
+            if (!lista.length) {
+                // Fila zerada: nada a abrir — mostra mensagem de conclusão.
+                if (detalhe) {
+                    detalhe.innerHTML = '<div class="revisao-detail-panel revisao-detail-concluido">'
+                        + '<strong>Fila de pendências concluída.</strong>'
+                        + '<p class="mb-0 text-muted">Não há mais pendências operacionais para os filtros atuais.</p></div>';
+                }
+                return;
+            }
+            // A próxima pendência é a que assumiu o índice da decidida; se a
+            // decidida era a última, volta para a nova última da lista.
+            let alvo = null;
+            if (Number.isInteger(indiceDecidida) && indiceDecidida >= 0) {
+                alvo = lista[indiceDecidida] || lista[lista.length - 1];
+            } else {
+                alvo = lista[0];
+            }
+            // Salvaguarda: nunca reabrir a divergência recém-decidida.
+            if (alvo && String(alvo.id) === String(idDecidida)) {
+                alvo = lista.find((d) => String(d.id) !== String(idDecidida)) || null;
+            }
+            if (alvo) {
+                abrirDetalheRevisao(alvo.id);
+            } else if (detalhe) {
+                detalhe.innerHTML = '<div class="revisao-detail-panel text-muted">Selecione uma divergência para revisar.</div>';
             }
         }
 
@@ -3408,6 +3470,13 @@ async function carregarLogoParaPDF() {
                         <p class="section-eyebrow mb-1">SISTEMA</p>
                         <h2>Revisão de divergências PAD x memória</h2>
                         <p class="text-muted mb-0">Consulta, saneamento e decisão humana auditável. Nenhuma decisão é aplicada ao planoAplicacao nesta etapa.</p>
+                    </div>
+                </section>
+                <section class="revisao-contador" id="revisao-contador-pendencias" aria-live="polite">
+                    <div class="revisao-contador-numero" id="revisao-contador-numero">—</div>
+                    <div class="revisao-contador-texto">
+                        <strong id="revisao-contador-titulo">pendências operacionais</strong>
+                        <span id="revisao-contador-detalhe" class="text-muted small">Carregando fila de revisão…</span>
                     </div>
                 </section>
                 <section class="revisao-warning-stack mb-4">
@@ -3578,9 +3647,15 @@ async function carregarLogoParaPDF() {
                         })
                     });
                     alert(`Decisão registrada. aplicadaAoPlano=${payload.decisao?.aplicadaAoPlano === true ? 'true' : 'false'}. Reconstrução/publicação não alteradas.`);
+                    // Guarda a posição da divergência decidida ANTES de recarregar
+                    // a lista, para abrir a próxima pendência automaticamente.
+                    const listaAnterior = Array.isArray(revisaoDivergenciasEstado.divergencias)
+                        ? revisaoDivergenciasEstado.divergencias
+                        : [];
+                    const indiceDecidida = listaAnterior.findIndex((d) => String(d.id) === String(id));
                     await carregarAuditoriaRevisao();
                     await carregarListaRevisao();
-                    await abrirDetalheRevisao(id);
+                    avancarParaProximaPendenciaRevisao(indiceDecidida, id);
                 } catch (error) {
                     definirErrosFormularioDecisaoRevisao([error.message || 'Falha ao registrar decisão.']);
                     alert(error.message || 'Falha ao registrar decisão.');

@@ -265,6 +265,10 @@ test("revisão de divergências exibe decisão estruturada sem registrar decisã
 
   const view = page.locator("#view-revisao-divergencias");
   await expect(view).toBeVisible();
+  // Contador de pendências visível no topo, refletindo a fila (1 pendência).
+  await expect(view.locator("#revisao-contador-pendencias")).toBeVisible();
+  await expect(view.locator("#revisao-contador-numero")).toHaveText("1");
+  await expect(view.locator("#revisao-contador-titulo")).toContainText(/pend[êe]ncia/i);
   await view.getByRole("button", { name: "Revisar" }).click();
   await expect(view.getByRole("heading", { name: /Rateio manual do item/i })).toBeVisible();
   // Editor de rateio por quantidade: setor (select fixo) + quantidade, sem percentuais.
