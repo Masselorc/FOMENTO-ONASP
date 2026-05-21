@@ -1,6 +1,67 @@
 # Diário de bordo
 
-## 21/05/2026 - PROFOR 2022: Decisão Assistida na Tela de Revisão de Divergências PAD x Memória (UX)
+## 21/05/2026 - PROFOR 2022: Saneamento Sistêmico de Pendências Residuais de Diacrítico e Correção do `item_ausente_no_pad`
+
+- **Status**: Implementado e Validado.
+- **Tipo de mudança**: Frontend/UX + auditoria/saneamento auditável dry-run + testes. Não houve publicação, alteração de origem ativa, de `frontend/data/publicados`, do `planoAplicacao` oficial, criação de migration ou de dependência nova. Nenhum SQLite é versionado.
+
+### Problema identificado
+
+Mesmo após a correção de acentuação/diacrítico no matching, a tela `SISTEMA > Revisão de divergências` ainda podia exibir como pendência operacional itens cuja diferença é apenas de acento (ex.: video/vídeo, minimo/mínimo, Camera/Câmera), e a divergência `item_ausente_no_pad` exibia mau payload:
+
+1. Itens cuja diferença é apenas acento podiam aparecer como pendência operacional.
+2. Divergências históricas não reapresentadas continuavam visíveis como `PENDENTE`.
+3. Em `item_ausente_no_pad`, `valorAnterior` poderia carregar descrição textual em vez de marcador de estado.
+4. A tela podia induzir o usuário a "Confirmar ausência" de item que existe no PAD com diferença só de acento.
+
+### Causa
+
+- A estrutura do payload de `item_ausente_no_pad` precisava de campos financeiros próprios e de marcadores de estado (`presente_na_memoria`/`ausente_no_pad`) em vez de descrição em `valorAnterior`.
+- A lista operacional não distinguia pendência real de histórico/saneado.
+- Não havia auditoria sistêmica que classificasse pendências residuais de diacrítico nem comando auditável de saneamento.
+
+### Correção
+
+- **Backend (`profor-pad-revisao-service.js`)**: `divergenciasAusentes()` já produz `valorAnterior: "presente_na_memoria"`, `valorNovo: "ausente_no_pad"` e payload com `descricaoMemoria`, `naturezaMemoria`, `quantidadeMemoria`, `valorUnitarioMemoria`, `valorPrevistoMemoria`, `valorExecutadoMemoria`, `saldoMemoria`, `totalRateiosAtivosMemoria`, `memoria`, `antes` e a flag `saneadoPorDiacritico`. Valores ausentes vêm como `null`, nunca descrição. `divergenciasAusentes` foi exposta no `module.exports` para teste unitário.
+- **Serviço novo (`profor-pad-diacritico-auditoria-service.js`)**: módulo puro, sem banco, com `classificarDivergenciaDiacritico()`, `diferencaApenasAcentuacaoOuDiacritico()`, `valorUnitarioCompativel()` (tolerância R$ 0,01), `normalizarNatureza()` e `montarSaneadasMap()`.
+- **Script de auditoria (`auditar-pendencias-diacritico-pad-profor-2022.js`)**: reescrito para consumir o serviço; comando `npm run profor:pad:diacritico:auditar-pendencias`; gera `profor-2022-pendencias-diacritico-dry-run.json` e `.md`.
+- **Script de saneamento (`sanear-pendencias-diacritico-pad-profor-2022.js`)**: comando `npm run profor:pad:diacritico:sanear-pendencias`; registra decisão `CORRIGIDO` apenas para `saneavel_automaticamente_por_diacritico`, via serviço `registrarDecisao` (sem SQL direto), usuário `sistema-saneamento-diacritico`, `aplicadaAoPlano=false`, snapshot `_segurancaPreAtivacao` e log automáticos. Proteção defensiva: re-checa o status atual e nunca registra decisão sobre divergência já resolutiva.
+- **Frontend (`app.js`)**: para `campoAfetado = 'existencia'` a tela não exibe mais descrição em "Valor anterior/novo" — mostra "Estado anterior/novo" (Presente na memória / Ausente no PAD) e os valores financeiros reais (valor unitário, previsto, executado, saldo, rateios ativos), exibindo "não informado" quando ausentes. Quando há evidência de saneamento por diacrítico (`saneadoPorDiacritico`), "Confirmar ausência" deixa de ser a ação principal — a ação primária passa a ser "Não é ausência (diferença de acento)". A lista operacional padrão oculta divergências com decisão resolutiva, históricas não reapresentadas e saneadas por diacrítico; novo checkbox "Mostrar históricos/saneados automaticamente" reexibe tudo para auditoria.
+
+### Critérios de saneamento automático
+
+Uma divergência só é `saneavel_automaticamente_por_diacritico` quando: descrição memória x PAD difere apenas por acentuação/diacrítico; números e tokens técnicos idênticos; mesmo convênio; natureza compatível; valor unitário compatível dentro de R$ 0,01; e há evidência de correspondência no PAD (`saneadoPorDiacritico` no payload ou em `equivalenciasDiacriticoSaneadas`). Não saneável: diferença numérica/técnica (2.4ghz x 4.2ghz), divergência de valor (Meia militar R$ 37,15 x R$ 37,59), natureza divergente, ou dados insuficientes.
+
+### IDs saneados e mantidos pendentes
+
+Diagnóstico do estado atual da fila (145 divergências):
+
+- **Pendências residuais de diacrítico saneadas nesta execução: 0.** A auditoria classificou 0 como `saneavel_automaticamente_por_diacritico` porque os 3 casos reais de equivalência por diacrítico do convênio 937782 (#25 Desktop video/vídeo, #26 Smartphone minimo/mínimo, #27 Switcher video/vídeo) **já estavam `ACEITO`** e #75 (item_ausente_no_pad Desktop video) já estava `CORRIGIDO` por ciclo anterior — classificados como `ja_decidido`.
+- **#24 "Meia militar" (convênio 937265): mantido `PENDENTE`** — classificado `divergencia_material` porque há divergência real de valor unitário (R$ 37,15 x R$ 37,59).
+- `historico_nao_reapresentado_sem_correspondencia`: 121 (itens conhecidos ausentes de outros convênios, sem correspondência de acento).
+- `ja_decidido`: 23. `dados_insuficientes`: 0.
+- **Nenhuma decisão falsa de ausência foi criada**: `idsSaneaveis` vazio; o comando de saneamento registrou 0 decisões.
+
+### Impacto na auditoria / reconstrução / comparador
+
+- `auditar-fila-revisao`: último lote `id 31`, 139 reapresentadas, 6 não reapresentadas.
+- `seguranca-pre-ativacao` (dry-run): após `gerar-fila-revisao` o snapshot detectou `payloadAlteradoAposDecisao: 4` (divergências `item_ausente_no_pad` #72/#73/#74 e correlata, cujo payload foi reestruturado em ciclo anterior) e `divergenciasNaoReapresentadas` com decisão resolutiva. Isso é o **mecanismo de rastreabilidade funcionando como projetado**: o snapshot `_segurancaPreAtivacao` sinaliza que essas decisões precisam ser revalidadas; nenhuma decisão ou log foi perdido. O banco local não é versionado.
+- `reconstruir-plano` (dry-run): 606 linhas reconstruídas, sem regressão estrutural.
+- `comparar-plano` (dry-run): 8 diferenças críticas (mesmas já documentadas), 49 itens ambíguos — sem regressão atribuível a esta mudança.
+- `validar-decisao-estruturada-ponta-a-ponta.js`: SUCESSO absoluto, retorno ao baseline validado.
+
+### Testes
+
+- `tests/services/profor-pad-diacritico-auditoria.test.js` (12 testes): acento simples saneável, divergência de valor/natureza/técnica não saneável, item ausente com/sem correspondência, `ja_decidido`, dados insuficientes.
+- `tests/services/profor-pad-item-ausente.test.js` (7 testes): `valorAnterior` não recebe descrição; payload financeiro preenchido com rateio ativo; `null` quando sem valores; `saneadoPorDiacritico`.
+- `tests/e2e/app.spec.js`: novo smoke "item ausente no PAD não exibe descrição em valor anterior e mostra valores financeiros". Suíte E2E completa: 14/14.
+- `npm run validar:services`: 56 testes OK.
+
+### Confirmação
+
+Mudança não publica, não altera origem ativa, `frontend/data/publicados` ou o `planoAplicacao` oficial. Nenhuma decisão real foi registrada durante os testes. Os relatórios dry-run de segurança/reconstrução/comparação foram revertidos por refletirem estado transitório de auditoria fora do escopo do patch.
+
+
 
 - **Status**: Implementado e Validado.
 - **Tipo de mudança**: **Apenas frontend/UX**. Não houve alteração de backend, banco, migration, dependências, publicação, origem ativa ou do `planoAplicacao` oficial.

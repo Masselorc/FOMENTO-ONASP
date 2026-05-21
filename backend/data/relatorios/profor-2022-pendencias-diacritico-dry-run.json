@@ -1,6 +1,7 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-21T20:19:30.119Z",
+    "geradoEm": "2026-05-21T20:39:37.147Z",
+    "modo": "dry-run",
     "totalAnalisado": 145,
     "saneavelAutomaticamente": 0,
     "divergenciaMaterial": 1,
@@ -272,7 +273,7 @@
       "descricaoMemoria": "Meia Militar",
       "descricaoPad": "Meia militar",
       "classificacao": "divergencia_material",
-      "motivo": "Diferença de acentuação/diacrítico mas possui divergência material (Preço mem: R$ 37.15, PAD: R$ 37.59; Natureza mem: CUSTEIO, PAD: CUSTEIO)."
+      "motivo": "Diferença de acentuação, mas há divergência material (preço memória R$ 37.15, PAD R$ 37.59; natureza memória CUSTEIO, PAD CUSTEIO)."
     },
     {
       "id": 25,

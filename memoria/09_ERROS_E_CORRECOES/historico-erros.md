@@ -317,6 +317,34 @@ Critério operacional: se não houver evidência concreta, registrar como risco,
 
 **Rollback:** reverter commit documental correspondente.
 
+### CA-004 — `item_ausente_no_pad` exibindo descrição em campo de estado e pendências de diacrítico na lista operacional
+
+**Classificação:** correção aplicada
+
+**Contexto:** tela `SISTEMA > Revisão de divergências PAD x memória`, PROFOR 2022.
+
+**Problema:** divergências `item_ausente_no_pad` podiam exibir descrição textual no campo "Valor anterior/novo" (que deve ser apenas marcador de estado), e itens cuja diferença é exclusivamente de acentuação/diacrítico apareciam como pendência operacional, podendo induzir o usuário a "Confirmar ausência" de item que existe no PAD.
+
+**Evidência:** `backend/services/profor-2022/profor-pad-revisao-service.js` (`divergenciasAusentes()` com `valorAnterior: "presente_na_memoria"` e payload financeiro); `frontend/js/app.js` (bloco `categoria === 'ausencia'` e `renderComparacaoRevisao`); relatório `backend/data/relatorios/profor-2022-pendencias-diacritico-dry-run.md`.
+
+**Causa provável:** o campo `valorAnterior` foi reutilizado para texto descritivo; a lista não distinguia pendência operacional real de histórico/saneado.
+
+**Correção aplicada:** payload de `item_ausente_no_pad` passou a usar marcadores de estado e campos financeiros próprios (`valorUnitarioMemoria` etc., `null` quando ausentes); a UI exibe "Estado anterior/novo" e valores financeiros; a lista operacional oculta históricos/saneados por padrão, com checkbox de auditoria. Criados a auditoria dry-run `profor:pad:diacritico:auditar-pendencias` e o saneamento auditável `profor:pad:diacritico:sanear-pendencias` (decisão via `registrarDecisao`, sem SQL direto).
+
+**Por que funcionou:** separa marcador de estado de descrição; o saneamento sistêmico só atua sobre casos comprovadamente diacríticos, preservando histórico e rastreabilidade.
+
+**Como prevenir:** nunca reutilizar campo de estado/marcador para texto livre; toda divergência de existência deve carregar valores materiais em campos próprios.
+
+**Boa prática reutilizável:** classificar pendências por auditoria dry-run antes de qualquer saneamento, e registrar decisão somente pelo serviço de decisão existente.
+
+**Aplicável a futuras aplicações:** sim.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-revisao-service.js`, `backend/services/profor-2022/profor-pad-diacritico-auditoria-service.js`, `backend/scripts/auditar-pendencias-diacritico-pad-profor-2022.js`, `backend/scripts/sanear-pendencias-diacritico-pad-profor-2022.js`, `frontend/js/app.js`.
+
+**Validações recomendadas:** `npm run validar:services`, `npm run profor:pad:diacritico:auditar-pendencias`, suíte E2E e `validar-decisao-estruturada-ponta-a-ponta.js`.
+
+**Rollback:** reverter o commit `fix(profor-2022): saneia pendencias residuais de diacritico`. Como o saneamento usa o serviço de decisão sem SQL direto e o banco não é versionado, não há rollback de schema.
+
 ## Riscos recorrentes
 
 ### RR-001 — Workspace sujo antes de iniciar nova tarefa

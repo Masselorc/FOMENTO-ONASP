@@ -1,9 +1,13 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { registrarDecisao } = require("../services/profor-2022/profor-pad-revisao-decisao-service");
+const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 const { inicializarBanco } = require("../db/init-db");
 
 const CAMINHO_DRY_RUN_JSON = "backend/data/relatorios/profor-2022-pendencias-diacritico-dry-run.json";
+
+// Status que já têm decisão resolutiva — não devem receber nova decisão.
+const STATUS_RESOLUTIVOS = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "APLICADO", "REVERTIDO"]);
 
 function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
@@ -42,10 +46,26 @@ function executar() {
   };
 
   let totalSaneados = 0;
+  let totalIgnorados = 0;
   for (const id of idsSaneaveis) {
     const item = analisados.find((x) => x.id === id);
     if (!item) {
       console.warn(`Aviso: ID ${id} listado como saneável mas não encontrado no detalhamento.`);
+      continue;
+    }
+
+    // Proteção defensiva: nunca registra decisão sobre divergência que já
+    // tenha decisão resolutiva (evita decisão duplicada se a fila mudou
+    // entre a auditoria e o saneamento).
+    const linhaAtual = repo.buscarDivergenciaPorId(id);
+    if (!linhaAtual) {
+      console.warn(`Aviso: ID #${id} não encontrado na base; ignorado.`);
+      totalIgnorados++;
+      continue;
+    }
+    if (STATUS_RESOLUTIVOS.has(linhaAtual.status)) {
+      console.log(`  ID #${id} já possui status resolutivo (${linhaAtual.status}); nenhuma decisão registrada.`);
+      totalIgnorados++;
       continue;
     }
 
@@ -64,7 +84,7 @@ function executar() {
     }
   }
 
-  console.log(`Processo finalizado. Total de itens saneados: ${totalSaneados} de ${idsSaneaveis.length}.`);
+  console.log(`Processo finalizado. Total saneados: ${totalSaneados}; ignorados (já decididos/ausentes): ${totalIgnorados}; de ${idsSaneaveis.length} candidatos.`);
 }
 
 try {

@@ -1529,6 +1529,73 @@ decisões já existentes não são afetadas.
 publicação, alteração da origem ativa, de `frontend/data/publicados` ou do
 `planoAplicacao` oficial.
 
+#### 16.2.16. Saneamento sistêmico de pendências de diacrítico (Etapa 9.3 — implementada)
+
+A Etapa 9.3 trata as pendências residuais cuja diferença é exclusivamente de
+acentuação/diacrítico e corrige a exibição/payload de `item_ausente_no_pad`. A
+mudança é de frontend/UX, auditoria/saneamento auditável em dry-run e testes;
+não cria migration, não publica e não altera a origem ativa nem o
+`planoAplicacao` oficial.
+
+**Auditoria dry-run.** O comando `npm run profor:pad:diacritico:auditar-pendencias`
+(script `auditar-pendencias-diacritico-pad-profor-2022.js`) lê a fila de revisão
+e classifica cada divergência, gerando
+`backend/data/relatorios/profor-2022-pendencias-diacritico-dry-run.json` e `.md`.
+A lógica de classificação fica no serviço puro
+`profor-pad-diacritico-auditoria-service.js` (testável sem banco).
+Classificações: `saneavel_automaticamente_por_diacritico`, `divergencia_material`,
+`historico_nao_reapresentado_sem_correspondencia`, `dados_insuficientes` e
+`ja_decidido`.
+
+**Critério de saneamento automático.** Uma divergência só é
+`saneavel_automaticamente_por_diacritico` quando a descrição memória x PAD difere
+apenas por acentuação/diacrítico; números e tokens técnicos são idênticos; mesmo
+convênio; natureza compatível; valor unitário compatível dentro de R$ 0,01; há
+evidência de correspondência no PAD (`saneadoPorDiacritico` no payload ou em
+`equivalenciasDiacriticoSaneadas`); e não há decisão humana conflitante. Não são
+saneáveis diferenças numéricas/técnicas (`2.4ghz` x `4.2ghz`), divergências de
+valor unitário, naturezas divergentes ou itens sem dados materiais suficientes.
+
+**Saneamento sistêmico auditável.** O comando
+`npm run profor:pad:diacritico:sanear-pendencias` (script
+`sanear-pendencias-diacritico-pad-profor-2022.js`) reaproveita o relatório
+dry-run e registra decisão resolutiva **apenas** para os IDs classificados como
+`saneavel_automaticamente_por_diacritico`, sempre pelo serviço existente
+`registrarDecisao` (nunca SQL direto). Decisão registrada: `CORRIGIDO`; usuário
+`sistema-saneamento-diacritico`; `aplicadaAoPlano=false`; o serviço gera o
+snapshot `_segurancaPreAtivacao` e o log automaticamente. Proteção defensiva:
+antes de registrar, o script re-consulta o status atual e ignora qualquer
+divergência que já tenha decisão resolutiva, evitando decisão duplicada. A
+justificativa padrão registra que a diferença é exclusivamente de
+acentuação/diacrítico, sem ausência real nem alteração material.
+
+**Correção de `item_ausente_no_pad`.** `divergenciasAusentes()` em
+`profor-pad-revisao-service.js` produz `valorAnterior: "presente_na_memoria"` e
+`valorNovo: "ausente_no_pad"` (marcadores de estado, nunca descrição). O payload
+carrega `descricaoMemoria`, `naturezaMemoria`, `quantidadeMemoria`,
+`valorUnitarioMemoria`, `valorPrevistoMemoria`, `valorExecutadoMemoria`,
+`saldoMemoria`, `totalRateiosAtivosMemoria`, `memoria`, `antes` e a flag
+`saneadoPorDiacritico`. Quando um valor não existe, vai como `null` — nunca a
+descrição.
+
+**Correção da interface.** Para `campoAfetado = 'existencia'` a tela de revisão
+não exibe mais descrição em "Valor anterior/novo": mostra "Estado anterior/novo"
+(Presente na memória / Ausente no PAD) e os valores financeiros reais da memória,
+exibindo "não informado" quando ausentes. Quando há evidência de saneamento por
+diacrítico, "Confirmar ausência" deixa de ser a ação principal — a ação primária
+passa a ser "Não é ausência (diferença de acento)". A lista operacional padrão
+oculta divergências com decisão resolutiva, históricas não reapresentadas e
+saneadas por diacrítico; o checkbox "Mostrar históricos/saneados automaticamente"
+reexibe tudo para auditoria.
+
+**Estado da fila e confirmação.** No diagnóstico atual (145 divergências), os 3
+casos reais de equivalência por diacrítico do convênio 937782 já estavam
+`ACEITO` e o `item_ausente_no_pad` correspondente já estava `CORRIGIDO` —
+portanto a auditoria reporta 0 pendências saneáveis residuais e o saneamento
+sistêmico registra 0 decisões. A divergência #24 ("Meia militar", convênio
+937265) permanece `PENDENTE` por divergência material de valor unitário. Nenhuma
+decisão falsa de ausência foi criada; nenhuma decisão ou log foi apagado.
+
 ---
 
 ## 17. Fases de implementação recomendadas

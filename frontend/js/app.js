@@ -2119,6 +2119,19 @@ async function carregarLogoParaPDF() {
             } catch (_) { /* localStorage indisponível: ignora persistência */ }
         }
 
+        // Para item_ausente_no_pad: campos financeiros que podem vir nulos da
+        // memória. Quando ausentes, exibe "não informado" em vez de descrição.
+        function valorOuNaoInformadoRevisao(valor) {
+            if (valor === null || valor === undefined || valor === '') return 'não informado';
+            return valor;
+        }
+
+        // Indica se a divergência tem evidência de saneamento por diacrítico
+        // (item reaparece no PAD apenas com diferença de acentuação).
+        function divergenciaSaneadaPorDiacriticoRevisao(divergencia) {
+            return divergencia?.payload?.saneadoPorDiacritico === true;
+        }
+
         function obterPresetsDecisaoRevisao(divergencia) {
             const categoria = obterCategoriaSaneamentoRevisao(divergencia);
             const revisarDepois = {
@@ -2195,23 +2208,35 @@ async function carregarLogoParaPDF() {
                 return presets;
             }
             if (categoria === 'ausencia') {
-                return [
-                    {
-                        id: 'confirmar_ausencia',
-                        label: 'Confirmar ausência',
-                        variante: 'success',
-                        decisao: 'ACEITO',
-                        justificativa: 'Ausência do item no PAD atual confirmada por decisão humana.'
-                    },
-                    {
-                        id: 'vincular_substituto',
-                        label: 'Não confirmar (revisar)',
-                        variante: 'danger',
-                        decisao: 'REJEITADO',
-                        justificativa: 'Ausência não confirmada; item pode ter substituto a vincular em revisão posterior.'
-                    },
-                    revisarDepois
-                ];
+                const confirmarAusencia = {
+                    id: 'confirmar_ausencia',
+                    label: 'Confirmar ausência',
+                    variante: 'success',
+                    decisao: 'ACEITO',
+                    justificativa: 'Ausência do item no PAD atual confirmada por decisão humana.'
+                };
+                const naoConfirmar = {
+                    id: 'vincular_substituto',
+                    label: 'Não confirmar (revisar)',
+                    variante: 'danger',
+                    decisao: 'REJEITADO',
+                    justificativa: 'Ausência não confirmada; item pode ter substituto a vincular em revisão posterior.'
+                };
+                // Quando há evidência de saneamento por diacrítico, "Confirmar ausência"
+                // NÃO é a ação principal — o item existe no PAD apenas com outra
+                // acentuação. A ação primária passa a ser não confirmar.
+                if (divergenciaSaneadaPorDiacriticoRevisao(divergencia)) {
+                    return [
+                        {
+                            ...naoConfirmar,
+                            label: 'Não é ausência (diferença de acento)',
+                            justificativa: 'Não há ausência real: o item correspondente existe no PAD com diferença apenas de acentuação/diacrítico.'
+                        },
+                        revisarDepois,
+                        confirmarAusencia
+                    ];
+                }
+                return [confirmarAusencia, naoConfirmar, revisarDepois];
             }
             if (categoria === 'consistencia') {
                 return [
@@ -2344,14 +2369,25 @@ async function carregarLogoParaPDF() {
                 ]);
             } else if (categoria === 'ausencia') {
                 titulo = 'Item ausente no PAD';
+                // campoAfetado = 'existencia': não exibir "Valor anterior/novo" como
+                // descrição. Mostrar Estado anterior/novo e valores financeiros reais.
+                const saneadoDiacritico = payload.saneadoPorDiacritico === true;
                 conteudo = renderListaSaneamentoRevisao([
-                    ['Item da memória', payload.descricaoMemoria || divergencia.valorAnterior],
+                    ['Item da memória', payload.descricaoMemoria],
                     ['Convênio', divergencia.numeroConvenio || payload.numeroConvenio],
                     ['UF', divergencia.uf || payload.uf],
-                    ['Área', payload.area || payload.areaMemoria],
-                    ['Natureza', payload.natureza || payload.naturezaMemoria],
-                    ['Valores antigos', divergencia.valorAnterior],
-                    ['Alerta', 'O item não apareceu no PAD atual.']
+                    ['Estado anterior', 'Presente na memória'],
+                    ['Estado novo', 'Ausente no PAD'],
+                    ['Natureza', payload.naturezaMemoria || payload.natureza],
+                    ['Quantidade (memória)', valorOuNaoInformadoRevisao(payload.quantidadeMemoria)],
+                    ['Valor unitário (memória)', valorOuNaoInformadoRevisao(payload.valorUnitarioMemoria)],
+                    ['Valor previsto (memória)', valorOuNaoInformadoRevisao(payload.valorPrevistoMemoria)],
+                    ['Valor executado (memória)', valorOuNaoInformadoRevisao(payload.valorExecutadoMemoria)],
+                    ['Saldo (memória)', valorOuNaoInformadoRevisao(payload.saldoMemoria)],
+                    ['Rateios ativos na memória', valorOuNaoInformadoRevisao(payload.totalRateiosAtivosMemoria)],
+                    ['Alerta', saneadoDiacritico
+                        ? 'Há item correspondente no PAD com diferença apenas de acentuação/diacrítico. Não confirme ausência: trata-se de saneamento textual.'
+                        : 'O item não apareceu no PAD atual. Avalie exclusão, substituição ou observação.']
                 ]);
             } else if (categoria === 'nao_apto') {
                 titulo = 'Item conhecido não apto';
@@ -2796,7 +2832,12 @@ async function carregarLogoParaPDF() {
                     obterValorAninhadoRevisao(antes, ['saldo']),
                     obterValorAninhadoRevisao(depois, ['saldo'])),
                 renderCampoComparacaoRevisao('Campo afetado', divergencia.campoAfetado, divergencia.campoAfetado),
-                renderCampoComparacaoRevisao('Valor anterior / novo', divergencia.valorAnterior, divergencia.valorNovo),
+                // Para campoAfetado = 'existencia', valorAnterior/valorNovo são
+                // marcadores de estado ('presente_na_memoria'/'ausente_no_pad'),
+                // não descrição. Exibe como "Estado anterior/novo" legível.
+                (obterCampoAfetadoRevisao(divergencia) === 'existencia'
+                    ? renderCampoComparacaoRevisao('Estado anterior / novo', 'Presente na memória', 'Ausente no PAD')
+                    : renderCampoComparacaoRevisao('Valor anterior / novo', divergencia.valorAnterior, divergencia.valorNovo)),
                 renderCampoComparacaoRevisao('Diferença', divergencia.diferenca, divergencia.diferenca),
                 renderCampoComparacaoRevisao('Fonte', divergencia.fonteAnterior, divergencia.fonteNova)
             ].filter(Boolean).join('');
@@ -3089,20 +3130,43 @@ async function carregarLogoParaPDF() {
             renderAuditoriaRevisao(revisaoDivergenciasEstado.auditoria);
         }
 
+        // Decide se a divergência é uma pendência operacional real, ou seja,
+        // deve aparecer na lista padrão. Histórico não reapresentado, item já
+        // saneado por diacrítico e divergência com decisão resolutiva não são
+        // pendências operacionais — ficam ocultos salvo modo auditoria.
+        function ehPendenciaOperacionalRevisao(item) {
+            const statusResolutivo = ['ACEITO', 'REJEITADO', 'CORRIGIDO', 'REVERTIDO'].includes(item?.status);
+            if (statusResolutivo) return false;
+            if (item?.reapresentada === false) return false;
+            if (divergenciaSaneadaPorDiacriticoRevisao(item)) return false;
+            return true;
+        }
+
         async function carregarListaRevisao() {
             const tbody = document.querySelector('#tabela-revisao-divergencias tbody');
             if (!tbody) return;
             tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-3">Carregando divergências…</td></tr>';
             try {
                 const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias${montarQueryRevisao(obterFiltrosRevisao())}`);
-                revisaoDivergenciasEstado.divergencias = Array.isArray(payload.divergencias) ? payload.divergencias : [];
+                const recebidas = Array.isArray(payload.divergencias) ? payload.divergencias : [];
+                const mostrarSaneados = document.getElementById('revisao-filtro-mostrar-saneados')?.checked === true;
+                // Lista operacional padrão: oculta históricos/saneados; modo
+                // auditoria ("Mostrar históricos/saneados") exibe tudo.
+                const visiveis = mostrarSaneados
+                    ? recebidas
+                    : recebidas.filter(ehPendenciaOperacionalRevisao);
+                const ocultadas = recebidas.length - visiveis.length;
+                revisaoDivergenciasEstado.divergencias = visiveis;
                 revisaoDivergenciasEstado.total = Number(payload.total || 0);
-                document.getElementById('revisao-lista-total').textContent = `${revisaoDivergenciasEstado.total} divergência(s)`;
-                if (!revisaoDivergenciasEstado.divergencias.length) {
-                    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-3">Nenhuma divergência encontrada para os filtros.</td></tr>';
+                const totalLabel = ocultadas > 0 && !mostrarSaneados
+                    ? `${visiveis.length} pendência(s) operacional(is) · ${ocultadas} histórico(s)/saneado(s) oculto(s)`
+                    : `${visiveis.length} divergência(s)`;
+                document.getElementById('revisao-lista-total').textContent = totalLabel;
+                if (!visiveis.length) {
+                    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-3">Nenhuma pendência operacional para os filtros. Marque "Mostrar históricos/saneados" para auditoria.</td></tr>';
                     return;
                 }
-                tbody.innerHTML = revisaoDivergenciasEstado.divergencias.map((item) => `
+                tbody.innerHTML = visiveis.map((item) => `
                     <tr>
                         <td>${renderBadgeRevisao(item.status, classeStatusRevisao(item.status))}</td>
                         <td>${renderBadgeRevisao(item.nivel, classeNivelRevisao(item.nivel))}</td>
@@ -3196,6 +3260,7 @@ async function carregarLogoParaPDF() {
                         <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-sem-decisao" checked><span>Sem decisão resolutiva</span></label>
 
                         <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-com-decisao"><span>Com decisão resolutiva</span></label>
+                        <label class="revisao-checkbox" title="Inclui divergências históricas não reapresentadas e itens já saneados automaticamente por diacrítico."><input type="checkbox" id="revisao-filtro-mostrar-saneados"><span>Mostrar históricos/saneados automaticamente</span></label>
                         <div class="revisao-filter-actions">
                             <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
                             <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-revisao-limpar-filtros">Limpar</button>
@@ -3301,6 +3366,10 @@ async function carregarLogoParaPDF() {
                     if (semDecisao) semDecisao.checked = true;
                     if (comDecisao) comDecisao.checked = false;
                 }
+            });
+            // "Mostrar históricos/saneados" é filtro client-side: recarrega a lista.
+            document.getElementById('revisao-filtro-mostrar-saneados')?.addEventListener('change', async () => {
+                await carregarListaRevisao();
             });
             form?.addEventListener('submit', async (event) => {
                 event.preventDefault();

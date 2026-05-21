@@ -401,6 +401,143 @@ test("revisão de equivalência por descrição normalizada usa decisão assisti
   expect(falhasCriticas).toEqual([]);
 });
 
+test("item ausente no PAD não exibe descrição em valor anterior e mostra valores financeiros", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+  let houvePostDecisao = false;
+
+  // Divergência item_ausente_no_pad com correspondência de diacrítico (#75).
+  const divergencia = {
+    id: 75,
+    status: "PENDENTE",
+    nivel: "aviso",
+    numeroConvenio: "937782",
+    uf: "AC",
+    chaveItem: "937782::DESKTOP-VIDEO",
+    tipoAlerta: "item_ausente_no_pad",
+    campoAfetado: "existencia",
+    valorAnterior: "presente_na_memoria",
+    valorNovo: "ausente_no_pad",
+    fonteAnterior: "memoria",
+    fonteNova: "pad",
+    diferenca: "item conhecido não apareceu no PAD atual",
+    motivoProvavel: "Item da memória ausente no PAD; possível exclusão ou substituição.",
+    bloqueiaPublicacao: false,
+    reapresentada: true,
+    payload: {
+      campoAfetado: "existencia",
+      numeroConvenio: "937782",
+      uf: "AC",
+      descricaoMemoria: "Desktop para edição de video",
+      naturezaMemoria: "CAPITAL",
+      quantidadeMemoria: 1,
+      valorUnitarioMemoria: 14849,
+      valorPrevistoMemoria: 14849,
+      valorExecutadoMemoria: 0,
+      saldoMemoria: 14849,
+      totalRateiosAtivosMemoria: 1,
+      saneadoPorDiacritico: true,
+      memoria: {
+        descricao: "Desktop para edição de video",
+        natureza: "CAPITAL",
+        quantidade: 1,
+        valorUnitario: 14849,
+        valorPrevisto: 14849,
+        valorExecutado: 0,
+        saldo: 14849,
+      },
+      antes: {
+        descricao: "Desktop para edição de video",
+        natureza: "CAPITAL",
+        quantidade: 1,
+        valorUnitario: 14849,
+        valorPrevisto: 14849,
+        valorExecutado: 0,
+        saldo: 14849,
+      },
+    },
+    decisoes: [],
+    logs: [],
+  };
+
+  await page.route("**/api/profor-2022/revisao/**", async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (request.method().toUpperCase() === "POST") {
+      houvePostDecisao = true;
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ success: false, message: "POST não deveria ocorrer neste smoke." }),
+      });
+      return;
+    }
+    if (url.pathname.endsWith("/auditoria")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          auditoria: {
+            publicacaoLiberada: true,
+            totalDivergencias: 1,
+            totalPendentes: 1,
+            totalEmRevisao: 0,
+            totalImpeditivas: 0,
+            totalBloqueiamPublicacao: 0,
+            totalPendentesQueBloqueiamPublicacao: 0,
+            totalEmRevisaoQueBloqueiamPublicacao: 0,
+            totalComDecisaoResolutiva: 0,
+            totalComComentario: 0,
+            totalSemDecisaoResolutiva: 1,
+            porTipo: [{ chave: "item_ausente_no_pad", total: 1 }],
+          },
+        }),
+      });
+      return;
+    }
+    if (url.pathname.endsWith("/divergencias/75")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ success: true, divergencia }),
+      });
+      return;
+    }
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, total: 1, divergencias: [divergencia] }),
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.localStorage.removeItem("profor2022:revisao:usuarioResponsavel"));
+  await page.evaluate(() => window.toggleView("revisao-divergencias"));
+
+  const view = page.locator("#view-revisao-divergencias");
+  await expect(view).toBeVisible();
+
+  // Lista padrão oculta o item saneado por diacrítico — modo auditoria revela.
+  await view.locator("#revisao-filtro-mostrar-saneados").check();
+  await view.getByRole("button", { name: "Revisar" }).click();
+
+  // Painel de saneamento mostra "Estado anterior/novo" e valores financeiros,
+  // nunca a constante "presente_na_memoria" como se fosse descrição.
+  const painel = view.locator(".revisao-structured-panel");
+  await expect(painel.getByText("Estado anterior", { exact: true })).toBeVisible();
+  await expect(painel.getByText("Estado novo", { exact: true })).toBeVisible();
+  await expect(painel.getByText("Valor previsto (memória)", { exact: true })).toBeVisible();
+  await expect(painel.getByText("presente_na_memoria")).toHaveCount(0);
+
+  // Comparação Antes x Depois usa "Estado anterior / novo", não "Valor anterior / novo".
+  await view.getByRole("tab", { name: /Comparação/i }).click();
+  const comparacao = view.locator(".revisao-comparacao-grid");
+  await expect(comparacao.getByText("Estado anterior / novo", { exact: true })).toBeVisible();
+  await expect(comparacao.getByText("presente_na_memoria")).toHaveCount(0);
+
+  expect(houvePostDecisao).toBe(false);
+  expect(falhasCriticas).toEqual([]);
+});
+
 test("parâmetros mínimos faz fallback para JSON publicado quando API local falha", async ({ page }) => {
   const falhasCriticas = registrarFalhasCriticas(page);
   await bloquearEscritasReais(page);

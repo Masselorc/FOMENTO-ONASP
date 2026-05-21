@@ -1,23 +1,25 @@
-# Relatório de Auditoria — Diacríticos e Acentuação PAD/PROFOR 2022 (Dry-Run)
+# Auditoria de pendências residuais de diacrítico — PAD/PROFOR 2022 (dry-run)
 
-*Gerado em:* 21/05/2026, 17:19:30
+*Gerado em:* 21/05/2026, 17:39:37
 
-## Resumo Estatístico
+Esta auditoria é somente leitura: não altera o banco, não publica e não aplica decisão.
+
+## Resumo estatístico
 
 | Classificação | Quantidade |
 | :--- | :---: |
-| **Saneável Automaticamente** | 0 |
-| Divergência Material | 1 |
-| Histórico Não Reapresentado | 121 |
-| Dados Insuficientes | 0 |
-| Já Decidido | 23 |
-| **Total Analisado** | **145** |
+| **Saneável automaticamente por diacrítico** | 0 |
+| Divergência material | 1 |
+| Histórico não reapresentado sem correspondência | 121 |
+| Dados insuficientes | 0 |
+| Já decidido | 23 |
+| **Total analisado** | **145** |
 
-## IDs Saneáveis
+## IDs saneáveis automaticamente
 
-Nenhum item saneável encontrado.
+Nenhum item saneável encontrado nesta execução.
 
-## Detalhes das Classificações
+## Detalhe por divergência
 
 | ID | Convênio | Tipo | Status | Classificação | Motivo |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -44,7 +46,7 @@ Nenhum item saneável encontrado.
 | #21 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #22 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #23 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
-| #24 | 937265 | `equivalencia_por_descricao_normalizada` | `PENDENTE` | **divergencia_material** | Diferença de acentuação/diacrítico mas possui divergência material (Preço mem: R$ 37.15, PAD: R$ 37.59; Natureza mem: CUSTEIO, PAD: CUSTEIO). |
+| #24 | 937265 | `equivalencia_por_descricao_normalizada` | `PENDENTE` | **divergencia_material** | Diferença de acentuação, mas há divergência material (preço memória R$ 37.15, PAD R$ 37.59; natureza memória CUSTEIO, PAD CUSTEIO). |
 | #25 | 937782 | `equivalencia_por_descricao_normalizada` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #26 | 937782 | `equivalencia_por_descricao_normalizada` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #27 | 937782 | `equivalencia_por_descricao_normalizada` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |

@@ -627,4 +627,6 @@ module.exports = {
   coletarDivergencias,
   gerarFilaRevisao,
   auditarFilaRevisao,
+  // Exposto para testes unitários do payload de item_ausente_no_pad.
+  divergenciasAusentes,
 };
