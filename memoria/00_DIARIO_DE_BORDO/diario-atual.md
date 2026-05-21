@@ -1,5 +1,105 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Etapa 9.3.0 - auditoria `item_nao_apto` sem divergência material
+
+- Branch atual: `main`.
+- Objetivo:
+  - criar auditoria dry-run para identificar divergências `item_nao_apto` em
+    que memória e PAD coincidem materialmente, permitindo aceite assistido
+    futuro por `ACEITO` sem aplicar decisão ao `planoAplicacao` oficial.
+- Arquivos alterados:
+  - `backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - relatórios gerados em `backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json` e `.md`;
+  - relatórios dry-run de segurança/reconstrução/comparação regenerados pelas validações.
+- Comandos adicionados:
+  - `npm run profor:pad:item-nao-apto:auditar`;
+  - `npm run profor:pad:item-nao-apto:aceitar-iguais -- --aplicar`.
+- Regra da auditoria:
+  - lê divergências `item_nao_apto`;
+  - considera para aceite apenas status `PENDENTE` ou `EM_REVISAO` sem decisão
+    resolutiva;
+  - compara `payload.memoria`/`payload.antes` com `payload.pad`/`payload.depois`;
+  - quantidade: tolerância `0,000001`;
+  - valores monetários: tolerância `0,01`;
+  - natureza: igualdade textual normalizada;
+  - descrição: igualdade textual normalizada, mas não bloqueia quando a chave do
+    item está preservada e os dados materiais coincidem;
+  - área não é exigida, pois o PAD pode não trazer área.
+- Resultado do dry-run:
+  - total `item_nao_apto`: `19`;
+  - candidatos a aceite automático: `11`;
+  - divergência material: `8`;
+  - dados insuficientes: `0`;
+  - já decididos: `0`;
+  - erros de payload: `0`.
+- Candidatos identificados:
+  - `#28` `937216/GO` Monitor LED, mínimo 27;
+  - `#29` `937216/GO` Notebook;
+  - `#30` `937216/GO` Tablet;
+  - `#35` `937468/TO` Nobreak OUVIDORIA;
+  - `#36` `937468/TO` Nobreak CORREGEDORIA;
+  - `#37` `937468/TO` Tablet CORREGEDORIA;
+  - `#40` `938128/SP` Câmera Digital;
+  - `#41` `938128/SP` Serviços de digitalização;
+  - `#42` `938128/SP` Estação de Trabalho;
+  - `#43` `938128/SP` Gaveteiros;
+  - `#45` `938128/SP` Serviço de operacionalização de sistema.
+- Aplicação:
+  - não executada nesta rodada;
+  - nenhuma decisão real foi registrada;
+  - o modo de aplicação exige flag explícita `--aplicar` e usa o serviço
+    existente de decisão, preservando `payloadDecisao`, snapshot
+    `_segurancaPreAtivacao`, logs e `aplicadaAoPlano=false`.
+- Auditoria após dry-run:
+  - fila mantida em `145` divergências;
+  - `145` pendentes;
+  - `48` bloqueiam publicação;
+  - `0` decisões resolutivas.
+- Reconstrução e comparador:
+  - reconstrução dry-run permaneceu `aptoParaAtivacao=false`, com `47`
+    impedimentos existentes;
+  - comparador dry-run permaneceu `aptoParaPublicacao=false`, com `0`
+    diferenças críticas;
+  - sem decisões resolutivas interpretadas, pois a aplicação assistida não foi executada.
+- Validações realizadas:
+  - `node --check backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js`;
+  - `npm run validar:syntax`;
+  - `npm run validar:services`;
+  - `npm run profor:pad:item-nao-apto:auditar`;
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `node backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js`;
+  - `git diff --check`;
+  - `git status --short frontend/data/publicados`;
+  - `git ls-files "*.sqlite*"`.
+- Confirmações de escopo:
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - nenhuma migration, dependência nova ou fuzzy matching.
+- Pendências:
+  - se o usuário autorizar, executar
+    `npm run profor:pad:item-nao-apto:aceitar-iguais -- --aplicar` para registrar
+    `ACEITO` apenas nos 11 candidatos listados.
+- Risco de regressão:
+  - baixo: script novo é local, padrão dry-run e não altera banco sem flag;
+  - risco operacional na aplicação futura é controlado pelas tolerâncias e pelo
+    uso do serviço existente de decisão.
+- Rollback:
+  - reverter o script, comandos npm, inclusão no `validar-syntax` e registros de
+    memória; se a aplicação assistida for executada futuramente, reverter decisões
+    exige registrar decisão humana `REVERTIDO` ou saneamento transacional específico,
+    sem apagar logs.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: exibição da memória em `item_nao_apto`
 
 - Branch atual: `main`.

@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T16:58:00.610Z",
+  "geradoEm": "2026-05-21T17:28:03.336Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -18905,7 +18905,7 @@
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T16:58:00.609Z",
+    "geradoEm": "2026-05-21T17:28:03.335Z",
     "resumo": {
       "totalDecisoesResolutivasAuditadas": 0,
       "totalPayloadPreservado": 0,

@@ -1253,6 +1253,14 @@ material.
   memória quando disponível para exibição do valor unitário/quantidade. Sem
   rateio ativo, os campos quantitativos/financeiros permanecem nulos e a
   divergência segue impedindo uso automático até saneamento humano.
+  A auditoria local `npm run profor:pad:item-nao-apto:auditar` identifica, em
+  modo dry-run, itens `item_nao_apto` pendentes/em revisão e sem decisão
+  resolutiva cujos dados materiais de memória e PAD coincidem. O critério usa
+  tolerância de `0,000001` para quantidade e `0,01` para valores monetários,
+  exige natureza normalizada igual e não exige área, pois o PAD pode não trazer
+  esse campo. A aplicação assistida só ocorre com
+  `npm run profor:pad:item-nao-apto:aceitar-iguais -- --aplicar`, registrando
+  `ACEITO` pelo serviço existente de decisão, com `aplicadaAoPlano=false`.
 - `quantidade_valor_unitario_inconsistente`: `ACEITO` marca a inconsistência
   como saneada em dry-run, mantendo os totais do PAD como fonte de verdade, sem
   recalcular o total previsto.

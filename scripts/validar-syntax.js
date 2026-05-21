@@ -49,6 +49,7 @@ const ARQUIVOS = [
   "backend/scripts/comparar-plano-pad-profor-2022.js",
   "backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js",
   "backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js",
+  "backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
   "frontend/js/core/ui-components.js",
