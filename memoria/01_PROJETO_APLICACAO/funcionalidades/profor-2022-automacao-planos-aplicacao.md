@@ -1458,6 +1458,77 @@ JSON `payload_decisao_json`, preservando o payload do usuário.
 divergência automaticamente, não cria rateio no banco, não limpa divergências e
 não substitui a auditoria/dry-runs obrigatórios antes de qualquer ativação.
 
+#### 16.2.15. Decisão assistida na tela de revisão (Etapa 9.2 — implementada)
+
+A Etapa 9.2 reformulou a usabilidade do painel "Registrar decisão" da tela
+`SISTEMA > Revisão de divergências PAD x memória` para reduzir a digitação
+manual no saneamento das divergências PAD/PROFOR 2022. É uma mudança
+**exclusivamente de frontend/UX**: não altera backend, banco, migration,
+dependências, publicação, origem ativa nem o `planoAplicacao` oficial. O patch é
+incremental e reversível; a tela não foi reescrita.
+
+**Problema de UX.** O formulário anterior exigia, em toda decisão, justificativa
+em texto livre, redigitação do usuário responsável e exibição permanente de
+campos técnicos (valor aplicado, decisão técnica, payload). Para divergências
+repetitivas — como equivalência por descrição normalizada, em que a diferença é
+apenas de acentuação — isso tornava o fluxo lento e propenso a inconsistência
+textual.
+
+**Presets por tipo de divergência.** A função `obterPresetsDecisaoRevisao()`
+gera, conforme a categoria de saneamento, opções pré-definidas que já trazem
+decisão e justificativa padronizada:
+
+- `equivalencia_por_descricao_normalizada`: Aceitar equivalência (`ACEITO`,
+  justificativa "Descrição coincide após normalização textual, com mesma
+  natureza e mesmo valor unitário dentro da tolerância definida."), Rejeitar
+  (`REJEITADO`), Revisar depois (`EM_REVISAO`).
+- `item_nao_apto` e variantes: Liberar item para dry-run (`ACEITO`), Manter
+  bloqueado (`REJEITADO`), Revisar depois (`EM_REVISAO`).
+- categoria `rateio` (`item_novo_sem_rateio`, `item_pad_sem_rateio`,
+  `rateio_novo`, `correcao_de_rateio`): Aplicar rateio sugerido (quando o
+  payload traz `rateioSugerido`), Informar rateio manual, Revisar depois.
+- categoria `ausencia` (`item_ausente_no_pad`, `item_substituido`): Confirmar
+  ausência, Não confirmar (revisar), Revisar depois.
+- categoria `consistencia` (`quantidade_valor_unitario_inconsistente`): Aceitar
+  total do PAD, Manter alerta, Revisar depois.
+- categoria `campo` (`valor_diferente` etc.): Aceitar valor do PAD, Corrigir
+  manualmente (`CORRIGIDO`), Manter memória (`REJEITADO`), Revisar depois.
+- categoria genérica: Aceitar, Rejeitar, Revisar depois.
+
+**Ações rápidas e motivo selecionável.** No topo do painel há chips de ação
+rápida (um por preset). Clicar um chip — ou escolher no dropdown "Motivo da
+decisão" — pré-preenche a decisão técnica e a justificativa, monta/atualiza o
+`payloadDecisao` e atualiza o resumo, **sem registrar**. O registro só ocorre ao
+clicar "Registrar decisão". A justificativa enviada ao backend é composta por
+`comporJustificativaDecisaoRevisao()` = texto padrão do motivo + observação
+adicional opcional; não é mais exigido texto livre quando há motivo padrão
+selecionado.
+
+**Campos ocultados/recolhidos.** O campo "Valor aplicado" fica oculto por padrão
+e só aparece quando a decisão é `CORRIGIDO`. O payload técnico permanece em
+`<details>` recolhível. A observação livre virou `<details>` "Observação
+adicional (opcional)". A decisão técnica (`select #revisao-decisao`) foi movida
+para `<details>` "Opções avançadas (decisão manual)", para decisões fora dos
+presets. O formulário principal ficou enxuto: ação → motivo → usuário
+responsável → campos específicos do tipo → botão registrar.
+
+**Usuário responsável.** O campo é pré-preenchido com o valor salvo em
+`localStorage` (`profor2022:revisao:usuarioResponsavel`); na ausência de valor
+salvo, usa o padrão local `usuario-local`. Ao registrar uma decisão, o valor
+atual é persistido no `localStorage`, evitando redigitação nas próximas.
+
+**Compatibilidade preservada.** O rateio manual da categoria `rateio` continua
+funcionando integralmente — adicionar/remover linha, validação da soma de
+`% valor` e `% quantidade` e geração de `payloadDecisao.rateio`. O payload
+técnico exibido continua sendo exatamente o objeto enviado no POST (ambos vêm de
+`montarPayloadDecisaoRevisao()`). O snapshot `_segurancaPreAtivacao`, os logs e a
+rastreabilidade permanecem inalterados, assim como o contrato do backend. As
+decisões já existentes não são afetadas.
+
+**Confirmação.** Esta etapa é apenas de frontend/UX e documentação; não houve
+publicação, alteração da origem ativa, de `frontend/data/publicados` ou do
+`planoAplicacao` oficial.
+
 ---
 
 ## 17. Fases de implementação recomendadas

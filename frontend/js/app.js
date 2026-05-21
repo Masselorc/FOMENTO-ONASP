@@ -2093,6 +2093,196 @@ async function carregarLogoParaPDF() {
             return obterCategoriaSaneamentoRevisao(divergencia) !== 'generico';
         }
 
+        /* ============================================================
+         * Decisão assistida — presets por tipo de divergência.
+         * Reduz digitação: cada preset já traz decisão + motivo padrão.
+         * O payloadDecisao continua sendo montado por montarPayloadDecisaoRevisao();
+         * presets apenas pré-preenchem decisão e justificativa, sem alterar
+         * a compatibilidade com o backend ou com o rateio manual.
+         * ============================================================ */
+        const REVISAO_USUARIO_STORAGE_KEY = 'profor2022:revisao:usuarioResponsavel';
+        const REVISAO_USUARIO_PADRAO = 'usuario-local';
+
+        function obterUsuarioResponsavelRevisao() {
+            try {
+                const salvo = window.localStorage?.getItem(REVISAO_USUARIO_STORAGE_KEY);
+                if (salvo && salvo.trim()) return salvo.trim();
+            } catch (_) { /* localStorage indisponível: usa padrão */ }
+            return REVISAO_USUARIO_PADRAO;
+        }
+
+        function salvarUsuarioResponsavelRevisao(valor) {
+            const limpo = String(valor || '').trim();
+            if (!limpo) return;
+            try {
+                window.localStorage?.setItem(REVISAO_USUARIO_STORAGE_KEY, limpo);
+            } catch (_) { /* localStorage indisponível: ignora persistência */ }
+        }
+
+        function obterPresetsDecisaoRevisao(divergencia) {
+            const categoria = obterCategoriaSaneamentoRevisao(divergencia);
+            const revisarDepois = {
+                id: 'revisar_depois',
+                label: 'Revisar depois',
+                variante: 'secondary',
+                decisao: 'EM_REVISAO',
+                justificativa: 'Caso mantido para revisão posterior.'
+            };
+
+            if (categoria === 'equivalencia') {
+                return [
+                    {
+                        id: 'aceitar_equivalencia',
+                        label: 'Aceitar equivalência',
+                        variante: 'success',
+                        decisao: 'ACEITO',
+                        justificativa: 'Descrição coincide após normalização textual, com mesma natureza e mesmo valor unitário dentro da tolerância definida.'
+                    },
+                    {
+                        id: 'rejeitar_equivalencia',
+                        label: 'Rejeitar',
+                        variante: 'danger',
+                        decisao: 'REJEITADO',
+                        justificativa: 'A descrição normalizada não representa o mesmo item.'
+                    },
+                    revisarDepois
+                ];
+            }
+            if (categoria === 'nao_apto') {
+                return [
+                    {
+                        id: 'liberar_item',
+                        label: 'Liberar item para dry-run',
+                        variante: 'success',
+                        decisao: 'ACEITO',
+                        justificativa: 'Item presente no PAD com dados materiais compatíveis com a memória; liberado para uso em dry-run.'
+                    },
+                    {
+                        id: 'manter_bloqueado',
+                        label: 'Manter bloqueado',
+                        variante: 'danger',
+                        decisao: 'REJEITADO',
+                        justificativa: 'Mantida a não aptidão do item até revisão técnica posterior.'
+                    },
+                    revisarDepois
+                ];
+            }
+            if (categoria === 'rateio') {
+                const temRateioSugerido = (() => {
+                    const p = divergencia?.payload || {};
+                    return Array.isArray(p.rateioSugerido) && p.rateioSugerido.length > 0;
+                })();
+                const presets = [];
+                if (temRateioSugerido) {
+                    presets.push({
+                        id: 'aplicar_rateio_sugerido',
+                        label: 'Aplicar rateio sugerido',
+                        variante: 'success',
+                        decisao: 'ACEITO',
+                        aplicarRateioSugerido: true,
+                        justificativa: 'Rateio sugerido no payload aplicado após conferência humana.'
+                    });
+                }
+                presets.push({
+                    id: 'informar_rateio_manual',
+                    label: 'Informar rateio manual',
+                    variante: 'primary',
+                    decisao: 'ACEITO',
+                    exigeRateioManual: true,
+                    justificativa: 'Rateio informado manualmente para o item, com percentuais conferidos.'
+                });
+                presets.push(revisarDepois);
+                return presets;
+            }
+            if (categoria === 'ausencia') {
+                return [
+                    {
+                        id: 'confirmar_ausencia',
+                        label: 'Confirmar ausência',
+                        variante: 'success',
+                        decisao: 'ACEITO',
+                        justificativa: 'Ausência do item no PAD atual confirmada por decisão humana.'
+                    },
+                    {
+                        id: 'vincular_substituto',
+                        label: 'Não confirmar (revisar)',
+                        variante: 'danger',
+                        decisao: 'REJEITADO',
+                        justificativa: 'Ausência não confirmada; item pode ter substituto a vincular em revisão posterior.'
+                    },
+                    revisarDepois
+                ];
+            }
+            if (categoria === 'consistencia') {
+                return [
+                    {
+                        id: 'aceitar_total_pad',
+                        label: 'Aceitar total do PAD',
+                        variante: 'success',
+                        decisao: 'ACEITO',
+                        justificativa: 'Total do PAD mantido como fonte de verdade; valor unitário tratado apenas como referência.'
+                    },
+                    {
+                        id: 'manter_alerta',
+                        label: 'Manter alerta',
+                        variante: 'danger',
+                        decisao: 'REJEITADO',
+                        justificativa: 'Inconsistência entre quantidade e valor unitário mantida para revisão.'
+                    },
+                    revisarDepois
+                ];
+            }
+            if (categoria === 'campo') {
+                return [
+                    {
+                        id: 'aceitar_pad',
+                        label: 'Aceitar valor do PAD',
+                        variante: 'success',
+                        decisao: 'ACEITO',
+                        justificativa: 'Valor do PAD aceito como correto para o campo divergente.'
+                    },
+                    {
+                        id: 'corrigir_manual',
+                        label: 'Corrigir manualmente',
+                        variante: 'primary',
+                        decisao: 'CORRIGIDO',
+                        exigeValorCorrigido: true,
+                        justificativa: 'Campo corrigido manualmente após análise da divergência.'
+                    },
+                    {
+                        id: 'manter_memoria',
+                        label: 'Manter memória (rejeitar)',
+                        variante: 'danger',
+                        decisao: 'REJEITADO',
+                        justificativa: 'Valor da memória mantido; divergência do PAD não aceita.'
+                    },
+                    revisarDepois
+                ];
+            }
+            // genérico
+            return [
+                {
+                    id: 'aceitar_pad',
+                    label: 'Aceitar',
+                    variante: 'success',
+                    decisao: 'ACEITO',
+                    justificativa: 'Divergência aceita por decisão humana.'
+                },
+                {
+                    id: 'manter_memoria',
+                    label: 'Rejeitar',
+                    variante: 'danger',
+                    decisao: 'REJEITADO',
+                    justificativa: 'Divergência não aceita por decisão humana.'
+                },
+                revisarDepois
+            ];
+        }
+
+        function obterPresetDecisaoRevisaoPorId(divergencia, presetId) {
+            return obterPresetsDecisaoRevisao(divergencia).find((preset) => preset.id === presetId) || null;
+        }
+
         function obterValorPayloadRevisao(divergencia, caminhos = []) {
             const payload = divergencia?.payload || {};
             return obterValorAninhadoRevisao(payload, caminhos);
@@ -2506,6 +2696,12 @@ async function carregarLogoParaPDF() {
             container.hidden = !erros.length;
         }
 
+        function comporJustificativaDecisaoRevisao() {
+            const motivoTexto = document.getElementById('revisao-motivo-decisao')?.dataset?.justificativa || '';
+            const observacao = document.getElementById('revisao-justificativa')?.value?.trim?.() || '';
+            return [motivoTexto, observacao].filter(Boolean).join(' ').trim();
+        }
+
         function atualizarPreviaPayloadDecisaoRevisao(divergencia) {
             const decisao = document.getElementById('revisao-decisao')?.value || '';
             const payloadDecisao = montarPayloadDecisaoRevisao(divergencia, decisao);
@@ -2517,6 +2713,33 @@ async function carregarLogoParaPDF() {
             const categoria = obterCategoriaSaneamentoRevisao(divergencia);
             const campoCorrigido = document.getElementById('revisao-campo-corrigido-wrapper');
             if (campoCorrigido) campoCorrigido.hidden = !(categoria === 'campo' && decisao === 'CORRIGIDO');
+
+            // "Valor aplicado" só é relevante para CORRIGIDO; oculto por padrão.
+            const valorAplicadoWrapper = document.getElementById('revisao-valor-aplicado-wrapper');
+            if (valorAplicadoWrapper) valorAplicadoWrapper.hidden = decisao !== 'CORRIGIDO';
+        }
+
+        // Aplica um preset: preenche decisão técnica e motivo, sem registrar.
+        function aplicarPresetDecisaoRevisao(divergencia, presetId) {
+            const preset = obterPresetDecisaoRevisaoPorId(divergencia, presetId);
+            if (!preset) return;
+            const selectMotivo = document.getElementById('revisao-motivo');
+            const selectDecisao = document.getElementById('revisao-decisao');
+            const motivoTexto = document.getElementById('revisao-motivo-decisao');
+            if (selectMotivo && selectMotivo.value !== preset.id) selectMotivo.value = preset.id;
+            if (selectDecisao) selectDecisao.value = preset.decisao;
+            if (motivoTexto) {
+                motivoTexto.dataset.justificativa = preset.justificativa || '';
+                motivoTexto.textContent = preset.justificativa
+                    ? `Decisão ${preset.decisao}: ${preset.justificativa}`
+                    : '';
+                motivoTexto.hidden = !preset.justificativa;
+            }
+            // Destaca o chip ativo correspondente ao preset escolhido.
+            document.querySelectorAll('#revisao-acoes-rapidas [data-revisao-preset]').forEach((chip) => {
+                chip.classList.toggle('is-active', chip.dataset.revisaoPreset === preset.id);
+            });
+            atualizarPreviaPayloadDecisaoRevisao(divergencia);
         }
 
         function obterAntesDepoisRevisao(divergencia) {
@@ -2643,34 +2866,66 @@ async function carregarLogoParaPDF() {
 
         function renderFormularioDecisaoRevisao(divergencia) {
             const decisoes = obterDecisoesPermitidasRevisao(divergencia);
+            const presets = obterPresetsDecisaoRevisao(divergencia);
+            const usuarioPadrao = obterUsuarioResponsavelRevisao();
+            const chips = presets.map((preset) => `
+                <button type="button"
+                    class="revisao-acao-chip revisao-acao-chip--${escapeHtml(preset.variante || 'secondary')}"
+                    data-revisao-preset="${escapeHtml(preset.id)}"
+                    title="${escapeHtml(preset.justificativa || '')}">
+                    ${escapeHtml(preset.label)}
+                </button>
+            `).join('');
+            const opcoesMotivo = presets.map((preset) => `
+                <option value="${escapeHtml(preset.id)}">${escapeHtml(preset.label)}</option>
+            `).join('');
             return `
                 <section class="revisao-detail-section revisao-decision-panel">
                     <h3>Registrar decisão</h3>
                     <p class="text-muted small">A decisão será registrada e auditada, mas não será aplicada ao planoAplicacao oficial nesta etapa.</p>
                     <form id="form-revisao-decisao" data-divergencia-id="${escapeHtml(String(divergencia.id))}">
-                        <div class="row g-2">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label" for="revisao-decisao">Decisão</label>
-                                <select class="form-select form-select-sm" id="revisao-decisao" required>
-                                    ${decisoes.map((decisao) => `<option value="${decisao}">${decisao}</option>`).join('')}
+                        <p class="revisao-acao-rapida-titulo">Ação sugerida</p>
+                        <div class="revisao-acao-rapida" id="revisao-acoes-rapidas" role="group" aria-label="Ações rápidas de decisão">
+                            ${chips}
+                        </div>
+                        <div class="row g-2 mt-1">
+                            <div class="col-12">
+                                <label class="form-label" for="revisao-motivo">Motivo da decisão</label>
+                                <select class="form-select form-select-sm" id="revisao-motivo" required>
+                                    <option value="">Selecione uma ação ou motivo…</option>
+                                    ${opcoesMotivo}
                                 </select>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label" for="revisao-usuario">Usuário responsável</label>
-                                <input class="form-control form-control-sm" id="revisao-usuario" maxlength="120" placeholder="nome.sobrenome">
+                                <p class="revisao-motivo-decisao text-muted small mb-0" id="revisao-motivo-decisao" hidden></p>
                             </div>
                             <div class="col-12">
+                                <label class="form-label" for="revisao-usuario">Usuário responsável</label>
+                                <input class="form-control form-control-sm" id="revisao-usuario" maxlength="120" placeholder="nome.sobrenome" value="${escapeHtml(usuarioPadrao)}">
+                                <p class="text-muted small mb-0" style="font-size:0.68rem;">O nome informado fica salvo neste navegador para as próximas decisões.</p>
+                            </div>
+                            <div class="col-12" id="revisao-editor-wrapper">
+                                ${renderEditorPayloadDecisaoRevisao(divergencia)}
+                            </div>
+                            <div class="col-12" id="revisao-valor-aplicado-wrapper" hidden>
                                 <label class="form-label" for="revisao-valor-aplicado">Valor aplicado (opcional)</label>
                                 <input class="form-control form-control-sm" id="revisao-valor-aplicado" maxlength="255" placeholder="Uso futuro/auditoria">
                             </div>
-                            <div class="col-12">
-                                ${renderEditorPayloadDecisaoRevisao(divergencia)}
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label" for="revisao-justificativa">Justificativa ou comentário</label>
-                                <textarea class="form-control" id="revisao-justificativa" rows="2" maxlength="2000" placeholder="Obrigatória para ACEITO, REJEITADO, CORRIGIDO e REVERTIDO."></textarea>
-                            </div>
                         </div>
+                        <details class="revisao-observacao-extra mt-2">
+                            <summary>Observação adicional (opcional)</summary>
+                            <textarea class="form-control mt-2" id="revisao-justificativa" rows="2" maxlength="2000" placeholder="Texto livre opcional — somado ao motivo padrão selecionado."></textarea>
+                        </details>
+                        <details class="revisao-avancado mt-2">
+                            <summary>Opções avançadas (decisão manual)</summary>
+                            <div class="row g-2 mt-1">
+                                <div class="col-12">
+                                    <label class="form-label" for="revisao-decisao">Decisão (campo técnico)</label>
+                                    <select class="form-select form-select-sm" id="revisao-decisao" required>
+                                        ${decisoes.map((decisao) => `<option value="${decisao}">${decisao}</option>`).join('')}
+                                    </select>
+                                    <p class="text-muted small mb-0" style="font-size:0.68rem;">Definido automaticamente pela ação/motivo. Ajuste apenas para decisões fora dos presets.</p>
+                                </div>
+                            </div>
+                        </details>
                         <div id="revisao-form-erros" class="revisao-form-erros mt-2" hidden></div>
                         <div class="revisao-payload-box mt-2">
                             <strong>Resumo do payload</strong>
@@ -3072,8 +3327,26 @@ async function carregarLogoParaPDF() {
             if (!form) return;
             const atualizarPrevia = () => atualizarPreviaPayloadDecisaoRevisao(divergencia);
             form.addEventListener('input', atualizarPrevia);
-            form.addEventListener('change', atualizarPrevia);
+            form.addEventListener('change', (event) => {
+                // Trocar o "Motivo da decisão" reaplica o preset correspondente.
+                if (event.target && event.target.id === 'revisao-motivo') {
+                    const presetId = event.target.value;
+                    if (presetId) {
+                        aplicarPresetDecisaoRevisao(divergencia, presetId);
+                        return;
+                    }
+                }
+                atualizarPrevia();
+            });
             form.addEventListener('click', (event) => {
+                // Chips de ação rápida — apenas preparam a decisão, não registram.
+                const chip = event.target.closest('[data-revisao-preset]');
+                if (chip) {
+                    event.preventDefault();
+                    aplicarPresetDecisaoRevisao(divergencia, chip.dataset.revisaoPreset);
+                    return;
+                }
+
                 const botaoAdicionar = event.target.closest('[data-revisao-rateio-adicionar]');
                 if (botaoAdicionar) {
                     event.preventDefault();
@@ -3100,7 +3373,9 @@ async function carregarLogoParaPDF() {
                 const id = form.dataset.divergenciaId;
                 const decisao = document.getElementById('revisao-decisao')?.value || '';
                 const usuario = document.getElementById('revisao-usuario')?.value?.trim?.() || '';
-                const justificativa = document.getElementById('revisao-justificativa')?.value?.trim?.() || '';
+                const motivoId = document.getElementById('revisao-motivo')?.value || '';
+                // Justificativa enviada = texto padrão do motivo + observação adicional opcional.
+                const justificativa = comporJustificativaDecisaoRevisao();
                 const valorAplicado = document.getElementById('revisao-valor-aplicado')?.value?.trim?.() || undefined;
                 const exigeJustificativa = ['ACEITO', 'REJEITADO', 'CORRIGIDO', 'REVERTIDO'].includes(decisao);
                 const payloadDecisao = montarPayloadDecisaoRevisao(divergencia, decisao);
@@ -3108,8 +3383,8 @@ async function carregarLogoParaPDF() {
                 if (!usuario) {
                     erros.push('Informe o usuário responsável pela decisão.');
                 }
-                if (exigeJustificativa && !justificativa) {
-                    erros.push(`A decisão ${decisao} exige justificativa.`);
+                if (exigeJustificativa && !motivoId && !justificativa) {
+                    erros.push('Selecione uma ação ou motivo para a decisão.');
                 }
                 erros.push(...validarPayloadDecisaoRevisao(divergencia, decisao, payloadDecisao));
                 if (erros.length) {
@@ -3117,6 +3392,8 @@ async function carregarLogoParaPDF() {
                     return;
                 }
                 definirErrosFormularioDecisaoRevisao([]);
+                // Usuário responsável fica salvo para evitar redigitação na próxima decisão.
+                salvarUsuarioResponsavelRevisao(usuario);
                 const botao = form.querySelector('button[type="submit"]');
                 if (botao) botao.disabled = true;
                 try {

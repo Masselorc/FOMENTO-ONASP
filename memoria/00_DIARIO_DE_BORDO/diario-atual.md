@@ -1,5 +1,40 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Decisão Assistida na Tela de Revisão de Divergências PAD x Memória (UX)
+
+- **Status**: Implementado e Validado.
+- **Tipo de mudança**: **Apenas frontend/UX**. Não houve alteração de backend, banco, migration, dependências, publicação, origem ativa ou do `planoAplicacao` oficial.
+- **Problema de UX identificado**: A tela `SISTEMA > Revisão de divergências PAD x memória` exigia digitação manual em todas as decisões — justificativa/comentário em texto livre, usuário responsável a cada decisão e campos técnicos sempre expostos. No saneamento operacional das divergências PAD/PROFOR 2022 isso tornava o fluxo lento e sujeito a inconsistência textual. Exemplo concreto: a divergência `#25` (`equivalencia_por_descricao_normalizada`, "Desktop para edição de video" x "Desktop para edição de vídeo", mesma natureza CAPITAL e mesmo valor unitário R$ 14.849,00, diferença só de acentuação) obrigava o usuário a digitar manualmente algo como "descrição igual".
+- **Decisão adotada**: Transformar o formulário de decisão em **fluxo de decisão assistida** — opções pré-definidas (presets) por tipo de divergência, reduzindo digitação, preservando `payloadDecisao`, snapshot `_segurancaPreAtivacao`, logs, rastreabilidade e compatibilidade total com o backend atual. Patch incremental e reversível; a tela não foi reescrita.
+- **Arquivos alterados**:
+  - `frontend/js/app.js` — presets por tipo, chips de ação rápida, dropdown de motivo, composição automática de justificativa, usuário responsável via `localStorage`, ocultação de campos.
+  - `frontend/css/app.css` — estilos dos chips de ação rápida e dos blocos recolhíveis.
+  - `tests/e2e/app.spec.js` — smoke da decisão assistida (equivalência) e atualização do teste de rateio manual.
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md` e `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`.
+- **Presets implementados por tipo de divergência** (função `obterPresetsDecisaoRevisao`):
+  - `equivalencia_por_descricao_normalizada`: Aceitar equivalência (`ACEITO`) / Rejeitar (`REJEITADO`) / Revisar depois (`EM_REVISAO`). A justificativa de aceite é a frase padronizada "Descrição coincide após normalização textual, com mesma natureza e mesmo valor unitário dentro da tolerância definida."
+  - `item_nao_apto` (e variantes): Liberar item para dry-run (`ACEITO`) / Manter bloqueado (`REJEITADO`) / Revisar depois (`EM_REVISAO`).
+  - `rateio` (`item_novo_sem_rateio`, `item_pad_sem_rateio`, etc.): Aplicar rateio sugerido (quando há `rateioSugerido` no payload) / Informar rateio manual / Revisar depois.
+  - `ausencia` (`item_ausente_no_pad`, `item_substituido`): Confirmar ausência / Não confirmar (revisar) / Revisar depois.
+  - `consistencia` (`quantidade_valor_unitario_inconsistente`): Aceitar total do PAD / Manter alerta / Revisar depois.
+  - `campo` (`valor_diferente`, etc.): Aceitar valor do PAD / Corrigir manualmente (`CORRIGIDO`) / Manter memória (`REJEITADO`) / Revisar depois.
+  - Genérico (demais tipos): Aceitar / Rejeitar / Revisar depois.
+- **Campos ocultados/recolhidos na tela principal**: campo "Valor aplicado" passou a ficar oculto por padrão e só aparece quando a decisão é `CORRIGIDO`; o payload técnico permanece em bloco `<details>` recolhível; a observação livre virou `<details>` "Observação adicional (opcional)"; a decisão técnica (`select #revisao-decisao`) foi movida para um bloco `<details>` "Opções avançadas (decisão manual)". O formulário principal ficou enxuto: ação → motivo → usuário → campos específicos do tipo → registrar.
+- **Regra de justificativa automática**: o campo de texto livre obrigatório foi substituído pelo dropdown "Motivo da decisão" (opções geradas conforme o tipo). A justificativa enviada ao backend é composta por `comporJustificativaDecisaoRevisao()` = texto padrão do motivo selecionado + observação adicional opcional. Não é mais exigido texto livre quando há motivo padrão selecionado.
+- **Regra do usuário responsável**: campo "Usuário responsável" é pré-preenchido com o valor salvo em `localStorage` (`profor2022:revisao:usuarioResponsavel`); na ausência de valor salvo, usa o padrão local `usuario-local`. Quando o usuário edita o campo, o valor é persistido no `localStorage` ao registrar a decisão, evitando redigitação nas próximas decisões.
+- **Rateio manual preservado**: a categoria `rateio` (ex.: `item_novo_sem_rateio`) mantém o editor de rateio intacto — adicionar/remover linha, validação da soma de `% valor` e `% quantidade`, e geração de `payloadDecisao.rateio` continuam funcionando sem alteração. O teste E2E cobre adicionar e remover linha.
+- **Payload técnico**: o payload exibido (`#revisao-payload-tecnico`) continua sendo exatamente o mesmo objeto enviado no POST — ambos provêm de `montarPayloadDecisaoRevisao()`. Os chips/presets apenas pré-preenchem decisão e motivo; o registro só ocorre ao clicar "Registrar decisão".
+- **Validações executadas**:
+  - `node --check frontend/js/app.js` — OK.
+  - `npm run validar:syntax` — 61 arquivos OK.
+  - `npm run validar:services` — 37 testes OK.
+  - Suíte E2E Playwright completa — 13/13 testes passaram, incluindo o novo smoke "revisão de equivalência por descrição normalizada usa decisão assistida sem digitação".
+  - `npm run profor:pad:auditar-fila-revisao` — executado; último lote `id 24`, 139 divergências reapresentadas, 6 não reapresentadas.
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run` — `Payload alterado após a decisão: 0`, `Bloqueios de ativação: 0`, `Apto para prosseguir ativação: sim`.
+  - `npm run profor:pad:reconstruir-plano:dry-run` e `npm run profor:pad:comparar-plano:dry-run` — sem regressão; mantêm o estado pré-existente de saneamento (30 impedimentos, 8 diferenças críticas legítimas já documentadas). As mudanças deste commit não afetam reconstrução/comparação por serem exclusivamente de UI.
+  - `git diff --check` sem problemas; `frontend/data/publicados` sem alterações; nenhum SQLite versionado. Os 5 arquivos de relatório dry-run regravados durante a auditoria (apenas o timestamp `geradoEm`) foram revertidos por estarem fora do escopo do patch.
+- **Confirmações de segurança**: nenhuma decisão real foi registrada durante os testes (o smoke E2E intercepta o POST e falha-rápido se houver tentativa); não houve publicação, alteração da origem ativa, de `frontend/data/publicados` ou do `planoAplicacao` oficial.
+
 ## 21/05/2026 - PROFOR 2022: Regra de Equivalência por Acentuação/Diacrítico na Fila de Revisão
 
 - **Status**: Implementado e Validado.

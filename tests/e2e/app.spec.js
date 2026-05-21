@@ -259,17 +259,144 @@ test("revisão de divergências exibe decisão estruturada sem registrar decisã
 
   await page.goto("/index.html", { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => typeof window.toggleView === "function");
+  // Garante ambiente limpo para a regra de usuário responsável em localStorage.
+  await page.evaluate(() => window.localStorage.removeItem("profor2022:revisao:usuarioResponsavel"));
   await page.evaluate(() => window.toggleView("revisao-divergencias"));
 
   const view = page.locator("#view-revisao-divergencias");
   await expect(view).toBeVisible();
   await view.getByRole("button", { name: "Revisar" }).click();
   await expect(view.getByRole("heading", { name: /Rateio manual do item/i })).toBeVisible();
+  // Rateio manual continua funcionando: editor e payload preservados.
   await expect(view.locator("[data-revisao-rateio-editor]")).toBeVisible();
   await expect(view.locator("#revisao-payload-resumo")).toContainText("rateio_manual");
 
-  await view.getByRole("button", { name: /Registrar decisão/i }).click();
-  await expect(view.locator("#revisao-form-erros")).toContainText("Informe o usuário responsável");
+  // Decisão assistida: chips de ação rápida disponíveis e usuário pré-preenchido.
+  await expect(view.locator("#revisao-acoes-rapidas [data-revisao-preset]").first()).toBeVisible();
+  await expect(view.locator("#revisao-usuario")).toHaveValue("usuario-local");
+
+  // Adicionar/remover linha de rateio continua operando.
+  await view.locator("[data-revisao-rateio-adicionar]").click();
+  await expect(view.locator("[data-revisao-rateio-row]")).toHaveCount(2);
+  await view.locator("[data-revisao-rateio-remover]").last().click();
+  await expect(view.locator("[data-revisao-rateio-row]")).toHaveCount(1);
+
+  // Selecionar a ação "Informar rateio manual" preenche o motivo automaticamente.
+  await view.locator('[data-revisao-preset="informar_rateio_manual"]').click();
+  await expect(view.locator("#revisao-motivo")).toHaveValue("informar_rateio_manual");
+  await expect(view.locator("#revisao-motivo-decisao")).toContainText("Rateio informado manualmente");
+  await expect(view.locator("#revisao-decisao")).toHaveValue("ACEITO");
+
+  expect(houvePostDecisao).toBe(false);
+  expect(falhasCriticas).toEqual([]);
+});
+
+test("revisão de equivalência por descrição normalizada usa decisão assistida sem digitação", async ({ page }) => {
+  const falhasCriticas = registrarFalhasCriticas(page);
+  await bloquearEscritasReais(page);
+  let houvePostDecisao = false;
+
+  const divergencia = {
+    id: 25,
+    status: "PENDENTE",
+    nivel: "informativo",
+    numeroConvenio: "937782",
+    uf: "AC",
+    chaveItem: "937782::DESKTOP-EDICAO-VIDEO",
+    tipoAlerta: "equivalencia_por_descricao_normalizada",
+    campoAfetado: "descricao",
+    valorAnterior: "Desktop para edição de video",
+    valorNovo: "Desktop para edição de vídeo",
+    fonteAnterior: "memoria",
+    fonteNova: "pad",
+    diferenca: "diferença apenas de acentuação",
+    bloqueiaPublicacao: false,
+    payload: {
+      chaveItem: "937782::DESKTOP-EDICAO-VIDEO",
+      descricaoPad: "Desktop para edição de vídeo",
+      descricaoMemoria: "Desktop para edição de video",
+      naturezaPad: "CAPITAL",
+      naturezaMemoria: "CAPITAL",
+      valorUnitarioPad: 14849,
+      valorUnitarioMemoria: 14849
+    },
+    decisoes: [],
+    logs: []
+  };
+
+  await page.route("**/api/profor-2022/revisao/**", async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (request.method().toUpperCase() === "POST") {
+      houvePostDecisao = true;
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ success: false, message: "POST não deveria ocorrer neste smoke." })
+      });
+      return;
+    }
+    if (url.pathname.endsWith("/auditoria")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          auditoria: {
+            publicacaoLiberada: true,
+            totalDivergencias: 1,
+            totalPendentes: 1,
+            totalEmRevisao: 0,
+            totalImpeditivas: 0,
+            totalBloqueiamPublicacao: 0,
+            totalPendentesQueBloqueiamPublicacao: 0,
+            totalEmRevisaoQueBloqueiamPublicacao: 0,
+            totalComDecisaoResolutiva: 0,
+            totalComComentario: 0,
+            totalSemDecisaoResolutiva: 1,
+            porTipo: [{ chave: "equivalencia_por_descricao_normalizada", total: 1 }]
+          }
+        })
+      });
+      return;
+    }
+    if (url.pathname.endsWith("/divergencias/25")) {
+      await route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ success: true, divergencia })
+      });
+      return;
+    }
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, total: 1, divergencias: [divergencia] })
+    });
+  });
+
+  await page.goto("/index.html", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => typeof window.toggleView === "function");
+  await page.evaluate(() => window.localStorage.removeItem("profor2022:revisao:usuarioResponsavel"));
+  await page.evaluate(() => window.toggleView("revisao-divergencias"));
+
+  const view = page.locator("#view-revisao-divergencias");
+  await expect(view).toBeVisible();
+  await view.getByRole("button", { name: "Revisar" }).click();
+
+  // Chip "Aceitar equivalência" disponível e, ao clicar, preenche tudo sem digitação.
+  await expect(view.locator('[data-revisao-preset="aceitar_equivalencia"]')).toBeVisible();
+  await view.locator('[data-revisao-preset="aceitar_equivalencia"]').click();
+
+  // Justificativa padronizada é aplicada automaticamente (campo livre não exigido).
+  await expect(view.locator("#revisao-motivo")).toHaveValue("aceitar_equivalencia");
+  await expect(view.locator("#revisao-motivo-decisao")).toContainText("normalização textual");
+  await expect(view.locator("#revisao-decisao")).toHaveValue("ACEITO");
+
+  // payloadDecisao montado corretamente e refletido no payload técnico exibido.
+  await expect(view.locator("#revisao-payload-resumo")).toContainText("equivalencia_por_descricao_normalizada");
+  await expect(view.locator("#revisao-payload-tecnico")).toContainText("\"equivalenciaAceita\": true");
+
+  // Campo de observação livre fica recolhido e não é obrigatório.
+  await expect(view.locator("#revisao-justificativa")).not.toBeVisible();
+
   expect(houvePostDecisao).toBe(false);
   expect(falhasCriticas).toEqual([]);
 });

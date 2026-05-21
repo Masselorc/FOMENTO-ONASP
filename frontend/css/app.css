@@ -10895,6 +10895,80 @@ table.dataTable thead th {
     padding: .75rem;
 }
 
+/* ---- Decisão assistida: ações rápidas, motivo e blocos recolhíveis ---- */
+.revisao-acao-rapida-titulo {
+    color: var(--color-muted);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    margin-bottom: .35rem;
+    text-transform: uppercase;
+}
+
+.revisao-acao-rapida {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+}
+
+.revisao-acao-chip {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text);
+    cursor: pointer;
+    font-size: .78rem;
+    font-weight: 600;
+    padding: .35rem .85rem;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.revisao-acao-chip:hover {
+    border-color: var(--color-primary);
+}
+
+.revisao-acao-chip.is-active {
+    border-width: 2px;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, .14);
+}
+
+.revisao-acao-chip--success.is-active {
+    background: var(--color-success-soft);
+    border-color: rgba(34, 197, 94, .55);
+}
+
+.revisao-acao-chip--danger.is-active {
+    background: var(--color-danger-soft);
+    border-color: rgba(255, 95, 95, .55);
+}
+
+.revisao-acao-chip--primary.is-active {
+    background: var(--color-info-soft);
+    border-color: rgba(59, 130, 246, .55);
+}
+
+.revisao-acao-chip--secondary.is-active {
+    background: var(--color-surface-muted);
+    border-color: var(--color-muted);
+}
+
+.revisao-motivo-decisao {
+    font-size: .72rem;
+    margin-top: .35rem;
+}
+
+.revisao-observacao-extra > summary,
+.revisao-avancado > summary {
+    color: var(--color-primary-strong);
+    cursor: pointer;
+    font-size: .76rem;
+    font-weight: 600;
+}
+
+.revisao-avancado > summary {
+    color: var(--color-muted);
+}
+
 @media (max-width: 768px) {
     .revisao-comparacao-header,
     .revisao-comparacao-row {
@@ -10907,6 +10981,11 @@ table.dataTable thead th {
 
     .revisao-structured-header {
         display: block;
+    }
+
+    .revisao-acao-chip {
+        flex: 1 1 auto;
+        text-align: center;
     }
 }
 
