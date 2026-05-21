@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T17:36:56.613Z",
+  "geradoEm": "2026-05-21T18:36:33.568Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -17399,6 +17399,74 @@
       "itemAptoParaUso": true,
       "liberadoPorDecisao": false,
       "decisaoAplicada": null
+    },
+    {
+      "uf": "AC",
+      "instrumento": "Convênio",
+      "numero": "937782",
+      "ano": "2022",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de 01 (um) Supervisor por 12",
+      "quantidade": 12,
+      "valorUnitario": 7461,
+      "valorPrevisto": 89532,
+      "valorExecutado": 0,
+      "saldo": 89532,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "origemReconstrucao": "rateio_manual_por_decisao",
+      "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
+      "itemConhecidoId": null,
+      "codigoNaturezaDespesa": "33903799",
+      "unidade": "MÊS",
+      "valorUnitarioPadReferencia": 7461,
+      "valorUnitarioDerivado": 7461,
+      "baseRateioValor": "percentual",
+      "baseRateioQuantidade": "percentual",
+      "ajusteResidualAplicado": false,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": false,
+      "decisaoAplicada": {
+        "divergenciaId": 21,
+        "chaveDivergencia": "item_novo_sem_rateio:c000447dfdaea057",
+        "decisao": "ACEITO",
+        "efeito": "rateio_manual"
+      }
+    },
+    {
+      "uf": "AC",
+      "instrumento": "Convênio",
+      "numero": "937782",
+      "ano": "2022",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
+      "quantidade": 12,
+      "valorUnitario": 8514,
+      "valorPrevisto": 102168,
+      "valorExecutado": 0,
+      "saldo": 102168,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "origemReconstrucao": "rateio_manual_por_decisao",
+      "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
+      "itemConhecidoId": null,
+      "codigoNaturezaDespesa": "33903799",
+      "unidade": "MES",
+      "valorUnitarioPadReferencia": 8514,
+      "valorUnitarioDerivado": 8514,
+      "baseRateioValor": "percentual",
+      "baseRateioQuantidade": "percentual",
+      "ajusteResidualAplicado": false,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": false,
+      "decisaoAplicada": {
+        "divergenciaId": 22,
+        "chaveDivergencia": "item_novo_sem_rateio:1117eb4639e34e65",
+        "decisao": "ACEITO",
+        "efeito": "rateio_manual"
+      }
     }
   ],
   "resumo": {
@@ -17406,27 +17474,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 498,
     "totalItensPadSemRateio": 27,
-    "totalItensPadSemRateioRemanescentes": 27,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 0,
-    "totalLinhasReconstruidas": 598,
+    "totalItensPadSemRateioRemanescentes": 25,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 2,
+    "totalLinhasReconstruidas": 600,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 36,
+    "totalImpedimentos": 34,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 11,
-    "totalDecisoesInterpretadasDryRun": 11,
-    "totalDecisoesAplicadasDryRun": 11,
+    "totalDecisoesResolutivasEncontradas": 13,
+    "totalDecisoesInterpretadasDryRun": 13,
+    "totalDecisoesAplicadasDryRun": 13,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 11,
+    "totalDecisoesComEfeitoNaReconstrucao": 13,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 11,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 13,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0,
-    "valorPrevistoReconstruidoTotal": 10326096.83,
+    "valorPrevistoReconstruidoTotal": 10517796.83,
     "valorExecutadoReconstruidoTotal": 3201807.64,
-    "saldoReconstruidoTotal": 7124289.19
+    "saldoReconstruidoTotal": 7315989.19
   },
   "impedimentos": [
     {
@@ -17500,24 +17568,6 @@
       "descricao": "CAPACETE PROTETOR",
       "chaveItem": "937817::CAPACETE PROTETOR",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Contratação de 01 (um) Supervisor por 12",
-      "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
-      "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
     },
     {
       "tipo": "item_pad_sem_rateio",
@@ -17751,7 +17801,7 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 37 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 35 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "alertas": [
@@ -18846,6 +18896,20 @@
   ],
   "decisoesResolutivasEncontradas": [
     {
+      "divergenciaId": 21,
+      "chaveDivergencia": "item_novo_sem_rateio:c000447dfdaea057",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 77
+    },
+    {
+      "divergenciaId": 22,
+      "chaveDivergencia": "item_novo_sem_rateio:1117eb4639e34e65",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 78
+    },
+    {
       "divergenciaId": 28,
       "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
       "tipoAlerta": "item_nao_apto",
@@ -18924,6 +18988,68 @@
     }
   ],
   "decisoesAplicadasDryRun": [
+    {
+      "divergenciaId": 21,
+      "chaveDivergencia": "item_novo_sem_rateio:c000447dfdaea057",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 77,
+      "usuario": "marcelo.cortez",
+      "decididoEm": "2026-05-21T18:25:20.279Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CUSTEIO",
+            "percentual_valor": 100,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 22,
+      "chaveDivergencia": "item_novo_sem_rateio:1117eb4639e34e65",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 78,
+      "usuario": "marcelo.cortez",
+      "decididoEm": "2026-05-21T18:26:03.104Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CUSTEIO",
+            "percentual_valor": 100,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
     {
       "divergenciaId": 28,
       "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
@@ -19148,22 +19274,22 @@
   "decisoesNaoAplicaveis": [],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 134,
+    "totalPendentes": 132,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 48,
-    "totalPendentesQueBloqueiamPublicacao": 37,
+    "totalPendentesQueBloqueiamPublicacao": 35,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 11,
+    "totalComDecisaoResolutiva": 13,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 134,
+    "totalSemDecisaoResolutiva": 132,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T17:36:56.613Z",
+    "geradoEm": "2026-05-21T18:36:33.567Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 11,
-      "totalPayloadPreservado": 11,
+      "totalDecisoesResolutivasAuditadas": 13,
+      "totalPayloadPreservado": 13,
       "totalPayloadAlteradoAposDecisao": 0,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,

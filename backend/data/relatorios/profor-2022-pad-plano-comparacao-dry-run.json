@@ -1,13 +1,13 @@
 {
-  "geradoEm": "2026-05-21T17:36:56.626Z",
+  "geradoEm": "2026-05-21T18:36:33.590Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
     "totalLinhasAntigo": 567,
-    "totalLinhasNovo": 598,
+    "totalLinhasNovo": 600,
     "totalItensIguais": 93,
-    "totalItensNovos": 0,
+    "totalItensNovos": 2,
     "totalItensAusentes": 34,
     "totalItensQuantidadeDivergente": 387,
     "totalItensValorPrevistoDivergente": 13,
@@ -16,18 +16,18 @@
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
     "totalItensAmbiguos": 49,
-    "totalDiferencas": 425,
-    "totalDiferencasCriticas": 0,
+    "totalDiferencas": 427,
+    "totalDiferencasCriticas": 2,
     "totalAvisos": 197,
     "totalDiferencasEsperadasPorAtualizacaoPad": 6,
     "totalDiferencasPorPendenciaDeDecisao": 222,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 0,
-    "totalDecisoesResolutivasEncontradas": 11,
-    "totalDecisoesInterpretadasDryRun": 11,
-    "totalDecisoesAplicadasDryRun": 11,
+    "totalDecisoesResolutivasEncontradas": 13,
+    "totalDecisoesInterpretadasDryRun": 13,
+    "totalDecisoesAplicadasDryRun": 13,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 11,
+    "totalDecisoesComEfeitoNaReconstrucao": 13,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0
   },
@@ -39,17 +39,17 @@
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 598,
-      "valorPrevisto": 10326096.83,
+      "linhas": 600,
+      "valorPrevisto": 10517796.83,
       "valorExecutado": 3201807.64,
-      "saldo": 7124289.19
+      "saldo": 7315989.19
     }
   },
   "diferencaTotal": {
-    "linhas": 31,
-    "valorPrevisto": -337918.65,
+    "linhas": 33,
+    "valorPrevisto": -146218.65,
     "valorExecutado": -888.26,
-    "saldo": -337030.39
+    "saldo": -145330.39
   },
   "diferencasPorConvenio": [
     {
@@ -208,16 +208,16 @@
         "saldo": 299282.16
       },
       "novo": {
-        "linhas": 41,
-        "valorPrevisto": 170190.25,
+        "linhas": 43,
+        "valorPrevisto": 361890.25,
         "valorExecutado": 81209.69,
-        "saldo": 88980.56
+        "saldo": 280680.56
       },
       "diferenca": {
-        "valorPrevisto": -226233.46,
+        "valorPrevisto": -34533.46,
         "valorExecutado": -15931.86,
-        "saldo": -210301.6,
-        "linhas": -9
+        "saldo": -18601.6,
+        "linhas": -7
       }
     },
     {
@@ -378,16 +378,16 @@
         "saldo": 299282.16
       },
       "novo": {
-        "linhas": 41,
-        "valorPrevisto": 170190.25,
+        "linhas": 43,
+        "valorPrevisto": 361890.25,
         "valorExecutado": 81209.69,
-        "saldo": 88980.56
+        "saldo": 280680.56
       },
       "diferenca": {
-        "valorPrevisto": -226233.46,
+        "valorPrevisto": -34533.46,
         "valorExecutado": -15931.86,
-        "saldo": -210301.6,
-        "linhas": -9
+        "saldo": -18601.6,
+        "linhas": -7
       }
     },
     {
@@ -779,16 +779,16 @@
         "saldo": 1299845.87
       },
       "novo": {
-        "linhas": 147,
-        "valorPrevisto": 1482211.58,
+        "linhas": 149,
+        "valorPrevisto": 1673911.58,
         "valorExecutado": 383571.5,
-        "saldo": 1098640.08
+        "saldo": 1290340.08
       },
       "diferenca": {
-        "valorPrevisto": -234489.82,
+        "valorPrevisto": -42789.82,
         "valorExecutado": -33284.03,
-        "saldo": -201205.79,
-        "linhas": 1
+        "saldo": -9505.79,
+        "linhas": 3
       }
     }
   ],
@@ -823,20 +823,47 @@
         "saldo": 2746331.59
       },
       "novo": {
-        "linhas": 161,
-        "valorPrevisto": 3048374.69,
+        "linhas": 163,
+        "valorPrevisto": 3240074.69,
         "valorExecutado": 501786.85,
-        "saldo": 2546587.84
+        "saldo": 2738287.84
       },
       "diferenca": {
-        "valorPrevisto": -193842.35,
+        "valorPrevisto": -2142.35,
         "valorExecutado": 5901.4,
-        "saldo": -199743.75,
-        "linhas": 8
+        "saldo": -8043.75,
+        "linhas": 10
       }
     }
   ],
-  "itensNovos": [],
+  "itensNovos": [
+    {
+      "chave": "937782::Contratação de 01 (um) Supervisor por 12::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de 01 (um) Supervisor por 12",
+      "situacao": "novo",
+      "valorPrevistoNovo": 89532,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Contratação de 02 (dois) Auxiliares Admi::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
+      "situacao": "novo",
+      "valorPrevistoNovo": 102168,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    }
+  ],
   "itensAusentes": [
     {
       "chave": "937221::Ar Condicionado Split 9000 BTUs (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -9898,7 +9925,34 @@
       "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
     }
   ],
-  "diferencasCriticas": [],
+  "diferencasCriticas": [
+    {
+      "chave": "937782::Contratação de 01 (um) Supervisor por 12::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de 01 (um) Supervisor por 12",
+      "situacao": "novo",
+      "valorPrevistoNovo": 89532,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Contratação de 02 (dois) Auxiliares Admi::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
+      "situacao": "novo",
+      "valorPrevistoNovo": 102168,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    }
+  ],
   "avisos": [
     {
       "chave": "937216::Apresentador/Passador de slides, sem fio::ESCOLA PENAL::CAPITAL",
@@ -14106,6 +14160,20 @@
   ],
   "decisoesResolutivasEncontradas": [
     {
+      "divergenciaId": 21,
+      "chaveDivergencia": "item_novo_sem_rateio:c000447dfdaea057",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 77
+    },
+    {
+      "divergenciaId": 22,
+      "chaveDivergencia": "item_novo_sem_rateio:1117eb4639e34e65",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 78
+    },
+    {
       "divergenciaId": 28,
       "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
       "tipoAlerta": "item_nao_apto",
@@ -14184,6 +14252,68 @@
     }
   ],
   "decisoesAplicadasDryRun": [
+    {
+      "divergenciaId": 21,
+      "chaveDivergencia": "item_novo_sem_rateio:c000447dfdaea057",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 77,
+      "usuario": "marcelo.cortez",
+      "decididoEm": "2026-05-21T18:25:20.279Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CUSTEIO",
+            "percentual_valor": 100,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 22,
+      "chaveDivergencia": "item_novo_sem_rateio:1117eb4639e34e65",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 78,
+      "usuario": "marcelo.cortez",
+      "decididoEm": "2026-05-21T18:26:03.104Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CUSTEIO",
+            "percentual_valor": 100,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
     {
       "divergenciaId": 28,
       "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
@@ -14408,22 +14538,22 @@
   "decisoesNaoAplicaveis": [],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 134,
+    "totalPendentes": 132,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 48,
-    "totalPendentesQueBloqueiamPublicacao": 37,
+    "totalPendentesQueBloqueiamPublicacao": 35,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 11,
+    "totalComDecisaoResolutiva": 13,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 134,
+    "totalSemDecisaoResolutiva": 132,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T17:36:56.613Z",
+    "geradoEm": "2026-05-21T18:36:33.567Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 11,
-      "totalPayloadPreservado": 11,
+      "totalDecisoesResolutivasAuditadas": 13,
+      "totalPayloadPreservado": 13,
       "totalPayloadAlteradoAposDecisao": 0,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -14443,27 +14573,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 498,
     "totalItensPadSemRateio": 27,
-    "totalItensPadSemRateioRemanescentes": 27,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 0,
-    "totalLinhasReconstruidas": 598,
+    "totalItensPadSemRateioRemanescentes": 25,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 2,
+    "totalLinhasReconstruidas": 600,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 36,
+    "totalImpedimentos": 34,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 11,
-    "totalDecisoesInterpretadasDryRun": 11,
-    "totalDecisoesAplicadasDryRun": 11,
+    "totalDecisoesResolutivasEncontradas": 13,
+    "totalDecisoesInterpretadasDryRun": 13,
+    "totalDecisoesAplicadasDryRun": 13,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 11,
+    "totalDecisoesComEfeitoNaReconstrucao": 13,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 11,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 13,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0,
-    "valorPrevistoReconstruidoTotal": 10326096.83,
+    "valorPrevistoReconstruidoTotal": 10517796.83,
     "valorExecutadoReconstruidoTotal": 3201807.64,
-    "saldoReconstruidoTotal": 7124289.19
+    "saldoReconstruidoTotal": 7315989.19
   },
   "impedimentosReconstrucao": [
     {
@@ -14537,24 +14667,6 @@
       "descricao": "CAPACETE PROTETOR",
       "chaveItem": "937817::CAPACETE PROTETOR",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Contratação de 01 (um) Supervisor por 12",
-      "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
-      "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
     },
     {
       "tipo": "item_pad_sem_rateio",
@@ -14788,14 +14900,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 37 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 35 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 36 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -337918.65, executado -888.26, saldo -337030.39.",
-    "Diferenças críticas: 0. Itens ambíguos: 49.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -146218.65, executado -888.26, saldo -145330.39.",
+    "Diferenças críticas: 2. Itens ambíguos: 49.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

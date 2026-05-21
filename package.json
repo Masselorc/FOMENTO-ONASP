@@ -32,6 +32,7 @@
     "profor:pad:seguranca-pre-ativacao:dry-run": "node backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js",
     "profor:pad:item-nao-apto:auditar": "node backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js",
     "profor:pad:item-nao-apto:aceitar-iguais": "node backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js --aplicar",
+    "profor:pad:item-sem-rateio:auditar-rateio-antigo": "node backend/scripts/auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022.js",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",

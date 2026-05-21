@@ -1231,6 +1231,17 @@ material.
   naturezas e soma de percentuais); sem rateio no payload → impedimento
   `decisao_sem_rateio_aplicavel`; rateio inválido → `decisao_rateio_invalido`;
   `REJEITADO`/`REVERTIDO` recusam o rateio.
+  A auditoria local
+  `npm run profor:pad:item-sem-rateio:auditar-rateio-antigo` verifica, em
+  dry-run, se um `item_novo_sem_rateio` já possui rateio antigo por área na
+  memória persistida ou nos artefatos de rateio inicial. O critério exige mesmo
+  convênio, natureza compatível, áreas antigas preenchidas, percentuais
+  calculáveis e fechamento de quantidade, valor previsto, valor executado e
+  saldo dentro das tolerâncias (`0,000001` para quantidade e `0,01` para
+  valores). A compatibilidade de descrição é controlada: primeiro tenta
+  igualdade normalizada; se necessário, permite apenas a remoção de token decimal
+  de frequência `GHz`, sempre condicionada ao fechamento financeiro. Essa etapa
+  não registra decisão nem altera payload/status da divergência.
 - `item_ausente_no_pad` / `item_substituido`: `ACEITO` confirma a ausência (o
   comparador a classifica como `ausencia_confirmada_por_decisao`);
   `REJEITADO`/`REVERTIDO` mantêm o alerta de ausência. O item não é apagado da

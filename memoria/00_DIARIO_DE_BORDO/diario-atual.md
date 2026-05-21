@@ -1,5 +1,116 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Etapa 9.3.1 - auditoria de rateio antigo em `item_novo_sem_rateio`
+
+- Branch atual: `main`.
+- Objetivo:
+  - auditar, em modo dry-run, divergências `item_novo_sem_rateio` que podem já
+    possuir rateio antigo por área na memória/planilha antiga, especialmente
+    quando o PAD novo consolida em uma linha itens que a planilha antiga dividia
+    por área.
+- Problema observado:
+  - divergência `#23`, tipo `item_novo_sem_rateio`, convênio `937782/AC`,
+    descrição PAD `Notebook 4 núcleos 4.2ghz ram ddr 4 8gb`;
+  - PAD consolidado: quantidade `2`, valor unitário `3599,99`, previsto
+    `7199,98`, executado `6229,86`, saldo `970,12`;
+  - memória antiga persistida: duas linhas de rateio por área
+    (`OUVIDORIA` e `CORREGEDORIA`), ambas `CAPITAL`, quantidade `1`,
+    previsto `3599,99`, executado `3114,93`, saldo `485,06`.
+- Arquivos alterados/criados:
+  - `backend/scripts/auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - relatórios gerados em
+    `backend/data/relatorios/profor-2022-item-sem-rateio-rateio-antigo-dry-run.json`
+    e `.md`;
+  - relatórios dry-run de segurança/reconstrução/comparação regenerados.
+- Comando criado:
+  - `npm run profor:pad:item-sem-rateio:auditar-rateio-antigo`.
+- Critérios de auditoria:
+  - mesmo `numeroConvenio`;
+  - busca primária na memória persistida SQLite
+    (`profor_2022_itens_conhecidos` + `profor_2022_item_rateios`);
+  - fallback para `backend/data/relatorios/profor-2022-rateio-inicial-dry-run.json`
+    quando não houver candidato no SQLite;
+  - descrição normalizada exata ou compatibilidade controlada removendo apenas
+    token decimal de frequência `GHz`;
+  - natureza compatível;
+  - soma de quantidade, valor previsto, valor executado e saldo fechando nas
+    tolerâncias (`0,000001` para quantidade, `0,01` para valores);
+  - pelo menos uma linha antiga com área preenchida;
+  - percentuais de quantidade e valor calculáveis;
+  - sem fuzzy matching amplo.
+- Resultado:
+  - total `item_novo_sem_rateio` analisados: `23`;
+  - rateio antigo compatível: `1`;
+  - possível rateio antigo com divergência: `0`;
+  - sem rateio antigo encontrado: `20`;
+  - dados insuficientes: `0`;
+  - já decididos: `2` (`#21`, `#22`, pré-existentes no banco local).
+- Candidato encontrado:
+  - `#23` `937782/AC` `Notebook 4 núcleos 4.2ghz ram ddr 4 8gb`;
+  - item de memória correspondente: `937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB`;
+  - critério de compatibilidade: `descricao_sem_token_frequencia_ghz`;
+  - origem: SQLite.
+- Rateio sugerido para `#23`:
+  - `OUVIDORIA` / `CAPITAL` / quantidade `1` / previsto `3599,99` /
+    executado `3114,93` / saldo `485,06` / `50%` quantidade / `50%` valor;
+  - `CORREGEDORIA` / `CAPITAL` / quantidade `1` / previsto `3599,99` /
+    executado `3114,93` / saldo `485,06` / `50%` quantidade / `50%` valor.
+- Aplicação:
+  - nenhuma decisão registrada;
+  - nenhum status/payload de divergência alterado;
+  - relatório gerado apenas para subsidiar autorização futura de saneamento assistido.
+- Estado operacional observado durante validações:
+  - auditoria geral atual do banco local: `145` divergências, `132` pendentes,
+    `13` ACEITO, `35` pendentes bloqueando publicação, `13` decisões
+    resolutivas;
+  - as `13` decisões resolutivas já existentes incluem os `11` aceites da Etapa
+    9.3.0 e `2` decisões anteriores em `item_novo_sem_rateio`;
+  - segurança pré-ativação: `13` decisões auditadas, `13` payloads preservados,
+    `0` bloqueios;
+  - reconstrução dry-run: `13` decisões interpretadas, `34` impedimentos,
+    `aptoParaAtivacao=false`;
+  - comparador dry-run: `2` diferenças críticas no baseline atual,
+    `aptoParaPublicacao=false`.
+- Validações realizadas:
+  - `node --check backend/scripts/auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022.js`;
+  - `npm run validar:syntax`;
+  - `npm run validar:services`;
+  - `npm run profor:pad:item-sem-rateio:auditar-rateio-antigo`;
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `node backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js`;
+  - `git diff --check`;
+  - `git status --short frontend/data/publicados`;
+  - `git ls-files "*.sqlite*"`.
+- Confirmações de escopo:
+  - nenhuma decisão registrada nesta etapa;
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - nenhuma migration ou dependência nova;
+  - nenhuma divergência, decisão ou log apagado.
+- Pendências:
+  - se autorizado, criar etapa posterior para registrar decisão assistida de
+    rateio antigo no item `#23`, com `payloadDecisao` contendo o rateio sugerido;
+  - revisar os `20` itens sem rateio antigo encontrado e as `2` divergências já
+    decididas para entender o impacto no comparador.
+- Risco de regressão:
+  - baixo: script novo é somente leitura;
+  - risco operacional: compatibilidade `GHz` é propositalmente restrita e depende
+    do fechamento financeiro para evitar aceite indevido.
+- Rollback:
+  - reverter script/comando/documentação e remover os relatórios gerados; não há
+    decisão ou alteração de banco a reverter nesta etapa.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: Etapa 9.3.0 - Melhoria de UX na Revisão de Divergências PAD x Memória
 
 - Branch atual: `main`.

@@ -1,0 +1,1110 @@
+{
+  "geradoEm": "2026-05-21T18:35:50.961Z",
+  "modo": "dry-run",
+  "tolerancias": {
+    "quantidade": 0.000001,
+    "monetaria": 0.01
+  },
+  "criterios": [
+    "mesmo numero_convenio",
+    "descrição normalizada exata ou compatibilidade controlada removendo apenas token decimal de frequência GHz",
+    "natureza compatível",
+    "quantidade, valor previsto, valor executado e saldo fechando nas tolerâncias",
+    "ao menos uma linha antiga com área preenchida",
+    "percentuais de quantidade e valor calculáveis"
+  ],
+  "resumo": {
+    "totalItemNovoSemRateioAnalisados": 23,
+    "totalRateioAntigoCompativel": 1,
+    "totalPossivelRateioAntigoComDivergencia": 0,
+    "totalSemRateioAntigoEncontrado": 20,
+    "totalDadosInsuficientes": 0,
+    "totalJaDecididos": 2
+  },
+  "candidatosRateioAntigoCompativel": [
+    {
+      "id": 23,
+      "classificacao": "rateio_antigo_compativel",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "dadosPad": {
+        "id": 23,
+        "numeroConvenio": "937782",
+        "uf": "AC",
+        "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+        "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 3599.99,
+        "valorPrevisto": 7199.98,
+        "valorExecutado": 6229.86,
+        "saldo": 970.12
+      },
+      "origemRateioAntigo": "sqlite",
+      "itemMemoria": {
+        "itemConhecidoId": 109,
+        "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+        "descricaoOriginalReferencia": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+        "descricaoNormalizada": "NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+        "criterioCompatibilidade": "descricao_sem_token_frequencia_ghz"
+      },
+      "linhasAntigasEncontradas": [
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 3599.99,
+          "valorExecutadoReferencia": 3114.93
+        },
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 3599.99,
+          "valorExecutadoReferencia": 3114.93
+        }
+      ],
+      "rateioSugerido": [
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 3599.99,
+          "valorExecutadoReferencia": 3114.93,
+          "saldoReferencia": 485.06,
+          "percentualQuantidade": 50,
+          "percentualValor": 50
+        },
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 1,
+          "valorPrevistoReferencia": 3599.99,
+          "valorExecutadoReferencia": 3114.93,
+          "saldoReferencia": 485.06,
+          "percentualQuantidade": 50,
+          "percentualValor": 50
+        }
+      ],
+      "diferencas": {
+        "natureza": {
+          "ok": true,
+          "diferenca": null
+        },
+        "quantidade": {
+          "ok": true,
+          "insuficiente": false,
+          "diferenca": 0
+        },
+        "valorPrevisto": {
+          "ok": true,
+          "insuficiente": false,
+          "diferenca": 0
+        },
+        "valorExecutado": {
+          "ok": true,
+          "insuficiente": false,
+          "diferenca": 0
+        },
+        "saldo": {
+          "ok": true,
+          "insuficiente": false,
+          "diferenca": 0
+        }
+      },
+      "justificativaSugerida": "Item PAD consolidado possui rateio antigo por área com mesma natureza, quantidade e valores fechando dentro da tolerância; candidato a saneamento assistido por rateio antigo."
+    }
+  ],
+  "possiveisRateiosAntigosComDivergencia": [],
+  "semRateioAntigoEncontrado": [
+    {
+      "id": 1,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+      "dadosPad": {
+        "id": 1,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+        "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 9501,
+        "valorPrevisto": 9501,
+        "valorExecutado": 0,
+        "saldo": 9501
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 2,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+      "descricao": "Ar condicionado split, capacidade de 12.",
+      "dadosPad": {
+        "id": 2,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+        "descricao": "Ar condicionado split, capacidade de 12.",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1870,
+        "valorPrevisto": 3740,
+        "valorExecutado": 0,
+        "saldo": 3740
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 3,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+      "descricao": "Ar condicionado tipo split, capacidade 3",
+      "dadosPad": {
+        "id": 3,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+        "descricao": "Ar condicionado tipo split, capacidade 3",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 4560,
+        "valorPrevisto": 4560,
+        "valorExecutado": 0,
+        "saldo": 4560
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 4,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+      "descricao": "Ar-condicionado tipo Split, capacidade d",
+      "dadosPad": {
+        "id": 4,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+        "descricao": "Ar-condicionado tipo Split, capacidade d",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1349.62,
+        "valorPrevisto": 2699.24,
+        "valorExecutado": 0,
+        "saldo": 2699.24
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 5,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+      "dadosPad": {
+        "id": 5,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+        "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 300,
+        "valorPrevisto": 600,
+        "valorExecutado": 0,
+        "saldo": 600
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 6,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+      "dadosPad": {
+        "id": 6,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+        "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 8106.75,
+        "valorPrevisto": 24320.25,
+        "valorExecutado": 0,
+        "saldo": 24320.25
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 7,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+      "descricao": "Equipamentos de rede (switches e roteado",
+      "dadosPad": {
+        "id": 7,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+        "descricao": "Equipamentos de rede (switches e roteado",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 350,
+        "valorPrevisto": 1050,
+        "valorExecutado": 0,
+        "saldo": 1050
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 8,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+      "dadosPad": {
+        "id": 8,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+        "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 726,
+        "valorPrevisto": 726,
+        "valorExecutado": 0,
+        "saldo": 726
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 9,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
+      "dadosPad": {
+        "id": 9,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+        "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 500,
+        "valorPrevisto": 500,
+        "valorExecutado": 0,
+        "saldo": 500
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 10,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+      "descricao": "Fragmentadora e papel - Corregedoria",
+      "dadosPad": {
+        "id": 10,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+        "descricao": "Fragmentadora e papel - Corregedoria",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1710,
+        "valorPrevisto": 3420,
+        "valorExecutado": 0,
+        "saldo": 3420
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 11,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+      "dadosPad": {
+        "id": 11,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+        "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 800,
+        "valorPrevisto": 800,
+        "valorExecutado": 0,
+        "saldo": 800
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 12,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+      "descricao": "Impressora multifuncional (OUVIDORIA)",
+      "dadosPad": {
+        "id": 12,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+        "descricao": "Impressora multifuncional (OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 3050,
+        "valorPrevisto": 6100,
+        "valorExecutado": 0,
+        "saldo": 6100
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 13,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
+      "dadosPad": {
+        "id": 13,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+        "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 1254.79,
+        "valorPrevisto": 1254.79,
+        "valorExecutado": 0,
+        "saldo": 1254.79
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 14,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+      "dadosPad": {
+        "id": 14,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+        "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 6,
+        "valorUnitario": 700,
+        "valorPrevisto": 4200,
+        "valorExecutado": 0,
+        "saldo": 4200
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 15,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+      "dadosPad": {
+        "id": 15,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+        "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+        "natureza": "CAPITAL",
+        "quantidade": 4,
+        "valorUnitario": 5500,
+        "valorPrevisto": 22000,
+        "valorExecutado": 0,
+        "saldo": 22000
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 16,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::QUADRO LOUSA BRANCA",
+      "descricao": "Quadro Lousa branca",
+      "dadosPad": {
+        "id": 16,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::QUADRO LOUSA BRANCA",
+        "descricao": "Quadro Lousa branca",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 1065.4,
+        "valorPrevisto": 3196.2,
+        "valorExecutado": 0,
+        "saldo": 3196.2
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 17,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+      "descricao": "Refrigerador frigobar, com capacidade no",
+      "dadosPad": {
+        "id": 17,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+        "descricao": "Refrigerador frigobar, com capacidade no",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1422,
+        "valorPrevisto": 2844,
+        "valorExecutado": 0,
+        "saldo": 2844
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 18,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "descricao": "Saldo Residual",
+      "dadosPad": {
+        "id": 18,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::SALDO RESIDUAL",
+        "descricao": "Saldo Residual",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 9506.54,
+        "valorPrevisto": 9506.54,
+        "valorExecutado": 0,
+        "saldo": 9506.54
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 19,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+      "descricao": "Televisão Smart LED, mínimo de 50 polega",
+      "dadosPad": {
+        "id": 19,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+        "descricao": "Televisão Smart LED, mínimo de 50 polega",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 2000,
+        "valorPrevisto": 2000,
+        "valorExecutado": 0,
+        "saldo": 2000
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 20,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+      "descricao": "Televisão smart LED, minimo de 50 polegadas",
+      "dadosPad": {
+        "id": 20,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+        "descricao": "Televisão smart LED, minimo de 50 polegadas",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 2174.86,
+        "valorPrevisto": 6524.58,
+        "valorExecutado": 0,
+        "saldo": 6524.58
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    }
+  ],
+  "dadosInsuficientes": [],
+  "jaDecididos": [
+    {
+      "id": 21,
+      "classificacao": "ja_decidido",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
+      "descricao": "Contratação de 01 (um) Supervisor por 12",
+      "motivos": [
+        "Divergência já possui decisão resolutiva ou status não analisável."
+      ]
+    },
+    {
+      "id": 22,
+      "classificacao": "ja_decidido",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
+      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
+      "motivos": [
+        "Divergência já possui decisão resolutiva ou status não analisável."
+      ]
+    }
+  ],
+  "itensExigemRateioManual": [
+    {
+      "id": 1,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+      "dadosPad": {
+        "id": 1,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+        "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 9501,
+        "valorPrevisto": 9501,
+        "valorExecutado": 0,
+        "saldo": 9501
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 2,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+      "descricao": "Ar condicionado split, capacidade de 12.",
+      "dadosPad": {
+        "id": 2,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+        "descricao": "Ar condicionado split, capacidade de 12.",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1870,
+        "valorPrevisto": 3740,
+        "valorExecutado": 0,
+        "saldo": 3740
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 3,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+      "descricao": "Ar condicionado tipo split, capacidade 3",
+      "dadosPad": {
+        "id": 3,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+        "descricao": "Ar condicionado tipo split, capacidade 3",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 4560,
+        "valorPrevisto": 4560,
+        "valorExecutado": 0,
+        "saldo": 4560
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 4,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+      "descricao": "Ar-condicionado tipo Split, capacidade d",
+      "dadosPad": {
+        "id": 4,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+        "descricao": "Ar-condicionado tipo Split, capacidade d",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1349.62,
+        "valorPrevisto": 2699.24,
+        "valorExecutado": 0,
+        "saldo": 2699.24
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 5,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+      "dadosPad": {
+        "id": 5,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+        "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 300,
+        "valorPrevisto": 600,
+        "valorExecutado": 0,
+        "saldo": 600
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 6,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+      "dadosPad": {
+        "id": 6,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+        "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 8106.75,
+        "valorPrevisto": 24320.25,
+        "valorExecutado": 0,
+        "saldo": 24320.25
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 7,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+      "descricao": "Equipamentos de rede (switches e roteado",
+      "dadosPad": {
+        "id": 7,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+        "descricao": "Equipamentos de rede (switches e roteado",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 350,
+        "valorPrevisto": 1050,
+        "valorExecutado": 0,
+        "saldo": 1050
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 8,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+      "dadosPad": {
+        "id": 8,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+        "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 726,
+        "valorPrevisto": 726,
+        "valorExecutado": 0,
+        "saldo": 726
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 9,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
+      "dadosPad": {
+        "id": 9,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+        "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 500,
+        "valorPrevisto": 500,
+        "valorExecutado": 0,
+        "saldo": 500
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 10,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+      "descricao": "Fragmentadora e papel - Corregedoria",
+      "dadosPad": {
+        "id": 10,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+        "descricao": "Fragmentadora e papel - Corregedoria",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1710,
+        "valorPrevisto": 3420,
+        "valorExecutado": 0,
+        "saldo": 3420
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 11,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+      "dadosPad": {
+        "id": 11,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+        "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 800,
+        "valorPrevisto": 800,
+        "valorExecutado": 0,
+        "saldo": 800
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 12,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+      "descricao": "Impressora multifuncional (OUVIDORIA)",
+      "dadosPad": {
+        "id": 12,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+        "descricao": "Impressora multifuncional (OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 3050,
+        "valorPrevisto": 6100,
+        "valorExecutado": 0,
+        "saldo": 6100
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 13,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
+      "dadosPad": {
+        "id": 13,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+        "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 1254.79,
+        "valorPrevisto": 1254.79,
+        "valorExecutado": 0,
+        "saldo": 1254.79
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 14,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+      "dadosPad": {
+        "id": 14,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+        "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+        "natureza": "CAPITAL",
+        "quantidade": 6,
+        "valorUnitario": 700,
+        "valorPrevisto": 4200,
+        "valorExecutado": 0,
+        "saldo": 4200
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 15,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+      "dadosPad": {
+        "id": 15,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+        "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+        "natureza": "CAPITAL",
+        "quantidade": 4,
+        "valorUnitario": 5500,
+        "valorPrevisto": 22000,
+        "valorExecutado": 0,
+        "saldo": 22000
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 16,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::QUADRO LOUSA BRANCA",
+      "descricao": "Quadro Lousa branca",
+      "dadosPad": {
+        "id": 16,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::QUADRO LOUSA BRANCA",
+        "descricao": "Quadro Lousa branca",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 1065.4,
+        "valorPrevisto": 3196.2,
+        "valorExecutado": 0,
+        "saldo": 3196.2
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 17,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+      "descricao": "Refrigerador frigobar, com capacidade no",
+      "dadosPad": {
+        "id": 17,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+        "descricao": "Refrigerador frigobar, com capacidade no",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 1422,
+        "valorPrevisto": 2844,
+        "valorExecutado": 0,
+        "saldo": 2844
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 18,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "descricao": "Saldo Residual",
+      "dadosPad": {
+        "id": 18,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::SALDO RESIDUAL",
+        "descricao": "Saldo Residual",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 9506.54,
+        "valorPrevisto": 9506.54,
+        "valorExecutado": 0,
+        "saldo": 9506.54
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 19,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+      "descricao": "Televisão Smart LED, mínimo de 50 polega",
+      "dadosPad": {
+        "id": 19,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+        "descricao": "Televisão Smart LED, mínimo de 50 polega",
+        "natureza": "CAPITAL",
+        "quantidade": 1,
+        "valorUnitario": 2000,
+        "valorPrevisto": 2000,
+        "valorExecutado": 0,
+        "saldo": 2000
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    },
+    {
+      "id": 20,
+      "classificacao": "sem_rateio_antigo_encontrado",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+      "descricao": "Televisão smart LED, minimo de 50 polegadas",
+      "dadosPad": {
+        "id": 20,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+        "descricao": "Televisão smart LED, minimo de 50 polegadas",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitario": 2174.86,
+        "valorPrevisto": 6524.58,
+        "valorExecutado": 0,
+        "saldo": 6524.58
+      },
+      "motivos": [
+        "Nenhum rateio antigo com descrição compatível foi encontrado."
+      ]
+    }
+  ]
+}
