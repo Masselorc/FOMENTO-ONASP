@@ -1,24 +1,25 @@
 # Diário de bordo
 
-## 21/05/2026 - PROFOR 2022: Contador de Pendências, Auto-avanço e Fim do Scroll na Tela de Revisão (UX)
+## 21/05/2026 - PROFOR 2022: Contador de Pendências, Auto-avanço e Detalhe Inline na Tela de Revisão (UX)
 
 - **Status**: Implementado e Validado.
 - **Tipo de mudança**: **Somente frontend/UX** (`frontend/js/app.js`, `frontend/css/app.css`, cache-buster em `index.html`, teste E2E). Sem alteração de backend, banco, publicação, origem ativa ou `planoAplicacao` oficial.
 
 ### Problema de UX
 
-Na tela `SISTEMA > Revisão de divergências`: (1) não havia um contador de pendências destacado; (2) após registrar uma decisão, o usuário tinha de rolar a tela de volta ao topo e clicar manualmente na próxima divergência; (3) ao clicar em "Revisar", a tela rolava (`scrollIntoView`) até o painel de detalhe no rodapé — um "pulo" incômodo.
+Na tela `SISTEMA > Revisão de divergências`: (1) não havia um contador de pendências destacado; (2) após registrar uma decisão, o usuário tinha de rolar a tela de volta ao topo e clicar manualmente na próxima divergência; (3) o painel de detalhe ficava isolado no rodapé da página — ao clicar em "Revisar", o conteúdo abria fora da viewport, obrigando o usuário a rolar até o fim para vê-lo.
 
 ### Correções
 
 - **Contador de pendências visível**: novo banner no topo da view (`#revisao-contador-pendencias`) com o número de pendências operacionais em destaque. Atualizado por `atualizarContadorPendenciasRevisao()` a cada carga da lista; fica verde ("fila concluída") quando zera e ajusta o texto no modo auditoria.
 - **Auto-avanço**: ao registrar uma decisão, `avancarParaProximaPendenciaRevisao()` abre automaticamente a próxima pendência da lista. Guarda o índice da divergência decidida antes de recarregar a fila e abre a que assume essa posição; nunca reabre a recém-decidida; quando a fila zera, exibe "Fila de pendências concluída".
-- **Sem rolagem incômoda**: removido o `scrollIntoView` de `abrirDetalheRevisao()`. O detalhe abre na posição atual, junto da linha clicada.
+- **Detalhe inline (acordeão)**: o painel de detalhe deixou de ficar isolado no rodapé. Ao clicar em "Revisar", o detalhe expande numa linha extra (`tr.revisao-linha-detalhe`) logo abaixo da linha clicada, dentro da própria tabela — o usuário vê o detalhe exatamente onde clicou. Apenas uma linha fica expandida por vez; `fecharDetalheInlineRevisao()` recolhe as demais. Clicar de novo na linha já expandida **recolhe** (toggle). A expansão é animada (`grid-template-rows` 0fr→1fr + leve fade/slide do conteúdo), respeitando `prefers-reduced-motion`. O painel `#revisao-divergencia-detalhe` do rodapé permanece como fallback (fila concluída / erro).
 
 ### Validações
 
 - `node --check` e `npm run validar:syntax` (61 arquivos) — OK.
-- Suíte E2E completa — 15/15, incluindo nova asserção do contador de pendências.
+- Suíte E2E completa — 15/15, incluindo asserção do contador de pendências.
+- Teste manual com backend real: expandir/recolher (toggle), troca de linha e auto-avanço funcionando sem erro de console.
 - `git diff --check` limpo; `frontend/data/publicados` sem alterações; nenhum SQLite versionado.
 
 ### Confirmação

@@ -3100,7 +3100,10 @@ async function carregarLogoParaPDF() {
         }
 
         function renderDetalheDivergenciaRevisao(divergencia) {
-            const container = document.getElementById('revisao-divergencia-detalhe');
+            // O detalhe é renderizado inline, na linha expandida da tabela
+            // (host com [data-revisao-detalhe-host]). Fallback: painel do rodapé.
+            const container = document.querySelector('[data-revisao-detalhe-host]')
+                || document.getElementById('revisao-divergencia-detalhe');
             if (!container) return;
             container.innerHTML = `
                 <article class="revisao-detail-panel">
@@ -3335,36 +3338,75 @@ async function carregarLogoParaPDF() {
             }
         }
 
+        // Remove qualquer linha de detalhe expandida da tabela.
+        function fecharDetalheInlineRevisao() {
+            document.querySelectorAll('tr.revisao-linha-detalhe').forEach((tr) => tr.remove());
+            document.querySelectorAll('#tabela-revisao-divergencias tbody tr.table-active')
+                .forEach((tr) => tr.classList.remove('table-active'));
+        }
+
         async function abrirDetalheRevisao(id) {
-            const container = document.getElementById('revisao-divergencia-detalhe');
-            if (container) {
-                container.innerHTML = '<div class="revisao-detail-panel text-muted">Carregando detalhe da divergência...</div>';
+            const botao = document.querySelector(`[data-revisao-abrir="${id}"]`);
+            const trItem = botao ? botao.closest('tr') : null;
+            const colunas = document.querySelectorAll('#tabela-revisao-divergencias thead th').length || 9;
+
+            // Acordeão com toggle: se a divergência clicada já está expandida,
+            // recolhe e encerra (segundo clique fecha).
+            if (trItem
+                && trItem.classList.contains('table-active')
+                && trItem.nextElementSibling
+                && trItem.nextElementSibling.classList.contains('revisao-linha-detalhe')) {
+                fecharDetalheInlineRevisao();
+                revisaoDivergenciasEstado.detalheAtualId = null;
+                return;
             }
 
-            const botao = document.querySelector(`[data-revisao-abrir="${id}"]`);
-            let originalTexto = '';
-            let tr = null;
+            // Caso contrário: fecha qualquer detalhe aberto e expande a clicada.
+            fecharDetalheInlineRevisao();
 
+            let originalTexto = '';
+            let linhaDetalhe = null;
             if (botao) {
                 originalTexto = botao.innerHTML;
                 botao.disabled = true;
                 botao.textContent = 'Carregando...';
-                tr = botao.closest('tr');
-                if (tr) {
-                    const tbody = tr.closest('tbody');
-                    if (tbody) {
-                        tbody.querySelectorAll('tr').forEach(r => r.classList.remove('table-active'));
-                    }
-                    tr.classList.add('table-active');
-                }
+            }
+            if (trItem) {
+                trItem.classList.add('table-active');
+                // Insere a linha de detalhe logo abaixo da linha clicada.
+                // O wrapper interno (.revisao-detalhe-anim) anima a expansão
+                // via grid-template-rows: 0fr -> 1fr.
+                linhaDetalhe = document.createElement('tr');
+                linhaDetalhe.className = 'revisao-linha-detalhe';
+                linhaDetalhe.innerHTML = `<td colspan="${colunas}" class="revisao-linha-detalhe-cel">`
+                    + '<div class="revisao-detalhe-anim">'
+                    + '<div class="revisao-detalhe-anim-inner" data-revisao-detalhe-host>'
+                    + '<div class="revisao-detail-panel text-muted">Carregando detalhe da divergência…</div>'
+                    + '</div></div></td>';
+                trItem.insertAdjacentElement('afterend', linhaDetalhe);
+                // Força um reflow e ativa a classe que dispara a transição.
+                void linhaDetalhe.offsetHeight;
+                linhaDetalhe.classList.add('is-aberta');
+            }
+            // Fallback (sem linha na tabela): usa o painel do rodapé.
+            const containerRodape = document.getElementById('revisao-divergencia-detalhe');
+            if (!trItem && containerRodape) {
+                containerRodape.innerHTML = '<div class="revisao-detail-panel text-muted">Carregando detalhe da divergência…</div>';
             }
 
             try {
                 const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias/${encodeURIComponent(id)}`);
                 revisaoDivergenciasEstado.detalheAtualId = Number(id);
                 renderDetalheDivergenciaRevisao(payload.divergencia);
-                // Não rola a tela: o detalhe abre na posição atual, junto da
-                // linha clicada — evita o "pulo" incômodo para o rodapé.
+                // Mantém a linha clicada visível, sem pulo para o rodapé.
+                if (trItem && typeof trItem.scrollIntoView === 'function') {
+                    trItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            } catch (error) {
+                const host = document.querySelector('[data-revisao-detalhe-host]') || containerRodape;
+                if (host) {
+                    host.innerHTML = `<div class="revisao-detail-panel text-danger">${escapeHtml(error.message || 'Falha ao carregar detalhe.')}</div>`;
+                }
             } finally {
                 if (botao) {
                     botao.disabled = false;
@@ -3382,13 +3424,18 @@ async function carregarLogoParaPDF() {
             const lista = Array.isArray(revisaoDivergenciasEstado.divergencias)
                 ? revisaoDivergenciasEstado.divergencias
                 : [];
-            const detalhe = document.getElementById('revisao-divergencia-detalhe');
+            const detalheRodape = document.getElementById('revisao-divergencia-detalhe');
             if (!lista.length) {
-                // Fila zerada: nada a abrir — mostra mensagem de conclusão.
-                if (detalhe) {
-                    detalhe.innerHTML = '<div class="revisao-detail-panel revisao-detail-concluido">'
+                // Fila zerada: fecha a linha expandida e mostra conclusão.
+                fecharDetalheInlineRevisao();
+                if (detalheRodape) {
+                    detalheRodape.innerHTML = '<div class="revisao-detail-panel revisao-detail-concluido">'
                         + '<strong>Fila de pendências concluída.</strong>'
                         + '<p class="mb-0 text-muted">Não há mais pendências operacionais para os filtros atuais.</p></div>';
+                }
+                const contador = document.getElementById('revisao-contador-pendencias');
+                if (contador && typeof contador.scrollIntoView === 'function') {
+                    contador.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
                 return;
             }
@@ -3406,8 +3453,11 @@ async function carregarLogoParaPDF() {
             }
             if (alvo) {
                 abrirDetalheRevisao(alvo.id);
-            } else if (detalhe) {
-                detalhe.innerHTML = '<div class="revisao-detail-panel text-muted">Selecione uma divergência para revisar.</div>';
+            } else {
+                fecharDetalheInlineRevisao();
+                if (detalheRodape) {
+                    detalheRodape.innerHTML = '<div class="revisao-detail-panel text-muted">Selecione uma divergência para revisar.</div>';
+                }
             }
         }
 
@@ -3514,9 +3564,7 @@ async function carregarLogoParaPDF() {
                         </table>
                     </div>
                 </section>
-                <section id="revisao-divergencia-detalhe" class="mb-5">
-                    <div class="revisao-detail-panel text-muted">Selecione uma divergência para revisar.</div>
-                </section>
+                <section id="revisao-divergencia-detalhe" class="mb-5"></section>
             `;
 
             await carregarAuditoriaRevisao();

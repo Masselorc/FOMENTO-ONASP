@@ -10569,6 +10569,58 @@ table.dataTable thead th {
     gap: .65rem;
 }
 
+/* Linha de detalhe expandida (acordeão) dentro da tabela de revisão. */
+.revisao-linha-detalhe > .revisao-linha-detalhe-cel {
+    background: var(--color-surface-muted);
+    border-left: 4px solid var(--color-primary);
+    padding: 0;
+}
+
+/* Wrapper que anima a expansão: grid-template-rows 0fr -> 1fr. */
+.revisao-detalhe-anim {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .28s ease;
+}
+
+.revisao-linha-detalhe.is-aberta .revisao-detalhe-anim {
+    grid-template-rows: 1fr;
+}
+
+.revisao-detalhe-anim-inner {
+    min-height: 0;
+    overflow: hidden;
+    /* Leve fade + deslize do conteúdo, reforçando a sensação de movimento. */
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .28s ease .04s, transform .28s ease .04s;
+}
+
+.revisao-linha-detalhe.is-aberta .revisao-detalhe-anim-inner {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* O painel de detalhe ganha o respiro interno (a célula tem padding 0). */
+.revisao-detalhe-anim-inner > .revisao-detail-panel,
+.revisao-detalhe-anim-inner > .revisao-detail-panel.text-muted,
+.revisao-detalhe-anim-inner > .revisao-detail-panel.text-danger {
+    margin: 0;
+    padding: 1rem;
+}
+
+/* Realce da linha cuja divergência está expandida. */
+#tabela-revisao-divergencias tbody tr.table-active > td {
+    background: rgba(74, 210, 255, .1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .revisao-detalhe-anim,
+    .revisao-detalhe-anim-inner {
+        transition: none;
+    }
+}
+
 /* Contador de pendências — destaque no topo da tela de revisão. */
 .revisao-contador {
     align-items: center;
