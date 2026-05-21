@@ -13,6 +13,9 @@ const STATUS_ANALISAVEIS = new Set(["PENDENTE", "EM_REVISAO"]);
 const DECISOES_RESOLUTIVAS = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"]);
 const TOLERANCIA_QUANTIDADE = 0.000001;
 const TOLERANCIA_MONETARIA = 0.01;
+const USUARIO_DECISAO = "sistema-auditoria-rateio-antigo";
+const JUSTIFICATIVA_RATEIO_ANTIGO = "Item PAD consolidado conferido com rateio antigo existente na memória. A soma das linhas antigas por área fecha integralmente com o PAD em quantidade, valor previsto, valor executado e saldo. Fica aceito o rateio antigo OUVIDORIA/CAPITAL 50% e CORREGEDORIA/CAPITAL 50% para uso em dry-run, sem alteração do planoAplicacao oficial.";
+const MOTIVO_RATEIO_ANTIGO = "Item PAD consolidado possui rateio antigo por área com fechamento material e financeiro completo.";
 
 function repoRootPadrao() {
   return path.resolve(__dirname, "../..");
@@ -92,6 +95,16 @@ function arredondar(valor, casas = 6) {
   if (!Number.isFinite(numero)) return null;
   const fator = 10 ** casas;
   return Math.round((numero + Number.EPSILON) * fator) / fator;
+}
+
+function argumentoFlag(nome) {
+  return process.argv.includes(nome);
+}
+
+function argumentoValor(nome) {
+  const prefixo = `${nome}=`;
+  const encontrado = process.argv.find((arg) => arg.startsWith(prefixo));
+  return encontrado ? encontrado.slice(prefixo.length) : null;
 }
 
 function compararNumerico(antigo, pad, tolerancia) {
@@ -559,6 +572,112 @@ function montarRelatorio() {
     dadosInsuficientes: grupos.insuficientes,
     jaDecididos: grupos.jaDecididos,
     itensExigemRateioManual,
+    aplicacao: {
+      solicitada: false,
+      totalAplicados: 0,
+      aplicados: [],
+    },
+  };
+}
+
+function validarCandidatoParaAplicacao(candidato, idEsperado) {
+  if (!candidato) {
+    throw new Error(`Candidato #${idEsperado} não foi encontrado como rateio_antigo_compativel.`);
+  }
+  if (candidato.id !== idEsperado) {
+    throw new Error(`Aplicação abortada: candidato inesperado #${candidato.id}; esperado #${idEsperado}.`);
+  }
+  if (candidato.classificacao !== "rateio_antigo_compativel") {
+    throw new Error(`Aplicação abortada: #${candidato.id} não está classificado como rateio_antigo_compativel.`);
+  }
+
+  const diferencas = candidato.diferencas || {};
+  for (const campo of ["quantidade", "valorPrevisto", "valorExecutado", "saldo"]) {
+    if (!diferencas[campo]?.ok) {
+      throw new Error(`Aplicação abortada: #${candidato.id} não fecha ${campo}.`);
+    }
+  }
+  if (!diferencas.natureza?.ok) {
+    throw new Error(`Aplicação abortada: #${candidato.id} possui natureza incompatível.`);
+  }
+
+  const rateio = garantirArray(candidato.rateioSugerido);
+  if (!rateio.length) {
+    throw new Error(`Aplicação abortada: #${candidato.id} não possui rateio sugerido.`);
+  }
+  if (rateio.some((linha) => !String(linha.area || "").trim() || !String(linha.natureza || "").trim())) {
+    throw new Error(`Aplicação abortada: #${candidato.id} possui linha de rateio sem área ou natureza.`);
+  }
+
+  const somaPercentualValor = rateio.reduce((total, linha) => total + (numeroOuNull(linha.percentualValor) ?? 0), 0);
+  const somaPercentualQuantidade = rateio.reduce((total, linha) => total + (numeroOuNull(linha.percentualQuantidade) ?? 0), 0);
+  if (Math.abs(somaPercentualValor - 100) > TOLERANCIA_QUANTIDADE) {
+    throw new Error(`Aplicação abortada: percentualValor soma ${somaPercentualValor}, não 100.`);
+  }
+  if (Math.abs(somaPercentualQuantidade - 100) > TOLERANCIA_QUANTIDADE) {
+    throw new Error(`Aplicação abortada: percentualQuantidade soma ${somaPercentualQuantidade}, não 100.`);
+  }
+}
+
+function montarPayloadDecisao(candidato) {
+  return {
+    origem: "auditoria-rateio-antigo-em-item-sem-rateio",
+    tipoSaneamento: "rateio_manual",
+    rateio: candidato.rateioSugerido.map((linha) => ({
+      area: linha.area,
+      natureza: linha.natureza,
+      percentualValor: linha.percentualValor,
+      percentualQuantidade: linha.percentualQuantidade,
+    })),
+    rateioAntigoValidado: true,
+    itemMemoria: {
+      chaveItem: candidato.itemMemoria.chaveItem,
+    },
+    motivo: MOTIVO_RATEIO_ANTIGO,
+  };
+}
+
+function aplicarRateioAntigo(relatorio, idAlvo) {
+  const candidatos = relatorio.candidatosRateioAntigoCompativel;
+  const candidato = candidatos.find((item) => item.id === idAlvo);
+  if (candidatos.some((item) => item.id !== idAlvo)) {
+    const ids = candidatos.map((item) => item.id).join(", ");
+    throw new Error(`Aplicação abortada: há candidatos além do alvo #${idAlvo}: ${ids}.`);
+  }
+  validarCandidatoParaAplicacao(candidato, idAlvo);
+
+  const resultado = revisaoService.registrarDecisao(candidato.id, {
+    decisao: "ACEITO",
+    justificativa: JUSTIFICATIVA_RATEIO_ANTIGO,
+    usuario: USUARIO_DECISAO,
+    payloadDecisao: montarPayloadDecisao(candidato),
+  });
+  if (resultado.aplicadaAoPlano !== false) {
+    throw new Error(`Decisão ${resultado.decisaoId} retornou aplicadaAoPlano diferente de false.`);
+  }
+
+  const detalhe = revisaoService.obterDivergencia(candidato.id);
+  const decisao = detalhe.decisoes.find((item) => item.id === resultado.decisaoId);
+  const temSnapshot = Boolean(decisao?.payloadDecisao?._segurancaPreAtivacao);
+  const temLog = detalhe.logs.some((log) =>
+    log.evento === "decisao_registrada" && log.estadoNovo?.decisaoId === resultado.decisaoId
+  );
+  if (!temSnapshot) {
+    throw new Error(`Decisão ${resultado.decisaoId} não possui snapshot _segurancaPreAtivacao.`);
+  }
+  if (!temLog) {
+    throw new Error(`Decisão ${resultado.decisaoId} não possui log decisao_registrada.`);
+  }
+
+  return {
+    divergenciaId: candidato.id,
+    decisaoId: resultado.decisaoId,
+    statusAnterior: resultado.statusAnterior,
+    statusNovo: resultado.statusNovo,
+    aplicadaAoPlano: resultado.aplicadaAoPlano,
+    temSnapshot,
+    temLog,
+    payloadDecisao: decisao.payloadDecisao,
   };
 }
 
@@ -583,12 +702,31 @@ function imprimirRelatorio(relatorio) {
   }
   console.log(`Saída JSON: ${CAMINHO_SAIDA_JSON}`);
   console.log(`Saída Markdown: ${CAMINHO_SAIDA_MD}`);
-  console.log("Dry-run: nenhuma decisão foi registrada.");
+  if (relatorio.aplicacao?.solicitada) {
+    console.log(`Decisões ACEITO registradas: ${relatorio.aplicacao.totalAplicados}`);
+    for (const item of relatorio.aplicacao.aplicados) {
+      console.log(`  #${item.divergenciaId} -> decisão ${item.decisaoId} | aplicadaAoPlano=${item.aplicadaAoPlano}`);
+    }
+  } else {
+    console.log("Dry-run: nenhuma decisão foi registrada.");
+  }
 }
 
 function executar() {
   inicializarBanco();
+  const aplicar = argumentoFlag("--aplicar");
+  const idAlvo = Number(argumentoValor("--id") || 23);
   const relatorio = montarRelatorio();
+  if (aplicar) {
+    const aplicado = aplicarRateioAntigo(relatorio, idAlvo);
+    relatorio.modo = "aplicacao-assistida";
+    relatorio.aplicacao = {
+      solicitada: true,
+      idAlvo,
+      totalAplicados: 1,
+      aplicados: [aplicado],
+    };
+  }
   escreverArquivoJson(CAMINHO_SAIDA_JSON, relatorio);
   escreverArquivoTexto(CAMINHO_SAIDA_MD, renderMarkdown(relatorio));
   imprimirRelatorio(relatorio);

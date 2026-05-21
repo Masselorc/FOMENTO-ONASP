@@ -1,13 +1,13 @@
 {
-  "geradoEm": "2026-05-21T18:36:33.590Z",
+  "geradoEm": "2026-05-21T18:43:49.748Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
     "totalLinhasAntigo": 567,
-    "totalLinhasNovo": 600,
+    "totalLinhasNovo": 602,
     "totalItensIguais": 93,
-    "totalItensNovos": 2,
+    "totalItensNovos": 4,
     "totalItensAusentes": 34,
     "totalItensQuantidadeDivergente": 387,
     "totalItensValorPrevistoDivergente": 13,
@@ -16,18 +16,18 @@
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
     "totalItensAmbiguos": 49,
-    "totalDiferencas": 427,
-    "totalDiferencasCriticas": 2,
+    "totalDiferencas": 429,
+    "totalDiferencasCriticas": 4,
     "totalAvisos": 197,
     "totalDiferencasEsperadasPorAtualizacaoPad": 6,
     "totalDiferencasPorPendenciaDeDecisao": 222,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 0,
-    "totalDecisoesResolutivasEncontradas": 13,
-    "totalDecisoesInterpretadasDryRun": 13,
-    "totalDecisoesAplicadasDryRun": 13,
+    "totalDecisoesResolutivasEncontradas": 14,
+    "totalDecisoesInterpretadasDryRun": 14,
+    "totalDecisoesAplicadasDryRun": 14,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 13,
+    "totalDecisoesComEfeitoNaReconstrucao": 14,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0
   },
@@ -39,17 +39,17 @@
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 600,
-      "valorPrevisto": 10517796.83,
-      "valorExecutado": 3201807.64,
-      "saldo": 7315989.19
+      "linhas": 602,
+      "valorPrevisto": 10524996.81,
+      "valorExecutado": 3208037.5,
+      "saldo": 7316959.31
     }
   },
   "diferencaTotal": {
-    "linhas": 33,
-    "valorPrevisto": -146218.65,
-    "valorExecutado": -888.26,
-    "saldo": -145330.39
+    "linhas": 35,
+    "valorPrevisto": -139018.67,
+    "valorExecutado": 5341.6,
+    "saldo": -144360.27
   },
   "diferencasPorConvenio": [
     {
@@ -208,16 +208,16 @@
         "saldo": 299282.16
       },
       "novo": {
-        "linhas": 43,
-        "valorPrevisto": 361890.25,
-        "valorExecutado": 81209.69,
-        "saldo": 280680.56
+        "linhas": 45,
+        "valorPrevisto": 369090.23,
+        "valorExecutado": 87439.55,
+        "saldo": 281650.68
       },
       "diferenca": {
-        "valorPrevisto": -34533.46,
-        "valorExecutado": -15931.86,
-        "saldo": -18601.6,
-        "linhas": -7
+        "valorPrevisto": -27333.48,
+        "valorExecutado": -9702,
+        "saldo": -17631.48,
+        "linhas": -5
       }
     },
     {
@@ -378,16 +378,16 @@
         "saldo": 299282.16
       },
       "novo": {
-        "linhas": 43,
-        "valorPrevisto": 361890.25,
-        "valorExecutado": 81209.69,
-        "saldo": 280680.56
+        "linhas": 45,
+        "valorPrevisto": 369090.23,
+        "valorExecutado": 87439.55,
+        "saldo": 281650.68
       },
       "diferenca": {
-        "valorPrevisto": -34533.46,
-        "valorExecutado": -15931.86,
-        "saldo": -18601.6,
-        "linhas": -7
+        "valorPrevisto": -27333.48,
+        "valorExecutado": -9702,
+        "saldo": -17631.48,
+        "linhas": -5
       }
     },
     {
@@ -695,16 +695,16 @@
         "saldo": 2048720.27
       },
       "novo": {
-        "linhas": 127,
-        "valorPrevisto": 2529946.33,
-        "valorExecutado": 574098.52,
-        "saldo": 1955847.81
+        "linhas": 128,
+        "valorPrevisto": 2533546.32,
+        "valorExecutado": 577213.45,
+        "saldo": 1956332.87
       },
       "diferenca": {
-        "valorPrevisto": -64131.3,
-        "valorExecutado": 28741.16,
-        "saldo": -92872.46,
-        "linhas": 12
+        "valorPrevisto": -60531.31,
+        "valorExecutado": 31856.09,
+        "saldo": -92387.4,
+        "linhas": 13
       }
     },
     {
@@ -779,16 +779,16 @@
         "saldo": 1299845.87
       },
       "novo": {
-        "linhas": 149,
-        "valorPrevisto": 1673911.58,
-        "valorExecutado": 383571.5,
-        "saldo": 1290340.08
+        "linhas": 150,
+        "valorPrevisto": 1677511.57,
+        "valorExecutado": 386686.43,
+        "saldo": 1290825.14
       },
       "diferenca": {
-        "valorPrevisto": -42789.82,
-        "valorExecutado": -33284.03,
-        "saldo": -9505.79,
-        "linhas": 3
+        "valorPrevisto": -39189.83,
+        "valorExecutado": -30169.1,
+        "saldo": -9020.73,
+        "linhas": 4
       }
     }
   ],
@@ -802,16 +802,16 @@
         "saldo": 4714987.99
       },
       "novo": {
-        "linhas": 437,
-        "valorPrevisto": 7277722.14,
-        "valorExecutado": 2700020.79,
-        "saldo": 4577701.35
+        "linhas": 439,
+        "valorPrevisto": 7284922.12,
+        "valorExecutado": 2706250.65,
+        "saldo": 4578671.47
       },
       "diferenca": {
-        "valorPrevisto": -144076.3,
-        "valorExecutado": -6789.66,
-        "saldo": -137286.64,
-        "linhas": 23
+        "valorPrevisto": -136876.32,
+        "valorExecutado": -559.8,
+        "saldo": -136316.52,
+        "linhas": 25
       }
     },
     {
@@ -860,6 +860,32 @@
       "situacao": "novo",
       "valorPrevistoNovo": 102168,
       "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3599.99,
+      "valorExecutadoNovo": 3114.93,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3599.99,
+      "valorExecutadoNovo": 3114.93,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     }
@@ -9951,6 +9977,32 @@
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3599.99,
+      "valorExecutadoNovo": 3114.93,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3599.99,
+      "valorExecutadoNovo": 3114.93,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     }
   ],
   "avisos": [
@@ -14174,6 +14226,13 @@
       "decisaoId": 78
     },
     {
+      "divergenciaId": 23,
+      "chaveDivergencia": "item_novo_sem_rateio:a36e6d22d9ce076c",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 85
+    },
+    {
       "divergenciaId": 28,
       "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
       "tipoAlerta": "item_nao_apto",
@@ -14305,6 +14364,46 @@
             "natureza": "CUSTEIO",
             "percentual_valor": 100,
             "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 23,
+      "chaveDivergencia": "item_novo_sem_rateio:a36e6d22d9ce076c",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 85,
+      "usuario": "sistema-auditoria-rateio-antigo",
+      "decididoEm": "2026-05-21T18:43:17.598Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 50,
+            "percentual_quantidade": 50,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          },
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 50,
+            "percentual_quantidade": 50,
             "valor_previsto_referencia": 0,
             "valor_executado_referencia": 0,
             "quantidade_referencia": 0
@@ -14538,22 +14637,22 @@
   "decisoesNaoAplicaveis": [],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 132,
+    "totalPendentes": 131,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 48,
-    "totalPendentesQueBloqueiamPublicacao": 35,
+    "totalPendentesQueBloqueiamPublicacao": 34,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 13,
+    "totalComDecisaoResolutiva": 14,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 132,
+    "totalSemDecisaoResolutiva": 131,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T18:36:33.567Z",
+    "geradoEm": "2026-05-21T18:43:49.730Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 13,
-      "totalPayloadPreservado": 13,
+      "totalDecisoesResolutivasAuditadas": 14,
+      "totalPayloadPreservado": 14,
       "totalPayloadAlteradoAposDecisao": 0,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -14573,27 +14672,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 498,
     "totalItensPadSemRateio": 27,
-    "totalItensPadSemRateioRemanescentes": 25,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 2,
-    "totalLinhasReconstruidas": 600,
+    "totalItensPadSemRateioRemanescentes": 24,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 3,
+    "totalLinhasReconstruidas": 602,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 34,
+    "totalImpedimentos": 33,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 13,
-    "totalDecisoesInterpretadasDryRun": 13,
-    "totalDecisoesAplicadasDryRun": 13,
+    "totalDecisoesResolutivasEncontradas": 14,
+    "totalDecisoesInterpretadasDryRun": 14,
+    "totalDecisoesAplicadasDryRun": 14,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 13,
+    "totalDecisoesComEfeitoNaReconstrucao": 14,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 13,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 14,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0,
-    "valorPrevistoReconstruidoTotal": 10517796.83,
-    "valorExecutadoReconstruidoTotal": 3201807.64,
-    "saldoReconstruidoTotal": 7315989.19
+    "valorPrevistoReconstruidoTotal": 10524996.81,
+    "valorExecutadoReconstruidoTotal": 3208037.5,
+    "saldoReconstruidoTotal": 7316959.31
   },
   "impedimentosReconstrucao": [
     {
@@ -14676,15 +14775,6 @@
       "descricao": "Desktop para edição de vídeo",
       "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
       "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
     },
     {
       "tipo": "item_pad_sem_rateio",
@@ -14900,14 +14990,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 35 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 34 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 33 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -146218.65, executado -888.26, saldo -145330.39.",
-    "Diferenças críticas: 2. Itens ambíguos: 49.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -139018.67, executado 5341.6, saldo -144360.27.",
+    "Diferenças críticas: 4. Itens ambíguos: 49.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

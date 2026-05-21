@@ -1,5 +1,97 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Etapa 9.3.1-A - aplicação assistida do rateio antigo compatível da divergência `#23`
+
+- Branch atual: `main`.
+- Objetivo:
+  - registrar decisão assistida `ACEITO` apenas na divergência `#23`,
+    `item_novo_sem_rateio`, convênio `937782/AC`, usando o rateio antigo já
+    identificado na Etapa 9.3.1 e preservando `aplicadaAoPlano=false`.
+- Arquivos alterados:
+  - `backend/scripts/auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022.js`;
+  - `package.json`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - relatórios dry-run em `backend/data/relatorios/`.
+- Comando adicionado:
+  - `npm run profor:pad:item-sem-rateio:aplicar-rateio-antigo`.
+- Validações antes de aplicar:
+  - alvo fixado em `--id=23`;
+  - divergência `#23` em status resolutivo pendente de saneamento e tipo
+    `item_novo_sem_rateio`;
+  - rateio antigo classificado como `rateio_antigo_compativel`;
+  - quantidade total, valor previsto, valor executado e saldo fechando com o PAD;
+  - natureza `CAPITAL` compatível;
+  - percentuais de quantidade e valor fechando `100%`.
+- Decisão registrada:
+  - divergência: `#23`;
+  - decisão: `ACEITO`;
+  - id da decisão: `85`;
+  - usuário: `sistema-auditoria-rateio-antigo`;
+  - `aplicadaAoPlano=false`;
+  - snapshot `_segurancaPreAtivacao` confirmado no `payloadDecisao`;
+  - log confirmado no detalhe da divergência.
+- Rateio aceito no `payloadDecisao`:
+  - origem: `auditoria-rateio-antigo-em-item-sem-rateio`;
+  - tipo de saneamento: `rateio_manual`;
+  - `OUVIDORIA` / `CAPITAL` / `50%` valor / `50%` quantidade;
+  - `CORREGEDORIA` / `CAPITAL` / `50%` valor / `50%` quantidade;
+  - item de memória:
+    `937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB`;
+  - `rateioAntigoValidado=true`.
+- Auditoria antes da aplicação:
+  - `145` divergências;
+  - `132` pendentes;
+  - `13` ACEITO;
+  - `35` pendentes bloqueando publicação;
+  - `13` decisões resolutivas;
+  - auditoria `item_novo_sem_rateio`: `1` rateio antigo compatível (`#23`),
+    `20` sem rateio antigo encontrado, `2` já decididos.
+- Auditoria após a aplicação:
+  - `145` divergências;
+  - `131` pendentes;
+  - `14` ACEITO;
+  - `34` pendentes bloqueando publicação;
+  - `14` decisões resolutivas;
+  - auditoria `item_novo_sem_rateio`: `0` rateio antigo compatível, `20` sem
+    rateio antigo encontrado, `3` já decididos.
+- Segurança/reconstrução/comparador após aplicação:
+  - segurança pré-ativação: `14` decisões resolutivas auditadas, `14` payloads
+    preservados, `0` bloqueios, `0` avisos;
+  - reconstrução dry-run: `14` decisões interpretadas, `14` com efeito,
+    `33` impedimentos, `aptoParaAtivacao=false`;
+  - comparador dry-run: `4` diferenças críticas, `197` avisos,
+    `aptoParaPublicacao=false`.
+- Validações realizadas:
+  - `node --check backend/scripts/auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022.js`;
+  - `npm run profor:pad:item-sem-rateio:auditar-rateio-antigo`;
+  - `npm run profor:pad:item-sem-rateio:aplicar-rateio-antigo`;
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `node backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js`.
+- Confirmações de escopo:
+  - nenhuma outra divergência foi alvo do comando;
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - nenhuma migration ou dependência nova;
+  - nenhuma divergência, decisão ou log apagado.
+- Pendências:
+  - restam `20` itens `item_novo_sem_rateio` sem rateio antigo encontrado;
+  - reconstrução e comparador permanecem não aptos por impedimentos/diferenças
+    remanescentes fora do escopo desta etapa.
+- Risco de regressão:
+  - baixo: a decisão foi registrada pelo serviço existente, com validação
+    explícita do alvo `#23` e sem aplicação ao plano oficial.
+- Rollback:
+  - não apagar decisão/log; se necessário, registrar decisão posterior
+    `REVERTIDO` para a divergência `#23` ou usar rotina auditável equivalente.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: Etapa 9.3.1 - auditoria de rateio antigo em `item_novo_sem_rateio`
 
 - Branch atual: `main`.

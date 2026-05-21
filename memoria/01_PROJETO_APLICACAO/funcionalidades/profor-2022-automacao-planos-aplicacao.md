@@ -1240,8 +1240,13 @@ material.
   saldo dentro das tolerâncias (`0,000001` para quantidade e `0,01` para
   valores). A compatibilidade de descrição é controlada: primeiro tenta
   igualdade normalizada; se necessário, permite apenas a remoção de token decimal
-  de frequência `GHz`, sempre condicionada ao fechamento financeiro. Essa etapa
-  não registra decisão nem altera payload/status da divergência.
+  de frequência `GHz`, sempre condicionada ao fechamento financeiro. Em modo
+  padrão, essa etapa não registra decisão nem altera payload/status da
+  divergência. A aplicação assistida exige comando explícito
+  `npm run profor:pad:item-sem-rateio:aplicar-rateio-antigo`, valida novamente o
+  candidato e registra `ACEITO` via serviço de decisão com `payloadDecisao` de
+  `rateio_manual`; a decisão permanece `aplicadaAoPlano=false` e só tem efeito
+  em dry-run.
 - `item_ausente_no_pad` / `item_substituido`: `ACEITO` confirma a ausência (o
   comparador a classifica como `ausencia_confirmada_por_decisao`);
   `REJEITADO`/`REVERTIDO` mantêm o alerta de ausência. O item não é apagado da

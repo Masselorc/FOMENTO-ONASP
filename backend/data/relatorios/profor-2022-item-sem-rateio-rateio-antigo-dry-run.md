@@ -1,32 +1,23 @@
 # PROFOR 2022 - Auditoria de rateio antigo em itens PAD sem rateio
 
-Gerado em: 2026-05-21T18:35:50.961Z
+Gerado em: 2026-05-21T18:43:32.840Z
 
 ## Resumo
 
 - Total item_novo_sem_rateio analisados: 23
-- Rateio antigo compatível: 1
+- Rateio antigo compatível: 0
 - Possível rateio antigo com divergência: 0
 - Sem rateio antigo encontrado: 20
 - Dados insuficientes: 0
-- Já decididos: 2
+- Já decididos: 3
 
 ### Candidatos com rateio antigo compatível
 
-| ID | Convênio | UF | Descrição | Classificação | Motivo/critério |
-| --- | --- | --- | --- | --- | --- |
-| 23 | 937782 | AC | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb | rateio_antigo_compativel | descricao_sem_token_frequencia_ghz |
+_Nenhum item._
 
 ## Rateios sugeridos
 
-### Divergência #23 - 937782/AC
-
-Descrição PAD: Notebook 4 núcleos 4.2ghz ram ddr 4 8gb
-
-| Área | Natureza | Quantidade | Previsto | Executado | Saldo | % Qtd | % Valor |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| OUVIDORIA | CAPITAL | 1 | 3599.99 | 3114.93 | 485.06 | 50 | 50 |
-| CORREGEDORIA | CAPITAL | 1 | 3599.99 | 3114.93 | 485.06 | 50 | 50 |
+_Nenhum rateio sugerido._
 
 ### Possível rateio antigo com divergência
 

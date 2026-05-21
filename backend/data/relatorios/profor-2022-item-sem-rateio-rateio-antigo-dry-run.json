@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T18:35:50.961Z",
+  "geradoEm": "2026-05-21T18:43:32.840Z",
   "modo": "dry-run",
   "tolerancias": {
     "quantidade": 0.000001,
@@ -15,108 +15,13 @@
   ],
   "resumo": {
     "totalItemNovoSemRateioAnalisados": 23,
-    "totalRateioAntigoCompativel": 1,
+    "totalRateioAntigoCompativel": 0,
     "totalPossivelRateioAntigoComDivergencia": 0,
     "totalSemRateioAntigoEncontrado": 20,
     "totalDadosInsuficientes": 0,
-    "totalJaDecididos": 2
+    "totalJaDecididos": 3
   },
-  "candidatosRateioAntigoCompativel": [
-    {
-      "id": 23,
-      "classificacao": "rateio_antigo_compativel",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
-      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-      "dadosPad": {
-        "id": 23,
-        "numeroConvenio": "937782",
-        "uf": "AC",
-        "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
-        "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-        "natureza": "CAPITAL",
-        "quantidade": 2,
-        "valorUnitario": 3599.99,
-        "valorPrevisto": 7199.98,
-        "valorExecutado": 6229.86,
-        "saldo": 970.12
-      },
-      "origemRateioAntigo": "sqlite",
-      "itemMemoria": {
-        "itemConhecidoId": 109,
-        "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
-        "descricaoOriginalReferencia": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
-        "descricaoNormalizada": "NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
-        "criterioCompatibilidade": "descricao_sem_token_frequencia_ghz"
-      },
-      "linhasAntigasEncontradas": [
-        {
-          "area": "OUVIDORIA",
-          "natureza": "CAPITAL",
-          "quantidadeReferencia": 1,
-          "valorPrevistoReferencia": 3599.99,
-          "valorExecutadoReferencia": 3114.93
-        },
-        {
-          "area": "CORREGEDORIA",
-          "natureza": "CAPITAL",
-          "quantidadeReferencia": 1,
-          "valorPrevistoReferencia": 3599.99,
-          "valorExecutadoReferencia": 3114.93
-        }
-      ],
-      "rateioSugerido": [
-        {
-          "area": "OUVIDORIA",
-          "natureza": "CAPITAL",
-          "quantidadeReferencia": 1,
-          "valorPrevistoReferencia": 3599.99,
-          "valorExecutadoReferencia": 3114.93,
-          "saldoReferencia": 485.06,
-          "percentualQuantidade": 50,
-          "percentualValor": 50
-        },
-        {
-          "area": "CORREGEDORIA",
-          "natureza": "CAPITAL",
-          "quantidadeReferencia": 1,
-          "valorPrevistoReferencia": 3599.99,
-          "valorExecutadoReferencia": 3114.93,
-          "saldoReferencia": 485.06,
-          "percentualQuantidade": 50,
-          "percentualValor": 50
-        }
-      ],
-      "diferencas": {
-        "natureza": {
-          "ok": true,
-          "diferenca": null
-        },
-        "quantidade": {
-          "ok": true,
-          "insuficiente": false,
-          "diferenca": 0
-        },
-        "valorPrevisto": {
-          "ok": true,
-          "insuficiente": false,
-          "diferenca": 0
-        },
-        "valorExecutado": {
-          "ok": true,
-          "insuficiente": false,
-          "diferenca": 0
-        },
-        "saldo": {
-          "ok": true,
-          "insuficiente": false,
-          "diferenca": 0
-        }
-      },
-      "justificativaSugerida": "Item PAD consolidado possui rateio antigo por área com mesma natureza, quantidade e valores fechando dentro da tolerância; candidato a saneamento assistido por rateio antigo."
-    }
-  ],
+  "candidatosRateioAntigoCompativel": [],
   "possiveisRateiosAntigosComDivergencia": [],
   "semRateioAntigoEncontrado": [
     {
@@ -623,6 +528,17 @@
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
       ]
+    },
+    {
+      "id": 23,
+      "classificacao": "ja_decidido",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "motivos": [
+        "Divergência já possui decisão resolutiva ou status não analisável."
+      ]
     }
   ],
   "itensExigemRateioManual": [
@@ -1106,5 +1022,10 @@
         "Nenhum rateio antigo com descrição compatível foi encontrado."
       ]
     }
-  ]
+  ],
+  "aplicacao": {
+    "solicitada": false,
+    "totalAplicados": 0,
+    "aplicados": []
+  }
 }

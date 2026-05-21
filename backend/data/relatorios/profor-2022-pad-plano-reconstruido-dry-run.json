@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T18:36:33.568Z",
+  "geradoEm": "2026-05-21T18:43:49.730Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -17467,6 +17467,74 @@
         "decisao": "ACEITO",
         "efeito": "rateio_manual"
       }
+    },
+    {
+      "uf": "AC",
+      "instrumento": "Convênio",
+      "numero": "937782",
+      "ano": "2022",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "quantidade": 1,
+      "valorUnitario": 3599.99,
+      "valorPrevisto": 3599.99,
+      "valorExecutado": 3114.93,
+      "saldo": 485.06,
+      "saldoEconomicidade": 485.06,
+      "percentualExecucao": 86.53,
+      "origemReconstrucao": "rateio_manual_por_decisao",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "itemConhecidoId": null,
+      "codigoNaturezaDespesa": "44905200",
+      "unidade": "UN",
+      "valorUnitarioPadReferencia": 3599.99,
+      "valorUnitarioDerivado": 3599.99,
+      "baseRateioValor": "percentual",
+      "baseRateioQuantidade": "percentual",
+      "ajusteResidualAplicado": false,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": false,
+      "decisaoAplicada": {
+        "divergenciaId": 23,
+        "chaveDivergencia": "item_novo_sem_rateio:a36e6d22d9ce076c",
+        "decisao": "ACEITO",
+        "efeito": "rateio_manual"
+      }
+    },
+    {
+      "uf": "AC",
+      "instrumento": "Convênio",
+      "numero": "937782",
+      "ano": "2022",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "quantidade": 1,
+      "valorUnitario": 3599.99,
+      "valorPrevisto": 3599.99,
+      "valorExecutado": 3114.93,
+      "saldo": 485.06,
+      "saldoEconomicidade": 485.06,
+      "percentualExecucao": 86.53,
+      "origemReconstrucao": "rateio_manual_por_decisao",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "itemConhecidoId": null,
+      "codigoNaturezaDespesa": "44905200",
+      "unidade": "UN",
+      "valorUnitarioPadReferencia": 3599.99,
+      "valorUnitarioDerivado": 3599.99,
+      "baseRateioValor": "percentual",
+      "baseRateioQuantidade": "percentual",
+      "ajusteResidualAplicado": false,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": false,
+      "decisaoAplicada": {
+        "divergenciaId": 23,
+        "chaveDivergencia": "item_novo_sem_rateio:a36e6d22d9ce076c",
+        "decisao": "ACEITO",
+        "efeito": "rateio_manual"
+      }
     }
   ],
   "resumo": {
@@ -17474,27 +17542,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 498,
     "totalItensPadSemRateio": 27,
-    "totalItensPadSemRateioRemanescentes": 25,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 2,
-    "totalLinhasReconstruidas": 600,
+    "totalItensPadSemRateioRemanescentes": 24,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 3,
+    "totalLinhasReconstruidas": 602,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 34,
+    "totalImpedimentos": 33,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 13,
-    "totalDecisoesInterpretadasDryRun": 13,
-    "totalDecisoesAplicadasDryRun": 13,
+    "totalDecisoesResolutivasEncontradas": 14,
+    "totalDecisoesInterpretadasDryRun": 14,
+    "totalDecisoesAplicadasDryRun": 14,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 13,
+    "totalDecisoesComEfeitoNaReconstrucao": 14,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 13,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 14,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0,
-    "valorPrevistoReconstruidoTotal": 10517796.83,
-    "valorExecutadoReconstruidoTotal": 3201807.64,
-    "saldoReconstruidoTotal": 7315989.19
+    "valorPrevistoReconstruidoTotal": 10524996.81,
+    "valorExecutadoReconstruidoTotal": 3208037.5,
+    "saldoReconstruidoTotal": 7316959.31
   },
   "impedimentos": [
     {
@@ -17577,15 +17645,6 @@
       "descricao": "Desktop para edição de vídeo",
       "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
       "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
     },
     {
       "tipo": "item_pad_sem_rateio",
@@ -17801,7 +17860,7 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 35 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 34 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "alertas": [
@@ -18910,6 +18969,13 @@
       "decisaoId": 78
     },
     {
+      "divergenciaId": 23,
+      "chaveDivergencia": "item_novo_sem_rateio:a36e6d22d9ce076c",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 85
+    },
+    {
       "divergenciaId": 28,
       "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
       "tipoAlerta": "item_nao_apto",
@@ -19041,6 +19107,46 @@
             "natureza": "CUSTEIO",
             "percentual_valor": 100,
             "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 23,
+      "chaveDivergencia": "item_novo_sem_rateio:a36e6d22d9ce076c",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 85,
+      "usuario": "sistema-auditoria-rateio-antigo",
+      "decididoEm": "2026-05-21T18:43:17.598Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 50,
+            "percentual_quantidade": 50,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          },
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 50,
+            "percentual_quantidade": 50,
             "valor_previsto_referencia": 0,
             "valor_executado_referencia": 0,
             "quantidade_referencia": 0
@@ -19274,22 +19380,22 @@
   "decisoesNaoAplicaveis": [],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 132,
+    "totalPendentes": 131,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 48,
-    "totalPendentesQueBloqueiamPublicacao": 35,
+    "totalPendentesQueBloqueiamPublicacao": 34,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 13,
+    "totalComDecisaoResolutiva": 14,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 132,
+    "totalSemDecisaoResolutiva": 131,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T18:36:33.567Z",
+    "geradoEm": "2026-05-21T18:43:49.730Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 13,
-      "totalPayloadPreservado": 13,
+      "totalDecisoesResolutivasAuditadas": 14,
+      "totalPayloadPreservado": 14,
       "totalPayloadAlteradoAposDecisao": 0,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
