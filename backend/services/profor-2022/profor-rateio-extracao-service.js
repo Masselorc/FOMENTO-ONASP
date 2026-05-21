@@ -7,6 +7,7 @@ const {
   normalizarNumeroConvenio,
   normalizarAnoProfor,
   moedaParaNumeroProfor,
+  quantidadeParaNumeroProfor,
   arredondarMoedaProfor,
 } = require("./profor-plano-aplicacao-service");
 
@@ -59,7 +60,7 @@ function obterValorMoeda(linha, indice) {
 }
 
 function obterValorQuantidade(linha, indice) {
-  const valor = moedaParaNumeroProfor(linha[indice]);
+  const valor = quantidadeParaNumeroProfor(linha[indice]);
   return Number.isFinite(valor) ? valor : 0;
 }
 

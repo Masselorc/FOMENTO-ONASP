@@ -1,6 +1,6 @@
 # PROFOR 2022 - Relatório de saneamento PAD x rateios
 
-Gerado em: 2026-05-21T21:08:10.731Z
+Gerado em: 2026-05-21T22:15:02.366Z
 
 ## Resumo
 
@@ -8,7 +8,7 @@ Gerado em: 2026-05-21T21:08:10.731Z
 | --- | --- |
 | Itens PAD sem rateio | 24 |
 | Coincidências apenas por descrição normalizada | 1 |
-| Itens conhecidos não aptos | 19 |
+| Itens conhecidos não aptos | 18 |
 | Itens conhecidos ausentes no PAD | 29 |
 | Possíveis pares por descrição normalizada | 0 |
 | Equivalências por diacrítico saneadas automaticamente | 3 |
@@ -20,7 +20,7 @@ Convênios afetados: 937216, 937221, 937265, 937468, 937782, 937817, 938128, 938
 
 | Convênio | UF | PAD sem rateio | Só normalizada | Não aptos | Ausentes no PAD | Total |
 | --- | --- | --- | --- | --- | --- | --- |
-| 937216 | GO | 0 | 0 | 3 | 0 | 3 |
+| 937216 | GO | 0 | 0 | 2 | 0 | 2 |
 | 937221 | AL | 20 | 0 | 0 | 25 | 45 |
 | 937265 | MS | 1 | 1 | 4 | 0 | 5 |
 | 937468 | TO | 0 | 0 | 3 | 0 | 3 |
@@ -71,7 +71,6 @@ O valor unitário previsto é exibido como indício adicional para a decisão hu
 
 | Convênio | UF | Descrição | Providência |
 | --- | --- | --- | --- |
-| 937216 | GO | Monitor LED, mínimo 27, conexões DVI-D ( | Resolver a pendência impeditiva herdada da extração inicial antes de usar o item na reconstrução. |
 | 937216 | GO | Notebook; Sistema Operacional: Proprietá | Resolver a pendência impeditiva herdada da extração inicial antes de usar o item na reconstrução. |
 | 937216 | GO | Tablet, Display Super AMOLED 14,6, TFT, | Resolver a pendência impeditiva herdada da extração inicial antes de usar o item na reconstrução. |
 | 937265 | MS | Calça Tática | Resolver a pendência impeditiva herdada da extração inicial antes de usar o item na reconstrução. |

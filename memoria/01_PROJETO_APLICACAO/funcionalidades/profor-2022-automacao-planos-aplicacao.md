@@ -1715,6 +1715,13 @@ Entrega:
 - não altera JSON publicado;
 - não altera frontend.
 
+Regra técnica consolidada (21/05/2026):
+
+- parsing de quantidade deve usar parser dedicado (`quantidadeParaNumeroProfor`);
+- `moedaParaNumeroProfor` fica restrito a campos monetários;
+- motivo: evitar inflação de quantidade em strings decimais da planilha antiga,
+  como `"1.0"` sendo convertida para `10`.
+
 ### Fase 3 — Persistência dos itens conhecidos e rateios
 
 Objetivo: criar tabelas SQLite ou estrutura equivalente para persistir itens conhecidos e rateios.

@@ -1,5 +1,68 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: correção do parser de quantidade (`"1.0"` -> `1`) + auditoria de impacto
+
+- Branch atual: `main`.
+- Objetivo:
+  - impedir que quantidades decimais serializadas como string (ex.: `"1.0"`)
+    sejam infladas para `10` na extração de rateio inicial da planilha antiga;
+  - manter parsing monetário inalterado para campos de valor;
+  - auditar impacto após regeneração dos artefatos PAD/PROFOR.
+- Diagnóstico consolidado:
+  - causa raiz confirmada em `backend/services/profor-2022/profor-rateio-extracao-service.js`:
+    `obterValorQuantidade` usava `moedaParaNumeroProfor()`;
+  - `moedaParaNumeroProfor("1.0")` remove `.` e retorna `10`;
+  - caso real confirmado: `937221/AL` (forno 32 litros), planilha com `"1.0"`
+    propagada como `10` para memória persistida e payload da divergência `#55`.
+- Correções de código:
+  - `backend/services/profor-2022/profor-plano-aplicacao-service.js`:
+    - criada função `quantidadeParaNumeroProfor(valor)`;
+    - mantido `moedaParaNumeroProfor(valor)` exclusivo para valores monetários;
+    - export da nova função adicionada.
+  - `backend/services/profor-2022/profor-rateio-extracao-service.js`:
+    - `obterValorQuantidade` passou a usar `quantidadeParaNumeroProfor`.
+  - `backend/scripts/auditar-quantidades-suspeitas-profor-2022.js`:
+    - novo dry-run para identificar rateios ativos com incompatibilidade
+      quantidade x valor previsto x valor unitário.
+  - `package.json`:
+    - comando novo `npm run profor:rateio:auditar-quantidades:dry-run`.
+  - `scripts/validar-syntax.js`:
+    - incluídos novo script e novo teste.
+  - `tests/services/profor-quantidade-parser.test.js`:
+    - testes para `quantidadeParaNumeroProfor`, não regressão de
+      `moedaParaNumeroProfor` e `converterQuantidadePad`.
+- Regeneração e validações executadas:
+  - `npm run extrair:rateios-profor-2022:dry-run`;
+  - `npm run profor:rateio:importar-json` (lote `2`);
+  - `npm run profor:rateio:auditar-quantidades:dry-run`;
+  - `npm run profor:pad:conferir-rateios:dry-run`;
+  - `npm run profor:pad:relatorio-saneamento`;
+  - `npm run profor:pad:gerar-fila-revisao`;
+  - `npm run profor:pad:ausentes:auditar-substitutos`;
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `npm run validar:syntax`;
+  - `npm run validar:services`.
+- Efeito observado:
+  - divergência `#55` passou a exibir `quantidadeMemoria: 1` (antes `10`);
+  - comparador dry-run: `quantidade divergente` caiu para `3`
+    (antes estava em patamar de centenas).
+- Escopo e restrições respeitados:
+  - nenhuma decisão automática registrada;
+  - `#55` não foi saneada;
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado.
+- Riscos remanescentes:
+  - decisões resolutivas antigas podem ficar com `payloadHash` divergente após
+    alteração material dos payloads e exigir revalidação manual na fila;
+  - ainda existem impeditivos de reconstrução/comparação fora deste patch.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: diagnóstico da divergência `#55` e possível substituto `#8`
 
 - Branch atual: `main`.

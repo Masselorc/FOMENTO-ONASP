@@ -32,6 +32,40 @@ function moedaParaNumeroProfor(valor) {
   return Number.isFinite(numero) ? numero : 0;
 }
 
+function quantidadeParaNumeroProfor(valor) {
+  if (valor === null || valor === undefined || valor === "") return 0;
+  if (typeof valor === "number") return Number.isFinite(valor) ? valor : 0;
+
+  const texto = String(valor).trim();
+  if (!texto) return 0;
+
+  // Quantidade nao usa parser monetario: evita inflar "1.0" => 10.
+  const limpo = texto.replace(/[^\d,.-]/g, "");
+  if (!limpo || !/\d/.test(limpo)) return 0;
+
+  const ultimoPonto = limpo.lastIndexOf(".");
+  const ultimaVirgula = limpo.lastIndexOf(",");
+  let normalizado = limpo;
+
+  if (ultimoPonto >= 0 && ultimaVirgula >= 0) {
+    const separadorDecimal = ultimoPonto > ultimaVirgula ? "." : ",";
+    const separadorMilhar = separadorDecimal === "." ? "," : ".";
+    normalizado = normalizado.replace(new RegExp(`\\${separadorMilhar}`, "g"), "");
+    if (separadorDecimal === ",") {
+      normalizado = normalizado.replace(",", ".");
+    }
+  } else if (ultimaVirgula >= 0) {
+    normalizado = normalizado.replace(/\./g, "").replace(",", ".");
+  } else if ((normalizado.match(/\./g) || []).length > 1) {
+    const partes = normalizado.split(".");
+    const ultima = partes.pop();
+    normalizado = `${partes.join("")}.${ultima}`;
+  }
+
+  const numero = Number(normalizado);
+  return Number.isFinite(numero) ? numero : 0;
+}
+
 function arredondarMoedaProfor(valor) {
   const numero = moedaParaNumeroProfor(valor);
   return Math.round((numero + Number.EPSILON) * 100) / 100;
@@ -301,6 +335,7 @@ module.exports = {
   normalizarNumeroConvenio,
   normalizarAnoProfor,
   moedaParaNumeroProfor,
+  quantidadeParaNumeroProfor,
   arredondarMoedaProfor,
   filtrarPlanoAplicacaoSeguro,
   agruparPlanoPorAreaENatureza,

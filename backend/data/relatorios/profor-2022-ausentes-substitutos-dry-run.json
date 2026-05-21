@@ -1,6 +1,6 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-21T22:01:41.608Z",
+    "geradoEm": "2026-05-21T22:15:49.441Z",
     "modo": "dry-run",
     "totalAusentesAnalisados": 32,
     "substituto_compativel": 0,
@@ -118,7 +118,7 @@
           "mesmoConvenio": true,
           "mesmaUf": true,
           "naturezaCompativel": true,
-          "quantidadeCompativel": false,
+          "quantidadeCompativel": true,
           "valorUnitarioCompativel": true,
           "valorPrevistoCompativel": true,
           "valorExecutadoCompativel": true,
