@@ -33,11 +33,29 @@ function executar() {
   console.log(`  pendentes: ${estatisticasAntes.totalPendentes}`);
   console.log(`  impeditivas: ${estatisticasAntes.totalImpeditivas}`);
   console.log(`  bloqueiam publicação: ${estatisticasAntes.totalBloqueiamPublicacao}`);
+  console.log("  [INFO] Esses valores serão adotados como o baseline dinâmico da execução.");
   
-  assert.strictEqual(estatisticasAntes.totalDivergencias, 145, "Baseline incorreto: deve haver exatamente 145 divergências.");
-  assert.strictEqual(estatisticasAntes.totalPendentes, 145, "Baseline incorreto: todas as 145 divergências devem estar PENDENTES.");
-  assert.strictEqual(estatisticasAntes.totalImpeditivas, 44, "Baseline incorreto: deve haver 44 impeditivas.");
-  assert.strictEqual(estatisticasAntes.totalBloqueiamPublicacao, 48, "Baseline incorreto: deve haver 48 que bloqueiam publicação.");
+  // Validação mínima de sanidade e estrutura do baseline (Tarefa C)
+  assert.ok(typeof estatisticasAntes.totalDivergencias === "number" && estatisticasAntes.totalDivergencias >= 0, "totalDivergencias do baseline inválido (deve ser número >= 0).");
+
+  const contadores = [
+    "totalDivergencias",
+    "totalPendentes",
+    "totalEmRevisao",
+    "totalImpeditivas",
+    "totalBloqueiamPublicacao",
+    "totalPendentesQueBloqueiamPublicacao",
+    "totalComDecisaoResolutiva",
+    "totalComComentario",
+    "totalSemDecisaoResolutiva",
+    "publicacaoLiberada"
+  ];
+  for (const campo of contadores) {
+    if (estatisticasAntes[campo] === undefined) {
+      throw new Error(`Campo essencial de auditoria '${campo}' está ausente ou undefined no baseline.`);
+    }
+  }
+
   console.log("  [OK] Baseline verificado com sucesso!\n");
 
   // Criação do Lote Temporário de Teste
@@ -390,8 +408,13 @@ function executar() {
   console.log(`  impeditivas: ${estatisticasDepois.totalImpeditivas}`);
   console.log(`  bloqueiam publicação: ${estatisticasDepois.totalBloqueiamPublicacao}`);
   
-  assert.strictEqual(estatisticasDepois.totalDivergencias, estatisticasAntes.totalDivergencias, "Contagem total de divergências não voltou ao baseline.");
-  assert.strictEqual(estatisticasDepois.totalPendentes, estatisticasAntes.totalPendentes, "Contagem de pendentes não voltou ao baseline.");
+  for (const campo of contadores) {
+    assert.strictEqual(
+      estatisticasDepois[campo],
+      estatisticasAntes[campo],
+      `O campo '${campo}' divergiu do baseline após a limpeza (Antes: ${estatisticasAntes[campo]}, Depois: ${estatisticasDepois[campo]}).`
+    );
+  }
   console.log("  [OK] Retorno ao baseline validado com sucesso!");
 
   console.log("\n======================================================================");

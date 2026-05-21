@@ -4725,3 +4725,36 @@ Logs operacionais gravados:
 - Restrições preservadas:
   - sem alteração em dados de produção (divergências de teste usam prefixo `revisao_teste:`);
   - sem ativação ou publicação de nova origem.
+
+---
+
+## 21/05/2026 - PROFOR 2022: Etapa 9.2 - Correção do script de validação para baseline dinâmico
+
+- Branch: `main`.
+- Objetivo:
+  - Adaptar o script `backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js` para adotar um baseline dinâmico, evitando que asserts rígidos (como total fixo de 145 divergências) quebrem a validação de integração após o início do saneamento real das divergências.
+- Alterações realizadas:
+  - **`backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js`**:
+    - Remoção de asserções com valores fixos na checagem de baseline (`145`, `44`, `48`).
+    - Captura dinâmica das estatísticas iniciais da fila em `estatisticasAntes`.
+    - Adicionado log detalhando os valores reais encontrados, identificando-os como o baseline dinâmico da execução.
+    - Implementação de checagem mínima de sanidade (se `totalDivergencias >= 0` e se campos vitais não são `undefined`).
+    - Validação transacional de retorno pós-limpeza comparando as estatísticas antes e depois para 10 contadores canônicos (`totalDivergencias`, `totalPendentes`, `totalEmRevisao`, `totalImpeditivas`, `totalBloqueiamPublicacao`, `totalPendentesQueBloqueiamPublicacao`, `totalComDecisaoResolutiva`, `totalComComentario`, `totalSemDecisaoResolutiva` e `publicacaoLiberada`).
+    - Remoção de espaços extras redundantes geradores de avisos de whitespace (`git diff --check`).
+- Execução e resultados do teste:
+  - Baseline capturado dinamicamente com sucesso.
+  - Inserção de 6 divergências temporárias `revisao_teste:%` e 6 decisões estruturadas processadas.
+  - Limpeza final efetuada, restaurando com precisão o estado original do banco antes da execução para todos os 10 contadores dinâmicos.
+- Validações executadas:
+  - `node --check backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js` -> OK;
+  - `npm run validar:syntax` -> OK (59 arquivos);
+  - `npm run validar:services` -> OK (31 testes passados);
+  - `node backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js` -> OK (executado e aprovado com sucesso);
+  - `node backend/scripts/auditar-fila-revisao-pad-profor-2022.js` -> OK;
+  - `node backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js` -> OK;
+  - `node backend/scripts/reconstruir-plano-pad-profor-2022.js` -> OK;
+  - `node backend/scripts/comparar-plano-pad-profor-2022.js` -> OK;
+  - `git diff --check` -> OK (limpo).
+- Restrições preservadas:
+  - nenhuma divergência real apagada ou alterada;
+  - sem alteração em dados de publicação, origem ativa, frontend/data/publicados ou no planoAplicacao de produção.
