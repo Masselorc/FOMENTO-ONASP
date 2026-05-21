@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T17:28:03.336Z",
+  "geradoEm": "2026-05-21T17:36:56.613Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -985,9 +985,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 28,
+        "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "GO",
@@ -1391,9 +1396,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 29,
+        "chaveDivergencia": "item_nao_apto:ff5ad65d97841131",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "GO",
@@ -1420,9 +1430,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 30,
+        "chaveDivergencia": "item_nao_apto:147a79510f88a0a3",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "GO",
@@ -10120,9 +10135,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 41,
+        "chaveDivergencia": "item_nao_apto:b022208ee5a0e005",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "SP",
@@ -10265,9 +10285,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 45,
+        "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "SP",
@@ -10729,9 +10754,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 40,
+        "chaveDivergencia": "item_nao_apto:861780b809d58dba",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "SP",
@@ -10787,9 +10817,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 42,
+        "chaveDivergencia": "item_nao_apto:b1f9faeffec96cb6",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "SP",
@@ -10903,9 +10938,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 43,
+        "chaveDivergencia": "item_nao_apto:58512e635a362fd2",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "SP",
@@ -13977,9 +14017,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 37,
+        "chaveDivergencia": "item_nao_apto:dbdeadeed7a3d23f",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "TO",
@@ -14238,9 +14283,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 35,
+        "chaveDivergencia": "item_nao_apto:a5f427049af93d5a",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "TO",
@@ -14412,9 +14462,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 36,
+        "chaveDivergencia": "item_nao_apto:cc712aa8f00aa83d",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      }
     },
     {
       "uf": "TO",
@@ -17355,18 +17410,18 @@
     "totalItensPadSemRateioReconstruidoPorDecisao": 0,
     "totalLinhasReconstruidas": 598,
     "totalConveniosReconstruidos": 15,
-    "totalItensConhecidosNaoAptosUsados": 19,
+    "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 47,
+    "totalImpedimentos": 36,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 0,
-    "totalDecisoesInterpretadasDryRun": 0,
-    "totalDecisoesAplicadasDryRun": 0,
+    "totalDecisoesResolutivasEncontradas": 11,
+    "totalDecisoesInterpretadasDryRun": 11,
+    "totalDecisoesAplicadasDryRun": 11,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 0,
+    "totalDecisoesComEfeitoNaReconstrucao": 11,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 0,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 11,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0,
     "valorPrevistoReconstruidoTotal": 10326096.83,
@@ -17374,33 +17429,6 @@
     "saldoReconstruidoTotal": 7124289.19
   },
   "impedimentos": [
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937216",
-      "uf": "GO",
-      "descricao": "Monitor LED, mínimo 27, conexões DVI-D (",
-      "chaveItem": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937216",
-      "uf": "GO",
-      "descricao": "Notebook; Sistema Operacional: Proprietá",
-      "chaveItem": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937216",
-      "uf": "GO",
-      "descricao": "Tablet, Display Super AMOLED 14,6, TFT,",
-      "chaveItem": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
     {
       "tipo": "item_conhecido_nao_apto_usado",
       "nivel": "impeditivo",
@@ -17462,78 +17490,6 @@
       "uf": "SP",
       "descricao": "Saldo Residual",
       "chaveItem": "938128::SALDO RESIDUAL",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Contratação de serviços de digitalização",
-      "chaveItem": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Serviço de operacionalização de sistema",
-      "chaveItem": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Câmera Digital, para a Ouvidoria",
-      "chaveItem": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Estação de Trabalho (Mesa em L), para Ou",
-      "chaveItem": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Gaveteiros, Ouvidoria",
-      "chaveItem": "938128::GAVETEIROS, OUVIDORIA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "descricao": "ETAPA 2 - CORREGEDORIA - Tablet, tela su",
-      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "descricao": "ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp",
-      "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "descricao": "ETAPA 2 - CORREGEDORIA - Nobreak: Peça/",
-      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
@@ -17795,7 +17751,7 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 48 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 37 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "alertas": [
@@ -18888,27 +18844,326 @@
       "decisaoAplicada": null
     }
   ],
-  "decisoesResolutivasEncontradas": [],
-  "decisoesAplicadasDryRun": [],
+  "decisoesResolutivasEncontradas": [
+    {
+      "divergenciaId": 28,
+      "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 60
+    },
+    {
+      "divergenciaId": 29,
+      "chaveDivergencia": "item_nao_apto:ff5ad65d97841131",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 61
+    },
+    {
+      "divergenciaId": 30,
+      "chaveDivergencia": "item_nao_apto:147a79510f88a0a3",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 62
+    },
+    {
+      "divergenciaId": 35,
+      "chaveDivergencia": "item_nao_apto:a5f427049af93d5a",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 63
+    },
+    {
+      "divergenciaId": 36,
+      "chaveDivergencia": "item_nao_apto:cc712aa8f00aa83d",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 64
+    },
+    {
+      "divergenciaId": 37,
+      "chaveDivergencia": "item_nao_apto:dbdeadeed7a3d23f",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 65
+    },
+    {
+      "divergenciaId": 40,
+      "chaveDivergencia": "item_nao_apto:861780b809d58dba",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 66
+    },
+    {
+      "divergenciaId": 41,
+      "chaveDivergencia": "item_nao_apto:b022208ee5a0e005",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 67
+    },
+    {
+      "divergenciaId": 42,
+      "chaveDivergencia": "item_nao_apto:b1f9faeffec96cb6",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 68
+    },
+    {
+      "divergenciaId": 43,
+      "chaveDivergencia": "item_nao_apto:58512e635a362fd2",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 69
+    },
+    {
+      "divergenciaId": 45,
+      "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 70
+    }
+  ],
+  "decisoesAplicadasDryRun": [
+    {
+      "divergenciaId": 28,
+      "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "chaveItem": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 60,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.923Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 29,
+      "chaveDivergencia": "item_nao_apto:ff5ad65d97841131",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "chaveItem": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 61,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.923Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 30,
+      "chaveDivergencia": "item_nao_apto:147a79510f88a0a3",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "chaveItem": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 62,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.923Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 35,
+      "chaveDivergencia": "item_nao_apto:a5f427049af93d5a",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 63,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.924Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 36,
+      "chaveDivergencia": "item_nao_apto:cc712aa8f00aa83d",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 64,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.924Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 37,
+      "chaveDivergencia": "item_nao_apto:dbdeadeed7a3d23f",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 65,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.924Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 40,
+      "chaveDivergencia": "item_nao_apto:861780b809d58dba",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 66,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.925Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 41,
+      "chaveDivergencia": "item_nao_apto:b022208ee5a0e005",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 67,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 42,
+      "chaveDivergencia": "item_nao_apto:b1f9faeffec96cb6",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 68,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 43,
+      "chaveDivergencia": "item_nao_apto:58512e635a362fd2",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::GAVETEIROS, OUVIDORIA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 69,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 45,
+      "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 70,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    }
+  ],
   "decisoesNaoAplicaveis": [],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 145,
+    "totalPendentes": 134,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 48,
-    "totalPendentesQueBloqueiamPublicacao": 48,
+    "totalPendentesQueBloqueiamPublicacao": 37,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 0,
+    "totalComDecisaoResolutiva": 11,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 145,
+    "totalSemDecisaoResolutiva": 134,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T17:28:03.335Z",
+    "geradoEm": "2026-05-21T17:36:56.613Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 0,
-      "totalPayloadPreservado": 0,
+      "totalDecisoesResolutivasAuditadas": 11,
+      "totalPayloadPreservado": 11,
       "totalPayloadAlteradoAposDecisao": 0,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,

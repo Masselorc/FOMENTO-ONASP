@@ -1,12 +1,12 @@
 # PROFOR 2022 — Segurança pré-ativação PAD (dry-run)
 
-Gerado em: 2026-05-21T17:27:55.244Z
+Gerado em: 2026-05-21T17:36:44.359Z
 Modo: dry-run
 
 ## Resumo
 
-- Decisões resolutivas auditadas: 0
-- Payload preservado: 0
+- Decisões resolutivas auditadas: 11
+- Payload preservado: 11
 - Payload alterado após a decisão: 0
 - Decisões sem snapshot de payload: 0
 - Decisões com divergência não encontrada: 0

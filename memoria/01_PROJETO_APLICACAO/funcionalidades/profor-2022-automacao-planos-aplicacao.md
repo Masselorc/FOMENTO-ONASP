@@ -1258,9 +1258,10 @@ material.
   resolutiva cujos dados materiais de memória e PAD coincidem. O critério usa
   tolerância de `0,000001` para quantidade e `0,01` para valores monetários,
   exige natureza normalizada igual e não exige área, pois o PAD pode não trazer
-  esse campo. A aplicação assistida só ocorre com
-  `npm run profor:pad:item-nao-apto:aceitar-iguais -- --aplicar`, registrando
-  `ACEITO` pelo serviço existente de decisão, com `aplicadaAoPlano=false`.
+  esse campo. A aplicação assistida só ocorre pelo comando dedicado
+  `npm run profor:pad:item-nao-apto:aceitar-iguais`, cujo script npm invoca o
+  auditor com `--aplicar`, registrando `ACEITO` pelo serviço existente de
+  decisão, com `aplicadaAoPlano=false`.
 - `quantidade_valor_unitario_inconsistente`: `ACEITO` marca a inconsistência
   como saneada em dry-run, mantendo os totais do PAD como fonte de verdade, sem
   recalcular o total previsto.

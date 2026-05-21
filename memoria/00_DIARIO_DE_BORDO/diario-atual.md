@@ -1,5 +1,94 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Etapa 9.3.0 - aplicação assistida `item_nao_apto`
+
+- Branch atual: `main`.
+- Objetivo:
+  - executar a aplicação assistida dos candidatos `item_nao_apto` sem divergência
+    material entre memória e PAD, registrando decisão `ACEITO` via serviço
+    existente de decisão e sem aplicar nada ao `planoAplicacao` oficial.
+- Baseline antes da aplicação:
+  - auditoria `item_nao_apto`: `19` analisados, `11` candidatos a aceite
+    automático, `8` com divergência material, `0` dados insuficientes, `0` já
+    decididos e `0` erros de payload;
+  - auditoria geral: `145` divergências, `145` pendentes, `48` bloqueando
+    publicação, `0` decisões resolutivas;
+  - segurança pré-ativação: `0` bloqueios, `0` avisos;
+  - reconstrução dry-run: `47` impedimentos, `19` itens não aptos usados,
+    `aptoParaAtivacao=false`;
+  - comparador dry-run: `0` diferenças críticas, `aptoParaPublicacao=false`.
+- Comando de aplicação:
+  - a tentativa literal `npm run profor:pad:item-nao-apto:aceitar-iguais -- --aplicar`
+    foi consumida pelo npm local como configuração e executou apenas dry-run;
+  - o script npm dedicado foi ajustado para invocar
+    `node backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js --aplicar`;
+  - aplicação efetiva executada com `npm run profor:pad:item-nao-apto:aceitar-iguais`.
+- Decisões registradas:
+  - total: `11` decisões `ACEITO`;
+  - IDs aceitos: `28`, `29`, `30`, `35`, `36`, `37`, `40`, `41`, `42`, `43`, `45`;
+  - decisões geradas: `60` a `70`;
+  - usuário: `sistema-auditoria-item-nao-apto`;
+  - todas retornaram `aplicadaAoPlano=false`;
+  - todas possuem snapshot `_segurancaPreAtivacao`.
+- Payload de decisão:
+  - `origem: "auditoria-item-nao-apto-sem-divergencia"`;
+  - `tipoSaneamento: "liberacao_item_nao_apto"`;
+  - `liberarUsoDryRun: true`;
+  - motivo: item presente no PAD com dados materiais coincidentes com a memória.
+- Resultado após aplicação:
+  - auditoria `item_nao_apto`: `19` analisados, `0` candidatos restantes,
+    `8` divergências materiais, `11` já decididos, `0` dados insuficientes e
+    `0` erros de payload;
+  - os `8` itens com divergência material permaneceram sem decisão:
+    `31`, `32`, `33`, `34`, `38`, `39`, `44`, `46`;
+  - auditoria geral: `145` divergências, `134` pendentes, `11` ACEITO,
+    `37` pendentes bloqueando publicação, `11` decisões resolutivas,
+    `publicacaoLiberada=false`;
+  - segurança pré-ativação: `11` decisões auditadas, `11` payloads preservados,
+    `0` bloqueios, `0` avisos;
+  - reconstrução dry-run: `11` decisões interpretadas, `11` com efeito na
+    reconstrução, `8` itens não aptos usados, `36` impedimentos,
+    `aptoParaAtivacao=false`;
+  - comparador dry-run: `11` decisões interpretadas, `0` diferenças críticas,
+    `aptoParaPublicacao=false`.
+- Arquivos alterados/gerados:
+  - `package.json` (comando `aceitar-iguais` passou a incluir `--aplicar` no script npm);
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - relatórios dry-run em `backend/data/relatorios/` regenerados;
+  - banco SQLite local atualizado pelas decisões, sem versionamento.
+- Validações realizadas:
+  - `npm run profor:pad:item-nao-apto:auditar` antes e depois;
+  - `npm run profor:pad:auditar-fila-revisao` antes e depois;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run` antes e depois;
+  - `npm run profor:pad:reconstruir-plano:dry-run` antes e depois;
+  - `npm run profor:pad:comparar-plano:dry-run` antes e depois;
+  - `node backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js` antes e depois;
+  - `npm run validar:syntax`;
+  - `npm run validar:services`;
+  - `git diff --check`;
+  - `git status --short frontend/data/publicados`;
+  - `git ls-files "*.sqlite*"`.
+- Confirmações de escopo:
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - nenhuma migration, dependência nova, exclusão de divergência, decisão ou log.
+- Pendências:
+  - sanear manualmente os `8` itens `item_nao_apto` com divergência material;
+  - tratar demais impedimentos de rateio/itens PAD sem rateio antes de ativação.
+- Risco de regressão:
+  - baixo no código; a alteração material está na fila SQLite local, por decisão
+    auditável;
+  - risco operacional restante está nos `8` itens com divergência material e nos
+    demais impedimentos da reconstrução.
+- Rollback:
+  - não apagar decisões/logs; registrar decisão posterior `REVERTIDO` nos IDs
+    aceitos indevidamente, ou criar rotina específica de reversão auditável.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: Etapa 9.3.0 - auditoria `item_nao_apto` sem divergência material
 
 - Branch atual: `main`.

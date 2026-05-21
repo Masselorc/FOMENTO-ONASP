@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T17:28:03.347Z",
+  "geradoEm": "2026-05-21T17:36:56.626Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
@@ -18,16 +18,16 @@
     "totalItensAmbiguos": 49,
     "totalDiferencas": 425,
     "totalDiferencasCriticas": 0,
-    "totalAvisos": 99,
-    "totalDiferencasEsperadasPorAtualizacaoPad": 4,
-    "totalDiferencasPorPendenciaDeDecisao": 322,
+    "totalAvisos": 197,
+    "totalDiferencasEsperadasPorAtualizacaoPad": 6,
+    "totalDiferencasPorPendenciaDeDecisao": 222,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 0,
-    "totalDecisoesResolutivasEncontradas": 0,
-    "totalDecisoesInterpretadasDryRun": 0,
-    "totalDecisoesAplicadasDryRun": 0,
+    "totalDecisoesResolutivasEncontradas": 11,
+    "totalDecisoesInterpretadasDryRun": 11,
+    "totalDecisoesAplicadasDryRun": 11,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 0,
+    "totalDecisoesComEfeitoNaReconstrucao": 11,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0
   },
@@ -1297,7 +1297,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Armário tipo Locker Roupeiro 20 Portas A::CORREGEDORIA::CAPITAL",
@@ -1314,7 +1314,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Automóvel de transporte de passageiros -::OUVIDORIA::CAPITAL",
@@ -1331,7 +1331,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira Base Giratória Cor: Preto Materi::CORREGEDORIA::CAPITAL",
@@ -1348,7 +1348,7 @@
           "valorNovo": 6
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira Escritório Presidente Giratória.::CORREGEDORIA::CAPITAL",
@@ -1365,7 +1365,7 @@
           "valorNovo": 10
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira fixa de Palito - tubular em aço::CORREGEDORIA::CAPITAL",
@@ -1382,7 +1382,7 @@
           "valorNovo": 15
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira tipo Gamer; Acompanhada de 1 alm::ESCOLA PENAL::CAPITAL",
@@ -1399,7 +1399,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Carregador de Pilhas recarregáveis forma::ESCOLA PENAL::CAPITAL",
@@ -1416,7 +1416,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cartão de Memória Micro SD, 32Gb, com ad::ESCOLA PENAL::CAPITAL",
@@ -1433,7 +1433,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cartão de memória SD 32Gb, classe 10::ESCOLA PENAL::CAPITAL",
@@ -1450,7 +1450,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cola para espuma acústica, cola de conta::ESCOLA PENAL::CUSTEIO",
@@ -1467,7 +1467,7 @@
           "valorNovo": 10
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Câmera DSLR: com lente EF-S 18-55mm, cap::ESCOLA PENAL::CAPITAL",
@@ -1484,7 +1484,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Câmera de Vídeo, Gravação de vídeos em F::ESCOLA PENAL::CAPITAL",
@@ -1501,7 +1501,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Espuma Acústica Antichamas, 10 placas, 5::ESCOLA PENAL::CUSTEIO",
@@ -1518,7 +1518,7 @@
           "valorNovo": 10
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Estação de trabalho para edição de vídeo::ESCOLA PENAL::CAPITAL",
@@ -1535,7 +1535,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Fechadura Eletrônica. Especificação Técn::CORREGEDORIA::CAPITAL",
@@ -1552,7 +1552,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Filtro Bebedouro. Características, Gabin::CORREGEDORIA::CAPITAL",
@@ -1569,7 +1569,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Fonte Adaptador AC Eliminador de bateri::ESCOLA PENAL::CAPITAL",
@@ -1586,7 +1586,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Fragmentadora de papel com as seguintes::CORREGEDORIA::CAPITAL",
@@ -1603,7 +1603,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Gimbal Estabilizador para câmera DSLR, c::ESCOLA PENAL::CAPITAL",
@@ -1620,7 +1620,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Gravador de Aúdio Portátil, equipado com::ESCOLA PENAL::CAPITAL",
@@ -1637,7 +1637,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::HD Externo, Características: Capacidade:::CORREGEDORIA::CAPITAL",
@@ -1654,7 +1654,7 @@
           "valorNovo": 9
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Headset, com transdutor dinâmico 53mm co::ESCOLA PENAL::CAPITAL",
@@ -1671,7 +1671,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Jogo de Pilhas recarregável 1000 Mah AAA::ESCOLA PENAL::CUSTEIO",
@@ -1688,7 +1688,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Jogo de Pilhas recarregável 2700 Mah AA::ESCOLA PENAL::CUSTEIO",
@@ -1705,7 +1705,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit NVR com 4 câmeras, fonte de energia,::CORREGEDORIA::CAPITAL",
@@ -1722,7 +1722,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit Refletor Led Luz Fria para Estúdio c::ESCOLA PENAL::CAPITAL",
@@ -1739,7 +1739,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit Teleprompter (TP), Kit com Estrutura::ESCOLA PENAL::CAPITAL",
@@ -1756,7 +1756,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit de tripé de vídeo profissional com c::ESCOLA PENAL::CAPITAL",
@@ -1773,7 +1773,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit mouse + teclado com fio, padrão ABNT2::ESCOLA PENAL::CAPITAL",
@@ -1790,7 +1790,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Lente zoom telefoto, distância focal 70-::ESCOLA PENAL::CAPITAL",
@@ -1807,7 +1807,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Mesa de som com 6 canais, sendo 4 canais::ESCOLA PENAL::CAPITAL",
@@ -1824,7 +1824,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Microfone super uni-direcional para uso::ESCOLA PENAL::CAPITAL",
@@ -1841,7 +1841,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Mochila para transporte de Câmera, capac::ESCOLA PENAL::CAPITAL",
@@ -1858,7 +1858,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Monitor LED, mínimo 27, conexões DVI-D (::ESCOLA PENAL::CAPITAL",
@@ -1875,7 +1875,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Monitor de Áudio, amplificador com potên::ESCOLA PENAL::CAPITAL",
@@ -1892,7 +1892,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Munição CBC 5,56X45 COMUM M193 (TREINA) A::ESCOLA PENAL::CUSTEIO",
@@ -1909,7 +1909,7 @@
           "valorNovo": 10000
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Notebook, Com arquitetura x86 corporativ::CORREGEDORIA::CAPITAL",
@@ -1926,7 +1926,7 @@
           "valorNovo": 6
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Notebook; Sistema Operacional: Proprietá::ESCOLA PENAL::CAPITAL",
@@ -1943,7 +1943,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Placas de isopor, forro isolamento termo::ESCOLA PENAL::CUSTEIO",
@@ -1960,7 +1960,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Projetor 3.400 Lumens (no mínimo) Conexã::CORREGEDORIA::CAPITAL",
@@ -1977,7 +1977,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Saldo Remanescente - Conforme NOTA TÉCNI::N/A::CAPITAL",
@@ -1994,7 +1994,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Sistema de microfone headset (sem fio),::ESCOLA PENAL::CAPITAL",
@@ -2011,7 +2011,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Switcher de vídeo com barra de transição::ESCOLA PENAL::CAPITAL",
@@ -2028,7 +2028,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::TV 42, Recursos/Funcionalidades, Resolu::CORREGEDORIA::CAPITAL",
@@ -2045,7 +2045,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::TV 55, 4K UHD, mínimo 3 entradas HDMI 2.::ESCOLA PENAL::CAPITAL",
@@ -2062,7 +2062,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Tablet, Display Super AMOLED 14,6, TFT,::ESCOLA PENAL::CAPITAL",
@@ -2079,7 +2079,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Tablet, características mínimas: Process::CORREGEDORIA::CAPITAL",
@@ -2096,7 +2096,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Tecido Fundo Infinito Verde, 3,00m Largu::ESCOLA PENAL::CAPITAL",
@@ -2113,7 +2113,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Webcam, Especificações: - Resolução máxi::CORREGEDORIA::CAPITAL",
@@ -2130,7 +2130,7 @@
           "valorNovo": 12
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937221::Ar condicionado Split 18000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
@@ -2880,7 +2880,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - CPU: Microcomputad::OUVIDORIA::CAPITAL",
@@ -2897,7 +2897,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Cadeira Giratória::OUVIDORIA::CAPITAL",
@@ -2914,7 +2914,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Caixa de som para::OUVIDORIA::CUSTEIO",
@@ -2931,7 +2931,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Headset Microfone::OUVIDORIA::CUSTEIO",
@@ -2948,7 +2948,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Mesa - estação de::OUVIDORIA::CAPITAL",
@@ -2965,7 +2965,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Monitor::OUVIDORIA::CAPITAL",
@@ -2994,7 +2994,7 @@
           "diferenca": -10619.91
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp::OUVIDORIA::CAPITAL",
@@ -3011,7 +3011,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Notebook: Bateria:::OUVIDORIA::CAPITAL",
@@ -3028,7 +3028,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Webcam: Câmera Web::OUVIDORIA::CUSTEIO",
@@ -3045,7 +3045,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Apoio ergonômic::CORREGEDORIA::CUSTEIO",
@@ -3062,7 +3062,7 @@
           "valorNovo": 7
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - CPU: Microcompu::CORREGEDORIA::CAPITAL",
@@ -3079,7 +3079,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Fone de ouvido::CORREGEDORIA::CUSTEIO",
@@ -3096,7 +3096,7 @@
           "valorNovo": 15
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Frigobar com Ca::CORREGEDORIA::CAPITAL",
@@ -3113,7 +3113,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Gaveteiro volan::CORREGEDORIA::CAPITAL",
@@ -3130,7 +3130,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Headset Microfone::CORREGEDORIA::CUSTEIO",
@@ -3147,7 +3147,7 @@
           "valorNovo": 7
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - MESA COM CREDEN::CORREGEDORIA::CAPITAL",
@@ -3164,7 +3164,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Mesa reta: esta::CORREGEDORIA::CAPITAL",
@@ -3181,7 +3181,7 @@
           "valorNovo": 17
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Monitor::CORREGEDORIA::CAPITAL",
@@ -3210,7 +3210,7 @@
           "diferenca": 10619.91
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Nobreak: Peça/::CORREGEDORIA::CAPITAL",
@@ -3227,7 +3227,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Televisão: - 50::CORREGEDORIA::CAPITAL",
@@ -3244,7 +3244,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Webcam: Câmera::CORREGEDORIA::CUSTEIO",
@@ -3261,7 +3261,7 @@
           "valorNovo": 7
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - BASTÃO POLICIAL PR-24::ESCOLA PENAL::CUSTEIO",
@@ -3278,7 +3278,7 @@
           "valorNovo": 32
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - BATERIA DE PISTOLA AIR::ESCOLA PENAL::CUSTEIO",
@@ -3295,7 +3295,7 @@
           "valorNovo": 15
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - BATERIA P/CARABINA AIR::ESCOLA PENAL::CUSTEIO",
@@ -3312,7 +3312,7 @@
           "valorNovo": 15
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - CADEIRA PLASTICA::ESCOLA PENAL::CUSTEIO",
@@ -3329,7 +3329,7 @@
           "valorNovo": 50
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - CAFETEIRA INDUSTRIAL::ESCOLA PENAL::CAPITAL",
@@ -3346,7 +3346,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - CAIXA DE SOM PORTÁTIL::ESCOLA PENAL::CUSTEIO",
@@ -3363,7 +3363,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - CARABINA AIRSOFT-ELÉTR::ESCOLA PENAL::CAPITAL",
@@ -3380,7 +3380,7 @@
           "valorNovo": 6
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - CARREGADOR BATERIA DE::ESCOLA PENAL::CUSTEIO",
@@ -3397,7 +3397,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - CARREGADOR BATERIA P/C::ESCOLA PENAL::CUSTEIO",
@@ -3414,7 +3414,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - GARRAFA TÉRMICA DE 20::ESCOLA PENAL::CUSTEIO",
@@ -3431,7 +3431,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - GARRAFA TÉRMICA DE 5 L::ESCOLA PENAL::CUSTEIO",
@@ -3448,7 +3448,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - GELADEIRA 340 LITROS::ESCOLA PENAL::CAPITAL",
@@ -3465,7 +3465,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - HEADFONE-PROFISSIONAL::ESCOLA PENAL::CUSTEIO",
@@ -3482,7 +3482,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - MEGAFONE PROFISSIONAL::ESCOLA PENAL::CAPITAL",
@@ -3499,7 +3499,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - MESA PLASTICA::ESCOLA PENAL::CUSTEIO",
@@ -3516,7 +3516,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - MICROFONES SEM FIOS CO::ESCOLA PENAL::CUSTEIO",
@@ -3533,7 +3533,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - MICROONDAS::ESCOLA PENAL::CAPITAL",
@@ -3550,7 +3550,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - MUNIÇÃO BBS 6MM PARA A::ESCOLA PENAL::CUSTEIO",
@@ -3567,7 +3567,7 @@
           "valorNovo": 100
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - NOTEBOOK: Ultraportáti::ESCOLA PENAL::CAPITAL",
@@ -3584,7 +3584,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - PISTOLA AIRSOFT-ELÉTRI::ESCOLA PENAL::CAPITAL",
@@ -3601,7 +3601,7 @@
           "valorNovo": 8
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - PLACA DE MEMÓRIA RAM 1::ESCOLA PENAL::CUSTEIO",
@@ -3618,7 +3618,7 @@
           "valorNovo": 6
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - PLACA USB 2.0-WIFI::ESCOLA PENAL::CUSTEIO",
@@ -3635,7 +3635,7 @@
           "valorNovo": 7
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - PROJETOR DE 34000 - EN::ESCOLA PENAL::CAPITAL",
@@ -3652,7 +3652,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - RING LIGHT GRANDE COM::ESCOLA PENAL::CUSTEIO",
@@ -3669,7 +3669,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - TOMADA/EXTENSÃO PROFIS::ESCOLA PENAL::CUSTEIO",
@@ -3686,7 +3686,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::ETAPA 3 ESCOLA - TORNIQUETE DE APH TATI::ESCOLA PENAL::CUSTEIO",
@@ -3703,7 +3703,7 @@
           "valorNovo": 30
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::Saldo de Economicidade - Despesas de Inv::N/A::CAPITAL",
@@ -3720,7 +3720,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937468::Saldo de Economicidade - despesas de custeio::N/A::CUSTEIO",
@@ -3737,7 +3737,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937592::CADEIRA FIXA para auditório::ESCOLA PENAL::CAPITAL",
@@ -8518,7 +8518,7 @@
           "diferenca": -10619.91
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Monitor::CORREGEDORIA::CAPITAL",
@@ -8547,7 +8547,7 @@
           "diferenca": 10619.91
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937817::CAIXAS DE GRAMPO COM 4000 UNIDADES::ESCOLA PENAL::CUSTEIO",
@@ -8979,7 +8979,7 @@
           "diferenca": -10619.91
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Monitor::CORREGEDORIA::CAPITAL",
@@ -9008,7 +9008,7 @@
           "diferenca": 10619.91
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937698::Veículo transporte pessoal, câmbio: manu::CORREGEDORIA::CAPITAL",
@@ -9900,6 +9900,1672 @@
   ],
   "diferencasCriticas": [],
   "avisos": [
+    {
+      "chave": "937216::Apresentador/Passador de slides, sem fio::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Apresentador/Passador de slides, sem fio",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Armário tipo Locker Roupeiro 20 Portas A::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Armário tipo Locker Roupeiro 20 Portas A",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Automóvel de transporte de passageiros -::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Automóvel de transporte de passageiros -",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Cadeira Base Giratória Cor: Preto Materi::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cadeira Base Giratória Cor: Preto Materi",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 60,
+          "valorNovo": 6
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Cadeira Escritório Presidente Giratória.::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cadeira Escritório Presidente Giratória.",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 100,
+          "valorNovo": 10
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Cadeira fixa de Palito - tubular em aço::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cadeira fixa de Palito - tubular em aço",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 150,
+          "valorNovo": 15
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Cadeira tipo Gamer; Acompanhada de 1 alm::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Cadeira tipo Gamer; Acompanhada de 1 alm",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 50,
+          "valorNovo": 5
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Carregador de Pilhas recarregáveis forma::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Carregador de Pilhas recarregáveis forma",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Cartão de Memória Micro SD, 32Gb, com ad::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Cartão de Memória Micro SD, 32Gb, com ad",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Cartão de memória SD 32Gb, classe 10::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Cartão de memória SD 32Gb, classe 10",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Cola para espuma acústica, cola de conta::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Cola para espuma acústica, cola de conta",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 100,
+          "valorNovo": 10
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Câmera DSLR: com lente EF-S 18-55mm, cap::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Câmera DSLR: com lente EF-S 18-55mm, cap",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Câmera de Vídeo, Gravação de vídeos em F::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Câmera de Vídeo, Gravação de vídeos em F",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Espuma Acústica Antichamas, 10 placas, 5::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Espuma Acústica Antichamas, 10 placas, 5",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 100,
+          "valorNovo": 10
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Estação de trabalho para edição de vídeo::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Estação de trabalho para edição de vídeo",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Fechadura Eletrônica. Especificação Técn::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Fechadura Eletrônica. Especificação Técn",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Filtro Bebedouro. Características, Gabin::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Filtro Bebedouro. Características, Gabin",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Fonte Adaptador AC Eliminador de bateri::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Fonte Adaptador AC Eliminador de bateri",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Fragmentadora de papel com as seguintes::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Fragmentadora de papel com as seguintes",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Gimbal Estabilizador para câmera DSLR, c::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Gimbal Estabilizador para câmera DSLR, c",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Gravador de Aúdio Portátil, equipado com::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Gravador de Aúdio Portátil, equipado com",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::HD Externo, Características: Capacidade:::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "HD Externo, Características: Capacidade:",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 90,
+          "valorNovo": 9
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Headset, com transdutor dinâmico 53mm co::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Headset, com transdutor dinâmico 53mm co",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 50,
+          "valorNovo": 5
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Jogo de Pilhas recarregável 1000 Mah AAA::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Jogo de Pilhas recarregável 1000 Mah AAA",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Jogo de Pilhas recarregável 2700 Mah AA::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Jogo de Pilhas recarregável 2700 Mah AA",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Kit NVR com 4 câmeras, fonte de energia,::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Kit NVR com 4 câmeras, fonte de energia,",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Kit Refletor Led Luz Fria para Estúdio c::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Kit Refletor Led Luz Fria para Estúdio c",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Kit Teleprompter (TP), Kit com Estrutura::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Kit Teleprompter (TP), Kit com Estrutura",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Kit de tripé de vídeo profissional com c::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Kit de tripé de vídeo profissional com c",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Kit mouse + teclado com fio, padrão ABNT2::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Kit mouse + teclado com fio, padrão ABNT2",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Lente zoom telefoto, distância focal 70-::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Lente zoom telefoto, distância focal 70-",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Mesa de som com 6 canais, sendo 4 canais::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Mesa de som com 6 canais, sendo 4 canais",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Microfone super uni-direcional para uso::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Microfone super uni-direcional para uso",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Mochila para transporte de Câmera, capac::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Mochila para transporte de Câmera, capac",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Monitor LED, mínimo 27, conexões DVI-D (::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Monitor LED, mínimo 27, conexões DVI-D (",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Monitor de Áudio, amplificador com potên::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Monitor de Áudio, amplificador com potên",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Munição CBC 5,56X45 COMUM M193 (TREINA) A::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Munição CBC 5,56X45 COMUM M193 (TREINA) A",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 100000,
+          "valorNovo": 10000
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Notebook, Com arquitetura x86 corporativ::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook, Com arquitetura x86 corporativ",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 60,
+          "valorNovo": 6
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Notebook; Sistema Operacional: Proprietá::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook; Sistema Operacional: Proprietá",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Placas de isopor, forro isolamento termo::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Placas de isopor, forro isolamento termo",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Projetor 3.400 Lumens (no mínimo) Conexã::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Projetor 3.400 Lumens (no mínimo) Conexã",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Saldo Remanescente - Conforme NOTA TÉCNI::N/A::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "N/A",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Remanescente - Conforme NOTA TÉCNI",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Sistema de microfone headset (sem fio),::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Sistema de microfone headset (sem fio),",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Switcher de vídeo com barra de transição::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Switcher de vídeo com barra de transição",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::TV 42, Recursos/Funcionalidades, Resolu::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "TV 42, Recursos/Funcionalidades, Resolu",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::TV 55, 4K UHD, mínimo 3 entradas HDMI 2.::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "TV 55, 4K UHD, mínimo 3 entradas HDMI 2.",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Tablet, Display Super AMOLED 14,6, TFT,::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Tablet, Display Super AMOLED 14,6, TFT,",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Tablet, características mínimas: Process::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Tablet, características mínimas: Process",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Tecido Fundo Infinito Verde, 3,00m Largu::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Tecido Fundo Infinito Verde, 3,00m Largu",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937216::Webcam, Especificações: - Resolução máxi::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Webcam, Especificações: - Resolução máxi",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 120,
+          "valorNovo": 12
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Apoio ergonômico p::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 1 - OUVIDORIA - Apoio ergonômico p",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - CPU: Microcomputad::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 1 - OUVIDORIA - CPU: Microcomputad",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Cadeira Giratória::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 1 - OUVIDORIA - Cadeira Giratória",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Caixa de som para::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 1 - OUVIDORIA - Caixa de som para",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Headset Microfone::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 1 - OUVIDORIA - Headset Microfone",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Mesa - estação de::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 1 - OUVIDORIA - Mesa - estação de",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Notebook: Bateria:::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 1 - OUVIDORIA - Notebook: Bateria:",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 1 - OUVIDORIA - Webcam: Câmera Web::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 1 - OUVIDORIA - Webcam: Câmera Web",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Apoio ergonômic::CORREGEDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Apoio ergonômic",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 70,
+          "valorNovo": 7
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - CPU: Microcompu::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - CPU: Microcompu",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Fone de ouvido::CORREGEDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Fone de ouvido",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 150,
+          "valorNovo": 15
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Frigobar com Ca::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Frigobar com Ca",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Gaveteiro volan::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Gaveteiro volan",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 50,
+          "valorNovo": 5
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Headset Microfone::CORREGEDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Headset Microfone",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 70,
+          "valorNovo": 7
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - MESA COM CREDEN::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - MESA COM CREDEN",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Mesa reta: esta::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Mesa reta: esta",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 170,
+          "valorNovo": 17
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Nobreak: Peça/::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Nobreak: Peça/",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 30,
+          "valorNovo": 3
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Televisão: - 50::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Televisão: - 50",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 2 - CORREGEDORIA - Webcam: Câmera::CORREGEDORIA::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 2 - CORREGEDORIA - Webcam: Câmera",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 70,
+          "valorNovo": 7
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - BASTÃO POLICIAL PR-24::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - BASTÃO POLICIAL PR-24",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 320,
+          "valorNovo": 32
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - BATERIA DE PISTOLA AIR::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - BATERIA DE PISTOLA AIR",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 150,
+          "valorNovo": 15
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - BATERIA P/CARABINA AIR::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - BATERIA P/CARABINA AIR",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 150,
+          "valorNovo": 15
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - CADEIRA PLASTICA::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - CADEIRA PLASTICA",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 500,
+          "valorNovo": 50
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - CAFETEIRA INDUSTRIAL::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - CAFETEIRA INDUSTRIAL",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - CAIXA DE SOM PORTÁTIL::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - CAIXA DE SOM PORTÁTIL",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - CARABINA AIRSOFT-ELÉTR::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - CARABINA AIRSOFT-ELÉTR",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 60,
+          "valorNovo": 6
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - CARREGADOR BATERIA DE::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - CARREGADOR BATERIA DE",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 50,
+          "valorNovo": 5
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - CARREGADOR BATERIA P/C::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - CARREGADOR BATERIA P/C",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 50,
+          "valorNovo": 5
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - GARRAFA TÉRMICA DE 20::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - GARRAFA TÉRMICA DE 20",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - GARRAFA TÉRMICA DE 5 L::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - GARRAFA TÉRMICA DE 5 L",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - GELADEIRA 340 LITROS::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - GELADEIRA 340 LITROS",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - HEADFONE-PROFISSIONAL::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - HEADFONE-PROFISSIONAL",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - MEGAFONE PROFISSIONAL::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - MEGAFONE PROFISSIONAL",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - MESA PLASTICA::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - MESA PLASTICA",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 50,
+          "valorNovo": 5
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - MICROFONES SEM FIOS CO::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - MICROFONES SEM FIOS CO",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - MICROONDAS::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - MICROONDAS",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - MUNIÇÃO BBS 6MM PARA A::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - MUNIÇÃO BBS 6MM PARA A",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 1000,
+          "valorNovo": 100
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - NOTEBOOK: Ultraportáti::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - NOTEBOOK: Ultraportáti",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 40,
+          "valorNovo": 4
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - PISTOLA AIRSOFT-ELÉTRI::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - PISTOLA AIRSOFT-ELÉTRI",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 80,
+          "valorNovo": 8
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - PLACA DE MEMÓRIA RAM 1::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - PLACA DE MEMÓRIA RAM 1",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 60,
+          "valorNovo": 6
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - PLACA USB 2.0-WIFI::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - PLACA USB 2.0-WIFI",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 70,
+          "valorNovo": 7
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - PROJETOR DE 34000 - EN::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - PROJETOR DE 34000 - EN",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - RING LIGHT GRANDE COM::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - RING LIGHT GRANDE COM",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - TOMADA/EXTENSÃO PROFIS::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - TOMADA/EXTENSÃO PROFIS",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::ETAPA 3 ESCOLA - TORNIQUETE DE APH TATI::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "ETAPA 3 ESCOLA - TORNIQUETE DE APH TATI",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 300,
+          "valorNovo": 30
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::Saldo de Economicidade - Despesas de Inv::N/A::CAPITAL",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "N/A",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo de Economicidade - Despesas de Inv",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937468::Saldo de Economicidade - despesas de custeio::N/A::CUSTEIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "area": "N/A",
+      "natureza": "CUSTEIO",
+      "descricao": "Saldo de Economicidade - despesas de custeio",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
     {
       "chave": "937592::CADEIRA FIXA para auditório::ESCOLA PENAL::CAPITAL",
       "numeroConvenio": "937592",
@@ -11602,7 +13268,7 @@
           "valorNovo": 3
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Armário tipo Locker Roupeiro 20 Portas A::CORREGEDORIA::CAPITAL",
@@ -11619,7 +13285,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Automóvel de transporte de passageiros -::OUVIDORIA::CAPITAL",
@@ -11636,7 +13302,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira Base Giratória Cor: Preto Materi::CORREGEDORIA::CAPITAL",
@@ -11653,7 +13319,7 @@
           "valorNovo": 6
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira Escritório Presidente Giratória.::CORREGEDORIA::CAPITAL",
@@ -11670,7 +13336,7 @@
           "valorNovo": 10
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira fixa de Palito - tubular em aço::CORREGEDORIA::CAPITAL",
@@ -11687,7 +13353,7 @@
           "valorNovo": 15
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cadeira tipo Gamer; Acompanhada de 1 alm::ESCOLA PENAL::CAPITAL",
@@ -11704,7 +13370,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Carregador de Pilhas recarregáveis forma::ESCOLA PENAL::CAPITAL",
@@ -11721,7 +13387,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cartão de Memória Micro SD, 32Gb, com ad::ESCOLA PENAL::CAPITAL",
@@ -11738,7 +13404,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cartão de memória SD 32Gb, classe 10::ESCOLA PENAL::CAPITAL",
@@ -11755,7 +13421,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Cola para espuma acústica, cola de conta::ESCOLA PENAL::CUSTEIO",
@@ -11772,7 +13438,7 @@
           "valorNovo": 10
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Câmera DSLR: com lente EF-S 18-55mm, cap::ESCOLA PENAL::CAPITAL",
@@ -11789,7 +13455,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Câmera de Vídeo, Gravação de vídeos em F::ESCOLA PENAL::CAPITAL",
@@ -11806,7 +13472,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Espuma Acústica Antichamas, 10 placas, 5::ESCOLA PENAL::CUSTEIO",
@@ -11823,7 +13489,7 @@
           "valorNovo": 10
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Estação de trabalho para edição de vídeo::ESCOLA PENAL::CAPITAL",
@@ -11840,7 +13506,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Fechadura Eletrônica. Especificação Técn::CORREGEDORIA::CAPITAL",
@@ -11857,7 +13523,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Filtro Bebedouro. Características, Gabin::CORREGEDORIA::CAPITAL",
@@ -11874,7 +13540,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Fonte Adaptador AC Eliminador de bateri::ESCOLA PENAL::CAPITAL",
@@ -11891,7 +13557,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Fragmentadora de papel com as seguintes::CORREGEDORIA::CAPITAL",
@@ -11908,7 +13574,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Gimbal Estabilizador para câmera DSLR, c::ESCOLA PENAL::CAPITAL",
@@ -11925,7 +13591,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Gravador de Aúdio Portátil, equipado com::ESCOLA PENAL::CAPITAL",
@@ -11942,7 +13608,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::HD Externo, Características: Capacidade:::CORREGEDORIA::CAPITAL",
@@ -11959,7 +13625,7 @@
           "valorNovo": 9
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Headset, com transdutor dinâmico 53mm co::ESCOLA PENAL::CAPITAL",
@@ -11976,7 +13642,7 @@
           "valorNovo": 5
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Jogo de Pilhas recarregável 1000 Mah AAA::ESCOLA PENAL::CUSTEIO",
@@ -11993,7 +13659,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Jogo de Pilhas recarregável 2700 Mah AA::ESCOLA PENAL::CUSTEIO",
@@ -12010,7 +13676,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit NVR com 4 câmeras, fonte de energia,::CORREGEDORIA::CAPITAL",
@@ -12027,7 +13693,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit Refletor Led Luz Fria para Estúdio c::ESCOLA PENAL::CAPITAL",
@@ -12044,7 +13710,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit Teleprompter (TP), Kit com Estrutura::ESCOLA PENAL::CAPITAL",
@@ -12061,7 +13727,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit de tripé de vídeo profissional com c::ESCOLA PENAL::CAPITAL",
@@ -12078,7 +13744,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Kit mouse + teclado com fio, padrão ABNT2::ESCOLA PENAL::CAPITAL",
@@ -12095,7 +13761,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Lente zoom telefoto, distância focal 70-::ESCOLA PENAL::CAPITAL",
@@ -12112,7 +13778,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Mesa de som com 6 canais, sendo 4 canais::ESCOLA PENAL::CAPITAL",
@@ -12129,7 +13795,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Microfone super uni-direcional para uso::ESCOLA PENAL::CAPITAL",
@@ -12146,7 +13812,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Mochila para transporte de Câmera, capac::ESCOLA PENAL::CAPITAL",
@@ -12163,7 +13829,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Monitor LED, mínimo 27, conexões DVI-D (::ESCOLA PENAL::CAPITAL",
@@ -12180,7 +13846,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Monitor de Áudio, amplificador com potên::ESCOLA PENAL::CAPITAL",
@@ -12197,7 +13863,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Munição CBC 5,56X45 COMUM M193 (TREINA) A::ESCOLA PENAL::CUSTEIO",
@@ -12214,7 +13880,7 @@
           "valorNovo": 10000
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Notebook, Com arquitetura x86 corporativ::CORREGEDORIA::CAPITAL",
@@ -12231,7 +13897,7 @@
           "valorNovo": 6
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Notebook; Sistema Operacional: Proprietá::ESCOLA PENAL::CAPITAL",
@@ -12248,7 +13914,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Placas de isopor, forro isolamento termo::ESCOLA PENAL::CUSTEIO",
@@ -12265,7 +13931,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Projetor 3.400 Lumens (no mínimo) Conexã::CORREGEDORIA::CAPITAL",
@@ -12282,7 +13948,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Saldo Remanescente - Conforme NOTA TÉCNI::N/A::CAPITAL",
@@ -12299,7 +13965,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Sistema de microfone headset (sem fio),::ESCOLA PENAL::CAPITAL",
@@ -12316,7 +13982,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Switcher de vídeo com barra de transição::ESCOLA PENAL::CAPITAL",
@@ -12333,7 +13999,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::TV 42, Recursos/Funcionalidades, Resolu::CORREGEDORIA::CAPITAL",
@@ -12350,7 +14016,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::TV 55, 4K UHD, mínimo 3 entradas HDMI 2.::ESCOLA PENAL::CAPITAL",
@@ -12367,7 +14033,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Tablet, Display Super AMOLED 14,6, TFT,::ESCOLA PENAL::CAPITAL",
@@ -12384,7 +14050,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Tablet, características mínimas: Process::CORREGEDORIA::CAPITAL",
@@ -12401,7 +14067,7 @@
           "valorNovo": 4
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Tecido Fundo Infinito Verde, 3,00m Largu::ESCOLA PENAL::CAPITAL",
@@ -12418,7 +14084,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937216::Webcam, Especificações: - Resolução máxi::CORREGEDORIA::CAPITAL",
@@ -12435,30 +14101,329 @@
           "valorNovo": 12
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     }
   ],
-  "decisoesResolutivasEncontradas": [],
-  "decisoesAplicadasDryRun": [],
+  "decisoesResolutivasEncontradas": [
+    {
+      "divergenciaId": 28,
+      "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 60
+    },
+    {
+      "divergenciaId": 29,
+      "chaveDivergencia": "item_nao_apto:ff5ad65d97841131",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 61
+    },
+    {
+      "divergenciaId": 30,
+      "chaveDivergencia": "item_nao_apto:147a79510f88a0a3",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 62
+    },
+    {
+      "divergenciaId": 35,
+      "chaveDivergencia": "item_nao_apto:a5f427049af93d5a",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 63
+    },
+    {
+      "divergenciaId": 36,
+      "chaveDivergencia": "item_nao_apto:cc712aa8f00aa83d",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 64
+    },
+    {
+      "divergenciaId": 37,
+      "chaveDivergencia": "item_nao_apto:dbdeadeed7a3d23f",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 65
+    },
+    {
+      "divergenciaId": 40,
+      "chaveDivergencia": "item_nao_apto:861780b809d58dba",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 66
+    },
+    {
+      "divergenciaId": 41,
+      "chaveDivergencia": "item_nao_apto:b022208ee5a0e005",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 67
+    },
+    {
+      "divergenciaId": 42,
+      "chaveDivergencia": "item_nao_apto:b1f9faeffec96cb6",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 68
+    },
+    {
+      "divergenciaId": 43,
+      "chaveDivergencia": "item_nao_apto:58512e635a362fd2",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 69
+    },
+    {
+      "divergenciaId": 45,
+      "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 70
+    }
+  ],
+  "decisoesAplicadasDryRun": [
+    {
+      "divergenciaId": 28,
+      "chaveDivergencia": "item_nao_apto:0d510e833f7e71d9",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "chaveItem": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 60,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.923Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 29,
+      "chaveDivergencia": "item_nao_apto:ff5ad65d97841131",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "chaveItem": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 61,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.923Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 30,
+      "chaveDivergencia": "item_nao_apto:147a79510f88a0a3",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "chaveItem": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 62,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.923Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 35,
+      "chaveDivergencia": "item_nao_apto:a5f427049af93d5a",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 63,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.924Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 36,
+      "chaveDivergencia": "item_nao_apto:cc712aa8f00aa83d",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 64,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.924Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 37,
+      "chaveDivergencia": "item_nao_apto:dbdeadeed7a3d23f",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 65,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.924Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 40,
+      "chaveDivergencia": "item_nao_apto:861780b809d58dba",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 66,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.925Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 41,
+      "chaveDivergencia": "item_nao_apto:b022208ee5a0e005",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 67,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 42,
+      "chaveDivergencia": "item_nao_apto:b1f9faeffec96cb6",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 68,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 43,
+      "chaveDivergencia": "item_nao_apto:58512e635a362fd2",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::GAVETEIROS, OUVIDORIA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 69,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 45,
+      "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 70,
+      "usuario": "sistema-auditoria-item-nao-apto",
+      "decididoEm": "2026-05-21T17:36:22.926Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    }
+  ],
   "decisoesNaoAplicaveis": [],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 145,
+    "totalPendentes": 134,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 48,
-    "totalPendentesQueBloqueiamPublicacao": 48,
+    "totalPendentesQueBloqueiamPublicacao": 37,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 0,
+    "totalComDecisaoResolutiva": 11,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 145,
+    "totalSemDecisaoResolutiva": 134,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T17:28:03.335Z",
+    "geradoEm": "2026-05-21T17:36:56.613Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 0,
-      "totalPayloadPreservado": 0,
+      "totalDecisoesResolutivasAuditadas": 11,
+      "totalPayloadPreservado": 11,
       "totalPayloadAlteradoAposDecisao": 0,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -12482,18 +14447,18 @@
     "totalItensPadSemRateioReconstruidoPorDecisao": 0,
     "totalLinhasReconstruidas": 598,
     "totalConveniosReconstruidos": 15,
-    "totalItensConhecidosNaoAptosUsados": 19,
+    "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 47,
+    "totalImpedimentos": 36,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 0,
-    "totalDecisoesInterpretadasDryRun": 0,
-    "totalDecisoesAplicadasDryRun": 0,
+    "totalDecisoesResolutivasEncontradas": 11,
+    "totalDecisoesInterpretadasDryRun": 11,
+    "totalDecisoesAplicadasDryRun": 11,
     "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 0,
+    "totalDecisoesComEfeitoNaReconstrucao": 11,
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 0,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 11,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 0,
     "valorPrevistoReconstruidoTotal": 10326096.83,
@@ -12501,33 +14466,6 @@
     "saldoReconstruidoTotal": 7124289.19
   },
   "impedimentosReconstrucao": [
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937216",
-      "uf": "GO",
-      "descricao": "Monitor LED, mínimo 27, conexões DVI-D (",
-      "chaveItem": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937216",
-      "uf": "GO",
-      "descricao": "Notebook; Sistema Operacional: Proprietá",
-      "chaveItem": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937216",
-      "uf": "GO",
-      "descricao": "Tablet, Display Super AMOLED 14,6, TFT,",
-      "chaveItem": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
     {
       "tipo": "item_conhecido_nao_apto_usado",
       "nivel": "impeditivo",
@@ -12589,78 +14527,6 @@
       "uf": "SP",
       "descricao": "Saldo Residual",
       "chaveItem": "938128::SALDO RESIDUAL",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Contratação de serviços de digitalização",
-      "chaveItem": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Serviço de operacionalização de sistema",
-      "chaveItem": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Câmera Digital, para a Ouvidoria",
-      "chaveItem": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Estação de Trabalho (Mesa em L), para Ou",
-      "chaveItem": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Gaveteiros, Ouvidoria",
-      "chaveItem": "938128::GAVETEIROS, OUVIDORIA",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "descricao": "ETAPA 2 - CORREGEDORIA - Tablet, tela su",
-      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "descricao": "ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp",
-      "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "descricao": "ETAPA 2 - CORREGEDORIA - Nobreak: Peça/",
-      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
@@ -12922,11 +14788,11 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 48 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 37 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 47 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 36 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
     "Diferença total origem antiga × reconstrução PAD: previsto -337918.65, executado -888.26, saldo -337030.39.",
     "Diferenças críticas: 0. Itens ambíguos: 49.",
