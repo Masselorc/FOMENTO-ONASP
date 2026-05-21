@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T00:16:25.121Z",
+  "geradoEm": "2026-05-21T00:34:32.375Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
@@ -28,7 +28,8 @@
     "totalDecisoesAplicadasDryRun": 0,
     "totalDecisoesNaoAplicaveis": 0,
     "totalDecisoesComEfeitoNaReconstrucao": 0,
-    "totalDecisoesSemEfeitoNaReconstrucao": 0
+    "totalDecisoesSemEfeitoNaReconstrucao": 0,
+    "totalBloqueiosSegurancaPreAtivacao": 0
   },
   "totaisAntigoNovo": {
     "antigo": {
@@ -12453,6 +12454,24 @@
     "totalSemDecisaoResolutiva": 145,
     "publicacaoLiberada": false
   },
+  "segurancaPreAtivacao": {
+    "geradoEm": "2026-05-21T00:34:32.356Z",
+    "resumo": {
+      "totalDecisoesResolutivasAuditadas": 0,
+      "totalPayloadPreservado": 0,
+      "totalPayloadAlteradoAposDecisao": 0,
+      "totalDecisoesSemSnapshotPayload": 0,
+      "totalDecisoesComDivergenciaNaoEncontrada": 0,
+      "totalDivergenciasExistentes": 145,
+      "totalDivergenciasReapresentadas": 145,
+      "totalDivergenciasNaoReapresentadas": 0,
+      "totalBloqueiosAtivacao": 0,
+      "totalAvisos": 0,
+      "geracaoAtualDisponivel": true,
+      "aptoParaProsseguirAtivacao": true
+    },
+    "bloqueiosAtivacao": []
+  },
   "reconstrucaoResumo": {
     "totalRelatoriosPad": 15,
     "totalItensPadProcessados": 525,
@@ -12475,6 +12494,7 @@
     "totalDecisoesSemEfeitoNaReconstrucao": 0,
     "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 0,
     "totalConsistenciaSaneadaPorDecisao": 0,
+    "totalBloqueiosSegurancaPreAtivacao": 0,
     "valorPrevistoReconstruidoTotal": 10326096.83,
     "valorExecutadoReconstruidoTotal": 3201807.64,
     "saldoReconstruidoTotal": 7124289.19

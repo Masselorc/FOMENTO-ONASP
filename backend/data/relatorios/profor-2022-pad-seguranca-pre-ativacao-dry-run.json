@@ -1,0 +1,24 @@
+{
+  "geradoEm": "2026-05-21T00:34:14.171Z",
+  "modo": "dry-run",
+  "payloadAlteradoAposDecisao": [],
+  "decisoesSemSnapshotPayload": [],
+  "decisoesComDivergenciaNaoEncontrada": [],
+  "divergenciasNaoReapresentadas": [],
+  "bloqueiosAtivacao": [],
+  "avisos": [],
+  "resumo": {
+    "totalDecisoesResolutivasAuditadas": 0,
+    "totalPayloadPreservado": 0,
+    "totalPayloadAlteradoAposDecisao": 0,
+    "totalDecisoesSemSnapshotPayload": 0,
+    "totalDecisoesComDivergenciaNaoEncontrada": 0,
+    "totalDivergenciasExistentes": 145,
+    "totalDivergenciasReapresentadas": 145,
+    "totalDivergenciasNaoReapresentadas": 0,
+    "totalBloqueiosAtivacao": 0,
+    "totalAvisos": 0,
+    "geracaoAtualDisponivel": true,
+    "aptoParaProsseguirAtivacao": true
+  }
+}

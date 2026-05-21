@@ -438,6 +438,10 @@ function compararPlanosPadDryRun(opcoes = {}) {
     totalDecisoesNaoAplicaveis: aplicacaoDecisoes.totalDecisoesNaoAplicaveis,
     totalDecisoesComEfeitoNaReconstrucao: aplicacaoDecisoes.totalDecisoesComEfeitoNaReconstrucao,
     totalDecisoesSemEfeitoNaReconstrucao: aplicacaoDecisoes.totalDecisoesSemEfeitoNaReconstrucao,
+    totalBloqueiosSegurancaPreAtivacao:
+      reconstrucao.segurancaPreAtivacao && reconstrucao.segurancaPreAtivacao.resumo
+        ? reconstrucao.segurancaPreAtivacao.resumo.totalBloqueiosAtivacao
+        : null,
   };
 
   const conclusaoOperacional = montarConclusaoOperacional({
@@ -490,6 +494,7 @@ function compararPlanosPadDryRun(opcoes = {}) {
     decisoesAplicadasDryRun: aplicacaoDecisoes.decisoesAplicadasDryRun,
     decisoesNaoAplicaveis: aplicacaoDecisoes.decisoesNaoAplicaveis,
     auditoriaRevisao: reconstrucao.auditoriaRevisao,
+    segurancaPreAtivacao: reconstrucao.segurancaPreAtivacao,
     reconstrucaoResumo: reconstrucao.resumo,
     impedimentosReconstrucao: reconstrucao.impedimentos,
     conclusaoOperacional,
@@ -562,6 +567,7 @@ function montarMarkdownComparacao(resultado) {
   linhas.push(`- Decisões com efeito na reconstrução: ${resumo.totalDecisoesComEfeitoNaReconstrucao}`);
   linhas.push(`- Decisões sem efeito na reconstrução: ${resumo.totalDecisoesSemEfeitoNaReconstrucao}`);
   linhas.push(`- Decisões não aplicáveis: ${resumo.totalDecisoesNaoAplicaveis}`);
+  linhas.push(`- Bloqueios de segurança pré-ativação: ${resumo.totalBloqueiosSegurancaPreAtivacao ?? "n/d"}`);
   linhas.push("");
   linhas.push("## Totais origem antiga × reconstrução PAD");
   linhas.push("");

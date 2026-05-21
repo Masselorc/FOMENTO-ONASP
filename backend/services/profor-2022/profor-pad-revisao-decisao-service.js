@@ -1,4 +1,7 @@
 const repo = require("./profor-pad-revisao-repository");
+const {
+  gerarHashPayloadDivergencia,
+} = require("./profor-pad-seguranca-pre-ativacao-service");
 
 // Decisões que o usuário pode registrar pela revisão assistida.
 // COMENTAR mantém o status PENDENTE (apenas registra comentário/log).
@@ -194,6 +197,25 @@ function registrarDecisao(divergenciaId, entrada = {}) {
   }
 
   const novoStatus = STATUS_POR_DECISAO[decisao];
+
+  // Snapshot de segurança pré-ativação: registra o hash do payload da
+  // divergência no momento da decisão, preservando o payload do usuário.
+  const payloadDecisaoUsuario = entrada.payloadDecisao && typeof entrada.payloadDecisao === "object"
+    ? entrada.payloadDecisao
+    : {};
+  const payloadDecisao = {
+    ...payloadDecisaoUsuario,
+    _segurancaPreAtivacao: {
+      versao: 1,
+      divergenciaId: id,
+      chaveDivergencia: linha.chave_divergencia,
+      tipoAlerta: linha.tipo_alerta,
+      campoAfetado: linha.campo_afetado,
+      payloadHashNoMomentoDaDecisao: gerarHashPayloadDivergencia(linha),
+      registradoEm: new Date().toISOString(),
+    },
+  };
+
   const resultado = repo.registrarDecisao({
     divergencia: linha,
     decisao,
@@ -201,9 +223,7 @@ function registrarDecisao(divergenciaId, entrada = {}) {
     valorAplicado: entrada.valorAplicado,
     justificativa: justificativa || null,
     usuario,
-    payloadDecisao: entrada.payloadDecisao && typeof entrada.payloadDecisao === "object"
-      ? entrada.payloadDecisao
-      : {},
+    payloadDecisao,
   });
 
   return {

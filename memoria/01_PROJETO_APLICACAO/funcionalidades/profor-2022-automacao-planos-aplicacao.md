@@ -1279,6 +1279,60 @@ compatibilidade): `totalDecisoesInterpretadasDryRun` (decisões traduzidas em
 efeito técnico determinístico), `totalDecisoesComEfeitoNaReconstrucao` e
 `totalDecisoesSemEfeitoNaReconstrucao`. `interpretadas = comEfeito + semEfeito`.
 
+#### 16.2.13. Segurança pré-ativação PAD (Etapa 8.2 — implementada)
+
+A auditoria dry-run de segurança pré-ativação foi implementada para impedir
+dois riscos antes de qualquer ativação/publicação: (1) decisão resolutiva
+validando payload de divergência que mudou; (2) divergência antiga que não
+aparece mais na geração atual da fila. Não altera a origem ativa, não publica,
+não toca `frontend/data/publicados`, não cria migration/coluna nova e não aplica
+decisão ao `planoAplicacao` oficial.
+
+Serviço criado:
+`backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js`.
+Comando somente leitura: `npm run profor:pad:seguranca-pre-ativacao:dry-run`,
+que gera `profor-2022-pad-seguranca-pre-ativacao-dry-run.json` e `.md` em
+`backend/data/relatorios`.
+
+**Hash e snapshot de payload.** `gerarHashPayloadDivergencia()` produz um
+SHA-256 estável da divergência, considerando `chave_divergencia`, `tipo_alerta`,
+`campo_afetado`, `numero_convenio`, `uf`, `chave_item` e `payload_json`;
+`stringifyOrdenado()` ordena recursivamente as chaves, de modo que o hash
+independe da ordem das chaves do JSON. Ao registrar uma nova decisão humana, o
+serviço de decisão acrescenta `_segurancaPreAtivacao` ao `payload_decisao_json`
+(versão, `divergenciaId`, `chaveDivergencia`, `tipoAlerta`, `campoAfetado`,
+`payloadHashNoMomentoDaDecisao`, `registradoEm`), preservando o payload original
+do usuário. Nenhuma coluna é criada. Decisões antigas sem o snapshot são
+tratadas como “sem snapshot”, não como erro fatal.
+
+**Auditoria de payload alterado.** Para cada decisão resolutiva (`ACEITO`,
+`REJEITADO`, `CORRIGIDO`, `REVERTIDO`), compara o `payloadHashNoMomentoDaDecisao`
+com o hash atual da divergência e classifica em `payload_preservado`,
+`payload_alterado_apos_decisao`, `decisao_sem_snapshot_payload` ou
+`divergencia_nao_encontrada_para_decisao`. `payload_alterado_apos_decisao` e
+`divergencia_nao_encontrada_para_decisao` geram bloqueio de ativação;
+`decisao_sem_snapshot_payload` é aviso, mas vira bloqueio quando a decisão é
+usada para liberar ativação. Nenhum status é reaberto automaticamente.
+
+**Auditoria de divergências não reapresentadas.** Reaproveita `coletarDivergencias()`
+para obter as chaves que seriam geradas hoje e as compara com as divergências
+persistidas, classificando em `reapresentada`, `nao_reapresentada_sem_decisao`,
+`nao_reapresentada_com_decisao_resolutiva`, `nao_reapresentada_bloqueante` e
+`nao_reapresentada_em_revisao`. `nao_reapresentada_com_decisao_resolutiva` e
+`nao_reapresentada_bloqueante` geram bloqueio. A auditoria não apaga divergências,
+não altera status e não cria decisão automática.
+
+**Integração.** A reconstrução e o comparador dry-run embutem o resumo de
+segurança pré-ativação (`segurancaPreAtivacao`); havendo bloqueio de segurança,
+`aptoParaAtivacao = false` e, em cascata, `aptoParaPublicacao = false`. A
+auditoria não interrompe a geração dos relatórios.
+
+Na base atual há `0` decisões resolutivas registradas e as `145` divergências
+existentes são todas reapresentadas pela geração atual: `0` bloqueios de
+segurança e `aptoParaProsseguirAtivacao = true` para esse critério específico.
+A reconstrução continua com `aptoParaAtivacao = false` pelas divergências
+pendentes, não pela segurança.
+
 ---
 
 ## 17. Fases de implementação recomendadas

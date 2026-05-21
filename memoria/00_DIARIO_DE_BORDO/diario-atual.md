@@ -1,5 +1,100 @@
 # Diário de bordo
 
+## 20/05/2026 - PROFOR 2022: Etapa 8.2 - Segurança pré-ativação PAD
+
+- Branch atual: `main`.
+- Objetivo: criar auditoria dry-run que impede dois riscos antes de qualquer
+  ativação/publicação: (1) decisão resolutiva validando payload de divergência
+  que mudou; (2) divergência antiga que não aparece mais na geração atual da
+  fila. Sem frontend, sem migration, sem publicação, sem alterar origem ativa,
+  sem aplicar decisão ao `planoAplicacao` oficial.
+- Serviço criado:
+  - `backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js`.
+- Arquivos criados:
+  - `backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js`;
+  - `tests/services/profor-pad-seguranca-pre-ativacao.test.js`.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-revisao-decisao-service.js`;
+  - `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`;
+  - `backend/services/profor-2022/profor-pad-plano-comparador-service.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
+- Comando criado:
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run` (somente leitura).
+- Hash/snapshot de payload:
+  - `gerarHashPayloadDivergencia()` gera SHA-256 estável considerando
+    `chave_divergencia`, `tipo_alerta`, `campo_afetado`, `numero_convenio`,
+    `uf`, `chave_item` e `payload_json`;
+  - `stringifyOrdenado()` ordena recursivamente as chaves — o hash independe da
+    ordem das chaves do JSON;
+  - ao registrar nova decisão humana, o serviço de decisão acrescenta
+    `_segurancaPreAtivacao` ao `payload_decisao_json` (versão, divergenciaId,
+    chaveDivergencia, tipoAlerta, campoAfetado, payloadHashNoMomentoDaDecisao,
+    registradoEm), preservando o payload original do usuário; **nenhuma coluna
+    nova foi criada**; decisões antigas sem snapshot são tratadas como “sem
+    snapshot”, não erro fatal.
+- Auditoria de payload alterado (decisões resolutivas `ACEITO`, `REJEITADO`,
+  `CORRIGIDO`, `REVERTIDO`):
+  - classifica em `payload_preservado`, `payload_alterado_apos_decisao`,
+    `decisao_sem_snapshot_payload` e `divergencia_nao_encontrada_para_decisao`;
+  - `payload_alterado_apos_decisao` gera bloqueio de ativação;
+  - `decisao_sem_snapshot_payload` é aviso, mas vira bloqueio quando a decisão é
+    usada para liberar ativação (última decisão resolutiva da divergência cujo
+    efeito altera a reconstrução ou cuja divergência bloqueia publicação);
+  - `divergencia_nao_encontrada_para_decisao` gera bloqueio;
+  - nenhum status é reaberto automaticamente.
+- Auditoria de divergências não reapresentadas:
+  - reutiliza `coletarDivergencias()` para obter as chaves que seriam geradas
+    hoje e compara com as divergências já persistidas;
+  - classifica em `reapresentada`, `nao_reapresentada_sem_decisao`,
+    `nao_reapresentada_com_decisao_resolutiva`, `nao_reapresentada_bloqueante`
+    e `nao_reapresentada_em_revisao`;
+  - `nao_reapresentada_com_decisao_resolutiva` e `nao_reapresentada_bloqueante`
+    geram bloqueio; não apaga, não altera status, não cria decisão automática.
+- Integração leve: a reconstrução e o comparador dry-run passaram a embutir
+  `segurancaPreAtivacao` (resumo + bloqueios) nos relatórios; havendo bloqueio
+  de segurança, `aptoParaAtivacao = false` e, em cascata, `aptoParaPublicacao
+  = false`. A auditoria não interrompe a geração dos relatórios — em falha,
+  registra alerta e bloqueia a aptidão.
+- Relatórios gerados em `backend/data/relatorios`:
+  - `profor-2022-pad-seguranca-pre-ativacao-dry-run.json`;
+  - `profor-2022-pad-seguranca-pre-ativacao-dry-run.md`.
+- Resultado com a base atual:
+  - decisões resolutivas auditadas: `0`; sem snapshot: `0`; com payload
+    alterado: `0`; com divergência não encontrada: `0`;
+  - divergências existentes: `145`; reapresentadas: `145`; não reapresentadas:
+    `0`; geração atual da fila disponível: sim;
+  - bloqueios de ativação: `0`; `aptoParaProsseguirAtivacao = true` (não há
+    risco de segurança pré-ativação na base atual);
+  - reconstrução mantém `47` impedimentos e `aptoParaAtivacao = false`
+    (bloqueada pelas 48 divergências pendentes, não pela segurança);
+    comparador inalterado, `aptoParaPublicacao = false`.
+- Validações executadas:
+  - `node --check` nos 6 arquivos criados/alterados;
+  - `npm run validar:syntax` (59 arquivos);
+  - `npm run validar:services` (30 testes aprovados — 11 novos da Etapa 8.2);
+  - `npm run profor:pad:auditar-fila-revisao` (baseline 145/145/0/44/48);
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `git diff --check` (apenas avisos de fim de linha LF/CRLF);
+  - `git status --short frontend/data/publicados` (sem alterações);
+  - `git ls-files "*.sqlite" "*.sqlite-wal" "*.sqlite-shm"` (nada versionado).
+- Confirmações de escopo:
+  - nenhuma publicação; origem ativa intacta; `frontend/data/publicados` sem
+    alterações; nenhuma decisão aplicada ao `planoAplicacao` oficial;
+  - nenhuma migration nem coluna nova; nenhuma divergência, decisão ou log
+    apagado; nenhum status reaberto; nenhuma API/front-end.
+- Riscos e rollback:
+  - risco baixo: serviço somente leitura; o snapshot só é gravado em decisões
+    futuras, dentro do JSON já existente `payload_decisao_json`;
+  - rollback por `git revert`/remoção dos 3 arquivos criados e reversão dos
+    serviços/`package.json`/`scripts/validar-syntax.js`; os relatórios em
+    `backend/data/relatorios` podem ser apagados sem impacto.
+
 ## 20/05/2026 - PROFOR 2022: Etapa 8.1 - Ajuste fino (alias de tipo não apto e métricas desambiguadas)
 
 - Branch atual: `main`. Rodada curta de ajuste sobre a Etapa 8.1.

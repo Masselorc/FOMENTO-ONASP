@@ -14,6 +14,10 @@ const { criarChaveDivergencia } = require("./profor-pad-revisao-service");
 const {
   carregarAplicacaoDecisoesDryRun,
 } = require("./profor-pad-decisao-aplicacao-service");
+const {
+  auditarSegurancaPreAtivacaoDryRun,
+  resumoSegurancaParaRelatorio,
+} = require("./profor-pad-seguranca-pre-ativacao-service");
 
 // Caminho padrão do relatório dry-run de reconstrução.
 const CAMINHO_RELATORIO_RECONSTRUCAO =
@@ -444,12 +448,31 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     }));
   }
 
+  // Auditoria de segurança pré-ativação (Etapa 8.2). Não interrompe a geração
+  // do relatório: em caso de falha, registra alerta e bloqueia a aptidão.
+  let segurancaPreAtivacao = null;
+  let segurancaSemBloqueio = false;
+  try {
+    const seguranca = opcoes.segurancaPreAtivacao
+      || auditarSegurancaPreAtivacaoDryRun({ repoRoot });
+    segurancaPreAtivacao = resumoSegurancaParaRelatorio(seguranca);
+    segurancaSemBloqueio = seguranca.resumo.totalBloqueiosAtivacao === 0;
+  } catch (erro) {
+    segurancaPreAtivacao = { erro: erro?.message || String(erro) };
+    segurancaSemBloqueio = false;
+    alertas.push(montarAlerta({
+      tipo: "seguranca_pre_ativacao_indisponivel",
+      detalhe: `Não foi possível executar a auditoria de segurança pré-ativação: ${erro?.message || erro}.`,
+    }));
+  }
+
   const aptoParaAtivacao = auditoria.publicacaoLiberada === true
     && itensPadSemRateioRemanescentes.length === 0
     && itensNaoAptosUsados.size === 0
     && conferencia.instrumentosNaoEncontradosNaCarteira.length === 0
     && errosCriticosLeitura.length === 0
-    && aplicacaoDecisoes.decisoesNaoAplicaveis.length === 0;
+    && aplicacaoDecisoes.decisoesNaoAplicaveis.length === 0
+    && segurancaSemBloqueio;
 
   const valorPrevistoTotal = arredondarMoedaProfor(
     plano.reduce((total, linha) => total + linha.valorPrevisto, 0)
@@ -482,6 +505,9 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     totalDecisoesSemEfeitoNaReconstrucao: aplicacaoDecisoes.totalDecisoesSemEfeitoNaReconstrucao,
     totalDecisoesEfetivamenteAplicadasNaReconstrucao: decisoesEfetivamenteAplicadas.size,
     totalConsistenciaSaneadaPorDecisao,
+    totalBloqueiosSegurancaPreAtivacao: segurancaPreAtivacao && segurancaPreAtivacao.resumo
+      ? segurancaPreAtivacao.resumo.totalBloqueiosAtivacao
+      : null,
     valorPrevistoReconstruidoTotal: valorPrevistoTotal,
     valorExecutadoReconstruidoTotal: valorExecutadoTotal,
     saldoReconstruidoTotal: saldoTotal,
@@ -513,6 +539,7 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     decisoesAplicadasDryRun: aplicacaoDecisoes.decisoesAplicadasDryRun,
     decisoesNaoAplicaveis: aplicacaoDecisoes.decisoesNaoAplicaveis,
     auditoriaRevisao,
+    segurancaPreAtivacao,
     // O comparador antigo × novo preenche este campo; vazio na reconstrução isolada.
     comparacao: {},
     aptoParaAtivacao,

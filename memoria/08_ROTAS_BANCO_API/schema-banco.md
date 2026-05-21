@@ -852,6 +852,21 @@ os rateios. A reconstrução e o comparador dry-run passaram a consumir essas
 regras e a registrar `decisoesAplicadasDryRun`/`decisoesNaoAplicaveis` nos
 relatórios. Nenhuma decisão é aplicada materialmente ao `planoAplicacao`.
 
+**Segurança pré-ativação (Etapa 8.2).** Foi criado o serviço
+`profor-pad-seguranca-pre-ativacao-service.js` e o comando somente leitura
+`npm run profor:pad:seguranca-pre-ativacao:dry-run`. A auditoria **não cria
+tabela, coluna, constraint nem estrutura persistida** e **não escreve em
+nenhuma tabela**. Ao registrar uma nova decisão humana, o serviço de decisão
+passou a gravar a chave `_segurancaPreAtivacao` **dentro do JSON já existente**
+`payload_decisao_json` da tabela `profor_2022_revisao_decisoes` — um snapshot
+com o hash do payload da divergência no momento da decisão. Não há coluna nova:
+o snapshot é apenas mais uma propriedade do objeto JSON. Decisões antigas sem o
+snapshot são tratadas como “sem snapshot”. A auditoria lê
+`profor_2022_revisao_divergencias` e `profor_2022_revisao_decisoes`, recompõe a
+geração atual da fila e grava a saída apenas em
+`backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json` e
+`.md`, fora do SQLite.
+
 ## Critérios para atualizar este arquivo
 
 Atualizar este arquivo quando houver:
