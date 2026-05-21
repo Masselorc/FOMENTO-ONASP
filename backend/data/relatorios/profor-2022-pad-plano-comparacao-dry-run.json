@@ -1,13 +1,13 @@
 {
-  "geradoEm": "2026-05-21T19:32:22.772Z",
+  "geradoEm": "2026-05-21T22:04:50.346Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
     "totalLinhasAntigo": 567,
-    "totalLinhasNovo": 606,
+    "totalLinhasNovo": 628,
     "totalItensIguais": 93,
-    "totalItensNovos": 8,
+    "totalItensNovos": 30,
     "totalItensAusentes": 34,
     "totalItensQuantidadeDivergente": 387,
     "totalItensValorPrevistoDivergente": 13,
@@ -16,20 +16,20 @@
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
     "totalItensAmbiguos": 49,
-    "totalDiferencas": 433,
-    "totalDiferencasCriticas": 8,
-    "totalAvisos": 206,
-    "totalDiferencasEsperadasPorAtualizacaoPad": 6,
-    "totalDiferencasPorPendenciaDeDecisao": 213,
+    "totalDiferencas": 455,
+    "totalDiferencasCriticas": 30,
+    "totalAvisos": 211,
+    "totalDiferencasEsperadasPorAtualizacaoPad": 7,
+    "totalDiferencasPorPendenciaDeDecisao": 180,
     "totalDiferencasSaneadasPorDecisao": 0,
-    "totalAusenciasConfirmadasPorDecisao": 0,
-    "totalDecisoesResolutivasEncontradas": 14,
-    "totalDecisoesInterpretadasDryRun": 14,
-    "totalDecisoesAplicadasDryRun": 14,
-    "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 14,
-    "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalBloqueiosSegurancaPreAtivacao": 0
+    "totalAusenciasConfirmadasPorDecisao": 27,
+    "totalDecisoesResolutivasEncontradas": 68,
+    "totalDecisoesInterpretadasDryRun": 64,
+    "totalDecisoesAplicadasDryRun": 64,
+    "totalDecisoesNaoAplicaveis": 4,
+    "totalDecisoesComEfeitoNaReconstrucao": 37,
+    "totalDecisoesSemEfeitoNaReconstrucao": 27,
+    "totalBloqueiosSegurancaPreAtivacao": 10
   },
   "totaisAntigoNovo": {
     "antigo": {
@@ -39,17 +39,17 @@
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 606,
-      "valorPrevisto": 10552330.29,
+      "linhas": 628,
+      "valorPrevisto": 10661872.89,
       "valorExecutado": 3217739.5,
-      "saldo": 7334590.79
+      "saldo": 7444133.39
     }
   },
   "diferencaTotal": {
-    "linhas": 39,
-    "valorPrevisto": -111685.19,
+    "linhas": 61,
+    "valorPrevisto": -2142.59,
     "valorExecutado": 15043.6,
-    "saldo": -126728.79
+    "saldo": -17186.19
   },
   "diferencasPorConvenio": [
     {
@@ -82,16 +82,16 @@
         "saldo": 171603.5
       },
       "novo": {
-        "linhas": 8,
-        "valorPrevisto": 62060.9,
+        "linhas": 30,
+        "valorPrevisto": 171603.5,
         "valorExecutado": 0,
-        "saldo": 62060.9
+        "saldo": 171603.5
       },
       "diferenca": {
-        "valorPrevisto": -109542.6,
+        "valorPrevisto": 0,
         "valorExecutado": 0,
-        "saldo": -109542.6,
-        "linhas": -25
+        "saldo": 0,
+        "linhas": -3
       }
     },
     {
@@ -399,16 +399,16 @@
         "saldo": 171603.5
       },
       "novo": {
-        "linhas": 8,
-        "valorPrevisto": 62060.9,
+        "linhas": 30,
+        "valorPrevisto": 171603.5,
         "valorExecutado": 0,
-        "saldo": 62060.9
+        "saldo": 171603.5
       },
       "diferenca": {
-        "valorPrevisto": -109542.6,
+        "valorPrevisto": 0,
         "valorExecutado": 0,
-        "saldo": -109542.6,
-        "linhas": -25
+        "saldo": 0,
+        "linhas": -3
       }
     },
     {
@@ -695,16 +695,37 @@
         "saldo": 2048720.27
       },
       "novo": {
-        "linhas": 129,
-        "valorPrevisto": 2535887.56,
+        "linhas": 136,
+        "valorPrevisto": 2582876.03,
         "valorExecutado": 578163.45,
-        "saldo": 1957724.11
+        "saldo": 2004712.58
       },
       "diferenca": {
-        "valorPrevisto": -58190.07,
+        "valorPrevisto": -11201.6,
         "valorExecutado": 32806.09,
-        "saldo": -90996.16,
-        "linhas": 14
+        "saldo": -44007.69,
+        "linhas": 21
+      }
+    },
+    {
+      "chave": "ESCOLA",
+      "antigo": {
+        "linhas": 0,
+        "valorPrevisto": 0,
+        "valorExecutado": 0,
+        "saldo": 0
+      },
+      "novo": {
+        "linhas": 4,
+        "valorPrevisto": 9935.04,
+        "valorExecutado": 0,
+        "saldo": 9935.04
+      },
+      "diferenca": {
+        "valorPrevisto": 9935.04,
+        "valorExecutado": 0,
+        "saldo": 9935.04,
+        "linhas": 4
       }
     },
     {
@@ -716,16 +737,16 @@
         "saldo": 2860899.75
       },
       "novo": {
-        "linhas": 303,
-        "valorPrevisto": 5086311.26,
+        "linhas": 304,
+        "valorPrevisto": 5095812.26,
         "valorExecutado": 2251939.62,
-        "saldo": 2834371.64
+        "saldo": 2843872.64
       },
       "diferenca": {
-        "valorPrevisto": -15071.5,
+        "valorPrevisto": -5570.5,
         "valorExecutado": 11456.61,
-        "saldo": -26528.11,
-        "linhas": 16
+        "saldo": -17027.11,
+        "linhas": 17
       }
     },
     {
@@ -779,16 +800,16 @@
         "saldo": 1299845.87
       },
       "novo": {
-        "linhas": 151,
-        "valorPrevisto": 1679852.81,
+        "linhas": 161,
+        "valorPrevisto": 1722970.9,
         "valorExecutado": 387636.43,
-        "saldo": 1292216.38
+        "saldo": 1335334.47
       },
       "diferenca": {
-        "valorPrevisto": -36848.59,
+        "valorPrevisto": 6269.5,
         "valorExecutado": -29219.1,
-        "saldo": -7629.49,
-        "linhas": 5
+        "saldo": 35488.6,
+        "linhas": 15
       }
     }
   ],
@@ -802,16 +823,16 @@
         "saldo": 4714987.99
       },
       "novo": {
-        "linhas": 443,
-        "valorPrevisto": 7312255.6,
+        "linhas": 465,
+        "valorPrevisto": 7421798.2,
         "valorExecutado": 2715952.65,
-        "saldo": 4596302.95
+        "saldo": 4705845.55
       },
       "diferenca": {
-        "valorPrevisto": -109542.84,
+        "valorPrevisto": -0.24,
         "valorExecutado": 9142.2,
-        "saldo": -118685.04,
-        "linhas": 29
+        "saldo": -9142.44,
+        "linhas": 51
       }
     },
     {
@@ -940,6 +961,292 @@
       "valorExecutadoNovo": 3114.93,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar condicionado Split 60.000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 9501,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar condicionado split, capacidade de 12.::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado split, capacidade de 12.",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3740,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar condicionado tipo split, capacidade 3::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado tipo split, capacidade 3",
+      "situacao": "novo",
+      "valorPrevistoNovo": 4560,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar-condicionado tipo Split, capacidade d::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar-condicionado tipo Split, capacidade d",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2699.24,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Cafeteira elétrica 1,0 litros bivolt::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+      "situacao": "novo",
+      "valorPrevistoNovo": 600,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+      "situacao": "novo",
+      "valorPrevistoNovo": 24320.25,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Equipamentos de rede (switches e roteado::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Equipamentos de rede (switches e roteado",
+      "situacao": "novo",
+      "valorPrevistoNovo": 1050,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Forno de Micro-ondas a partir de- 32 lit::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+      "situacao": "novo",
+      "valorPrevistoNovo": 726,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Forno de Microondas - 20L - (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 500,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Fragmentadora e papel - Corregedoria::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Fragmentadora e papel - Corregedoria",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3420,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Frigobar 45L INVERTER BIVOLT (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 800,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Impressora multifuncional (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Impressora multifuncional (OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 6100,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Nobreak 1200 BIVOLT(OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 4200,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Notebook i7 16 gb, 1 TB SSD, Windows 11::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+      "situacao": "novo",
+      "valorPrevistoNovo": 22000,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Quadro Lousa branca::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Quadro Lousa branca",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3196.2,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Refrigerador frigobar, com capacidade no::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Refrigerador frigobar, com capacidade no",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2844,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3168.85,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3168.85,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3168.84,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Televisão Smart LED, mínimo de 50 polega::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Televisão Smart LED, mínimo de 50 polega",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2000,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Televisão smart LED, minimo de 50 polegadas::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Televisão smart LED, minimo de 50 polegadas",
+      "situacao": "novo",
+      "valorPrevistoNovo": 6524.58,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::kit com 2 Poltronas (CORREGEDORIA).::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
+      "situacao": "novo",
+      "valorPrevistoNovo": 1254.79,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     }
   ],
   "itensAusentes": [
@@ -953,8 +1260,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 1349.62,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Ar condicionado Split 24000 BTUs (CORREG::CORREGEDORIA::CAPITAL",
@@ -966,8 +1273,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 12736.48,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Ar condicionado Split 36000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
@@ -979,8 +1286,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 8168.19,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Cadeira Longarina plástica 03 Lugares -::OUVIDORIA::CAPITAL",
@@ -992,8 +1299,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 703.26,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Cadeira Secretária Fixa, Preta, pé palit::OUVIDORIA::CAPITAL",
@@ -1005,8 +1312,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 582.36,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Cafeteira Elétrica Tradicional Industria::OUVIDORIA::CAPITAL",
@@ -1018,8 +1325,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 844.06,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Computador Desktop (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1031,8 +1338,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 1455.49,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Forno de Microondas - 20L Branco (OUVID::OUVIDORIA::CAPITAL",
@@ -1044,8 +1351,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 482.36,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Forno de Microondas - 32 litros - Branco::ESCOLA PENAL::CAPITAL",
@@ -1057,7 +1364,7 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 726,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
     },
     {
@@ -1070,8 +1377,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 1859.26,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Geladeira frost free duplex 400 litros (::ESCOLA PENAL::CAPITAL",
@@ -1083,8 +1390,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 3490.71,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Gravador de áudio digital 32GB (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1096,8 +1403,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 2150.72,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::HD Externo 2TB (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1109,8 +1416,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 2787.76,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Impressora multifuncional Tanque de Tin::OUVIDORIA::CAPITAL",
@@ -1122,8 +1429,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 3178.2,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Kit videoconferência (CORREGEDORIA - 03::CORREGEDORIA::CAPITAL",
@@ -1135,8 +1442,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 32427,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Mesa Escritório REDONDA - 1,20m (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1148,8 +1455,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 492.51,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Nobreak 1200VA (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1161,8 +1468,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 6104.55,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Notebook (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1174,8 +1481,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 2020.5,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Pen drive 64Gb (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1187,8 +1494,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 1901.92,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Poltronas (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
@@ -1200,8 +1507,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 1254.79,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Projetor Multimídia 3.000 lumens (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1213,8 +1520,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 7133.77,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Quadro lousa branca 250x120cm (ESCOLA)::ESCOLA PENAL::CAPITAL",
@@ -1226,8 +1533,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 4261.6,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Tela de projeção 2x2 retrátil com tripé::OUVIDORIA::CAPITAL",
@@ -1239,8 +1546,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 1047.97,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Televisão 50 (CORREGEDORIA - 03 UN. E OU::CORREGEDORIA::CAPITAL",
@@ -1252,8 +1559,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 10874.3,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937221::Webcam full HD (OUVIDORIA)::OUVIDORIA::CAPITAL",
@@ -1265,8 +1572,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 491.08,
       "valorExecutadoAntigo": 0,
-      "classificacao": "diferenca_por_pendencia_de_decisao",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937782::Contratação de Bolsa - Aluno Ouvidoria I::OUVIDORIA::CUSTEIO",
@@ -1278,8 +1585,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 172800,
       "valorExecutadoAntigo": 0,
-      "classificacao": "aviso",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937782::Contratação de Bolsa -Coordenador Ouvid::OUVIDORIA::CUSTEIO",
@@ -1291,8 +1598,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 14400,
       "valorExecutadoAntigo": 0,
-      "classificacao": "aviso",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937782::Contratação de Bolsa -Pesquisador Ouvid::OUVIDORIA::CUSTEIO",
@@ -1304,8 +1611,8 @@
       "situacao": "ausente",
       "valorPrevistoAntigo": 4500,
       "valorExecutadoAntigo": 0,
-      "classificacao": "aviso",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
       "chave": "937782::Desktop para edição de video::ESCOLA PENAL::CAPITAL",
@@ -2252,7 +2559,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937221::Contratação de Serviços de Desenvolvimen::ESCOLA PENAL::CUSTEIO",
@@ -2269,7 +2576,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937221::Fragmentadora de Papel 150 folhas (OUVI::OUVIDORIA::CAPITAL",
@@ -2298,7 +2605,7 @@
           "diferenca": -1018.14
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937221::Impressora multifuncional laser colorida::ESCOLA PENAL::CAPITAL",
@@ -2315,7 +2622,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937221::Mesa de Centro (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
@@ -2332,7 +2639,7 @@
           "valorNovo": 2
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937221::Sofá 3 lugares (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
@@ -2349,7 +2656,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937221::Suplementação de Valor - Aquisição de Fo::N/A::CAPITAL",
@@ -2366,7 +2673,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937221::Tapete (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
@@ -2383,7 +2690,7 @@
           "valorNovo": 1
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "aviso"
     },
     {
       "chave": "937265::Algemas de pulso cromada c/corrente com::ESCOLA PENAL::CUSTEIO",
@@ -8259,7 +8566,7 @@
           "diferenca": -1018.14
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937265::Meia Militar::CORREGEDORIA::CUSTEIO",
@@ -8997,7 +9304,7 @@
           "diferenca": -1018.14
         }
       ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937265::Meia Militar::CORREGEDORIA::CUSTEIO",
@@ -10107,6 +10414,292 @@
       "valorExecutadoNovo": 3114.93,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar condicionado Split 60.000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 9501,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar condicionado split, capacidade de 12.::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado split, capacidade de 12.",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3740,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar condicionado tipo split, capacidade 3::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado tipo split, capacidade 3",
+      "situacao": "novo",
+      "valorPrevistoNovo": 4560,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Ar-condicionado tipo Split, capacidade d::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar-condicionado tipo Split, capacidade d",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2699.24,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Cafeteira elétrica 1,0 litros bivolt::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+      "situacao": "novo",
+      "valorPrevistoNovo": 600,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+      "situacao": "novo",
+      "valorPrevistoNovo": 24320.25,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Equipamentos de rede (switches e roteado::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Equipamentos de rede (switches e roteado",
+      "situacao": "novo",
+      "valorPrevistoNovo": 1050,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Forno de Micro-ondas a partir de- 32 lit::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+      "situacao": "novo",
+      "valorPrevistoNovo": 726,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Forno de Microondas - 20L - (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 500,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Fragmentadora e papel - Corregedoria::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Fragmentadora e papel - Corregedoria",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3420,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Frigobar 45L INVERTER BIVOLT (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 800,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Impressora multifuncional (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Impressora multifuncional (OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 6100,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Nobreak 1200 BIVOLT(OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+      "situacao": "novo",
+      "valorPrevistoNovo": 4200,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Notebook i7 16 gb, 1 TB SSD, Windows 11::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+      "situacao": "novo",
+      "valorPrevistoNovo": 22000,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Quadro Lousa branca::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Quadro Lousa branca",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3196.2,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Refrigerador frigobar, com capacidade no::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Refrigerador frigobar, com capacidade no",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2844,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3168.85,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3168.85,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::ESCOLA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 3168.84,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Televisão Smart LED, mínimo de 50 polega::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Televisão Smart LED, mínimo de 50 polega",
+      "situacao": "novo",
+      "valorPrevistoNovo": 2000,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Televisão smart LED, minimo de 50 polegadas::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Televisão smart LED, minimo de 50 polegadas",
+      "situacao": "novo",
+      "valorPrevistoNovo": 6524.58,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::kit com 2 Poltronas (CORREGEDORIA).::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
+      "situacao": "novo",
+      "valorPrevistoNovo": 1254.79,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     }
   ],
   "avisos": [
@@ -10956,6 +11549,138 @@
           "campo": "quantidade",
           "valorAntigo": 120,
           "valorNovo": 12
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937221::Ar condicionado Split 18000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado Split 18000 BTUs (ESCOLA)",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937221::Contratação de Serviços de Desenvolvimen::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de Serviços de Desenvolvimen",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937221::Forno de Microondas - 32 litros - Branco::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Forno de Microondas - 32 litros - Branco",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 726,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937221::Impressora multifuncional laser colorida::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Impressora multifuncional laser colorida",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937221::Mesa de Centro (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Mesa de Centro (CORREGEDORIA)",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 20,
+          "valorNovo": 2
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937221::Sofá 3 lugares (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Sofá 3 lugares (CORREGEDORIA)",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937221::Suplementação de Valor - Aquisição de Fo::N/A::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "N/A",
+      "natureza": "CAPITAL",
+      "descricao": "Suplementação de Valor - Aquisição de Fo",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
+        }
+      ],
+      "classificacao": "aviso"
+    },
+    {
+      "chave": "937221::Tapete (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Tapete (CORREGEDORIA)",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 10,
+          "valorNovo": 1
         }
       ],
       "classificacao": "aviso"
@@ -12270,45 +12995,6 @@
       "classificacao": "aviso"
     },
     {
-      "chave": "937782::Contratação de Bolsa - Aluno Ouvidoria I::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Contratação de Bolsa - Aluno Ouvidoria I",
-      "situacao": "ausente",
-      "valorPrevistoAntigo": 172800,
-      "valorExecutadoAntigo": 0,
-      "classificacao": "aviso",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
-    },
-    {
-      "chave": "937782::Contratação de Bolsa -Coordenador Ouvid::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Contratação de Bolsa -Coordenador Ouvid",
-      "situacao": "ausente",
-      "valorPrevistoAntigo": 14400,
-      "valorExecutadoAntigo": 0,
-      "classificacao": "aviso",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
-    },
-    {
-      "chave": "937782::Contratação de Bolsa -Pesquisador Ouvid::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Contratação de Bolsa -Pesquisador Ouvid",
-      "situacao": "ausente",
-      "valorPrevistoAntigo": 4500,
-      "valorExecutadoAntigo": 0,
-      "classificacao": "aviso",
-      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
-    },
-    {
       "chave": "937782::Desktop para edição de video::ESCOLA PENAL::CAPITAL",
       "numeroConvenio": "937782",
       "uf": "AC",
@@ -13578,7 +14264,359 @@
     }
   ],
   "diferencasSaneadasPorDecisao": [],
-  "ausenciasConfirmadasPorDecisao": [],
+  "ausenciasConfirmadasPorDecisao": [
+    {
+      "chave": "937221::Ar Condicionado Split 9000 BTUs (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 1349.62,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Ar condicionado Split 24000 BTUs (CORREG::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado Split 24000 BTUs (CORREG",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 12736.48,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Ar condicionado Split 36000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado Split 36000 BTUs (ESCOLA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 8168.19,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Cadeira Longarina plástica 03 Lugares -::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cadeira Longarina plástica 03 Lugares -",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 703.26,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Cadeira Secretária Fixa, Preta, pé palit::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cadeira Secretária Fixa, Preta, pé palit",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 582.36,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Cafeteira Elétrica Tradicional Industria::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Cafeteira Elétrica Tradicional Industria",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 844.06,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Computador Desktop (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Computador Desktop (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 1455.49,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Forno de Microondas - 20L Branco (OUVID::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Forno de Microondas - 20L Branco (OUVID",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 482.36,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Frigobar 71L (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Frigobar 71L (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 1859.26,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Geladeira frost free duplex 400 litros (::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Geladeira frost free duplex 400 litros (",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 3490.71,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Gravador de áudio digital 32GB (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Gravador de áudio digital 32GB (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 2150.72,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::HD Externo 2TB (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "HD Externo 2TB (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 2787.76,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Impressora multifuncional Tanque de Tin::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Impressora multifuncional Tanque de Tin",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 3178.2,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Kit videoconferência (CORREGEDORIA - 03::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Kit videoconferência (CORREGEDORIA - 03",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 32427,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Mesa Escritório REDONDA - 1,20m (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 492.51,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Nobreak 1200VA (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Nobreak 1200VA (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 6104.55,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Notebook (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 2020.5,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Pen drive 64Gb (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Pen drive 64Gb (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 1901.92,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Poltronas (CORREGEDORIA)::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Poltronas (CORREGEDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 1254.79,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Projetor Multimídia 3.000 lumens (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 7133.77,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Quadro lousa branca 250x120cm (ESCOLA)::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Quadro lousa branca 250x120cm (ESCOLA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 4261.6,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Tela de projeção 2x2 retrátil com tripé::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Tela de projeção 2x2 retrátil com tripé",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 1047.97,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Televisão 50 (CORREGEDORIA - 03 UN. E OU::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Televisão 50 (CORREGEDORIA - 03 UN. E OU",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 10874.3,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937221::Webcam full HD (OUVIDORIA)::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Webcam full HD (OUVIDORIA)",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 491.08,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937782::Contratação de Bolsa - Aluno Ouvidoria I::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de Bolsa - Aluno Ouvidoria I",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 172800,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937782::Contratação de Bolsa -Coordenador Ouvid::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de Bolsa -Coordenador Ouvid",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 14400,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    },
+    {
+      "chave": "937782::Contratação de Bolsa -Pesquisador Ouvid::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Contratação de Bolsa -Pesquisador Ouvid",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 4500,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "ausencia_confirmada_por_decisao",
+      "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
+    }
+  ],
   "amostraDivergencias": [
     {
       "chave": "937216::Apresentador/Passador de slides, sem fio::ESCOLA PENAL::CAPITAL",
@@ -14433,6 +15471,146 @@
   ],
   "decisoesResolutivasEncontradas": [
     {
+      "divergenciaId": 1,
+      "chaveDivergencia": "item_novo_sem_rateio:1979e8e746e2a51c",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 127
+    },
+    {
+      "divergenciaId": 2,
+      "chaveDivergencia": "item_novo_sem_rateio:b442d77b7786ba59",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 134
+    },
+    {
+      "divergenciaId": 3,
+      "chaveDivergencia": "item_novo_sem_rateio:64aaf74849f4de73",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 135
+    },
+    {
+      "divergenciaId": 4,
+      "chaveDivergencia": "item_novo_sem_rateio:966f81043fe87439",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 136
+    },
+    {
+      "divergenciaId": 5,
+      "chaveDivergencia": "item_novo_sem_rateio:6fe5d0e53dc3e4cf",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 137
+    },
+    {
+      "divergenciaId": 6,
+      "chaveDivergencia": "item_novo_sem_rateio:7e9e19957e9ef768",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 138
+    },
+    {
+      "divergenciaId": 7,
+      "chaveDivergencia": "item_novo_sem_rateio:fdc310d0973a9724",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 139
+    },
+    {
+      "divergenciaId": 8,
+      "chaveDivergencia": "item_novo_sem_rateio:3c22aa5c18a00713",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 140
+    },
+    {
+      "divergenciaId": 9,
+      "chaveDivergencia": "item_novo_sem_rateio:2b5d564d06701b0f",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 141
+    },
+    {
+      "divergenciaId": 10,
+      "chaveDivergencia": "item_novo_sem_rateio:2bb65df66915b310",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 142
+    },
+    {
+      "divergenciaId": 11,
+      "chaveDivergencia": "item_novo_sem_rateio:4bcfbea61f899f46",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 143
+    },
+    {
+      "divergenciaId": 12,
+      "chaveDivergencia": "item_novo_sem_rateio:79431a1f8f0e71f2",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 144
+    },
+    {
+      "divergenciaId": 13,
+      "chaveDivergencia": "item_novo_sem_rateio:978143b963a238d5",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 145
+    },
+    {
+      "divergenciaId": 14,
+      "chaveDivergencia": "item_novo_sem_rateio:9ef2b937491ed9b8",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 146
+    },
+    {
+      "divergenciaId": 15,
+      "chaveDivergencia": "item_novo_sem_rateio:a98aa59d9f16ff08",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 147
+    },
+    {
+      "divergenciaId": 16,
+      "chaveDivergencia": "item_novo_sem_rateio:1d397b152d47b0cc",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 148
+    },
+    {
+      "divergenciaId": 17,
+      "chaveDivergencia": "item_novo_sem_rateio:7514030fcf3dc2ee",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 149
+    },
+    {
+      "divergenciaId": 18,
+      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 150
+    },
+    {
+      "divergenciaId": 19,
+      "chaveDivergencia": "item_novo_sem_rateio:e3d3a1545c56f329",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 151
+    },
+    {
+      "divergenciaId": 20,
+      "chaveDivergencia": "item_novo_sem_rateio:78046f18c0b80b20",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "decisao": "ACEITO",
+      "decisaoId": 152
+    },
+    {
       "divergenciaId": 21,
       "chaveDivergencia": "item_novo_sem_rateio:c000447dfdaea057",
       "tipoAlerta": "item_novo_sem_rateio",
@@ -14452,6 +15630,27 @@
       "tipoAlerta": "item_novo_sem_rateio",
       "decisao": "ACEITO",
       "decisaoId": 85
+    },
+    {
+      "divergenciaId": 25,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "decisao": "ACEITO",
+      "decisaoId": 104
+    },
+    {
+      "divergenciaId": 26,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:f812a27863b7408a",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "decisao": "ACEITO",
+      "decisaoId": 105
+    },
+    {
+      "divergenciaId": 27,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a55de103e70ebde1",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "decisao": "ACEITO",
+      "decisaoId": 106
     },
     {
       "divergenciaId": 28,
@@ -14529,9 +15728,864 @@
       "tipoAlerta": "item_nao_apto",
       "decisao": "ACEITO",
       "decisaoId": 70
+    },
+    {
+      "divergenciaId": 47,
+      "chaveDivergencia": "item_ausente_no_pad:e4caa4f2de2619b3",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 153
+    },
+    {
+      "divergenciaId": 48,
+      "chaveDivergencia": "item_ausente_no_pad:8c26f66ea1caca0d",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 154
+    },
+    {
+      "divergenciaId": 49,
+      "chaveDivergencia": "item_ausente_no_pad:85aa4ec3ed492a6c",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 155
+    },
+    {
+      "divergenciaId": 50,
+      "chaveDivergencia": "item_ausente_no_pad:6695decd0ced4c5b",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 156
+    },
+    {
+      "divergenciaId": 51,
+      "chaveDivergencia": "item_ausente_no_pad:ca5226c5cd9dcaf7",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 157
+    },
+    {
+      "divergenciaId": 52,
+      "chaveDivergencia": "item_ausente_no_pad:57810d766febc453",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 158
+    },
+    {
+      "divergenciaId": 53,
+      "chaveDivergencia": "item_ausente_no_pad:5d314260fd60be80",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 159
+    },
+    {
+      "divergenciaId": 54,
+      "chaveDivergencia": "item_ausente_no_pad:da1129758bd0e411",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 160
+    },
+    {
+      "divergenciaId": 56,
+      "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 161
+    },
+    {
+      "divergenciaId": 57,
+      "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 162
+    },
+    {
+      "divergenciaId": 58,
+      "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 163
+    },
+    {
+      "divergenciaId": 59,
+      "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 164
+    },
+    {
+      "divergenciaId": 60,
+      "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 165
+    },
+    {
+      "divergenciaId": 61,
+      "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 166
+    },
+    {
+      "divergenciaId": 62,
+      "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 167
+    },
+    {
+      "divergenciaId": 63,
+      "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 168
+    },
+    {
+      "divergenciaId": 64,
+      "chaveDivergencia": "item_ausente_no_pad:584b9c4c0a6d70d4",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 169
+    },
+    {
+      "divergenciaId": 65,
+      "chaveDivergencia": "item_ausente_no_pad:0aa793b7aad7dea9",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 170
+    },
+    {
+      "divergenciaId": 66,
+      "chaveDivergencia": "item_ausente_no_pad:9ef6ef8500d7dd16",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 182
+    },
+    {
+      "divergenciaId": 67,
+      "chaveDivergencia": "item_ausente_no_pad:263c61398f88427a",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 171
+    },
+    {
+      "divergenciaId": 68,
+      "chaveDivergencia": "item_ausente_no_pad:12da4f953a810aba",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 172
+    },
+    {
+      "divergenciaId": 69,
+      "chaveDivergencia": "item_ausente_no_pad:8fa2597b2ebf3282",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 173
+    },
+    {
+      "divergenciaId": 70,
+      "chaveDivergencia": "item_ausente_no_pad:e726b662149c7057",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 174
+    },
+    {
+      "divergenciaId": 71,
+      "chaveDivergencia": "item_ausente_no_pad:53e1018ea3c16260",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 175
+    },
+    {
+      "divergenciaId": 72,
+      "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 108
+    },
+    {
+      "divergenciaId": 73,
+      "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 109
+    },
+    {
+      "divergenciaId": 74,
+      "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "ACEITO",
+      "decisaoId": 110
+    },
+    {
+      "divergenciaId": 75,
+      "chaveDivergencia": "item_ausente_no_pad:ce97612ee9b9e3ce",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "CORRIGIDO",
+      "decisaoId": 117
+    },
+    {
+      "divergenciaId": 76,
+      "chaveDivergencia": "item_ausente_no_pad:c8492dcaa80c4008",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "CORRIGIDO",
+      "decisaoId": 126
+    },
+    {
+      "divergenciaId": 77,
+      "chaveDivergencia": "item_ausente_no_pad:48844ea18c1d3543",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "CORRIGIDO",
+      "decisaoId": 118
+    },
+    {
+      "divergenciaId": 78,
+      "chaveDivergencia": "item_ausente_no_pad:d8099a1f5573201b",
+      "tipoAlerta": "item_ausente_no_pad",
+      "decisao": "CORRIGIDO",
+      "decisaoId": 119
     }
   ],
   "decisoesAplicadasDryRun": [
+    {
+      "divergenciaId": 1,
+      "chaveDivergencia": "item_novo_sem_rateio:1979e8e746e2a51c",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 127,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T21:25:51.612Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "ESCOLA PENAL",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 2,
+      "chaveDivergencia": "item_novo_sem_rateio:b442d77b7786ba59",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 134,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T21:28:31.814Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 3,
+      "chaveDivergencia": "item_novo_sem_rateio:64aaf74849f4de73",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 135,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T21:28:56.296Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 4,
+      "chaveDivergencia": "item_novo_sem_rateio:966f81043fe87439",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 136,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T21:30:22.321Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 5,
+      "chaveDivergencia": "item_novo_sem_rateio:6fe5d0e53dc3e4cf",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 137,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T21:31:17.638Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 6,
+      "chaveDivergencia": "item_novo_sem_rateio:7e9e19957e9ef768",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 138,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T21:34:00.653Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 7,
+      "chaveDivergencia": "item_novo_sem_rateio:fdc310d0973a9724",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 139,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.548Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 8,
+      "chaveDivergencia": "item_novo_sem_rateio:3c22aa5c18a00713",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 140,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.549Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "ESCOLA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 9,
+      "chaveDivergencia": "item_novo_sem_rateio:2b5d564d06701b0f",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 141,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.549Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 10,
+      "chaveDivergencia": "item_novo_sem_rateio:2bb65df66915b310",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 142,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.550Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 11,
+      "chaveDivergencia": "item_novo_sem_rateio:4bcfbea61f899f46",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 143,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.550Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 12,
+      "chaveDivergencia": "item_novo_sem_rateio:79431a1f8f0e71f2",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 144,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.551Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 13,
+      "chaveDivergencia": "item_novo_sem_rateio:978143b963a238d5",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 145,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.551Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 14,
+      "chaveDivergencia": "item_novo_sem_rateio:9ef2b937491ed9b8",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 146,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.552Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 15,
+      "chaveDivergencia": "item_novo_sem_rateio:a98aa59d9f16ff08",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 147,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.552Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 16,
+      "chaveDivergencia": "item_novo_sem_rateio:1d397b152d47b0cc",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::QUADRO LOUSA BRANCA",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 148,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.553Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "ESCOLA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 17,
+      "chaveDivergencia": "item_novo_sem_rateio:7514030fcf3dc2ee",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 149,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.553Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "ESCOLA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 18,
+      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 150,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.553Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 33.33,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          },
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 33.33,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          },
+          {
+            "area": "ESCOLA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 33.33,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 19,
+      "chaveDivergencia": "item_novo_sem_rateio:e3d3a1545c56f329",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 151,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.554Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "OUVIDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 20,
+      "chaveDivergencia": "item_novo_sem_rateio:78046f18c0b80b20",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 152,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.554Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "CORREGEDORIA",
+            "natureza": "CAPITAL",
+            "percentual_valor": 0,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
     {
       "divergenciaId": 21,
       "chaveDivergencia": "item_novo_sem_rateio:c000447dfdaea057",
@@ -14630,6 +16684,66 @@
             "quantidade_referencia": 0
           }
         ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 25,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "campoAfetado": "descricao",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 104,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T19:53:51.853Z",
+      "efeito": {
+        "tipo": "equivalencia_aceita",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 26,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:f812a27863b7408a",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "campoAfetado": "descricao",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 105,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T19:54:12.082Z",
+      "efeito": {
+        "tipo": "equivalencia_aceita",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 27,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a55de103e70ebde1",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "campoAfetado": "descricao",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 106,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T19:54:27.692Z",
+      "efeito": {
+        "tipo": "equivalencia_aceita",
+        "afetaReconstrucao": true
       },
       "aplicavel": true,
       "motivoNaoAplicavel": null
@@ -14853,67 +16967,794 @@
       },
       "aplicavel": true,
       "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 47,
+      "chaveDivergencia": "item_ausente_no_pad:e4caa4f2de2619b3",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 153,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.555Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 48,
+      "chaveDivergencia": "item_ausente_no_pad:8c26f66ea1caca0d",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 154,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.555Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 49,
+      "chaveDivergencia": "item_ausente_no_pad:85aa4ec3ed492a6c",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 155,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.568Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 50,
+      "chaveDivergencia": "item_ausente_no_pad:6695decd0ced4c5b",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 156,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.569Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 51,
+      "chaveDivergencia": "item_ausente_no_pad:ca5226c5cd9dcaf7",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 157,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.570Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 52,
+      "chaveDivergencia": "item_ausente_no_pad:57810d766febc453",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::CAFETEIRA ELETRICA TRADICIONAL INDUSTRIA",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 158,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.570Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 53,
+      "chaveDivergencia": "item_ausente_no_pad:5d314260fd60be80",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::COMPUTADOR DESKTOP (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 159,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.570Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 54,
+      "chaveDivergencia": "item_ausente_no_pad:da1129758bd0e411",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L BRANCO (OUVID",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 160,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.571Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 56,
+      "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FRIGOBAR 71L (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 161,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.571Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 57,
+      "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::GELADEIRA FROST FREE DUPLEX 400 LITROS (",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 162,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 58,
+      "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::GRAVADOR DE AUDIO DIGITAL 32GB (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 163,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 59,
+      "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::HD EXTERNO 2TB (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 164,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 60,
+      "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL TANQUE DE TIN",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 165,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.573Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 61,
+      "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::KIT VIDEOCONFERENCIA (CORREGEDORIA - 03",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 166,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.574Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 62,
+      "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::MESA ESCRITORIO REDONDA - 1,20M (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 167,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.574Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 63,
+      "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOBREAK 1200VA (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 168,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 64,
+      "chaveDivergencia": "item_ausente_no_pad:584b9c4c0a6d70d4",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::NOTEBOOK (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 169,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 65,
+      "chaveDivergencia": "item_ausente_no_pad:0aa793b7aad7dea9",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::PEN DRIVE 64GB (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 170,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 66,
+      "chaveDivergencia": "item_ausente_no_pad:9ef6ef8500d7dd16",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::POLTRONAS (CORREGEDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 182,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T21:45:25.004Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 67,
+      "chaveDivergencia": "item_ausente_no_pad:263c61398f88427a",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::PROJETOR MULTIMIDIA 3.000 LUMENS (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 171,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 68,
+      "chaveDivergencia": "item_ausente_no_pad:12da4f953a810aba",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::QUADRO LOUSA BRANCA 250X120CM (ESCOLA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 172,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 69,
+      "chaveDivergencia": "item_ausente_no_pad:8fa2597b2ebf3282",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELA DE PROJECAO 2X2 RETRATIL COM TRIPE",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 173,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 70,
+      "chaveDivergencia": "item_ausente_no_pad:e726b662149c7057",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::TELEVISAO 50 (CORREGEDORIA - 03 UN. E OU",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 174,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.576Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 71,
+      "chaveDivergencia": "item_ausente_no_pad:53e1018ea3c16260",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::WEBCAM FULL HD (OUVIDORIA)",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 175,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.576Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 72,
+      "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE BOLSA - ALUNO OUVIDORIA I",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 108,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T19:55:11.354Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 73,
+      "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE BOLSA -COORDENADOR OUVID",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 109,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T19:55:23.586Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 74,
+      "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::CONTRATACAO DE BOLSA -PESQUISADOR OUVID",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "ACEITO",
+      "decisaoId": 110,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-21T19:55:35.322Z",
+      "efeito": {
+        "tipo": "ausencia_confirmada",
+        "afetaReconstrucao": false,
+        "afetaComparador": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
     }
   ],
-  "decisoesNaoAplicaveis": [],
+  "decisoesNaoAplicaveis": [
+    {
+      "divergenciaId": 75,
+      "chaveDivergencia": "item_ausente_no_pad:ce97612ee9b9e3ce",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 117,
+      "usuario": "sistema-saneamento-diacritico",
+      "decididoEm": "2026-05-21T20:15:50.259Z",
+      "efeito": {
+        "tipo": "decisao_sem_efeito_definido",
+        "afetaReconstrucao": false
+      },
+      "aplicavel": false,
+      "motivoNaoAplicavel": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "divergenciaId": 76,
+      "chaveDivergencia": "item_ausente_no_pad:c8492dcaa80c4008",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 126,
+      "usuario": "sistema-saneamento-substituto-pad",
+      "decididoEm": "2026-05-21T21:21:00.567Z",
+      "efeito": {
+        "tipo": "decisao_sem_efeito_definido",
+        "afetaReconstrucao": false
+      },
+      "aplicavel": false,
+      "motivoNaoAplicavel": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "divergenciaId": 77,
+      "chaveDivergencia": "item_ausente_no_pad:48844ea18c1d3543",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 118,
+      "usuario": "sistema-saneamento-diacritico",
+      "decididoEm": "2026-05-21T20:15:50.259Z",
+      "efeito": {
+        "tipo": "decisao_sem_efeito_definido",
+        "afetaReconstrucao": false
+      },
+      "aplicavel": false,
+      "motivoNaoAplicavel": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "divergenciaId": 78,
+      "chaveDivergencia": "item_ausente_no_pad:d8099a1f5573201b",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "tipoAlerta": "item_ausente_no_pad",
+      "campoAfetado": "existencia",
+      "bloqueiaPublicacao": false,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 119,
+      "usuario": "sistema-saneamento-diacritico",
+      "decididoEm": "2026-05-21T20:15:50.260Z",
+      "efeito": {
+        "tipo": "decisao_sem_efeito_definido",
+        "afetaReconstrucao": false
+      },
+      "aplicavel": false,
+      "motivoNaoAplicavel": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    }
+  ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 131,
+    "totalPendentes": 77,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 31,
+    "totalPendentesQueBloqueiamPublicacao": 11,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 14,
+    "totalComDecisaoResolutiva": 68,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 131,
+    "totalSemDecisaoResolutiva": 77,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-21T19:32:22.753Z",
+    "geradoEm": "2026-05-21T22:04:50.327Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 14,
-      "totalPayloadPreservado": 14,
-      "totalPayloadAlteradoAposDecisao": 0,
+      "totalDecisoesResolutivasAuditadas": 69,
+      "totalPayloadPreservado": 65,
+      "totalPayloadAlteradoAposDecisao": 4,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
       "totalDivergenciasExistentes": 145,
       "totalDivergenciasReapresentadas": 139,
       "totalDivergenciasNaoReapresentadas": 6,
       "totalDivergenciasReapresentacaoIndeterminada": 0,
-      "totalBloqueiosAtivacao": 0,
-      "totalAvisos": 6,
+      "totalBloqueiosAtivacao": 10,
+      "totalAvisos": 0,
       "geracaoAtualDisponivel": true,
-      "aptoParaProsseguirAtivacao": true
+      "aptoParaProsseguirAtivacao": false
     },
-    "bloqueiosAtivacao": []
+    "bloqueiosAtivacao": [
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 107,
+        "divergenciaId": 72,
+        "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 108,
+        "divergenciaId": 72,
+        "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 109,
+        "divergenciaId": 73,
+        "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 110,
+        "divergenciaId": 74,
+        "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "divergencia_nao_reapresentada",
+        "classificacao": "nao_reapresentada_com_decisao_resolutiva",
+        "divergenciaId": 25,
+        "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
+        "motivo": "Divergência com decisão resolutiva não aparece na geração atual da fila."
+      },
+      {
+        "origem": "divergencia_nao_reapresentada",
+        "classificacao": "nao_reapresentada_com_decisao_resolutiva",
+        "divergenciaId": 26,
+        "chaveDivergencia": "equivalencia_por_descricao_normalizada:f812a27863b7408a",
+        "motivo": "Divergência com decisão resolutiva não aparece na geração atual da fila."
+      },
+      {
+        "origem": "divergencia_nao_reapresentada",
+        "classificacao": "nao_reapresentada_com_decisao_resolutiva",
+        "divergenciaId": 27,
+        "chaveDivergencia": "equivalencia_por_descricao_normalizada:a55de103e70ebde1",
+        "motivo": "Divergência com decisão resolutiva não aparece na geração atual da fila."
+      },
+      {
+        "origem": "divergencia_nao_reapresentada",
+        "classificacao": "nao_reapresentada_com_decisao_resolutiva",
+        "divergenciaId": 75,
+        "chaveDivergencia": "item_ausente_no_pad:ce97612ee9b9e3ce",
+        "motivo": "Divergência com decisão resolutiva não aparece na geração atual da fila."
+      },
+      {
+        "origem": "divergencia_nao_reapresentada",
+        "classificacao": "nao_reapresentada_com_decisao_resolutiva",
+        "divergenciaId": 77,
+        "chaveDivergencia": "item_ausente_no_pad:48844ea18c1d3543",
+        "motivo": "Divergência com decisão resolutiva não aparece na geração atual da fila."
+      },
+      {
+        "origem": "divergencia_nao_reapresentada",
+        "classificacao": "nao_reapresentada_com_decisao_resolutiva",
+        "divergenciaId": 78,
+        "chaveDivergencia": "item_ausente_no_pad:d8099a1f5573201b",
+        "motivo": "Divergência com decisão resolutiva não aparece na geração atual da fila."
+      }
+    ]
   },
   "reconstrucaoResumo": {
     "totalRelatoriosPad": 15,
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 501,
     "totalItensPadSemRateio": 24,
-    "totalItensPadSemRateioRemanescentes": 21,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 3,
-    "totalLinhasReconstruidas": 606,
+    "totalItensPadSemRateioRemanescentes": 1,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 23,
+    "totalLinhasReconstruidas": 628,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 30,
-    "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 14,
-    "totalDecisoesInterpretadasDryRun": 14,
-    "totalDecisoesAplicadasDryRun": 14,
-    "totalDecisoesNaoAplicaveis": 0,
-    "totalDecisoesComEfeitoNaReconstrucao": 14,
-    "totalDecisoesSemEfeitoNaReconstrucao": 0,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 14,
+    "totalImpedimentos": 34,
+    "totalAlertas": 107,
+    "totalDecisoesResolutivasEncontradas": 68,
+    "totalDecisoesInterpretadasDryRun": 64,
+    "totalDecisoesAplicadasDryRun": 64,
+    "totalDecisoesNaoAplicaveis": 4,
+    "totalDecisoesComEfeitoNaReconstrucao": 37,
+    "totalDecisoesSemEfeitoNaReconstrucao": 27,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 34,
     "totalConsistenciaSaneadaPorDecisao": 0,
-    "totalBloqueiosSegurancaPreAtivacao": 0,
-    "valorPrevistoReconstruidoTotal": 10552330.29,
+    "totalBloqueiosSegurancaPreAtivacao": 10,
+    "valorPrevistoReconstruidoTotal": 10661872.89,
     "valorExecutadoReconstruidoTotal": 3217739.5,
-    "saldoReconstruidoTotal": 7334590.79
+    "saldoReconstruidoTotal": 7444133.39
   },
   "impedimentosReconstrucao": [
     {
@@ -14998,184 +17839,220 @@
       "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Ar condicionado split, capacidade de 12.",
       "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Ar condicionado tipo split, capacidade 3",
       "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Ar-condicionado tipo Split, capacidade d",
       "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Cafeteira elétrica 1,0 litros bivolt",
       "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
       "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Equipamentos de rede (switches e roteado",
       "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Forno de Micro-ondas a partir de- 32 lit",
       "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
       "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Fragmentadora e papel - Corregedoria",
       "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
       "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Impressora multifuncional (OUVIDORIA)",
       "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
       "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
       "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Quadro Lousa branca",
       "chaveItem": "937221::QUADRO LOUSA BRANCA",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Refrigerador frigobar, com capacidade no",
       "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Saldo Residual",
       "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Televisão Smart LED, mínimo de 50 polega",
       "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Televisão smart LED, minimo de 50 polegadas",
       "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
+      "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
       "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
     },
     {
       "tipo": "divergencias_revisao_bloqueiam_publicacao",
@@ -15184,14 +18061,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 31 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 11 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 30 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -111685.19, executado 15043.6, saldo -126728.79.",
-    "Diferenças críticas: 8. Itens ambíguos: 49.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -2142.59, executado 15043.6, saldo -17186.19.",
+    "Diferenças críticas: 30. Itens ambíguos: 49.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

@@ -1,5 +1,75 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: diagnóstico da divergência `#55` e possível substituto `#8`
+
+- Branch atual: `main`.
+- Objetivo:
+  - investigar, em modo dry-run, se a divergência `#55`
+    (`item_ausente_no_pad`, convênio `937221/AL`) deve permanecer como ausência
+    real ou se possui correspondente no PAD novo pela divergência `#8`.
+- Divergência `#55`:
+  - tipo: `item_ausente_no_pad`;
+  - status: `PENDENTE`;
+  - item de memória: `Forno de Microondas - 32 litros - Branco`;
+  - chave: `937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO`;
+  - payload atual: quantidade `10`, valor unitário `726`, valor previsto `726`,
+    valor executado `0`, saldo `726`, `1` rateio ativo;
+  - decisões registradas: `0`.
+- Possível substituto `#8`:
+  - tipo: `item_novo_sem_rateio`;
+  - status atual no banco: `ACEITO`;
+  - descrição PAD: `Forno de Micro-ondas a partir de- 32 lit`;
+  - payload PAD: quantidade `1`, valor unitário `726`, valor previsto `726`,
+    valor executado `0`, saldo `726`, natureza `CAPITAL`;
+  - decisão existente: `ACEITO` (`#140`), registrada por
+    `sistema-saneamento-pad-al-937221`.
+- Fontes conferidas:
+  - SQLite: divergências `#55` e `#8`, payloads, logs e decisões;
+  - `backend/data/relatorios/profor-2022-ausentes-substitutos-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pad-saneamento.json`;
+  - `backend/data/relatorios/profor-2022-item-sem-rateio-rateio-antigo-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pad-relatorios-dry-run.json`;
+  - planilha antiga `Planilhas/gestao_financeira_ouvidoria.xlsx`, aba `AL`.
+- Evidência principal:
+  - a planilha antiga, aba `AL`, linha `12`, traz quantidade original `"1.0"`
+    para `Forno de Microondas - 32 litros - Branco`;
+  - a memória persistida (`profor_2022_item_rateios`, item conhecido `456`)
+    registrou `quantidade_referencia=10`;
+  - `moedaParaNumeroProfor("1.0")` retorna `10`, pois o parser monetário remove
+    o ponto antes de converter;
+  - os valores financeiro/material (`726`, `0`, `726`) fecham integralmente com
+    o PAD da divergência `#8`, que possui quantidade `1`.
+- Conclusão:
+  - a `#55` tem correspondente no PAD novo pela `#8`;
+  - o vínculo `#55 -> #8` é tecnicamente provável;
+  - a divergência de quantidade decorre de inconsistência de leitura/agregação da
+    memória antiga, não de divergência material do PAD;
+  - classificação: `substituto_compativel_com_quantidade_memoria_inconsistente`.
+- Recomendação:
+  - não confirmar ausência da `#55`;
+  - tratar como substituição/atualização de descrição com saneamento assistido,
+    cuidando para não duplicar o efeito já registrado na `#8`;
+  - antes de saneamentos em massa, corrigir ou isolar a conversão de quantidade
+    para não transformar strings decimais como `"1.0"` em `10`.
+- Relatórios gerados:
+  - `backend/data/relatorios/profor-2022-diagnostico-55-8-forno-al.json`;
+  - `backend/data/relatorios/profor-2022-diagnostico-55-8-forno-al.md`.
+- Escopo:
+  - nenhuma decisão registrada;
+  - nenhum status alterado;
+  - nenhuma ausência confirmada;
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado.
+- Riscos:
+  - existem outros itens com quantidade em string decimal na planilha antiga que
+    podem ter sido inflados pelo mesmo parser;
+  - como a `#8` já está `ACEITO`, uma próxima decisão para a `#55` precisa ser
+    auditável e sem duplicidade de efeito na reconstrução dry-run.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: Contador de Pendências, Auto-avanço e Detalhe Inline na Tela de Revisão (UX)
 
 - **Status**: Implementado e Validado.

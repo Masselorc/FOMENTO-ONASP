@@ -1,0 +1,286 @@
+{
+  "geradoEm": "2026-05-21T22:03:13.410Z",
+  "modo": "diagnostico-dry-run",
+  "escopo": "Investigar divergência #55 e possível substituto #8 sem registrar decisão.",
+  "classificacao": "substituto_compativel_com_quantidade_memoria_inconsistente",
+  "decisaoRegistrada": false,
+  "divergenciaAusente55": {
+    "id": 55,
+    "status": "PENDENTE",
+    "tipoAlerta": "item_ausente_no_pad",
+    "nivel": "aviso",
+    "bloqueiaPublicacao": false,
+    "chaveDivergencia": "item_ausente_no_pad:27e43486e8eb1131",
+    "numeroConvenio": "937221",
+    "uf": "AL",
+    "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+    "payload": {
+      "descricaoMemoria": "Forno de Microondas - 32 litros - Branco",
+      "naturezaMemoria": "CAPITAL",
+      "quantidadeMemoria": 10,
+      "valorUnitarioMemoria": 726,
+      "valorPrevistoMemoria": 726,
+      "valorExecutadoMemoria": 0,
+      "saldoMemoria": 726,
+      "totalRateiosAtivosMemoria": 1,
+      "itemConhecidoId": 456
+    },
+    "totalDecisoes": 0,
+    "totalLogs": 15
+  },
+  "divergenciaSubstituta8": {
+    "id": 8,
+    "status": "ACEITO",
+    "tipoAlerta": "item_novo_sem_rateio",
+    "nivel": "impeditivo",
+    "bloqueiaPublicacao": true,
+    "chaveDivergencia": "item_novo_sem_rateio:3c22aa5c18a00713",
+    "numeroConvenio": "937221",
+    "uf": "AL",
+    "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+    "payload": {
+      "descricaoPad": "Forno de Micro-ondas a partir de- 32 lit",
+      "naturezaPad": "CAPITAL",
+      "quantidadePad": 1,
+      "valorUnitarioPad": 726,
+      "valorPrevistoPad": 726,
+      "valorExecutadoPad": 0,
+      "saldoPad": 726,
+      "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_552380858078419559992.xls",
+      "linhaOrigem": 25
+    },
+    "totalDecisoes": 1,
+    "ultimaDecisao": {
+      "id": 140,
+      "decisao": "ACEITO",
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.549Z"
+    },
+    "totalLogs": 16
+  },
+  "fontes": {
+    "relatorioAusentesSubstitutos": {
+      "id": 55,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "status": "PENDENTE",
+      "descricaoMemoria": "Forno de Microondas - 32 litros - Branco",
+      "classificacao": "possivel_substituto_com_divergencia",
+      "motivo": "Há candidato a substituto (#8), mas com divergência material — exige revisão humana.",
+      "substituto": {
+        "divergenciaSubstitutaId": 8,
+        "tipoSubstituto": "item_novo_sem_rateio",
+        "statusSubstituto": "ACEITO",
+        "descricaoPadSubstituta": "Forno de Micro-ondas a partir de- 32 lit",
+        "decisaoSubstitutaJaAceita": true,
+        "criterios": {
+          "mesmoConvenio": true,
+          "mesmaUf": true,
+          "naturezaCompativel": true,
+          "quantidadeCompativel": false,
+          "valorUnitarioCompativel": true,
+          "valorPrevistoCompativel": true,
+          "valorExecutadoCompativel": true,
+          "saldoCompativel": true,
+          "descricaoCompativel": false
+        }
+      }
+    },
+    "itemPadRelatorio": {
+      "instrumento": "937221",
+      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_552380858078419559992.xls",
+      "aba": "937221",
+      "linha": 25,
+      "tipoDespesa": "BEM",
+      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+      "codigoNaturezaDespesa": "44905299",
+      "codigoNaturezaNormalizado": "44905299",
+      "natureza": "CAPITAL",
+      "unidade": "un",
+      "quantidade": 1,
+      "valorUnitario": 726,
+      "valorTotalPrevisto": 726,
+      "valorTotalExecutado": 0,
+      "saldo": 726
+    },
+    "itemPadSaneamento": {
+      "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "chaveDescricaoOriginal": "937221::Forno de Micro-ondas a partir de- 32 lit",
+      "numeroConvenio": "937221",
+      "descricaoNormalizada": "FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "descricaoOriginal": "Forno de Micro-ondas a partir de- 32 lit",
+      "uf": "AL",
+      "ano": "2022",
+      "instrumento": "Convênio",
+      "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_552380858078419559992.xls",
+      "aba": "937221",
+      "linha": 25,
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "unidade": "un",
+      "quantidade": 1,
+      "valorUnitario": 726,
+      "valorTotalPrevisto": 726,
+      "valorTotalExecutado": 0,
+      "saldo": 726,
+      "motivo": "item_pad_nao_existe_na_memoria_rateio",
+      "itemConhecidoNormalizadoId": null,
+      "descricaoOriginalReferencia": null,
+      "bloqueiaEtapa6": true,
+      "recomendacao": "Criar ou validar memória de rateio para este item antes de permitir reconstrução automática."
+    },
+    "itemMemoriaPersistido": {
+      "id": 456,
+      "chave_item": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "numero_convenio": "937221",
+      "descricao_normalizada": "FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "descricao_original_referencia": "Forno de Microondas - 32 litros - Branco",
+      "uf": "AL",
+      "ano": "2022",
+      "naturezas_encontradas_json": "[\"CAPITAL\"]",
+      "unidades_encontradas_json": "[]",
+      "valor_unitario_referencia": 726,
+      "origem": "planilha-antiga",
+      "possui_pendencia_impeditiva": 0,
+      "apto_para_importacao_futura": 1,
+      "status_item": "ATIVO",
+      "ultima_ocorrencia_em": "2026-05-20T17:11:11.290Z",
+      "ultima_ausencia_em": null,
+      "validacao_exclusao": null,
+      "item_substituido_id": null,
+      "motivo_substituicao": null,
+      "observacao_substituicao": null,
+      "validado_por": null,
+      "validado_em": null,
+      "ativo": 1,
+      "lote_importacao_id": 1,
+      "criado_em": "2026-05-20T17:11:11.290Z",
+      "atualizado_em": "2026-05-20T17:11:11.290Z"
+    },
+    "rateiosAtivosMemoria": [
+      {
+        "id": 522,
+        "item_conhecido_id": 456,
+        "chave_item": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+        "area": "ESCOLA PENAL",
+        "natureza": "CAPITAL",
+        "quantidade_referencia": 10,
+        "valor_previsto_referencia": 726,
+        "valor_executado_referencia": 0,
+        "percentual_quantidade": 100,
+        "percentual_valor": 100,
+        "ativo": 1,
+        "lote_importacao_id": 1,
+        "criado_em": "2026-05-20T17:11:11.290Z",
+        "atualizado_em": "2026-05-20T17:11:11.290Z"
+      }
+    ],
+    "rateioInicialDryRun": {
+      "item": {
+        "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+        "numeroConvenio": "937221",
+        "descricaoNormalizada": "FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+        "descricaoOriginalReferencia": "Forno de Microondas - 32 litros - Branco",
+        "uf": "AL",
+        "ano": "2022",
+        "naturezasEncontradas": [
+          "CAPITAL"
+        ],
+        "unidadesEncontradas": [],
+        "valorUnitarioReferencia": 726,
+        "origem": "planilha-antiga",
+        "possuiPendenciaImpedativa": false,
+        "aptoParaImportacaoFutura": true
+      },
+      "rateios": [
+        {
+          "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+          "area": "ESCOLA PENAL",
+          "natureza": "CAPITAL",
+          "quantidadeReferencia": 10,
+          "valorPrevistoReferencia": 726,
+          "valorExecutadoReferencia": 0,
+          "percentualQuantidade": 100,
+          "percentualValor": 100
+        }
+      ]
+    },
+    "linhaPlanilhaAntiga": {
+      "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+      "aba": "AL",
+      "linha": 12,
+      "valores": [
+        "AL",
+        "Convênio",
+        937221,
+        2022,
+        "ESCOLA PENAL",
+        "CAPITAL",
+        "Forno de Microondas - 32 litros - Branco",
+        "1.0",
+        726,
+        726,
+        null,
+        726,
+        0
+      ],
+      "quantidadeOriginal": "1.0",
+      "tipoQuantidadeOriginal": "string"
+    }
+  },
+  "diagnosticoQuantidade": {
+    "quantidadeOriginalPlanilha": "1.0",
+    "quantidadeOriginalEsperada": 1,
+    "conversaoAtualPorMoedaParaNumero": 10,
+    "causaProvavel": "A extração de rateio inicial usa moedaParaNumeroProfor também para quantidade. Para a string \"1.0\", o parser monetário remove o ponto e converte para 10.",
+    "evidencia": "Planilha antiga linha 12/AL possui quantidade \"1.0\"; banco e payload da #55 mostram quantidade 10; valores previsto/unitário/saldo permanecem 726, indicando quantidade efetiva 1."
+  },
+  "comparacao": {
+    "descricao": {
+      "memoria": "Forno de Microondas - 32 litros - Branco",
+      "pad": "Forno de Micro-ondas a partir de- 32 lit",
+      "compativel": false,
+      "observacao": "Descrições indicam mesmo bem, mas PAD está truncado/reescrito e a normalização atual não considera equivalência automática."
+    },
+    "natureza": {
+      "memoria": "CAPITAL",
+      "pad": "CAPITAL",
+      "compativel": true
+    },
+    "quantidade": {
+      "memoriaPayload": 10,
+      "memoriaPlanilhaOriginal": 1,
+      "pad": 1,
+      "compativelPayload": false,
+      "compativelPlanilha": true
+    },
+    "valorUnitario": {
+      "memoria": 726,
+      "pad": 726,
+      "compativel": true
+    },
+    "valorPrevisto": {
+      "memoria": 726,
+      "pad": 726,
+      "compativel": true
+    },
+    "valorExecutado": {
+      "memoria": 0,
+      "pad": 0,
+      "compativel": true
+    },
+    "saldo": {
+      "memoria": 726,
+      "pad": 726,
+      "compativel": true
+    }
+  },
+  "conclusao": "A #55 tem correspondente no PAD novo pela #8. O vínculo #55 -> #8 é tecnicamente provável. A divergência de quantidade decorre de inconsistência de leitura/agregação da memória, não de divergência material do PAD, pois a quantidade original da planilha é 1.0 e os valores fecham integralmente com o PAD.",
+  "recomendacao": "Não confirmar ausência. Tratar como substituição/atualização de descrição com saneamento assistido, usando a #8 já aceita como item PAD e registrando posteriormente decisão auditável para a #55, se autorizado. Antes de saneamentos em massa, corrigir ou isolar o parser de quantidade para não transformar strings decimais como \"1.0\" em 10.",
+  "riscos": [
+    "#8 já está ACEITO por saneamento anterior com rateio ESCOLA; uma decisão futura na #55 deve evitar duplicar efeito no plano dry-run.",
+    "Há outros itens da planilha antiga com quantidade em string decimal que podem ter sido inflados pelo mesmo parser.",
+    "A descrição PAD está truncada/reescrita; o vínculo deve continuar humano/assistido, não automático amplo."
+  ]
+}

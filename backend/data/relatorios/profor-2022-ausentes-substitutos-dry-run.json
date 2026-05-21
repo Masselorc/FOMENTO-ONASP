@@ -1,13 +1,13 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-21T21:23:17.304Z",
+    "geradoEm": "2026-05-21T22:01:41.608Z",
     "modo": "dry-run",
     "totalAusentesAnalisados": 32,
     "substituto_compativel": 0,
-    "possivel_substituto_com_divergencia": 2,
-    "ausencia_real_sem_substituto": 23,
+    "possivel_substituto_com_divergencia": 1,
+    "ausencia_real_sem_substituto": 0,
     "dados_insuficientes": 0,
-    "ja_decidido": 7
+    "ja_decidido": 31
   },
   "vinculosSugeridos": [],
   "analisados": [
@@ -16,10 +16,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Ar condicionado Split 24000 BTUs (CORREG",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -27,10 +27,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Ar condicionado Split 36000 BTUs (ESCOLA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -38,10 +38,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -49,10 +49,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Cadeira Longarina plástica 03 Lugares -",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -60,10 +60,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Cadeira Secretária Fixa, Preta, pé palit",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -71,10 +71,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::CAFETEIRA ELETRICA TRADICIONAL INDUSTRIA",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Cafeteira Elétrica Tradicional Industria",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -82,10 +82,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::COMPUTADOR DESKTOP (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Computador Desktop (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -93,10 +93,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::FORNO DE MICROONDAS - 20L BRANCO (OUVID",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Forno de Microondas - 20L Branco (OUVID",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -111,9 +111,9 @@
       "substituto": {
         "divergenciaSubstitutaId": 8,
         "tipoSubstituto": "item_novo_sem_rateio",
-        "statusSubstituto": "PENDENTE",
+        "statusSubstituto": "ACEITO",
         "descricaoPadSubstituta": "Forno de Micro-ondas a partir de- 32 lit",
-        "decisaoSubstitutaJaAceita": false,
+        "decisaoSubstitutaJaAceita": true,
         "criterios": {
           "mesmoConvenio": true,
           "mesmaUf": true,
@@ -132,10 +132,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::FRIGOBAR 71L (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Frigobar 71L (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -143,10 +143,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::GELADEIRA FROST FREE DUPLEX 400 LITROS (",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Geladeira frost free duplex 400 litros (",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -154,10 +154,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::GRAVADOR DE AUDIO DIGITAL 32GB (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Gravador de áudio digital 32GB (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -165,10 +165,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::HD EXTERNO 2TB (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "HD Externo 2TB (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -176,10 +176,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL TANQUE DE TIN",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Impressora multifuncional Tanque de Tin",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -187,10 +187,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::KIT VIDEOCONFERENCIA (CORREGEDORIA - 03",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Kit videoconferência (CORREGEDORIA - 03",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -198,10 +198,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::MESA ESCRITORIO REDONDA - 1,20M (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -209,10 +209,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::NOBREAK 1200VA (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Nobreak 1200VA (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -220,10 +220,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::NOTEBOOK (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Notebook (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -231,10 +231,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::PEN DRIVE 64GB (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Pen drive 64Gb (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -242,38 +242,21 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::POLTRONAS (CORREGEDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Poltronas (CORREGEDORIA)",
-      "classificacao": "possivel_substituto_com_divergencia",
-      "motivo": "Há candidato a substituto (#13), mas com divergência material — exige revisão humana.",
-      "substituto": {
-        "divergenciaSubstitutaId": 13,
-        "tipoSubstituto": "item_novo_sem_rateio",
-        "statusSubstituto": "PENDENTE",
-        "descricaoPadSubstituta": "kit com 2 Poltronas (CORREGEDORIA).",
-        "decisaoSubstitutaJaAceita": false,
-        "criterios": {
-          "mesmoConvenio": true,
-          "mesmaUf": true,
-          "naturezaCompativel": true,
-          "quantidadeCompativel": false,
-          "valorUnitarioCompativel": false,
-          "valorPrevistoCompativel": true,
-          "valorExecutadoCompativel": true,
-          "saldoCompativel": true,
-          "descricaoCompativel": false
-        }
-      }
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
+      "substituto": null
     },
     {
       "id": 67,
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::PROJETOR MULTIMIDIA 3.000 LUMENS (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -281,10 +264,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::QUADRO LOUSA BRANCA 250X120CM (ESCOLA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Quadro lousa branca 250x120cm (ESCOLA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -292,10 +275,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::TELA DE PROJECAO 2X2 RETRATIL COM TRIPE",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Tela de projeção 2x2 retrátil com tripé",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -303,10 +286,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::TELEVISAO 50 (CORREGEDORIA - 03 UN. E OU",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Televisão 50 (CORREGEDORIA - 03 UN. E OU",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {
@@ -314,10 +297,10 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::WEBCAM FULL HD (OUVIDORIA)",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Webcam full HD (OUVIDORIA)",
-      "classificacao": "ausencia_real_sem_substituto",
-      "motivo": "Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real.",
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (ACEITO).",
       "substituto": null
     },
     {

@@ -1,6 +1,6 @@
 # Auditoria de itens ausentes com substituto provável no PAD — PROFOR 2022 (dry-run)
 
-*Gerado em:* 21/05/2026, 18:23:17
+*Gerado em:* 21/05/2026, 19:01:41
 
 Auditoria somente leitura: não altera o banco, não publica, não confirma ausência.
 
@@ -9,10 +9,10 @@ Auditoria somente leitura: não altera o banco, não publica, não confirma aus�
 | Classificação | Quantidade |
 | :--- | :---: |
 | **Substituto compatível** | 0 |
-| Possível substituto com divergência | 2 |
-| Ausência real sem substituto | 23 |
+| Possível substituto com divergência | 1 |
+| Ausência real sem substituto | 0 |
 | Dados insuficientes | 0 |
-| Já decidido | 7 |
+| Já decidido | 31 |
 | **Total de ausentes analisados** | **32** |
 
 ## Vínculos sugeridos (ausente → substituto)
@@ -23,31 +23,31 @@ Nenhum vínculo sugerido nesta execução.
 
 | ID | Convênio | Status | Classificação | Substituto | Motivo |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| #47 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #48 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #49 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #50 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #51 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #52 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #53 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #54 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
+| #47 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #48 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #49 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #50 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #51 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #52 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #53 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #54 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #55 | 937221 | `PENDENTE` | **possivel_substituto_com_divergencia** | #8 | Há candidato a substituto (#8), mas com divergência material — exige revisão humana. |
-| #56 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #57 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #58 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #59 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #60 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #61 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #62 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #63 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #64 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #65 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #66 | 937221 | `PENDENTE` | **possivel_substituto_com_divergencia** | #13 | Há candidato a substituto (#13), mas com divergência material — exige revisão humana. |
-| #67 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #68 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #69 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #70 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
-| #71 | 937221 | `PENDENTE` | **ausencia_real_sem_substituto** | — | Nenhum item correspondente no PAD com dados materiais compatíveis. Tratar como ausência real. |
+| #56 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #57 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #58 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #59 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #60 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #61 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #62 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #63 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #64 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #65 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #66 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #67 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #68 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #69 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #70 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
+| #71 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #72 | 937782 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #73 | 937782 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #74 | 937782 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |

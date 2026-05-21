@@ -1,6 +1,6 @@
 # PROFOR 2022 — Comparação planoAplicacao antigo × reconstruído PAD (dry-run)
 
-Gerado em: 2026-05-21T19:32:22.772Z
+Gerado em: 2026-05-21T22:04:50.346Z
 Modo: dry-run
 Origem antiga: memoria-rateio-persistida (abas-uf capturadas)
 Origem nova: relatorios-pad-rateados
@@ -8,9 +8,9 @@ Origem nova: relatorios-pad-rateados
 ## Resumo geral
 
 - Linhas origem antiga: 567
-- Linhas reconstruídas (PAD): 606
+- Linhas reconstruídas (PAD): 628
 - Itens iguais: 93
-- Itens novos: 8
+- Itens novos: 30
 - Itens ausentes: 34
 - Quantidade divergente: 387
 - Valor previsto divergente: 13
@@ -18,30 +18,30 @@ Origem nova: relatorios-pad-rateados
 - Saldo divergente: 26
 - Área divergente: 0
 - Natureza divergente: 0
-- Diferenças críticas: 8
-- Avisos: 206
-- Diferenças esperadas por atualização PAD: 6
-- Diferenças por pendência de decisão: 213
+- Diferenças críticas: 30
+- Avisos: 211
+- Diferenças esperadas por atualização PAD: 7
+- Diferenças por pendência de decisão: 180
 - Diferenças saneadas por decisão (dry-run): 0
-- Ausências confirmadas por decisão (dry-run): 0
+- Ausências confirmadas por decisão (dry-run): 27
 - Itens ambíguos: 49
 
 ## Decisões de revisão (dry-run)
 
-- Decisões resolutivas encontradas: 14
-- Decisões interpretadas em dry-run: 14
-- Decisões com efeito na reconstrução: 14
-- Decisões sem efeito na reconstrução: 0
-- Decisões não aplicáveis: 0
-- Bloqueios de segurança pré-ativação: 0
+- Decisões resolutivas encontradas: 68
+- Decisões interpretadas em dry-run: 64
+- Decisões com efeito na reconstrução: 37
+- Decisões sem efeito na reconstrução: 27
+- Decisões não aplicáveis: 4
+- Bloqueios de segurança pré-ativação: 10
 
 ## Totais origem antiga × reconstrução PAD
 
 | Plano | Linhas | Valor previsto | Valor executado | Saldo |
 | --- | ---: | ---: | ---: | ---: |
 | Origem antiga | 567 | 10.664.015,48 | 3.202.695,90 | 7.461.319,58 |
-| Reconstrução PAD | 606 | 10.552.330,29 | 3.217.739,50 | 7.334.590,79 |
-| Diferença | 39 | -111.685,19 | 15.043,60 | -126.728,79 |
+| Reconstrução PAD | 628 | 10.661.872,89 | 3.217.739,50 | 7.444.133,39 |
+| Diferença | 61 | -2.142,59 | 15.043,60 | -17.186,19 |
 
 ## Aptidão
 
@@ -50,10 +50,10 @@ Origem nova: relatorios-pad-rateados
 
 ## Conclusão operacional
 
-- Reconstrução NÃO apta para ativação: 30 impedimento(s) registrado(s).
+- Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).
 - Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.
-- Diferença total origem antiga × reconstrução PAD: previsto -111685.19, executado 15043.6, saldo -126728.79.
-- Diferenças críticas: 8. Itens ambíguos: 49.
+- Diferença total origem antiga × reconstrução PAD: previsto -2142.59, executado 15043.6, saldo -17186.19.
+- Diferenças críticas: 30. Itens ambíguos: 49.
 - Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao.
 
 ## Amostra de diferenças críticas
@@ -66,4 +66,16 @@ Origem nova: relatorios-pad-rateados
 - [novo] 937782 | OUVIDORIA | Contratação de 02 (dois) Auxiliares Admi
 - [novo] 937782 | OUVIDORIA | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb
 - [novo] 937782 | CORREGEDORIA | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb
+- [novo] 937221 | ESCOLA PENAL | Ar condicionado Split 60.000 BTUs (ESCOLA)
+- [novo] 937221 | CORREGEDORIA | Ar condicionado split, capacidade de 12.
+- [novo] 937221 | CORREGEDORIA | Ar condicionado tipo split, capacidade 3
+- [novo] 937221 | OUVIDORIA | Ar-condicionado tipo Split, capacidade d
+- [novo] 937221 | OUVIDORIA | Cafeteira elétrica 1,0 litros bivolt
+- [novo] 937221 | CORREGEDORIA | EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V
+- [novo] 937221 | OUVIDORIA | Equipamentos de rede (switches e roteado
+- [novo] 937221 | ESCOLA | Forno de Micro-ondas a partir de- 32 lit
+- [novo] 937221 | OUVIDORIA | Forno de Microondas - 20L - (OUVIDORIA)
+- [novo] 937221 | CORREGEDORIA | Fragmentadora e papel - Corregedoria
+- [novo] 937221 | OUVIDORIA | Frigobar 45L INVERTER BIVOLT (OUVIDORIA)
+- [novo] 937221 | OUVIDORIA | Impressora multifuncional (OUVIDORIA)
 
