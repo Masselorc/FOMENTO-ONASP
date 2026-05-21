@@ -1985,8 +1985,14 @@ async function carregarLogoParaPDF() {
             return 'warning';
         }
 
-        function renderBadgeRevisao(valor, classe = 'secondary') {
-            return `<span class="badge text-bg-${classe} revisao-badge">${escapeHtml(valor || '-')}</span>`;
+        function renderBadgeRevisao(valor, classe = 'secondary', titulo = '') {
+            const titleAttr = titulo ? ` title="${escapeHtml(titulo)}"` : '';
+            return `<span class="badge text-bg-${classe} revisao-badge"${titleAttr}>${escapeHtml(valor || '-')}</span>`;
+        }
+
+        function calcularBloqueioEfetivoRevisao(item) {
+            const status = String(item.status || '').toUpperCase();
+            return item.bloqueiaPublicacao === true && ['PENDENTE', 'EM_REVISAO'].includes(status);
         }
 
         function obterValorAninhadoRevisao(objeto, caminhos = []) {
@@ -2697,10 +2703,18 @@ async function carregarLogoParaPDF() {
                             <h2>${escapeHtml(divergencia.tipoAlerta || 'Divergência')}</h2>
                             <div class="revisao-detail-meta">
                                 ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
-                                ${renderBadgeRevisao(divergencia.nivel, classeNivelRevisao(divergencia.nivel))}
+                                ${renderBadgeRevisao(`Nível original: ${divergencia.nivel}`, classeNivelRevisao(divergencia.nivel))}
                                 ${renderBadgeRevisao(`Convênio ${divergencia.numeroConvenio || '-'}`, 'secondary')}
                                 ${renderBadgeRevisao(`UF ${divergencia.uf || '-'}`, 'secondary')}
-                                ${renderBadgeRevisao(divergencia.bloqueiaPublicacao ? 'Bloqueia publicação' : 'Não bloqueia publicação', divergencia.bloqueiaPublicacao ? 'danger' : 'success')}
+                                ${(() => {
+                                    if (calcularBloqueioEfetivoRevisao(divergencia)) {
+                                        return renderBadgeRevisao('Bloqueio ativo', 'danger');
+                                    } else if (divergencia.bloqueiaPublicacao === true) {
+                                        return renderBadgeRevisao('Bloqueio original saneado', 'secondary');
+                                    } else {
+                                        return renderBadgeRevisao('Não bloqueante', 'success');
+                                    }
+                                })()}
                             </div>
                         </div>
                     </div>
@@ -2842,7 +2856,16 @@ async function carregarLogoParaPDF() {
                         <td>${escapeHtml(item.tipoAlerta || '-')}</td>
                         <td>${escapeHtml(item.campoAfetado || '-')}</td>
                         <td>${escapeHtml(item.motivoProvavel || item.acaoSugerida || '-')}</td>
-                        <td>${renderBadgeRevisao(formatarBooleanoRevisao(item.bloqueiaPublicacao), item.bloqueiaPublicacao ? 'danger' : 'success')}</td>
+                        <td>${(() => {
+                            if (calcularBloqueioEfetivoRevisao(item)) {
+                                return renderBadgeRevisao('Sim', 'danger');
+                            } else if (item.bloqueiaPublicacao === true) {
+                                return renderBadgeRevisao('Não — resolvido', 'secondary', 'Bloqueio original saneado por decisão.');
+                            } else {
+                                return renderBadgeRevisao('Não', 'success');
+                            }
+                        })()}</td>
+
                         <td class="text-end">
                             <button type="button" class="btn btn-sm btn-outline-primary" data-revisao-abrir="${escapeHtml(String(item.id))}">
                                 Revisar
@@ -2915,7 +2938,8 @@ async function carregarLogoParaPDF() {
                         <label><span>Convênio</span><input id="revisao-filtro-convenio" class="form-control" placeholder="937782"></label>
                         <label><span>UF</span><input id="revisao-filtro-uf" class="form-control" maxlength="2" placeholder="AC"></label>
                         <label><span>Bloqueia publicação</span><select id="revisao-filtro-bloqueia" class="form-select"><option value="">Todos</option><option value="true">Sim</option><option value="false">Não</option></select></label>
-                        <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-sem-decisao"><span>Sem decisão resolutiva</span></label>
+                        <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-sem-decisao" checked><span>Sem decisão resolutiva</span></label>
+
                         <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-com-decisao"><span>Com decisão resolutiva</span></label>
                         <div class="revisao-filter-actions">
                             <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
@@ -3006,11 +3030,22 @@ async function carregarLogoParaPDF() {
             const form = document.getElementById('form-revisao-filtros');
             const semDecisao = document.getElementById('revisao-filtro-sem-decisao');
             const comDecisao = document.getElementById('revisao-filtro-com-decisao');
+            const statusSelect = document.getElementById('revisao-filtro-status');
             semDecisao?.addEventListener('change', () => {
                 if (semDecisao.checked && comDecisao) comDecisao.checked = false;
             });
             comDecisao?.addEventListener('change', () => {
                 if (comDecisao.checked && semDecisao) semDecisao.checked = false;
+            });
+            statusSelect?.addEventListener('change', () => {
+                const valor = statusSelect.value;
+                if (['ACEITO', 'CORRIGIDO', 'REJEITADO', 'REVERTIDO'].includes(valor)) {
+                    if (comDecisao) comDecisao.checked = true;
+                    if (semDecisao) semDecisao.checked = false;
+                } else if (['PENDENTE', 'EM_REVISAO'].includes(valor)) {
+                    if (semDecisao) semDecisao.checked = true;
+                    if (comDecisao) comDecisao.checked = false;
+                }
             });
             form?.addEventListener('submit', async (event) => {
                 event.preventDefault();

@@ -1,5 +1,30 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Etapa 9.3.0 - Melhoria de UX na Revisão de Divergências PAD x Memória
+
+- Branch atual: `main`.
+- Objetivo:
+  - Melhorar a UX da tela de revisão de divergências separando visualmente o bloqueio original, o bloqueio efetivo atual pós-decisão resolutiva, e o status da decisão.
+  - Implementar lógica no frontend para marcar um item resolvido (ex: `ACEITO` ou `CORRIGIDO`) como não-bloqueante efetivo ("Não — resolvido"), removendo a marcação de bloqueio ativo e impeditivo.
+  - Definir o filtro "Sem decisão resolutiva" como selecionado por padrão e sincronizar automaticamente as opções de visualização ao alterar o status no select de busca.
+- Modificações realizadas:
+  - `frontend/js/app.js`:
+    - Adicionado helper `calcularBloqueioEfetivoRevisao(item)` para calcular o bloqueio atual.
+    - Modificado `renderBadgeRevisao` para aceitar um terceiro parâmetro de título (tooltip HTML nativo).
+    - Atualizada a tabela de divergências para renderizar a coluna "Bloqueia" usando badges HSL apropriados: vermelho ("Sim") para bloqueios ativos, cinza ("Não — resolvido") para bloqueios originais saneados com tooltip explicativa, e verde ("Não") para itens não-bloqueantes.
+    - Atualizado o cabeçalho dos detalhes da divergência para exibir "Bloqueio ativo", "Bloqueio original saneado" ou "Não bloqueante", bem como especificar o nível original como "Nível original: <nivel>".
+    - Definida a caixa de seleção "Sem decisão resolutiva" como checked por padrão.
+    - Implementada sincronização no evento de alteração do select de status para gerenciar o estado dos checkboxes.
+- Validações:
+  - Testes unitários do backend (`node --test tests/services/*.test.js`) executados e 100% aprovados.
+  - Validação de sintaxe (`node scripts/validar-syntax.js`) com sucesso.
+  - Testes E2E do Playwright rodando com sucesso.
+- Risco de regressão:
+  - Inexistente no backend ou banco de dados.
+  - Baixo no frontend, totalmente contido na tela de revisão de divergências.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: Etapa 9.3.0 - aplicação assistida `item_nao_apto`
 
 - Branch atual: `main`.
