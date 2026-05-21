@@ -33,7 +33,9 @@ function executar() {
 
   console.log("Auditoria de aplicação de decisões PAD x memória (dry-run) PROFOR 2022");
   console.log(`Decisões resolutivas encontradas: ${aplicacao.totalDecisoesResolutivasEncontradas}`);
-  console.log(`Decisões aplicáveis em dry-run: ${aplicacao.totalDecisoesAplicadasDryRun}`);
+  console.log(`Decisões interpretadas em dry-run: ${aplicacao.totalDecisoesInterpretadasDryRun}`);
+  console.log(`  com efeito na reconstrução: ${aplicacao.totalDecisoesComEfeitoNaReconstrucao}`);
+  console.log(`  sem efeito na reconstrução: ${aplicacao.totalDecisoesSemEfeitoNaReconstrucao}`);
   console.log(`Decisões não aplicáveis: ${aplicacao.totalDecisoesNaoAplicaveis}`);
   imprimirLista("Decisões aplicáveis em dry-run:", aplicacao.decisoesAplicadasDryRun);
   imprimirLista("Decisões não aplicáveis:", aplicacao.decisoesNaoAplicaveis);

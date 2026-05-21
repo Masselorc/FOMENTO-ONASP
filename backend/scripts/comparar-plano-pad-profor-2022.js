@@ -45,7 +45,9 @@ function imprimirResumo(resultado, arquivoJson, arquivoMarkdown) {
   console.log(`Diferenças saneadas por decisão (dry-run): ${resumo.totalDiferencasSaneadasPorDecisao}`);
   console.log(`Ausências confirmadas por decisão (dry-run): ${resumo.totalAusenciasConfirmadasPorDecisao}`);
   console.log(`Decisões resolutivas encontradas: ${resumo.totalDecisoesResolutivasEncontradas}`);
-  console.log(`Decisões aplicadas em dry-run: ${resumo.totalDecisoesAplicadasDryRun}`);
+  console.log(`Decisões interpretadas em dry-run: ${resumo.totalDecisoesInterpretadasDryRun}`);
+  console.log(`  com efeito na reconstrução: ${resumo.totalDecisoesComEfeitoNaReconstrucao}`);
+  console.log(`  sem efeito na reconstrução: ${resumo.totalDecisoesSemEfeitoNaReconstrucao}`);
   console.log(`Decisões não aplicáveis: ${resumo.totalDecisoesNaoAplicaveis}`);
   console.log(
     `Totais — antigo: previsto ${totaisAntigoNovo.antigo.valorPrevisto}, `

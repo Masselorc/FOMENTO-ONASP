@@ -21,7 +21,16 @@ const TIPOS_RATEIO = new Set([
   "correcao_de_rateio",
 ]);
 const TIPOS_AUSENCIA = new Set(["item_ausente_no_pad", "item_substituido"]);
-const TIPOS_NAO_APTO = new Set(["item_nao_apto", "item_conhecido_nao_apto"]);
+// `item_nao_apto` é o tipo de divergência gerado na fila de revisão;
+// `item_conhecido_nao_apto` é o tipo do alerta do leitor/matching;
+// `item_conhecido_nao_apto_usado` é o tipo do impedimento interno da
+// reconstrução — incluído aqui como alias para evitar incompatibilidade caso
+// uma divergência futura chegue à fila com esse rótulo.
+const TIPOS_NAO_APTO = new Set([
+  "item_nao_apto",
+  "item_conhecido_nao_apto",
+  "item_conhecido_nao_apto_usado",
+]);
 const TIPOS_CONSISTENCIA = new Set(["quantidade_valor_unitario_inconsistente"]);
 const TIPOS_CAMPO = new Set([
   "valor_diferente",
@@ -376,6 +385,15 @@ function carregarAplicacaoDecisoesDryRun() {
     }
   }
 
+  // Métricas desambiguadas: uma decisão "interpretada" foi traduzida num efeito
+  // técnico determinístico; nem toda interpretada altera a reconstrução —
+  // REJEITADO/REVERTIDO mantêm o impedimento (afetaReconstrucao = false).
+  const totalDecisoesComEfeitoNaReconstrucao = decisoesAplicadasDryRun.filter(
+    (registro) => registro.efeito && registro.efeito.afetaReconstrucao === true
+  ).length;
+  const totalDecisoesSemEfeitoNaReconstrucao =
+    decisoesAplicadasDryRun.length - totalDecisoesComEfeitoNaReconstrucao;
+
   return {
     geradoEm: new Date().toISOString(),
     modo: "dry-run",
@@ -384,8 +402,14 @@ function carregarAplicacaoDecisoesDryRun() {
     decisoesAplicadasDryRun,
     decisoesNaoAplicaveis,
     totalDecisoesResolutivasEncontradas: decisoesResolutivasEncontradas.length,
+    // `totalDecisoesInterpretadasDryRun` é a contagem semântica clara das
+    // decisões traduzidas em efeito técnico; `totalDecisoesAplicadasDryRun` é
+    // mantido como alias dela para compatibilidade com relatórios existentes.
+    totalDecisoesInterpretadasDryRun: decisoesAplicadasDryRun.length,
     totalDecisoesAplicadasDryRun: decisoesAplicadasDryRun.length,
     totalDecisoesNaoAplicaveis: decisoesNaoAplicaveis.length,
+    totalDecisoesComEfeitoNaReconstrucao,
+    totalDecisoesSemEfeitoNaReconstrucao,
   };
 }
 

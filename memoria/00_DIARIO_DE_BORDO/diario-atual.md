@@ -1,5 +1,46 @@
 # Diário de bordo
 
+## 20/05/2026 - PROFOR 2022: Etapa 8.1 - Ajuste fino (alias de tipo não apto e métricas desambiguadas)
+
+- Branch atual: `main`. Rodada curta de ajuste sobre a Etapa 8.1.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js`;
+  - `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`;
+  - `backend/services/profor-2022/profor-pad-plano-comparador-service.js`;
+  - `backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js`;
+  - `backend/scripts/reconstruir-plano-pad-profor-2022.js`;
+  - `backend/scripts/comparar-plano-pad-profor-2022.js`;
+  - `tests/services/profor-pad-decisao-aplicacao.test.js`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`.
+- Ajuste 1 — risco provável futuro: `TIPOS_NAO_APTO` passou a aceitar também
+  `item_conhecido_nao_apto_usado` como alias, além de `item_nao_apto` e
+  `item_conhecido_nao_apto`. Assim, se uma divergência futura na fila chegar com
+  o rótulo do impedimento interno da reconstrução, a decisão de liberação ainda
+  será reconhecida pelo motor.
+- Ajuste 2 — melhoria recomendada: as métricas de decisão foram desambiguadas.
+  Além de `totalDecisoesAplicadasDryRun` (mantido como alias), o motor e os
+  relatórios passaram a expor `totalDecisoesInterpretadasDryRun`,
+  `totalDecisoesComEfeitoNaReconstrucao` e `totalDecisoesSemEfeitoNaReconstrucao`
+  (`REJEITADO`/`REVERTIDO` são interpretadas, mas sem efeito na reconstrução).
+- Validações executadas:
+  - `node --check` nos 7 arquivos alterados;
+  - `npm run validar:syntax` (56 arquivos);
+  - `node --test tests/services/profor-pad-decisao-aplicacao.test.js` (15 casos,
+    todos aprovados — inclui caso novo de alias de tipo não apto);
+  - `npm run profor:pad:decisoes:auditar-aplicacao-dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `git diff --check` (apenas avisos de fim de linha LF/CRLF);
+  - `git ls-files "*.sqlite*"` (nada versionado); `frontend/data/publicados`
+    sem alterações.
+- Resultado: base sem decisões resolutivas — todas as métricas de decisão em
+  `0`; reconstrução com `47` impedimentos e comparador inalterados;
+  `aptoParaAtivacao` e `aptoParaPublicacao` continuam `false`.
+- Escopo: sem alteração de banco, origem ativa, publicação, frontend ou API;
+  nenhuma decisão aplicada materialmente ao `planoAplicacao`.
+- Rollback: `git revert`/reversão dos arquivos acima.
+
 ## 20/05/2026 - PROFOR 2022: Etapa 8.1 - Motor de aplicação material das decisões de revisão em dry-run
 
 - Branch atual: `main`.

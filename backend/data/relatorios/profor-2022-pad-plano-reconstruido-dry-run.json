@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-21T00:05:13.500Z",
+  "geradoEm": "2026-05-21T00:16:25.102Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -17361,8 +17361,11 @@
     "totalImpedimentos": 47,
     "totalAlertas": 106,
     "totalDecisoesResolutivasEncontradas": 0,
+    "totalDecisoesInterpretadasDryRun": 0,
     "totalDecisoesAplicadasDryRun": 0,
     "totalDecisoesNaoAplicaveis": 0,
+    "totalDecisoesComEfeitoNaReconstrucao": 0,
+    "totalDecisoesSemEfeitoNaReconstrucao": 0,
     "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 0,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "valorPrevistoReconstruidoTotal": 10326096.83,

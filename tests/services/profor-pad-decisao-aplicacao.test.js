@@ -70,6 +70,14 @@ test("item não apto ACEITO libera uso na reconstrução", () => {
   assert.equal(r.efeito.tipo, "nao_apto_liberado");
 });
 
+test("aliases de item não apto são reconhecidos pelo motor", () => {
+  for (const tipo of ["item_conhecido_nao_apto", "item_conhecido_nao_apto_usado"]) {
+    const r = interpretarDecisaoRevisao(divergencia(tipo), decisao("ACEITO"));
+    assert.equal(r.aplicavel, true, `tipo ${tipo} deveria ser aplicável`);
+    assert.equal(r.efeito.tipo, "nao_apto_liberado", `tipo ${tipo} deveria liberar`);
+  }
+});
+
 test("inconsistência quantidade × valor unitário ACEITO marca saneamento", () => {
   const r = interpretarDecisaoRevisao(divergencia("quantidade_valor_unitario_inconsistente"), decisao("ACEITO"));
   assert.equal(r.aplicavel, true);

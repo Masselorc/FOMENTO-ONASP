@@ -1235,9 +1235,14 @@ material.
   comparador a classifica como `ausencia_confirmada_por_decisao`);
   `REJEITADO`/`REVERTIDO` mantêm o alerta de ausência. O item não é apagado da
   memória.
-- `item_nao_apto` / `item_conhecido_nao_apto`: `ACEITO`/`CORRIGIDO` liberam o
-  uso do item na reconstrução dry-run, sem alterar `apto_para_importacao_futura`
-  no banco; `REJEITADO`/`REVERTIDO` mantêm o impedimento.
+- `item_nao_apto` / `item_conhecido_nao_apto` / `item_conhecido_nao_apto_usado`:
+  `ACEITO`/`CORRIGIDO` liberam o uso do item na reconstrução dry-run, sem
+  alterar `apto_para_importacao_futura` no banco; `REJEITADO`/`REVERTIDO` mantêm
+  o impedimento. O tipo de divergência gerado na fila é `item_nao_apto`;
+  `item_conhecido_nao_apto` (alerta do leitor/matching) e
+  `item_conhecido_nao_apto_usado` (impedimento interno da reconstrução) são
+  aceitos como aliases, para evitar incompatibilidade futura caso a fila receba
+  uma divergência com esse rótulo.
 - `quantidade_valor_unitario_inconsistente`: `ACEITO` marca a inconsistência
   como saneada em dry-run, mantendo os totais do PAD como fonte de verdade, sem
   recalcular o total previsto.
@@ -1266,6 +1271,13 @@ decisões, aplica `0` e os relatórios da Etapa 5.6+6+7 permanecem com os mesmos
 números. `aptoParaAtivacao` e `aptoParaPublicacao` continuam `false`. Esta etapa
 não cria migration, não cria estrutura persistida nova, não cria front-end e não
 aplica decisão materialmente ao `planoAplicacao` oficial.
+
+**Métricas desambiguadas das decisões.** Como `REJEITADO`/`REVERTIDO` são
+decisões interpretadas mas com `afetaReconstrucao = false`, os relatórios
+expõem, além de `totalDecisoesAplicadasDryRun` (mantido como alias por
+compatibilidade): `totalDecisoesInterpretadasDryRun` (decisões traduzidas em
+efeito técnico determinístico), `totalDecisoesComEfeitoNaReconstrucao` e
+`totalDecisoesSemEfeitoNaReconstrucao`. `interpretadas = comEfeito + semEfeito`.
 
 ---
 

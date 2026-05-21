@@ -433,8 +433,11 @@ function compararPlanosPadDryRun(opcoes = {}) {
       (item) => item.classificacao === "ausencia_confirmada_por_decisao"
     ).length,
     totalDecisoesResolutivasEncontradas: aplicacaoDecisoes.totalDecisoesResolutivasEncontradas,
+    totalDecisoesInterpretadasDryRun: aplicacaoDecisoes.totalDecisoesInterpretadasDryRun,
     totalDecisoesAplicadasDryRun: aplicacaoDecisoes.totalDecisoesAplicadasDryRun,
     totalDecisoesNaoAplicaveis: aplicacaoDecisoes.totalDecisoesNaoAplicaveis,
+    totalDecisoesComEfeitoNaReconstrucao: aplicacaoDecisoes.totalDecisoesComEfeitoNaReconstrucao,
+    totalDecisoesSemEfeitoNaReconstrucao: aplicacaoDecisoes.totalDecisoesSemEfeitoNaReconstrucao,
   };
 
   const conclusaoOperacional = montarConclusaoOperacional({
@@ -555,7 +558,9 @@ function montarMarkdownComparacao(resultado) {
   linhas.push("## Decisões de revisão (dry-run)");
   linhas.push("");
   linhas.push(`- Decisões resolutivas encontradas: ${resumo.totalDecisoesResolutivasEncontradas}`);
-  linhas.push(`- Decisões aplicadas em dry-run: ${resumo.totalDecisoesAplicadasDryRun}`);
+  linhas.push(`- Decisões interpretadas em dry-run: ${resumo.totalDecisoesInterpretadasDryRun}`);
+  linhas.push(`- Decisões com efeito na reconstrução: ${resumo.totalDecisoesComEfeitoNaReconstrucao}`);
+  linhas.push(`- Decisões sem efeito na reconstrução: ${resumo.totalDecisoesSemEfeitoNaReconstrucao}`);
   linhas.push(`- Decisões não aplicáveis: ${resumo.totalDecisoesNaoAplicaveis}`);
   linhas.push("");
   linhas.push("## Totais origem antiga × reconstrução PAD");

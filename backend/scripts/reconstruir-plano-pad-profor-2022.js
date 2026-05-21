@@ -23,7 +23,9 @@ function imprimirResumo(resultado, arquivoSaidaRelativo) {
   console.log(`Linhas reconstruídas: ${resumo.totalLinhasReconstruidas}`);
   console.log(`Convênios reconstruídos: ${resumo.totalConveniosReconstruidos}`);
   console.log(`Decisões resolutivas encontradas: ${resumo.totalDecisoesResolutivasEncontradas}`);
-  console.log(`Decisões aplicadas em dry-run: ${resumo.totalDecisoesAplicadasDryRun}`);
+  console.log(`Decisões interpretadas em dry-run: ${resumo.totalDecisoesInterpretadasDryRun}`);
+  console.log(`  com efeito na reconstrução: ${resumo.totalDecisoesComEfeitoNaReconstrucao}`);
+  console.log(`  sem efeito na reconstrução: ${resumo.totalDecisoesSemEfeitoNaReconstrucao}`);
   console.log(`Decisões não aplicáveis: ${resumo.totalDecisoesNaoAplicaveis}`);
   console.log(`Itens não aptos usados: ${resumo.totalItensConhecidosNaoAptosUsados}`);
   console.log(`Instrumentos fora da carteira: ${resumo.totalInstrumentosForaCarteira}`);
