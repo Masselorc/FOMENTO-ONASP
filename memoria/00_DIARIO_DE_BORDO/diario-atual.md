@@ -1,6 +1,59 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: Diagnóstico e Análise das 4 Diferenças Críticas no Comparador (Pós-divergência #23)
+
+- **Status**: Diagnóstico concluído.
+- **Objetivo**: Analisar as 4 diferenças críticas geradas pelo comparador após a aplicação da decisão assistida de rateio na divergência `#23`.
+- **Diagnóstico geral**:
+  - As 4 críticas do comparador são **efeito esperado** do ciclo de vida das divergências e das decisões aplicadas em dry-run;
+  - Não indicam regressão no motor de reconstrução ou no comparador;
+  - Não há falsos positivos no comparador. O tratamento de ambiguidade e duplicidades de linhas pelo comparador está 100% correto;
+  - Não há necessidade de alteração de código.
+
+### Detalhamento das 4 Diferenças Críticas (Convênio 937782 / AC)
+
+1. **Contratação de 01 (um) Supervisor por 12** (`OUVIDORIA / CUSTEIO`)
+   - **Valor antigo**: `R$ 0,00`
+   - **Valor reconstruído**: `R$ 89.532,00`
+   - **Diferença**: `+R$ 89.532,00`
+   - **Classificação**: `critica` (situação: `novo`)
+   - **Relação**: Divergência `#21` (`item_novo_sem_rateio`), aceita com 100% Ouvidoria/Custeio. Por ser um item novo adicionado ao PAD e inexistente na memória antiga, é correto que apareça como novo/crítico até a homologação final.
+2. **Contratação de 02 (dois) Auxiliares Admi** (`OUVIDORIA / CUSTEIO`)
+   - **Valor antigo**: `R$ 0,00`
+   - **Valor reconstruído**: `R$ 102.168,00`
+   - **Diferença**: `+R$ 102.168,00`
+   - **Classificação**: `critica` (situação: `novo`)
+   - **Relação**: Divergência `#22` (`item_novo_sem_rateio`), aceita com 100% Ouvidoria/Custeio. Mesma justificativa do item 1.
+3. **Notebook 4 núcleos 4.2ghz ram ddr 4 8gb** (`OUVIDORIA / CAPITAL`)
+   - **Valor antigo**: `R$ 0,00` (referente a esta chave exata)
+   - **Valor reconstruído**: `R$ 3.599,99`
+   - **Diferença**: `+R$ 3.599,99`
+   - **Classificação**: `critica` (situação: `novo`)
+   - **Relação**: Divergência `#23` (`item_novo_sem_rateio`), aceita com o rateio de 50% Ouvidoria / 50% Corregedoria.
+4. **Notebook 4 núcleos 4.2ghz ram ddr 4 8gb** (`CORREGEDORIA / CAPITAL`)
+   - **Valor antigo**: `R$ 0,00` (referente a esta chave exata)
+   - **Valor reconstruído**: `R$ 3.599,99`
+   - **Diferença**: `+R$ 3.599,99`
+   - **Classificação**: `critica` (situação: `novo`)
+   - **Relação**: Divergência `#23`.
+
+### Análise da Origem dos Notebooks (Itens 3 e 4) e Tratamento do Comparador
+
+- **Mudança de Descrição**: O PAD atualizou o item alterando a frequência de `2.4ghz` para `4.2ghz`. Por isso, o matching gerou um novo item (`#23`) e a ausência do antigo (`#76`).
+- **Estado do Saneamento**:
+  - A divergência `#23` (item novo) foi aceita com a aplicação do rateio antigo (50% Ouvidoria / 50% Corregedoria), gerando as duas novas linhas reconstruídas (itens 3 e 4).
+  - No entanto, a divergência `#76` (ausência do notebook `2.4ghz`) permanece `PENDENTE`. As linhas antigas de `2.4ghz` no valor total de `R$ 7.199,98` ainda são importadas no plano antigo.
+  - Como a ausência do item de `2.4ghz` ainda não foi confirmada por decisão resolutiva, o comparador aponta as duas linhas antigas como `ausente` (com classificação `diferenca_por_pendencia_de_decisao`) e as duas novas como `novo` (com classificação `critica`).
+  - **Conclusão**: O comportamento é o esperado. Quando a divergência `#76` for decidida como `ACEITO` (homologando a ausência do notebook antigo `2.4ghz` substituído), a diferença crítica e os alertas correspondentes serão saneados.
+
+### Validação de Ambiguidade e Duplicidades
+
+- O comparador utiliza a chave composta `numeroConvenio::descricao::area::natureza`. Caso uma mesma chave apareça mais de uma vez em qualquer um dos planos (ex: múltiplos ar condicionados na mesma área e natureza no convênio `937265`), o comparador rejeita qualquer consolidação ou correspondência às cegas e classifica os itens no grupo `itensAmbiguos` (total de 49 no baseline). Esse comportamento é essencial para evitar o mascaramento de divergências materiais em itens repetidos e está correto.
+
+---
+
 ## 21/05/2026 - PROFOR 2022: Etapa 9.3.1-A - aplicação assistida do rateio antigo compatível da divergência `#23`
+
 
 - Branch atual: `main`.
 - Objetivo:
