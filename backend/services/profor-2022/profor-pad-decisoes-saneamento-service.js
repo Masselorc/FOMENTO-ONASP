@@ -4,13 +4,15 @@ const path = require("node:path");
 const db = require("../../db/database");
 const {
   normalizarNumeroConvenio,
-  normalizarTextoProfor,
 } = require("./profor-plano-aplicacao-service");
 const {
   CAMINHO_DECISOES_PADRAO,
   VERSAO_ESQUEMA_DECISOES,
   DECISAO_PENDENTE,
 } = require("./profor-pad-saneamento-service");
+const {
+  ehSaldoResidualProfor,
+} = require("./profor-saldo-residual-service");
 
 const CAMINHO_RATEIOS_DRY_RUN_PADRAO = "backend/data/relatorios/profor-2022-pad-rateios-dry-run.json";
 
@@ -19,9 +21,6 @@ const AREAS_VALIDAS = ["OUVIDORIA", "CORREGEDORIA", "ESCOLA PENAL", "N/A"];
 
 // Tolerância para a soma de percentuais de rateio (centavos / arredondamento).
 const TOLERANCIA_PERCENTUAL = 0.01;
-
-// Regex que identifica descrições de saldo residual/remanescente.
-const REGEX_SALDO_RESIDUAL = /\bSALDO\s+(RESIDUAL|REMANESCENTE)\b/;
 
 const SECOES_DECISAO = [
   "equivalenciasConfirmadas",
@@ -341,7 +340,7 @@ function validarDescricoesResiduais(dados) {
   const problemas = [];
   const checar = (secao, entrada, descricao) => {
     if (!ehDecisao(entrada.decisao)) return;
-    if (REGEX_SALDO_RESIDUAL.test(normalizarTextoProfor(descricao))
+    if (ehSaldoResidualProfor(descricao)
       && !textoPreenchido(entrada.justificativa)) {
       problemas.push(problema({
         secao, id: entrada.id, codigo: "saldo_residual_sem_justificativa", nivel: "erro",

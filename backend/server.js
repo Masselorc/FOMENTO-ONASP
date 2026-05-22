@@ -900,6 +900,9 @@ async function rotearApi(req, res, pathname) {
       if (sp.has("operacionalEfetiva")) {
         filtros.operacionalEfetiva = lerBooleanQuery("operacionalEfetiva");
       }
+      if (sp.has("saldoResidual")) {
+        filtros.saldoResidual = lerBooleanQuery("saldoResidual");
+      }
       if (
         filtros.semDecisaoResolutiva !== undefined
         && filtros.comDecisaoResolutiva !== undefined

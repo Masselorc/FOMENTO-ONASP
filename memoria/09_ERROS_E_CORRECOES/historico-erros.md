@@ -871,3 +871,29 @@ Ao atualizar:
 **Validações recomendadas:** conferir `operacionalEfetiva=true`, `categoriaOperacional=falso_positivo_saneavel` e o detalhe da `#31` com PAD consolidado `50` unidades.
 
 **Rollback:** reverter o commit da integração; a tela volta a depender apenas da fila SQLite persistida.
+
+---
+
+## 22/05/2026 - PROFOR 2022: Saldo Residual pareado sem segregação por natureza
+
+**Classificação:** erro real corrigido
+
+**Contexto:** frente PAD/PROFOR 2022, divergências de `Saldo Residual` e `Saldo Remanescente`.
+
+**Problema:** itens de saldo residual/remanescente eram tratados pela chave operacional sem natureza suficiente e podiam ser rateados ou comparados como se pertencessem a áreas operacionais. A divergência `#44` comparava memória `CAPITAL` de R$ 22.351,09 com PAD `CUSTEIO` de R$ 71,36.
+
+**Evidência:** o payload da `#44` continha `memoria.natureza = CAPITAL` e `pad.natureza = CUSTEIO`; relatórios anteriores também continham caso histórico de `Saldo Residual` rateado entre OUVIDORIA, CORREGEDORIA e ESCOLA.
+
+**Causa provável:** regra de equivalência/rateio herdada de itens operacionais comuns, sem tratamento especializado para saldos técnicos não setorializados.
+
+**Correção aplicada:** criado serviço central de saldo residual/remanescente, auditoria dry-run específica, bloqueio de rateio manual em área operacional, reconstrução técnica com área `NAO INFORMADO`, comparador segregado por natureza e enriquecimento da tela/API com badge e alerta operacional.
+
+**Por que funcionou:** o fluxo passa a tratar `CAPITAL` e `CUSTEIO` como identidades distintas e impede efeito automático de decisões/rateios incompatíveis no dry-run, sem apagar histórico.
+
+**Como prevenir:** qualquer novo saneamento de saldo residual deve usar chave `numeroConvenio + descricaoNormalizada + natureza` e nunca distribuir valor por área operacional.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-saldo-residual-service.js`, `backend/scripts/auditar-saldos-residuais-profor-2022.js`, `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`, `backend/services/profor-2022/profor-pad-plano-comparador-service.js`, `backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js`, `frontend/js/app.js`.
+
+**Validações recomendadas:** `npm run profor:pad:saldos-residuais:auditar`, `npm run profor:pad:auditar-pendencias-profundo`, `npm run profor:pad:reconstruir-plano:dry-run`, `npm run profor:pad:comparar-plano:dry-run`, `npm run validar:services`.
+
+**Rollback:** reverter o commit e regenerar relatórios dry-run; não apagar divergências, decisões ou logs históricos.

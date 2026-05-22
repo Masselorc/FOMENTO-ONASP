@@ -2,6 +2,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const db = require("../db/database");
+const {
+  DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+  ehSaldoResidualProfor,
+} = require("../services/profor-2022/profor-saldo-residual-service");
 
 const SAIDA_JSON = "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json";
 const SAIDA_MD = "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.md";
@@ -24,6 +28,13 @@ const CATEGORIAS = [
   "decisao_antiga_com_payload_alterado",
   "duplicidade_ou_ambiguidade_pad",
   "dados_insuficientes",
+  "saldo_residual_natureza_divergente",
+  "saldo_residual_sem_correspondente_mesma_natureza",
+  "saldo_residual_rateado_indevidamente",
+  "saldo_residual_decisao_anterior_incompativel",
+  "saldo_residual_corrigido_sistemicamente",
+  "saldo_residual_revalidacao_necessaria",
+  "saldo_residual_ok_nao_setorializado",
 ];
 
 // Camada operacional: cada item recai em exatamente uma destas categorias,
@@ -46,6 +57,7 @@ const RELATORIOS = {
   seguranca: "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
   reconstrucao: "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
   comparacao: "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
+  saldosResiduais: "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json",
 };
 
 function repoRoot() {
@@ -349,6 +361,14 @@ function montarMapasRelatorios(relatorios) {
   }
 
   const ambiguidades = garantirArray(relatorios.comparacao?.itensAmbiguos);
+  const saldosResiduais = new Map();
+  for (const item of garantirArray(relatorios.saldosResiduais?.itens)) {
+    const id = Number(item.divergenciaId);
+    if (!Number.isFinite(id)) continue;
+    if (!saldosResiduais.has(id)) saldosResiduais.set(id, []);
+    saldosResiduais.get(id).push(item);
+  }
+  const saldosResiduaisDecisoes = garantirArray(relatorios.saldosResiduais?.decisoesAfetadas);
 
   return {
     ausentes,
@@ -359,6 +379,8 @@ function montarMapasRelatorios(relatorios) {
     naoReapresentadas,
     reapresentacaoIndeterminada,
     ambiguidades,
+    saldosResiduais,
+    saldosResiduaisDecisoes,
   };
 }
 
@@ -409,6 +431,17 @@ function classificarOperacional(item, divergencia, mapas) {
   const temBloqueioSeguranca = temPayloadAlterado || naoReapresentada || reapIndeterminada;
   const cls = new Set(item.classificacoes);
   const bloqueante = Boolean(divergencia.bloqueia_publicacao);
+
+  if (cls.has("saldo_residual_natureza_divergente")
+    || cls.has("saldo_residual_sem_correspondente_mesma_natureza")
+    || cls.has("saldo_residual_rateado_indevidamente")
+    || cls.has("saldo_residual_decisao_anterior_incompativel")) {
+    return {
+      categoria: "pendencia_operacional_real",
+      motivo: "Saldo residual/remanescente exige saneamento especifico por natureza e area tecnica nao setorializada.",
+      exigeDecisaoHumanaSubstantiva: true,
+    };
+  }
 
   // 1. Payload alterado após a decisão: exige revalidação humana antes da ativação.
   if (temPayloadAlterado) {
@@ -482,6 +515,30 @@ function classificarDivergencia(divergencia, mapas) {
   const recomendacoes = [];
   const statusPendente = STATUS_PENDENTES.has(String(divergencia.status || "").toUpperCase());
   const statusResolutivo = DECISOES_RESOLUTIVAS.has(String(divergencia.status || "").toUpperCase());
+  const registrosSaldoResidual = mapas.saldosResiduais.get(divergencia.id) || [];
+  const descricao = descricaoDaDivergencia(divergencia);
+
+  if (ehSaldoResidualProfor(descricao) || registrosSaldoResidual.length) {
+    const temNaturezaDivergente = registrosSaldoResidual.some((item) => item.classificacao === "saldo_residual_natureza_divergente" || item.misturaCapitalCusteio);
+    const temRateioIndevido = registrosSaldoResidual.some((item) => item.classificacao === "saldo_residual_rateado_indevidamente" || item.areaOperacionalIndevida);
+    const temDecisaoIncompativel = garantirArray(mapas.saldosResiduaisDecisoes).some((item) => item.divergenciaId === divergencia.id);
+    if (temNaturezaDivergente) {
+      categorias.add("saldo_residual_natureza_divergente");
+      evidencias.push(DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA);
+      recomendacoes.push("Manter como pendencia operacional real ate esclarecer correspondente da mesma natureza.");
+    } else if (temRateioIndevido) {
+      categorias.add("saldo_residual_rateado_indevidamente");
+      evidencias.push("Saldo residual/remanescente apareceu vinculado a area operacional.");
+      recomendacoes.push("Neutralizar rateio setorial no dry-run e manter area tecnica nao setorializada.");
+    } else {
+      categorias.add("saldo_residual_ok_nao_setorializado");
+      evidencias.push("Saldo residual/remanescente identificado; aplicar comparacao segregada por natureza.");
+      recomendacoes.push("Manter segregacao por natureza e area tecnica.");
+    }
+    if (temDecisaoIncompativel) {
+      categorias.add("saldo_residual_decisao_anterior_incompativel");
+    }
+  }
 
   if (divergencia.temDecisaoResolutiva || statusResolutivo) {
     categorias.add("ja_saneado_mas_ainda_pendente");
@@ -644,7 +701,7 @@ function classificarDivergencia(divergencia, mapas) {
     numeroConvenio: divergencia.numero_convenio,
     uf: divergencia.uf,
     tipoAlerta: tipo,
-    descricao: descricaoDaDivergencia(divergencia),
+    descricao,
     status: divergencia.status,
     nivel: divergencia.nivel,
     bloqueiaPublicacao: Boolean(divergencia.bloqueia_publicacao),
@@ -655,6 +712,10 @@ function classificarDivergencia(divergencia, mapas) {
     totalDecisoes: divergencia.decisoes.length,
     temDecisaoResolutiva: divergencia.temDecisaoResolutiva,
     totalLogs: divergencia.logs.length,
+    saldoResidualTecnico: ehSaldoResidualProfor(descricao) || registrosSaldoResidual.length > 0,
+    alertaSaldoResidual: (ehSaldoResidualProfor(descricao) || registrosSaldoResidual.length > 0)
+      ? DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA
+      : null,
   };
   const operacional = classificarOperacional(item, divergencia, mapas);
   item.classificacaoOperacional = operacional.categoria;

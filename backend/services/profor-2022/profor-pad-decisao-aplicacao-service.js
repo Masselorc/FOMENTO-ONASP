@@ -1,4 +1,11 @@
 const db = require("../../db/database");
+const {
+  DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+  ehSaldoResidualProfor,
+  areaSaldoResidualEhOperacional,
+  naturezaSaldoResidualValida,
+  normalizarNaturezaSaldoResidual,
+} = require("./profor-saldo-residual-service");
 
 /**
  * Etapa 8.1 — Motor de aplicação material das decisões de revisão em dry-run.
@@ -92,6 +99,50 @@ function validarRateioManual(rateios) {
   return { valido: false, motivo: "rateio sem percentuais nem valores de referência" };
 }
 
+function obterDescricaoSaldoResidualDivergencia(divergencia) {
+  const payload = divergencia?.payload || {};
+  return payload.descricaoPad
+    || payload.descricaoMemoria
+    || payload.pad?.descricao
+    || payload.depois?.descricao
+    || payload.memoria?.descricao
+    || payload.antes?.descricao
+    || divergencia?.valorNovo
+    || divergencia?.valorAnterior
+    || divergencia?.chaveItem
+    || "";
+}
+
+function validarRateioSaldoResidual(divergencia, rateios) {
+  const descricao = obterDescricaoSaldoResidualDivergencia(divergencia);
+  if (!ehSaldoResidualProfor(descricao)) return { valido: true };
+
+  const naturezas = new Set();
+  for (const rateio of rateios) {
+    if (areaSaldoResidualEhOperacional(rateio.area)) {
+      return {
+        valido: false,
+        motivo: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Rateio informou area operacional '${rateio.area}'.`,
+      };
+    }
+    const natureza = normalizarNaturezaSaldoResidual(rateio.natureza);
+    if (!naturezaSaldoResidualValida(natureza)) {
+      return {
+        valido: false,
+        motivo: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Natureza obrigatoria ausente ou invalida no rateio.`,
+      };
+    }
+    naturezas.add(natureza);
+  }
+  if (naturezas.size > 1) {
+    return {
+      valido: false,
+      motivo: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Rateio mistura naturezas: ${Array.from(naturezas).join(", ")}.`,
+    };
+  }
+  return { valido: true };
+}
+
 function obterCampoCorrigido(decisao) {
   const payload = decisao.payloadDecisao || {};
   const valor = payload.valorCorrigido !== undefined ? payload.valorCorrigido
@@ -153,6 +204,14 @@ function interpretarDecisaoRevisao(divergencia, decisao) {
           aplicavel: false,
           efeito: { tipo: "decisao_rateio_invalido", afetaReconstrucao: false },
           motivoNaoAplicavel: `Rateio do payloadDecisao inválido: ${validacao.motivo}.`,
+        };
+      }
+      const validacaoSaldoResidual = validarRateioSaldoResidual(divergencia, rateios);
+      if (!validacaoSaldoResidual.valido) {
+        return {
+          aplicavel: false,
+          efeito: { tipo: "saldo_residual_rateio_invalido", afetaReconstrucao: false },
+          motivoNaoAplicavel: validacaoSaldoResidual.motivo,
         };
       }
       return { aplicavel: true, efeito: { tipo: "rateio_manual", afetaReconstrucao: true, rateios }, motivoNaoAplicavel: null };
@@ -418,5 +477,6 @@ module.exports = {
   interpretarDecisaoRevisao,
   extrairRateioManual,
   validarRateioManual,
+  validarRateioSaldoResidual,
   carregarAplicacaoDecisoesDryRun,
 };

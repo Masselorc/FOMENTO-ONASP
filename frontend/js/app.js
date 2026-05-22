@@ -3037,6 +3037,7 @@ async function carregarLogoParaPDF() {
                         <div><dt>Categoria operacional</dt><dd>${escapeHtml(divergencia.categoriaOperacional || '-')}</dd></div>
                         <div><dt>Ação operacional recomendada</dt><dd>${escapeHtml(divergencia.acaoOperacionalRecomendada || '-')}</dd></div>
                         <div><dt>Motivos de saneamento</dt><dd>${Array.isArray(divergencia.motivosSaneamento) && divergencia.motivosSaneamento.length ? `<ul class="mb-0">${divergencia.motivosSaneamento.map((motivo) => `<li>${escapeHtml(motivo)}</li>`).join('')}</ul>` : '-'}</dd></div>
+                        <div><dt>Saldo residual/remanescente</dt><dd>${divergencia.saldoResidualTecnico ? `<strong>Saldo residual técnico</strong><p class="mb-0 mt-1">${escapeHtml(divergencia.alertaSaldoResidual || 'Item técnico não setorializado por área e segregado por natureza.')}</p>` : '-'}</dd></div>
                         <div><dt>Evidências</dt><dd>${renderObjetoResumoRevisao(payload.evidencias || payload.evidencia || {})}</dd></div>
                         <div><dt>Risco de falso positivo</dt><dd>${escapeHtml(payload.riscoFalsoPositivo || payload.risco_falso_positivo || '-')}</dd></div>
                         <div><dt>Ação sugerida</dt><dd>${escapeHtml(divergencia.acaoSugerida || '-')}</dd></div>
@@ -3165,6 +3166,7 @@ async function carregarLogoParaPDF() {
                                 ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
                                 ${renderBadgeRevisao(`Nível original: ${divergencia.nivel}`, classeNivelRevisao(divergencia.nivel))}
                                 ${divergencia.falsoPositivoSaneavel ? renderBadgeRevisao('Saneado tecnicamente', 'success') : ''}
+                                ${divergencia.saldoResidualTecnico ? renderBadgeRevisao('Saldo residual técnico', 'warning') : ''}
                                 ${divergencia.categoriaOperacional ? renderBadgeRevisao(divergencia.categoriaOperacional, 'secondary') : ''}
                                 ${renderBadgeRevisao(`Convênio ${divergencia.numeroConvenio || '-'}`, 'secondary')}
                                 ${renderBadgeRevisao(`UF ${divergencia.uf || '-'}`, 'secondary')}
@@ -3266,6 +3268,7 @@ async function carregarLogoParaPDF() {
                 convenio: valor('revisao-filtro-convenio'),
                 uf: valor('revisao-filtro-uf').toUpperCase(),
                 bloqueiaPublicacao: valor('revisao-filtro-bloqueia'),
+                saldoResidual: valor('revisao-filtro-saldo-residual'),
                 categoriaOperacional: valor('revisao-filtro-categoria-operacional'),
                 limite: '500'
             };
@@ -3370,7 +3373,7 @@ async function carregarLogoParaPDF() {
                         <td>${renderBadgeRevisao(item.nivel, classeNivelRevisao(item.nivel))}</td>
                         <td>${escapeHtml(item.numeroConvenio || '-')}</td>
                         <td>${escapeHtml(item.uf || '-')}</td>
-                        <td>${escapeHtml(item.tipoAlerta || '-')}${item.categoriaOperacional ? `<div class="text-muted small">${escapeHtml(item.categoriaOperacional)}</div>` : ''}</td>
+                        <td>${escapeHtml(item.tipoAlerta || '-')}${item.saldoResidualTecnico ? '<div class="small text-warning">Saldo residual técnico</div>' : ''}${item.categoriaOperacional ? `<div class="text-muted small">${escapeHtml(item.categoriaOperacional)}</div>` : ''}</td>
                         <td>${escapeHtml(item.campoAfetado || '-')}</td>
                         <td>${escapeHtml(item.motivoProvavel || item.acaoSugerida || '-')}</td>
                         <td>${(() => {
@@ -3538,6 +3541,7 @@ async function carregarLogoParaPDF() {
                         <label><span>Convênio</span><input id="revisao-filtro-convenio" class="form-control" placeholder="937782"></label>
                         <label><span>UF</span><input id="revisao-filtro-uf" class="form-control" maxlength="2" placeholder="AC"></label>
                         <label><span>Bloqueia publicação</span><select id="revisao-filtro-bloqueia" class="form-select"><option value="">Todos</option><option value="true">Sim</option><option value="false">Não</option></select></label>
+                        <label><span>Saldo residual</span><select id="revisao-filtro-saldo-residual" class="form-select"><option value="">Todos</option><option value="true">Apenas saldos residuais</option><option value="false">Ocultar saldos residuais</option></select></label>
                         <label><span>Categoria operacional</span><select id="revisao-filtro-categoria-operacional" class="form-select"><option value="">Fila operacional</option><option value="pendencia_operacional_real">Pendência operacional real</option><option value="falso_positivo_saneavel">Falso positivo/saneado</option><option value="bloqueio_tecnico_seguranca">Bloqueio técnico</option><option value="historico_saneado">Histórico/saneado</option><option value="revalidacao_necessaria">Revalidação necessária</option></select></label>
                         <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-sem-decisao" checked><span>Sem decisão resolutiva</span></label>
 

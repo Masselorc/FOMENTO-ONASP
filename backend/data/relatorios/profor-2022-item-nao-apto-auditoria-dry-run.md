@@ -1,6 +1,6 @@
 # PROFOR 2022 - Auditoria item_nao_apto sem divergência material
 
-Gerado em: 2026-05-22T14:24:57.118Z
+Gerado em: 2026-05-22T14:57:12.030Z
 Modo: dry-run
 
 ## Resumo
@@ -9,9 +9,9 @@ Modo: dry-run
 - Sem divergência material detectada: 1
 - Candidatos a aceite automático (legado): 1
 - Falsos positivos saneáveis: 4
-- Divergência material: 3
+- Divergência material: 2
 - Dados insuficientes: 0
-- Já decididos: 11
+- Já decididos: 12
 - Erros de payload: 0
 - Decisões aplicadas: 0
 
@@ -34,7 +34,6 @@ Modo: dry-run
 
 | ID | Convênio | UF | Descrição | Qtd mem/PAD | Previsto mem/PAD | Executado mem/PAD | Saldo mem/PAD | Motivos |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 39 | 938128 | SP | Agenda Planner | 10 / 10 | 1134.3 / 1134.27 | 0 / 0 | 1134.3 / 1134.27 | natureza divergente; valorPrevisto divergente (0.03); saldo divergente (0.03) |
 | 44 | 938128 | SP | Saldo Residual | 1.003203 / 1 | 22351.09 / 71.36 | 0 / 0 | 22351.09 / 71.36 | natureza divergente; valorUnitario divergente (22208.37); valorPrevisto divergente (22279.73); saldo divergente (22279.73) |
 | 46 | 938277 | MA | SALDO REMANESCENTE | 2.22676 / 1 | 13192.33 / 5924.45 | 0 / 0 | 13192.33 / 5924.45 | natureza divergente; quantidade divergente (1.22676); valorPrevisto divergente (7267.88); saldo divergente (7267.88) |
 

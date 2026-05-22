@@ -36,9 +36,9 @@ const DRY_RUN = process.argv.includes("--dry-run") || process.env.npm_config_dry
 /**
  * Classificação por área dos itens NOVOS do PAD 937221 (item_novo_sem_rateio).
  * Fonte: ExtratoProposta.pdf — seção 9 (Plano de Aplicação Detalhado).
- * `area` única => rateio 100% para a área. `rateioIgual: true` => divide
- * igualmente entre as três áreas (caso "Saldo Residual", localizado no PDF
- * como "Ouvidoria, escola, corregedoria").
+ * `area` única => rateio 100% para a área. Saldo Residual/Remanescente foi
+ * removido deste saneamento: a regra atual exige item técnico não
+ * setorializado e segregado por natureza, sem rateio entre áreas operacionais.
  */
 const ITENS_NOVOS = [
   { chave: "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO", area: "OUVIDORIA" },
@@ -52,7 +52,6 @@ const ITENS_NOVOS = [
   { chave: "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11", area: "OUVIDORIA" },
   { chave: "937221::QUADRO LOUSA BRANCA", area: "ESCOLA" },
   { chave: "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO", area: "ESCOLA" },
-  { chave: "937221::SALDO RESIDUAL", rateioIgual: true },
   { chave: "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA", area: "OUVIDORIA" },
   { chave: "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS", area: "CORREGEDORIA" },
 ];
@@ -65,17 +64,7 @@ function montarRateioItemNovo(item, payloadDivergencia) {
   const quantidadeTotal = Number(payloadDivergencia.quantidadePad);
 
   if (item.rateioIgual) {
-    // Saldo Residual: divide igualmente entre as três áreas.
-    const pct = Number((100 / 3).toFixed(2)); // 33,33
-    const qtdPorArea = Number.isFinite(quantidadeTotal) && quantidadeTotal > 0
-      ? Number((quantidadeTotal / 3).toFixed(6))
-      : null;
-    return AREAS_TRES.map((area) => ({
-      area,
-      natureza,
-      quantidade: qtdPorArea,
-      percentualQuantidade: pct,
-    }));
+    throw new Error("Rateio igual entre areas foi desabilitado para Saldo Residual/Remanescente.");
   }
   // Área única: 100% para a área indicada no PDF.
   return [{
@@ -141,9 +130,7 @@ function executar() {
     const payloadDivergencia = JSON.parse(linha.payload_json || "{}");
     const rateio = montarRateioItemNovo(item, payloadDivergencia);
     const areasTexto = rateio.map((r) => `${r.area} ${r.percentualQuantidade}%`).join(", ");
-    const justificativa = item.rateioIgual
-      ? "Item classificado a partir do Plano de Aplicação Detalhado do PAD (ExtratoProposta.pdf): saldo residual rateado igualmente entre OUVIDORIA, CORREGEDORIA e ESCOLA conforme localização declarada no extrato."
-      : `Item classificado a partir do Plano de Aplicação Detalhado do PAD (ExtratoProposta.pdf): aquisição destinada à área ${item.area}, conforme descrição/observação do extrato.`;
+    const justificativa = `Item classificado a partir do Plano de Aplicação Detalhado do PAD (ExtratoProposta.pdf): aquisição destinada à área ${item.area}, conforme descrição/observação do extrato.`;
 
     if (DRY_RUN) {
       console.log(`  #${linha.id} -> ACEITO | rateio: ${areasTexto}`);

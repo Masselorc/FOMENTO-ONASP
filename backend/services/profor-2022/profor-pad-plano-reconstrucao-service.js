@@ -18,6 +18,14 @@ const {
   auditarSegurancaPreAtivacaoDryRun,
   resumoSegurancaParaRelatorio,
 } = require("./profor-pad-seguranca-pre-ativacao-service");
+const {
+  DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+  ehSaldoResidualProfor,
+  areaSaldoResidualEhOperacional,
+  normalizarAreaSaldoResidual,
+  normalizarNaturezaSaldoResidual,
+  naturezaSaldoResidualValida,
+} = require("./profor-saldo-residual-service");
 
 // Caminho padrão do relatório dry-run de reconstrução.
 const CAMINHO_RELATORIO_RECONSTRUCAO =
@@ -130,6 +138,51 @@ function resumoDecisao(registro) {
   };
 }
 
+function gerarLinhaTecnicaSaldoResidual(itemPad, contexto) {
+  const valorPrevisto = arredondarMoedaProfor(itemPad.valorTotalPrevisto);
+  const valorExecutado = arredondarMoedaProfor(itemPad.valorTotalExecutado);
+  const quantidade = arredondarQuantidadeProfor(itemPad.quantidade);
+  const saldo = arredondarMoedaProfor(valorPrevisto - valorExecutado);
+  const valorUnitarioDerivado = derivarValorUnitario(valorPrevisto, quantidade);
+  const percentualExecucao = valorPrevisto > 0
+    ? Math.round((valorExecutado / valorPrevisto) * 10000) / 100
+    : 0;
+  const linha = {
+    uf: itemPad.uf || null,
+    instrumento: itemPad.instrumento || null,
+    numero: itemPad.numeroConvenio || null,
+    ano: itemPad.ano || null,
+    area: "NAO INFORMADO",
+    natureza: normalizarNaturezaSaldoResidual(itemPad.natureza),
+    descricao: itemPad.descricaoOriginal,
+    quantidade,
+    valorUnitario: valorUnitarioDerivado !== null
+      ? valorUnitarioDerivado
+      : (Number(itemPad.valorUnitario) || 0),
+    valorPrevisto,
+    valorExecutado,
+    saldo,
+    saldoEconomicidade: 0,
+    percentualExecucao,
+  };
+  linha.saldoEconomicidade = calcularEconomicidadeItem(linha, []);
+  linha.origemReconstrucao = contexto.fonteRateio || "saldo-residual-tecnico";
+  linha.chaveItem = itemPad.chaveItem;
+  linha.itemConhecidoId = contexto.itemConhecidoId ?? null;
+  linha.codigoNaturezaDespesa = itemPad.codigoNaturezaDespesa || null;
+  linha.unidade = itemPad.unidade || null;
+  linha.valorUnitarioPadReferencia = Number(itemPad.valorUnitario) || 0;
+  linha.valorUnitarioDerivado = valorUnitarioDerivado;
+  linha.baseRateioValor = "saldo_residual_nao_setorializado";
+  linha.baseRateioQuantidade = "saldo_residual_nao_setorializado";
+  linha.ajusteResidualAplicado = false;
+  linha.itemAptoParaUso = contexto.itemAptoParaUso !== false;
+  linha.liberadoPorDecisao = Boolean(contexto.liberadoPorDecisao);
+  linha.decisaoAplicada = resumoDecisao(contexto.decisaoAplicada);
+  linha.saldoResidualTecnico = true;
+  return linha;
+}
+
 /**
  * Gera as linhas reconstruídas de um item PAD a partir de um conjunto de
  * rateios, aplicando os totais financeiros do PAD como fonte de verdade.
@@ -138,6 +191,56 @@ function gerarLinhasItem(itemPad, rateios, contexto = {}) {
   const alertasItem = [];
   const impedimentosItem = [];
   const linhas = [];
+
+  if (ehSaldoResidualProfor(itemPad.descricaoOriginal)) {
+    const naturezaPad = normalizarNaturezaSaldoResidual(itemPad.natureza);
+    const naturezasRateio = new Set((rateios || []).map((rateio) => normalizarNaturezaSaldoResidual(rateio.natureza)).filter(Boolean));
+    const areasOperacionais = (rateios || []).filter((rateio) => areaSaldoResidualEhOperacional(rateio.area));
+
+    linhas.push(gerarLinhaTecnicaSaldoResidual(itemPad, contexto));
+    alertasItem.push(montarAlerta({
+      tipo: "saldo_residual_nao_setorializado",
+      nivel: "info",
+      numeroConvenio: itemPad.numeroConvenio,
+      uf: itemPad.uf,
+      descricao: itemPad.descricaoOriginal,
+      chaveItem: itemPad.chaveItem,
+      detalhe: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Linha reconstruida com area tecnica '${normalizarAreaSaldoResidual(null)}'.`,
+    }));
+
+    if (!naturezaSaldoResidualValida(naturezaPad)) {
+      impedimentosItem.push(montarImpedimento({
+        tipo: "saldo_residual_sem_natureza",
+        numeroConvenio: itemPad.numeroConvenio,
+        uf: itemPad.uf,
+        descricao: itemPad.descricaoOriginal,
+        chaveItem: itemPad.chaveItem,
+        detalhe: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Natureza do PAD ausente ou invalida.`,
+      }));
+    }
+    if (areasOperacionais.length) {
+      impedimentosItem.push(montarImpedimento({
+        tipo: "saldo_residual_rateado_indevidamente",
+        numeroConvenio: itemPad.numeroConvenio,
+        uf: itemPad.uf,
+        descricao: itemPad.descricaoOriginal,
+        chaveItem: itemPad.chaveItem,
+        detalhe: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Rateios por area operacional ignorados no dry-run: ${areasOperacionais.map((r) => r.area).join(", ")}.`,
+      }));
+    }
+    if (naturezaPad && naturezasRateio.size && (naturezasRateio.size > 1 || !naturezasRateio.has(naturezaPad))) {
+      impedimentosItem.push(montarImpedimento({
+        tipo: "saldo_residual_natureza_divergente",
+        numeroConvenio: itemPad.numeroConvenio,
+        uf: itemPad.uf,
+        descricao: itemPad.descricaoOriginal,
+        chaveItem: itemPad.chaveItem,
+        detalhe: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Natureza PAD '${naturezaPad}' x memoria/rateio '${Array.from(naturezasRateio).join(", ")}'.`,
+      }));
+    }
+
+    return { linhas, alertasItem, impedimentosItem };
+  }
 
   const pesosValor = obterPesosRateio(rateios, "percentual_valor", "valor_previsto_referencia");
   const pesosQuantidade = obterPesosRateio(rateios, "percentual_quantidade", "quantidade_referencia");

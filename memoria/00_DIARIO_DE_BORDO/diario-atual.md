@@ -1,5 +1,75 @@
 # Diário de bordo
 
+## 22/05/2026 - PROFOR 2022: correção de saldos residuais por natureza (dry-run)
+
+- Objetivo:
+  - corrigir a classe de erro revelada pela divergência `#44` (`938128/SP`,
+    `Saldo Residual`), em que memória `CAPITAL` e PAD `CUSTEIO` estavam sendo
+    tratados dentro da mesma chave operacional sem segregação suficiente por
+    natureza.
+- Regra de negócio consolidada:
+  - `Saldo Residual`, `Saldo Remanescente` e equivalentes são itens técnicos,
+    não setorializados por área operacional;
+  - a área técnica aceita é `N/A`, `NAO INFORMADO`, `SEM AREA`, nulo técnico
+    ou equivalente controlado;
+  - `CAPITAL` e `CUSTEIO` são identidades distintas e não podem ser pareadas,
+    consolidadas ou rateadas entre si;
+  - a chave mínima de equivalência passa a considerar
+    `numeroConvenio + descricaoNormalizada + natureza`.
+- Arquivos alterados:
+  - novo serviço central `backend/services/profor-2022/profor-saldo-residual-service.js`;
+  - novo script `backend/scripts/auditar-saldos-residuais-profor-2022.js`;
+  - reconstrução dry-run, comparador, motor de decisões, auditoria profunda,
+    API da revisão, tela de revisão, testes e validação de sintaxe;
+  - script histórico `sanear-classificacao-pad-al-937221-profor-2022.js`
+    deixou de permitir rateio igual de `Saldo Residual` entre áreas operacionais.
+- Relatórios gerados:
+  - `backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.md`.
+- Resultado da auditoria específica:
+  - saldos residuais/remanescentes encontrados: `113`;
+  - mistura `CAPITAL/CUSTEIO`: `57`;
+  - rateio por setor em relatório final pós-correção: `0`;
+  - decisões anteriores afetadas: `23`;
+  - a decisão `#150` da divergência `#18` foi identificada como incompatível
+    por ratear `Saldo Residual` para áreas operacionais; não foi apagada nem
+    alterada, apenas neutralizada no efeito dry-run.
+- Caso-piloto `#44`:
+  - classificada como `saldo_residual_natureza_divergente`;
+  - permanece `pendencia_operacional_real`;
+  - a tela passa a exibir badge `Saldo residual técnico` e o alerta:
+    "Saldo residual/remanescente é item técnico não setorializado por área,
+    mas segregado por natureza. CAPITAL e CUSTEIO não devem ser pareados nem
+    consolidados como equivalentes.";
+  - não houve decisão registrada para a `#44`.
+- Impacto na reconstrução/comparador:
+  - reconstrução dry-run: `37` impedimentos, incluindo bloqueios específicos
+    `saldo_residual_natureza_divergente`;
+  - comparação dry-run: `30` diferenças críticas, `45` itens ambíguos,
+    `aptoParaPublicacao=false`;
+  - saldos residuais reconstruídos deixaram de ser distribuídos por
+    OUVIDORIA/CORREGEDORIA/ESCOLA e passam a usar área técnica `NAO INFORMADO`.
+- Validações executadas:
+  - `npm run profor:pad:item-nao-apto:auditar`;
+  - `npm run profor:pad:saldos-residuais:auditar`;
+  - `npm run profor:pad:auditar-pendencias-profundo`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `npm run validar:syntax`;
+  - `npm run validar:services`.
+- Confirmações de escopo:
+  - nenhuma publicação;
+  - origem ativa intacta;
+  - `frontend/data/publicados` intacto;
+  - `planoAplicacao` oficial não alterado;
+  - nenhuma divergência, decisão ou log apagado;
+  - nenhuma decisão registrada por SQL direto ou serviço.
+- Riscos e rollback:
+  - risco remanescente: decisões antigas incompatíveis ainda existem como
+    histórico e exigem etapa própria de revalidação/retificação auditável;
+  - rollback: reverter o commit, regenerar relatórios dry-run anteriores se
+    necessário e não apagar decisões/logs históricos.
+
 ## 22/05/2026 - PROFOR 2022: detalhamento da segurança pré-ativação e separação operacional (dry-run)
 
 - Contexto:

@@ -1,55 +1,55 @@
 {
-  "geradoEm": "2026-05-22T14:05:15.254Z",
+  "geradoEm": "2026-05-22T14:57:40.743Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
-    "totalLinhasAntigo": 567,
-    "totalLinhasNovo": 630,
-    "totalItensIguais": 458,
-    "totalItensNovos": 32,
+    "totalLinhasAntigo": 566,
+    "totalLinhasNovo": 623,
+    "totalItensIguais": 460,
+    "totalItensNovos": 30,
     "totalItensAusentes": 34,
-    "totalItensQuantidadeDivergente": 3,
-    "totalItensValorPrevistoDivergente": 13,
+    "totalItensQuantidadeDivergente": 4,
+    "totalItensValorPrevistoDivergente": 14,
     "totalItensValorExecutadoDivergente": 13,
-    "totalItensSaldoDivergente": 26,
+    "totalItensSaldoDivergente": 27,
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
-    "totalItensAmbiguos": 49,
-    "totalDiferencas": 92,
-    "totalDiferencasCriticas": 32,
+    "totalItensAmbiguos": 45,
+    "totalDiferencas": 91,
+    "totalDiferencasCriticas": 30,
     "totalAvisos": 7,
     "totalDiferencasEsperadasPorAtualizacaoPad": 7,
-    "totalDiferencasPorPendenciaDeDecisao": 19,
+    "totalDiferencasPorPendenciaDeDecisao": 20,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 27,
-    "totalDecisoesResolutivasEncontradas": 70,
+    "totalDecisoesResolutivasEncontradas": 71,
     "totalDecisoesInterpretadasDryRun": 65,
     "totalDecisoesAplicadasDryRun": 65,
-    "totalDecisoesNaoAplicaveis": 5,
+    "totalDecisoesNaoAplicaveis": 6,
     "totalDecisoesComEfeitoNaReconstrucao": 38,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
     "totalBloqueiosSegurancaPreAtivacao": 35
   },
   "totaisAntigoNovo": {
     "antigo": {
-      "linhas": 567,
+      "linhas": 566,
       "valorPrevisto": 10664015.48,
       "valorExecutado": 3202695.9,
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 630,
-      "valorPrevisto": 10664015.24,
+      "linhas": 623,
+      "valorPrevisto": 10654508.7,
       "valorExecutado": 3217739.5,
-      "saldo": 7446275.74
+      "saldo": 7436769.2
     }
   },
   "diferencaTotal": {
-    "linhas": 63,
-    "valorPrevisto": -0.24,
+    "linhas": 57,
+    "valorPrevisto": -9506.78,
     "valorExecutado": 15043.6,
-    "saldo": -15043.84
+    "saldo": -24550.38
   },
   "diferencasPorConvenio": [
     {
@@ -82,16 +82,16 @@
         "saldo": 171603.5
       },
       "novo": {
-        "linhas": 30,
-        "valorPrevisto": 171603.5,
+        "linhas": 27,
+        "valorPrevisto": 162096.96,
         "valorExecutado": 0,
-        "saldo": 171603.5
+        "saldo": 162096.96
       },
       "diferenca": {
-        "valorPrevisto": 0,
+        "valorPrevisto": -9506.54,
         "valorExecutado": 0,
-        "saldo": 0,
-        "linhas": -3
+        "saldo": -9506.54,
+        "linhas": -6
       }
     },
     {
@@ -328,13 +328,13 @@
     {
       "chave": "938128",
       "antigo": {
-        "linhas": 47,
+        "linhas": 46,
         "valorPrevisto": 3846559.56,
         "valorExecutado": 1068101.92,
         "saldo": 2778457.64
       },
       "novo": {
-        "linhas": 49,
+        "linhas": 47,
         "valorPrevisto": 3846559.5,
         "valorExecutado": 1068101.92,
         "saldo": 2778457.58
@@ -343,7 +343,7 @@
         "valorPrevisto": -0.06,
         "valorExecutado": 0,
         "saldo": -0.06,
-        "linhas": 2
+        "linhas": 1
       }
     },
     {
@@ -355,7 +355,7 @@
         "saldo": 277212.05
       },
       "novo": {
-        "linhas": 54,
+        "linhas": 52,
         "valorPrevisto": 346697.9,
         "valorExecutado": 70511.85,
         "saldo": 276186.05
@@ -364,7 +364,7 @@
         "valorPrevisto": 0,
         "valorExecutado": 1026,
         "saldo": -1026,
-        "linhas": 2
+        "linhas": 0
       }
     }
   ],
@@ -399,16 +399,16 @@
         "saldo": 171603.5
       },
       "novo": {
-        "linhas": 30,
-        "valorPrevisto": 171603.5,
+        "linhas": 27,
+        "valorPrevisto": 162096.96,
         "valorExecutado": 0,
-        "saldo": 171603.5
+        "saldo": 162096.96
       },
       "diferenca": {
-        "valorPrevisto": 0,
+        "valorPrevisto": -9506.54,
         "valorExecutado": 0,
-        "saldo": 0,
-        "linhas": -3
+        "saldo": -9506.54,
+        "linhas": -6
       }
     },
     {
@@ -462,7 +462,7 @@
         "saldo": 277212.05
       },
       "novo": {
-        "linhas": 54,
+        "linhas": 52,
         "valorPrevisto": 346697.9,
         "valorExecutado": 70511.85,
         "saldo": 276186.05
@@ -471,7 +471,7 @@
         "valorPrevisto": 0,
         "valorExecutado": 1026,
         "saldo": -1026,
-        "linhas": 2
+        "linhas": 0
       }
     },
     {
@@ -645,13 +645,13 @@
     {
       "chave": "SP",
       "antigo": {
-        "linhas": 47,
+        "linhas": 46,
         "valorPrevisto": 3846559.56,
         "valorExecutado": 1068101.92,
         "saldo": 2778457.64
       },
       "novo": {
-        "linhas": 49,
+        "linhas": 47,
         "valorPrevisto": 3846559.5,
         "valorExecutado": 1068101.92,
         "saldo": 2778457.58
@@ -660,7 +660,7 @@
         "valorPrevisto": -0.06,
         "valorExecutado": 0,
         "saldo": -0.06,
-        "linhas": 2
+        "linhas": 1
       }
     },
     {
@@ -695,16 +695,16 @@
         "saldo": 2048720.27
       },
       "novo": {
-        "linhas": 137,
-        "valorPrevisto": 2583773.44,
+        "linhas": 136,
+        "valorPrevisto": 2580604.59,
         "valorExecutado": 578163.45,
-        "saldo": 2005609.99
+        "saldo": 2002441.14
       },
       "diferenca": {
-        "valorPrevisto": -10304.19,
+        "valorPrevisto": -13473.04,
         "valorExecutado": 32806.09,
-        "saldo": -43110.28,
-        "linhas": 22
+        "saldo": -46279.13,
+        "linhas": 21
       }
     },
     {
@@ -716,16 +716,16 @@
         "saldo": 0
       },
       "novo": {
-        "linhas": 4,
-        "valorPrevisto": 9935.04,
+        "linhas": 3,
+        "valorPrevisto": 6766.2,
         "valorExecutado": 0,
-        "saldo": 9935.04
+        "saldo": 6766.2
       },
       "diferenca": {
-        "valorPrevisto": 9935.04,
+        "valorPrevisto": 6766.2,
         "valorExecutado": 0,
-        "saldo": 9935.04,
-        "linhas": 4
+        "saldo": 6766.2,
+        "linhas": 3
       }
     },
     {
@@ -752,42 +752,42 @@
     {
       "chave": "N/A",
       "antigo": {
-        "linhas": 15,
-        "valorPrevisto": 318981.36,
+        "linhas": 4,
+        "valorPrevisto": 16028.92,
         "valorExecutado": 0,
-        "saldo": 318981.36
+        "saldo": 16028.92
       },
       "novo": {
-        "linhas": 18,
-        "valorPrevisto": 317411.39,
+        "linhas": 4,
+        "valorPrevisto": 16028.92,
         "valorExecutado": 0,
-        "saldo": 317411.39
+        "saldo": 16028.92
       },
       "diferenca": {
-        "valorPrevisto": -1569.97,
+        "valorPrevisto": 0,
         "valorExecutado": 0,
-        "saldo": -1569.97,
-        "linhas": 3
+        "saldo": 0,
+        "linhas": 0
       }
     },
     {
       "chave": "NAO INFORMADO",
       "antigo": {
-        "linhas": 4,
-        "valorPrevisto": 932872.33,
+        "linhas": 14,
+        "valorPrevisto": 1235824.77,
         "valorExecutado": 0,
-        "saldo": 932872.33
+        "saldo": 1235824.77
       },
       "novo": {
-        "linhas": 5,
-        "valorPrevisto": 932867.27,
+        "linhas": 15,
+        "valorPrevisto": 1234249.74,
         "valorExecutado": 0,
-        "saldo": 932867.27
+        "saldo": 1234249.74
       },
       "diferenca": {
-        "valorPrevisto": -5.06,
+        "valorPrevisto": -1575.03,
         "valorExecutado": 0,
-        "saldo": -5.06,
+        "saldo": -1575.03,
         "linhas": 1
       }
     },
@@ -800,16 +800,16 @@
         "saldo": 1299845.87
       },
       "novo": {
-        "linhas": 162,
-        "valorPrevisto": 1724215.84,
+        "linhas": 161,
+        "valorPrevisto": 1721046.99,
         "valorExecutado": 387636.43,
-        "saldo": 1336579.41
+        "saldo": 1333410.56
       },
       "diferenca": {
-        "valorPrevisto": 7514.44,
+        "valorPrevisto": 4345.59,
         "valorExecutado": -29219.1,
-        "saldo": 36733.54,
-        "linhas": 16
+        "saldo": 33564.69,
+        "linhas": 15
       }
     }
   ],
@@ -817,22 +817,22 @@
     {
       "chave": "CAPITAL",
       "antigo": {
-        "linhas": 414,
+        "linhas": 413,
         "valorPrevisto": 7421798.44,
         "valorExecutado": 2706810.45,
         "saldo": 4714987.99
       },
       "novo": {
-        "linhas": 465,
-        "valorPrevisto": 7421798.2,
+        "linhas": 458,
+        "valorPrevisto": 7412220.3,
         "valorExecutado": 2715952.65,
-        "saldo": 4705845.55
+        "saldo": 4696267.65
       },
       "diferenca": {
-        "valorPrevisto": -0.24,
+        "valorPrevisto": -9578.14,
         "valorExecutado": 9142.2,
-        "saldo": -9142.44,
-        "linhas": 51
+        "saldo": -18720.34,
+        "linhas": 45
       }
     },
     {
@@ -845,14 +845,14 @@
       },
       "novo": {
         "linhas": 165,
-        "valorPrevisto": 3242217.04,
+        "valorPrevisto": 3242288.4,
         "valorExecutado": 501786.85,
-        "saldo": 2740430.19
+        "saldo": 2740501.55
       },
       "diferenca": {
-        "valorPrevisto": 0,
+        "valorPrevisto": 71.36,
         "valorExecutado": 5901.4,
-        "saldo": -5901.4,
+        "saldo": -5830.04,
         "linhas": 12
       }
     }
@@ -907,6 +907,19 @@
       "situacao": "novo",
       "valorPrevistoNovo": 7802,
       "valorExecutadoNovo": 7802,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "938128::Saldo Residual::NAO INFORMADO::CUSTEIO",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "NAO INFORMADO",
+      "natureza": "CUSTEIO",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 71.36,
+      "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     },
@@ -1192,45 +1205,6 @@
       "descricao": "Refrigerador frigobar, com capacidade no",
       "situacao": "novo",
       "valorPrevistoNovo": 2844,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Saldo Residual::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Saldo Residual",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3168.85,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Saldo Residual::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Saldo Residual",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3168.85,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Saldo Residual::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Saldo Residual",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3168.84,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -1806,6 +1780,35 @@
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "938128::Saldo Residual::NAO INFORMADO::CAPITAL",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 2,
+          "valorNovo": 1
+        },
+        {
+          "campo": "valorPrevisto",
+          "valorAntigo": 22351.09,
+          "valorNovo": 20704.73,
+          "diferenca": -1646.36
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 22351.09,
+          "valorNovo": 20704.73,
+          "diferenca": -1646.36
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     }
   ],
   "itensValorPrevistoDivergente": [
@@ -2132,6 +2135,35 @@
           "valorAntigo": -1575,
           "valorNovo": 0,
           "diferenca": 1575
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "938128::Saldo Residual::NAO INFORMADO::CAPITAL",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 2,
+          "valorNovo": 1
+        },
+        {
+          "campo": "valorPrevisto",
+          "valorAntigo": 22351.09,
+          "valorNovo": 20704.73,
+          "diferenca": -1646.36
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 22351.09,
+          "valorNovo": 20704.73,
+          "diferenca": -1646.36
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -3044,6 +3076,35 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
+      "chave": "938128::Saldo Residual::NAO INFORMADO::CAPITAL",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "quantidade",
+          "valorAntigo": 2,
+          "valorNovo": 1
+        },
+        {
+          "campo": "valorPrevisto",
+          "valorAntigo": 22351.09,
+          "valorNovo": 20704.73,
+          "diferenca": -1646.36
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 22351.09,
+          "valorNovo": 20704.73,
+          "diferenca": -1646.36
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
       "chave": "938277::Headphone/Fone de ouvido::ESCOLA PENAL::CUSTEIO",
       "numeroConvenio": "938277",
       "uf": "MA",
@@ -3364,30 +3425,6 @@
       "ocorrenciasAntigo": 1,
       "ocorrenciasNovo": 2,
       "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "938128::Saldo Residual::N/A::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "938128::Saldo Residual::NAO INFORMADO::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "938277::SALDO REMANESCENTE::N/A::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "938277::SALDO REMANESCENTE::N/A::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
     }
   ],
   "diferencasCriticas": [
@@ -3440,6 +3477,19 @@
       "situacao": "novo",
       "valorPrevistoNovo": 7802,
       "valorExecutadoNovo": 7802,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "938128::Saldo Residual::NAO INFORMADO::CUSTEIO",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "NAO INFORMADO",
+      "natureza": "CUSTEIO",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 71.36,
+      "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     },
@@ -3725,45 +3775,6 @@
       "descricao": "Refrigerador frigobar, com capacidade no",
       "situacao": "novo",
       "valorPrevistoNovo": 2844,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Saldo Residual::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Saldo Residual",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3168.85,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Saldo Residual::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Saldo Residual",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3168.85,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Saldo Residual::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Saldo Residual",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3168.84,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -5331,6 +5342,13 @@
       "decisaoId": 65
     },
     {
+      "divergenciaId": 39,
+      "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 185
+    },
+    {
       "divergenciaId": 40,
       "chaveDivergencia": "item_nao_apto:861780b809d58dba",
       "tipoAlerta": "item_nao_apto",
@@ -6119,55 +6137,6 @@
       "motivoNaoAplicavel": null
     },
     {
-      "divergenciaId": 18,
-      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "tipoAlerta": "item_novo_sem_rateio",
-      "campoAfetado": "rateio",
-      "bloqueiaPublicacao": true,
-      "decisao": "ACEITO",
-      "decisaoId": 150,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.553Z",
-      "efeito": {
-        "tipo": "rateio_manual",
-        "afetaReconstrucao": true,
-        "rateios": [
-          {
-            "area": "OUVIDORIA",
-            "natureza": "CAPITAL",
-            "percentual_valor": 0,
-            "percentual_quantidade": 33.33,
-            "valor_previsto_referencia": 0,
-            "valor_executado_referencia": 0,
-            "quantidade_referencia": 0
-          },
-          {
-            "area": "CORREGEDORIA",
-            "natureza": "CAPITAL",
-            "percentual_valor": 0,
-            "percentual_quantidade": 33.33,
-            "valor_previsto_referencia": 0,
-            "valor_executado_referencia": 0,
-            "quantidade_referencia": 0
-          },
-          {
-            "area": "ESCOLA",
-            "natureza": "CAPITAL",
-            "percentual_valor": 0,
-            "percentual_quantidade": 33.33,
-            "valor_previsto_referencia": 0,
-            "valor_executado_referencia": 0,
-            "quantidade_referencia": 0
-          }
-        ]
-      },
-      "aplicavel": true,
-      "motivoNaoAplicavel": null
-    },
-    {
       "divergenciaId": 19,
       "chaveDivergencia": "item_novo_sem_rateio:e3d3a1545c56f329",
       "numeroConvenio": "937221",
@@ -6524,6 +6493,26 @@
       "decisaoId": 65,
       "usuario": "sistema-auditoria-item-nao-apto",
       "decididoEm": "2026-05-21T17:36:22.924Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
+      "divergenciaId": 39,
+      "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::AGENDA PLANNER",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 185,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-22T14:34:27.140Z",
       "efeito": {
         "tipo": "nao_apto_liberado",
         "afetaReconstrucao": true
@@ -7201,6 +7190,26 @@
   ],
   "decisoesNaoAplicaveis": [
     {
+      "divergenciaId": 18,
+      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 150,
+      "usuario": "sistema-saneamento-pad-al-937221",
+      "decididoEm": "2026-05-21T21:41:09.553Z",
+      "efeito": {
+        "tipo": "saldo_residual_rateio_invalido",
+        "afetaReconstrucao": false
+      },
+      "aplicavel": false,
+      "motivoNaoAplicavel": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'."
+    },
+    {
       "divergenciaId": 55,
       "chaveDivergencia": "item_ausente_no_pad:27e43486e8eb1131",
       "numeroConvenio": "937221",
@@ -7303,22 +7312,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 75,
+    "totalPendentes": 74,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 10,
+    "totalPendentesQueBloqueiamPublicacao": 9,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 70,
+    "totalComDecisaoResolutiva": 71,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 75,
+    "totalSemDecisaoResolutiva": 74,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T14:05:15.240Z",
+    "geradoEm": "2026-05-22T14:57:40.705Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 71,
-      "totalPayloadPreservado": 43,
+      "totalDecisoesResolutivasAuditadas": 72,
+      "totalPayloadPreservado": 44,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -7640,27 +7649,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 501,
     "totalItensPadSemRateio": 24,
-    "totalItensPadSemRateioRemanescentes": 0,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 24,
-    "totalLinhasReconstruidas": 630,
+    "totalItensPadSemRateioRemanescentes": 1,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 23,
+    "totalLinhasReconstruidas": 623,
     "totalConveniosReconstruidos": 15,
-    "totalItensConhecidosNaoAptosUsados": 8,
+    "totalItensConhecidosNaoAptosUsados": 7,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 34,
-    "totalAlertas": 108,
-    "totalDecisoesResolutivasEncontradas": 70,
+    "totalImpedimentos": 37,
+    "totalAlertas": 119,
+    "totalDecisoesResolutivasEncontradas": 71,
     "totalDecisoesInterpretadasDryRun": 65,
     "totalDecisoesAplicadasDryRun": 65,
-    "totalDecisoesNaoAplicaveis": 5,
+    "totalDecisoesNaoAplicaveis": 6,
     "totalDecisoesComEfeitoNaReconstrucao": 38,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
     "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 34,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
-    "valorPrevistoReconstruidoTotal": 10664015.24,
+    "valorPrevistoReconstruidoTotal": 10654508.7,
     "valorExecutadoReconstruidoTotal": 3217739.5,
-    "saldoReconstruidoTotal": 7446275.74
+    "saldoReconstruidoTotal": 7436769.2
   },
   "impedimentosReconstrucao": [
     {
@@ -7700,6 +7709,15 @@
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
+      "tipo": "saldo_residual_natureza_divergente",
+      "nivel": "impeditivo",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "descricao": "SALDO REMANESCENTE",
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Natureza PAD 'CUSTEIO' x memoria/rateio 'CAPITAL, CUSTEIO'."
+    },
+    {
       "tipo": "item_conhecido_nao_apto_usado",
       "nivel": "impeditivo",
       "numeroConvenio": "938277",
@@ -7709,13 +7727,22 @@
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
-      "tipo": "item_conhecido_nao_apto_usado",
+      "tipo": "saldo_residual_natureza_divergente",
+      "nivel": "impeditivo",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "descricao": "SALDO REMANESCENTE",
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Natureza PAD 'CAPITAL' x memoria/rateio 'CAPITAL, CUSTEIO'."
+    },
+    {
+      "tipo": "saldo_residual_natureza_divergente",
       "nivel": "impeditivo",
       "numeroConvenio": "938128",
       "uf": "SP",
-      "descricao": "Agenda Planner",
-      "chaveItem": "938128::AGENDA PLANNER",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+      "descricao": "Saldo Residual",
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Natureza PAD 'CUSTEIO' x memoria/rateio 'CAPITAL'."
     },
     {
       "tipo": "item_conhecido_nao_apto_usado",
@@ -7880,13 +7907,13 @@
       "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "rateio_percentual_indefinido",
+      "tipo": "item_pad_sem_rateio",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "uf": "AL",
       "descricao": "Saldo Residual",
       "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
     },
     {
       "tipo": "rateio_percentual_indefinido",
@@ -7914,6 +7941,15 @@
       "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
       "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
       "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:saldo_residual_rateio_invalido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'."
     },
     {
       "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
@@ -7967,14 +8003,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 10 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 9 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 37 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -0.24, executado 15043.6, saldo -15043.84.",
-    "Diferenças críticas: 32. Itens ambíguos: 49.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -9506.78, executado 15043.6, saldo -24550.38.",
+    "Diferenças críticas: 30. Itens ambíguos: 45.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

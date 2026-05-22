@@ -49,6 +49,23 @@ test("item novo sem rateio ACEITO com rateio válido gera rateio_manual", () => 
   assert.equal(r.efeito.rateios.length, 2);
 });
 
+test("saldo residual nao aceita rateio manual em area operacional", () => {
+  const payloadDecisao = {
+    rateio: [
+      { area: "OUVIDORIA", natureza: "CAPITAL", percentualValor: 100, percentualQuantidade: 100 },
+    ],
+  };
+  const r = interpretarDecisaoRevisao(
+    divergencia("item_novo_sem_rateio", {
+      chaveItem: "937221::SALDO RESIDUAL",
+      payload: { descricaoPad: "Saldo Residual", naturezaPad: "CAPITAL" },
+    }),
+    decisao("ACEITO", { payloadDecisao })
+  );
+  assert.equal(r.aplicavel, false);
+  assert.equal(r.efeito.tipo, "saldo_residual_rateio_invalido");
+});
+
 test("rateio com soma de percentual diferente de 100 é inválido", () => {
   const payloadDecisao = {
     rateio: [{ area: "OUVIDORIA", natureza: "CUSTEIO", percentualValor: 70 }],

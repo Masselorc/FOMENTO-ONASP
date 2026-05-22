@@ -24,6 +24,7 @@ const STATUS_POR_DECISAO = {
 const DECISOES_JUSTIFICATIVA_OBRIGATORIA = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"]);
 const CAMINHO_PENDENCIAS_PROFUNDO = "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json";
 const CAMINHO_ITEM_NAO_APTO = "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json";
+const CAMINHO_SALDOS_RESIDUAIS = "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json";
 const CATEGORIA_OPERACIONAL_EFETIVA = "pendencia_operacional_real";
 
 /** Erro de validação de entrada da API (HTTP 400). */
@@ -82,10 +83,23 @@ function carregarIndiceItemNaoApto() {
   return indexarPorId(listas.flat());
 }
 
+function carregarIndiceSaldosResiduais() {
+  const relatorio = lerJsonRelatorio(CAMINHO_SALDOS_RESIDUAIS, { itens: [] });
+  const mapa = new Map();
+  for (const item of Array.isArray(relatorio.itens) ? relatorio.itens : []) {
+    const id = Number(item?.divergenciaId);
+    if (!Number.isInteger(id) || id <= 0) continue;
+    if (!mapa.has(id)) mapa.set(id, []);
+    mapa.get(id).push(item);
+  }
+  return mapa;
+}
+
 function carregarIndicesAuditoriaOperacional() {
   return {
     pendenciasProfundo: carregarIndicePendenciasProfundo(),
     itemNaoApto: carregarIndiceItemNaoApto(),
+    saldosResiduais: carregarIndiceSaldosResiduais(),
   };
 }
 
@@ -108,6 +122,7 @@ function enriquecerDivergenciaComAuditoria(divergencia, indices = carregarIndice
   if (!divergencia) return null;
   const profundo = indices.pendenciasProfundo?.get(Number(divergencia.id));
   const itemNaoApto = indices.itemNaoApto?.get(Number(divergencia.id));
+  const saldosResiduais = indices.saldosResiduais?.get(Number(divergencia.id)) || [];
   const categoriaOperacional = profundo?.classificacaoOperacional || null;
   const classificacaoDetalhada = itemNaoApto?.classificacao
     || (Array.isArray(profundo?.classificacoes) ? profundo.classificacoes.join(", ") : null);
@@ -124,6 +139,11 @@ function enriquecerDivergenciaComAuditoria(divergencia, indices = carregarIndice
     memoriaConsolidada: montarMemoriaConsolidadaItemNaoApto(itemNaoApto),
     motivosSaneamento: itemNaoApto?.motivos || (profundo?.evidencia ? [profundo.evidencia] : []),
     acaoOperacionalRecomendada: profundo?.recomendacao || itemNaoApto?.justificativaSugerida || divergencia.acaoSugerida,
+    saldoResidualTecnico: Boolean(profundo?.saldoResidualTecnico || saldosResiduais.length),
+    alertaSaldoResidual: profundo?.alertaSaldoResidual || (saldosResiduais.length
+      ? "Saldo residual/remanescente é item técnico não setorializado por área, mas segregado por natureza. CAPITAL e CUSTEIO não devem ser pareados nem consolidados como equivalentes."
+      : null),
+    detalhesSaldoResidual: saldosResiduais,
   };
 }
 
@@ -137,6 +157,12 @@ function aplicarFiltrosOperacionais(divergencias, filtros = {}) {
   }
   if (filtros.operacionalEfetiva === false) {
     resultado = resultado.filter((item) => item.categoriaOperacional !== CATEGORIA_OPERACIONAL_EFETIVA);
+  }
+  if (filtros.saldoResidual === true) {
+    resultado = resultado.filter((item) => item.saldoResidualTecnico === true);
+  }
+  if (filtros.saldoResidual === false) {
+    resultado = resultado.filter((item) => item.saldoResidualTecnico !== true);
   }
   return resultado;
 }
@@ -203,7 +229,9 @@ function formatarLog(linha) {
 
 function listarDivergencias(filtros = {}) {
   const revisaoService = require("./profor-pad-revisao-service");
-  const usaFiltroOperacional = filtros.categoriaOperacional || filtros.operacionalEfetiva !== undefined;
+  const usaFiltroOperacional = filtros.categoriaOperacional
+    || filtros.operacionalEfetiva !== undefined
+    || filtros.saldoResidual !== undefined;
   const limiteSolicitado = Math.min(Math.max(Number(filtros.limite) || 100, 1), 500);
   const offsetSolicitado = Math.max(Number(filtros.offset) || 0, 0);
   const filtrosRepo = usaFiltroOperacional

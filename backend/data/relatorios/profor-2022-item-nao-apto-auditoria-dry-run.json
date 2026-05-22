@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T14:24:57.118Z",
+  "geradoEm": "2026-05-22T14:57:12.030Z",
   "modo": "dry-run",
   "tolerancias": {
     "quantidade": 0.000001,
@@ -10,9 +10,9 @@
     "totalSemDivergenciaMaterialDetectada": 1,
     "totalCandidatosAceiteAutomatico": 1,
     "totalFalsosPositivosSaneaveis": 4,
-    "totalDivergenciaMaterial": 3,
+    "totalDivergenciaMaterial": 2,
     "totalDadosMemoriaInsuficientes": 0,
-    "totalJaDecididos": 11,
+    "totalJaDecididos": 12,
     "totalErrosPayload": 0
   },
   "semDivergenciaMaterialDetectada": [
@@ -519,62 +519,6 @@
   ],
   "divergenciasMateriais": [
     {
-      "id": 39,
-      "classificacao": "divergencia_material",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "chaveItem": "938128::AGENDA PLANNER",
-      "descricao": "Agenda Planner",
-      "naturezaMemoria": "CAPITAL",
-      "naturezaPad": "CUSTEIO",
-      "quantidadeMemoria": 10,
-      "quantidadePad": 10,
-      "valorUnitarioMemoria": 113.43,
-      "valorUnitarioPad": 113.43,
-      "valorPrevistoMemoria": 1134.3,
-      "valorPrevistoPad": 1134.27,
-      "valorExecutadoMemoria": 0,
-      "valorExecutadoPad": 0,
-      "saldoMemoria": 1134.3,
-      "saldoPad": 1134.27,
-      "quantidadePadConsolidada": 10,
-      "valorUnitarioPadConsolidado": 113.43,
-      "valorPrevistoPadConsolidado": 1134.27,
-      "valorExecutadoPadConsolidado": 0,
-      "saldoPadConsolidado": 1134.27,
-      "padConsolidado": {
-        "descricao": "Agenda Planner",
-        "natureza": "CUSTEIO",
-        "quantidade": 10,
-        "valorUnitario": 113.43,
-        "valorPrevisto": 1134.27,
-        "valorExecutado": 0,
-        "saldo": 1134.27,
-        "totalLinhasPadEquivalentes": 1,
-        "linhas": [
-          {
-            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
-            "aba": "938128",
-            "linha": 16,
-            "descricao": "Agenda Planner",
-            "natureza": "CUSTEIO",
-            "quantidade": 10,
-            "valorUnitario": 113.43,
-            "valorPrevisto": 1134.27,
-            "valorExecutado": 0,
-            "saldo": 1134.27
-          }
-        ]
-      },
-      "rateiosQuantidadeSuspeita": [],
-      "justificativaSugerida": null,
-      "motivos": [
-        "natureza divergente",
-        "valorPrevisto divergente (0.03)",
-        "saldo divergente (0.03)"
-      ]
-    },
-    {
       "id": 44,
       "classificacao": "divergencia_material",
       "numeroConvenio": "938128",
@@ -884,6 +828,37 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 21868,
       "saldoPad": 21868,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
+      "justificativaSugerida": null,
+      "motivos": [
+        "Divergência já possui decisão resolutiva ou status não analisável."
+      ]
+    },
+    {
+      "id": 39,
+      "classificacao": "ja_decidido",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::AGENDA PLANNER",
+      "descricao": "Agenda Planner",
+      "naturezaMemoria": "CAPITAL",
+      "naturezaPad": "CUSTEIO",
+      "quantidadeMemoria": 10,
+      "quantidadePad": 10,
+      "valorUnitarioMemoria": 113.43,
+      "valorUnitarioPad": 113.43,
+      "valorPrevistoMemoria": 1134.3,
+      "valorPrevistoPad": 1134.27,
+      "valorExecutadoMemoria": 0,
+      "valorExecutadoPad": 0,
+      "saldoMemoria": 1134.3,
+      "saldoPad": 1134.27,
       "quantidadePadConsolidada": null,
       "valorUnitarioPadConsolidado": null,
       "valorPrevistoPadConsolidado": null,

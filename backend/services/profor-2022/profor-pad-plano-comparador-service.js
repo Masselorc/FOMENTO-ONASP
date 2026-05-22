@@ -16,6 +16,12 @@ const {
 const {
   carregarAplicacaoDecisoesDryRun,
 } = require("./profor-pad-decisao-aplicacao-service");
+const {
+  ehSaldoResidualProfor,
+  normalizarAreaSaldoResidual,
+  normalizarNaturezaSaldoResidual,
+  criarChaveSaldoResidual,
+} = require("./profor-saldo-residual-service");
 
 // Caminhos padrão dos relatórios dry-run de comparação.
 const CAMINHO_RELATORIO_COMPARACAO_JSON =
@@ -41,11 +47,12 @@ function textoChave(valor) {
 
 /** Chave estável de linha: numeroConvenio + descrição + área + natureza (exata, sem fuzzy). */
 function criarChaveLinhaComparacao(linha) {
+  const saldoResidual = ehSaldoResidualProfor(linha.descricao);
   return [
     normalizarNumeroConvenio(linha.numero ?? linha.numeroConvenio) || "sem-convenio",
     limparDescricao(linha.descricao),
-    textoChave(linha.area),
-    textoChave(linha.natureza),
+    saldoResidual ? normalizarAreaSaldoResidual(linha.area) : textoChave(linha.area),
+    saldoResidual ? normalizarNaturezaSaldoResidual(linha.natureza) : textoChave(linha.natureza),
   ].join("::");
 }
 
@@ -91,13 +98,14 @@ function montarPlanoOrigemAntiga() {
     const valorPrevisto = arredondarMoedaProfor(linha.valor_previsto_referencia);
     const valorExecutado = arredondarMoedaProfor(linha.valor_executado_referencia);
     const quantidade = Number(linha.quantidade_referencia) || 0;
+    const saldoResidual = ehSaldoResidualProfor(linha.descricao_original_referencia);
     return {
       uf: carteiraConvenio?.uf || linha.item_uf || null,
       instrumento: carteiraConvenio?.instrumento || null,
       numero,
       ano: carteiraConvenio?.ano || linha.item_ano || null,
-      area: linha.area,
-      natureza: linha.natureza,
+      area: saldoResidual ? normalizarAreaSaldoResidual(linha.area) : linha.area,
+      natureza: saldoResidual ? normalizarNaturezaSaldoResidual(linha.natureza) : linha.natureza,
       descricao: linha.descricao_original_referencia || "",
       quantidade,
       valorUnitario: quantidade > 0
@@ -111,6 +119,57 @@ function montarPlanoOrigemAntiga() {
         : 0,
     };
   });
+}
+
+function consolidarLinhasSaldoResidual(linhas) {
+  const resultado = [];
+  const mapa = new Map();
+
+  for (const linha of linhas) {
+    if (!ehSaldoResidualProfor(linha.descricao)) {
+      resultado.push(linha);
+      continue;
+    }
+    const chave = criarChaveSaldoResidual({
+      numeroConvenio: linha.numero ?? linha.numeroConvenio,
+      descricao: linha.descricao,
+      natureza: linha.natureza,
+    });
+    if (!chave) {
+      resultado.push({
+        ...linha,
+        area: normalizarAreaSaldoResidual(linha.area),
+        natureza: normalizarNaturezaSaldoResidual(linha.natureza),
+      });
+      continue;
+    }
+    if (!mapa.has(chave)) {
+      mapa.set(chave, {
+        ...linha,
+        area: "NAO INFORMADO",
+        natureza: normalizarNaturezaSaldoResidual(linha.natureza),
+        quantidade: 0,
+        valorPrevisto: 0,
+        valorExecutado: 0,
+        saldo: 0,
+        saldoResidualTecnico: true,
+      });
+      resultado.push(mapa.get(chave));
+    }
+    const agregado = mapa.get(chave);
+    agregado.quantidade += Number(linha.quantidade) || 0;
+    agregado.valorPrevisto = arredondarMoedaProfor(agregado.valorPrevisto + (Number(linha.valorPrevisto) || 0));
+    agregado.valorExecutado = arredondarMoedaProfor(agregado.valorExecutado + (Number(linha.valorExecutado) || 0));
+    agregado.saldo = arredondarMoedaProfor(agregado.valorPrevisto - agregado.valorExecutado);
+    agregado.valorUnitario = agregado.quantidade > 0
+      ? Math.round((agregado.valorPrevisto / agregado.quantidade + Number.EPSILON) * 1e6) / 1e6
+      : 0;
+    agregado.percentualExecucao = agregado.valorPrevisto > 0
+      ? Math.round((agregado.valorExecutado / agregado.valorPrevisto) * 10000) / 100
+      : 0;
+  }
+
+  return resultado;
 }
 
 /** Conjunto de convênios com divergência pendente que bloqueia publicação. */
@@ -183,10 +242,16 @@ function montarTotais(planoAntigo, planoNovo, chaveFn) {
 function indexarAreasNaturezaPorItem(linhas) {
   const indice = new Map();
   for (const linha of linhas) {
-    const chave = `${normalizarNumeroConvenio(linha.numero ?? linha.numeroConvenio) || "sem-convenio"}::${limparDescricao(linha.descricao)}`;
+    const saldoResidual = ehSaldoResidualProfor(linha.descricao);
+    const natureza = saldoResidual ? normalizarNaturezaSaldoResidual(linha.natureza) : "";
+    const chave = [
+      normalizarNumeroConvenio(linha.numero ?? linha.numeroConvenio) || "sem-convenio",
+      limparDescricao(linha.descricao),
+      saldoResidual ? natureza : null,
+    ].filter((parte) => parte !== null).join("::");
     if (!indice.has(chave)) indice.set(chave, { areas: new Set(), naturezas: new Set() });
-    indice.get(chave).areas.add(textoChave(linha.area));
-    indice.get(chave).naturezas.add(textoChave(linha.natureza));
+    indice.get(chave).areas.add(saldoResidual ? normalizarAreaSaldoResidual(linha.area) : textoChave(linha.area));
+    indice.get(chave).naturezas.add(saldoResidual ? natureza : textoChave(linha.natureza));
   }
   return indice;
 }
@@ -198,9 +263,12 @@ function diferencaConjuntos(setA, setB) {
 }
 
 /** Recria a chave_item (numeroConvenio + descrição normalizada) de uma linha. */
-function chaveItemDeLinha(numeroConvenio, descricao) {
+function chaveItemDeLinha(numeroConvenio, descricao, natureza = null) {
   const numero = normalizarNumeroConvenio(numeroConvenio);
   if (!numero) return null;
+  if (ehSaldoResidualProfor(descricao)) {
+    return criarChaveSaldoResidual({ numeroConvenio: numero, descricao, natureza });
+  }
   return criarChaveItemRateioProfor(numero, normalizarDescricaoRateioProfor(descricao));
 }
 
@@ -214,8 +282,8 @@ function compararPlanosPadDryRun(opcoes = {}) {
   const reconstrucao = opcoes.reconstrucao
     || reconstruirPlanoAplicacaoPadDryRun({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
 
-  const planoAntigo = montarPlanoOrigemAntiga();
-  const planoNovo = reconstrucao.planoAplicacaoReconstruido;
+  const planoAntigo = consolidarLinhasSaldoResidual(montarPlanoOrigemAntiga());
+  const planoNovo = consolidarLinhasSaldoResidual(reconstrucao.planoAplicacaoReconstruido);
   const conveniosComPendencia = carregarConveniosComPendenciaBloqueante();
   const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
   const regras = aplicacaoDecisoes.regras;
@@ -264,7 +332,7 @@ function compararPlanosPadDryRun(opcoes = {}) {
     };
 
     if (antigo && !novo) {
-      const chaveItem = chaveItemDeLinha(numeroConvenio, base.descricao);
+      const chaveItem = chaveItemDeLinha(numeroConvenio, base.descricao, base.natureza);
       const ausenciaConfirmada = chaveItem && regras.ausenciasConfirmadas.has(chaveItem);
       const registro = {
         ...base,
@@ -333,7 +401,7 @@ function compararPlanosPadDryRun(opcoes = {}) {
     }
 
     const temCampoFinanceiro = campos.some((campo) => campo.campo !== "quantidade");
-    const chaveItemDivergente = chaveItemDeLinha(numeroConvenio, base.descricao);
+    const chaveItemDivergente = chaveItemDeLinha(numeroConvenio, base.descricao, base.natureza);
     const saneadoPorDecisao = chaveItemDivergente
       && regras.camposSaneadosPorChaveItem.has(chaveItemDivergente);
     let classificacao;

@@ -2216,3 +2216,62 @@ Regra de interface:
 
 A integração não altera status no banco, não registra decisão, não publica e não altera a origem ativa do `planoAplicacao`.
 
+---
+
+## 27. Regra de Saldo Residual/Saldo Remanescente
+
+Em 22/05/2026, foi adicionada regra específica para itens denominados `Saldo Residual`, `Saldo Remanescente`, `Saldo Remanescente de Aplicação`, `Saldo de Aplicação`, `sobra de saldo residual` e equivalentes controlados.
+
+### 27.1. Invariantes
+
+- Saldo residual/remanescente é item técnico, não setorializado por área operacional.
+- A área deve permanecer como `N/A`, `NAO INFORMADO`, `SEM AREA`, nulo técnico ou equivalente controlado.
+- O item deve ter natureza orçamentária obrigatória: `CAPITAL` ou `CUSTEIO`.
+- `CAPITAL` e `CUSTEIO` não podem ser misturados.
+- Para equivalência, comparação, reconstrução e auditoria, a chave mínima é `numeroConvenio + descricaoNormalizada + natureza`.
+- Saldo residual não pode ser redistribuído para OUVIDORIA, CORREGEDORIA, ESCOLA PENAL ou outra área operacional.
+
+### 27.2. Implementação
+
+- Serviço central: `backend/services/profor-2022/profor-saldo-residual-service.js`.
+- Auditoria dry-run: `npm run profor:pad:saldos-residuais:auditar`.
+- Relatórios:
+  - `backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.md`.
+- Reconstrução dry-run:
+  - cria linha técnica com área `NAO INFORMADO`;
+  - registra impedimento `saldo_residual_natureza_divergente` quando a natureza PAD diverge da memória/rateio;
+  - registra impedimento `saldo_residual_rateado_indevidamente` quando houver rateio por área operacional;
+  - não usa distribuição percentual por setor para saldo residual.
+- Comparador:
+  - consolida saldos residuais por convênio, descrição e natureza;
+  - normaliza áreas técnicas equivalentes (`N/A`, `NAO INFORMADO`) sem transformar em área operacional;
+  - recria chave de decisão de saldo residual com natureza.
+- Motor de decisões:
+  - rejeita como não aplicável decisão `rateio_manual` que tente ratear saldo residual por área operacional;
+  - não apaga decisão histórica incompatível, apenas impede efeito automático no dry-run.
+
+### 27.3. Caso-piloto `#44`
+
+A divergência `#44` (`938128/SP`, `Saldo Residual`) permanece como `pendencia_operacional_real`, com classificação `saldo_residual_natureza_divergente`.
+
+Motivo: a memória aponta `CAPITAL` de R$ 22.351,09 e o PAD novo aponta `CUSTEIO` de R$ 71,36. Esses itens não são equivalentes, ainda que tenham a mesma descrição normalizada.
+
+A tela `SISTEMA > Revisão de divergências` exibe:
+- badge `Saldo residual técnico`;
+- alerta de segregação por natureza;
+- recomendação operacional específica.
+
+### 27.4. Resultado da auditoria
+
+Na geração de 22/05/2026:
+- saldos residuais/remanescentes encontrados: 113;
+- mistura `CAPITAL/CUSTEIO`: 57;
+- rateio por setor no relatório final pós-correção: 0;
+- decisões anteriores afetadas: 23;
+- decisão histórica `#150` da divergência `#18` identificada como incompatível por rateio setorial, sem apagamento.
+
+### 27.5. Escopo preservado
+
+Esta correção não registra decisão, não altera status, não publica, não altera origem ativa, não muda `frontend/data/publicados` e não altera o `planoAplicacao` oficial. O efeito é limitado a auditoria, reconstrução/comparação dry-run, neutralização de efeitos incompatíveis e exibição operacional na tela.
+

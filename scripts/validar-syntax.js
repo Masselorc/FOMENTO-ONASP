@@ -29,6 +29,7 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-pad-plano-comparador-service.js",
   "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js",
+  "backend/services/profor-2022/profor-saldo-residual-service.js",
   "backend/services/data-service.js",
   "backend/services/analytics.js",
   "backend/scripts/extrair-rateios-profor-2022.js",
@@ -53,6 +54,7 @@ const ARQUIVOS = [
   "backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js",
   "backend/scripts/auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022.js",
   "backend/scripts/auditar-quantidades-suspeitas-profor-2022.js",
+  "backend/scripts/auditar-saldos-residuais-profor-2022.js",
   "backend/scripts/auditar-pendencias-profor-2022-profundo.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
@@ -67,7 +69,8 @@ const ARQUIVOS = [
   "tests/services/profor-pad-seguranca-pre-ativacao.test.js",
   "tests/services/profor-quantidade-parser.test.js",
   "tests/services/profor-pad-item-nao-apto.test.js",
-  "tests/services/profor-pad-revisao-operacional.test.js"
+  "tests/services/profor-pad-revisao-operacional.test.js",
+  "tests/services/profor-saldo-residual.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {
