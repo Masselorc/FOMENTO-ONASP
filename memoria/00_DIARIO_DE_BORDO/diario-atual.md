@@ -1,5 +1,50 @@
 # Diário de bordo
 
+## 22/05/2026 - PROFOR 2022: parecer decisório final da divergência #44
+
+- Objetivo:
+  - consolidar diagnóstico decisório da divergência `#44` (`938128/SP`,
+    `Saldo Residual`) para orientar decisão humana sem registrar nova decisão.
+- Fontes consultadas:
+  - payload da `#44` pela API/serviço local de revisão;
+  - decisão `#186` e logs da divergência;
+  - `backend/data/relatorios/profor-2022-divergencia-44-diagnostico-dry-run.md`;
+  - `profor-2022-pendencias-profundo-dry-run.*`;
+  - `profor-2022-pad-plano-reconstruido-dry-run.json`;
+  - `profor-2022-pad-plano-comparacao-dry-run.json`;
+  - linhas PAD do convênio `938128/SP`;
+  - memória/rateios antigos da chave `938128::SALDO RESIDUAL`.
+- Diagnóstico:
+  - memória antiga de `Saldo Residual` `CAPITAL`: `R$ 22.351,09`;
+  - PAD novo de `Saldo Residual` `CAPITAL`: `R$ 20.704,73`;
+  - diferença bruta: `-R$ 1.646,36` (PAD menor);
+  - considerando a parcela `R$ 71,36` reapresentada como `CUSTEIO`, a
+    diferença líquida material remanescente é `-R$ 1.575,00`;
+  - a decisão `#186` libera o item não apto para dry-run, mas não resolve o
+    mérito material da redução/reclassificação.
+- Parecer:
+  - a `#44` deve permanecer como `pendencia_operacional_real`;
+  - recomendação atual: revisar depois, com confirmação documental externa;
+  - se a área confirmar o ajuste do PAD, registrar decisão complementar ou
+    retificadora pelo serviço de decisão, sem aplicar ao plano oficial.
+- Arquivo gerado:
+  - `backend/data/relatorios/profor-2022-divergencia-44-parecer-decisorio.md`.
+- Validações:
+  - `npm run profor:pad:auditar-pendencias-profundo`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `npm run validar:syntax`;
+  - `npm run validar:services`.
+- Confirmações de escopo:
+  - nenhuma decisão registrada;
+  - nenhum dado do SQLite alterado;
+  - nenhuma publicação;
+  - origem ativa e `planoAplicacao` oficial não alterados;
+  - `frontend/data/publicados` não alterado.
+- Rollback:
+  - reverter o commit documental, se houver, e regenerar relatórios dry-run se
+    necessário; não apagar decisões, divergências nem logs.
+
 ## 22/05/2026 - PROFOR 2022: harmonização da #46 na regressão de saneamentos
 
 - Objetivo:
