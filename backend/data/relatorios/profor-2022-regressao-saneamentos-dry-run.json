@@ -1,0 +1,3265 @@
+{
+  "geradoEm": "2026-05-22T20:49:56.354Z",
+  "modo": "dry-run",
+  "titulo": "Auditoria de regressao dos saneamentos PAD/PROFOR 2022 por chave de pareamento fragil",
+  "escopo": "Somente leitura. Nao publica, nao registra decisao, nao reabre divergencia, nao altera SQLite, origem ativa nem planoAplicacao oficial. Nenhum achado suspeito vira pendencia sem evidencia material.",
+  "motivacao": "Diagnostico da #44 (938128/SP): o PAD tinha multiplas linhas para a mesma descricao. Reavaliacao transversal dos saneamentos que dependem de pareamento de linha PAD.",
+  "fonteIdentidadeMaterial": "backend/data/relatorios/profor-2022-identidade-material-pad-dry-run.json",
+  "catalogoClassificacoes": {
+    "saneamento_confirmado": "Pareamento sem ambiguidade material; grupo PAD de linha unica ou tipo nao sensivel a pareamento.",
+    "saneamento_suspeito_chave_fragil": "Divergencia ja decidida cuja chave de pareamento corresponde a mais de uma linha PAD; exige revalidacao manual da decisao.",
+    "risco_confirmado_ja_diagnosticado": "Caso ja diagnosticado e corrigido em auditoria anterior (#44).",
+    "divergencia_aberta_com_alerta_pareamento": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo.",
+    "pendencia_material_potencial_aberta": "Divergencia aberta em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material).",
+    "pendencia_material_potencial_decidida": "Divergencia ja decidida em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material)."
+  },
+  "resumo": {
+    "totalDivergenciasReavaliadas": 145,
+    "totalSensiveisAPareamento": 46,
+    "totalSaneamentosConcluidos": 72,
+    "saneamentosConfirmados": 138,
+    "saneamentosConcluidosConfirmados": 70,
+    "saneamentosSuspeitosChaveFragil": 1,
+    "riscosConfirmadosJaDiagnosticados": 1,
+    "divergenciasAbertasComAlertaPareamento": 4,
+    "pendenciasMateriaisPotenciaisAbertas": 1,
+    "pendenciasMateriaisPotenciaisDecididas": 0,
+    "divergenciasSaneadasParaRevalidar": [
+      24
+    ],
+    "divergenciasPendentesComAlerta": [
+      46,
+      31,
+      32,
+      33,
+      34
+    ],
+    "divergenciasParaReabrir": []
+  },
+  "achados": [
+    {
+      "divergenciaId": 24,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937265::MEIA MILITAR",
+      "itemConhecidoId": 154,
+      "decisao": "#184 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::MEIA MILITAR",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903099"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza",
+        "equivalencia_para_item_conhecido_com_multiplas_linhas_pad"
+      ],
+      "classificacaoRegressao": "saneamento_suspeito_chave_fragil",
+      "recomendacao": "Revalidar manualmente a decisao: a chave de pareamento (descricao/itemConhecido) corresponde a mais de uma linha PAD.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 46,
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "itemConhecidoId": 231,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938277::SALDO REMANESCENTE",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO",
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "33903099",
+          "44905299"
+        ],
+        "severidade": "alto"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "grupo_pad_com_multiplas_naturezas",
+        "grupo_pad_com_multiplos_codigos_natureza",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "pendencia_material_potencial_aberta",
+      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material). Exige segregar por natureza/codigo na analise.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 31,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::CALCA TATICA",
+      "itemConhecidoId": 131,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::CALCA TATICA",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903016"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
+      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 32,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::CINTO TATICO",
+      "itemConhecidoId": 135,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::CINTO TATICO",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903016"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
+      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 33,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::COTURNO",
+      "itemConhecidoId": 136,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::COTURNO",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903016"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
+      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 34,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "itemConhecidoId": 164,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905287"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
+      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 44,
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "itemConhecidoId": 212,
+      "decisao": "#186 ACEITO (usuario-local)",
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938128::SALDO RESIDUAL",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO",
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "33903099",
+          "44905299"
+        ],
+        "severidade": "alto"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "grupo_pad_com_multiplas_naturezas",
+        "grupo_pad_com_multiplos_codigos_natureza",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "risco_confirmado_ja_diagnosticado",
+      "recomendacao": "Caso ja diagnosticado e corrigido em auditoria anterior; manter como referencia.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 1,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+      "itemConhecidoId": null,
+      "decisao": "#127 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 2,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+      "itemConhecidoId": null,
+      "decisao": "#134 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 3,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+      "itemConhecidoId": null,
+      "decisao": "#135 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 4,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+      "itemConhecidoId": null,
+      "decisao": "#136 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 5,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+      "itemConhecidoId": null,
+      "decisao": "#137 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 6,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+      "itemConhecidoId": null,
+      "decisao": "#138 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 7,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+      "itemConhecidoId": null,
+      "decisao": "#139 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 8,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "itemConhecidoId": null,
+      "decisao": "#140 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 9,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+      "itemConhecidoId": null,
+      "decisao": "#141 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 10,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+      "itemConhecidoId": null,
+      "decisao": "#142 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 11,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+      "itemConhecidoId": null,
+      "decisao": "#143 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 12,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+      "itemConhecidoId": null,
+      "decisao": "#144 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 13,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+      "itemConhecidoId": null,
+      "decisao": "#145 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 14,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+      "itemConhecidoId": null,
+      "decisao": "#146 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 15,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+      "itemConhecidoId": null,
+      "decisao": "#147 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 16,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::QUADRO LOUSA BRANCA",
+      "itemConhecidoId": null,
+      "decisao": "#148 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::QUADRO LOUSA BRANCA",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 17,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+      "itemConhecidoId": null,
+      "decisao": "#149 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 18,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "itemConhecidoId": null,
+      "decisao": "#150 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::SALDO RESIDUAL",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 19,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+      "itemConhecidoId": null,
+      "decisao": "#151 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 20,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+      "itemConhecidoId": null,
+      "decisao": "#152 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 21,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
+      "itemConhecidoId": null,
+      "decisao": "#77 ACEITO (marcelo.cortez)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903799"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 22,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
+      "itemConhecidoId": null,
+      "decisao": "#78 ACEITO (marcelo.cortez)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903799"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 23,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+      "itemConhecidoId": null,
+      "decisao": "#85 ACEITO (sistema-auditoria-rateio-antigo)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905200"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 25,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "itemConhecidoId": 97,
+      "decisao": "#104 ACEITO (usuario-local)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937782::DESKTOP PARA EDICAO DE VIDEO",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905200"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 26,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "itemConhecidoId": 111,
+      "decisao": "#105 ACEITO (usuario-local)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905200"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 27,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "itemConhecidoId": 112,
+      "decisao": "#106 ACEITO (usuario-local)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937782::SWITCHER DE VIDEO",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905200"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 28,
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
+      "itemConhecidoId": 34,
+      "decisao": "#60 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937216::MONITOR LED, MINIMO 27, CONEXOES DVI-D (",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905233"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 29,
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
+      "itemConhecidoId": 48,
+      "decisao": "#61 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937216::NOTEBOOK; SISTEMA OPERACIONAL: PROPRIETA",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905235"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 30,
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
+      "itemConhecidoId": 49,
+      "decisao": "#62 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937216::TABLET, DISPLAY SUPER AMOLED 14,6, TFT,",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905235"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 35,
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
+      "itemConhecidoId": 370,
+      "decisao": "#63 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937468::ETAPA 1 - OUVIDORIA - NOBREAK: PECA/COMP",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 36,
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
+      "itemConhecidoId": 375,
+      "decisao": "#64 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937468::ETAPA 2 - CORREGEDORIA - NOBREAK: PECA/",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 37,
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
+      "itemConhecidoId": 386,
+      "decisao": "#65 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937468::ETAPA 2 - CORREGEDORIA - TABLET, TELA SU",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905235"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 38,
+      "numeroConvenio": "937817",
+      "uf": "RJ",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937817::CAPACETE PROTETOR",
+      "itemConhecidoId": 393,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937817::CAPACETE PROTETOR",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903099"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 39,
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "938128::AGENDA PLANNER",
+      "itemConhecidoId": 214,
+      "decisao": "#185 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938128::AGENDA PLANNER",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903099"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 40,
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
+      "itemConhecidoId": 217,
+      "decisao": "#66 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938128::CAMERA DIGITAL, PARA A OUVIDORIA",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 41,
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
+      "itemConhecidoId": 215,
+      "decisao": "#67 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938128::CONTRATACAO DE SERVICOS DE DIGITALIZACAO",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903999"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 42,
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
+      "itemConhecidoId": 218,
+      "decisao": "#68 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938128::ESTACAO DE TRABALHO (MESA EM L), PARA OU",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 43,
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "938128::GAVETEIROS, OUVIDORIA",
+      "itemConhecidoId": 219,
+      "decisao": "#69 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938128::GAVETEIROS, OUVIDORIA",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905299"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 45,
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "tipoAlerta": "item_nao_apto",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
+      "itemConhecidoId": 216,
+      "decisao": "#70 ACEITO (sistema-auditoria-item-nao-apto)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938128::SERVICO DE OPERACIONALIZACAO DE SISTEMA",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903999"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 47,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG",
+      "itemConhecidoId": 449,
+      "decisao": "#153 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 48,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)",
+      "itemConhecidoId": 450,
+      "decisao": "#154 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 49,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)",
+      "itemConhecidoId": 447,
+      "decisao": "#155 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 50,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -",
+      "itemConhecidoId": 451,
+      "decisao": "#156 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 51,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT",
+      "itemConhecidoId": 452,
+      "decisao": "#157 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 52,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::CAFETEIRA ELETRICA TRADICIONAL INDUSTRIA",
+      "itemConhecidoId": 453,
+      "decisao": "#158 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 53,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::COMPUTADOR DESKTOP (OUVIDORIA)",
+      "itemConhecidoId": 454,
+      "decisao": "#159 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 54,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L BRANCO (OUVID",
+      "itemConhecidoId": 455,
+      "decisao": "#160 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 55,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "CORRIGIDO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "itemConhecidoId": 456,
+      "decisao": "#183 CORRIGIDO (sistema-saneamento-substituto-pad)",
+      "classificacaoOperacional": null,
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 56,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::FRIGOBAR 71L (OUVIDORIA)",
+      "itemConhecidoId": 458,
+      "decisao": "#161 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 57,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::GELADEIRA FROST FREE DUPLEX 400 LITROS (",
+      "itemConhecidoId": 459,
+      "decisao": "#162 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 58,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::GRAVADOR DE AUDIO DIGITAL 32GB (OUVIDORIA)",
+      "itemConhecidoId": 460,
+      "decisao": "#163 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 59,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::HD EXTERNO 2TB (OUVIDORIA)",
+      "itemConhecidoId": 461,
+      "decisao": "#164 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 60,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL TANQUE DE TIN",
+      "itemConhecidoId": 462,
+      "decisao": "#165 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 61,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::KIT VIDEOCONFERENCIA (CORREGEDORIA - 03",
+      "itemConhecidoId": 464,
+      "decisao": "#166 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 62,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::MESA ESCRITORIO REDONDA - 1,20M (OUVIDORIA)",
+      "itemConhecidoId": 465,
+      "decisao": "#167 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 63,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::NOBREAK 1200VA (OUVIDORIA)",
+      "itemConhecidoId": 467,
+      "decisao": "#168 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 64,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::NOTEBOOK (OUVIDORIA)",
+      "itemConhecidoId": 468,
+      "decisao": "#169 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 65,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::PEN DRIVE 64GB (OUVIDORIA)",
+      "itemConhecidoId": 469,
+      "decisao": "#170 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 66,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::POLTRONAS (CORREGEDORIA)",
+      "itemConhecidoId": 470,
+      "decisao": "#182 ACEITO (usuario-local)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 67,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::PROJETOR MULTIMIDIA 3.000 LUMENS (OUVIDORIA)",
+      "itemConhecidoId": 471,
+      "decisao": "#171 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 68,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::QUADRO LOUSA BRANCA 250X120CM (ESCOLA)",
+      "itemConhecidoId": 472,
+      "decisao": "#172 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 69,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::TELA DE PROJECAO 2X2 RETRATIL COM TRIPE",
+      "itemConhecidoId": 476,
+      "decisao": "#173 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 70,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::TELEVISAO 50 (CORREGEDORIA - 03 UN. E OU",
+      "itemConhecidoId": 477,
+      "decisao": "#174 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 71,
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937221::WEBCAM FULL HD (OUVIDORIA)",
+      "itemConhecidoId": 478,
+      "decisao": "#175 ACEITO (sistema-saneamento-pad-al-937221)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 72,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::CONTRATACAO DE BOLSA - ALUNO OUVIDORIA I",
+      "itemConhecidoId": 115,
+      "decisao": "#108 ACEITO (usuario-local)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 73,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::CONTRATACAO DE BOLSA -COORDENADOR OUVID",
+      "itemConhecidoId": 116,
+      "decisao": "#109 ACEITO (usuario-local)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 74,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::CONTRATACAO DE BOLSA -PESQUISADOR OUVID",
+      "itemConhecidoId": 117,
+      "decisao": "#110 ACEITO (usuario-local)",
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 75,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "CORRIGIDO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "itemConhecidoId": 97,
+      "decisao": "#117 CORRIGIDO (sistema-saneamento-diacritico)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": false,
+      "grupoPad": {
+        "chaveDescricao": "937782::DESKTOP PARA EDICAO DE VIDEO",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905200"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 76,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "CORRIGIDO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+      "itemConhecidoId": 109,
+      "decisao": "#126 CORRIGIDO (sistema-saneamento-substituto-pad)",
+      "classificacaoOperacional": null,
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 77,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "CORRIGIDO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "itemConhecidoId": 111,
+      "decisao": "#118 CORRIGIDO (sistema-saneamento-diacritico)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": false,
+      "grupoPad": {
+        "chaveDescricao": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905200"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 78,
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "status": "CORRIGIDO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "itemConhecidoId": 112,
+      "decisao": "#119 CORRIGIDO (sistema-saneamento-diacritico)",
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "sensivelAPareamento": false,
+      "grupoPad": {
+        "chaveDescricao": "937782::SWITCHER DE VIDEO",
+        "totalLinhasPad": 1,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905200"
+        ],
+        "severidade": "ok"
+      },
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 79,
+      "numeroConvenio": "937698",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 80,
+      "numeroConvenio": "937698",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 81,
+      "numeroConvenio": "937698",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 82,
+      "numeroConvenio": "937698",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 83,
+      "numeroConvenio": "937698",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 84,
+      "numeroConvenio": "937698",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 85,
+      "numeroConvenio": "937871",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 86,
+      "numeroConvenio": "937871",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 87,
+      "numeroConvenio": "937592",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 88,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 89,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 90,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 91,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 92,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 93,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 94,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 95,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 96,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 97,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 98,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 99,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 100,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 101,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 102,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 103,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 104,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 105,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 106,
+      "numeroConvenio": "937265",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 107,
+      "numeroConvenio": "938277",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 108,
+      "numeroConvenio": "938128",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 109,
+      "numeroConvenio": "938128",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 110,
+      "numeroConvenio": "938128",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 111,
+      "numeroConvenio": "938128",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 112,
+      "numeroConvenio": "938128",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 113,
+      "numeroConvenio": "937780",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 114,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 115,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 116,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 117,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 118,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 119,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 120,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 121,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 122,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 123,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 124,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 125,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 126,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 127,
+      "numeroConvenio": "937917",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 128,
+      "numeroConvenio": "937468",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 129,
+      "numeroConvenio": "937468",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 130,
+      "numeroConvenio": "937468",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 131,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 132,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 133,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 134,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 135,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 136,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 137,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 138,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 139,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 140,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 141,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 142,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 143,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 144,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 145,
+      "numeroConvenio": "937817",
+      "uf": null,
+      "tipoAlerta": "quantidade_valor_unitario_inconsistente",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": null,
+      "itemConhecidoId": null,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": false,
+      "grupoPad": null,
+      "fatoresFragilidade": [],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
+      "reabrir": false
+    }
+  ],
+  "garantias": {
+    "decisaoRegistrada": false,
+    "statusAlterado": false,
+    "divergenciaReaberta": false,
+    "publicacaoExecutada": false,
+    "origemAtivaAlterada": false,
+    "planoAplicacaoOficialAlterado": false,
+    "sqliteAlterado": false
+  }
+}

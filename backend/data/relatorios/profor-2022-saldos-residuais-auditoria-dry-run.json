@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T20:12:41.145Z",
+  "geradoEm": "2026-05-22T20:49:01.456Z",
   "modo": "dry-run",
   "regra": {
     "diagnostico": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
@@ -38,21 +38,21 @@
     }
   ],
   "resumo": {
-    "totalSaldosResiduaisEncontrados": 117,
+    "totalSaldosResiduaisEncontrados": 116,
     "totalPorNatureza": {
       "CAPITAL": 37,
       "CUSTEIO": 28,
-      "SEM_NATUREZA": 50,
+      "SEM_NATUREZA": 49,
       "MISTA": 2
     },
-    "totalAreaTecnicaCorreta": 117,
+    "totalAreaTecnicaCorreta": 116,
     "totalIndevidamenteRateadoPorSetor": 0,
-    "totalMisturaCapitalCusteio": 59,
+    "totalMisturaCapitalCusteio": 58,
     "totalMisturaFechaPorNatureza": 5,
     "totalDecisaoAnteriorAfetada": 24,
     "totalCorrigidoAutomaticamente": 33,
-    "totalPendenteDecisaoHumana": 84,
-    "totalBloqueadoPorSeguranca": 54
+    "totalPendenteDecisaoHumana": 83,
+    "totalBloqueadoPorSeguranca": 53
   },
   "itens": [
     {
@@ -1524,30 +1524,6 @@
       "areaTecnicaNaoSetorializada": true,
       "areaOperacionalIndevida": false,
       "naturezaValida": true,
-      "classificacao": "saldo_residual_natureza_divergente",
-      "recomendacao": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
-      "misturaCapitalCusteio": true,
-      "chaveIgnorouNatureza": true
-    },
-    {
-      "origem": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricaoOriginal": "Saldo Residual",
-      "descricaoNormalizada": "SALDO RESIDUAL",
-      "natureza": "",
-      "codigoNaturezaDespesa": null,
-      "areaOriginal": null,
-      "areaTecnica": "NAO INFORMADO",
-      "valorUnitario": 0,
-      "quantidade": 0,
-      "valorPrevisto": 0,
-      "valorExecutado": 0,
-      "saldo": 0,
-      "chaveSaldoResidual": "938128::SALDO RESIDUAL::SEM_NATUREZA",
-      "areaTecnicaNaoSetorializada": true,
-      "areaOperacionalIndevida": false,
-      "naturezaValida": false,
       "classificacao": "saldo_residual_natureza_divergente",
       "recomendacao": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
       "misturaCapitalCusteio": true,

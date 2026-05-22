@@ -2349,3 +2349,29 @@ A primeira execução apontou `#18` como `pendencia_operacional_real` mesmo já 
 
 **Resultado da reexecução (22/05/2026).** `pendencia_operacional_real` caiu de 2 para 1. `#18` passou a `decisao_resolutiva_com_pendencia_tecnica` (decisão canônica válida, payload não alterado, pendência técnica = rateio de saldo residual por área operacional na decisão #150, que exige revalidação do efeito). `#44` permanece `pendencia_operacional_real` (divergência material de natureza: memória CAPITAL sem correspondente PAD de mesma natureza/valor). Bloco B inalterado (35 bloqueios), Blocos C e D inalterados. A correção é restrita à categorização operacional da auditoria profunda e está coberta por `tests/services/profor-pad-classificacao-operacional.test.js`.
 
+## 30. Auditoria de identidade material PAD e regressão de saneamentos por chave frágil
+
+### 30.1. Objetivo
+Auditoria transversal de leitura (dry-run) motivada pelo caso #44. O objetivo é mapear se a aplicação corre o risco de fundir ou misturar linhas PAD distintas que possuam a mesma descrição textual normalizada no mesmo convênio (chave de pareamento frágil `convenio::descricao`). O relatório ajuda a reavaliar saneamentos já decididos e classificar divergências ativas de forma segregada.
+
+### 30.2. Autor de Identidade Material PAD
+O script `backend/scripts/auditar-identidade-material-pad-profor-2022.js` agrupa as linhas PAD físicas por convênio e descrição normalizada, sinalizando grupos em que a descrição não é identidade material suficiente:
+- **Severidade Alta**: Mesma descrição contendo naturezas divergentes (como CAPITAL e CUSTEIO concorrendo na mesma descrição, padrão do caso #44).
+- **Severidade Média**: Mesma descrição com códigos de natureza diferentes (por exemplo, subelementos de despesa distintos).
+- **Severidade Baixa**: Mesma descrição com valores unitários divergentes.
+
+### 30.3. Auditor de Regressão de Saneamentos por Chave Frágil
+O script `backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js` reavalia cada divergência resolvida e em aberto sensível a pareamento, separando-as nas categorias:
+- `saneamento_confirmado`: Saneamento em grupo PAD de linha única ou não sensível a pareamento.
+- `saneamento_suspeito_chave_fragil`: Saneamento concluído em grupo PAD com múltiplas linhas (exemplo: `#24`), exigindo revalidação manual.
+- `risco_confirmado_ja_diagnosticado`: Caso `#44` (preservado como referência).
+- `divergencia_aberta_com_alerta_pareamento`: Divergência aberta em grupo PAD com múltiplas linhas de mesma natureza/código (exemplos: `#31-#34`).
+- `pendencia_material_potencial_aberta`: Divergência aberta em grupo PAD com múltiplas linhas e divergência de natureza/código (exemplo: `#46`).
+- `pendencia_material_potencial_decidida`: Saneamento concluído em grupo PAD com múltiplas linhas e divergência de natureza/código.
+
+Nenhum saneamento é reaberto automaticamente no banco SQLite. Todo o processo funciona em modo somente leitura (dry-run).
+
+### 30.4. Resultados da Auditoria (22/05/2026)
+- **Identidade Material**: Detectados 34 grupos com risco de identidade material.
+- **Regressão de Saneamento**: Analisadas 145 divergências. 72 saneamentos concluídos (70 confirmados confiáveis, 1 suspeito (#24), 1 já diagnosticado (#44)). 4 divergências abertas com alerta de pareamento (#31-#34) e 1 pendência material potencial aberta (#46).
+

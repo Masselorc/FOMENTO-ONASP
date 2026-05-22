@@ -1,0 +1,1789 @@
+{
+  "geradoEm": "2026-05-22T20:50:40.774Z",
+  "modo": "dry-run",
+  "titulo": "Auditoria de identidade material das linhas PAD/PROFOR 2022",
+  "escopo": "Somente leitura. Nao publica, nao registra decisao, nao altera origem ativa, planoAplicacao oficial nem SQLite versionado.",
+  "motivacao": "Diagnostico da divergencia #44 (938128/SP): o PAD tinha duas linhas 'Saldo Residual' com naturezas/codigos diferentes para a mesma descricao. Chave de pareamento por descricao normalizada nao e identidade material suficiente.",
+  "fonte": "backend/data/relatorios/profor-2022-pad-rateios-dry-run.json",
+  "chaveIdentidadeMaterialRecomendada": "numeroConvenio + descricaoNormalizada + natureza + codigoNaturezaDespesa",
+  "catalogoRiscos": {
+    "descricao_repetida_no_convenio": "Mesma descricao normalizada com mais de uma linha PAD no convenio.",
+    "descricao_com_multiplas_naturezas": "Mesma descricao com CAPITAL e CUSTEIO (ou outra divergencia de natureza).",
+    "descricao_com_multiplos_codigos_natureza": "Mesma descricao com mais de um codigo de natureza da despesa.",
+    "descricao_com_valores_unitarios_distintos": "Mesma descricao com valores unitarios diferentes entre linhas.",
+    "saldo_residual_ou_remanescente": "Descricao generica de saldo residual/remanescente; alto risco de colisao.",
+    "saldo_residual_repetido_no_convenio": "Saldo residual/remanescente com mais de uma linha PAD no convenio.",
+    "mesma_descricao_capital_e_custeio": "Mesma descricao aparece em CAPITAL e em CUSTEIO (padrao da #44)."
+  },
+  "resumo": {
+    "totalLinhasPadAnalisadas": 525,
+    "totalDescricoesDistintas": 494,
+    "totalIdentidadesMateriaisDistintas": 499,
+    "totalDescricoesRepetidas": 25,
+    "totalDescricoesComMultiplasNaturezas": 2,
+    "totalDescricoesComMultiplosCodigosNatureza": 5,
+    "totalSaldoResidualOuRemanescente": 11,
+    "totalSaldoResidualRepetido": 2,
+    "totalGruposComRisco": 34,
+    "totalGruposAlto": 2,
+    "totalGruposMedio": 3,
+    "totalGruposBaixo": 29,
+    "totalItensConhecidosAfetados": 5
+  },
+  "gruposComRisco": [
+    {
+      "chaveDescricao": "938128::SALDO RESIDUAL",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoNormalizada": "SALDO RESIDUAL",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO",
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "33903099",
+        "44905299"
+      ],
+      "itemConhecidoIds": [
+        212
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_multiplas_naturezas",
+        "descricao_com_multiplos_codigos_natureza",
+        "descricao_com_valores_unitarios_distintos",
+        "saldo_residual_ou_remanescente",
+        "saldo_residual_repetido_no_convenio",
+        "mesma_descricao_capital_e_custeio"
+      ],
+      "severidade": "alto",
+      "linhas": [
+        {
+          "aba": "938128",
+          "linha": 19,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903099",
+          "unidade": "un",
+          "quantidade": 1,
+          "valorUnitario": 71.36,
+          "valorPrevisto": 71.36,
+          "valorExecutado": 0,
+          "saldo": 71.36,
+          "chaveItem": "938128::SALDO RESIDUAL",
+          "chaveIdentidadeMaterial": "938128::SALDO RESIDUAL::CUSTEIO::33903099"
+        },
+        {
+          "aba": "938128",
+          "linha": 61,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 20704.73,
+          "valorPrevisto": 20704.73,
+          "valorExecutado": 0,
+          "saldo": 20704.73,
+          "chaveItem": "938128::SALDO RESIDUAL",
+          "chaveIdentidadeMaterial": "938128::SALDO RESIDUAL::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "938277::SALDO REMANESCENTE",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "descricaoNormalizada": "SALDO REMANESCENTE",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO",
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "33903099",
+        "44905299"
+      ],
+      "itemConhecidoIds": [
+        231
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_multiplas_naturezas",
+        "descricao_com_multiplos_codigos_natureza",
+        "descricao_com_valores_unitarios_distintos",
+        "saldo_residual_ou_remanescente",
+        "saldo_residual_repetido_no_convenio",
+        "mesma_descricao_capital_e_custeio"
+      ],
+      "severidade": "alto",
+      "linhas": [
+        {
+          "aba": "938277",
+          "linha": 27,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903099",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 5924.45,
+          "valorPrevisto": 5924.45,
+          "valorExecutado": 0,
+          "saldo": 5924.45,
+          "chaveItem": "938277::SALDO REMANESCENTE",
+          "chaveIdentidadeMaterial": "938277::SALDO REMANESCENTE::CUSTEIO::33903099"
+        },
+        {
+          "aba": "938277",
+          "linha": 52,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 7267.88,
+          "valorPrevisto": 7267.88,
+          "valorExecutado": 0,
+          "saldo": 7267.88,
+          "chaveItem": "938277::SALDO REMANESCENTE",
+          "chaveIdentidadeMaterial": "938277::SALDO REMANESCENTE::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::CAMISA TATICA",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "CAMISA TATICA",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903016",
+        "33903023"
+      ],
+      "itemConhecidoIds": [
+        132
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_multiplos_codigos_natureza"
+      ],
+      "severidade": "medio",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 24,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 30,
+          "valorUnitario": 198.38,
+          "valorPrevisto": 5951.5,
+          "valorExecutado": 0,
+          "saldo": 5951.5,
+          "chaveItem": "937265::CAMISA TATICA",
+          "chaveIdentidadeMaterial": "937265::CAMISA TATICA::CUSTEIO::33903016"
+        },
+        {
+          "aba": "937265",
+          "linha": 43,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903023",
+          "unidade": "UN",
+          "quantidade": 40,
+          "valorUnitario": 198.38,
+          "valorPrevisto": 7935.33,
+          "valorExecutado": 0,
+          "saldo": 7935.33,
+          "chaveItem": "937265::CAMISA TATICA",
+          "chaveIdentidadeMaterial": "937265::CAMISA TATICA::CUSTEIO::33903023"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905242",
+        "44905299"
+      ],
+      "itemConhecidoIds": [
+        362
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_multiplos_codigos_natureza"
+      ],
+      "severidade": "medio",
+      "linhas": [
+        {
+          "aba": "937468",
+          "linha": 45,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905242",
+          "unidade": "UN",
+          "quantidade": 3,
+          "valorUnitario": 1200,
+          "valorPrevisto": 3600,
+          "valorExecutado": 0,
+          "saldo": 3600,
+          "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "chaveIdentidadeMaterial": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR::CAPITAL::44905242"
+        },
+        {
+          "aba": "937468",
+          "linha": 56,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 16,
+          "valorUnitario": 1200,
+          "valorPrevisto": 19200,
+          "valorExecutado": 0,
+          "saldo": 19200,
+          "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "chaveIdentidadeMaterial": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "numeroConvenio": "937468",
+      "uf": "TO",
+      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905242",
+        "44905299"
+      ],
+      "itemConhecidoIds": [
+        365
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_multiplos_codigos_natureza",
+        "descricao_com_valores_unitarios_distintos"
+      ],
+      "severidade": "medio",
+      "linhas": [
+        {
+          "aba": "937468",
+          "linha": 48,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905242",
+          "unidade": "un",
+          "quantidade": 1,
+          "valorUnitario": 3933.72,
+          "valorPrevisto": 3933.72,
+          "valorExecutado": 0,
+          "saldo": 3933.72,
+          "chaveItem": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "chaveIdentidadeMaterial": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO::CAPITAL::44905242"
+        },
+        {
+          "aba": "937468",
+          "linha": 61,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "un",
+          "quantidade": 1,
+          "valorUnitario": 3020.33,
+          "valorPrevisto": 3020.33,
+          "valorExecutado": 0,
+          "saldo": 3020.33,
+          "chaveItem": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "chaveIdentidadeMaterial": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937216::SALDO REMANESCENTE - CONFORME NOTA TECNI",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "descricaoNormalizada": "SALDO REMANESCENTE - CONFORME NOTA TECNI",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44322015"
+      ],
+      "itemConhecidoIds": [
+        19
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937216",
+          "linha": 22,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44322015",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 34033.34,
+          "valorPrevisto": 34033.34,
+          "valorExecutado": 0,
+          "saldo": 34033.34,
+          "chaveItem": "937216::SALDO REMANESCENTE - CONFORME NOTA TECNI",
+          "chaveIdentidadeMaterial": "937216::SALDO REMANESCENTE - CONFORME NOTA TECNI::CAPITAL::44322015"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937221::SALDO RESIDUAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricaoNormalizada": "SALDO RESIDUAL",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905299"
+      ],
+      "itemConhecidoIds": [],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937221",
+          "linha": 37,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "un",
+          "quantidade": 1,
+          "valorUnitario": 9506.54,
+          "valorPrevisto": 9506.54,
+          "valorExecutado": 0,
+          "saldo": 9506.54,
+          "chaveItem": "937221::SALDO RESIDUAL",
+          "chaveIdentidadeMaterial": "937221::SALDO RESIDUAL::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "AR CONDICIONADO INVERTER 12.000 BTUS",
+      "totalLinhasPad": 3,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        155
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 52,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 4,
+          "valorUnitario": 2595.3,
+          "valorPrevisto": 10381.21,
+          "valorExecutado": 0,
+          "saldo": 10381.21,
+          "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
+          "chaveIdentidadeMaterial": "937265::AR CONDICIONADO INVERTER 12.000 BTUS::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 53,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 3,
+          "valorUnitario": 2595.3,
+          "valorPrevisto": 7785.91,
+          "valorExecutado": 0,
+          "saldo": 7785.91,
+          "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
+          "chaveIdentidadeMaterial": "937265::AR CONDICIONADO INVERTER 12.000 BTUS::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 54,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 4,
+          "valorUnitario": 2595.3,
+          "valorPrevisto": 10381.21,
+          "valorExecutado": 18920,
+          "saldo": -8538.79,
+          "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
+          "chaveIdentidadeMaterial": "937265::AR CONDICIONADO INVERTER 12.000 BTUS::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::AR CONDICIONADO INVERTER 24.000 BTUS",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "AR CONDICIONADO INVERTER 24.000 BTUS",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        156
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 55,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 4344.89,
+          "valorPrevisto": 8689.78,
+          "valorExecutado": 0,
+          "saldo": 8689.78,
+          "chaveItem": "937265::AR CONDICIONADO INVERTER 24.000 BTUS",
+          "chaveIdentidadeMaterial": "937265::AR CONDICIONADO INVERTER 24.000 BTUS::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 56,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 4344.89,
+          "valorPrevisto": 8689.78,
+          "valorExecutado": 13280,
+          "saldo": -4590.22,
+          "chaveItem": "937265::AR CONDICIONADO INVERTER 24.000 BTUS",
+          "chaveIdentidadeMaterial": "937265::AR CONDICIONADO INVERTER 24.000 BTUS::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::CADEIRA FIXA",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "CADEIRA FIXA",
+      "totalLinhasPad": 3,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        158
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 58,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 9,
+          "valorUnitario": 655.09,
+          "valorPrevisto": 5895.84,
+          "valorExecutado": 0,
+          "saldo": 5895.84,
+          "chaveItem": "937265::CADEIRA FIXA",
+          "chaveIdentidadeMaterial": "937265::CADEIRA FIXA::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 59,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 4,
+          "valorUnitario": 655.09,
+          "valorPrevisto": 2620.37,
+          "valorExecutado": 0,
+          "saldo": 2620.37,
+          "chaveItem": "937265::CADEIRA FIXA",
+          "chaveIdentidadeMaterial": "937265::CADEIRA FIXA::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 60,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 4,
+          "valorUnitario": 655.09,
+          "valorPrevisto": 2620.37,
+          "valorExecutado": 0,
+          "saldo": 2620.37,
+          "chaveItem": "937265::CADEIRA FIXA",
+          "chaveIdentidadeMaterial": "937265::CADEIRA FIXA::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::CADEIRA GIRATORIA COM BRACOS",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "CADEIRA GIRATORIA COM BRACOS",
+      "totalLinhasPad": 3,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        159
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 61,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 5,
+          "valorUnitario": 2510.22,
+          "valorPrevisto": 12551.12,
+          "valorExecutado": 0,
+          "saldo": 12551.12,
+          "chaveItem": "937265::CADEIRA GIRATORIA COM BRACOS",
+          "chaveIdentidadeMaterial": "937265::CADEIRA GIRATORIA COM BRACOS::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 62,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 9,
+          "valorUnitario": 2510.22,
+          "valorPrevisto": 22592.01,
+          "valorExecutado": 0,
+          "saldo": 22592.01,
+          "chaveItem": "937265::CADEIRA GIRATORIA COM BRACOS",
+          "chaveIdentidadeMaterial": "937265::CADEIRA GIRATORIA COM BRACOS::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 63,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 5,
+          "valorUnitario": 2510.22,
+          "valorPrevisto": 12551.12,
+          "valorExecutado": 0,
+          "saldo": 12551.12,
+          "chaveItem": "937265::CADEIRA GIRATORIA COM BRACOS",
+          "chaveIdentidadeMaterial": "937265::CADEIRA GIRATORIA COM BRACOS::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::CALCA TATICA",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "CALCA TATICA",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903016"
+      ],
+      "itemConhecidoIds": [
+        131
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 22,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 30,
+          "valorUnitario": 330.53,
+          "valorPrevisto": 9915.8,
+          "valorExecutado": 0,
+          "saldo": 9915.8,
+          "chaveItem": "937265::CALCA TATICA",
+          "chaveIdentidadeMaterial": "937265::CALCA TATICA::CUSTEIO::33903016"
+        },
+        {
+          "aba": "937265",
+          "linha": 23,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 20,
+          "valorUnitario": 330.53,
+          "valorPrevisto": 6610.53,
+          "valorExecutado": 0,
+          "saldo": 6610.53,
+          "chaveItem": "937265::CALCA TATICA",
+          "chaveIdentidadeMaterial": "937265::CALCA TATICA::CUSTEIO::33903016"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::CINTO TATICO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "CINTO TATICO",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903016"
+      ],
+      "itemConhecidoIds": [
+        135
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 27,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 30,
+          "valorUnitario": 209.13,
+          "valorPrevisto": 6273.98,
+          "valorExecutado": 0,
+          "saldo": 6273.98,
+          "chaveItem": "937265::CINTO TATICO",
+          "chaveIdentidadeMaterial": "937265::CINTO TATICO::CUSTEIO::33903016"
+        },
+        {
+          "aba": "937265",
+          "linha": 28,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 20,
+          "valorUnitario": 209.13,
+          "valorPrevisto": 4182.65,
+          "valorExecutado": 0,
+          "saldo": 4182.65,
+          "chaveItem": "937265::CINTO TATICO",
+          "chaveIdentidadeMaterial": "937265::CINTO TATICO::CUSTEIO::33903016"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::COMPUTADOR COMPLETO COM MONITOR",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "COMPUTADOR COMPLETO COM MONITOR",
+      "totalLinhasPad": 3,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        161
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 65,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 5,
+          "valorUnitario": 3818,
+          "valorPrevisto": 19090,
+          "valorExecutado": 80178,
+          "saldo": -61088,
+          "chaveItem": "937265::COMPUTADOR COMPLETO COM MONITOR",
+          "chaveIdentidadeMaterial": "937265::COMPUTADOR COMPLETO COM MONITOR::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 66,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 9,
+          "valorUnitario": 3818,
+          "valorPrevisto": 34362,
+          "valorExecutado": 0,
+          "saldo": 34362,
+          "chaveItem": "937265::COMPUTADOR COMPLETO COM MONITOR",
+          "chaveIdentidadeMaterial": "937265::COMPUTADOR COMPLETO COM MONITOR::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 67,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 7,
+          "valorUnitario": 3818,
+          "valorPrevisto": 26726,
+          "valorExecutado": 0,
+          "saldo": 26726,
+          "chaveItem": "937265::COMPUTADOR COMPLETO COM MONITOR",
+          "chaveIdentidadeMaterial": "937265::COMPUTADOR COMPLETO COM MONITOR::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::COTURNO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "COTURNO",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903016"
+      ],
+      "itemConhecidoIds": [
+        136
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 29,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 20,
+          "valorUnitario": 356.2,
+          "valorPrevisto": 7124,
+          "valorExecutado": 0,
+          "saldo": 7124,
+          "chaveItem": "937265::COTURNO",
+          "chaveIdentidadeMaterial": "937265::COTURNO::CUSTEIO::33903016"
+        },
+        {
+          "aba": "937265",
+          "linha": 30,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 30,
+          "valorUnitario": 356.2,
+          "valorPrevisto": 10686,
+          "valorExecutado": 0,
+          "saldo": 10686,
+          "chaveItem": "937265::COTURNO",
+          "chaveIdentidadeMaterial": "937265::COTURNO::CUSTEIO::33903016"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "ESTANTE EM ACO COM 6 PRATELEIRAS",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        162
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 68,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 3,
+          "valorUnitario": 360.18,
+          "valorPrevisto": 1080.53,
+          "valorExecutado": 0,
+          "saldo": 1080.53,
+          "chaveItem": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS",
+          "chaveIdentidadeMaterial": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 69,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 3,
+          "valorUnitario": 360.18,
+          "valorPrevisto": 1080.53,
+          "valorExecutado": 0,
+          "saldo": 1080.53,
+          "chaveItem": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS",
+          "chaveIdentidadeMaterial": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        164
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 71,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 3890,
+          "valorPrevisto": 3890,
+          "valorExecutado": 2999.99,
+          "saldo": 890.01,
+          "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+          "chaveIdentidadeMaterial": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 72,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 3890,
+          "valorPrevisto": 3890,
+          "valorExecutado": 2999.99,
+          "saldo": 890.01,
+          "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+          "chaveIdentidadeMaterial": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::LONGARINA COM 3 LUGARES",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "LONGARINA COM 3 LUGARES",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        165
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 73,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 1239.6,
+          "valorPrevisto": 2479.2,
+          "valorExecutado": 0,
+          "saldo": 2479.2,
+          "chaveItem": "937265::LONGARINA COM 3 LUGARES",
+          "chaveIdentidadeMaterial": "937265::LONGARINA COM 3 LUGARES::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 74,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 3,
+          "valorUnitario": 1239.6,
+          "valorPrevisto": 3718.8,
+          "valorExecutado": 0,
+          "saldo": 3718.8,
+          "chaveItem": "937265::LONGARINA COM 3 LUGARES",
+          "chaveIdentidadeMaterial": "937265::LONGARINA COM 3 LUGARES::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        166
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 75,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 533.8,
+          "valorPrevisto": 1067.6,
+          "valorExecutado": 0,
+          "saldo": 1067.6,
+          "chaveItem": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C",
+          "chaveIdentidadeMaterial": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 76,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 533.8,
+          "valorPrevisto": 1067.6,
+          "valorExecutado": 0,
+          "saldo": 1067.6,
+          "chaveItem": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C",
+          "chaveIdentidadeMaterial": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::MEIA MILITAR",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "MEIA MILITAR",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903099"
+      ],
+      "itemConhecidoIds": [
+        154
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_valores_unitarios_distintos"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 50,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903099",
+          "unidade": "un",
+          "quantidade": 80,
+          "valorUnitario": 37.15,
+          "valorPrevisto": 2972,
+          "valorExecutado": 0,
+          "saldo": 2972,
+          "chaveItem": "937265::MEIA MILITAR",
+          "chaveIdentidadeMaterial": "937265::MEIA MILITAR::CUSTEIO::33903099"
+        },
+        {
+          "aba": "937265",
+          "linha": 51,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903099",
+          "unidade": "un",
+          "quantidade": 57,
+          "valorUnitario": 37.59,
+          "valorPrevisto": 2142.35,
+          "valorExecutado": 0,
+          "saldo": 2142.35,
+          "chaveItem": "937265::MEIA MILITAR",
+          "chaveIdentidadeMaterial": "937265::MEIA MILITAR::CUSTEIO::33903099"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::MESA EM L",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "MESA EM L",
+      "totalLinhasPad": 3,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        167
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 77,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 5,
+          "valorUnitario": 1527.06,
+          "valorPrevisto": 7635.3,
+          "valorExecutado": 7635.3,
+          "saldo": 0,
+          "chaveItem": "937265::MESA EM L",
+          "chaveIdentidadeMaterial": "937265::MESA EM L::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 78,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 5,
+          "valorUnitario": 1527.06,
+          "valorPrevisto": 7635.3,
+          "valorExecutado": 7635.3,
+          "saldo": 0,
+          "chaveItem": "937265::MESA EM L",
+          "chaveIdentidadeMaterial": "937265::MESA EM L::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 79,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 5,
+          "valorUnitario": 1527.06,
+          "valorPrevisto": 7635.3,
+          "valorExecutado": 7635.3,
+          "saldo": 0,
+          "chaveItem": "937265::MESA EM L",
+          "chaveIdentidadeMaterial": "937265::MESA EM L::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::MICROONDAS MINIMO 20L. BRANCO 110V",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "MICROONDAS MINIMO 20L. BRANCO 110V",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        168
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 80,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 1490.86,
+          "valorPrevisto": 1490.86,
+          "valorExecutado": 0,
+          "saldo": 1490.86,
+          "chaveItem": "937265::MICROONDAS MINIMO 20L. BRANCO 110V",
+          "chaveIdentidadeMaterial": "937265::MICROONDAS MINIMO 20L. BRANCO 110V::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 81,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 1490.86,
+          "valorPrevisto": 1490.86,
+          "valorExecutado": 1230,
+          "saldo": 260.86,
+          "chaveItem": "937265::MICROONDAS MINIMO 20L. BRANCO 110V",
+          "chaveIdentidadeMaterial": "937265::MICROONDAS MINIMO 20L. BRANCO 110V::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::NOTEBOOK",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "NOTEBOOK",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905287"
+      ],
+      "itemConhecidoIds": [
+        169
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 82,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 3557,
+          "valorPrevisto": 7114,
+          "valorExecutado": 0,
+          "saldo": 7114,
+          "chaveItem": "937265::NOTEBOOK",
+          "chaveIdentidadeMaterial": "937265::NOTEBOOK::CAPITAL::44905287"
+        },
+        {
+          "aba": "937265",
+          "linha": 83,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905287",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 3557,
+          "valorPrevisto": 7114,
+          "valorExecutado": 14228,
+          "saldo": -7114,
+          "chaveItem": "937265::NOTEBOOK",
+          "chaveIdentidadeMaterial": "937265::NOTEBOOK::CAPITAL::44905287"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricaoNormalizada": "PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903016"
+      ],
+      "itemConhecidoIds": [
+        141
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937265",
+          "linha": 35,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 3,
+          "valorUnitario": 1630.69,
+          "valorPrevisto": 4892.07,
+          "valorExecutado": 0,
+          "saldo": 4892.07,
+          "chaveItem": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
+          "chaveIdentidadeMaterial": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA::CUSTEIO::33903016"
+        },
+        {
+          "aba": "937265",
+          "linha": 36,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903016",
+          "unidade": "UN",
+          "quantidade": 3,
+          "valorUnitario": 1630.69,
+          "valorPrevisto": 4892.06,
+          "valorExecutado": 0,
+          "saldo": 4892.06,
+          "chaveItem": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
+          "chaveIdentidadeMaterial": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA::CUSTEIO::33903016"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937780::SALDO RESIDUAL APOS O AJUSTE DO PT",
+      "numeroConvenio": "937780",
+      "uf": "PI",
+      "descricaoNormalizada": "SALDO RESIDUAL APOS O AJUSTE DO PT",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905242"
+      ],
+      "itemConhecidoIds": [
+        295
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937780",
+          "linha": 37,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905242",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 5.03,
+          "valorPrevisto": 5.03,
+          "valorExecutado": 0,
+          "saldo": 5.03,
+          "chaveItem": "937780::SALDO RESIDUAL APOS O AJUSTE DO PT",
+          "chaveIdentidadeMaterial": "937780::SALDO RESIDUAL APOS O AJUSTE DO PT::CAPITAL::44905242"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937783::ITEM 021 - SALDO REMANESCENTE CONSUMO",
+      "numeroConvenio": "937783",
+      "uf": "SC",
+      "descricaoNormalizada": "ITEM 021 - SALDO REMANESCENTE CONSUMO",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903099"
+      ],
+      "itemConhecidoIds": [
+        480
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937783",
+          "linha": 17,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903099",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 92886.88,
+          "valorPrevisto": 92886.88,
+          "valorExecutado": 0,
+          "saldo": 92886.88,
+          "chaveItem": "937783::ITEM 021 - SALDO REMANESCENTE CONSUMO",
+          "chaveIdentidadeMaterial": "937783::ITEM 021 - SALDO REMANESCENTE CONSUMO::CUSTEIO::33903099"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937783::ITEM 022 - SALDO REMANESCENTE CAPITAL",
+      "numeroConvenio": "937783",
+      "uf": "SC",
+      "descricaoNormalizada": "ITEM 022 - SALDO REMANESCENTE CAPITAL",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905299"
+      ],
+      "itemConhecidoIds": [
+        500
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937783",
+          "linha": 37,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 18488.15,
+          "valorPrevisto": 18488.15,
+          "valorExecutado": 0,
+          "saldo": 18488.15,
+          "chaveItem": "937783::ITEM 022 - SALDO REMANESCENTE CAPITAL",
+          "chaveIdentidadeMaterial": "937783::ITEM 022 - SALDO REMANESCENTE CAPITAL::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937817::SALDO REMANESCENTE - AQUISICAO",
+      "numeroConvenio": "937817",
+      "uf": "RJ",
+      "descricaoNormalizada": "SALDO REMANESCENTE - AQUISICAO",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905299"
+      ],
+      "itemConhecidoIds": [
+        439
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937817",
+          "linha": 68,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 183.4,
+          "valorPrevisto": 183.4,
+          "valorExecutado": 0,
+          "saldo": 183.4,
+          "chaveItem": "937817::SALDO REMANESCENTE - AQUISICAO",
+          "chaveIdentidadeMaterial": "937817::SALDO REMANESCENTE - AQUISICAO::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "numeroConvenio": "937818",
+      "uf": "PB",
+      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "totalLinhasPad": 3,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905299"
+      ],
+      "itemConhecidoIds": [
+        269
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937818",
+          "linha": 22,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 1895,
+          "valorPrevisto": 3790,
+          "valorExecutado": 3790,
+          "saldo": 0,
+          "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+          "chaveIdentidadeMaterial": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,::CAPITAL::44905299"
+        },
+        {
+          "aba": "937818",
+          "linha": 23,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 1895,
+          "valorPrevisto": 3790,
+          "valorExecutado": 0,
+          "saldo": 3790,
+          "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+          "chaveIdentidadeMaterial": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,::CAPITAL::44905299"
+        },
+        {
+          "aba": "937818",
+          "linha": 24,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905299",
+          "unidade": "UN",
+          "quantidade": 13,
+          "valorUnitario": 1895,
+          "valorPrevisto": 24635,
+          "valorExecutado": 24635,
+          "saldo": 0,
+          "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+          "chaveIdentidadeMaterial": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,::CAPITAL::44905299"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "numeroConvenio": "937818",
+      "uf": "PB",
+      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905235"
+      ],
+      "itemConhecidoIds": [
+        266
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_valores_unitarios_distintos"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937818",
+          "linha": 18,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905235",
+          "unidade": "UN",
+          "quantidade": 16,
+          "valorUnitario": 2573.7,
+          "valorPrevisto": 41179.2,
+          "valorExecutado": 0,
+          "saldo": 41179.2,
+          "chaveItem": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+          "chaveIdentidadeMaterial": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN::CAPITAL::44905235"
+        },
+        {
+          "aba": "937818",
+          "linha": 19,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905235",
+          "unidade": "UN",
+          "quantidade": 19,
+          "valorUnitario": 2464,
+          "valorPrevisto": 46816,
+          "valorExecutado": 0,
+          "saldo": 46816,
+          "chaveItem": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+          "chaveIdentidadeMaterial": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN::CAPITAL::44905235"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937871::SALDO REMANESCENTE DE CAPITAL 44",
+      "numeroConvenio": "937871",
+      "uf": "PR",
+      "descricaoNormalizada": "SALDO REMANESCENTE DE CAPITAL 44",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905200"
+      ],
+      "itemConhecidoIds": [
+        67
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937871",
+          "linha": 20,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905200",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 42884.02,
+          "valorPrevisto": 42884.02,
+          "valorExecutado": 0,
+          "saldo": 42884.02,
+          "chaveItem": "937871::SALDO REMANESCENTE DE CAPITAL 44",
+          "chaveIdentidadeMaterial": "937871::SALDO REMANESCENTE DE CAPITAL 44::CAPITAL::44905200"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "937871::VEICULO TIPO SUV",
+      "numeroConvenio": "937871",
+      "uf": "PR",
+      "descricaoNormalizada": "VEICULO TIPO SUV",
+      "totalLinhasPad": 2,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905248"
+      ],
+      "itemConhecidoIds": [
+        74
+      ],
+      "riscos": [
+        "descricao_repetida_no_convenio",
+        "descricao_com_valores_unitarios_distintos"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "937871",
+          "linha": 27,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905248",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 74366.42,
+          "valorPrevisto": 74366.42,
+          "valorExecutado": 0,
+          "saldo": 74366.42,
+          "chaveItem": "937871::VEICULO TIPO SUV",
+          "chaveIdentidadeMaterial": "937871::VEICULO TIPO SUV::CAPITAL::44905248"
+        },
+        {
+          "aba": "937871",
+          "linha": 28,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905248",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 51133.66,
+          "valorPrevisto": 51133.66,
+          "valorExecutado": 0,
+          "saldo": 51133.66,
+          "chaveItem": "937871::VEICULO TIPO SUV",
+          "chaveIdentidadeMaterial": "937871::VEICULO TIPO SUV::CAPITAL::44905248"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "938128::SALDO RESIDUAL SERVICOS EAP",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoNormalizada": "SALDO RESIDUAL SERVICOS EAP",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903999"
+      ],
+      "itemConhecidoIds": [
+        178
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "938128",
+          "linha": 23,
+          "natureza": "CUSTEIO",
+          "codigoNaturezaDespesa": "33903999",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 46233.82,
+          "valorPrevisto": 46233.82,
+          "valorExecutado": 0,
+          "saldo": 46233.82,
+          "chaveItem": "938128::SALDO RESIDUAL SERVICOS EAP",
+          "chaveIdentidadeMaterial": "938128::SALDO RESIDUAL SERVICOS EAP::CUSTEIO::33903999"
+        }
+      ]
+    },
+    {
+      "chaveDescricao": "938128::SOBRA DE SALDO RESIDUAL",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricaoNormalizada": "SOBRA DE SALDO RESIDUAL",
+      "totalLinhasPad": 1,
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905200"
+      ],
+      "itemConhecidoIds": [
+        182
+      ],
+      "riscos": [
+        "saldo_residual_ou_remanescente"
+      ],
+      "severidade": "baixo",
+      "linhas": [
+        {
+          "aba": "938128",
+          "linha": 28,
+          "natureza": "CAPITAL",
+          "codigoNaturezaDespesa": "44905200",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 32765.74,
+          "valorPrevisto": 32765.74,
+          "valorExecutado": 0,
+          "saldo": 32765.74,
+          "chaveItem": "938128::SOBRA DE SALDO RESIDUAL",
+          "chaveIdentidadeMaterial": "938128::SOBRA DE SALDO RESIDUAL::CAPITAL::44905200"
+        }
+      ]
+    }
+  ],
+  "itensConhecidosAfetados": [
+    {
+      "itemConhecidoId": 132,
+      "chaveDescricao": "937265::CAMISA TATICA",
+      "naturezas": [
+        "CUSTEIO"
+      ],
+      "codigosNatureza": [
+        "33903016",
+        "33903023"
+      ],
+      "totalLinhasPad": 2
+    },
+    {
+      "itemConhecidoId": 231,
+      "chaveDescricao": "938277::SALDO REMANESCENTE",
+      "naturezas": [
+        "CUSTEIO",
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "33903099",
+        "44905299"
+      ],
+      "totalLinhasPad": 2
+    },
+    {
+      "itemConhecidoId": 212,
+      "chaveDescricao": "938128::SALDO RESIDUAL",
+      "naturezas": [
+        "CUSTEIO",
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "33903099",
+        "44905299"
+      ],
+      "totalLinhasPad": 2
+    },
+    {
+      "itemConhecidoId": 362,
+      "chaveDescricao": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905242",
+        "44905299"
+      ],
+      "totalLinhasPad": 2
+    },
+    {
+      "itemConhecidoId": 365,
+      "chaveDescricao": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "naturezas": [
+        "CAPITAL"
+      ],
+      "codigosNatureza": [
+        "44905242",
+        "44905299"
+      ],
+      "totalLinhasPad": 2
+    }
+  ],
+  "garantias": {
+    "decisaoRegistrada": false,
+    "statusAlterado": false,
+    "publicacaoExecutada": false,
+    "origemAtivaAlterada": false,
+    "planoAplicacaoOficialAlterado": false,
+    "sqliteAlterado": false
+  }
+}

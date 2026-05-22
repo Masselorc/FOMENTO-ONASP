@@ -1,18 +1,18 @@
 # PROFOR 2022 - Auditoria de saldos residuais/remanescentes (dry-run)
 
-Gerado em: 2026-05-22T20:12:41.145Z
+Gerado em: 2026-05-22T20:49:01.456Z
 
 Auditoria somente leitura: nao registra decisao, nao altera status, nao publica e nao altera o planoAplicacao oficial.
 
 ## Resumo executivo
 
-- Saldos residuais/remanescentes encontrados: 117
-- Area tecnica correta: 117
+- Saldos residuais/remanescentes encontrados: 116
+- Area tecnica correta: 116
 - Indevidamente rateados por setor: 0
-- Mistura CAPITAL/CUSTEIO: 59
+- Mistura CAPITAL/CUSTEIO: 58
 - Mistura que fecha segregada por natureza (falso positivo saneavel): 5
 - Decisoes anteriores afetadas: 24
-- Pendentes de decisao humana: 84
+- Pendentes de decisao humana: 83
 
 Regra aplicada: Saldo residual/remanescente e item tecnico nao setorializado por area e segregado por natureza. CAPITAL e CUSTEIO nao sao equivalentes.
 
@@ -83,7 +83,6 @@ Regra aplicada: Saldo residual/remanescente e item tecnico nao setorializado por
 | backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json | - | 938128 | SP | Saldo Residual | CAPITAL | NAO INFORMADO | 0 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json | - | 938128 | SP | Saldo Residual | CAPITAL | NAO INFORMADO | 0 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json | - | 938128 | SP | Saldo Residual | CUSTEIO | NAO INFORMADO | 0 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
-| backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json | - | 938128 | SP | Saldo Residual | - | - | 0 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json | - | 938128 | SP | Saldo Residual | - | - | 0 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json | - | 938128 | SP | Saldo Residual | - | - | 0 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json | - | 938128 | SP | Saldo Residual | - | - | 0 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |

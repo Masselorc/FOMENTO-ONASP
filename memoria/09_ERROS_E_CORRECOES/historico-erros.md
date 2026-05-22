@@ -1011,3 +1011,30 @@ Ao atualizar:
 **Comandos executados:** `npm run profor:pad:reconstruir-plano:dry-run`, `:item-nao-apto:auditar`, `:saldos-residuais:auditar`, `:seguranca-pre-ativacao:dry-run`, `:seguranca-pre-ativacao:detalhar`, `:comparar-plano:dry-run`, `:auditar-pendencias-profundo`, `npm run validar:syntax` (71 arquivos), `npm run validar:services` (111 testes, 111 aprovados).
 
 **Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar decisões, logs, divergências ou relatórios históricos.
+
+---
+
+## 22/05/2026 - PROFOR 2022: auditoria transversal de regressão por identidade material PAD
+
+**Classificação:** boa prática | prevenção | registro de auditoria
+
+**Contexto:** Auditoria de regressão dos saneamentos PAD/PROFOR 2022 por chave de pareamento frágil (dry-run).
+
+**Problema:** Risco sistêmico de pareamento frágil (revelado pela divergência #44). A aplicação tratava múltiplas linhas PAD com a mesma descrição normalizada no mesmo convênio como um único item lógico. Isso gerava o risco de aplicar decisões ou rateios incorretos (mistura de linhas materialmente distintas).
+
+**Evidência:** Arquivos `backend/data/relatorios/profor-2022-identidade-material-pad-dry-run.md` (34 grupos com risco de identidade material, incluindo o saldo residual da #44 e #46) e `backend/data/relatorios/profor-2022-regressao-saneamentos-dry-run.md`.
+
+**Causa provável:** Chave de pareamento padrão (`convenio::descricao`) baseada apenas na descrição textual normalizada, sem segregação explícita por natureza e código de natureza da despesa.
+
+**Correção aplicada:** Criação do auditor de identidade material (`auditar-identidade-material-pad-profor-2022.js`) e do auditor de regressão de saneamentos (`auditar-regressao-saneamentos-pad-profor-2022.js`). A classificação separa de forma clara saneamentos concluídos confiáveis, saneamentos suspeitos por chave frágil (#24), riscos já diagnosticados (#44), divergências abertas com alerta de pareamento (#31–#34) e pendências materiais potenciais abertas (#46).
+
+**Por que funcionou:** A categorização separou de forma exata os saneamentos concluídos (72 no total: 70 confirmados confiáveis, 1 suspeito (#24) e 1 já diagnosticado (#44)) de divergências que continuam abertas e sem decisão resolutiva (#31-#34, #46), evitando falsas notificações de regressão e fornecendo alertas preventivos precisos sem reabrir divergências automaticamente.
+
+**Como prevenir:** Em auditorias futuras, manter chaves de pareamento fortes (`convenio::descricaoNormalizada::natureza::codigoNatureza`) em relatórios e verificações onde houver concorrência multi-linha. Não reabrir divergências no banco sem decisão/auditoria humana explícita.
+
+**Arquivos relacionados:** `backend/scripts/auditar-identidade-material-pad-profor-2022.js`, `backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js`, `tests/services/profor-pad-identidade-material-regressao.test.js`, `backend/data/relatorios/profor-2022-identidade-material-pad-dry-run.{json,md}`, `backend/data/relatorios/profor-2022-regressao-saneamentos-dry-run.{json,md}`.
+
+**Validações recomendadas:** `node backend/scripts/auditar-identidade-material-pad-profor-2022.js`, `node backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js`, `node --test tests/services/profor-pad-identidade-material-regressao.test.js`.
+
+**Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar divergências, decisões ou relatórios históricos.
+

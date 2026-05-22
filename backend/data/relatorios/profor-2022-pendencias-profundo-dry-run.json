@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T20:12:48.697Z",
+  "geradoEm": "2026-05-22T20:49:07.015Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -19,7 +19,7 @@
       "itemNaoApto": {
         "caminho": "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T20:12:40.725Z",
+        "geradoEm": "2026-05-22T20:49:04.213Z",
         "erro": null
       },
       "rateioAntigo": {
@@ -55,7 +55,7 @@
       "saldosResiduais": {
         "caminho": "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T20:12:41.145Z",
+        "geradoEm": "2026-05-22T20:49:01.456Z",
         "erro": null
       }
     }
