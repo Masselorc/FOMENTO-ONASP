@@ -1,5 +1,67 @@
 # Diário de bordo
 
+## 22/05/2026 - PROFOR 2022: segurança pré-ativação final após zerar pendências operacionais
+
+- Objetivo:
+  - executar a segurança pré-ativação final em modo exclusivamente dry-run,
+    após `pendencia_operacional_real = 0`, para classificar os bloqueios
+    técnicos remanescentes antes de qualquer ativação controlada.
+- Conferência inicial:
+  - branch/worktree conferidos com `git status --short`;
+  - últimos commits conferidos com `git log --oneline -5`;
+  - último commit relevante: `c43f327 fix(profor-2022): aplica prevalencia do PAD na divergencia 44`;
+  - `frontend/data/publicados` sem alterações;
+  - nenhum `*.sqlite`, `*.sqlite-wal` ou `*.sqlite-shm` listado para versionamento.
+- Relatório criado:
+  - `backend/scripts/auditar-seguranca-pre-ativacao-final-pad-profor-2022.js`;
+  - comando `npm run profor:pad:seguranca-pre-ativacao:final`;
+  - saídas:
+    - `backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.json`;
+    - `backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.md`.
+- Resultado final:
+  - `pendencia_operacional_real = 0`;
+  - `#44`: `historico_saneado` por `saldo_residual_prevalencia_pad`;
+  - bloqueios técnicos de segurança pré-ativação: `35`;
+  - divergências únicas na matriz final: `35`;
+  - decisões com `payload_alterado_apos_decisao`: `28`;
+  - divergências únicas com payload alterado: `27`;
+  - decisões resolutivas com pendência técnica: `8`;
+  - apto para ativação controlada: `não`.
+- Classificações:
+  - `revalidacao_humana_necessaria`: `27` divergências (`#47-#54`, `#56-#74`);
+  - `bloqueio_tecnico_residual`: `7` divergências (`#25`, `#26`, `#27`, `#28`, `#75`, `#77`, `#78`);
+  - `decisao_retificadora_necessaria`: `1` divergência (`#18`).
+- Observação técnica:
+  - o relatório de segurança estrito lista `28` decisões com payload alterado,
+    porque a divergência `#72` possui duas decisões afetadas;
+  - a matriz decisória final consolida `27` divergências únicas de payload
+    alterado mais `8` divergências com pendência técnica, totalizando `35`
+    itens para tratamento antes da ativação.
+- Comandos executados:
+  - `npm run profor:pad:auditar-pendencias-profundo`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:seguranca-pre-ativacao:detalhar`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `npm run profor:pad:regressao-saneamentos:auditar`;
+  - `npm run profor:pad:seguranca-pre-ativacao:final`.
+- Confirmações de escopo:
+  - nenhuma decisão registrada;
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `planoAplicacao` oficial não alterado;
+  - `frontend/data/publicados` não alterado;
+  - SQLite não versionado;
+  - relatório final é somente leitura e não baixa bloqueios técnicos.
+- Próximos passos:
+  - tratar os `27` casos de payload alterado por revalidação humana;
+  - avaliar a decisão retificadora/neutralização técnica para a `#18`;
+  - definir política para os `7` históricos não reapresentados antes de
+    qualquer ativação controlada.
+- Rollback:
+  - reverter o commit desta auditoria e regenerar relatórios dry-run;
+  - não apagar decisões, logs, divergências ou relatórios históricos.
+
 ## 22/05/2026 - PROFOR 2022: prevalência do PAD novo na divergência #44
 
 - Objetivo:

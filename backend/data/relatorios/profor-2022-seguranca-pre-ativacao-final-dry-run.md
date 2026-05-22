@@ -1,0 +1,122 @@
+# PROFOR 2022 - Segurança pré-ativação final (dry-run)
+
+Gerado em: 2026-05-22T22:44:27.140Z
+
+Auditoria somente leitura: não registra decisão, não publica, não altera origem ativa, não altera `frontend/data/publicados` e não altera o `planoAplicacao` oficial.
+
+## 1. Resumo executivo
+
+- Pendência operacional real: 0
+- Bloqueios técnicos de segurança pré-ativação: 35
+- Divergências únicas na matriz final: 35
+- Decisões com payload alterado: 28
+- Divergências com payload alterado: 27
+- Decisões resolutivas com pendência técnica: 8
+- Apto para ativação controlada: não
+
+## 2. Contagem por classificação final
+
+| Classificação | Qtd |
+|---|---:|
+| `decisao_retificadora_necessaria` | 1 |
+| `bloqueio_tecnico_residual` | 7 |
+| `revalidacao_humana_necessaria` | 27 |
+
+## 3. Payload alterado após decisão
+
+| ID | Convênio/UF | Tipo | Status | Decisão | Payload preservado | Snapshot | Tipo bloqueio | Classificação final | Impacto material | Prioridade | Ação |
+|---:|---|---|---|---|---|---|---|---|---|---|---|
+| #47 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #153 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #48 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #154 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #49 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #155 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #50 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #156 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #51 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #157 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #52 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #158 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #53 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #159 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #54 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #160 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #56 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #161 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #57 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #162 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #58 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #163 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #59 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #164 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #60 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #165 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #61 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #166 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #62 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #167 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #63 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #168 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #64 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #169 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #65 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #170 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #66 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #182 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #67 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #171 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #68 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #172 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #69 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #173 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #70 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #174 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #71 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #175 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #72 | 937782/AC | `item_ausente_no_pad` | ACEITO | ACEITO #107 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #73 | 937782/AC | `item_ausente_no_pad` | ACEITO | ACEITO #109 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #74 | 937782/AC | `item_ausente_no_pad` | ACEITO | ACEITO #110 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+
+## 4. Decisão resolutiva com pendência técnica
+
+| ID | Convênio/UF | Tipo | Status | Decisão | Payload preservado | Snapshot | Tipo bloqueio | Classificação final | Impacto material | Prioridade | Ação |
+|---:|---|---|---|---|---|---|---|---|---|---|---|
+| #18 | 937221/AL | `item_novo_sem_rateio` | ACEITO | ACEITO #150 | sim | sim | `decisao_resolutiva_com_pendencia_tecnica` | `decisao_retificadora_necessaria` | tecnico_residual_saldo_residual_rateio_operacional | alta | decisao_retificadora_futura_ou_neutralizacao_tecnica_do_efeito |
+| #25 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #104 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #26 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #105 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #27 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #106 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #28 | 937216/GO | `item_nao_apto` | ACEITO | ACEITO #60 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #75 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #117 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #77 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #118 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #78 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #119 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+
+## 5. Matriz final consolidada
+
+| ID | Convênio/UF | Tipo | Status | Decisão | Payload preservado | Snapshot | Tipo bloqueio | Classificação final | Impacto material | Prioridade | Ação |
+|---:|---|---|---|---|---|---|---|---|---|---|---|
+| #18 | 937221/AL | `item_novo_sem_rateio` | ACEITO | ACEITO #150 | sim | sim | `decisao_resolutiva_com_pendencia_tecnica` | `decisao_retificadora_necessaria` | tecnico_residual_saldo_residual_rateio_operacional | alta | decisao_retificadora_futura_ou_neutralizacao_tecnica_do_efeito |
+| #25 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #104 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #26 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #105 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #27 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #106 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #28 | 937216/GO | `item_nao_apto` | ACEITO | ACEITO #60 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #47 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #153 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #48 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #154 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #49 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #155 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #50 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #156 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #51 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #157 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #52 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #158 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #53 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #159 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #54 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #160 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #56 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #161 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #57 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #162 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #58 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #163 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #59 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #164 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #60 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #165 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #61 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #166 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #62 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #167 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #63 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #168 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #64 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #169 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #65 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #170 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #66 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #182 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #67 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #171 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #68 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #172 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #69 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #173 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #70 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #174 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #71 | 937221/AL | `item_ausente_no_pad` | ACEITO | ACEITO #175 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #72 | 937782/AC | `item_ausente_no_pad` | ACEITO | ACEITO #107 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #73 | 937782/AC | `item_ausente_no_pad` | ACEITO | ACEITO #109 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #74 | 937782/AC | `item_ausente_no_pad` | ACEITO | ACEITO #110 | não | sim | `payload_alterado_apos_decisao` | `revalidacao_humana_necessaria` | indeterminado_sem_payload_anterior_completo | alta | registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo |
+| #75 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #117 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #77 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #118 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+| #78 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #119 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+
+## 6. Conclusão
+
+Não apto para ativação controlada nesta etapa: a pendência operacional real está zerada, mas permanecem bloqueios técnicos de segurança pré-ativação que exigem revalidação humana ou tratamento técnico posterior. Nenhuma publicação deve ser executada.
+
+## 7. Garantias
+
+- Nenhuma decisão registrada: conforme
+- Nenhuma publicação executada: conforme
+- Origem ativa alterada: não
+- Plano oficial alterado: não
+- frontend/data/publicados alterado: não
+
+Rollback: reverter o commit desta auditoria e regenerar relatórios dry-run. Não apagar decisões, logs, divergências ou relatórios históricos.

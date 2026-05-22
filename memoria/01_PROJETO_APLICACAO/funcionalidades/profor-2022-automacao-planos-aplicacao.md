@@ -2390,3 +2390,53 @@ Nenhum saneamento é reaberto automaticamente no banco SQLite. Todo o processo f
 - **Identidade Material**: Detectados 34 grupos com risco de identidade material.
 - **Regressão de Saneamento**: Analisadas 145 divergências. 72 saneamentos concluídos. Após harmonização com a auditoria operacional, não há pendência material potencial aberta; `#31-#34` e `#46` permanecem como alertas de pareamento sem pendência operacional material, pois a auditoria profunda classificou esses casos como `falso_positivo_saneavel`.
 
+## 31. Segurança pré-ativação final após pendência operacional zerada
+
+### 31.1. Objetivo
+
+Auditoria final em modo dry-run para separar pendência operacional de bloqueio técnico de segurança antes de qualquer ativação controlada. O comando criado é:
+
+```bash
+npm run profor:pad:seguranca-pre-ativacao:final
+```
+
+O script consolida as fontes já geradas por auditoria profunda, segurança pré-ativação, detalhamento de segurança, reconstrução, comparador e regressão de saneamentos.
+
+### 31.2. Resultado de 22/05/2026
+
+- `pendencia_operacional_real = 0`;
+- `#44` permanece rastreada como `historico_saneado` por `saldo_residual_prevalencia_pad`;
+- bloqueios técnicos de segurança pré-ativação: `35`;
+- divergências únicas na matriz final: `35`;
+- decisões com payload alterado: `28`;
+- divergências únicas com payload alterado: `27`;
+- decisões resolutivas com pendência técnica: `8`;
+- apto para ativação controlada: `não`.
+
+### 31.3. Matriz decisória
+
+- `revalidacao_humana_necessaria`: `27` divergências com `payload_alterado_apos_decisao` (`#47-#54`, `#56-#74`).
+- `bloqueio_tecnico_residual`: `7` divergências não reapresentadas com decisão resolutiva (`#25`, `#26`, `#27`, `#28`, `#75`, `#77`, `#78`).
+- `decisao_retificadora_necessaria`: `1` divergência (`#18`), relacionada a efeito técnico residual de saldo residual/rateio operacional.
+
+Observação: a segurança estrita aponta `28` decisões com payload alterado porque a divergência `#72` tem duas decisões afetadas; a matriz final consolida por divergência única.
+
+### 31.4. Critério operacional
+
+A ausência de `pendencia_operacional_real` não libera ativação automaticamente. A ativação controlada permanece bloqueada enquanto existirem:
+
+- decisões cujo hash atual do payload diverge do hash salvo no snapshot `_segurancaPreAtivacao`;
+- divergências não reapresentadas com decisão resolutiva ainda sem política técnica de baixa;
+- decisões resolutivas com pendência técnica residual.
+
+Nenhum bloqueio foi baixado automaticamente. Nenhuma decisão foi registrada.
+
+### 31.5. Saídas
+
+- `backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.json`;
+- `backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.md`.
+
+### 31.6. Escopo preservado
+
+A auditoria final não publica, não altera origem ativa, não altera `frontend/data/publicados`, não altera o `planoAplicacao` oficial, não registra decisão e não altera SQLite por SQL direto. O efeito é limitado a relatório dry-run e documentação de próximos passos.
+

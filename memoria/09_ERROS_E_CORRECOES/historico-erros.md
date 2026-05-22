@@ -1181,3 +1181,31 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 **Limites preservados:** `CAPITAL` e `CUSTEIO` continuam separados; saldo residual continua em área técnica (`NAO INFORMADO`/`N/A`); nenhuma publicação; origem ativa e `planoAplicacao` oficial intactos.
 
 **Rollback:** reverter o commit de código/documentação e, se necessário desfazer a decisão `#187`, registrar decisão posterior `REVERTIDO` pelo serviço existente. Não apagar decisões, logs ou divergências.
+
+---
+
+## 22/05/2026 - PROFOR 2022: segurança pré-ativação final com pendência operacional zerada
+
+**Classificação:** auditoria final dry-run | bloqueios técnicos remanescentes
+
+**Contexto:** Após a regra de prevalência do PAD novo e a decisão complementar `#187` da divergência `#44`, a auditoria profunda passou a informar `pendencia_operacional_real = 0`. A etapa seguinte foi consolidar a segurança pré-ativação final sem publicar, sem ativar origem nova e sem alterar o `planoAplicacao` oficial.
+
+**Problema remanescente:** A ausência de pendência operacional não significa aptidão automática para ativação. A segurança pré-ativação ainda identifica bloqueios técnicos que protegem decisões antigas contra payload alterado ou divergências não reapresentadas.
+
+**Evidência:**
+- `npm run profor:pad:auditar-pendencias-profundo`: `pendencia_operacional_real = 0`, `revalidacao_necessaria = 27`, `decisao_resolutiva_com_pendencia_tecnica = 8`.
+- `npm run profor:pad:seguranca-pre-ativacao:dry-run`: `35` bloqueios de ativação.
+- `npm run profor:pad:seguranca-pre-ativacao:final`: matriz final com `35` divergências únicas.
+
+**Classificação final:**
+- `27` divergências com `payload_alterado_apos_decisao`: `#47-#54`, `#56-#74`. Classificação: `revalidacao_humana_necessaria`.
+- `7` divergências não reapresentadas com decisão resolutiva: `#25`, `#26`, `#27`, `#28`, `#75`, `#77`, `#78`. Classificação: `bloqueio_tecnico_residual`.
+- `1` divergência com decisão resolutiva e pendência técnica: `#18`. Classificação: `decisao_retificadora_necessaria`.
+
+**Correção/ação aplicada:** Criado o relatório final `profor-2022-seguranca-pre-ativacao-final-dry-run.{json,md}`, sem decisão automática e sem alteração de banco. O relatório consolida hash anterior/atual, snapshot, decisão vigente, tipo de bloqueio, impacto material e ação recomendada.
+
+**Resultado:** Sistema **não apto** para ativação controlada. A pendência operacional está zerada, mas os bloqueios técnicos devem ser saneados ou revalidados antes de qualquer ativação/publicação.
+
+**Como prevenir regressão:** Não baixar `payload_alterado_apos_decisao` por regra genérica. Exigir revalidação humana ou decisão retificadora auditável quando o hash atual divergir do snapshot de decisão.
+
+**Rollback:** Reverter o commit da auditoria/documentação e regenerar relatórios dry-run. Não apagar decisões, logs, divergências ou relatórios históricos.
