@@ -136,6 +136,7 @@ function enriquecerDivergenciaComAuditoria(divergencia, indices = carregarIndice
     riscoOperacional: profundo?.exigeDecisaoHumanaSubstantiva === true ? "alto" : (categoriaOperacional ? "baixo" : null),
     falsoPositivoSaneavel,
     padConsolidado: itemNaoApto?.padConsolidado || null,
+    comparacaoSaldoResidualPorNatureza: itemNaoApto?.comparacaoSaldoResidualPorNatureza || null,
     memoriaConsolidada: montarMemoriaConsolidadaItemNaoApto(itemNaoApto),
     motivosSaneamento: itemNaoApto?.motivos || (profundo?.evidencia ? [profundo.evidencia] : []),
     acaoOperacionalRecomendada: profundo?.recomendacao || itemNaoApto?.justificativaSugerida || divergencia.acaoSugerida,

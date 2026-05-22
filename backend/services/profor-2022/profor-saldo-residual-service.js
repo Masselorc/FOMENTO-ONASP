@@ -43,6 +43,13 @@ const DESCRITORES_SALDO_RESIDUAL = [
 const DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA =
   "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.";
 
+// Marcador de natureza mista: o texto trazia CAPITAL e CUSTEIO juntos. Nunca e
+// uma natureza valida de comparacao; sinaliza que a memoria precisa ser
+// separada por natureza antes de comparar com o PAD.
+const NATUREZA_SALDO_RESIDUAL_MISTA = "MISTA";
+
+const NATUREZAS_SALDO_RESIDUAL = ["CAPITAL", "CUSTEIO"];
+
 function normalizarTextoSaldoResidual(valor) {
   return String(valor ?? "")
     .normalize("NFD")
@@ -59,15 +66,38 @@ function ehSaldoResidualProfor(descricao) {
   return DESCRITORES_SALDO_RESIDUAL.some((descritor) => texto.includes(descritor));
 }
 
+/**
+ * Normaliza a natureza orcamentaria de um saldo residual/remanescente.
+ *
+ * CAPITAL e CUSTEIO sao naturezas distintas e nunca equivalentes. Quando o
+ * texto traz as duas juntas (ex.: "CAPITAL, CUSTEIO"), retorna o marcador
+ * MISTA: a memoria foi consolidada indevidamente e precisa ser separada por
+ * natureza antes de qualquer comparacao com o PAD. Tratar texto misto como
+ * uma unica natureza (CAPITAL) gerava falso positivo de divergencia.
+ */
 function normalizarNaturezaSaldoResidual(natureza) {
   const texto = normalizarTextoSaldoResidual(natureza);
-  if (texto.includes("CAPITAL")) return "CAPITAL";
-  if (texto.includes("CUSTEIO")) return "CUSTEIO";
+  const temCapital = texto.includes("CAPITAL");
+  const temCusteio = texto.includes("CUSTEIO");
+  if (temCapital && temCusteio) return NATUREZA_SALDO_RESIDUAL_MISTA;
+  if (temCapital) return "CAPITAL";
+  if (temCusteio) return "CUSTEIO";
   return texto || "";
 }
 
+/** Lista de naturezas individuais presentes no texto, sem consolidar. */
+function naturezasSaldoResidualDoTexto(natureza) {
+  const texto = normalizarTextoSaldoResidual(natureza);
+  return NATUREZAS_SALDO_RESIDUAL.filter((nat) => texto.includes(nat));
+}
+
+/** True quando a natureza informada mistura CAPITAL e CUSTEIO. */
+function naturezaSaldoResidualEhMista(natureza) {
+  return normalizarNaturezaSaldoResidual(natureza) === NATUREZA_SALDO_RESIDUAL_MISTA;
+}
+
 function naturezaSaldoResidualValida(natureza) {
-  return ["CAPITAL", "CUSTEIO"].includes(normalizarNaturezaSaldoResidual(natureza));
+  return NATUREZAS_SALDO_RESIDUAL.includes(normalizarNaturezaSaldoResidual(natureza));
 }
 
 function normalizarAreaSaldoResidual(area) {
@@ -101,6 +131,53 @@ function criarChaveSaldoResidual({ numeroConvenio, descricao, natureza }) {
   return `${numero}::${desc}::${nat}`;
 }
 
+function arredondarMoedaSaldoResidual(valor) {
+  return Math.round(((Number(valor) || 0) + Number.EPSILON) * 100) / 100;
+}
+
+/**
+ * Separa uma memoria consolidada de saldo residual/remanescente em uma linha
+ * por natureza, usando os rateios ativos como fonte de cada parcela.
+ *
+ * O saldo residual nunca e setorializado por area, mas e obrigatoriamente
+ * segregado por natureza: CAPITAL e CUSTEIO sao unidades de comparacao
+ * distintas. Quando a memoria chega consolidada ("CAPITAL, CUSTEIO"), os
+ * valores precisam ser reconstituidos a partir dos rateios antes de comparar
+ * com o PAD, sob pena de comparar o total contra uma unica natureza.
+ *
+ * Retorna { natureza, valorPrevisto, valorExecutado, saldo, quantidade } por
+ * natureza encontrada nos rateios. Sem rateios utilizaveis, retorna [].
+ */
+function separarMemoriaSaldoResidualPorNatureza(memoria = {}, rateios = []) {
+  const linhasPorNatureza = new Map();
+  for (const rateio of Array.isArray(rateios) ? rateios : []) {
+    const natureza = normalizarNaturezaSaldoResidual(rateio?.natureza);
+    if (!naturezaSaldoResidualValida(natureza)) continue;
+    if (!linhasPorNatureza.has(natureza)) {
+      linhasPorNatureza.set(natureza, {
+        natureza,
+        quantidade: 0,
+        valorPrevisto: 0,
+        valorExecutado: 0,
+        saldo: 0,
+      });
+    }
+    const linha = linhasPorNatureza.get(natureza);
+    linha.quantidade += Number(rateio.quantidadeReferencia ?? rateio.quantidade) || 0;
+    linha.valorPrevisto = arredondarMoedaSaldoResidual(
+      linha.valorPrevisto + (Number(rateio.valorPrevistoReferencia ?? rateio.valorPrevisto) || 0)
+    );
+    linha.valorExecutado = arredondarMoedaSaldoResidual(
+      linha.valorExecutado + (Number(rateio.valorExecutadoReferencia ?? rateio.valorExecutado) || 0)
+    );
+  }
+  for (const linha of linhasPorNatureza.values()) {
+    linha.saldo = arredondarMoedaSaldoResidual(linha.valorPrevisto - linha.valorExecutado);
+  }
+  return Array.from(linhasPorNatureza.values())
+    .sort((a, b) => a.natureza.localeCompare(b.natureza, "pt-BR"));
+}
+
 function avaliarSaldoResidual(registro = {}) {
   const descricao = registro.descricao
     ?? registro.descricaoOriginal
@@ -116,6 +193,7 @@ function avaliarSaldoResidual(registro = {}) {
     areaTecnicaNaoSetorializada: saldoResidual ? areaSaldoResidualEhTecnica(registro.area) : false,
     areaOperacionalIndevida: saldoResidual ? areaSaldoResidualEhOperacional(registro.area) : false,
     naturezaValida: saldoResidual ? naturezaSaldoResidualValida(natureza) : true,
+    naturezaMista: saldoResidual ? naturezaSaldoResidualEhMista(registro.natureza) : false,
     natureza,
     areaTecnica: area,
   };
@@ -126,13 +204,18 @@ module.exports = {
   AREAS_TECNICAS_SALDO_RESIDUAL,
   DESCRITORES_SALDO_RESIDUAL,
   DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+  NATUREZA_SALDO_RESIDUAL_MISTA,
+  NATUREZAS_SALDO_RESIDUAL,
   normalizarTextoSaldoResidual,
   ehSaldoResidualProfor,
   normalizarNaturezaSaldoResidual,
+  naturezasSaldoResidualDoTexto,
+  naturezaSaldoResidualEhMista,
   naturezaSaldoResidualValida,
   normalizarAreaSaldoResidual,
   areaSaldoResidualEhTecnica,
   areaSaldoResidualEhOperacional,
   criarChaveSaldoResidual,
+  separarMemoriaSaldoResidualPorNatureza,
   avaliarSaldoResidual,
 };

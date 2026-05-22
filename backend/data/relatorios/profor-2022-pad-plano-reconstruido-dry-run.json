@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T14:57:40.705Z",
+  "geradoEm": "2026-05-22T16:06:01.841Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -10139,9 +10139,14 @@
       "baseRateioValor": "saldo_residual_nao_setorializado",
       "baseRateioQuantidade": "saldo_residual_nao_setorializado",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 44,
+        "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      },
       "saldoResidualTecnico": true
     },
     {
@@ -11385,9 +11390,14 @@
       "baseRateioValor": "saldo_residual_nao_setorializado",
       "baseRateioQuantidade": "saldo_residual_nao_setorializado",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 44,
+        "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      },
       "saldoResidualTecnico": true
     },
     {
@@ -18272,18 +18282,18 @@
     "totalItensPadSemRateioReconstruidoPorDecisao": 23,
     "totalLinhasReconstruidas": 623,
     "totalConveniosReconstruidos": 15,
-    "totalItensConhecidosNaoAptosUsados": 7,
+    "totalItensConhecidosNaoAptosUsados": 6,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 37,
+    "totalImpedimentos": 34,
     "totalAlertas": 119,
-    "totalDecisoesResolutivasEncontradas": 71,
-    "totalDecisoesInterpretadasDryRun": 65,
-    "totalDecisoesAplicadasDryRun": 65,
+    "totalDecisoesResolutivasEncontradas": 72,
+    "totalDecisoesInterpretadasDryRun": 66,
+    "totalDecisoesAplicadasDryRun": 66,
     "totalDecisoesNaoAplicaveis": 6,
-    "totalDecisoesComEfeitoNaReconstrucao": 38,
+    "totalDecisoesComEfeitoNaReconstrucao": 39,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 34,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 35,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "valorPrevistoReconstruidoTotal": 10654508.7,
@@ -18328,15 +18338,6 @@
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
-      "tipo": "saldo_residual_natureza_divergente",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938277",
-      "uf": "MA",
-      "descricao": "SALDO REMANESCENTE",
-      "chaveItem": "938277::SALDO REMANESCENTE",
-      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Natureza PAD 'CUSTEIO' x memoria/rateio 'CAPITAL, CUSTEIO'."
-    },
-    {
       "tipo": "item_conhecido_nao_apto_usado",
       "nivel": "impeditivo",
       "numeroConvenio": "938277",
@@ -18348,29 +18349,11 @@
     {
       "tipo": "saldo_residual_natureza_divergente",
       "nivel": "impeditivo",
-      "numeroConvenio": "938277",
-      "uf": "MA",
-      "descricao": "SALDO REMANESCENTE",
-      "chaveItem": "938277::SALDO REMANESCENTE",
-      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Natureza PAD 'CAPITAL' x memoria/rateio 'CAPITAL, CUSTEIO'."
-    },
-    {
-      "tipo": "saldo_residual_natureza_divergente",
-      "nivel": "impeditivo",
       "numeroConvenio": "938128",
       "uf": "SP",
       "descricao": "Saldo Residual",
       "chaveItem": "938128::SALDO RESIDUAL",
-      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Natureza PAD 'CUSTEIO' x memoria/rateio 'CAPITAL'."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Saldo Residual",
-      "chaveItem": "938128::SALDO RESIDUAL",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Natureza PAD 'CUSTEIO' sem rateio de mesma natureza na memoria (rateios: 'CAPITAL')."
     },
     {
       "tipo": "item_conhecido_nao_apto_usado",
@@ -18622,7 +18605,7 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 9 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 8 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "alertas": [
@@ -20100,6 +20083,13 @@
       "decisaoId": 69
     },
     {
+      "divergenciaId": 44,
+      "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 186
+    },
+    {
       "divergenciaId": 45,
       "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
       "tipoAlerta": "item_nao_apto",
@@ -21324,6 +21314,26 @@
       "motivoNaoAplicavel": null
     },
     {
+      "divergenciaId": 44,
+      "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 186,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-22T15:47:29.497Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
       "divergenciaId": 45,
       "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
       "numeroConvenio": "938128",
@@ -22035,22 +22045,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 74,
+    "totalPendentes": 73,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 9,
+    "totalPendentesQueBloqueiamPublicacao": 8,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 71,
+    "totalComDecisaoResolutiva": 72,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 74,
+    "totalSemDecisaoResolutiva": 73,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T14:57:40.705Z",
+    "geradoEm": "2026-05-22T16:06:01.841Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 72,
-      "totalPayloadPreservado": 44,
+      "totalDecisoesResolutivasAuditadas": 73,
+      "totalPayloadPreservado": 45,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,

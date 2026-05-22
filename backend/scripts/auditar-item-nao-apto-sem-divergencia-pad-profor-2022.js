@@ -3,6 +3,14 @@ const path = require("node:path");
 
 const { inicializarBanco } = require("../db/init-db");
 const revisaoService = require("../services/profor-2022/profor-pad-revisao-decisao-service");
+const {
+  DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+  ehSaldoResidualProfor,
+  normalizarNaturezaSaldoResidual,
+  naturezaSaldoResidualValida,
+  naturezaSaldoResidualEhMista,
+  separarMemoriaSaldoResidualPorNatureza,
+} = require("../services/profor-2022/profor-saldo-residual-service");
 
 const CAMINHO_SAIDA_JSON = "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json";
 const CAMINHO_SAIDA_MD = "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.md";
@@ -243,6 +251,107 @@ function consolidarLinhasPad(linhas) {
   };
 }
 
+/**
+ * Localiza linhas PAD do mesmo convenio + descricao + natureza, para saldo
+ * residual/remanescente. Diferente de localizarLinhasPadEquivalentes, nao
+ * filtra por valor unitario: o saldo residual e segregado por natureza e cada
+ * natureza tem o seu proprio valor unitario.
+ */
+function localizarLinhasPadSaldoResidualPorNatureza(numeroConvenio, descricaoReferencia, natureza, itensPad) {
+  if (!Array.isArray(itensPad) || !itensPad.length) return [];
+  const descNorm = normalizarTextoComparacao(descricaoReferencia);
+  const naturezaAlvo = normalizarNaturezaSaldoResidual(natureza);
+  if (!numeroConvenio || !descNorm || !naturezaSaldoResidualValida(naturezaAlvo)) return [];
+  return itensPad.filter((item) => {
+    if (numeroConvenioItemPad(item) !== numeroConvenio) return false;
+    if (normalizarTextoComparacao(descricaoItemPad(item)) !== descNorm) return false;
+    return normalizarNaturezaSaldoResidual(naturezaItemPad(item)) === naturezaAlvo;
+  });
+}
+
+/**
+ * Compara um saldo residual/remanescente segregando por natureza.
+ *
+ * A memoria consolidada ("CAPITAL, CUSTEIO") e separada em uma parcela por
+ * natureza a partir dos rateios ativos; cada parcela e comparada apenas com as
+ * linhas PAD da mesma natureza. CAPITAL e CUSTEIO nunca sao pareados entre si,
+ * e o total nunca e usado como chave de equivalencia — apenas como conferencia.
+ */
+function compararSaldoResidualPorNatureza(divergencia, dados, payload, itensPad) {
+  const numeroConvenio = numeroConvenioDivergencia(divergencia);
+  const descricaoReferencia = dados.pad.descricao || dados.memoria.descricao;
+  const rateios = Array.isArray(payload.rateiosAtivos) ? payload.rateiosAtivos : [];
+  const parcelasMemoria = separarMemoriaSaldoResidualPorNatureza(dados.memoria, rateios);
+
+  const naturezasPad = new Set();
+  for (const item of Array.isArray(itensPad) ? itensPad : []) {
+    if (numeroConvenioItemPad(item) !== numeroConvenio) continue;
+    if (normalizarTextoComparacao(descricaoItemPad(item)) !== normalizarTextoComparacao(descricaoReferencia)) continue;
+    const nat = normalizarNaturezaSaldoResidual(naturezaItemPad(item));
+    if (naturezaSaldoResidualValida(nat)) naturezasPad.add(nat);
+  }
+
+  const naturezas = Array.from(new Set([
+    ...parcelasMemoria.map((parcela) => parcela.natureza),
+    ...naturezasPad,
+  ])).sort((a, b) => a.localeCompare(b, "pt-BR"));
+
+  const porNatureza = naturezas.map((natureza) => {
+    const memoria = parcelasMemoria.find((parcela) => parcela.natureza === natureza) || null;
+    const linhasPad = localizarLinhasPadSaldoResidualPorNatureza(
+      numeroConvenio,
+      descricaoReferencia,
+      natureza,
+      itensPad
+    );
+    const padConsolidado = consolidarLinhasPad(linhasPad);
+    const memoriaOk = memoria !== null;
+    const padOk = padConsolidado !== null;
+    let fecha = false;
+    let motivo;
+    if (!memoriaOk && !padOk) {
+      motivo = "Natureza sem parcela na memoria nem linha no PAD.";
+    } else if (!memoriaOk) {
+      motivo = "Natureza presente no PAD sem parcela correspondente na memoria.";
+    } else if (!padOk) {
+      motivo = "Natureza presente na memoria sem linha correspondente no PAD.";
+    } else {
+      const previstoOk = valoresProximos(memoria.valorPrevisto, padConsolidado.valorPrevisto, TOLERANCIA_MONETARIA);
+      const executadoOk = valoresProximos(memoria.valorExecutado, padConsolidado.valorExecutado, TOLERANCIA_MONETARIA);
+      const saldoOk = valoresProximos(memoria.saldo, padConsolidado.saldo, TOLERANCIA_MONETARIA);
+      fecha = previstoOk && executadoOk && saldoOk;
+      motivo = fecha
+        ? "Memoria e PAD fecham para esta natureza."
+        : "Valor previsto, executado ou saldo divergente para esta natureza.";
+    }
+    return {
+      natureza,
+      memoria,
+      pad: padConsolidado,
+      fecha,
+      motivo,
+    };
+  });
+
+  const totalMemoria = arredondarMoeda(
+    parcelasMemoria.reduce((soma, parcela) => soma + (parcela.valorPrevisto || 0), 0)
+  );
+  const totalPad = arredondarMoeda(
+    porNatureza.reduce((soma, item) => soma + (item.pad?.valorPrevisto || 0), 0)
+  );
+
+  return {
+    diagnostico: DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+    naturezaMemoriaOriginal: dados.memoria.natureza || null,
+    naturezaMista: naturezaSaldoResidualEhMista(dados.memoria.natureza),
+    porNatureza,
+    totalMemoriaPrevisto: totalMemoria,
+    totalPadPrevisto: totalPad,
+    totalApenasConferencia: true,
+    todasNaturezasFecham: porNatureza.length > 0 && porNatureza.every((item) => item.fecha),
+  };
+}
+
 function detectarRateiosQuantidadeSuspeita(dados, payload) {
   const valorUnitario = dados.memoria.valorUnitario;
   if (valorUnitario === null || valorUnitario <= 0) return [];
@@ -367,6 +476,7 @@ function montarLinhaRelatorio(divergencia, dados, classificacao, motivos, extras
     saldoPadConsolidado: extras.padConsolidado?.saldo ?? null,
     padConsolidado: extras.padConsolidado || null,
     rateiosQuantidadeSuspeita: extras.rateiosQuantidadeSuspeita || [],
+    comparacaoSaldoResidualPorNatureza: extras.comparacaoSaldoResidualPorNatureza || null,
     justificativaSugerida: [CLASSIFICACAO_SEM_DIVERGENCIA_MATERIAL, "falso_positivo_saneavel"].includes(classificacao)
       ? JUSTIFICATIVA_ACEITE
       : null,
@@ -392,6 +502,43 @@ function classificarDivergencia(divergencia, contexto = {}) {
   const linhasPadEquivalentes = localizarLinhasPadEquivalentes(divergencia, dados, contexto.itensPad || []);
   const padConsolidado = consolidarLinhasPad(linhasPadEquivalentes);
   const rateiosQuantidadeSuspeita = detectarRateiosQuantidadeSuspeita(dados, payload);
+
+  // Saldo residual/remanescente: nunca comparar agregando naturezas. A memoria
+  // consolidada e separada por natureza (CAPITAL e CUSTEIO) e cada parcela e
+  // comparada apenas com a linha PAD de mesma natureza. O total e conferencia.
+  const descricaoSaldoResidual = dados.memoria.descricao || dados.pad.descricao;
+  if (ehSaldoResidualProfor(descricaoSaldoResidual)) {
+    const comparacaoSaldoResidual = compararSaldoResidualPorNatureza(
+      divergencia,
+      dados,
+      payload,
+      contexto.itensPad || []
+    );
+    const naturezasComparadas = comparacaoSaldoResidual.porNatureza;
+    if (naturezasComparadas.length && comparacaoSaldoResidual.todasNaturezasFecham) {
+      return montarLinhaRelatorio(divergencia, dados, "falso_positivo_saneavel", [
+        DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+        `Saldo remanescente segregado por natureza: ${naturezasComparadas
+          .map((item) => `${item.natureza} memoria ${item.memoria?.valorPrevisto} x PAD ${item.pad?.valorPrevisto}`)
+          .join("; ")}.`,
+        "Todas as naturezas fecham com linhas PAD equivalentes de mesma natureza; "
+          + "o bloqueio anterior comparava o total consolidado contra uma unica natureza.",
+      ], { padConsolidado, rateiosQuantidadeSuspeita, comparacaoSaldoResidualPorNatureza: comparacaoSaldoResidual });
+    }
+    if (naturezasComparadas.length) {
+      const naturezasAbertas = naturezasComparadas.filter((item) => !item.fecha);
+      return montarLinhaRelatorio(divergencia, dados, "divergencia_material", [
+        DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+        ...naturezasAbertas.map((item) => `${item.natureza}: ${item.motivo}`),
+      ], { padConsolidado, rateiosQuantidadeSuspeita, comparacaoSaldoResidualPorNatureza: comparacaoSaldoResidual });
+    }
+    // Sem rateios utilizaveis para separar por natureza: dados insuficientes.
+    return montarLinhaRelatorio(divergencia, dados, "dados_memoria_insuficientes", [
+      DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+      "Saldo remanescente sem rateios ativos por natureza para separar a memoria consolidada.",
+    ], { padConsolidado, rateiosQuantidadeSuspeita, comparacaoSaldoResidualPorNatureza: comparacaoSaldoResidual });
+  }
+
   const camposObrigatorios = ["quantidade", "valorUnitario", "valorPrevisto", "valorExecutado", "saldo"];
   const faltantesMemoria = camposObrigatorios.filter((campo) => dados.memoria[campo] === null);
   const faltantesPad = camposObrigatorios.filter((campo) => dados.pad[campo] === null);
@@ -713,5 +860,7 @@ module.exports = {
   consolidarLinhasPad,
   detectarRateiosQuantidadeSuspeita,
   localizarLinhasPadEquivalentes,
+  localizarLinhasPadSaldoResidualPorNatureza,
+  compararSaldoResidualPorNatureza,
   montarMemoriaPad,
 };

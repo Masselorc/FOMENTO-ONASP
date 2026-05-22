@@ -251,7 +251,36 @@ function carregarDecisoesAfetadas(divergencias) {
   return afetadas;
 }
 
-function detectarMisturas(registros) {
+/**
+ * Conjunto de divergenciaId cuja comparacao de saldo residual/remanescente
+ * fecha quando segregada por natureza. Lido do relatorio de item nao apto, que
+ * separa a memoria consolidada e compara cada natureza com a linha PAD de mesma
+ * natureza. Para esses itens, ter CAPITAL e CUSTEIO juntos NAO e divergencia:
+ * e apenas memoria consolidada com correspondente PAD em cada natureza.
+ */
+function carregarSaldosResiduaisFechadosPorNatureza() {
+  const relatorio = lerJsonSeExistir(
+    "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json"
+  );
+  const fechados = new Set();
+  if (!relatorio) return fechados;
+  const listas = [
+    relatorio.semDivergenciaMaterialDetectada,
+    relatorio.candidatosAceiteAutomatico,
+    relatorio.falsosPositivosSaneaveis,
+    relatorio.divergenciasMateriais,
+  ].filter(Array.isArray);
+  for (const item of listas.flat()) {
+    const comparacao = item?.comparacaoSaldoResidualPorNatureza;
+    const id = Number(item?.id);
+    if (Number.isInteger(id) && comparacao && comparacao.todasNaturezasFecham === true) {
+      fechados.add(id);
+    }
+  }
+  return fechados;
+}
+
+function detectarMisturas(registros, fechadosPorNatureza = new Set()) {
   const porDescricao = new Map();
   for (const item of registros) {
     const chave = `${normalizarTextoSaldoResidual(item.numeroConvenio).replace(/\D/g, "")}::${item.descricaoNormalizada}`;
@@ -266,6 +295,21 @@ function detectarMisturas(registros) {
   return registros.map((item) => {
     const chave = `${normalizarTextoSaldoResidual(item.numeroConvenio).replace(/\D/g, "")}::${item.descricaoNormalizada}`;
     if (!chavesMistas.has(chave)) return item;
+    // Mistura cuja comparacao fecha em cada natureza: a memoria estava apenas
+    // consolidada, com correspondente PAD por natureza. Nao e divergencia real.
+    const fechaPorNatureza = Number.isInteger(Number(item.divergenciaId))
+      && fechadosPorNatureza.has(Number(item.divergenciaId));
+    if (fechaPorNatureza && item.classificacao !== "saldo_residual_rateado_indevidamente") {
+      return {
+        ...item,
+        misturaCapitalCusteio: true,
+        chaveIgnorouNatureza: true,
+        naturezasFechamComPad: true,
+        classificacao: "saldo_residual_ok_nao_setorializado",
+        recomendacao: "Memoria consolidada separavel por natureza; cada natureza fecha com linha PAD equivalente. "
+          + "Tratar como falso positivo saneavel, comparando sempre segregado por natureza.",
+      };
+    }
     const classificacao = item.classificacao === "saldo_residual_rateado_indevidamente"
       ? item.classificacao
       : "saldo_residual_natureza_divergente";
@@ -290,6 +334,7 @@ function sintetizar(registros, decisoesAfetadas) {
     totalAreaTecnicaCorreta: registros.filter((item) => item.areaTecnicaNaoSetorializada).length,
     totalIndevidamenteRateadoPorSetor: registros.filter((item) => item.areaOperacionalIndevida).length,
     totalMisturaCapitalCusteio: registros.filter((item) => item.misturaCapitalCusteio).length,
+    totalMisturaFechaPorNatureza: registros.filter((item) => item.naturezasFechamComPad).length,
     totalDecisaoAnteriorAfetada: decisoesAfetadas.length,
     totalCorrigidoAutomaticamente: registros.filter((item) => [
       "saldo_residual_ok_nao_setorializado",
@@ -317,6 +362,7 @@ function renderMarkdown(relatorio) {
     `- Area tecnica correta: ${relatorio.resumo.totalAreaTecnicaCorreta}`,
     `- Indevidamente rateados por setor: ${relatorio.resumo.totalIndevidamenteRateadoPorSetor}`,
     `- Mistura CAPITAL/CUSTEIO: ${relatorio.resumo.totalMisturaCapitalCusteio}`,
+    `- Mistura que fecha segregada por natureza (falso positivo saneavel): ${relatorio.resumo.totalMisturaFechaPorNatureza}`,
     `- Decisoes anteriores afetadas: ${relatorio.resumo.totalDecisaoAnteriorAfetada}`,
     `- Pendentes de decisao humana: ${relatorio.resumo.totalPendenteDecisaoHumana}`,
     "",
@@ -358,7 +404,8 @@ function executar() {
     if (dados) varrerJson(registros, fonte, dados);
   }
 
-  const itens = detectarMisturas(registros)
+  const fechadosPorNatureza = carregarSaldosResiduaisFechadosPorNatureza();
+  const itens = detectarMisturas(registros, fechadosPorNatureza)
     .sort((a, b) => String(a.numeroConvenio || "").localeCompare(String(b.numeroConvenio || ""), "pt-BR")
       || String(a.descricaoOriginal || "").localeCompare(String(b.descricaoOriginal || ""), "pt-BR")
       || String(a.origem || "").localeCompare(String(b.origem || ""), "pt-BR"));

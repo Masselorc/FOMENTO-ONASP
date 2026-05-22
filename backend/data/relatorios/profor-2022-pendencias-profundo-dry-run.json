@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T14:57:51.673Z",
+  "geradoEm": "2026-05-22T16:09:01.405Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -19,7 +19,7 @@
       "itemNaoApto": {
         "caminho": "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T14:57:12.030Z",
+        "geradoEm": "2026-05-22T16:04:43.801Z",
         "erro": null
       },
       "rateioAntigo": {
@@ -43,19 +43,19 @@
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T14:57:40.705Z",
+        "geradoEm": "2026-05-22T16:06:01.841Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T14:57:40.743Z",
+        "geradoEm": "2026-05-22T16:06:01.867Z",
         "erro": null
       },
       "saldosResiduais": {
         "caminho": "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T14:57:51.196Z",
+        "geradoEm": "2026-05-22T16:08:52.453Z",
         "erro": null
       }
     }
@@ -63,27 +63,27 @@
   "resumo": {
     "totalDivergencias": 145,
     "totalAnalisadas": 143,
-    "totalPendentesOperacionais": 74,
+    "totalPendentesOperacionais": 73,
     "totalBloqueantes": 45,
-    "totalBloqueantesOperacionais": 9,
-    "totalComDecisaoResolutiva": 69,
-    "totalDecisoesRegistradas": 73,
-    "totalPossiveisFalsosPositivos": 70,
-    "totalPendenciasReaisEstimadas": 2,
+    "totalBloqueantesOperacionais": 8,
+    "totalComDecisaoResolutiva": 70,
+    "totalDecisoesRegistradas": 74,
+    "totalPossiveisFalsosPositivos": 71,
+    "totalPendenciasReaisEstimadas": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "totalPayloadAlteradoAposDecisao": 27,
     "separacaoOperacional": {
-      "pendenciaOperacionalReal": 7,
+      "pendenciaOperacionalReal": 6,
       "bloqueioTecnicoSeguranca": 2,
       "decisaoResolutivaComPendenciaTecnica": 7,
       "revalidacaoNecessaria": 27,
       "historicoSaneado": 34,
-      "falsoPositivoSaneavel": 66
+      "falsoPositivoSaneavel": 67
     },
     "porStatus": [
       {
         "status": "ACEITO",
-        "total": 66
+        "total": 67
       },
       {
         "status": "CORRIGIDO",
@@ -91,7 +91,7 @@
       },
       {
         "status": "PENDENTE",
-        "total": 74
+        "total": 73
       }
     ],
     "porTipoStatus": [
@@ -113,12 +113,12 @@
       {
         "tipoAlerta": "item_nao_apto",
         "status": "ACEITO",
-        "total": 12
+        "total": 13
       },
       {
         "tipoAlerta": "item_nao_apto",
         "status": "PENDENTE",
-        "total": 7
+        "total": 6
       },
       {
         "tipoAlerta": "item_novo_sem_rateio",
@@ -135,7 +135,7 @@
   "categorias": [
     {
       "categoria": "possivel_falso_positivo",
-      "quantidade": 70,
+      "quantidade": 71,
       "ids": [
         24,
         25,
@@ -146,6 +146,7 @@
         33,
         34,
         38,
+        46,
         81,
         82,
         83,
@@ -213,7 +214,7 @@
     },
     {
       "categoria": "ja_saneado_mas_ainda_pendente",
-      "quantidade": 69,
+      "quantidade": 70,
       "ids": [
         1,
         2,
@@ -253,6 +254,7 @@
         41,
         42,
         43,
+        44,
         45,
         47,
         48,
@@ -451,13 +453,14 @@
     },
     {
       "categoria": "item_nao_apto_sem_divergencia_material",
-      "quantidade": 5,
+      "quantidade": 6,
       "ids": [
         31,
         32,
         33,
         34,
-        38
+        38,
+        46
       ],
       "risco": "medio",
       "acaoRecomendada": "liberar uso dry-run por decisão auditável"
@@ -475,39 +478,30 @@
       "acaoRecomendada": "saneamento por diacrítico com critérios materiais"
     },
     {
-      "categoria": "pendencia_real",
-      "quantidade": 2,
-      "ids": [
-        44,
-        46
-      ],
-      "risco": "alto",
-      "acaoRecomendada": "decisão humana real"
-    },
-    {
-      "categoria": "saldo_residual_natureza_divergente",
-      "quantidade": 2,
-      "ids": [
-        44,
-        46
-      ],
-      "risco": "medio",
-      "acaoRecomendada": "revisar"
-    },
-    {
       "categoria": "saldo_residual_decisao_anterior_incompativel",
-      "quantidade": 1,
+      "quantidade": 2,
       "ids": [
-        18
+        18,
+        44
       ],
       "risco": "medio",
       "acaoRecomendada": "revisar"
     },
     {
       "categoria": "saldo_residual_ok_nao_setorializado",
+      "quantidade": 2,
+      "ids": [
+        18,
+        46
+      ],
+      "risco": "medio",
+      "acaoRecomendada": "revisar"
+    },
+    {
+      "categoria": "saldo_residual_natureza_divergente",
       "quantidade": 1,
       "ids": [
-        18
+        44
       ],
       "risco": "medio",
       "acaoRecomendada": "revisar"
@@ -516,13 +510,14 @@
   "categoriasOperacionais": [
     {
       "categoria": "falso_positivo_saneavel",
-      "quantidade": 66,
+      "quantidade": 67,
       "ids": [
         31,
         32,
         33,
         34,
         38,
+        46,
         81,
         82,
         83,
@@ -682,11 +677,10 @@
     },
     {
       "categoria": "pendencia_operacional_real",
-      "quantidade": 7,
+      "quantidade": 6,
       "ids": [
         18,
         44,
-        46,
         88,
         89,
         97,
@@ -1814,19 +1808,20 @@
       "uf": "SP",
       "tipoAlerta": "item_nao_apto",
       "descricao": "Saldo Residual",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "nivel": "impeditivo",
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
         "saldo_residual_natureza_divergente",
-        "pendencia_real"
+        "saldo_residual_decisao_anterior_incompativel",
+        "ja_saneado_mas_ainda_pendente"
       ],
-      "evidencia": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. | Auditoria de item não apto: divergencia_material.",
-      "recomendacao": "Manter como pendencia operacional real ate esclarecer correspondente da mesma natureza. | Exige decisão humana real; há divergência material entre memória e PAD.",
-      "totalDecisoes": 0,
-      "temDecisaoResolutiva": false,
-      "totalLogs": 16,
+      "evidencia": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Auditoria de item não apto: ja_decidido.",
+      "recomendacao": "Manter como pendencia operacional real ate esclarecer correspondente da mesma natureza. | Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
       "saldoResidualTecnico": true,
       "alertaSaldoResidual": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
       "classificacaoOperacional": "pendencia_operacional_real",
@@ -1870,19 +1865,20 @@
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "saldo_residual_natureza_divergente",
-        "pendencia_real"
+        "saldo_residual_ok_nao_setorializado",
+        "possivel_falso_positivo",
+        "item_nao_apto_sem_divergencia_material"
       ],
-      "evidencia": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. | Auditoria de item não apto: divergencia_material.",
-      "recomendacao": "Manter como pendencia operacional real ate esclarecer correspondente da mesma natureza. | Exige decisão humana real; há divergência material entre memória e PAD.",
+      "evidencia": "Saldo remanescente com memoria consolidada CAPITAL/CUSTEIO; cada natureza fecha com linha PAD equivalente de mesma natureza. | Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Tratar como falso positivo saneavel: comparar sempre segregado por natureza; total apenas como conferencia. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
       "saldoResidualTecnico": true,
       "alertaSaldoResidual": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Saldo residual/remanescente exige saneamento especifico por natureza e area tecnica nao setorializada.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 47,
@@ -4433,7 +4429,8 @@
       32,
       33,
       34,
-      38
+      38,
+      46
     ],
     "exigemDecisaoHumana": [
       31,
@@ -4442,8 +4439,6 @@
       34,
       36,
       37,
-      44,
-      46,
       88,
       89,
       90,
@@ -4507,6 +4502,7 @@
       41,
       42,
       43,
+      44,
       45,
       47,
       48,

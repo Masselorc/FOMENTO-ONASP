@@ -519,7 +519,16 @@ function classificarDivergencia(divergencia, mapas) {
   const descricao = descricaoDaDivergencia(divergencia);
 
   if (ehSaldoResidualProfor(descricao) || registrosSaldoResidual.length) {
-    const temNaturezaDivergente = registrosSaldoResidual.some((item) => item.classificacao === "saldo_residual_natureza_divergente" || item.misturaCapitalCusteio);
+    // Mistura CAPITAL/CUSTEIO cuja comparacao fecha em cada natureza nao e
+    // divergencia: a memoria estava consolidada, com correspondente PAD por
+    // natureza. Nao deve gerar pendencia operacional real.
+    const fechaPorNatureza = registrosSaldoResidual.some((item) => item.naturezasFechamComPad === true);
+    const itemNaoAptoSaldo = mapas.itemNaoApto.get(divergencia.id);
+    const comparacaoNatureza = itemNaoAptoSaldo?.comparacaoSaldoResidualPorNatureza || null;
+    const todasNaturezasFecham = fechaPorNatureza
+      || comparacaoNatureza?.todasNaturezasFecham === true;
+    const temNaturezaDivergente = !todasNaturezasFecham
+      && registrosSaldoResidual.some((item) => item.classificacao === "saldo_residual_natureza_divergente" || item.misturaCapitalCusteio);
     const temRateioIndevido = registrosSaldoResidual.some((item) => item.classificacao === "saldo_residual_rateado_indevidamente" || item.areaOperacionalIndevida);
     const temDecisaoIncompativel = garantirArray(mapas.saldosResiduaisDecisoes).some((item) => item.divergenciaId === divergencia.id);
     if (temNaturezaDivergente) {
@@ -532,8 +541,14 @@ function classificarDivergencia(divergencia, mapas) {
       recomendacoes.push("Neutralizar rateio setorial no dry-run e manter area tecnica nao setorializada.");
     } else {
       categorias.add("saldo_residual_ok_nao_setorializado");
-      evidencias.push("Saldo residual/remanescente identificado; aplicar comparacao segregada por natureza.");
-      recomendacoes.push("Manter segregacao por natureza e area tecnica.");
+      if (todasNaturezasFecham) {
+        categorias.add("possivel_falso_positivo");
+        evidencias.push("Saldo remanescente com memoria consolidada CAPITAL/CUSTEIO; cada natureza fecha com linha PAD equivalente de mesma natureza.");
+        recomendacoes.push("Tratar como falso positivo saneavel: comparar sempre segregado por natureza; total apenas como conferencia.");
+      } else {
+        evidencias.push("Saldo residual/remanescente identificado; aplicar comparacao segregada por natureza.");
+        recomendacoes.push("Manter segregacao por natureza e area tecnica.");
+      }
     }
     if (temDecisaoIncompativel) {
       categorias.add("saldo_residual_decisao_anterior_incompativel");

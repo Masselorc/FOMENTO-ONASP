@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T14:57:12.030Z",
+  "geradoEm": "2026-05-22T16:04:43.801Z",
   "modo": "dry-run",
   "tolerancias": {
     "quantidade": 0.000001,
@@ -9,10 +9,10 @@
     "totalItemNaoAptoEncontrados": 19,
     "totalSemDivergenciaMaterialDetectada": 1,
     "totalCandidatosAceiteAutomatico": 1,
-    "totalFalsosPositivosSaneaveis": 4,
-    "totalDivergenciaMaterial": 2,
+    "totalFalsosPositivosSaneaveis": 5,
+    "totalDivergenciaMaterial": 0,
     "totalDadosMemoriaInsuficientes": 0,
-    "totalJaDecididos": 12,
+    "totalJaDecididos": 13,
     "totalErrosPayload": 0
   },
   "semDivergenciaMaterialDetectada": [
@@ -76,6 +76,7 @@
           "valorPrevistoReferencia": 4340.07
         }
       ],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
         "Natureza, quantidade e valores coincidem dentro das tolerâncias.",
@@ -144,6 +145,7 @@
           "valorPrevistoReferencia": 4340.07
         }
       ],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
         "Natureza, quantidade e valores coincidem dentro das tolerâncias.",
@@ -234,6 +236,7 @@
           "valorPrevistoReferencia": 6610.53
         }
       ],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
         "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
@@ -325,6 +328,7 @@
           "valorPrevistoReferencia": 4182.65
         }
       ],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
         "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
@@ -416,6 +420,7 @@
           "valorPrevistoReferencia": 7124
         }
       ],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
         "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
@@ -507,6 +512,7 @@
           "valorPrevistoReferencia": 3890
         }
       ],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
         "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
@@ -515,67 +521,10 @@
         "Rateios da memória apresentam quantidade legada incompatível com valor previsto / valor unitário, com indício de inflação decimal.",
         "Alertas originais indicam saldo antigo inconsistente; saldo calculado por previsto - executado fecha com o PAD consolidado."
       ]
-    }
-  ],
-  "divergenciasMateriais": [
-    {
-      "id": 44,
-      "classificacao": "divergencia_material",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "chaveItem": "938128::SALDO RESIDUAL",
-      "descricao": "Saldo Residual",
-      "naturezaMemoria": "CAPITAL",
-      "naturezaPad": "CUSTEIO",
-      "quantidadeMemoria": 1.003203,
-      "quantidadePad": 1,
-      "valorUnitarioMemoria": 22279.73,
-      "valorUnitarioPad": 71.36,
-      "valorPrevistoMemoria": 22351.09,
-      "valorPrevistoPad": 71.36,
-      "valorExecutadoMemoria": 0,
-      "valorExecutadoPad": 0,
-      "saldoMemoria": 22351.09,
-      "saldoPad": 71.36,
-      "quantidadePadConsolidada": null,
-      "valorUnitarioPadConsolidado": null,
-      "valorPrevistoPadConsolidado": null,
-      "valorExecutadoPadConsolidado": null,
-      "saldoPadConsolidado": null,
-      "padConsolidado": null,
-      "rateiosQuantidadeSuspeita": [
-        {
-          "area": "N/A",
-          "natureza": "CAPITAL",
-          "quantidadeGravada": 10,
-          "quantidadeEstimada": 1,
-          "fatorInflacao": 10,
-          "fatorInflacaoDecimal10": true,
-          "valorUnitarioReferencia": 22279.73,
-          "valorPrevistoReferencia": 22279.73
-        },
-        {
-          "area": "NAO INFORMADO",
-          "natureza": "CAPITAL",
-          "quantidadeGravada": 1,
-          "quantidadeEstimada": 0.003203,
-          "fatorInflacao": 312.215947,
-          "fatorInflacaoDecimal10": false,
-          "valorUnitarioReferencia": 22279.73,
-          "valorPrevistoReferencia": 71.36
-        }
-      ],
-      "justificativaSugerida": null,
-      "motivos": [
-        "natureza divergente",
-        "valorUnitario divergente (22208.37)",
-        "valorPrevisto divergente (22279.73)",
-        "saldo divergente (22279.73)"
-      ]
     },
     {
       "id": 46,
-      "classificacao": "divergencia_material",
+      "classificacao": "falso_positivo_saneavel",
       "numeroConvenio": "938277",
       "uf": "MA",
       "chaveItem": "938277::SALDO REMANESCENTE",
@@ -643,15 +592,98 @@
           "valorPrevistoReferencia": 5924.45
         }
       ],
-      "justificativaSugerida": null,
+      "comparacaoSaldoResidualPorNatureza": {
+        "diagnostico": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
+        "naturezaMemoriaOriginal": "CAPITAL, CUSTEIO",
+        "naturezaMista": true,
+        "porNatureza": [
+          {
+            "natureza": "CAPITAL",
+            "memoria": {
+              "natureza": "CAPITAL",
+              "quantidade": 10,
+              "valorPrevisto": 7267.88,
+              "valorExecutado": 0,
+              "saldo": 7267.88
+            },
+            "pad": {
+              "descricao": "SALDO REMANESCENTE",
+              "natureza": "CAPITAL",
+              "quantidade": 1,
+              "valorUnitario": 7267.88,
+              "valorPrevisto": 7267.88,
+              "valorExecutado": 0,
+              "saldo": 7267.88,
+              "totalLinhasPadEquivalentes": 1,
+              "linhas": [
+                {
+                  "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_531991440416570841452.xls",
+                  "aba": "938277",
+                  "linha": 52,
+                  "descricao": "SALDO REMANESCENTE",
+                  "natureza": "CAPITAL",
+                  "quantidade": 1,
+                  "valorUnitario": 7267.88,
+                  "valorPrevisto": 7267.88,
+                  "valorExecutado": 0,
+                  "saldo": 7267.88
+                }
+              ]
+            },
+            "fecha": true,
+            "motivo": "Memoria e PAD fecham para esta natureza."
+          },
+          {
+            "natureza": "CUSTEIO",
+            "memoria": {
+              "natureza": "CUSTEIO",
+              "quantidade": 10,
+              "valorPrevisto": 5924.45,
+              "valorExecutado": 0,
+              "saldo": 5924.45
+            },
+            "pad": {
+              "descricao": "SALDO REMANESCENTE",
+              "natureza": "CUSTEIO",
+              "quantidade": 1,
+              "valorUnitario": 5924.45,
+              "valorPrevisto": 5924.45,
+              "valorExecutado": 0,
+              "saldo": 5924.45,
+              "totalLinhasPadEquivalentes": 1,
+              "linhas": [
+                {
+                  "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_531991440416570841452.xls",
+                  "aba": "938277",
+                  "linha": 27,
+                  "descricao": "SALDO REMANESCENTE",
+                  "natureza": "CUSTEIO",
+                  "quantidade": 1,
+                  "valorUnitario": 5924.45,
+                  "valorPrevisto": 5924.45,
+                  "valorExecutado": 0,
+                  "saldo": 5924.45
+                }
+              ]
+            },
+            "fecha": true,
+            "motivo": "Memoria e PAD fecham para esta natureza."
+          }
+        ],
+        "totalMemoriaPrevisto": 13192.33,
+        "totalPadPrevisto": 13192.33,
+        "totalApenasConferencia": true,
+        "todasNaturezasFecham": true
+      },
+      "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
-        "natureza divergente",
-        "quantidade divergente (1.22676)",
-        "valorPrevisto divergente (7267.88)",
-        "saldo divergente (7267.88)"
+        "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
+        "Saldo remanescente segregado por natureza: CAPITAL memoria 7267.88 x PAD 7267.88; CUSTEIO memoria 5924.45 x PAD 5924.45.",
+        "Todas as naturezas fecham com linhas PAD equivalentes de mesma natureza; o bloqueio anterior comparava o total consolidado contra uma unica natureza."
       ]
     }
   ],
+  "divergenciasMateriais": [],
   "dadosMemoriaInsuficientes": [],
   "jaDecididos": [
     {
@@ -680,6 +712,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -711,6 +744,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -742,6 +776,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -773,6 +808,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -804,6 +840,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -835,6 +872,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -866,6 +904,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -897,6 +936,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -928,6 +968,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -959,6 +1000,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -990,6 +1032,39 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
+      "justificativaSugerida": null,
+      "motivos": [
+        "Divergência já possui decisão resolutiva ou status não analisável."
+      ]
+    },
+    {
+      "id": 44,
+      "classificacao": "ja_decidido",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "descricao": "Saldo Residual",
+      "naturezaMemoria": "CAPITAL",
+      "naturezaPad": "CUSTEIO",
+      "quantidadeMemoria": 1.003203,
+      "quantidadePad": 1,
+      "valorUnitarioMemoria": 22279.73,
+      "valorUnitarioPad": 71.36,
+      "valorPrevistoMemoria": 22351.09,
+      "valorPrevistoPad": 71.36,
+      "valorExecutadoMemoria": 0,
+      "valorExecutadoPad": 0,
+      "saldoMemoria": 22351.09,
+      "saldoPad": 71.36,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -1021,6 +1096,7 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
+      "comparacaoSaldoResidualPorNatureza": null,
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."

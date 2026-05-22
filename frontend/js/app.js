@@ -2976,6 +2976,45 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        function renderSaldoResidualPorNaturezaRevisao(divergencia) {
+            const comparacao = divergencia?.comparacaoSaldoResidualPorNatureza;
+            const porNatureza = Array.isArray(comparacao?.porNatureza) ? comparacao.porNatureza : [];
+            if (!comparacao || porNatureza.length < 2) return '';
+            const blocos = porNatureza.map((item) => {
+                const memoria = item.memoria || {};
+                const pad = item.pad || {};
+                const badge = item.fecha
+                    ? '<span class="badge bg-success">fecha</span>'
+                    : '<span class="badge bg-warning text-dark">divergente</span>';
+                return `
+                    <div class="revisao-saldo-natureza-bloco">
+                        <h5>${escapeHtml(item.natureza || '-')} ${badge}</h5>
+                        <table class="table table-sm align-middle mb-1">
+                            <thead><tr><th>Campo</th><th>Memória</th><th>PAD</th></tr></thead>
+                            <tbody>
+                                <tr><td>Valor previsto</td><td>${escapeHtml(formatarValorRevisao(memoria.valorPrevisto, 'Valor previsto'))}</td><td>${escapeHtml(formatarValorRevisao(pad.valorPrevisto, 'Valor previsto'))}</td></tr>
+                                <tr><td>Valor executado</td><td>${escapeHtml(formatarValorRevisao(memoria.valorExecutado, 'Valor executado'))}</td><td>${escapeHtml(formatarValorRevisao(pad.valorExecutado, 'Valor executado'))}</td></tr>
+                                <tr><td>Saldo</td><td>${escapeHtml(formatarValorRevisao(memoria.saldo, 'Saldo'))}</td><td>${escapeHtml(formatarValorRevisao(pad.saldo, 'Saldo'))}</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="text-muted small mb-0">${escapeHtml(item.motivo || '')}</p>
+                    </div>
+                `;
+            }).join('');
+            return `
+                <div class="revisao-saldo-residual-natureza mt-3">
+                    <h4>Saldo remanescente segregado por natureza</h4>
+                    <p class="text-muted small">${escapeHtml(comparacao.diagnostico || 'CAPITAL e CUSTEIO são naturezas distintas e não equivalentes.')}</p>
+                    <div class="revisao-saldo-natureza-grid">${blocos}</div>
+                    <p class="revisao-saldo-natureza-total small mb-0">
+                        Total (apenas conferência, não é chave de equivalência):
+                        memória ${escapeHtml(formatarValorRevisao(comparacao.totalMemoriaPrevisto, 'Valor previsto'))}
+                        x PAD ${escapeHtml(formatarValorRevisao(comparacao.totalPadPrevisto, 'Valor previsto'))}.
+                    </p>
+                </div>
+            `;
+        }
+
         function renderComparacaoRevisao(divergencia) {
             const { antes, depois } = obterAntesDepoisRevisao(divergencia);
             const isExistencia = obterCampoAfetadoRevisao(divergencia) === 'existencia';
@@ -3022,6 +3061,7 @@ async function carregarLogoParaPDF() {
                         <div class="revisao-comparacao-header"><span>Campo</span><strong>ANTES — memória atual</strong><strong>DEPOIS — PAD novo</strong></div>
                         ${linhas || '<div class="revisao-comparacao-empty">Payload sem campos comparáveis estruturados.</div>'}
                     </div>
+                    ${renderSaldoResidualPorNaturezaRevisao(divergencia)}
                     ${renderPadConsolidadoRevisao(divergencia)}
                 </section>
             `;

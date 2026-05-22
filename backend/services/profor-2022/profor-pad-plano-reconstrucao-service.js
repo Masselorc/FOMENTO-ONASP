@@ -228,14 +228,19 @@ function gerarLinhasItem(itemPad, rateios, contexto = {}) {
         detalhe: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Rateios por area operacional ignorados no dry-run: ${areasOperacionais.map((r) => r.area).join(", ")}.`,
       }));
     }
-    if (naturezaPad && naturezasRateio.size && (naturezasRateio.size > 1 || !naturezasRateio.has(naturezaPad))) {
+    // Cada linha PAD de saldo residual e de uma unica natureza. A memoria pode
+    // ter rateios de varias naturezas (memoria consolidada): isso NAO e
+    // divergencia, pois cada natureza tem a sua propria linha PAD. So ha
+    // divergencia quando a natureza do PAD nao existe entre os rateios da
+    // memoria — nesse caso nao ha correspondente de mesma natureza.
+    if (naturezaSaldoResidualValida(naturezaPad) && naturezasRateio.size && !naturezasRateio.has(naturezaPad)) {
       impedimentosItem.push(montarImpedimento({
         tipo: "saldo_residual_natureza_divergente",
         numeroConvenio: itemPad.numeroConvenio,
         uf: itemPad.uf,
         descricao: itemPad.descricaoOriginal,
         chaveItem: itemPad.chaveItem,
-        detalhe: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Natureza PAD '${naturezaPad}' x memoria/rateio '${Array.from(naturezasRateio).join(", ")}'.`,
+        detalhe: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} Natureza PAD '${naturezaPad}' sem rateio de mesma natureza na memoria (rateios: '${Array.from(naturezasRateio).join(", ")}').`,
       }));
     }
 

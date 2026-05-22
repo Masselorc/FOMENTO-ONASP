@@ -10834,6 +10834,36 @@ table.dataTable thead th {
     padding: .85rem;
 }
 
+.revisao-saldo-residual-natureza {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: .85rem;
+}
+
+.revisao-saldo-natureza-grid {
+    display: grid;
+    gap: .85rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.revisao-saldo-natureza-bloco {
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: .7rem .85rem;
+}
+
+.revisao-saldo-natureza-bloco h5 {
+    font-size: .85rem;
+    margin-bottom: .5rem;
+    text-transform: uppercase;
+}
+
+.revisao-saldo-natureza-total {
+    color: var(--color-muted);
+    margin-top: .6rem;
+}
+
 .revisao-diagnostic-list,
 .revisao-keyvalue-list {
     display: grid;
