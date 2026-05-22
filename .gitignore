@@ -36,16 +36,19 @@ Dados/detru/*.csv
 Dados/detru/*.tmp
 
 # Ambientes e dados locais
-backend/data/onasp.sqlite
-backend/data/onasp.sqlite-*
-backend/data/backups/
 backend/logs/
 *.log
 _codex_backup_*/
 _codex_backup*/
 *_backup_*/
-*.sqlite
-*.sqlite3
-*.db
+
+# Banco de dados — versionado durante desenvolvimento (ver FOMENTO-ONASP#db-versioning)
+# Remover as exceções abaixo quando o banco estabilizar em produção
+!backend/data/onasp.sqlite
+!backend/data/onasp-mj-12666669.sqlite
+!backend/data/backups/
+backend/data/onasp.sqlite-shm
+backend/data/onasp.sqlite-wal
+# Outros .sqlite fora de backend/data permanecem ignorados
 *.sqlite-shm
 *.sqlite-wal
