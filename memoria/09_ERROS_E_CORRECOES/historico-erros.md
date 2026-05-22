@@ -1160,3 +1160,24 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 **Rollback:**
 - Reverter o histórico de erros ou os relatórios gerados via `git checkout --`.
 
+---
+
+## 22/05/2026 - PROFOR 2022: prevalência do PAD novo na divergência #44
+
+**Classificação:** regra de negócio aplicada | correção operacional auditável
+
+**Contexto:** A divergência `#44` (`938128/SP`, `Saldo Residual`) permanecia como `pendencia_operacional_real` porque a memória antiga tinha `Saldo Residual` `CAPITAL` de `R$ 22.351,09`, enquanto o PAD novo apresentava `Saldo Residual` `CAPITAL` de `R$ 20.704,73` e parcela `CUSTEIO` de `R$ 71,36`.
+
+**Regra definida:** O PAD novo prevalece integralmente sobre a memória antiga. A memória é histórico/comparativo e não bloqueia valor, natureza, código, quantidade, executado ou saldo do PAD quando não há erro técnico de extração.
+
+**Correção aplicada:**
+- `auditar-pendencias-profor-2022-profundo.js` passou a classificar a diferença de saldo residual como `saldo_residual_prevalencia_pad`/`falso_positivo_saneavel`, não como pendência operacional real.
+- `auditar-saldos-residuais-profor-2022.js` passou a contar casos resolvidos por prevalência do PAD.
+- `auditar-regressao-saneamentos-pad-profor-2022.js` mantém a `#44` como risco diagnosticado/rastreável, sem reabrir pendência material.
+- Decisão complementar `#187` registrada via serviço existente: `CORRIGIDO`, usuário `sistema-prevalencia-pad`, `aplicadaAoPlano=false`, snapshot presente e log registrado.
+
+**Resultado:** `pendencia_operacional_real = 0`. A `#44` fica como `historico_saneado`, preservando a diferença memória antiga x PAD novo para auditoria.
+
+**Limites preservados:** `CAPITAL` e `CUSTEIO` continuam separados; saldo residual continua em área técnica (`NAO INFORMADO`/`N/A`); nenhuma publicação; origem ativa e `planoAplicacao` oficial intactos.
+
+**Rollback:** reverter o commit de código/documentação e, se necessário desfazer a decisão `#187`, registrar decisão posterior `REVERTIDO` pelo serviço existente. Não apagar decisões, logs ou divergências.

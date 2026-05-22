@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria de regressão dos saneamentos por chave de pareamento frágil (dry-run)
 
-Gerado em: 2026-05-22T22:08:54.856Z
+Gerado em: 2026-05-22T22:31:14.780Z
 Modo: dry-run — somente leitura. Não publica, não registra decisão, não reabre divergência, não altera SQLite, origem ativa nem `planoAplicacao` oficial.
 
 > Diagnostico da #44 (938128/SP): o PAD tinha multiplas linhas para a mesma descricao. Reavaliacao transversal dos saneamentos que dependem de pareamento de linha PAD.
@@ -77,11 +77,11 @@ Divergências abertas (status PENDENTE) cujos grupos PAD possuem múltiplas natu
 
 ## 6. Casos Já Diagnosticados
 
-Casos de risco material que já foram formalmente diagnosticados ou corrigidos.
+Casos de risco material que já foram formalmente diagnosticados e permanecem rastreáveis sem pendência operacional.
 
 | Divergência | Convênio | UF | Tipo Alerta | Status | Descrição do Diagnóstico |
 |---|---|---|---|---|---|
-| #44 | 938128 | SP | item_nao_apto | ACEITO | Caso ja diagnosticado e corrigido em auditoria anterior; manter como referencia. |
+| #44 | 938128 | SP | item_nao_apto | CORRIGIDO | Caso ja diagnosticado e resolvido por prevalencia do PAD novo; manter como referencia rastreavel, sem pendencia operacional. |
 
 ## 7. Conclusão
 

@@ -89,7 +89,7 @@ test("5.1. #46 com fechamento operacional por natureza vira alerta sem pendênci
   assert.equal(resultado.reabrir, false);
 });
 
-test("6. #44 deve ser preservada como risco_confirmado_ja_diagnosticado", () => {
+test("6. #44 deve ficar rastreável como risco diagnosticado resolvido por prevalência do PAD", () => {
   const divergencia = { id: 44, status: "ACEITO", tipoAlerta: "item_nao_apto" };
   const fatores = ["chave_descricao_com_multiplas_linhas_pad", "grupo_pad_com_multiplas_naturezas"];
   const grupoPad = { totalLinhasPad: 2, naturezas: ["CUSTEIO", "CAPITAL"], codigosNatureza: ["33903099", "44905299"] };
@@ -99,6 +99,7 @@ test("6. #44 deve ser preservada como risco_confirmado_ja_diagnosticado", () => 
   const resultado = classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva);
   assert.equal(resultado.classificacao, "risco_confirmado_ja_diagnosticado");
   assert.equal(resultado.reabrir, false);
+  assert.match(resultado.recomendacao, /prevalencia do PAD/);
 });
 
 test("7. Divergência de quantidade x valor unitário por arredondamento não deve ser reaberta por chave frágil", () => {

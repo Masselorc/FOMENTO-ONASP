@@ -60,33 +60,32 @@ test("3. payload alterado após decisão continua como revalidacao_necessaria", 
   assert.equal(resultado.categoria, "revalidacao_necessaria");
 });
 
-test("4. saldo residual com natureza divergente e SEM decisão continua pendencia_operacional_real", () => {
+test("4. saldo residual com natureza divergente e SEM decisão vira saneável por prevalência do PAD", () => {
   const item = {
     id: 300,
     classificacoes: ["saldo_residual_natureza_divergente"],
   };
   const divergencia = { id: 300, status: "PENDENTE", bloqueia_publicacao: 1, temDecisaoResolutiva: false };
   const resultado = classificarOperacional(item, divergencia, mapasVazios());
-  assert.equal(resultado.categoria, "pendencia_operacional_real");
-  assert.equal(resultado.exigeDecisaoHumanaSubstantiva, true);
+  assert.equal(resultado.categoria, "falso_positivo_saneavel");
+  assert.equal(resultado.exigeDecisaoHumanaSubstantiva, false);
 });
 
-test("5. #44 — saldo residual natureza divergente permanece pendencia_operacional_real mesmo com decisão", () => {
-  // A decisão registrada não resolve o mérito material (memória CAPITAL sem
-  // correspondente PAD de mesma natureza/valor). Não pode ser saneada.
+test("5. #44 — saldo residual com PAD prevalente não permanece pendencia_operacional_real", () => {
+  // Regra fixa: o PAD novo prevalece sobre a memória antiga. A diferença fica
+  // rastreada, mas não exige nova decisão humana substantiva.
   const item = {
     id: 44,
     classificacoes: [
-      "saldo_residual_natureza_divergente",
-      "saldo_residual_decisao_anterior_incompativel",
+      "saldo_residual_prevalencia_pad",
+      "possivel_falso_positivo",
       "ja_saneado_mas_ainda_pendente",
     ],
   };
   const divergencia = { id: 44, status: "ACEITO", bloqueia_publicacao: 1, temDecisaoResolutiva: true };
   const resultado = classificarOperacional(item, divergencia, mapasVazios());
-  assert.equal(resultado.categoria, "pendencia_operacional_real");
-  assert.equal(resultado.exigeDecisaoHumanaSubstantiva, true);
-  assert.match(resultado.motivo, /nao resolve o merito|merito/);
+  assert.equal(resultado.categoria, "historico_saneado");
+  assert.equal(resultado.exigeDecisaoHumanaSubstantiva, false);
 });
 
 test("6. saldo residual com incompatibilidade técnica SEM decisão resolutiva continua pendencia_operacional_real", () => {

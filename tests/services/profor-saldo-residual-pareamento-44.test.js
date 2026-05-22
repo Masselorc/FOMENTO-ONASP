@@ -114,9 +114,10 @@ test("misturaFechaPorNatureza só é verdadeira quando todas as naturezas fecham
   );
 });
 
-test("detectarMisturas: #44 — divergência material de saldo residual permanece natureza_divergente", () => {
+test("detectarMisturas: #44 — diferença com a memória vira prevalência do PAD", () => {
   // Dois registros da mesma chave mista (CAPITAL + CUSTEIO) cuja comparação por
-  // natureza NÃO fecha: é divergência material real, não falso positivo.
+  // natureza NÃO fecha: pela regra fixa, o PAD prevalece e a diferença fica
+  // apenas rastreada, sem pendência operacional real.
   const registros = [
     {
       numeroConvenio: "938128",
@@ -139,7 +140,8 @@ test("detectarMisturas: #44 — divergência material de saldo residual permanec
   const resultado = detectarMisturas(registros, comparacoes);
   for (const item of resultado) {
     assert.equal(item.misturaCapitalCusteio, true);
-    assert.equal(item.classificacao, "saldo_residual_natureza_divergente");
+    assert.equal(item.classificacao, "saldo_residual_prevalencia_pad");
+    assert.match(item.recomendacao, /PAD novo prevalece/);
   }
 });
 

@@ -1,49 +1,67 @@
 # Diário de bordo
 
-## 22/05/2026 - PROFOR 2022: parecer decisório final da divergência #44
+## 22/05/2026 - PROFOR 2022: prevalência do PAD novo na divergência #44
 
 - Objetivo:
-  - consolidar diagnóstico decisório da divergência `#44` (`938128/SP`,
-    `Saldo Residual`) para orientar decisão humana sem registrar nova decisão.
-- Fontes consultadas:
-  - payload da `#44` pela API/serviço local de revisão;
-  - decisão `#186` e logs da divergência;
-  - `backend/data/relatorios/profor-2022-divergencia-44-diagnostico-dry-run.md`;
-  - `profor-2022-pendencias-profundo-dry-run.*`;
-  - `profor-2022-pad-plano-reconstruido-dry-run.json`;
-  - `profor-2022-pad-plano-comparacao-dry-run.json`;
-  - linhas PAD do convênio `938128/SP`;
-  - memória/rateios antigos da chave `938128::SALDO RESIDUAL`.
-- Diagnóstico:
-  - memória antiga de `Saldo Residual` `CAPITAL`: `R$ 22.351,09`;
-  - PAD novo de `Saldo Residual` `CAPITAL`: `R$ 20.704,73`;
-  - diferença bruta: `-R$ 1.646,36` (PAD menor);
-  - considerando a parcela `R$ 71,36` reapresentada como `CUSTEIO`, a
-    diferença líquida material remanescente é `-R$ 1.575,00`;
-  - a decisão `#186` libera o item não apto para dry-run, mas não resolve o
-    mérito material da redução/reclassificação.
-- Parecer:
-  - a `#44` deve permanecer como `pendencia_operacional_real`;
-  - recomendação atual: revisar depois, com confirmação documental externa;
-  - se a área confirmar o ajuste do PAD, registrar decisão complementar ou
-    retificadora pelo serviço de decisão, sem aplicar ao plano oficial.
-- Arquivo gerado:
+  - aplicar a regra fixa de negócio segundo a qual o PAD novo prevalece
+    integralmente sobre a memória antiga, concluindo a divergência `#44`
+    (`938128/SP`, `Saldo Residual`) sem publicação e sem alteração do plano
+    oficial.
+- Regra aplicada:
+  - o PAD novo é a fonte correta e suficiente para valor, natureza, código de
+    natureza, quantidade, executado e saldo;
+  - a memória antiga fica como referência histórica/comparativa;
+  - `CAPITAL` e `CUSTEIO` continuam segregados e saldo residual permanece em
+    área técnica (`NAO INFORMADO`/`N/A`), sem rateio para áreas operacionais.
+- Decisão registrada:
+  - divergência `#44`: decisão complementar `#187`, `CORRIGIDO`;
+  - usuário: `sistema-prevalencia-pad`;
+  - serviço usado: `registrarDecisao` (`profor-pad-revisao-decisao-service`);
+  - `aplicadaAoPlano=false`;
+  - snapshot `_segurancaPreAtivacao` presente;
+  - log `decisao_registrada` confirmado (`logId=2523`);
+  - decisão `#186` preservada, sem exclusão.
+- Dados rastreados:
+  - memória antiga `CAPITAL`: `R$ 22.351,09`;
+  - PAD novo `CAPITAL` (`44905299`): `R$ 20.704,73`;
+  - PAD novo `CUSTEIO` (`33903099`): `R$ 71,36`;
+  - diferença bruta `CAPITAL`: `-R$ 1.646,36`;
+  - diferença líquida considerando a parcela `CUSTEIO`: `-R$ 1.575,00`.
+- Ajustes de código:
+  - auditoria profunda passou a classificar saldo residual divergente como
+    `saldo_residual_prevalencia_pad`/`falso_positivo_saneavel` quando o PAD
+    está identificado por linha e natureza;
+  - auditoria de saldos residuais passou a contar casos resolvidos por
+    prevalência do PAD, sem tratá-los como pendência humana;
+  - regressão mantém a `#44` como risco diagnosticado e rastreável, não como
+    pendência operacional material.
+- Resultado:
+  - `#44`: status `CORRIGIDO`, `classificacaoOperacional=historico_saneado`;
+  - `pendencia_operacional_real = 0`;
+  - regressão: `#44` permanece `risco_confirmado_ja_diagnosticado`, com
+    recomendação de prevalência do PAD.
+- Arquivo atualizado:
   - `backend/data/relatorios/profor-2022-divergencia-44-parecer-decisorio.md`.
 - Validações:
+  - `npm run profor:pad:item-nao-apto:auditar`;
+  - `npm run profor:pad:saldos-residuais:auditar`;
   - `npm run profor:pad:auditar-pendencias-profundo`;
+  - `npm run profor:pad:regressao-saneamentos:auditar`;
   - `npm run profor:pad:reconstruir-plano:dry-run`;
   - `npm run profor:pad:comparar-plano:dry-run`;
   - `npm run validar:syntax`;
   - `npm run validar:services`.
 - Confirmações de escopo:
-  - nenhuma decisão registrada;
-  - nenhum dado do SQLite alterado;
   - nenhuma publicação;
   - origem ativa e `planoAplicacao` oficial não alterados;
-  - `frontend/data/publicados` não alterado.
+  - `frontend/data/publicados` não alterado;
+  - nenhuma decisão, divergência ou log apagado;
+  - SQLite foi alterado apenas pelo serviço existente de decisão e não deve ser
+    versionado.
 - Rollback:
-  - reverter o commit documental, se houver, e regenerar relatórios dry-run se
-    necessário; não apagar decisões, divergências nem logs.
+  - reverter o commit de código/documentação;
+  - se a decisão `#187` precisar ser desfeita, registrar nova decisão
+    `REVERTIDO` via serviço existente; não apagar decisões/logs.
 
 ## 22/05/2026 - PROFOR 2022: harmonização da #46 na regressão de saneamentos
 

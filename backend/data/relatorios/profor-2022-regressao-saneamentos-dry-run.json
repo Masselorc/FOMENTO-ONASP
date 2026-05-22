@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T22:08:54.856Z",
+  "geradoEm": "2026-05-22T22:31:14.780Z",
   "modo": "dry-run",
   "titulo": "Auditoria de regressao dos saneamentos PAD/PROFOR 2022 por chave de pareamento fragil",
   "escopo": "Somente leitura. Nao publica, nao registra decisao, nao reabre divergencia, nao altera SQLite, origem ativa nem planoAplicacao oficial. Nenhum achado suspeito vira pendencia sem evidencia material.",
@@ -8,7 +8,7 @@
   "catalogoClassificacoes": {
     "saneamento_confirmado": "Pareamento sem ambiguidade material; grupo PAD de linha unica ou tipo nao sensivel a pareamento.",
     "saneamento_suspeito_chave_fragil": "Divergencia ja decidida cuja chave de pareamento corresponde a mais de uma linha PAD; exige revalidacao manual da decisao.",
-    "risco_confirmado_ja_diagnosticado": "Caso ja diagnosticado e corrigido em auditoria anterior (#44).",
+    "risco_confirmado_ja_diagnosticado": "Caso ja diagnosticado e resolvido por prevalencia do PAD novo (#44).",
     "divergencia_aberta_com_alerta_pareamento": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo.",
     "alerta_pareamento_sem_pendencia_operacional": "Divergencia aberta em grupo PAD multi-linha, mas sem pendencia operacional material porque a auditoria operacional fechou por natureza.",
     "pendencia_material_potencial_aberta": "Divergencia aberta em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material).",
@@ -42,12 +42,12 @@
       "numeroConvenio": "938128",
       "uf": "SP",
       "tipoAlerta": "item_nao_apto",
-      "status": "ACEITO",
+      "status": "CORRIGIDO",
       "saneamentoConcluido": true,
       "chaveItem": "938128::SALDO RESIDUAL",
       "itemConhecidoId": 212,
-      "decisao": "#186 ACEITO (usuario-local)",
-      "classificacaoOperacional": "pendencia_operacional_real",
+      "decisao": "#187 CORRIGIDO (sistema-prevalencia-pad)",
+      "classificacaoOperacional": "historico_saneado",
       "sensivelAPareamento": true,
       "grupoPad": {
         "chaveDescricao": "938128::SALDO RESIDUAL",
@@ -70,7 +70,7 @@
         "payload_sem_codigo_natureza"
       ],
       "classificacaoRegressao": "risco_confirmado_ja_diagnosticado",
-      "recomendacao": "Caso ja diagnosticado e corrigido em auditoria anterior; manter como referencia.",
+      "recomendacao": "Caso ja diagnosticado e resolvido por prevalencia do PAD novo; manter como referencia rastreavel, sem pendencia operacional.",
       "reabrir": false
     },
     {

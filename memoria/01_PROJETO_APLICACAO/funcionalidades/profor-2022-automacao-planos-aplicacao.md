@@ -2342,12 +2342,26 @@ A auditoria não registra decisão, não altera status, não publica, não alter
 
 A primeira execução apontou `#18` como `pendencia_operacional_real` mesmo já tendo decisão resolutiva canônica (ACEITO, decisão #150). A causa era a ordem de avaliação do classificador operacional (`classificarOperacional`): o ramo de saldo residual era avaliado **antes** dos ramos de decisão resolutiva e retornava `pendencia_operacional_real` de forma incondicional.
 
-**Regra corrigida.** O ramo de saldo residual passou a distinguir:
+**Regra corrigida naquele momento.** O ramo de saldo residual passou a distinguir:
 
 - **Divergência material ativa** (`saldo_residual_natureza_divergente`, `saldo_residual_sem_correspondente_mesma_natureza`): permanece `pendencia_operacional_real` mesmo com decisão registrada, pois a decisão não resolve o mérito material. Protege `#44`.
 - **Pendência apenas técnica** (`saldo_residual_rateado_indevidamente`, `saldo_residual_decisao_anterior_incompativel`): só força `pendencia_operacional_real` quando **não** há decisão resolutiva canônica. Havendo decisão, segue pelos ramos de decisão resolutiva — payload alterado → `revalidacao_necessaria`; senão → `decisao_resolutiva_com_pendencia_tecnica`.
 
 **Resultado da reexecução (22/05/2026).** `pendencia_operacional_real` caiu de 2 para 1. `#18` passou a `decisao_resolutiva_com_pendencia_tecnica` (decisão canônica válida, payload não alterado, pendência técnica = rateio de saldo residual por área operacional na decisão #150, que exige revalidação do efeito). `#44` permanece `pendencia_operacional_real` (divergência material de natureza: memória CAPITAL sem correspondente PAD de mesma natureza/valor). Bloco B inalterado (35 bloqueios), Blocos C e D inalterados. A correção é restrita à categorização operacional da auditoria profunda e está coberta por `tests/services/profor-pad-classificacao-operacional.test.js`.
+
+### 29.7. Regra fixa posterior: prevalência integral do PAD novo
+
+Em 22/05/2026 foi definida regra fixa de negócio para a frente PAD/PROFOR 2022: o PAD novo prevalece integralmente sobre a memória antiga. A memória permanece como referência histórica/comparativa e não bloqueia a reconstrução quando divergir do PAD, salvo erro técnico de extração.
+
+Aplicação na `#44` (`938128/SP`, `Saldo Residual`):
+
+- memória antiga `CAPITAL`: `R$ 22.351,09`;
+- PAD novo `CAPITAL` (`44905299`): `R$ 20.704,73`;
+- PAD novo `CUSTEIO` (`33903099`): `R$ 71,36`;
+- a diferença fica rastreada como atualização válida do PAD, sem tratar `CAPITAL` e `CUSTEIO` como equivalentes;
+- saldo residual permanece em área técnica (`NAO INFORMADO`/`N/A`), sem rateio para áreas operacionais.
+
+A decisão complementar `#187` (`CORRIGIDO`, usuário `sistema-prevalencia-pad`) registra a prevalência do PAD novo para a `#44`, com `aplicadaAoPlano=false`, snapshot de segurança e log. Após a reexecução dos relatórios, `pendencia_operacional_real = 0` e a `#44` fica como `historico_saneado`, mantendo rastreabilidade no relatório de regressão.
 
 ## 30. Auditoria de identidade material PAD e regressão de saneamentos por chave frágil
 
@@ -2364,7 +2378,7 @@ O script `backend/scripts/auditar-identidade-material-pad-profor-2022.js` agrupa
 O script `backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js` reavalia cada divergência resolvida e em aberto sensível a pareamento, separando-as nas categorias:
 - `saneamento_confirmado`: Saneamento em grupo PAD de linha única ou não sensível a pareamento.
 - `saneamento_suspeito_chave_fragil`: Saneamento concluído em grupo PAD com múltiplas linhas (exemplo: `#24`), exigindo revalidação manual.
-- `risco_confirmado_ja_diagnosticado`: Caso `#44` (preservado como referência).
+- `risco_confirmado_ja_diagnosticado`: Caso `#44` (resolvido por prevalência do PAD novo e preservado como referência rastreável).
 - `divergencia_aberta_com_alerta_pareamento`: Divergência aberta em grupo PAD com múltiplas linhas de mesma natureza/código (exemplos: `#31-#34`).
 - `alerta_pareamento_sem_pendencia_operacional`: Divergência aberta em grupo PAD multi-linha que permanece monitorada, mas não é pendência material aberta porque a auditoria operacional fechou o item por natureza (exemplo: `#46`).
 - `pendencia_material_potencial_aberta`: Divergência aberta em grupo PAD com múltiplas linhas e divergência de natureza/código sem fechamento operacional por natureza.

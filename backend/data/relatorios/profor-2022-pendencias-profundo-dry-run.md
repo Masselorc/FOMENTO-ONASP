@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria profunda de pendências PAD (dry-run)
 
-Gerado em: 2026-05-22T22:15:40.074Z
+Gerado em: 2026-05-22T22:30:18.676Z
 
 Auditoria somente leitura: não registra decisão, não altera status, não publica e não altera o planoAplicacao oficial.
 Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO) — incluindo a divergência `#24`, já resolvida — são classificados como histórico/saneado e ficam fora da fila operacional.
@@ -13,17 +13,17 @@ Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO
 - Total bloqueante técnico: 45
 - Total bloqueante operacional: 8
 - Total com decisão resolutiva: 70
-- Total de suspeitas/falsos positivos: 77
+- Total de suspeitas/falsos positivos: 78
 - Total de pendências reais estimadas: 0
 - Bloqueios de segurança pré-ativação: 35
 
 Separação operacional (cada item recai em exatamente uma categoria):
 
-- Pendência operacional real: 1
+- Pendência operacional real: 0
 - Bloqueio técnico de segurança: 0
 - Decisão resolutiva com pendência técnica: 8
 - Revalidação necessária (payload alterado): 27
-- Histórico/saneado: 34
+- Histórico/saneado: 35
 - Falso positivo saneável: 73
 
 ## 2. Separação operacional × bloqueio técnico
@@ -31,16 +31,15 @@ Separação operacional (cada item recai em exatamente uma categoria):
 | Categoria operacional | Qtd | IDs | Risco | Descrição |
 |---|---:|---|---|---|
 | `falso_positivo_saneavel` | 73 | 31, 32, 33, 34, 38, 46, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102 ... | medio | Falso positivo saneável por regra sistêmica auditável. |
-| `historico_saneado` | 34 | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 29, 30, 35, 36, 37, 39, 40 ... | baixo | Histórico/saneado; fora da fila operacional prioritária. |
+| `historico_saneado` | 35 | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 29, 30, 35, 36, 37, 39, 40 ... | baixo | Histórico/saneado; fora da fila operacional prioritária. |
 | `revalidacao_necessaria` | 27 | 47, 48, 49, 50, 51, 52, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74 | alto | Decisão com payload alterado após a decisão; exige revalidação humana. |
 | `decisao_resolutiva_com_pendencia_tecnica` | 8 | 18, 25, 26, 27, 28, 75, 77, 78 | medio | Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança. |
-| `pendencia_operacional_real` | 1 | 44 | alto | Pendência aberta que exige decisão humana substantiva. |
 
 ## 3. Tabela por categoria detalhada
 
 | Categoria | Qtd | IDs | Risco | Ação recomendada |
 |---|---:|---|---|---|
-| `possivel_falso_positivo` | 77 | 24, 25, 26, 27, 31, 32, 33, 34, 38, 46, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92 ... | medio | avaliar saneamento sistêmico auditável |
+| `possivel_falso_positivo` | 78 | 24, 25, 26, 27, 31, 32, 33, 34, 38, 44, 46, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91 ... | medio | avaliar saneamento sistêmico auditável |
 | `ja_saneado_mas_ainda_pendente` | 70 | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 ... | medio | remover da operação padrão; revisar segurança |
 | `quantidade_arredondamento_valor_unitario` | 67 | 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102 ... | baixo | saneado tecnicamente — total do PAD preservado |
 | `valor_ou_saldo_inconsistente` | 67 | 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102 ... | medio | manter total PAD como fonte ou corrigir campo |
@@ -49,9 +48,9 @@ Separação operacional (cada item recai em exatamente uma categoria):
 | `item_nao_apto_sem_divergencia_material` | 6 | 31, 32, 33, 34, 38, 46 | medio | liberar uso dry-run por decisão auditável |
 | `duplicidade_ou_ambiguidade_pad` | 5 | 36, 37, 128, 129, 130 | alto | revisar granularidade/substituição |
 | `diacritico_ou_acentuacao` | 4 | 24, 25, 26, 27 | baixo | saneamento por diacrítico com critérios materiais |
-| `saldo_residual_decisao_anterior_incompativel` | 2 | 18, 44 | medio | revisar |
 | `saldo_residual_ok_nao_setorializado` | 2 | 18, 46 | medio | revisar |
-| `saldo_residual_natureza_divergente` | 1 | 44 | medio | revisar |
+| `saldo_residual_decisao_anterior_incompativel` | 1 | 18 | medio | revisar |
+| `saldo_residual_prevalencia_pad` | 1 | 44 | medio | revisar |
 
 ## 4. Tabela detalhada por item
 
@@ -100,7 +99,7 @@ Separação operacional (cada item recai em exatamente uma categoria):
 | #41 | 938128 | SP | `item_nao_apto` | Contratação de serviços de digitalização | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
 | #42 | 938128 | SP | `item_nao_apto` | Estação de Trabalho (Mesa em L), para Ou | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
 | #43 | 938128 | SP | `item_nao_apto` | Gaveteiros, Ouvidoria | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
-| #44 | 938128 | SP | `item_nao_apto` | Saldo Residual | ACEITO | sim | `pendencia_operacional_real` | `saldo_residual_natureza_divergente`<br>`saldo_residual_decisao_anterior_incompativel`<br>`ja_saneado_mas_ainda_pendente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. / Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
+| #44 | 938128 | SP | `item_nao_apto` | Saldo Residual | CORRIGIDO | sim | `historico_saneado` | `saldo_residual_prevalencia_pad`<br>`possivel_falso_positivo`<br>`ja_saneado_mas_ainda_pendente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. PAD novo prevalece sobre a memoria antiga quando a linha PAD esta corretamente identificada por natureza. / Status/decisão resolutiva presente (CORRIGIDO); incluído na auditoria por bl |
 | #45 | 938128 | SP | `item_nao_apto` | Serviço de operacionalização de sistema | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
 | #46 | 938277 | MA | `item_nao_apto` | SALDO REMANESCENTE | PENDENTE | sim | `falso_positivo_saneavel` | `saldo_residual_ok_nao_setorializado`<br>`possivel_falso_positivo`<br>`item_nao_apto_sem_divergencia_material` | Saldo remanescente com memoria consolidada CAPITAL/CUSTEIO; cada natureza fecha com linha PAD equivalente de mesma natureza. / Auditoria de item não apto: falso_positivo_saneavel. |
 | #47 | 937221 | AL | `item_ausente_no_pad` | Ar condicionado Split 24000 BTUs (CORREG | ACEITO | não | `revalidacao_necessaria` | `ja_saneado_mas_ainda_pendente`<br>`decisao_antiga_com_payload_alterado` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. / Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO). |
@@ -232,7 +231,7 @@ Separação operacional (cada item recai em exatamente uma categoria):
 - Não exibir como pendência operacional na fila de revisão.
 
 ### Grupo 3 — Pendências operacionais reais
-- IDs: 44
+- IDs: nenhum
 - Manter para revisão humana real; exigem decisão substantiva (não sanear por regra).
 
 ### Grupo 4 — Falsos positivos saneáveis
@@ -240,7 +239,7 @@ Separação operacional (cada item recai em exatamente uma categoria):
 - Propor saneamento sistêmico auditável em etapa posterior; sem decisão automática nesta etapa.
 
 ### Histórico/saneado e bloqueio técnico puro
-- Histórico/saneado (fora da fila operacional): 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 29, 30, 35, 36, 37, 39, 40, 41, 42, 43, 45
+- Histórico/saneado (fora da fila operacional): 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 29, 30, 35, 36, 37, 39, 40, 41, 42, 43, 44, 45
 - Bloqueio técnico de segurança: nenhum
 
 Rollback: remover este script, seu comando npm, os relatórios gerados e os registros documentais desta auditoria.

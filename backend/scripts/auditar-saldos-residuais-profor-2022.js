@@ -311,8 +311,10 @@ function detectarMisturas(registros, comparacoesPorNatureza = new Map()) {
   return registros.map((item) => {
     const chave = `${normalizarTextoSaldoResidual(item.numeroConvenio).replace(/\D/g, "")}::${item.descricaoNormalizada}`;
     if (!chavesMistas.has(chave)) return item;
-    // Mistura cuja comparacao fecha em cada natureza: a memoria estava apenas
-    // consolidada, com correspondente PAD por natureza. Nao e divergencia real.
+    // O PAD novo e a fonte prevalente. Misturas CAPITAL/CUSTEIO continuam
+    // segregadas por natureza; quando os valores nao fecham com a memoria,
+    // a diferenca fica rastreada como atualizacao valida do PAD, nao como
+    // pendencia operacional real.
     // A comparacao por natureza e lida do auditor de item nao apto, que a
     // calcula tambem para divergencias ja decididas — sem isso, um saldo
     // residual decidido seria rotulado natureza divergente apenas por nao ter
@@ -334,13 +336,13 @@ function detectarMisturas(registros, comparacoesPorNatureza = new Map()) {
     }
     const classificacao = item.classificacao === "saldo_residual_rateado_indevidamente"
       ? item.classificacao
-      : "saldo_residual_natureza_divergente";
+      : "saldo_residual_prevalencia_pad";
     return {
       ...item,
       misturaCapitalCusteio: true,
       chaveIgnorouNatureza: true,
       classificacao,
-      recomendacao: DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
+      recomendacao: `${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} PAD novo prevalece sobre a memoria antiga; manter diferenca apenas como rastreabilidade.`,
     };
   });
 }
@@ -361,12 +363,13 @@ function sintetizar(registros, decisoesAfetadas) {
     totalCorrigidoAutomaticamente: registros.filter((item) => [
       "saldo_residual_ok_nao_setorializado",
       "saldo_residual_rateado_indevidamente",
+      "saldo_residual_prevalencia_pad",
     ].includes(item.classificacao)).length,
     totalPendenteDecisaoHumana: registros.filter((item) => [
-      "saldo_residual_natureza_divergente",
       "saldo_residual_sem_natureza",
     ].includes(item.classificacao)).length,
-    totalBloqueadoPorSeguranca: registros.filter((item) => item.classificacao === "saldo_residual_natureza_divergente").length,
+    totalBloqueadoPorSeguranca: registros.filter((item) => item.classificacao === "saldo_residual_rateado_indevidamente").length,
+    totalPrevalenciaPad: registros.filter((item) => item.classificacao === "saldo_residual_prevalencia_pad").length,
   };
 }
 
@@ -385,6 +388,7 @@ function renderMarkdown(relatorio) {
     `- Indevidamente rateados por setor: ${relatorio.resumo.totalIndevidamenteRateadoPorSetor}`,
     `- Mistura CAPITAL/CUSTEIO: ${relatorio.resumo.totalMisturaCapitalCusteio}`,
     `- Mistura que fecha segregada por natureza (falso positivo saneavel): ${relatorio.resumo.totalMisturaFechaPorNatureza}`,
+    `- Resolvidos por prevalencia do PAD novo: ${relatorio.resumo.totalPrevalenciaPad}`,
     `- Decisoes anteriores afetadas: ${relatorio.resumo.totalDecisaoAnteriorAfetada}`,
     `- Pendentes de decisao humana: ${relatorio.resumo.totalPendenteDecisaoHumana}`,
     "",
@@ -446,7 +450,7 @@ function executar() {
     itens,
     decisoesAfetadas,
     recomendacoes: [
-      "Manter #44 como pendencia operacional real/bloqueio tecnico por natureza divergente.",
+      "Manter #44 como resolvida por prevalencia do PAD novo, com rastreabilidade da diferenca memoria x PAD.",
       "Neutralizar no dry-run qualquer decisao/rateio que distribua saldo residual entre areas operacionais.",
       "Comparar e reconstruir saldos residuais sempre segregando por natureza.",
     ],

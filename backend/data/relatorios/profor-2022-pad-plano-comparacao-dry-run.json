@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T22:15:50.295Z",
+  "geradoEm": "2026-05-22T22:30:25.427Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
@@ -5130,8 +5130,8 @@
       "divergenciaId": 44,
       "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
       "tipoAlerta": "item_nao_apto",
-      "decisao": "ACEITO",
-      "decisaoId": 186
+      "decisao": "CORRIGIDO",
+      "decisaoId": 187
     },
     {
       "divergenciaId": 45,
@@ -8576,10 +8576,10 @@
       "tipoAlerta": "item_nao_apto",
       "campoAfetado": "aptidao",
       "bloqueiaPublicacao": true,
-      "decisao": "ACEITO",
-      "decisaoId": 186,
-      "usuario": "usuario-local",
-      "decididoEm": "2026-05-22T15:47:29.497Z",
+      "decisao": "CORRIGIDO",
+      "decisaoId": 187,
+      "usuario": "sistema-prevalencia-pad",
+      "decididoEm": "2026-05-22T22:29:43.978Z",
       "efeito": {
         "tipo": "nao_apto_liberado",
         "afetaReconstrucao": true
@@ -8709,10 +8709,52 @@
         "bloqueiaPublicacao": true
       },
       "payloadDecisao": {
-        "origem": "interface-revisao-divergencias",
-        "tipoSaneamento": "liberacao_item_nao_apto",
-        "liberarUsoDryRun": true,
-        "motivo": "liberação validada por decisão humana",
+        "origem": "prevalencia-pad-novo-divergencia-44",
+        "tipoSaneamento": "prevalencia_pad_novo_saldo_residual",
+        "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
+        "aplicadaAoPlano": false,
+        "divergenciaId": 44,
+        "numeroConvenio": "938128",
+        "uf": "SP",
+        "chaveItem": "938128::SALDO RESIDUAL",
+        "memoriaAntiga": {
+          "natureza": "CAPITAL",
+          "valorPrevisto": 22351.09,
+          "valorExecutado": 0,
+          "saldo": 22351.09
+        },
+        "padNovo": {
+          "linhas": [
+            {
+              "linha": 61,
+              "descricao": "Saldo Residual",
+              "natureza": "CAPITAL",
+              "codigoNaturezaDespesa": "44905299",
+              "valorPrevisto": 20704.73,
+              "valorExecutado": 0,
+              "saldo": 20704.73
+            },
+            {
+              "linha": 19,
+              "descricao": "Saldo Residual",
+              "natureza": "CUSTEIO",
+              "codigoNaturezaDespesa": "33903099",
+              "valorPrevisto": 71.36,
+              "valorExecutado": 0,
+              "saldo": 71.36
+            }
+          ]
+        },
+        "diferencasRastreadas": {
+          "diferencaBrutaCapital": -1646.36,
+          "diferencaLiquidaConsiderandoCusteio": -1575
+        },
+        "garantias": {
+          "capitalECusteioSegregados": true,
+          "areaTecnicaNaoSetorializada": true,
+          "semPublicacao": true,
+          "semAlteracaoPlanoOficial": true
+        },
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 44,
@@ -8720,7 +8762,7 @@
           "tipoAlerta": "item_nao_apto",
           "campoAfetado": "aptidao",
           "payloadHashNoMomentoDaDecisao": "1c2ba2d2a7b70c0bfc36366addb04d35924b149d8195735a5974a00c1f960f0e",
-          "registradoEm": "2026-05-22T15:47:29.496Z"
+          "registradoEm": "2026-05-22T22:29:43.976Z"
         }
       }
     },
@@ -11358,10 +11400,10 @@
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T22:15:50.274Z",
+    "geradoEm": "2026-05-22T22:30:25.397Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 73,
-      "totalPayloadPreservado": 45,
+      "totalDecisoesResolutivasAuditadas": 74,
+      "totalPayloadPreservado": 46,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,

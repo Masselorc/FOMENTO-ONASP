@@ -34,6 +34,7 @@ const CATEGORIAS = [
   "quantidade_arredondamento_valor_unitario",
   "saldo_residual_natureza_divergente",
   "saldo_residual_sem_correspondente_mesma_natureza",
+  "saldo_residual_prevalencia_pad",
   "saldo_residual_rateado_indevidamente",
   "saldo_residual_decisao_anterior_incompativel",
   "saldo_residual_corrigido_sistemicamente",
@@ -436,33 +437,20 @@ function classificarOperacional(item, divergencia, mapas) {
   const cls = new Set(item.classificacoes);
   const bloqueante = Boolean(divergencia.bloqueia_publicacao);
 
-  // Saldo residual/remanescente. Separa divergência material ativa de
-  // pendência apenas técnica/de revalidação de decisão já registrada.
+  // Saldo residual/remanescente. O PAD novo é a fonte prevalente. Diferença
+  // entre memória antiga e PAD novo fica rastreada, mas não é pendência
+  // operacional real quando o PAD foi identificado por linha e natureza.
   //
-  // - Material ativa: natureza divergente ou sem correspondente PAD de mesma
-  //   natureza. Permanece pendencia_operacional_real mesmo com decisão, pois a
-  //   decisão existente não resolve o mérito material (caso #44).
   // - Técnica residual: a decisão anterior é incompatível com a regra de saldo
   //   residual (ex.: rateio por área operacional), mas não há divergência
   //   material de natureza/valor. Se há decisão resolutiva canônica, não é
   //   pendência operacional real comum — é revalidação/pendência técnica da
   //   decisão (caso #18).
-  const saldoResidualMaterialAtivo = cls.has("saldo_residual_natureza_divergente")
+  const saldoResidualPrevalenciaPad = cls.has("saldo_residual_prevalencia_pad")
+    || cls.has("saldo_residual_natureza_divergente")
     || cls.has("saldo_residual_sem_correspondente_mesma_natureza");
   const saldoResidualPendenciaTecnica = cls.has("saldo_residual_rateado_indevidamente")
     || cls.has("saldo_residual_decisao_anterior_incompativel");
-
-  if (saldoResidualMaterialAtivo) {
-    // Divergência material de saldo residual: a decisão, se existir, não sana o
-    // mérito (natureza/valor). Mantém pendência operacional real.
-    return {
-      categoria: "pendencia_operacional_real",
-      motivo: temResolutiva
-        ? "Saldo residual com divergencia material de natureza/valor: a decisao registrada nao resolve o merito; exige correspondente PAD de mesma natureza ou decisao retificadora."
-        : "Saldo residual/remanescente exige saneamento especifico por natureza e area tecnica nao setorializada.",
-      exigeDecisaoHumanaSubstantiva: true,
-    };
-  }
 
   if (saldoResidualPendenciaTecnica && !temResolutiva) {
     // Incompatibilidade técnica residual sem decisão resolutiva canônica:
@@ -471,6 +459,16 @@ function classificarOperacional(item, divergencia, mapas) {
       categoria: "pendencia_operacional_real",
       motivo: "Saldo residual/remanescente com incompatibilidade tecnica e sem decisao resolutiva canonica; exige saneamento por natureza e area tecnica nao setorializada.",
       exigeDecisaoHumanaSubstantiva: true,
+    };
+  }
+  // Diferença material entre memória antiga e PAD novo, sem erro técnico de
+  // extração, é atualização válida do PAD. Mantém alerta rastreável, sem exigir
+  // decisão humana substantiva.
+  if (saldoResidualPrevalenciaPad && !temResolutiva && !saldoResidualPendenciaTecnica) {
+    return {
+      categoria: "falso_positivo_saneavel",
+      motivo: "Saldo residual/remanescente divergente apenas por prevalencia do PAD novo; memoria antiga e historica/comparativa.",
+      exigeDecisaoHumanaSubstantiva: false,
     };
   }
   // Quando saldoResidualPendenciaTecnica e há decisão resolutiva canônica, a
@@ -569,14 +567,18 @@ function classificarDivergencia(divergencia, mapas) {
     const comparacaoNatureza = itemNaoAptoSaldo?.comparacaoSaldoResidualPorNatureza || null;
     const todasNaturezasFecham = fechaPorNatureza
       || comparacaoNatureza?.todasNaturezasFecham === true;
-    const temNaturezaDivergente = !todasNaturezasFecham
+    const temPrevalenciaPad = !todasNaturezasFecham
       && registrosSaldoResidual.some((item) => item.classificacao === "saldo_residual_natureza_divergente" || item.misturaCapitalCusteio);
     const temRateioIndevido = registrosSaldoResidual.some((item) => item.classificacao === "saldo_residual_rateado_indevidamente" || item.areaOperacionalIndevida);
-    const temDecisaoIncompativel = garantirArray(mapas.saldosResiduaisDecisoes).some((item) => item.divergenciaId === divergencia.id);
-    if (temNaturezaDivergente) {
-      categorias.add("saldo_residual_natureza_divergente");
-      evidencias.push(DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA);
-      recomendacoes.push("Manter como pendencia operacional real ate esclarecer correspondente da mesma natureza.");
+    const temDecisaoIncompativel = garantirArray(mapas.saldosResiduaisDecisoes).some((item) => (
+      item.divergenciaId === divergencia.id
+      && item.classificacao === "saldo_residual_decisao_anterior_incompativel"
+    ));
+    if (temPrevalenciaPad) {
+      categorias.add("saldo_residual_prevalencia_pad");
+      categorias.add("possivel_falso_positivo");
+      evidencias.push(`${DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA} PAD novo prevalece sobre a memoria antiga quando a linha PAD esta corretamente identificada por natureza.`);
+      recomendacoes.push("Tratar como resolvido por prevalencia do PAD novo; manter diferenca memoria x PAD apenas como rastreabilidade.");
     } else if (temRateioIndevido) {
       categorias.add("saldo_residual_rateado_indevidamente");
       evidencias.push("Saldo residual/remanescente apareceu vinculado a area operacional.");

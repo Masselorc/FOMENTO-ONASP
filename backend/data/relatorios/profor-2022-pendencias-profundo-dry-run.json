@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T22:15:40.074Z",
+  "geradoEm": "2026-05-22T22:30:18.676Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -19,7 +19,7 @@
       "itemNaoApto": {
         "caminho": "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T21:47:58.351Z",
+        "geradoEm": "2026-05-22T22:30:07.618Z",
         "erro": null
       },
       "rateioAntigo": {
@@ -43,19 +43,19 @@
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T21:48:13.850Z",
+        "geradoEm": "2026-05-22T22:15:50.274Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T21:48:13.884Z",
+        "geradoEm": "2026-05-22T22:15:50.295Z",
         "erro": null
       },
       "saldosResiduais": {
         "caminho": "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T20:49:01.456Z",
+        "geradoEm": "2026-05-22T22:30:12.284Z",
         "erro": null
       }
     }
@@ -67,27 +67,27 @@
     "totalBloqueantes": 45,
     "totalBloqueantesOperacionais": 8,
     "totalComDecisaoResolutiva": 70,
-    "totalDecisoesRegistradas": 74,
-    "totalPossiveisFalsosPositivos": 77,
+    "totalDecisoesRegistradas": 75,
+    "totalPossiveisFalsosPositivos": 78,
     "totalPendenciasReaisEstimadas": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "totalPayloadAlteradoAposDecisao": 27,
     "separacaoOperacional": {
-      "pendenciaOperacionalReal": 1,
+      "pendenciaOperacionalReal": 0,
       "bloqueioTecnicoSeguranca": 0,
       "decisaoResolutivaComPendenciaTecnica": 8,
       "revalidacaoNecessaria": 27,
-      "historicoSaneado": 34,
+      "historicoSaneado": 35,
       "falsoPositivoSaneavel": 73
     },
     "porStatus": [
       {
         "status": "ACEITO",
-        "total": 67
+        "total": 66
       },
       {
         "status": "CORRIGIDO",
-        "total": 5
+        "total": 6
       },
       {
         "status": "PENDENTE",
@@ -113,7 +113,12 @@
       {
         "tipoAlerta": "item_nao_apto",
         "status": "ACEITO",
-        "total": 13
+        "total": 12
+      },
+      {
+        "tipoAlerta": "item_nao_apto",
+        "status": "CORRIGIDO",
+        "total": 1
       },
       {
         "tipoAlerta": "item_nao_apto",
@@ -135,7 +140,7 @@
   "categorias": [
     {
       "categoria": "possivel_falso_positivo",
-      "quantidade": 77,
+      "quantidade": 78,
       "ids": [
         24,
         25,
@@ -146,6 +151,7 @@
         33,
         34,
         38,
+        44,
         46,
         79,
         80,
@@ -536,16 +542,6 @@
       "acaoRecomendada": "saneamento por diacrítico com critérios materiais"
     },
     {
-      "categoria": "saldo_residual_decisao_anterior_incompativel",
-      "quantidade": 2,
-      "ids": [
-        18,
-        44
-      ],
-      "risco": "medio",
-      "acaoRecomendada": "revisar"
-    },
-    {
       "categoria": "saldo_residual_ok_nao_setorializado",
       "quantidade": 2,
       "ids": [
@@ -556,7 +552,16 @@
       "acaoRecomendada": "revisar"
     },
     {
-      "categoria": "saldo_residual_natureza_divergente",
+      "categoria": "saldo_residual_decisao_anterior_incompativel",
+      "quantidade": 1,
+      "ids": [
+        18
+      ],
+      "risco": "medio",
+      "acaoRecomendada": "revisar"
+    },
+    {
+      "categoria": "saldo_residual_prevalencia_pad",
       "quantidade": 1,
       "ids": [
         44
@@ -649,7 +654,7 @@
     },
     {
       "categoria": "historico_saneado",
-      "quantidade": 34,
+      "quantidade": 35,
       "ids": [
         1,
         2,
@@ -684,6 +689,7 @@
         41,
         42,
         43,
+        44,
         45
       ],
       "risco": "baixo",
@@ -739,15 +745,6 @@
       ],
       "risco": "medio",
       "descricao": "Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança."
-    },
-    {
-      "categoria": "pendencia_operacional_real",
-      "quantidade": 1,
-      "ids": [
-        44
-      ],
-      "risco": "alto",
-      "descricao": "Pendência aberta que exige decisão humana substantiva."
     }
   ],
   "itens": [
@@ -1854,25 +1851,25 @@
       "uf": "SP",
       "tipoAlerta": "item_nao_apto",
       "descricao": "Saldo Residual",
-      "status": "ACEITO",
+      "status": "CORRIGIDO",
       "nivel": "impeditivo",
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "saldo_residual_natureza_divergente",
-        "saldo_residual_decisao_anterior_incompativel",
+        "saldo_residual_prevalencia_pad",
+        "possivel_falso_positivo",
         "ja_saneado_mas_ainda_pendente"
       ],
-      "evidencia": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Auditoria de item não apto: ja_decidido.",
-      "recomendacao": "Manter como pendencia operacional real ate esclarecer correspondente da mesma natureza. | Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
-      "totalDecisoes": 1,
+      "evidencia": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. PAD novo prevalece sobre a memoria antiga quando a linha PAD esta corretamente identificada por natureza. | Status/decisão resolutiva presente (CORRIGIDO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Auditoria de item não apto: ja_decidido.",
+      "recomendacao": "Tratar como resolvido por prevalencia do PAD novo; manter diferenca memoria x PAD apenas como rastreabilidade. | Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
+      "totalDecisoes": 2,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17,
+      "totalLogs": 18,
       "saldoResidualTecnico": true,
       "alertaSaldoResidual": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Saldo residual com divergencia material de natureza/valor: a decisao registrada nao resolve o merito; exige correspondente PAD de mesma natureza ou decisao retificadora.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 45,

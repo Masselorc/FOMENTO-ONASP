@@ -225,7 +225,7 @@ function avaliarFragilidadeChave(divergencia, grupoPad, itemConhecidoId) {
  * - saneamento_suspeito_chave_fragil: divergência JÁ DECIDIDA cuja conclusão
  *   dependeu de chave frágil e cujo grupo PAD tem mais de uma linha; exige
  *   revalidação manual da decisão.
- * - risco_confirmado_ja_diagnosticado: caso já diagnosticado/corrigido (#44).
+ * - risco_confirmado_ja_diagnosticado: caso já diagnosticado e resolvido por prevalência do PAD (#44).
  * - divergencia_aberta_com_alerta_pareamento: divergência aberta em grupo PAD
  *   com múltiplas linhas de mesma natureza/código.
  * - alerta_pareamento_sem_pendencia_operacional: divergência aberta em grupo
@@ -240,7 +240,7 @@ function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temD
   if (jaDiagnosticado) {
     return {
       classificacao: "risco_confirmado_ja_diagnosticado",
-      recomendacao: "Caso ja diagnosticado e corrigido em auditoria anterior; manter como referencia.",
+      recomendacao: "Caso ja diagnosticado e resolvido por prevalencia do PAD novo; manter como referencia rastreavel, sem pendencia operacional.",
       reabrir: false,
     };
   }
@@ -316,7 +316,7 @@ function executar() {
   const classificacaoOperacional = carregarClassificacaoOperacional();
   const planoReconstruido = lerJson("backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json")?.planoAplicacaoReconstruido || [];
 
-  // #44 já foi diagnosticada e corrigida em auditoria anterior.
+  // #44 já foi diagnosticada e resolvida por prevalência do PAD novo.
   const ID_JA_DIAGNOSTICADO = new Set([44]);
 
   const achados = [];
@@ -438,7 +438,7 @@ function executar() {
     catalogoClassificacoes: {
       saneamento_confirmado: "Pareamento sem ambiguidade material; grupo PAD de linha unica ou tipo nao sensivel a pareamento.",
       saneamento_suspeito_chave_fragil: "Divergencia ja decidida cuja chave de pareamento corresponde a mais de uma linha PAD; exige revalidacao manual da decisao.",
-      risco_confirmado_ja_diagnosticado: "Caso ja diagnosticado e corrigido em auditoria anterior (#44).",
+      risco_confirmado_ja_diagnosticado: "Caso ja diagnosticado e resolvido por prevalencia do PAD novo (#44).",
       divergencia_aberta_com_alerta_pareamento: "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo.",
       alerta_pareamento_sem_pendencia_operacional: "Divergencia aberta em grupo PAD multi-linha, mas sem pendencia operacional material porque a auditoria operacional fechou por natureza.",
       pendencia_material_potencial_aberta: "Divergencia aberta em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material).",
@@ -598,7 +598,7 @@ function renderMarkdown(relatorio) {
     "",
     "## 6. Casos Já Diagnosticados",
     "",
-    "Casos de risco material que já foram formalmente diagnosticados ou corrigidos.",
+    "Casos de risco material que já foram formalmente diagnosticados e permanecem rastreáveis sem pendência operacional.",
     ""
   );
 
