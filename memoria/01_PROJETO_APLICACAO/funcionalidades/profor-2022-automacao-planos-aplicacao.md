@@ -2322,7 +2322,7 @@ Auditoria dry-run que combina integridade pós-saneamento e segurança pré-ativ
 
 Relatório rastreável em `backend/data/relatorios/profor-2022-integridade-pos-saneamento-dry-run.{json,md}`, consolidando cinco blocos: A (integridade pós-saneamento), B (segurança pré-ativação), C (reconstrução dry-run), D (comparador) e E (confirmação de não publicação). Cada execução regenera as fontes pelos comandos `npm` da frente PAD.
 
-### 29.3. Resultado da execução de 22/05/2026
+### 29.3. Resultado da primeira execução de 22/05/2026
 
 - **Bloco A:** 145 divergências na fila, 143 analisadas. `pendencia_operacional_real = 2` (`#18` 937221/AL, `#44` 938128/SP) — **critério central (0) não atendido**. 73 falsos positivos saneáveis, 34 históricos saneados, 27 revalidações necessárias, 7 decisões resolutivas com pendência técnica. 0 divergências sem payload.
 - **Bloco B:** 35 bloqueios de segurança (`aptoParaProsseguirAtivacao = false`): 28 por payload alterado após decisão (revalidação humana), 7 não reapresentadas com decisão resolutiva (histórico documentado). Nenhum impeditivo por dado oficial alterado; `aplicadaAoPlano` permanece `false`. 1 decisão legada não canônica (#1).
@@ -2337,4 +2337,15 @@ Relatório rastreável em `backend/data/relatorios/profor-2022-integridade-pos-s
 ### 29.5. Escopo preservado
 
 A auditoria não registra decisão, não altera status, não publica, não altera origem ativa, não muda `frontend/data/publicados`, não altera o `planoAplicacao` oficial e não altera o SQLite versionado. O efeito é limitado a leitura e geração de relatório dry-run.
+
+### 29.6. Correção do classificador operacional e reexecução
+
+A primeira execução apontou `#18` como `pendencia_operacional_real` mesmo já tendo decisão resolutiva canônica (ACEITO, decisão #150). A causa era a ordem de avaliação do classificador operacional (`classificarOperacional`): o ramo de saldo residual era avaliado **antes** dos ramos de decisão resolutiva e retornava `pendencia_operacional_real` de forma incondicional.
+
+**Regra corrigida.** O ramo de saldo residual passou a distinguir:
+
+- **Divergência material ativa** (`saldo_residual_natureza_divergente`, `saldo_residual_sem_correspondente_mesma_natureza`): permanece `pendencia_operacional_real` mesmo com decisão registrada, pois a decisão não resolve o mérito material. Protege `#44`.
+- **Pendência apenas técnica** (`saldo_residual_rateado_indevidamente`, `saldo_residual_decisao_anterior_incompativel`): só força `pendencia_operacional_real` quando **não** há decisão resolutiva canônica. Havendo decisão, segue pelos ramos de decisão resolutiva — payload alterado → `revalidacao_necessaria`; senão → `decisao_resolutiva_com_pendencia_tecnica`.
+
+**Resultado da reexecução (22/05/2026).** `pendencia_operacional_real` caiu de 2 para 1. `#18` passou a `decisao_resolutiva_com_pendencia_tecnica` (decisão canônica válida, payload não alterado, pendência técnica = rateio de saldo residual por área operacional na decisão #150, que exige revalidação do efeito). `#44` permanece `pendencia_operacional_real` (divergência material de natureza: memória CAPITAL sem correspondente PAD de mesma natureza/valor). Bloco B inalterado (35 bloqueios), Blocos C e D inalterados. A correção é restrita à categorização operacional da auditoria profunda e está coberta por `tests/services/profor-pad-classificacao-operacional.test.js`.
 

@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria profunda de pendências PAD (dry-run)
 
-Gerado em: 2026-05-22T19:02:28.225Z
+Gerado em: 2026-05-22T19:31:52.362Z
 
 Auditoria somente leitura: não registra decisão, não altera status, não publica e não altera o planoAplicacao oficial.
 Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO) — incluindo a divergência `#24`, já resolvida — são classificados como histórico/saneado e ficam fora da fila operacional.
@@ -19,9 +19,9 @@ Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO
 
 Separação operacional (cada item recai em exatamente uma categoria):
 
-- Pendência operacional real: 2
+- Pendência operacional real: 1
 - Bloqueio técnico de segurança: 0
-- Decisão resolutiva com pendência técnica: 7
+- Decisão resolutiva com pendência técnica: 8
 - Revalidação necessária (payload alterado): 27
 - Histórico/saneado: 34
 - Falso positivo saneável: 73
@@ -33,8 +33,8 @@ Separação operacional (cada item recai em exatamente uma categoria):
 | `falso_positivo_saneavel` | 73 | 31, 32, 33, 34, 38, 46, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102 ... | medio | Falso positivo saneável por regra sistêmica auditável. |
 | `historico_saneado` | 34 | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 29, 30, 35, 36, 37, 39, 40 ... | baixo | Histórico/saneado; fora da fila operacional prioritária. |
 | `revalidacao_necessaria` | 27 | 47, 48, 49, 50, 51, 52, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74 | alto | Decisão com payload alterado após a decisão; exige revalidação humana. |
-| `decisao_resolutiva_com_pendencia_tecnica` | 7 | 25, 26, 27, 28, 75, 77, 78 | medio | Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança. |
-| `pendencia_operacional_real` | 2 | 18, 44 | alto | Pendência aberta que exige decisão humana substantiva. |
+| `decisao_resolutiva_com_pendencia_tecnica` | 8 | 18, 25, 26, 27, 28, 75, 77, 78 | medio | Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança. |
+| `pendencia_operacional_real` | 1 | 44 | alto | Pendência aberta que exige decisão humana substantiva. |
 
 ## 3. Tabela por categoria detalhada
 
@@ -74,7 +74,7 @@ Separação operacional (cada item recai em exatamente uma categoria):
 | #15 | 937221 | AL | `item_novo_sem_rateio` | Notebook i7 16 gb, 1 TB SSD, Windows 11 | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
 | #16 | 937221 | AL | `item_novo_sem_rateio` | Quadro Lousa branca | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
 | #17 | 937221 | AL | `item_novo_sem_rateio` | Refrigerador frigobar, com capacidade no | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
-| #18 | 937221 | AL | `item_novo_sem_rateio` | Saldo Residual | ACEITO | sim | `pendencia_operacional_real` | `saldo_residual_ok_nao_setorializado`<br>`saldo_residual_decisao_anterior_incompativel`<br>`ja_saneado_mas_ainda_pendente` | Saldo residual/remanescente identificado; aplicar comparacao segregada por natureza. / Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
+| #18 | 937221 | AL | `item_novo_sem_rateio` | Saldo Residual | ACEITO | sim | `decisao_resolutiva_com_pendencia_tecnica` | `saldo_residual_ok_nao_setorializado`<br>`saldo_residual_decisao_anterior_incompativel`<br>`ja_saneado_mas_ainda_pendente` | Saldo residual/remanescente identificado; aplicar comparacao segregada por natureza. / Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
 | #19 | 937221 | AL | `item_novo_sem_rateio` | Televisão Smart LED, mínimo de 50 polega | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
 | #20 | 937221 | AL | `item_novo_sem_rateio` | Televisão smart LED, minimo de 50 polegadas | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
 | #21 | 937782 | AC | `item_novo_sem_rateio` | Contratação de 01 (um) Supervisor por 12 | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de rateio antigo: ja_decidido. |
@@ -227,12 +227,12 @@ Separação operacional (cada item recai em exatamente uma categoria):
 - Registrar nova decisão apenas em etapa posterior; ver `profor-2022-seguranca-pre-ativacao-detalhada-dry-run`.
 
 ### Grupo 2 — Decisão resolutiva com pendência técnica (não reapresentada)
-- IDs: 25, 26, 27, 28, 75, 77, 78
+- IDs: 18, 25, 26, 27, 28, 75, 77, 78
 - Manter em histórico; avaliar se ainda devem bloquear a segurança pré-ativação.
 - Não exibir como pendência operacional na fila de revisão.
 
 ### Grupo 3 — Pendências operacionais reais
-- IDs: 18, 44
+- IDs: 44
 - Manter para revisão humana real; exigem decisão substantiva (não sanear por regra).
 
 ### Grupo 4 — Falsos positivos saneáveis

@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T19:02:28.225Z",
+  "geradoEm": "2026-05-22T19:31:52.362Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -37,19 +37,19 @@
       "seguranca": {
         "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T01:04:54.502Z",
+        "geradoEm": "2026-05-22T19:02:28.842Z",
         "erro": null
       },
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T16:56:56.614Z",
+        "geradoEm": "2026-05-22T19:02:43.532Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T16:56:56.646Z",
+        "geradoEm": "2026-05-22T19:02:43.555Z",
         "erro": null
       },
       "saldosResiduais": {
@@ -73,9 +73,9 @@
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "totalPayloadAlteradoAposDecisao": 27,
     "separacaoOperacional": {
-      "pendenciaOperacionalReal": 2,
+      "pendenciaOperacionalReal": 1,
       "bloqueioTecnicoSeguranca": 0,
-      "decisaoResolutivaComPendenciaTecnica": 7,
+      "decisaoResolutivaComPendenciaTecnica": 8,
       "revalidacaoNecessaria": 27,
       "historicoSaneado": 34,
       "falsoPositivoSaneavel": 73
@@ -749,8 +749,9 @@
     },
     {
       "categoria": "decisao_resolutiva_com_pendencia_tecnica",
-      "quantidade": 7,
+      "quantidade": 8,
       "ids": [
+        18,
         25,
         26,
         27,
@@ -764,9 +765,8 @@
     },
     {
       "categoria": "pendencia_operacional_real",
-      "quantidade": 2,
+      "quantidade": 1,
       "ids": [
-        18,
         44
       ],
       "risco": "alto",
@@ -1222,9 +1222,9 @@
       "totalLogs": 17,
       "saldoResidualTecnico": true,
       "alertaSaldoResidual": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Saldo residual/remanescente exige saneamento especifico por natureza e area tecnica nao setorializada.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item ja decidido de forma resolutiva, mas a decisao carrega incompatibilidade tecnica residual de saldo residual (ex.: rateio por area operacional); exige revalidacao do efeito da decisao, nao nova decisao de merito.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 19,
@@ -1898,7 +1898,7 @@
       "saldoResidualTecnico": true,
       "alertaSaldoResidual": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
       "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Saldo residual/remanescente exige saneamento especifico por natureza e area tecnica nao setorializada.",
+      "motivoOperacional": "Saldo residual com divergencia material de natureza/valor: a decisao registrada nao resolve o merito; exige correspondente PAD de mesma natureza ou decisao retificadora.",
       "exigeDecisaoHumanaSubstantiva": true
     },
     {

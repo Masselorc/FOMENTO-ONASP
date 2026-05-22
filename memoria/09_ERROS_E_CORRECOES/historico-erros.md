@@ -949,3 +949,33 @@ Ao atualizar:
 **Recomendação final da auditoria:** NÃO APTO para preparar ativação controlada, com bloqueios listados; nenhum bloqueio decorre de alteração indevida de dado oficial.
 
 **Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar divergências, decisões, logs nem relatórios históricos.
+
+---
+
+## 22/05/2026 - PROFOR 2022: divergência já decidida reaparecia como pendência operacional real por regra de saldo residual
+
+**Classificação:** erro real corrigido
+
+**Contexto:** classificador operacional da auditoria profunda PAD/PROFOR 2022 (`classificarOperacional` em `auditar-pendencias-profor-2022-profundo.js`).
+
+**Problema:** a divergência `#18` (937221/AL, `item_novo_sem_rateio`, status ACEITO, decisão canônica #150) aparecia como `pendencia_operacional_real` mesmo já decidida. A auditoria integrada anterior apontava `pendenciaOperacionalReal = 2` (#18 e #44).
+
+**Causa raiz:** em `classificarOperacional`, o ramo de saldo residual era o **primeiro** a ser avaliado e retornava `pendencia_operacional_real` de forma incondicional para qualquer divergência com `saldo_residual_natureza_divergente`, `saldo_residual_sem_correspondente_mesma_natureza`, `saldo_residual_rateado_indevidamente` ou `saldo_residual_decisao_anterior_incompativel` — **antes** dos ramos de decisão resolutiva (payload alterado, bloqueio de segurança, histórico saneado). Uma divergência com decisão ACEITO válida voltava para pendência operacional real apenas por carregar `saldo_residual_decisao_anterior_incompativel`.
+
+**Evidência:** `#18` tem decisão #150 canônica com snapshot de segurança; o hash do payload atual confere com o snapshot (payload não alterado após a decisão) e há log `decisao_registrada`. A decisão #150 rateia o saldo residual por áreas operacionais (OUVIDORIA/CORREGEDORIA/ESCOLA), o que é incompatível com a regra de saldo residual não setorializado — daí a classificação `saldo_residual_decisao_anterior_incompativel`. Não há divergência material de natureza.
+
+**Correção aplicada:** o ramo de saldo residual passou a separar **divergência material ativa** de **pendência apenas técnica**. `saldo_residual_natureza_divergente`/`saldo_residual_sem_correspondente_mesma_natureza` continuam `pendencia_operacional_real` mesmo com decisão (a decisão não sana o mérito material — caso #44). `saldo_residual_rateado_indevidamente`/`saldo_residual_decisao_anterior_incompativel` só forçam `pendencia_operacional_real` quando **não** há decisão resolutiva canônica; havendo decisão, a classificação segue pelos ramos de decisão resolutiva (payload alterado → `revalidacao_necessaria`; senão → `decisao_resolutiva_com_pendencia_tecnica`).
+
+**Por que #18 não é pendência operacional real comum:** já possui decisão resolutiva canônica, sem divergência material e sem payload alterado. A pendência é revalidação do efeito da decisão (rateio setorial indevido), não decisão de mérito.
+
+**Por que #44 permanece pendente:** `#44` tem divergência material de natureza (memória CAPITAL R$ 22.351,09 sem correspondente PAD de mesma natureza/valor). A decisão registrada não resolve o mérito; permanece `pendencia_operacional_real`.
+
+**Resultado:** `pendencia_operacional_real` caiu de 2 para 1 (resta #44). `#18` passou a `decisao_resolutiva_com_pendencia_tecnica`. Nenhuma decisão registrada; nenhum status alterado; `aplicadaAoPlano` permanece false.
+
+**Riscos:** baixo — a mudança é restrita à categorização operacional da auditoria profunda; reconstrução, comparador e segurança pré-ativação não foram afetados. Coberto por 7 testes em `tests/services/profor-pad-classificacao-operacional.test.js`.
+
+**Arquivos relacionados:** `backend/scripts/auditar-pendencias-profor-2022-profundo.js`, `tests/services/profor-pad-classificacao-operacional.test.js`, `backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.{json,md}`, `backend/data/relatorios/profor-2022-integridade-pos-saneamento-dry-run.{json,md}`.
+
+**Comandos executados:** `npm run profor:pad:auditar-pendencias-profundo`, `:seguranca-pre-ativacao:dry-run`, `:seguranca-pre-ativacao:detalhar`, `:reconstruir-plano:dry-run`, `:comparar-plano:dry-run`, `npm run validar:syntax`, `npm run validar:services` (104 testes, 104 aprovados).
+
+**Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar decisões, logs, divergências ou relatórios históricos.

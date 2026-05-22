@@ -1,9 +1,9 @@
 {
-  "geradoEm": "2026-05-22T19:02:35.862Z",
+  "geradoEm": "2026-05-22T19:31:53.234Z",
   "modo": "dry-run",
   "fonte": {
     "seguranca": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
-    "segurancaGeradoEm": "2026-05-22T19:02:28.842Z",
+    "segurancaGeradoEm": "2026-05-22T19:31:52.782Z",
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite"
   },
   "resumo": {

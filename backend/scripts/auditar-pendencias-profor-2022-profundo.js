@@ -436,16 +436,46 @@ function classificarOperacional(item, divergencia, mapas) {
   const cls = new Set(item.classificacoes);
   const bloqueante = Boolean(divergencia.bloqueia_publicacao);
 
-  if (cls.has("saldo_residual_natureza_divergente")
-    || cls.has("saldo_residual_sem_correspondente_mesma_natureza")
-    || cls.has("saldo_residual_rateado_indevidamente")
-    || cls.has("saldo_residual_decisao_anterior_incompativel")) {
+  // Saldo residual/remanescente. Separa divergência material ativa de
+  // pendência apenas técnica/de revalidação de decisão já registrada.
+  //
+  // - Material ativa: natureza divergente ou sem correspondente PAD de mesma
+  //   natureza. Permanece pendencia_operacional_real mesmo com decisão, pois a
+  //   decisão existente não resolve o mérito material (caso #44).
+  // - Técnica residual: a decisão anterior é incompatível com a regra de saldo
+  //   residual (ex.: rateio por área operacional), mas não há divergência
+  //   material de natureza/valor. Se há decisão resolutiva canônica, não é
+  //   pendência operacional real comum — é revalidação/pendência técnica da
+  //   decisão (caso #18).
+  const saldoResidualMaterialAtivo = cls.has("saldo_residual_natureza_divergente")
+    || cls.has("saldo_residual_sem_correspondente_mesma_natureza");
+  const saldoResidualPendenciaTecnica = cls.has("saldo_residual_rateado_indevidamente")
+    || cls.has("saldo_residual_decisao_anterior_incompativel");
+
+  if (saldoResidualMaterialAtivo) {
+    // Divergência material de saldo residual: a decisão, se existir, não sana o
+    // mérito (natureza/valor). Mantém pendência operacional real.
     return {
       categoria: "pendencia_operacional_real",
-      motivo: "Saldo residual/remanescente exige saneamento especifico por natureza e area tecnica nao setorializada.",
+      motivo: temResolutiva
+        ? "Saldo residual com divergencia material de natureza/valor: a decisao registrada nao resolve o merito; exige correspondente PAD de mesma natureza ou decisao retificadora."
+        : "Saldo residual/remanescente exige saneamento especifico por natureza e area tecnica nao setorializada.",
       exigeDecisaoHumanaSubstantiva: true,
     };
   }
+
+  if (saldoResidualPendenciaTecnica && !temResolutiva) {
+    // Incompatibilidade técnica residual sem decisão resolutiva canônica:
+    // permanece pendência operacional real até decisão.
+    return {
+      categoria: "pendencia_operacional_real",
+      motivo: "Saldo residual/remanescente com incompatibilidade tecnica e sem decisao resolutiva canonica; exige saneamento por natureza e area tecnica nao setorializada.",
+      exigeDecisaoHumanaSubstantiva: true,
+    };
+  }
+  // Quando saldoResidualPendenciaTecnica e há decisão resolutiva canônica, a
+  // classificação segue pelos ramos de decisão resolutiva abaixo (payload
+  // alterado -> revalidacao_necessaria; senão -> decisao_resolutiva_com_pendencia_tecnica).
 
   // 1. Payload alterado após a decisão: exige revalidação humana antes da ativação.
   if (temPayloadAlterado) {
@@ -455,11 +485,18 @@ function classificarOperacional(item, divergencia, mapas) {
       exigeDecisaoHumanaSubstantiva: false,
     };
   }
-  // 2. Decisão resolutiva que ainda carrega bloqueio técnico de segurança.
-  if (temResolutiva && temBloqueioSeguranca) {
+  // 2. Decisão resolutiva que ainda carrega pendência técnica: bloqueio de
+  //    segurança pré-ativação (divergência não reapresentada) OU
+  //    incompatibilidade técnica residual de saldo residual (ex.: decisão com
+  //    rateio por área operacional). Em ambos os casos a decisão resolutiva é
+  //    válida, mas o efeito precisa de revalidação — não é pendência
+  //    operacional real comum.
+  if (temResolutiva && (temBloqueioSeguranca || saldoResidualPendenciaTecnica)) {
     return {
       categoria: "decisao_resolutiva_com_pendencia_tecnica",
-      motivo: "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      motivo: saldoResidualPendenciaTecnica
+        ? "Item ja decidido de forma resolutiva, mas a decisao carrega incompatibilidade tecnica residual de saldo residual (ex.: rateio por area operacional); exige revalidacao do efeito da decisao, nao nova decisao de merito."
+        : "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
       exigeDecisaoHumanaSubstantiva: false,
     };
   }
@@ -1154,10 +1191,17 @@ function executar() {
   console.log(`Bloqueios de segurança pré-ativação: ${relatorio.resumo.totalBloqueiosSegurancaPreAtivacao}`);
 }
 
-try {
-  executar();
-} catch (erro) {
-  console.error("Falha na auditoria profunda de pendências PAD/PROFOR 2022.");
-  console.error(erro?.stack || erro?.message || erro);
-  process.exit(1);
+if (require.main === module) {
+  try {
+    executar();
+  } catch (erro) {
+    console.error("Falha na auditoria profunda de pendências PAD/PROFOR 2022.");
+    console.error(erro?.stack || erro?.message || erro);
+    process.exit(1);
+  }
 }
+
+module.exports = {
+  classificarOperacional,
+  classificarDivergencia,
+};
