@@ -310,6 +310,7 @@ function montarMapasRelatorios(relatorios) {
 
   const itemNaoApto = new Map();
   for (const [classe, lista] of [
+    ["sem_divergencia_material_detectada", relatorios.itemNaoApto?.semDivergenciaMaterialDetectada],
     ["candidato_aceite_automatico", relatorios.itemNaoApto?.candidatosAceiteAutomatico],
     ["falso_positivo_saneavel", relatorios.itemNaoApto?.falsosPositivosSaneaveis],
     ["divergencia_material", relatorios.itemNaoApto?.divergenciasMateriais],
@@ -565,12 +566,14 @@ function classificarDivergencia(divergencia, mapas) {
     const info = mapas.itemNaoApto.get(divergencia.id);
     if (info) {
       evidencias.push(`Auditoria de item não apto: ${info.classificacao}.`);
-      if (info.classificacao === "candidato_aceite_automatico" || info.classificacao === "falso_positivo_saneavel") {
+      if (info.classificacao === "sem_divergencia_material_detectada"
+        || info.classificacao === "candidato_aceite_automatico"
+        || info.classificacao === "falso_positivo_saneavel") {
         categorias.add("item_nao_apto_sem_divergencia_material");
         categorias.add("possivel_falso_positivo");
         recomendacoes.push(info.classificacao === "falso_positivo_saneavel"
           ? "Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria."
-          : "Liberar apenas por decisão auditável; não alterar aptidão no banco nesta auditoria.");
+          : "Sem divergência material detectada; liberar apenas por decisão auditável, sem alterar aptidão no banco nesta auditoria.");
       } else if (info.classificacao === "divergencia_material" && statusPendente) {
         categorias.add("pendencia_real");
         recomendacoes.push("Exige decisão humana real; há divergência material entre memória e PAD.");

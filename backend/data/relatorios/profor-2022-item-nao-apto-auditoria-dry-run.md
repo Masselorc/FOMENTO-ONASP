@@ -1,12 +1,13 @@
 # PROFOR 2022 - Auditoria item_nao_apto sem divergência material
 
-Gerado em: 2026-05-22T14:03:28.690Z
+Gerado em: 2026-05-22T14:15:54.931Z
 Modo: dry-run
 
 ## Resumo
 
 - Total item_nao_apto encontrados: 19
-- Candidatos a aceite automático: 1
+- Sem divergência material detectada: 1
+- Candidatos a aceite automático (legado): 1
 - Falsos positivos saneáveis: 4
 - Divergência material: 3
 - Dados insuficientes: 0
@@ -14,7 +15,7 @@ Modo: dry-run
 - Erros de payload: 0
 - Decisões aplicadas: 0
 
-### Candidatos a aceite automático
+### Sem divergência material detectada
 
 | ID | Convênio | UF | Descrição | Qtd mem/PAD | Previsto mem/PAD | Executado mem/PAD | Saldo mem/PAD | Motivos |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |

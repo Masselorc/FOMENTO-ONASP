@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T14:05:05.609Z",
+  "geradoEm": "2026-05-22T14:15:54.763Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -43,13 +43,13 @@
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T01:05:08.587Z",
+        "geradoEm": "2026-05-22T14:05:15.240Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T01:05:08.617Z",
+        "geradoEm": "2026-05-22T14:05:15.254Z",
         "erro": null
       }
     }
@@ -1564,7 +1564,7 @@
         "possivel_falso_positivo"
       ],
       "evidencia": "Auditoria de item não apto: candidato_aceite_automatico.",
-      "recomendacao": "Liberar apenas por decisão auditável; não alterar aptidão no banco nesta auditoria.",
+      "recomendacao": "Sem divergência material detectada; liberar apenas por decisão auditável, sem alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,

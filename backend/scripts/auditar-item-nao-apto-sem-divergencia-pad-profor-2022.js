@@ -10,6 +10,7 @@ const CAMINHO_PAD_RELATORIOS_JSON = "backend/data/relatorios/profor-2022-pad-rel
 
 const STATUS_ANALISAVEIS = new Set(["PENDENTE", "EM_REVISAO"]);
 const DECISOES_RESOLUTIVAS = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"]);
+const CLASSIFICACAO_SEM_DIVERGENCIA_MATERIAL = "sem_divergencia_material_detectada";
 const TOLERANCIA_QUANTIDADE = 0.000001;
 const TOLERANCIA_QUANTIDADE_DERIVADA = 0.01;
 const TOLERANCIA_MONETARIA = 0.01;
@@ -366,7 +367,7 @@ function montarLinhaRelatorio(divergencia, dados, classificacao, motivos, extras
     saldoPadConsolidado: extras.padConsolidado?.saldo ?? null,
     padConsolidado: extras.padConsolidado || null,
     rateiosQuantidadeSuspeita: extras.rateiosQuantidadeSuspeita || [],
-    justificativaSugerida: ["candidato_aceite_automatico", "falso_positivo_saneavel"].includes(classificacao)
+    justificativaSugerida: [CLASSIFICACAO_SEM_DIVERGENCIA_MATERIAL, "falso_positivo_saneavel"].includes(classificacao)
       ? JUSTIFICATIVA_ACEITE
       : null,
     motivos,
@@ -465,7 +466,7 @@ function classificarDivergencia(divergencia, contexto = {}) {
   if (!descricaoCoincide && !chaveItemPresente) {
     return montarLinhaRelatorio(divergencia, dados, "divergencia_material", motivos);
   }
-  return montarLinhaRelatorio(divergencia, dados, "candidato_aceite_automatico", motivos, {
+  return montarLinhaRelatorio(divergencia, dados, CLASSIFICACAO_SEM_DIVERGENCIA_MATERIAL, motivos, {
     padConsolidado,
     rateiosQuantidadeSuspeita,
   });
@@ -486,7 +487,8 @@ function carregarDivergenciasItemNaoApto() {
 
 function agruparPorClassificacao(itens) {
   return {
-    candidatosAceiteAutomatico: itens.filter((item) => item.classificacao === "candidato_aceite_automatico"),
+    semDivergenciaMaterialDetectada: itens.filter((item) => item.classificacao === CLASSIFICACAO_SEM_DIVERGENCIA_MATERIAL),
+    candidatosAceiteAutomatico: itens.filter((item) => item.classificacao === CLASSIFICACAO_SEM_DIVERGENCIA_MATERIAL),
     falsosPositivosSaneaveis: itens.filter((item) => item.classificacao === "falso_positivo_saneavel"),
     divergenciasMateriais: itens.filter((item) => item.classificacao === "divergencia_material"),
     dadosMemoriaInsuficientes: itens.filter((item) => item.classificacao === "dados_memoria_insuficientes"),
@@ -581,7 +583,8 @@ function renderMarkdown(relatorio) {
     "## Resumo",
     "",
     `- Total item_nao_apto encontrados: ${relatorio.resumo.totalItemNaoAptoEncontrados}`,
-    `- Candidatos a aceite automático: ${relatorio.resumo.totalCandidatosAceiteAutomatico}`,
+    `- Sem divergência material detectada: ${relatorio.resumo.totalSemDivergenciaMaterialDetectada}`,
+    `- Candidatos a aceite automático (legado): ${relatorio.resumo.totalCandidatosAceiteAutomatico}`,
     `- Falsos positivos saneáveis: ${relatorio.resumo.totalFalsosPositivosSaneaveis}`,
     `- Divergência material: ${relatorio.resumo.totalDivergenciaMaterial}`,
     `- Dados insuficientes: ${relatorio.resumo.totalDadosMemoriaInsuficientes}`,
@@ -589,7 +592,7 @@ function renderMarkdown(relatorio) {
     `- Erros de payload: ${relatorio.resumo.totalErrosPayload}`,
     `- Decisões aplicadas: ${relatorio.aplicacao.totalAplicados}`,
     "",
-    ...renderTabelaMarkdown("Candidatos a aceite automático", relatorio.candidatosAceiteAutomatico),
+    ...renderTabelaMarkdown("Sem divergência material detectada", relatorio.semDivergenciaMaterialDetectada),
     ...renderTabelaMarkdown("Falsos positivos saneáveis", relatorio.falsosPositivosSaneaveis),
     ...renderTabelaMarkdown("Divergência material", relatorio.divergenciasMateriais),
     ...renderTabelaMarkdown("Dados insuficientes", relatorio.dadosMemoriaInsuficientes),
@@ -609,7 +612,7 @@ function montarRelatorio({ aplicar }) {
   };
 
   if (aplicar) {
-    aplicacao.aplicados = aplicarAceiteAssistido(grupos.candidatosAceiteAutomatico);
+    aplicacao.aplicados = aplicarAceiteAssistido(grupos.semDivergenciaMaterialDetectada);
     aplicacao.totalAplicados = aplicacao.aplicados.length;
   }
 
@@ -622,6 +625,7 @@ function montarRelatorio({ aplicar }) {
     },
     resumo: {
       totalItemNaoAptoEncontrados: classificados.length,
+      totalSemDivergenciaMaterialDetectada: grupos.semDivergenciaMaterialDetectada.length,
       totalCandidatosAceiteAutomatico: grupos.candidatosAceiteAutomatico.length,
       totalFalsosPositivosSaneaveis: grupos.falsosPositivosSaneaveis.length,
       totalDivergenciaMaterial: grupos.divergenciasMateriais.length,
@@ -629,6 +633,7 @@ function montarRelatorio({ aplicar }) {
       totalJaDecididos: grupos.jaDecididos.length,
       totalErrosPayload: grupos.errosPayload.length,
     },
+    semDivergenciaMaterialDetectada: grupos.semDivergenciaMaterialDetectada,
     candidatosAceiteAutomatico: grupos.candidatosAceiteAutomatico,
     falsosPositivosSaneaveis: grupos.falsosPositivosSaneaveis,
     divergenciasMateriais: grupos.divergenciasMateriais,
@@ -643,17 +648,18 @@ function imprimirRelatorio(relatorio) {
   console.log("Auditoria de item_nao_apto sem divergência material PAD/PROFOR 2022");
   console.log(`Modo: ${relatorio.modo}`);
   console.log(`Total item_nao_apto encontrados: ${relatorio.resumo.totalItemNaoAptoEncontrados}`);
-  console.log(`Candidatos a aceite automático: ${relatorio.resumo.totalCandidatosAceiteAutomatico}`);
+  console.log(`Sem divergência material detectada: ${relatorio.resumo.totalSemDivergenciaMaterialDetectada}`);
+  console.log(`Candidatos a aceite automático (legado): ${relatorio.resumo.totalCandidatosAceiteAutomatico}`);
   console.log(`Falsos positivos saneáveis: ${relatorio.resumo.totalFalsosPositivosSaneaveis}`);
   console.log(`Divergência material: ${relatorio.resumo.totalDivergenciaMaterial}`);
   console.log(`Dados insuficientes: ${relatorio.resumo.totalDadosMemoriaInsuficientes}`);
   console.log(`Já decididos: ${relatorio.resumo.totalJaDecididos}`);
   console.log(`Erros de payload: ${relatorio.resumo.totalErrosPayload}`);
-  console.log("Candidatos:");
-  if (!relatorio.candidatosAceiteAutomatico.length) {
+  console.log("Sem divergência material detectada:");
+  if (!relatorio.semDivergenciaMaterialDetectada.length) {
     console.log("  (nenhum)");
   } else {
-    for (const item of relatorio.candidatosAceiteAutomatico) {
+    for (const item of relatorio.semDivergenciaMaterialDetectada) {
       console.log(
         `  #${item.id} | ${item.numeroConvenio}/${item.uf || "-"} | ${item.descricao || item.chaveItem}`
         + ` | qtd ${item.quantidadeMemoria}/${item.quantidadePad}`
@@ -702,6 +708,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  CLASSIFICACAO_SEM_DIVERGENCIA_MATERIAL,
   classificarDivergencia,
   consolidarLinhasPad,
   detectarRateiosQuantidadeSuspeita,

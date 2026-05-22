@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T14:03:28.690Z",
+  "geradoEm": "2026-05-22T14:15:54.931Z",
   "modo": "dry-run",
   "tolerancias": {
     "quantidade": 0.000001,
@@ -7,6 +7,7 @@
   },
   "resumo": {
     "totalItemNaoAptoEncontrados": 19,
+    "totalSemDivergenciaMaterialDetectada": 1,
     "totalCandidatosAceiteAutomatico": 1,
     "totalFalsosPositivosSaneaveis": 4,
     "totalDivergenciaMaterial": 3,
@@ -14,10 +15,78 @@
     "totalJaDecididos": 11,
     "totalErrosPayload": 0
   },
+  "semDivergenciaMaterialDetectada": [
+    {
+      "id": 38,
+      "classificacao": "sem_divergencia_material_detectada",
+      "numeroConvenio": "937817",
+      "uf": "RJ",
+      "chaveItem": "937817::CAPACETE PROTETOR",
+      "descricao": "CAPACETE PROTETOR",
+      "naturezaMemoria": "CUSTEIO",
+      "naturezaPad": "CUSTEIO",
+      "quantidadeMemoria": 20.000323,
+      "quantidadePad": 20,
+      "valorUnitarioMemoria": 217,
+      "valorUnitarioPad": 217,
+      "valorPrevistoMemoria": 4340.07,
+      "valorPrevistoPad": 4340.07,
+      "valorExecutadoMemoria": 0,
+      "valorExecutadoPad": 0,
+      "saldoMemoria": 4340.07,
+      "saldoPad": 4340.07,
+      "quantidadePadConsolidada": 20,
+      "valorUnitarioPadConsolidado": 217,
+      "valorPrevistoPadConsolidado": 4340.07,
+      "valorExecutadoPadConsolidado": 0,
+      "saldoPadConsolidado": 4340.07,
+      "padConsolidado": {
+        "descricao": "CAPACETE PROTETOR",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitario": 217,
+        "valorPrevisto": 4340.07,
+        "valorExecutado": 0,
+        "saldo": 4340.07,
+        "totalLinhasPadEquivalentes": 1,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+            "aba": "937817",
+            "linha": 22,
+            "descricao": "CAPACETE PROTETOR",
+            "natureza": "CUSTEIO",
+            "quantidade": 20,
+            "valorUnitario": 217,
+            "valorPrevisto": 4340.07,
+            "valorExecutado": 0,
+            "saldo": 4340.07
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 200,
+          "quantidadeEstimada": 20.000323,
+          "fatorInflacao": 9.999839,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 217,
+          "valorPrevistoReferencia": 4340.07
+        }
+      ],
+      "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
+      "motivos": [
+        "Natureza, quantidade e valores coincidem dentro das tolerâncias.",
+        "Descrição normalizada coincide."
+      ]
+    }
+  ],
   "candidatosAceiteAutomatico": [
     {
       "id": 38,
-      "classificacao": "candidato_aceite_automatico",
+      "classificacao": "sem_divergencia_material_detectada",
       "numeroConvenio": "937817",
       "uf": "RJ",
       "chaveItem": "937817::CAPACETE PROTETOR",
