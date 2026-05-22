@@ -57,6 +57,8 @@ function avaliarRegistro(registro) {
   const diferencaQuantidade = Math.abs(quantidade - quantidadeEstimada);
   const valorEsperado = arredondarMoedaProfor(quantidade * valorUnitario);
   const diferencaFechamento = Math.abs(arredondarMoedaProfor(valorEsperado - valorPrevisto));
+  const fatorInflacao = quantidadeEstimada > 0 ? quantidade / quantidadeEstimada : null;
+  const fatorInflacaoDecimal10 = fatorInflacao !== null && Math.abs(fatorInflacao - 10) <= 0.05;
   const suspeito = diferencaQuantidade > TOLERANCIA_QUANTIDADE && diferencaFechamento > TOLERANCIA_VALOR;
 
   if (!suspeito) return null;
@@ -75,6 +77,9 @@ function avaliarRegistro(registro) {
     quantidadeGravada: quantidade,
     quantidadeEstimada,
     diferencaQuantidade: arredondarQuantidade(quantidade - quantidadeEstimada),
+    fatorInflacao: fatorInflacao === null ? null : arredondarQuantidade(fatorInflacao),
+    fatorInflacaoDecimal10,
+    classificacao: fatorInflacaoDecimal10 ? "inflacao_decimal_legada_fator_10" : "quantidade_incompativel_com_valor_previsto",
     valorUnitarioReferencia: valorUnitario,
     valorPrevistoReferencia: arredondarMoedaProfor(valorPrevisto),
     valorEsperadoPelaQuantidadeGravada: valorEsperado,
@@ -131,15 +136,15 @@ function renderMarkdown(relatorio) {
     "",
     "## Suspeitos (amostra)",
     "",
-    "| Rateio | Convenio/UF | Item | Qtd gravada | Qtd estimada | Diff qtd | VU | Previsto | Fechamento diff |",
-    "|---:|---|---|---:|---:|---:|---:|---:|---:|",
+    "| Rateio | Convenio/UF | Item | Classificação | Qtd gravada | Qtd estimada | Fator | Diff qtd | VU | Previsto | Fechamento diff |",
+    "|---:|---|---|---|---:|---:|---:|---:|---:|---:|---:|",
   ];
 
   const amostra = relatorio.suspeitos.slice(0, 50);
   for (const item of amostra) {
     linhas.push(
       `| ${item.rateioId} | ${item.numeroConvenio}/${item.uf} | ${item.descricao} | `
-      + `${item.quantidadeGravada} | ${item.quantidadeEstimada} | ${item.diferencaQuantidade} | `
+      + `${item.classificacao} | ${item.quantidadeGravada} | ${item.quantidadeEstimada} | ${item.fatorInflacao ?? "-"} | ${item.diferencaQuantidade} | `
       + `${item.valorUnitarioReferencia} | ${item.valorPrevistoReferencia} | ${item.diferencaFechamentoValor} |`
     );
   }

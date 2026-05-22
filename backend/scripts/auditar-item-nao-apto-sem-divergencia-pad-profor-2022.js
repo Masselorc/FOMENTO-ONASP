@@ -6,11 +6,14 @@ const revisaoService = require("../services/profor-2022/profor-pad-revisao-decis
 
 const CAMINHO_SAIDA_JSON = "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json";
 const CAMINHO_SAIDA_MD = "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.md";
+const CAMINHO_PAD_RELATORIOS_JSON = "backend/data/relatorios/profor-2022-pad-relatorios-dry-run.json";
 
 const STATUS_ANALISAVEIS = new Set(["PENDENTE", "EM_REVISAO"]);
 const DECISOES_RESOLUTIVAS = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"]);
 const TOLERANCIA_QUANTIDADE = 0.000001;
+const TOLERANCIA_QUANTIDADE_DERIVADA = 0.01;
 const TOLERANCIA_MONETARIA = 0.01;
+const TOLERANCIA_VALOR_UNITARIO_AGRUPAMENTO = 0.01;
 const USUARIO_DECISAO = "sistema-auditoria-item-nao-apto";
 const JUSTIFICATIVA_ACEITE = "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.";
 const PAYLOAD_DECISAO = {
@@ -36,6 +39,12 @@ function escreverArquivoTexto(caminhoRelativo, conteudo) {
   fs.writeFileSync(caminho, `${conteudo.trimEnd()}\n`, "utf8");
 }
 
+function lerJsonRelativo(caminhoRelativo, fallback = null) {
+  const caminho = path.join(repoRootPadrao(), caminhoRelativo);
+  if (!fs.existsSync(caminho)) return fallback;
+  return JSON.parse(fs.readFileSync(caminho, "utf8"));
+}
+
 function normalizarTextoComparacao(valor) {
   return String(valor ?? "")
     .normalize("NFD")
@@ -43,6 +52,16 @@ function normalizarTextoComparacao(valor) {
     .replace(/\s+/g, " ")
     .trim()
     .toLocaleUpperCase("pt-BR");
+}
+
+function arredondarQuantidade(valor) {
+  if (!Number.isFinite(valor)) return null;
+  return Math.round((Number(valor) + Number.EPSILON) * 1000000) / 1000000;
+}
+
+function arredondarMoeda(valor) {
+  if (!Number.isFinite(valor)) return null;
+  return Math.round((Number(valor) + Number.EPSILON) * 100) / 100;
 }
 
 function numeroOuNull(valor) {
@@ -118,12 +137,208 @@ function compararNumerico(memoria, pad, tolerancia) {
   };
 }
 
+function numeroConvenioDivergencia(divergencia) {
+  return String(divergencia.numeroConvenio
+    ?? divergencia.numero_convenio
+    ?? divergencia.payload?.numeroConvenio
+    ?? "").trim();
+}
+
+function numeroConvenioItemPad(item) {
+  return String(item?.numeroConvenio
+    ?? item?.instrumento
+    ?? item?.codigoInstrumento
+    ?? item?.codigo_instrumento
+    ?? "").trim();
+}
+
+function descricaoItemPad(item) {
+  return String(item?.descricao ?? item?.descricaoOriginal ?? "").trim();
+}
+
+function naturezaItemPad(item) {
+  return String(item?.natureza ?? item?.naturezaPad ?? "").trim();
+}
+
+function quantidadeItemPad(item) {
+  return numeroOuNull(item?.quantidade ?? item?.quantidadePad);
+}
+
+function valorUnitarioItemPad(item) {
+  return numeroOuNull(item?.valorUnitario ?? item?.valorUnitarioPad);
+}
+
+function valorPrevistoItemPad(item) {
+  return numeroOuNull(item?.valorTotalPrevisto ?? item?.valorPrevisto ?? item?.valorPrevistoPad);
+}
+
+function valorExecutadoItemPad(item) {
+  return numeroOuNull(item?.valorTotalExecutado ?? item?.valorExecutado ?? item?.valorExecutadoPad);
+}
+
+function saldoItemPad(item) {
+  return numeroOuNull(item?.saldo ?? item?.saldoPad);
+}
+
+function carregarItensPadRelatorio() {
+  const relatorio = lerJsonRelativo(CAMINHO_PAD_RELATORIOS_JSON, { itens: [] });
+  return Array.isArray(relatorio?.itens) ? relatorio.itens : [];
+}
+
+function valoresProximos(a, b, tolerancia) {
+  if (a === null || b === null) return false;
+  return Math.abs(a - b) <= tolerancia;
+}
+
+function localizarLinhasPadEquivalentes(divergencia, dados, itensPad) {
+  if (!Array.isArray(itensPad) || !itensPad.length) return [];
+
+  const numeroConvenio = numeroConvenioDivergencia(divergencia);
+  const descricaoReferencia = normalizarTextoComparacao(dados.pad.descricao || dados.memoria.descricao);
+  const naturezaReferencia = normalizarTextoComparacao(dados.pad.natureza || dados.memoria.natureza);
+  const valorUnitarioReferencia = dados.memoria.valorUnitario ?? dados.pad.valorUnitario;
+
+  if (!numeroConvenio || !descricaoReferencia || !naturezaReferencia || valorUnitarioReferencia === null) {
+    return [];
+  }
+
+  return itensPad.filter((item) => {
+    if (numeroConvenioItemPad(item) !== numeroConvenio) return false;
+    if (normalizarTextoComparacao(descricaoItemPad(item)) !== descricaoReferencia) return false;
+    if (normalizarTextoComparacao(naturezaItemPad(item)) !== naturezaReferencia) return false;
+    return valoresProximos(valorUnitarioItemPad(item), valorUnitarioReferencia, TOLERANCIA_VALOR_UNITARIO_AGRUPAMENTO);
+  });
+}
+
+function consolidarLinhasPad(linhas) {
+  if (!Array.isArray(linhas) || !linhas.length) return null;
+
+  const quantidade = linhas.reduce((soma, item) => soma + (quantidadeItemPad(item) ?? 0), 0);
+  const valorPrevisto = linhas.reduce((soma, item) => soma + (valorPrevistoItemPad(item) ?? 0), 0);
+  const valorExecutado = linhas.reduce((soma, item) => soma + (valorExecutadoItemPad(item) ?? 0), 0);
+  const saldo = linhas.reduce((soma, item) => soma + (saldoItemPad(item) ?? 0), 0);
+
+  return {
+    descricao: descricaoItemPad(linhas[0]),
+    natureza: naturezaItemPad(linhas[0]),
+    quantidade: arredondarQuantidade(quantidade),
+    valorUnitario: quantidade > 0 ? arredondarMoeda(valorPrevisto / quantidade) : valorUnitarioItemPad(linhas[0]),
+    valorPrevisto: arredondarMoeda(valorPrevisto),
+    valorExecutado: arredondarMoeda(valorExecutado),
+    saldo: arredondarMoeda(saldo),
+    totalLinhasPadEquivalentes: linhas.length,
+    linhas: linhas.map((item) => ({
+      arquivo: item.arquivo,
+      aba: item.aba,
+      linha: item.linha,
+      descricao: descricaoItemPad(item),
+      natureza: naturezaItemPad(item),
+      quantidade: quantidadeItemPad(item),
+      valorUnitario: valorUnitarioItemPad(item),
+      valorPrevisto: valorPrevistoItemPad(item),
+      valorExecutado: valorExecutadoItemPad(item),
+      saldo: saldoItemPad(item),
+    })),
+  };
+}
+
+function detectarRateiosQuantidadeSuspeita(dados, payload) {
+  const valorUnitario = dados.memoria.valorUnitario;
+  if (valorUnitario === null || valorUnitario <= 0) return [];
+
+  return (Array.isArray(payload.rateiosAtivos) ? payload.rateiosAtivos : [])
+    .map((rateio) => {
+      const quantidadeGravada = numeroOuNull(rateio.quantidadeReferencia);
+      const valorPrevisto = numeroOuNull(rateio.valorPrevistoReferencia);
+      if (quantidadeGravada === null || valorPrevisto === null) return null;
+      const quantidadeEstimada = valorPrevisto / valorUnitario;
+      const fatorInflacao = quantidadeEstimada > 0 ? quantidadeGravada / quantidadeEstimada : null;
+      const fator10 = fatorInflacao !== null && Math.abs(fatorInflacao - 10) <= 0.05;
+      const valorPelaQuantidadeGravada = quantidadeGravada * valorUnitario;
+      const fechamentoIncompativel = Math.abs(valorPelaQuantidadeGravada - valorPrevisto) > TOLERANCIA_MONETARIA;
+      if (!fator10 && !fechamentoIncompativel) return null;
+      return {
+        area: rateio.area,
+        natureza: rateio.natureza,
+        quantidadeGravada,
+        quantidadeEstimada: arredondarQuantidade(quantidadeEstimada),
+        fatorInflacao: fatorInflacao === null ? null : arredondarQuantidade(fatorInflacao),
+        fatorInflacaoDecimal10: fator10,
+        valorUnitarioReferencia: valorUnitario,
+        valorPrevistoReferencia: valorPrevisto,
+      };
+    })
+    .filter(Boolean);
+}
+
+function compararQuantidadeMemoriaPad(dados, padConsolidado) {
+  const comparacaoEstrita = compararNumerico(dados.memoria.quantidade, padConsolidado.quantidade, TOLERANCIA_QUANTIDADE);
+  if (comparacaoEstrita.ok) return comparacaoEstrita;
+
+  const quantidadeDerivadaFecha = valoresProximos(
+    dados.memoria.quantidade,
+    padConsolidado.quantidade,
+    TOLERANCIA_QUANTIDADE_DERIVADA
+  );
+  if (quantidadeDerivadaFecha) {
+    return {
+      ok: true,
+      insuficiente: false,
+      diferenca: Number((dados.memoria.quantidade - padConsolidado.quantidade).toFixed(6)),
+      toleranciaDerivada: TOLERANCIA_QUANTIDADE_DERIVADA,
+    };
+  }
+  return comparacaoEstrita;
+}
+
+function saldoCalculadoCompativelComPad(dados, padConsolidado) {
+  if (dados.memoria.valorPrevisto === null || dados.memoria.valorExecutado === null || padConsolidado.saldo === null) {
+    return false;
+  }
+  const saldoCalculadoMemoria = arredondarMoeda(dados.memoria.valorPrevisto - dados.memoria.valorExecutado);
+  return valoresProximos(saldoCalculadoMemoria, padConsolidado.saldo, TOLERANCIA_MONETARIA);
+}
+
+function avaliarComparacao(dados, padComparacao) {
+  const naturezaMemoria = normalizarTextoComparacao(dados.memoria.natureza);
+  const naturezaPad = normalizarTextoComparacao(padComparacao.natureza);
+  const comparacoes = {
+    natureza: { ok: naturezaMemoria === naturezaPad, diferenca: null },
+    quantidade: compararQuantidadeMemoriaPad(dados, padComparacao),
+    valorUnitario: compararNumerico(dados.memoria.valorUnitario, padComparacao.valorUnitario, TOLERANCIA_MONETARIA),
+    valorPrevisto: compararNumerico(dados.memoria.valorPrevisto, padComparacao.valorPrevisto, TOLERANCIA_MONETARIA),
+    valorExecutado: compararNumerico(dados.memoria.valorExecutado, padComparacao.valorExecutado, TOLERANCIA_MONETARIA),
+    saldo: compararNumerico(dados.memoria.saldo, padComparacao.saldo, TOLERANCIA_MONETARIA),
+  };
+
+  if (!comparacoes.saldo.ok && saldoCalculadoCompativelComPad(dados, padComparacao)) {
+    comparacoes.saldo = {
+      ok: true,
+      diferenca: comparacoes.saldo.diferenca,
+      saldoMemoriaCalculado: arredondarMoeda(dados.memoria.valorPrevisto - dados.memoria.valorExecutado),
+      saldoInformadoIgnoradoPorFechamento: true,
+    };
+  }
+
+  return comparacoes;
+}
+
+function divergenciasComparacoes(comparacoes) {
+  return Object.entries(comparacoes)
+    .filter(([, comparacao]) => !comparacao.ok)
+    .map(([campo, comparacao]) =>
+      comparacao.diferenca === null
+        ? `${campo} divergente`
+        : `${campo} divergente (${comparacao.diferenca})`
+    );
+}
+
 function possuiDecisaoResolutiva(divergencia) {
   return Array.isArray(divergencia.decisoes)
     && divergencia.decisoes.some((decisao) => DECISOES_RESOLUTIVAS.has(String(decisao.decisao || "").toUpperCase()));
 }
 
-function montarLinhaRelatorio(divergencia, dados, classificacao, motivos) {
+function montarLinhaRelatorio(divergencia, dados, classificacao, motivos, extras = {}) {
   const descricao = dados.memoria.descricao || dados.pad.descricao || divergencia.valorNovo || divergencia.chaveItem;
   return {
     id: divergencia.id,
@@ -144,12 +359,21 @@ function montarLinhaRelatorio(divergencia, dados, classificacao, motivos) {
     valorExecutadoPad: dados.pad.valorExecutado,
     saldoMemoria: dados.memoria.saldo,
     saldoPad: dados.pad.saldo,
-    justificativaSugerida: classificacao === "candidato_aceite_automatico" ? JUSTIFICATIVA_ACEITE : null,
+    quantidadePadConsolidada: extras.padConsolidado?.quantidade ?? null,
+    valorUnitarioPadConsolidado: extras.padConsolidado?.valorUnitario ?? null,
+    valorPrevistoPadConsolidado: extras.padConsolidado?.valorPrevisto ?? null,
+    valorExecutadoPadConsolidado: extras.padConsolidado?.valorExecutado ?? null,
+    saldoPadConsolidado: extras.padConsolidado?.saldo ?? null,
+    padConsolidado: extras.padConsolidado || null,
+    rateiosQuantidadeSuspeita: extras.rateiosQuantidadeSuspeita || [],
+    justificativaSugerida: ["candidato_aceite_automatico", "falso_positivo_saneavel"].includes(classificacao)
+      ? JUSTIFICATIVA_ACEITE
+      : null,
     motivos,
   };
 }
 
-function classificarDivergencia(divergencia) {
+function classificarDivergencia(divergencia, contexto = {}) {
   if (possuiDecisaoResolutiva(divergencia) || !STATUS_ANALISAVEIS.has(String(divergencia.status || "").toUpperCase())) {
     return montarLinhaRelatorio(divergencia, montarMemoriaPad(divergencia), "ja_decidido", [
       "Divergência já possui decisão resolutiva ou status não analisável.",
@@ -163,6 +387,10 @@ function classificarDivergencia(divergencia) {
   }
 
   const dados = montarMemoriaPad(divergencia);
+  const payload = divergencia.payload || {};
+  const linhasPadEquivalentes = localizarLinhasPadEquivalentes(divergencia, dados, contexto.itensPad || []);
+  const padConsolidado = consolidarLinhasPad(linhasPadEquivalentes);
+  const rateiosQuantidadeSuspeita = detectarRateiosQuantidadeSuspeita(dados, payload);
   const camposObrigatorios = ["quantidade", "valorUnitario", "valorPrevisto", "valorExecutado", "saldo"];
   const faltantesMemoria = camposObrigatorios.filter((campo) => dados.memoria[campo] === null);
   const faltantesPad = camposObrigatorios.filter((campo) => dados.pad[campo] === null);
@@ -181,29 +409,51 @@ function classificarDivergencia(divergencia) {
     ]);
   }
 
-  const comparacoes = {
-    natureza: { ok: naturezaMemoria === naturezaPad, diferenca: null },
-    quantidade: compararNumerico(dados.memoria.quantidade, dados.pad.quantidade, TOLERANCIA_QUANTIDADE),
-    valorUnitario: compararNumerico(dados.memoria.valorUnitario, dados.pad.valorUnitario, TOLERANCIA_MONETARIA),
-    valorPrevisto: compararNumerico(dados.memoria.valorPrevisto, dados.pad.valorPrevisto, TOLERANCIA_MONETARIA),
-    valorExecutado: compararNumerico(dados.memoria.valorExecutado, dados.pad.valorExecutado, TOLERANCIA_MONETARIA),
-    saldo: compararNumerico(dados.memoria.saldo, dados.pad.saldo, TOLERANCIA_MONETARIA),
-  };
+  const comparacoes = avaliarComparacao(dados, dados.pad);
   const descricaoMemoria = normalizarTextoComparacao(dados.memoria.descricao);
   const descricaoPad = normalizarTextoComparacao(dados.pad.descricao);
   const descricaoCoincide = Boolean(descricaoMemoria && descricaoPad && descricaoMemoria === descricaoPad);
   const chaveItemPresente = Boolean(String(divergencia.chaveItem || "").trim());
 
-  const divergencias = Object.entries(comparacoes)
-    .filter(([, comparacao]) => !comparacao.ok)
-    .map(([campo, comparacao]) =>
-      comparacao.diferenca === null
-        ? `${campo} divergente`
-        : `${campo} divergente (${comparacao.diferenca})`
-    );
+  const divergencias = divergenciasComparacoes(comparacoes);
+
+  if (divergencias.length && padConsolidado && padConsolidado.totalLinhasPadEquivalentes > 1) {
+    const comparacoesConsolidadas = avaliarComparacao(dados, padConsolidado);
+    const divergenciasConsolidadas = divergenciasComparacoes(comparacoesConsolidadas);
+    const fechamentoFinanceiroOk = comparacoesConsolidadas.valorPrevisto.ok
+      && comparacoesConsolidadas.valorExecutado.ok
+      && comparacoesConsolidadas.saldo.ok;
+    const quantidadeOk = comparacoesConsolidadas.quantidade.ok;
+    const valorUnitarioOk = comparacoesConsolidadas.valorUnitario.ok;
+
+    if (!divergenciasConsolidadas.length || (fechamentoFinanceiroOk && quantidadeOk && valorUnitarioOk)) {
+      const motivos = [
+        `PAD possui ${padConsolidado.totalLinhasPadEquivalentes} linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.`,
+        "Quantidade, valor previsto total e valor unitário fecham no conjunto consolidado.",
+        "Bloqueio anterior decorre de comparação contra linha PAD isolada.",
+      ];
+      if (rateiosQuantidadeSuspeita.length) {
+        motivos.push("Rateios da memória apresentam quantidade legada incompatível com valor previsto / valor unitário, com indício de inflação decimal.");
+      }
+      if ((payload.alertasOriginais || []).some((alerta) => String(alerta.tipo) === "fechamento_valor_inconsistente")) {
+        motivos.push("Alertas originais indicam saldo antigo inconsistente; saldo calculado por previsto - executado fecha com o PAD consolidado.");
+      }
+      return montarLinhaRelatorio(divergencia, dados, "falso_positivo_saneavel", motivos, {
+        padConsolidado,
+        rateiosQuantidadeSuspeita,
+      });
+    }
+  }
 
   if (divergencias.length) {
-    return montarLinhaRelatorio(divergencia, dados, "divergencia_material", divergencias);
+    const motivos = [...divergencias];
+    if (padConsolidado?.totalLinhasPadEquivalentes > 1) {
+      motivos.push(`PAD consolidado também foi avaliado com ${padConsolidado.totalLinhasPadEquivalentes} linhas equivalentes, mas ainda há divergência material.`);
+    }
+    return montarLinhaRelatorio(divergencia, dados, "divergencia_material", motivos, {
+      padConsolidado,
+      rateiosQuantidadeSuspeita,
+    });
   }
 
   const motivos = [
@@ -215,7 +465,10 @@ function classificarDivergencia(divergencia) {
   if (!descricaoCoincide && !chaveItemPresente) {
     return montarLinhaRelatorio(divergencia, dados, "divergencia_material", motivos);
   }
-  return montarLinhaRelatorio(divergencia, dados, "candidato_aceite_automatico", motivos);
+  return montarLinhaRelatorio(divergencia, dados, "candidato_aceite_automatico", motivos, {
+    padConsolidado,
+    rateiosQuantidadeSuspeita,
+  });
 }
 
 function carregarDivergenciasItemNaoApto() {
@@ -234,6 +487,7 @@ function carregarDivergenciasItemNaoApto() {
 function agruparPorClassificacao(itens) {
   return {
     candidatosAceiteAutomatico: itens.filter((item) => item.classificacao === "candidato_aceite_automatico"),
+    falsosPositivosSaneaveis: itens.filter((item) => item.classificacao === "falso_positivo_saneavel"),
     divergenciasMateriais: itens.filter((item) => item.classificacao === "divergencia_material"),
     dadosMemoriaInsuficientes: itens.filter((item) => item.classificacao === "dados_memoria_insuficientes"),
     jaDecididos: itens.filter((item) => item.classificacao === "ja_decidido"),
@@ -297,15 +551,19 @@ function renderTabelaMarkdown(titulo, itens) {
   linhas.push("| ID | Convênio | UF | Descrição | Qtd mem/PAD | Previsto mem/PAD | Executado mem/PAD | Saldo mem/PAD | Motivos |");
   linhas.push("| --- | --- | --- | --- | --- | --- | --- | --- | --- |");
   for (const item of itens) {
+    const quantidadePad = item.quantidadePadConsolidada ?? item.quantidadePad;
+    const valorPrevistoPad = item.valorPrevistoPadConsolidado ?? item.valorPrevistoPad;
+    const valorExecutadoPad = item.valorExecutadoPadConsolidado ?? item.valorExecutadoPad;
+    const saldoPad = item.saldoPadConsolidado ?? item.saldoPad;
     linhas.push([
       `| ${item.id}`,
       item.numeroConvenio || "-",
       item.uf || "-",
       String(item.descricao || "-").replace(/\|/g, "\\|"),
-      `${item.quantidadeMemoria ?? "-"} / ${item.quantidadePad ?? "-"}`,
-      `${item.valorPrevistoMemoria ?? "-"} / ${item.valorPrevistoPad ?? "-"}`,
-      `${item.valorExecutadoMemoria ?? "-"} / ${item.valorExecutadoPad ?? "-"}`,
-      `${item.saldoMemoria ?? "-"} / ${item.saldoPad ?? "-"}`,
+      `${item.quantidadeMemoria ?? "-"} / ${quantidadePad ?? "-"}`,
+      `${item.valorPrevistoMemoria ?? "-"} / ${valorPrevistoPad ?? "-"}`,
+      `${item.valorExecutadoMemoria ?? "-"} / ${valorExecutadoPad ?? "-"}`,
+      `${item.saldoMemoria ?? "-"} / ${saldoPad ?? "-"}`,
       `${(item.motivos || []).join("; ").replace(/\|/g, "\\|")} |`,
     ].join(" | "));
   }
@@ -324,6 +582,7 @@ function renderMarkdown(relatorio) {
     "",
     `- Total item_nao_apto encontrados: ${relatorio.resumo.totalItemNaoAptoEncontrados}`,
     `- Candidatos a aceite automático: ${relatorio.resumo.totalCandidatosAceiteAutomatico}`,
+    `- Falsos positivos saneáveis: ${relatorio.resumo.totalFalsosPositivosSaneaveis}`,
     `- Divergência material: ${relatorio.resumo.totalDivergenciaMaterial}`,
     `- Dados insuficientes: ${relatorio.resumo.totalDadosMemoriaInsuficientes}`,
     `- Já decididos: ${relatorio.resumo.totalJaDecididos}`,
@@ -331,6 +590,7 @@ function renderMarkdown(relatorio) {
     `- Decisões aplicadas: ${relatorio.aplicacao.totalAplicados}`,
     "",
     ...renderTabelaMarkdown("Candidatos a aceite automático", relatorio.candidatosAceiteAutomatico),
+    ...renderTabelaMarkdown("Falsos positivos saneáveis", relatorio.falsosPositivosSaneaveis),
     ...renderTabelaMarkdown("Divergência material", relatorio.divergenciasMateriais),
     ...renderTabelaMarkdown("Dados insuficientes", relatorio.dadosMemoriaInsuficientes),
   ];
@@ -339,7 +599,8 @@ function renderMarkdown(relatorio) {
 
 function montarRelatorio({ aplicar }) {
   const divergencias = carregarDivergenciasItemNaoApto();
-  const classificados = divergencias.map(classificarDivergencia);
+  const itensPad = carregarItensPadRelatorio();
+  const classificados = divergencias.map((divergencia) => classificarDivergencia(divergencia, { itensPad }));
   const grupos = agruparPorClassificacao(classificados);
   const aplicacao = {
     solicitada: aplicar,
@@ -362,12 +623,14 @@ function montarRelatorio({ aplicar }) {
     resumo: {
       totalItemNaoAptoEncontrados: classificados.length,
       totalCandidatosAceiteAutomatico: grupos.candidatosAceiteAutomatico.length,
+      totalFalsosPositivosSaneaveis: grupos.falsosPositivosSaneaveis.length,
       totalDivergenciaMaterial: grupos.divergenciasMateriais.length,
       totalDadosMemoriaInsuficientes: grupos.dadosMemoriaInsuficientes.length,
       totalJaDecididos: grupos.jaDecididos.length,
       totalErrosPayload: grupos.errosPayload.length,
     },
     candidatosAceiteAutomatico: grupos.candidatosAceiteAutomatico,
+    falsosPositivosSaneaveis: grupos.falsosPositivosSaneaveis,
     divergenciasMateriais: grupos.divergenciasMateriais,
     dadosMemoriaInsuficientes: grupos.dadosMemoriaInsuficientes,
     jaDecididos: grupos.jaDecididos,
@@ -381,6 +644,7 @@ function imprimirRelatorio(relatorio) {
   console.log(`Modo: ${relatorio.modo}`);
   console.log(`Total item_nao_apto encontrados: ${relatorio.resumo.totalItemNaoAptoEncontrados}`);
   console.log(`Candidatos a aceite automático: ${relatorio.resumo.totalCandidatosAceiteAutomatico}`);
+  console.log(`Falsos positivos saneáveis: ${relatorio.resumo.totalFalsosPositivosSaneaveis}`);
   console.log(`Divergência material: ${relatorio.resumo.totalDivergenciaMaterial}`);
   console.log(`Dados insuficientes: ${relatorio.resumo.totalDadosMemoriaInsuficientes}`);
   console.log(`Já decididos: ${relatorio.resumo.totalJaDecididos}`);
@@ -394,6 +658,18 @@ function imprimirRelatorio(relatorio) {
         `  #${item.id} | ${item.numeroConvenio}/${item.uf || "-"} | ${item.descricao || item.chaveItem}`
         + ` | qtd ${item.quantidadeMemoria}/${item.quantidadePad}`
         + ` | previsto ${item.valorPrevistoMemoria}/${item.valorPrevistoPad}`
+      );
+    }
+  }
+  console.log("Falsos positivos saneáveis:");
+  if (!relatorio.falsosPositivosSaneaveis.length) {
+    console.log("  (nenhum)");
+  } else {
+    for (const item of relatorio.falsosPositivosSaneaveis) {
+      console.log(
+        `  #${item.id} | ${item.numeroConvenio}/${item.uf || "-"} | ${item.descricao || item.chaveItem}`
+        + ` | qtd ${item.quantidadeMemoria}/${item.quantidadePadConsolidada ?? item.quantidadePad}`
+        + ` | previsto ${item.valorPrevistoMemoria}/${item.valorPrevistoPadConsolidado ?? item.valorPrevistoPad}`
       );
     }
   }
@@ -415,10 +691,20 @@ function executar() {
   imprimirRelatorio(relatorio);
 }
 
-try {
-  executar();
-} catch (erro) {
-  console.error("Falha ao auditar itens item_nao_apto sem divergência material PAD/PROFOR 2022.");
-  console.error(erro?.stack || erro?.message || erro);
-  process.exit(1);
+if (require.main === module) {
+  try {
+    executar();
+  } catch (erro) {
+    console.error("Falha ao auditar itens item_nao_apto sem divergência material PAD/PROFOR 2022.");
+    console.error(erro?.stack || erro?.message || erro);
+    process.exit(1);
+  }
 }
+
+module.exports = {
+  classificarDivergencia,
+  consolidarLinhasPad,
+  detectarRateiosQuantidadeSuspeita,
+  localizarLinhasPadEquivalentes,
+  montarMemoriaPad,
+};

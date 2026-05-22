@@ -65,7 +65,8 @@ const ARQUIVOS = [
   "tests/services/validacoes-services.test.js",
   "tests/services/profor-pad-decisao-aplicacao.test.js",
   "tests/services/profor-pad-seguranca-pre-ativacao.test.js",
-  "tests/services/profor-quantidade-parser.test.js"
+  "tests/services/profor-quantidade-parser.test.js",
+  "tests/services/profor-pad-item-nao-apto.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {

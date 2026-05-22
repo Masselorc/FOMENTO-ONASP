@@ -2155,3 +2155,38 @@ Confirmadas `PENDENTE/impeditivo/bloqueante`, nenhuma resolvida:
 ### 25.8. Confirmações
 Nenhuma decisão registrada nesta etapa; nenhuma publicação; origem ativa, `frontend/data/publicados` e `planoAplicacao` oficial intactos; divergências, decisões e logs preservados.
 
+---
+
+## 26. Saneamento técnico de `item_nao_apto` por conjunto PAD equivalente
+
+Em 22/05/2026, a auditoria de `item_nao_apto` foi ajustada para evitar falso positivo quando a memória está agregada e o PAD novo apresenta o mesmo item em múltiplas linhas equivalentes.
+
+### 26.1. Caso motivador
+- Divergência: `#31`.
+- Convênio/UF: `937265/MS`.
+- Item: `Calça Tática`.
+- Memória: `valorPrevistoMemoria = 16526.33`, `valorUnitarioMemoria = 330.53`, `quantidadeMemoria = 49.999486`.
+- Rateios antigos: quantidades `300` e `200`, com valores previstos compatíveis com aproximadamente `30` e `20` unidades.
+- PAD: duas linhas equivalentes de `30` e `20` unidades, totalizando `50` unidades e `R$ 16.526,33`.
+
+### 26.2. Regra técnica
+A auditoria `backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js` passa a:
+- carregar `backend/data/relatorios/profor-2022-pad-relatorios-dry-run.json`;
+- localizar linhas PAD equivalentes por `numeroConvenio`, descrição normalizada, natureza e valor unitário aproximado;
+- consolidar quantidade, valor previsto, valor executado e saldo;
+- detectar rateios legados com quantidade incompatível com `valorPrevistoReferencia / valorUnitarioReferencia`, inclusive padrão de inflação decimal por fator 10;
+- classificar como `falso_positivo_saneavel` quando o conjunto PAD consolidado fecha com a memória, mesmo que a comparação contra a linha PAD isolada diverja.
+
+### 26.3. Limite da regra
+A regra não registra decisão, não altera aptidão no banco, não aplica decisão ao `planoAplicacao`, não publica e não altera a origem ativa. Ela apenas qualifica a pendência operacional para saneamento assistido posterior.
+
+### 26.4. Impacto operacional
+A divergência `#31` deixa de ser pendência operacional real quando o conjunto `Calça Tática` fecha com:
+- quantidade consolidada PAD: `50`;
+- valor unitário compatível: `330.53`;
+- valor previsto total: `16526.33`;
+- valor executado: `0`;
+- saldo consolidado: `16526.33`.
+
+O relatório passa a explicar que o bloqueio anterior decorreu de saldo antigo inconsistente e quantidade legada contaminada, combinados com comparação contra apenas uma linha PAD.
+

@@ -817,3 +817,31 @@ Ao atualizar:
 - registrar validações;
 - registrar rollback;
 - manter linguagem operacional e reutilizável.
+
+---
+
+## 22/05/2026 - PROFOR 2022: falso positivo por quantidade legada e PAD em múltiplas linhas
+
+**Classificação:** erro real corrigido
+
+**Contexto:** auditoria PAD/PROFOR 2022 de divergências `item_nao_apto`.
+
+**Problema:** a divergência `#31` (`937265/MS`, `Calça Tática`) era classificada como `pendencia_operacional_real`, embora a memória e o PAD fechassem materialmente quando consideradas as duas linhas equivalentes do PAD.
+
+**Evidência:** a memória consolidada tinha `valorPrevistoMemoria = 16526.33`, `valorUnitarioMemoria = 330.53` e `quantidadeMemoria = 49.999486` derivada de valor monetário arredondado. Os rateios legados registravam `quantidadeReferencia` 300 e 200, mas os valores previstos correspondiam a aproximadamente 30 e 20 unidades. O PAD trazia duas linhas equivalentes de `Calça Tática`, com 30 e 20 unidades, totalizando 50 unidades e R$ 16.526,33.
+
+**Causa provável:** combinação de quantidade legada inflada por fator decimal 10 nos rateios antigos com comparação da auditoria contra apenas uma linha PAD isolada.
+
+**Correção aplicada:** a auditoria de `item_nao_apto` passou a consolidar linhas PAD equivalentes por convênio, descrição normalizada, natureza e valor unitário aproximado, além de detectar rateios com quantidade incompatível com `valorPrevistoReferencia / valorUnitarioReferencia`. Quando o conjunto fecha financeiramente e a diferença de quantidade decorre de arredondamento monetário, o item é classificado como `falso_positivo_saneavel`.
+
+**Por que funcionou:** a comparação deixou de confrontar memória agregada contra uma linha PAD parcial e passou a verificar o conjunto material equivalente.
+
+**Como prevenir:** para itens agregados ou repetidos no PAD, comparar conjuntos equivalentes antes de classificar divergência material. Quantidades derivadas de moeda arredondada devem usar tolerância própria e nunca sobrescrever os totais financeiros como fonte de verdade.
+
+**Boa prática reutilizável:** em saneamento assistido, separar inconsistência de origem legada de divergência material real e registrar ambas no relatório dry-run.
+
+**Arquivos relacionados:** `backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js`, `backend/scripts/auditar-pendencias-profor-2022-profundo.js`, `backend/scripts/auditar-quantidades-suspeitas-profor-2022.js`, `tests/services/profor-pad-item-nao-apto.test.js`.
+
+**Validações recomendadas:** `npm run profor:pad:item-nao-apto:auditar`, `npm run profor:pad:auditar-pendencias-profundo`, `npm run validar:services`.
+
+**Rollback:** reverter o commit da correção; a auditoria voltará a classificar o item pela comparação com linha PAD isolada.

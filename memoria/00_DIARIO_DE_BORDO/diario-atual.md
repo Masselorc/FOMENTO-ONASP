@@ -5957,3 +5957,71 @@ Logs operacionais gravados:
   - sem alteração de backend;
   - sem alteração em frontend/data/publicados;
   - sem ativação ou publicação de nova origem.
+
+---
+
+## 22/05/2026 - PROFOR 2022: saneamento técnico de quantidade legada em `item_nao_apto`
+
+- Horário: 11:03.
+- Branch: `main`.
+- Objetivo:
+  - sanear falso positivo de quantidade/saldo na divergência `#31` (`937265/MS`, `Calça Tática`) sem registrar decisão e sem alterar o `planoAplicacao` oficial.
+- Problema confirmado:
+  - a memória agregada fechava em `49.999486` unidades derivadas de `R$ 16.526,33 / R$ 330,53`;
+  - os rateios antigos traziam `quantidadeReferencia` `300` e `200`, com indício de inflação decimal legada por fator 10;
+  - o PAD tinha duas linhas equivalentes (`30` e `20` unidades), mas a auditoria comparava a memória agregada contra apenas uma linha PAD isolada.
+- Arquivos alterados:
+  - `backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js`;
+  - `backend/scripts/auditar-pendencias-profor-2022-profundo.js`;
+  - `backend/scripts/auditar-quantidades-suspeitas-profor-2022.js`;
+  - `tests/services/profor-pad-item-nao-apto.test.js`;
+  - `scripts/validar-syntax.js`;
+  - `memoria/09_ERROS_E_CORRECOES/historico-erros.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Correção aplicada:
+  - a auditoria de `item_nao_apto` agora consolida linhas PAD equivalentes por convênio, descrição normalizada, natureza e valor unitário aproximado;
+  - detecta rateios com quantidade incompatível com `valorPrevistoReferencia / valorUnitarioReferencia`, incluindo fator decimal 10;
+  - admite tolerância própria para quantidade derivada por valor monetário arredondado;
+  - classifica como `falso_positivo_saneavel` quando quantidade, valor unitário, valor previsto, executado e saldo fecham no conjunto PAD consolidado.
+- Resultado parcial executado:
+  - `npm run profor:pad:item-nao-apto:auditar`:
+    - total `item_nao_apto`: `19`;
+    - candidatos a aceite automático: `1`;
+    - falsos positivos saneáveis: `4`;
+    - divergências materiais: `3`;
+    - já decididos: `11`;
+    - `#31` classificada como `falso_positivo_saneavel`;
+  - `npm run profor:rateio:auditar-quantidades:dry-run`:
+    - rateios auditados: `567`;
+    - suspeitos: `19`;
+    - convênios/UF afetados: `9`.
+- Teste adicionado:
+  - `tests/services/profor-pad-item-nao-apto.test.js` reproduz a Calça Tática com rateios `300/200`, valores `9915.80/6610.53`, valor unitário `330.53` e PAD `30/20`, esperando `falso_positivo_saneavel`.
+- Confirmações de escopo:
+  - nenhuma decisão registrada;
+  - nenhuma publicação;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - sem migration.
+- Validações finais:
+  - `npm run validar:syntax` -> OK (`66` arquivos);
+  - `npm run validar:services` -> OK (`77` testes);
+  - `npm run profor:pad:item-nao-apto:auditar` -> OK;
+  - `npm run profor:rateio:auditar-quantidades:dry-run` -> OK;
+  - `npm run profor:pad:auditar-pendencias-profundo` -> OK;
+  - `npm run profor:pad:auditar-fila-revisao` -> OK;
+  - `npm run profor:pad:reconstruir-plano:dry-run` -> OK;
+  - `npm run profor:pad:comparar-plano:dry-run` -> OK;
+  - `git diff --check` -> OK, apenas avisos de normalização LF/CRLF;
+  - `git status --short frontend/data/publicados` -> sem alterações.
+- Impacto final:
+  - auditoria profunda: `pendencia_operacional_real = 7`, `falso_positivo_saneavel = 66`;
+  - `#31` passou a `classificacaoOperacional = falso_positivo_saneavel`, sem decisão registrada;
+  - reconstrução segue `aptoParaAtivacao = não`, com `34` impedimentos;
+  - comparador segue `aptoParaPublicacao = não`, com `32` diferenças críticas.
+- Pendências:
+  - nenhuma pendência desta correção; saneamento material posterior ainda depende de decisão assistida específica.
+- Rollback:
+  - reverter o commit desta correção; os relatórios dry-run voltam à classificação anterior.

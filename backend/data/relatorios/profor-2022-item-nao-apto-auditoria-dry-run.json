@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T01:04:56.898Z",
+  "geradoEm": "2026-05-22T14:03:28.690Z",
   "modo": "dry-run",
   "tolerancias": {
     "quantidade": 0.000001,
@@ -7,122 +7,17 @@
   },
   "resumo": {
     "totalItemNaoAptoEncontrados": 19,
-    "totalCandidatosAceiteAutomatico": 0,
-    "totalDivergenciaMaterial": 8,
+    "totalCandidatosAceiteAutomatico": 1,
+    "totalFalsosPositivosSaneaveis": 4,
+    "totalDivergenciaMaterial": 3,
     "totalDadosMemoriaInsuficientes": 0,
     "totalJaDecididos": 11,
     "totalErrosPayload": 0
   },
-  "candidatosAceiteAutomatico": [],
-  "divergenciasMateriais": [
-    {
-      "id": 31,
-      "classificacao": "divergencia_material",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "chaveItem": "937265::CALCA TATICA",
-      "descricao": "Calça Tática",
-      "naturezaMemoria": "CUSTEIO",
-      "naturezaPad": "CUSTEIO",
-      "quantidadeMemoria": 49.999486,
-      "quantidadePad": 30,
-      "valorUnitarioMemoria": 330.53,
-      "valorUnitarioPad": 330.53,
-      "valorPrevistoMemoria": 16526.33,
-      "valorPrevistoPad": 9915.8,
-      "valorExecutadoMemoria": 0,
-      "valorExecutadoPad": 0,
-      "saldoMemoria": 16526.33,
-      "saldoPad": 9915.8,
-      "justificativaSugerida": null,
-      "motivos": [
-        "quantidade divergente (19.999486)",
-        "valorPrevisto divergente (6610.53)",
-        "saldo divergente (6610.53)"
-      ]
-    },
-    {
-      "id": 32,
-      "classificacao": "divergencia_material",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "chaveItem": "937265::CINTO TATICO",
-      "descricao": "Cinto Tático",
-      "naturezaMemoria": "CUSTEIO",
-      "naturezaPad": "CUSTEIO",
-      "quantidadeMemoria": 50.000622,
-      "quantidadePad": 30,
-      "valorUnitarioMemoria": 209.13,
-      "valorUnitarioPad": 209.13,
-      "valorPrevistoMemoria": 10456.63,
-      "valorPrevistoPad": 6273.98,
-      "valorExecutadoMemoria": 0,
-      "valorExecutadoPad": 0,
-      "saldoMemoria": 10456.63,
-      "saldoPad": 6273.98,
-      "justificativaSugerida": null,
-      "motivos": [
-        "quantidade divergente (20.000622)",
-        "valorPrevisto divergente (4182.65)",
-        "saldo divergente (4182.65)"
-      ]
-    },
-    {
-      "id": 33,
-      "classificacao": "divergencia_material",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "chaveItem": "937265::COTURNO",
-      "descricao": "Coturno",
-      "naturezaMemoria": "CUSTEIO",
-      "naturezaPad": "CUSTEIO",
-      "quantidadeMemoria": 50,
-      "quantidadePad": 20,
-      "valorUnitarioMemoria": 356.2,
-      "valorUnitarioPad": 356.2,
-      "valorPrevistoMemoria": 17810,
-      "valorPrevistoPad": 7124,
-      "valorExecutadoMemoria": 0,
-      "valorExecutadoPad": 0,
-      "saldoMemoria": 17810,
-      "saldoPad": 7124,
-      "justificativaSugerida": null,
-      "motivos": [
-        "quantidade divergente (30)",
-        "valorPrevisto divergente (10686)",
-        "saldo divergente (10686)"
-      ]
-    },
-    {
-      "id": 34,
-      "classificacao": "divergencia_material",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
-      "descricao": "Geladeira minimo 410L Frost Free 110v Branca",
-      "naturezaMemoria": "CAPITAL",
-      "naturezaPad": "CAPITAL",
-      "quantidadeMemoria": 2,
-      "quantidadePad": 1,
-      "valorUnitarioMemoria": 3890,
-      "valorUnitarioPad": 3890,
-      "valorPrevistoMemoria": 7780,
-      "valorPrevistoPad": 3890,
-      "valorExecutadoMemoria": 5999.98,
-      "valorExecutadoPad": 2999.99,
-      "saldoMemoria": 1780.02,
-      "saldoPad": 890.01,
-      "justificativaSugerida": null,
-      "motivos": [
-        "quantidade divergente (1)",
-        "valorPrevisto divergente (3890)",
-        "valorExecutado divergente (2999.99)",
-        "saldo divergente (890.01)"
-      ]
-    },
+  "candidatosAceiteAutomatico": [
     {
       "id": 38,
-      "classificacao": "divergencia_material",
+      "classificacao": "candidato_aceite_automatico",
       "numeroConvenio": "937817",
       "uf": "RJ",
       "chaveItem": "937817::CAPACETE PROTETOR",
@@ -139,11 +34,421 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 4340.07,
       "saldoPad": 4340.07,
-      "justificativaSugerida": null,
+      "quantidadePadConsolidada": 20,
+      "valorUnitarioPadConsolidado": 217,
+      "valorPrevistoPadConsolidado": 4340.07,
+      "valorExecutadoPadConsolidado": 0,
+      "saldoPadConsolidado": 4340.07,
+      "padConsolidado": {
+        "descricao": "CAPACETE PROTETOR",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitario": 217,
+        "valorPrevisto": 4340.07,
+        "valorExecutado": 0,
+        "saldo": 4340.07,
+        "totalLinhasPadEquivalentes": 1,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+            "aba": "937817",
+            "linha": 22,
+            "descricao": "CAPACETE PROTETOR",
+            "natureza": "CUSTEIO",
+            "quantidade": 20,
+            "valorUnitario": 217,
+            "valorPrevisto": 4340.07,
+            "valorExecutado": 0,
+            "saldo": 4340.07
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 200,
+          "quantidadeEstimada": 20.000323,
+          "fatorInflacao": 9.999839,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 217,
+          "valorPrevistoReferencia": 4340.07
+        }
+      ],
+      "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
       "motivos": [
-        "quantidade divergente (0.000323)"
+        "Natureza, quantidade e valores coincidem dentro das tolerâncias.",
+        "Descrição normalizada coincide."
+      ]
+    }
+  ],
+  "falsosPositivosSaneaveis": [
+    {
+      "id": 31,
+      "classificacao": "falso_positivo_saneavel",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "chaveItem": "937265::CALCA TATICA",
+      "descricao": "Calça Tática",
+      "naturezaMemoria": "CUSTEIO",
+      "naturezaPad": "CUSTEIO",
+      "quantidadeMemoria": 49.999486,
+      "quantidadePad": 30,
+      "valorUnitarioMemoria": 330.53,
+      "valorUnitarioPad": 330.53,
+      "valorPrevistoMemoria": 16526.33,
+      "valorPrevistoPad": 9915.8,
+      "valorExecutadoMemoria": 0,
+      "valorExecutadoPad": 0,
+      "saldoMemoria": 16526.33,
+      "saldoPad": 9915.8,
+      "quantidadePadConsolidada": 50,
+      "valorUnitarioPadConsolidado": 330.53,
+      "valorPrevistoPadConsolidado": 16526.33,
+      "valorExecutadoPadConsolidado": 0,
+      "saldoPadConsolidado": 16526.33,
+      "padConsolidado": {
+        "descricao": "Calça Tática",
+        "natureza": "CUSTEIO",
+        "quantidade": 50,
+        "valorUnitario": 330.53,
+        "valorPrevisto": 16526.33,
+        "valorExecutado": 0,
+        "saldo": 16526.33,
+        "totalLinhasPadEquivalentes": 2,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 22,
+            "descricao": "Calça Tática",
+            "natureza": "CUSTEIO",
+            "quantidade": 30,
+            "valorUnitario": 330.53,
+            "valorPrevisto": 9915.8,
+            "valorExecutado": 0,
+            "saldo": 9915.8
+          },
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 23,
+            "descricao": "Calça Tática",
+            "natureza": "CUSTEIO",
+            "quantidade": 20,
+            "valorUnitario": 330.53,
+            "valorPrevisto": 6610.53,
+            "valorExecutado": 0,
+            "saldo": 6610.53
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 300,
+          "quantidadeEstimada": 29.999697,
+          "fatorInflacao": 10.000101,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 330.53,
+          "valorPrevistoReferencia": 9915.8
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 200,
+          "quantidadeEstimada": 19.999788,
+          "fatorInflacao": 10.000106,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 330.53,
+          "valorPrevistoReferencia": 6610.53
+        }
+      ],
+      "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
+      "motivos": [
+        "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
+        "Quantidade, valor previsto total e valor unitário fecham no conjunto consolidado.",
+        "Bloqueio anterior decorre de comparação contra linha PAD isolada.",
+        "Rateios da memória apresentam quantidade legada incompatível com valor previsto / valor unitário, com indício de inflação decimal.",
+        "Alertas originais indicam saldo antigo inconsistente; saldo calculado por previsto - executado fecha com o PAD consolidado."
       ]
     },
+    {
+      "id": 32,
+      "classificacao": "falso_positivo_saneavel",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "chaveItem": "937265::CINTO TATICO",
+      "descricao": "Cinto Tático",
+      "naturezaMemoria": "CUSTEIO",
+      "naturezaPad": "CUSTEIO",
+      "quantidadeMemoria": 50.000622,
+      "quantidadePad": 30,
+      "valorUnitarioMemoria": 209.13,
+      "valorUnitarioPad": 209.13,
+      "valorPrevistoMemoria": 10456.63,
+      "valorPrevistoPad": 6273.98,
+      "valorExecutadoMemoria": 0,
+      "valorExecutadoPad": 0,
+      "saldoMemoria": 10456.63,
+      "saldoPad": 6273.98,
+      "quantidadePadConsolidada": 50,
+      "valorUnitarioPadConsolidado": 209.13,
+      "valorPrevistoPadConsolidado": 10456.63,
+      "valorExecutadoPadConsolidado": 0,
+      "saldoPadConsolidado": 10456.63,
+      "padConsolidado": {
+        "descricao": "Cinto Tático",
+        "natureza": "CUSTEIO",
+        "quantidade": 50,
+        "valorUnitario": 209.13,
+        "valorPrevisto": 10456.63,
+        "valorExecutado": 0,
+        "saldo": 10456.63,
+        "totalLinhasPadEquivalentes": 2,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 27,
+            "descricao": "Cinto Tático",
+            "natureza": "CUSTEIO",
+            "quantidade": 30,
+            "valorUnitario": 209.13,
+            "valorPrevisto": 6273.98,
+            "valorExecutado": 0,
+            "saldo": 6273.98
+          },
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 28,
+            "descricao": "Cinto Tático",
+            "natureza": "CUSTEIO",
+            "quantidade": 20,
+            "valorUnitario": 209.13,
+            "valorPrevisto": 4182.65,
+            "valorExecutado": 0,
+            "saldo": 4182.65
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 300,
+          "quantidadeEstimada": 30.000383,
+          "fatorInflacao": 9.999872,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 209.13,
+          "valorPrevistoReferencia": 6273.98
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 200,
+          "quantidadeEstimada": 20.000239,
+          "fatorInflacao": 9.99988,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 209.13,
+          "valorPrevistoReferencia": 4182.65
+        }
+      ],
+      "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
+      "motivos": [
+        "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
+        "Quantidade, valor previsto total e valor unitário fecham no conjunto consolidado.",
+        "Bloqueio anterior decorre de comparação contra linha PAD isolada.",
+        "Rateios da memória apresentam quantidade legada incompatível com valor previsto / valor unitário, com indício de inflação decimal.",
+        "Alertas originais indicam saldo antigo inconsistente; saldo calculado por previsto - executado fecha com o PAD consolidado."
+      ]
+    },
+    {
+      "id": 33,
+      "classificacao": "falso_positivo_saneavel",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "chaveItem": "937265::COTURNO",
+      "descricao": "Coturno",
+      "naturezaMemoria": "CUSTEIO",
+      "naturezaPad": "CUSTEIO",
+      "quantidadeMemoria": 50,
+      "quantidadePad": 20,
+      "valorUnitarioMemoria": 356.2,
+      "valorUnitarioPad": 356.2,
+      "valorPrevistoMemoria": 17810,
+      "valorPrevistoPad": 7124,
+      "valorExecutadoMemoria": 0,
+      "valorExecutadoPad": 0,
+      "saldoMemoria": 17810,
+      "saldoPad": 7124,
+      "quantidadePadConsolidada": 50,
+      "valorUnitarioPadConsolidado": 356.2,
+      "valorPrevistoPadConsolidado": 17810,
+      "valorExecutadoPadConsolidado": 0,
+      "saldoPadConsolidado": 17810,
+      "padConsolidado": {
+        "descricao": "Coturno",
+        "natureza": "CUSTEIO",
+        "quantidade": 50,
+        "valorUnitario": 356.2,
+        "valorPrevisto": 17810,
+        "valorExecutado": 0,
+        "saldo": 17810,
+        "totalLinhasPadEquivalentes": 2,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 29,
+            "descricao": "Coturno",
+            "natureza": "CUSTEIO",
+            "quantidade": 20,
+            "valorUnitario": 356.2,
+            "valorPrevisto": 7124,
+            "valorExecutado": 0,
+            "saldo": 7124
+          },
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 30,
+            "descricao": "Coturno",
+            "natureza": "CUSTEIO",
+            "quantidade": 30,
+            "valorUnitario": 356.2,
+            "valorPrevisto": 10686,
+            "valorExecutado": 0,
+            "saldo": 10686
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "CORREGEDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 300,
+          "quantidadeEstimada": 30,
+          "fatorInflacao": 10,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 356.2,
+          "valorPrevistoReferencia": 10686
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 200,
+          "quantidadeEstimada": 20,
+          "fatorInflacao": 10,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 356.2,
+          "valorPrevistoReferencia": 7124
+        }
+      ],
+      "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
+      "motivos": [
+        "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
+        "Quantidade, valor previsto total e valor unitário fecham no conjunto consolidado.",
+        "Bloqueio anterior decorre de comparação contra linha PAD isolada.",
+        "Rateios da memória apresentam quantidade legada incompatível com valor previsto / valor unitário, com indício de inflação decimal.",
+        "Alertas originais indicam saldo antigo inconsistente; saldo calculado por previsto - executado fecha com o PAD consolidado."
+      ]
+    },
+    {
+      "id": 34,
+      "classificacao": "falso_positivo_saneavel",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "descricao": "Geladeira minimo 410L Frost Free 110v Branca",
+      "naturezaMemoria": "CAPITAL",
+      "naturezaPad": "CAPITAL",
+      "quantidadeMemoria": 2,
+      "quantidadePad": 1,
+      "valorUnitarioMemoria": 3890,
+      "valorUnitarioPad": 3890,
+      "valorPrevistoMemoria": 7780,
+      "valorPrevistoPad": 3890,
+      "valorExecutadoMemoria": 5999.98,
+      "valorExecutadoPad": 2999.99,
+      "saldoMemoria": 1780.02,
+      "saldoPad": 890.01,
+      "quantidadePadConsolidada": 2,
+      "valorUnitarioPadConsolidado": 3890,
+      "valorPrevistoPadConsolidado": 7780,
+      "valorExecutadoPadConsolidado": 5999.98,
+      "saldoPadConsolidado": 1780.02,
+      "padConsolidado": {
+        "descricao": "Geladeira minimo 410L Frost Free 110v Branca",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitario": 3890,
+        "valorPrevisto": 7780,
+        "valorExecutado": 5999.98,
+        "saldo": 1780.02,
+        "totalLinhasPadEquivalentes": 2,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 71,
+            "descricao": "Geladeira minimo 410L Frost Free 110v Branca",
+            "natureza": "CAPITAL",
+            "quantidade": 1,
+            "valorUnitario": 3890,
+            "valorPrevisto": 3890,
+            "valorExecutado": 2999.99,
+            "saldo": 890.01
+          },
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+            "aba": "937265",
+            "linha": 72,
+            "descricao": "Geladeira minimo 410L Frost Free 110v Branca",
+            "natureza": "CAPITAL",
+            "quantidade": 1,
+            "valorUnitario": 3890,
+            "valorPrevisto": 3890,
+            "valorExecutado": 2999.99,
+            "saldo": 890.01
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "ESCOLA PENAL",
+          "natureza": "CAPITAL",
+          "quantidadeGravada": 10,
+          "quantidadeEstimada": 1,
+          "fatorInflacao": 10,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 3890,
+          "valorPrevistoReferencia": 3890
+        },
+        {
+          "area": "OUVIDORIA",
+          "natureza": "CAPITAL",
+          "quantidadeGravada": 10,
+          "quantidadeEstimada": 1,
+          "fatorInflacao": 10,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 3890,
+          "valorPrevistoReferencia": 3890
+        }
+      ],
+      "justificativaSugerida": "Item conferido automaticamente: descrição/chave, natureza, quantidade, valor unitário, valor previsto, valor executado e saldo coincidem entre memória e PAD dentro da tolerância definida. A pendência referia-se apenas à marcação histórica de não aptidão, motivo pelo qual fica registrada a liberação para uso em dry-run, sem alteração do planoAplicacao oficial.",
+      "motivos": [
+        "PAD possui 2 linhas equivalentes consolidadas por convênio, descrição, natureza e valor unitário.",
+        "Quantidade, valor previsto total e valor unitário fecham no conjunto consolidado.",
+        "Bloqueio anterior decorre de comparação contra linha PAD isolada.",
+        "Rateios da memória apresentam quantidade legada incompatível com valor previsto / valor unitário, com indício de inflação decimal.",
+        "Alertas originais indicam saldo antigo inconsistente; saldo calculado por previsto - executado fecha com o PAD consolidado."
+      ]
+    }
+  ],
+  "divergenciasMateriais": [
     {
       "id": 39,
       "classificacao": "divergencia_material",
@@ -163,6 +468,36 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 1134.3,
       "saldoPad": 1134.27,
+      "quantidadePadConsolidada": 10,
+      "valorUnitarioPadConsolidado": 113.43,
+      "valorPrevistoPadConsolidado": 1134.27,
+      "valorExecutadoPadConsolidado": 0,
+      "saldoPadConsolidado": 1134.27,
+      "padConsolidado": {
+        "descricao": "Agenda Planner",
+        "natureza": "CUSTEIO",
+        "quantidade": 10,
+        "valorUnitario": 113.43,
+        "valorPrevisto": 1134.27,
+        "valorExecutado": 0,
+        "saldo": 1134.27,
+        "totalLinhasPadEquivalentes": 1,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+            "aba": "938128",
+            "linha": 16,
+            "descricao": "Agenda Planner",
+            "natureza": "CUSTEIO",
+            "quantidade": 10,
+            "valorUnitario": 113.43,
+            "valorPrevisto": 1134.27,
+            "valorExecutado": 0,
+            "saldo": 1134.27
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "natureza divergente",
@@ -189,10 +524,37 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 22351.09,
       "saldoPad": 71.36,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "N/A",
+          "natureza": "CAPITAL",
+          "quantidadeGravada": 10,
+          "quantidadeEstimada": 1,
+          "fatorInflacao": 10,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 22279.73,
+          "valorPrevistoReferencia": 22279.73
+        },
+        {
+          "area": "NAO INFORMADO",
+          "natureza": "CAPITAL",
+          "quantidadeGravada": 1,
+          "quantidadeEstimada": 0.003203,
+          "fatorInflacao": 312.215947,
+          "fatorInflacaoDecimal10": false,
+          "valorUnitarioReferencia": 22279.73,
+          "valorPrevistoReferencia": 71.36
+        }
+      ],
       "justificativaSugerida": null,
       "motivos": [
         "natureza divergente",
-        "quantidade divergente (0.003203)",
         "valorUnitario divergente (22208.37)",
         "valorPrevisto divergente (22279.73)",
         "saldo divergente (22279.73)"
@@ -217,6 +579,57 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 13192.33,
       "saldoPad": 5924.45,
+      "quantidadePadConsolidada": 1,
+      "valorUnitarioPadConsolidado": 5924.45,
+      "valorPrevistoPadConsolidado": 5924.45,
+      "valorExecutadoPadConsolidado": 0,
+      "saldoPadConsolidado": 5924.45,
+      "padConsolidado": {
+        "descricao": "SALDO REMANESCENTE",
+        "natureza": "CUSTEIO",
+        "quantidade": 1,
+        "valorUnitario": 5924.45,
+        "valorPrevisto": 5924.45,
+        "valorExecutado": 0,
+        "saldo": 5924.45,
+        "totalLinhasPadEquivalentes": 1,
+        "linhas": [
+          {
+            "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_531991440416570841452.xls",
+            "aba": "938277",
+            "linha": 27,
+            "descricao": "SALDO REMANESCENTE",
+            "natureza": "CUSTEIO",
+            "quantidade": 1,
+            "valorUnitario": 5924.45,
+            "valorPrevisto": 5924.45,
+            "valorExecutado": 0,
+            "saldo": 5924.45
+          }
+        ]
+      },
+      "rateiosQuantidadeSuspeita": [
+        {
+          "area": "N/A",
+          "natureza": "CAPITAL",
+          "quantidadeGravada": 10,
+          "quantidadeEstimada": 1.22676,
+          "fatorInflacao": 8.151552,
+          "fatorInflacaoDecimal10": false,
+          "valorUnitarioReferencia": 5924.45,
+          "valorPrevistoReferencia": 7267.88
+        },
+        {
+          "area": "N/A",
+          "natureza": "CUSTEIO",
+          "quantidadeGravada": 10,
+          "quantidadeEstimada": 1,
+          "fatorInflacao": 10,
+          "fatorInflacaoDecimal10": true,
+          "valorUnitarioReferencia": 5924.45,
+          "valorPrevistoReferencia": 5924.45
+        }
+      ],
       "justificativaSugerida": null,
       "motivos": [
         "natureza divergente",
@@ -247,6 +660,13 @@
       "valorExecutadoPad": 3270.64,
       "saldoMemoria": 3950.68,
       "saldoPad": 3950.68,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -271,6 +691,13 @@
       "valorExecutadoPad": 3750,
       "saldoMemoria": 199.83,
       "saldoPad": 199.83,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -295,6 +722,13 @@
       "valorExecutadoPad": 10394.56,
       "saldoMemoria": -5131.23,
       "saldoPad": -5131.23,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -319,6 +753,13 @@
       "valorExecutadoPad": 1344,
       "saldoMemoria": 0,
       "saldoPad": 0,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -343,6 +784,13 @@
       "valorExecutadoPad": 1344,
       "saldoMemoria": 0,
       "saldoPad": 0,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -367,6 +815,13 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 21868,
       "saldoPad": 21868,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -391,6 +846,13 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 4287.7,
       "saldoPad": 4287.7,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -415,6 +877,13 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 505000,
       "saldoPad": 505000,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -439,6 +908,13 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 30292.2,
       "saldoPad": 30292.2,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -463,6 +939,13 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 12297.6,
       "saldoPad": 12297.6,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."
@@ -487,6 +970,13 @@
       "valorExecutadoPad": 0,
       "saldoMemoria": 426666.67,
       "saldoPad": 426666.67,
+      "quantidadePadConsolidada": null,
+      "valorUnitarioPadConsolidado": null,
+      "valorPrevistoPadConsolidado": null,
+      "valorExecutadoPadConsolidado": null,
+      "saldoPadConsolidado": null,
+      "padConsolidado": null,
+      "rateiosQuantidadeSuspeita": [],
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."

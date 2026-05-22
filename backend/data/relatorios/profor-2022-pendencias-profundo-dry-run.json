@@ -1,8 +1,8 @@
 {
-  "geradoEm": "2026-05-22T01:06:31.613Z",
+  "geradoEm": "2026-05-22T14:05:05.609Z",
   "modo": "dry-run",
   "fonte": {
-    "sqlite": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
+    "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
     "relatorios": {
       "ausentesSubstitutos": {
         "caminho": "backend/data/relatorios/profor-2022-ausentes-substitutos-dry-run.json",
@@ -19,7 +19,7 @@
       "itemNaoApto": {
         "caminho": "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T01:04:56.898Z",
+        "geradoEm": "2026-05-22T14:03:28.690Z",
         "erro": null
       },
       "rateioAntigo": {
@@ -31,7 +31,7 @@
       "quantidades": {
         "caminho": "backend/data/relatorios/profor-2022-quantidades-suspeitas-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T01:05:05.828Z",
+        "geradoEm": "2026-05-22T14:03:34.222Z",
         "erro": null
       },
       "seguranca": {
@@ -62,17 +62,17 @@
     "totalBloqueantesOperacionais": 10,
     "totalComDecisaoResolutiva": 68,
     "totalDecisoesRegistradas": 72,
-    "totalPossiveisFalsosPositivos": 65,
-    "totalPendenciasReaisEstimadas": 8,
+    "totalPossiveisFalsosPositivos": 70,
+    "totalPendenciasReaisEstimadas": 3,
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "totalPayloadAlteradoAposDecisao": 27,
     "separacaoOperacional": {
-      "pendenciaOperacionalReal": 12,
+      "pendenciaOperacionalReal": 7,
       "bloqueioTecnicoSeguranca": 2,
       "decisaoResolutivaComPendenciaTecnica": 7,
       "revalidacaoNecessaria": 27,
       "historicoSaneado": 34,
-      "falsoPositivoSaneavel": 61
+      "falsoPositivoSaneavel": 66
     },
     "porStatus": [
       {
@@ -127,6 +127,84 @@
     ]
   },
   "categorias": [
+    {
+      "categoria": "possivel_falso_positivo",
+      "quantidade": 70,
+      "ids": [
+        24,
+        25,
+        26,
+        27,
+        31,
+        32,
+        33,
+        34,
+        38,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145
+      ],
+      "risco": "medio",
+      "acaoRecomendada": "avaliar saneamento sistêmico auditável"
+    },
     {
       "categoria": "ja_saneado_mas_ainda_pendente",
       "quantidade": 68,
@@ -279,79 +357,6 @@
       "acaoRecomendada": "manter total PAD como fonte ou corrigir campo"
     },
     {
-      "categoria": "possivel_falso_positivo",
-      "quantidade": 65,
-      "ids": [
-        24,
-        25,
-        26,
-        27,
-        81,
-        82,
-        83,
-        84,
-        85,
-        86,
-        87,
-        90,
-        91,
-        92,
-        93,
-        94,
-        95,
-        96,
-        98,
-        99,
-        100,
-        101,
-        102,
-        103,
-        104,
-        105,
-        106,
-        107,
-        108,
-        109,
-        110,
-        111,
-        112,
-        113,
-        114,
-        116,
-        117,
-        118,
-        119,
-        120,
-        121,
-        122,
-        123,
-        124,
-        125,
-        126,
-        127,
-        128,
-        129,
-        130,
-        131,
-        132,
-        133,
-        134,
-        135,
-        136,
-        137,
-        138,
-        139,
-        140,
-        141,
-        142,
-        143,
-        144,
-        145
-      ],
-      "risco": "medio",
-      "acaoRecomendada": "avaliar saneamento sistêmico auditável"
-    },
-    {
       "categoria": "duplicidade_ou_ambiguidade_pad",
       "quantidade": 30,
       "ids": [
@@ -425,22 +430,6 @@
       "acaoRecomendada": "revalidar decisão antiga"
     },
     {
-      "categoria": "pendencia_real",
-      "quantidade": 8,
-      "ids": [
-        31,
-        32,
-        33,
-        34,
-        38,
-        39,
-        44,
-        46
-      ],
-      "risco": "alto",
-      "acaoRecomendada": "decisão humana real"
-    },
-    {
       "categoria": "historico_nao_reapresentado",
       "quantidade": 7,
       "ids": [
@@ -456,6 +445,19 @@
       "acaoRecomendada": "tratar em etapa de histórico/segurança"
     },
     {
+      "categoria": "item_nao_apto_sem_divergencia_material",
+      "quantidade": 5,
+      "ids": [
+        31,
+        32,
+        33,
+        34,
+        38
+      ],
+      "risco": "medio",
+      "acaoRecomendada": "liberar uso dry-run por decisão auditável"
+    },
+    {
       "categoria": "diacritico_ou_acentuacao",
       "quantidade": 4,
       "ids": [
@@ -466,13 +468,29 @@
       ],
       "risco": "baixo",
       "acaoRecomendada": "saneamento por diacrítico com critérios materiais"
+    },
+    {
+      "categoria": "pendencia_real",
+      "quantidade": 3,
+      "ids": [
+        39,
+        44,
+        46
+      ],
+      "risco": "alto",
+      "acaoRecomendada": "decisão humana real"
     }
   ],
   "categoriasOperacionais": [
     {
       "categoria": "falso_positivo_saneavel",
-      "quantidade": 61,
+      "quantidade": 66,
       "ids": [
+        31,
+        32,
+        33,
+        34,
+        38,
         81,
         82,
         83,
@@ -616,26 +634,6 @@
       "descricao": "Decisão com payload alterado após a decisão; exige revalidação humana."
     },
     {
-      "categoria": "pendencia_operacional_real",
-      "quantidade": 12,
-      "ids": [
-        31,
-        32,
-        33,
-        34,
-        38,
-        39,
-        44,
-        46,
-        88,
-        89,
-        97,
-        115
-      ],
-      "risco": "alto",
-      "descricao": "Pendência aberta que exige decisão humana substantiva."
-    },
-    {
       "categoria": "decisao_resolutiva_com_pendencia_tecnica",
       "quantidade": 7,
       "ids": [
@@ -649,6 +647,21 @@
       ],
       "risco": "medio",
       "descricao": "Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança."
+    },
+    {
+      "categoria": "pendencia_operacional_real",
+      "quantidade": 7,
+      "ids": [
+        39,
+        44,
+        46,
+        88,
+        89,
+        97,
+        115
+      ],
+      "risco": "alto",
+      "descricao": "Pendência aberta que exige decisão humana substantiva."
     },
     {
       "categoria": "bloqueio_tecnico_seguranca",
@@ -1377,16 +1390,17 @@
       "campoAfetado": "aptidao",
       "classificacoes": [
         "duplicidade_ou_ambiguidade_pad",
-        "pendencia_real"
+        "item_nao_apto_sem_divergencia_material",
+        "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: divergencia_material.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
+      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 32,
@@ -1401,16 +1415,17 @@
       "campoAfetado": "aptidao",
       "classificacoes": [
         "duplicidade_ou_ambiguidade_pad",
-        "pendencia_real"
+        "item_nao_apto_sem_divergencia_material",
+        "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: divergencia_material.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
+      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 33,
@@ -1425,16 +1440,17 @@
       "campoAfetado": "aptidao",
       "classificacoes": [
         "duplicidade_ou_ambiguidade_pad",
-        "pendencia_real"
+        "item_nao_apto_sem_divergencia_material",
+        "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: divergencia_material.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
+      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 34,
@@ -1449,16 +1465,17 @@
       "campoAfetado": "aptidao",
       "classificacoes": [
         "duplicidade_ou_ambiguidade_pad",
-        "pendencia_real"
+        "item_nao_apto_sem_divergencia_material",
+        "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: divergencia_material.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
+      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 35,
@@ -1543,16 +1560,17 @@
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "pendencia_real"
+        "item_nao_apto_sem_divergencia_material",
+        "possivel_falso_positivo"
       ],
-      "evidencia": "Auditoria de item não apto: divergencia_material.",
-      "recomendacao": "Exige decisão humana real; há divergência material entre memória e PAD.",
+      "evidencia": "Auditoria de item não apto: candidato_aceite_automatico.",
+      "recomendacao": "Liberar apenas por decisão auditável; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 39,
@@ -4090,7 +4108,12 @@
       24,
       25,
       26,
-      27
+      27,
+      31,
+      32,
+      33,
+      34,
+      38
     ],
     "exigemDecisaoHumana": [
       31,
@@ -4099,7 +4122,6 @@
       34,
       36,
       37,
-      38,
       39,
       44,
       46,

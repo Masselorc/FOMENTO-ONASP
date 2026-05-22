@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria profunda de pendências PAD (dry-run)
 
-Gerado em: 2026-05-22T01:06:31.613Z
+Gerado em: 2026-05-22T14:05:05.609Z
 
 Auditoria somente leitura: não registra decisão, não altera status, não publica e não altera o planoAplicacao oficial.
 Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO) — incluindo a divergência `#24`, já resolvida — são classificados como histórico/saneado e ficam fora da fila operacional.
@@ -13,42 +13,43 @@ Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO
 - Total bloqueante técnico: 45
 - Total bloqueante operacional: 10
 - Total com decisão resolutiva: 68
-- Total de suspeitas/falsos positivos: 65
-- Total de pendências reais estimadas: 8
+- Total de suspeitas/falsos positivos: 70
+- Total de pendências reais estimadas: 3
 - Bloqueios de segurança pré-ativação: 35
 
 Separação operacional (cada item recai em exatamente uma categoria):
 
-- Pendência operacional real: 12
+- Pendência operacional real: 7
 - Bloqueio técnico de segurança: 2
 - Decisão resolutiva com pendência técnica: 7
 - Revalidação necessária (payload alterado): 27
 - Histórico/saneado: 34
-- Falso positivo saneável: 61
+- Falso positivo saneável: 66
 
 ## 2. Separação operacional × bloqueio técnico
 
 | Categoria operacional | Qtd | IDs | Risco | Descrição |
 |---|---:|---|---|---|
-| `falso_positivo_saneavel` | 61 | 81, 82, 83, 84, 85, 86, 87, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113 ... | medio | Falso positivo saneável por regra sistêmica auditável. |
+| `falso_positivo_saneavel` | 66 | 31, 32, 33, 34, 38, 81, 82, 83, 84, 85, 86, 87, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108 ... | medio | Falso positivo saneável por regra sistêmica auditável. |
 | `historico_saneado` | 34 | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 29, 30, 35, 36, 37, 40 ... | baixo | Histórico/saneado; fora da fila operacional prioritária. |
 | `revalidacao_necessaria` | 27 | 47, 48, 49, 50, 51, 52, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74 | alto | Decisão com payload alterado após a decisão; exige revalidação humana. |
-| `pendencia_operacional_real` | 12 | 31, 32, 33, 34, 38, 39, 44, 46, 88, 89, 97, 115 | alto | Pendência aberta que exige decisão humana substantiva. |
 | `decisao_resolutiva_com_pendencia_tecnica` | 7 | 25, 26, 27, 28, 75, 77, 78 | medio | Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança. |
+| `pendencia_operacional_real` | 7 | 39, 44, 46, 88, 89, 97, 115 | alto | Pendência aberta que exige decisão humana substantiva. |
 | `bloqueio_tecnico_seguranca` | 2 | 79, 80 | alto | Pendente e bloqueante de publicação por critério técnico, sem decisão resolutiva. |
 
 ## 3. Tabela por categoria detalhada
 
 | Categoria | Qtd | IDs | Risco | Ação recomendada |
 |---|---:|---|---|---|
+| `possivel_falso_positivo` | 70 | 24, 25, 26, 27, 31, 32, 33, 34, 38, 81, 82, 83, 84, 85, 86, 87, 90, 91, 92, 93, 94, 95, 96, 98 ... | medio | avaliar saneamento sistêmico auditável |
 | `ja_saneado_mas_ainda_pendente` | 68 | 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 ... | medio | remover da operação padrão; revisar segurança |
 | `valor_ou_saldo_inconsistente` | 67 | 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102 ... | medio | manter total PAD como fonte ou corrigir campo |
-| `possivel_falso_positivo` | 65 | 24, 25, 26, 27, 81, 82, 83, 84, 85, 86, 87, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100, 101, 102, 103 ... | medio | avaliar saneamento sistêmico auditável |
 | `duplicidade_ou_ambiguidade_pad` | 30 | 31, 32, 33, 34, 36, 37, 44, 46, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103 ... | alto | revisar granularidade/substituição |
 | `decisao_antiga_com_payload_alterado` | 27 | 47, 48, 49, 50, 51, 52, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71 ... | alto | revalidar decisão antiga |
-| `pendencia_real` | 8 | 31, 32, 33, 34, 38, 39, 44, 46 | alto | decisão humana real |
 | `historico_nao_reapresentado` | 7 | 25, 26, 27, 28, 75, 77, 78 | alto | tratar em etapa de histórico/segurança |
+| `item_nao_apto_sem_divergencia_material` | 5 | 31, 32, 33, 34, 38 | medio | liberar uso dry-run por decisão auditável |
 | `diacritico_ou_acentuacao` | 4 | 24, 25, 26, 27 | baixo | saneamento por diacrítico com critérios materiais |
+| `pendencia_real` | 3 | 39, 44, 46 | alto | decisão humana real |
 
 ## 4. Tabela detalhada por item
 
@@ -84,14 +85,14 @@ Separação operacional (cada item recai em exatamente uma categoria):
 | #28 | 937216 | GO | `item_nao_apto` | Monitor LED, mínimo 27, conexões DVI-D ( | ACEITO | sim | `decisao_resolutiva_com_pendencia_tecnica` | `ja_saneado_mas_ainda_pendente`<br>`historico_nao_reapresentado` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Divergência não reapresentada na geração atual (nao_reapresentada_com_decisao_resolutiva). / Auditoria de item não apto: ja_decidido. |
 | #29 | 937216 | GO | `item_nao_apto` | Notebook; Sistema Operacional: Proprietá | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
 | #30 | 937216 | GO | `item_nao_apto` | Tablet, Display Super AMOLED 14,6, TFT, | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
-| #31 | 937265 | MS | `item_nao_apto` | Calça Tática | PENDENTE | sim | `pendencia_operacional_real` | `duplicidade_ou_ambiguidade_pad`<br>`pendencia_real` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: divergencia_material. |
-| #32 | 937265 | MS | `item_nao_apto` | Cinto Tático | PENDENTE | sim | `pendencia_operacional_real` | `duplicidade_ou_ambiguidade_pad`<br>`pendencia_real` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: divergencia_material. |
-| #33 | 937265 | MS | `item_nao_apto` | Coturno | PENDENTE | sim | `pendencia_operacional_real` | `duplicidade_ou_ambiguidade_pad`<br>`pendencia_real` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: divergencia_material. |
-| #34 | 937265 | MS | `item_nao_apto` | Geladeira minimo 410L Frost Free 110v Branca | PENDENTE | sim | `pendencia_operacional_real` | `duplicidade_ou_ambiguidade_pad`<br>`pendencia_real` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: divergencia_material. |
+| #31 | 937265 | MS | `item_nao_apto` | Calça Tática | PENDENTE | sim | `falso_positivo_saneavel` | `duplicidade_ou_ambiguidade_pad`<br>`item_nao_apto_sem_divergencia_material`<br>`possivel_falso_positivo` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: falso_positivo_saneavel. |
+| #32 | 937265 | MS | `item_nao_apto` | Cinto Tático | PENDENTE | sim | `falso_positivo_saneavel` | `duplicidade_ou_ambiguidade_pad`<br>`item_nao_apto_sem_divergencia_material`<br>`possivel_falso_positivo` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: falso_positivo_saneavel. |
+| #33 | 937265 | MS | `item_nao_apto` | Coturno | PENDENTE | sim | `falso_positivo_saneavel` | `duplicidade_ou_ambiguidade_pad`<br>`item_nao_apto_sem_divergencia_material`<br>`possivel_falso_positivo` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: falso_positivo_saneavel. |
+| #34 | 937265 | MS | `item_nao_apto` | Geladeira minimo 410L Frost Free 110v Branca | PENDENTE | sim | `falso_positivo_saneavel` | `duplicidade_ou_ambiguidade_pad`<br>`item_nao_apto_sem_divergencia_material`<br>`possivel_falso_positivo` | Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: falso_positivo_saneavel. |
 | #35 | 937468 | TO | `item_nao_apto` | ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
 | #36 | 937468 | TO | `item_nao_apto` | ETAPA 2 - CORREGEDORIA - Nobreak: Peça/ | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente`<br>`duplicidade_ou_ambiguidade_pad` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: ja_decidido. |
 | #37 | 937468 | TO | `item_nao_apto` | ETAPA 2 - CORREGEDORIA - Tablet, tela su | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente`<br>`duplicidade_ou_ambiguidade_pad` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. / Auditoria de item não apto: ja_decidido. |
-| #38 | 937817 | RJ | `item_nao_apto` | CAPACETE PROTETOR | PENDENTE | sim | `pendencia_operacional_real` | `pendencia_real` | Auditoria de item não apto: divergencia_material. |
+| #38 | 937817 | RJ | `item_nao_apto` | CAPACETE PROTETOR | PENDENTE | sim | `falso_positivo_saneavel` | `item_nao_apto_sem_divergencia_material`<br>`possivel_falso_positivo` | Auditoria de item não apto: candidato_aceite_automatico. |
 | #39 | 938128 | SP | `item_nao_apto` | Agenda Planner | PENDENTE | sim | `pendencia_operacional_real` | `pendencia_real` | Auditoria de item não apto: divergencia_material. |
 | #40 | 938128 | SP | `item_nao_apto` | Câmera Digital, para a Ouvidoria | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
 | #41 | 938128 | SP | `item_nao_apto` | Contratação de serviços de digitalização | ACEITO | sim | `historico_saneado` | `ja_saneado_mas_ainda_pendente` | Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. / Auditoria de item não apto: ja_decidido. |
@@ -200,8 +201,8 @@ Separação operacional (cada item recai em exatamente uma categoria):
 
 ## 5. Lista de saneamentos potenciais
 
-- Podem ser saneados por regra auditável: 24, 25, 26, 27
-- Exigem decisão humana: 31, 32, 33, 34, 36, 37, 38, 39, 44, 46, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 128, 129, 130
+- Podem ser saneados por regra auditável: 24, 25, 26, 27, 31, 32, 33, 34, 38
+- Exigem decisão humana: 31, 32, 33, 34, 36, 37, 39, 44, 46, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 128, 129, 130
 - Exigem correção de código/parser: nenhum
 - Exigem ajuste de UI/filtro: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 35, 36, 37, 40, 41, 42, 43, 45, 47, 48, 49, 50, 51, 52, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 77, 78
 
@@ -229,11 +230,11 @@ Separação operacional (cada item recai em exatamente uma categoria):
 - Não exibir como pendência operacional na fila de revisão.
 
 ### Grupo 3 — Pendências operacionais reais
-- IDs: 31, 32, 33, 34, 38, 39, 44, 46, 88, 89, 97, 115
+- IDs: 39, 44, 46, 88, 89, 97, 115
 - Manter para revisão humana real; exigem decisão substantiva (não sanear por regra).
 
 ### Grupo 4 — Falsos positivos saneáveis
-- IDs: 81, 82, 83, 84, 85, 86, 87, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145
+- IDs: 31, 32, 33, 34, 38, 81, 82, 83, 84, 85, 86, 87, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145
 - Propor saneamento sistêmico auditável em etapa posterior; sem decisão automática nesta etapa.
 
 ### Histórico/saneado e bloqueio técnico puro
