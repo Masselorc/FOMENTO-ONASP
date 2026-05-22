@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria de regressão dos saneamentos por chave de pareamento frágil (dry-run)
 
-Gerado em: 2026-05-22T21:10:55.212Z
+Gerado em: 2026-05-22T21:36:06.983Z
 Modo: dry-run — somente leitura. Não publica, não registra decisão, não reabre divergência, não altera SQLite, origem ativa nem `planoAplicacao` oficial.
 
 > Diagnostico da #44 (938128/SP): o PAD tinha multiplas linhas para a mesma descricao. Reavaliacao transversal dos saneamentos que dependem de pareamento de linha PAD.
@@ -12,8 +12,8 @@ Modo: dry-run — somente leitura. Não publica, não registra decisão, não re
 - Saneamentos concluídos reavaliados (com decisão resolutiva ou status resolutivo): 72
   - Permanecem confiáveis (saneamento confirmado): 71
   - Exigem revalidação manual (suspeitos de chave frágil ou pendência material decidida): 0
-- Divergências abertas com alerta de pareamento (sem decisão resolutiva): 0
-- Pendências materiais potenciais abertas (sem decisão resolutiva): 0
+- Divergências abertas com alerta de pareamento (sem decisão resolutiva): 4
+- Pendências materiais potenciais abertas (sem decisão resolutiva): 1
 - Riscos confirmados já diagnosticados (#44): 1
 
 > [!IMPORTANT]
@@ -54,13 +54,20 @@ Saneamentos concluídos cuja chave de pareamento (descrição/itemConhecido) cor
 
 Divergências que continuam abertas (status PENDENTE) e cujos grupos PAD possuem mais de uma linha com a mesma descrição normalizada (mas com mesma natureza/código). **Não são regressão de saneamento**, pois nunca foram decididas.
 
-- Nenhuma divergência aberta com alerta de pareamento.
+| Divergência | Convênio | UF | Tipo Alerta | Status | Grupo PAD |
+|---|---|---|---|---|---|
+| #31 | 937265 | MS | item_nao_apto | PENDENTE | `937265::CALCA TATICA` (2 linhas) |
+| #32 | 937265 | MS | item_nao_apto | PENDENTE | `937265::CINTO TATICO` (2 linhas) |
+| #33 | 937265 | MS | item_nao_apto | PENDENTE | `937265::COTURNO` (2 linhas) |
+| #34 | 937265 | MS | item_nao_apto | PENDENTE | `937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA` (2 linhas) |
 
 ## 5. Pendências Materiais Potenciais Abertas
 
 Divergências abertas (status PENDENTE) cujos grupos PAD possuem múltiplas naturezas/códigos (risco material alto/médio). Exigem segregação material no pareamento.
 
-- Nenhuma pendência material potencial aberta.
+| Divergência | Convênio | UF | Tipo Alerta | Status | Naturezas | Códigos |
+|---|---|---|---|---|---|---|
+| #46 | 938277 | MA | item_nao_apto | PENDENTE | CUSTEIO, CAPITAL | 33903099, 44905299 |
 
 ## 6. Casos Já Diagnosticados
 

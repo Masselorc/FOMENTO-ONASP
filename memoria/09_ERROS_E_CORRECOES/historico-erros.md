@@ -1067,3 +1067,50 @@ Ao atualizar:
 **Validações recomendadas:** `node backend/scripts/reconstruir-plano-pad-profor-2022.js`, `node backend/scripts/comparar-plano-pad-profor-2022.js`, `node backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js`, `node --test tests/services/profor-pad-identidade-material-regressao.test.js`.
 
 **Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar decisões, logs, divergências ou relatórios históricos.
+
+---
+
+## 22/05/2026 - PROFOR 2022: auditoria da redução de linhas na reconstrução do plano (623 para 567)
+
+**Classificação:** registro de auditoria | explicação de divergência material
+
+**Contexto:** Verificação da reconstrução do plano de aplicação do PAD 2022 para o Convênio 937265 (MS) após a correção da duplicação de rateios em itens multi-linha.
+
+**Problema:** O total de linhas no plano de aplicação reconstruído caiu de 623 para 567. Era necessário auditar se essa redução (56 linhas a menos) foi correta e legítima, garantindo que nenhum item legítimo foi descartado e explicando exatamente quais chaves perderam linhas.
+
+**Auditoria e Explicação:**
+A causa raiz da redução foi a eliminação das duplicações geradas pela multiplicação cruzada (cross-multiplication) entre linhas do PAD e rateios do mesmo item. Antes da correção, quando um item conhecido multi-linha continha $N$ linhas físicas no PAD e $M$ rateios na memória, a reconstrução gerava $N \times M$ linhas (repetindo todos os rateios para cada linha do PAD). Com a correção do pareamento material e controle de uso (`_usado = true`), cada linha do PAD pareia com exatamente uma linha de rateio correspondente, gerando apenas $N$ linhas (ou $M$ se coincidirem).
+
+Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento da redução por item conhecido é o seguinte:
+* **Redução de 6 linhas (de 9 para 3 linhas) - Itens com 3 linhas PAD e 3 rateios na memória (redução de $3 \times 3 = 9$ para $3$):**
+  * `Ar condicionado inverter 12.000 BTUs` (-6 linhas)
+  * `Cadeira Fixa` (-6 linhas)
+  * `Cadeira Giratória com braços` (-6 linhas)
+  * `Computador completo com monitor` (-6 linhas)
+  * `Mesa em L` (-6 linhas)
+* **Redução de 2 linhas (de 4 para 2 linhas) - Itens com 2 linhas PAD e 2 rateios na memória (redução de $2 \times 2 = 4$ para $2$):**
+  * `Ar condicionado inverter 24.000 BTUs` (-2 linhas)
+  * `Calça Tática` (-2 linhas)
+  * `Camisa Tática` (-2 linhas)
+  * `Cinto Tático` (-2 linhas)
+  * `Coturno` (-2 linhas)
+  * `Estante em aço` (-2 linhas)
+  * `Geladeira Frost Free` (-2 linhas)
+  * `Longarina` (-2 linhas)
+  * `Lousa branca` (-2 linhas)
+  * `Microondas` (-2 linhas)
+  * `Notebook` (-2 linhas)
+* **Redução de 2 linhas (de 4 para 2 linhas) - Pareamento do Meia Militar:**
+  * `Meia militar` / `Meia Militar` (-2 linhas)
+
+**Cálculo do total de redução:** $(5 \times 6) + (12 \times 2) + 2 = 30 + 24 + 2 = 56$ linhas.
+
+**Legitimidade e Segurança:**
+* A soma dos valores previstos e quantidades após a consolidação permaneceu correta e condizente com a soma total do PAD. Nenhum item legítimo foi descartado.
+* O uso de propriedades de controle em memória (`_usado = true`) é seguro pois os arrays de rateio são instanciados e consumidos na memória no escopo de cada execução, sem efeito colateral no banco de dados.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`, `backend/data/relatorios/profor-2022-pad-plano-reconstrucido-dry-run.json`.
+
+**Validações recomendadas:** `npm run profor:pad:reconstruir-plano:dry-run`, `npm run profor:pad:comparar-plano:dry-run`.
+
+**Rollback:** `git checkout -- memoria/09_ERROS_E_CORRECOES/historico-erros.md`

@@ -254,7 +254,7 @@ function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temD
     };
   }
 
-  if (reconstrucaoCorreta) {
+  if (reconstrucaoCorreta && temDecisaoResolutiva) {
     return {
       classificacao: "saneamento_confirmado",
       recomendacao: "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",

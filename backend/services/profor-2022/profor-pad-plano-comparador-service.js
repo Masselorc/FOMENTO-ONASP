@@ -272,6 +272,20 @@ function chaveItemDeLinha(numeroConvenio, descricao, natureza = null) {
   return criarChaveItemRateioProfor(numero, normalizarDescricaoRateioProfor(descricao));
 }
 
+function normalizarDescricoesPlanosPorEquivalencia(linhas, equivalenciasAceitas) {
+  if (!equivalenciasAceitas || equivalenciasAceitas.size === 0) return;
+  for (const linha of linhas) {
+    const chaveItem = chaveItemDeLinha(linha.numero ?? linha.numeroConvenio, linha.descricao, linha.natureza);
+    if (chaveItem && equivalenciasAceitas.has(chaveItem)) {
+      const eq = equivalenciasAceitas.get(chaveItem);
+      const descricaoMemoria = eq.payload?.descricaoMemoria || eq.payloadDecisao?.descricaoMemoria;
+      if (descricaoMemoria) {
+        linha.descricao = descricaoMemoria;
+      }
+    }
+  }
+}
+
 /**
  * Compara, em dry-run, o planoAplicacao da origem antiga com o planoAplicacao
  * reconstruído pelos relatórios PAD. Não usa fuzzy matching, não consolida
@@ -287,6 +301,9 @@ function compararPlanosPadDryRun(opcoes = {}) {
   const conveniosComPendencia = carregarConveniosComPendenciaBloqueante();
   const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
   const regras = aplicacaoDecisoes.regras;
+
+  normalizarDescricoesPlanosPorEquivalencia(planoAntigo, regras.equivalenciasAceitas);
+  normalizarDescricoesPlanosPorEquivalencia(planoNovo, regras.equivalenciasAceitas);
 
   const indiceAntigo = indexarPorChave(planoAntigo);
   const indiceNovo = indexarPorChave(planoNovo);

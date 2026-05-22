@@ -1,6 +1,6 @@
 # PROFOR 2022 — Comparação planoAplicacao antigo × reconstruído PAD (dry-run)
 
-Gerado em: 2026-05-22T21:10:51.447Z
+Gerado em: 2026-05-22T21:36:12.783Z
 Modo: dry-run
 Origem antiga: memoria-rateio-persistida (abas-uf capturadas)
 Origem nova: relatorios-pad-rateados
@@ -9,19 +9,19 @@ Origem nova: relatorios-pad-rateados
 
 - Linhas origem antiga: 566
 - Linhas reconstruídas (PAD): 567
-- Itens iguais: 492
-- Itens novos: 29
-- Itens ausentes: 35
+- Itens iguais: 497
+- Itens novos: 24
+- Itens ausentes: 30
 - Quantidade divergente: 2
 - Valor previsto divergente: 12
 - Valor executado divergente: 21
 - Saldo divergente: 33
-- Área divergente: 1
+- Área divergente: 0
 - Natureza divergente: 0
-- Diferenças críticas: 29
-- Avisos: 7
+- Diferenças críticas: 24
+- Avisos: 3
 - Diferenças esperadas por atualização PAD: 12
-- Diferenças por pendência de decisão: 22
+- Diferenças por pendência de decisão: 21
 - Diferenças saneadas por decisão (dry-run): 0
 - Ausências confirmadas por decisão (dry-run): 27
 - Itens ambíguos: 6
@@ -53,21 +53,16 @@ Origem nova: relatorios-pad-rateados
 - Reconstrução NÃO apta para ativação: 33 impedimento(s) registrado(s).
 - Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.
 - Diferença total origem antiga × reconstrução PAD: previsto -9506.78, executado 15043.6, saldo -24550.38.
-- Diferenças críticas: 29. Itens ambíguos: 6.
+- Diferenças críticas: 24. Itens ambíguos: 6.
 - Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao.
 
 ## Amostra de diferenças críticas
 
-- [novo] 937782 | ESCOLA PENAL | Desktop para edição de vídeo
-- [novo] 937782 | CORREGEDORIA | Smartphone mínimo de 128gb de memória in
-- [novo] 937782 | OUVIDORIA | Smartphone mínimo de 128gb de memória in
-- [novo] 937782 | ESCOLA PENAL | Switcher de vídeo
 - [novo] 938128 | NAO INFORMADO | Saldo Residual
 - [novo] 937782 | OUVIDORIA | Contratação de 01 (um) Supervisor por 12
 - [novo] 937782 | OUVIDORIA | Contratação de 02 (dois) Auxiliares Admi
 - [novo] 937782 | OUVIDORIA | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb
 - [novo] 937782 | CORREGEDORIA | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb
-- [novo] 937265 | CORREGEDORIA | Meia militar
 - [novo] 937221 | ESCOLA PENAL | Ar condicionado Split 60.000 BTUs (ESCOLA)
 - [novo] 937221 | CORREGEDORIA | Ar condicionado split, capacidade de 12.
 - [novo] 937221 | CORREGEDORIA | Ar condicionado tipo split, capacidade 3
@@ -78,4 +73,9 @@ Origem nova: relatorios-pad-rateados
 - [novo] 937221 | ESCOLA | Forno de Micro-ondas a partir de- 32 lit
 - [novo] 937221 | OUVIDORIA | Forno de Microondas - 20L - (OUVIDORIA)
 - [novo] 937221 | CORREGEDORIA | Fragmentadora e papel - Corregedoria
+- [novo] 937221 | OUVIDORIA | Frigobar 45L INVERTER BIVOLT (OUVIDORIA)
+- [novo] 937221 | OUVIDORIA | Impressora multifuncional (OUVIDORIA)
+- [novo] 937221 | OUVIDORIA | Nobreak 1200 BIVOLT(OUVIDORIA)
+- [novo] 937221 | OUVIDORIA | Notebook i7 16 gb, 1 TB SSD, Windows 11
+- [novo] 937221 | ESCOLA | Quadro Lousa branca
 

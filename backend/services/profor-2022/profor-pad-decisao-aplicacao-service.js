@@ -426,6 +426,8 @@ function carregarAplicacaoDecisoesDryRun() {
       efeito: interpretacao.efeito,
       aplicavel: interpretacao.aplicavel,
       motivoNaoAplicavel: interpretacao.motivoNaoAplicavel,
+      payload: divergencia.payload,
+      payloadDecisao: decisao.payloadDecisao,
     };
 
     decisoesResolutivasEncontradas.push({

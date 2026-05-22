@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria de identidade material das linhas PAD (dry-run)
 
-Gerado em: 2026-05-22T20:50:40.774Z
+Gerado em: 2026-05-22T21:36:04.766Z
 Modo: dry-run — somente leitura. Não publica, não registra decisão, não altera SQLite, origem ativa nem `planoAplicacao` oficial.
 
 > Diagnostico da divergencia #44 (938128/SP): o PAD tinha duas linhas 'Saldo Residual' com naturezas/codigos diferentes para a mesma descricao. Chave de pareamento por descricao normalizada nao e identidade material suficiente.

@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T20:49:07.015Z",
+  "geradoEm": "2026-05-22T21:36:15.218Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -43,13 +43,13 @@
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T20:12:48.131Z",
+        "geradoEm": "2026-05-22T21:36:12.754Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T20:12:48.154Z",
+        "geradoEm": "2026-05-22T21:36:12.783Z",
         "erro": null
       },
       "saldosResiduais": {
@@ -447,42 +447,6 @@
       "acaoRecomendada": "manter total PAD como fonte ou corrigir campo"
     },
     {
-      "categoria": "duplicidade_ou_ambiguidade_pad",
-      "quantidade": 28,
-      "ids": [
-        31,
-        32,
-        33,
-        34,
-        36,
-        37,
-        88,
-        89,
-        90,
-        91,
-        92,
-        93,
-        94,
-        95,
-        96,
-        97,
-        98,
-        99,
-        100,
-        101,
-        102,
-        103,
-        104,
-        105,
-        106,
-        128,
-        129,
-        130
-      ],
-      "risco": "alto",
-      "acaoRecomendada": "revisar granularidade/substituição"
-    },
-    {
       "categoria": "decisao_antiga_com_payload_alterado",
       "quantidade": 27,
       "ids": [
@@ -545,6 +509,19 @@
       ],
       "risco": "medio",
       "acaoRecomendada": "liberar uso dry-run por decisão auditável"
+    },
+    {
+      "categoria": "duplicidade_ou_ambiguidade_pad",
+      "quantidade": 5,
+      "ids": [
+        36,
+        37,
+        128,
+        129,
+        130
+      ],
+      "risco": "alto",
+      "acaoRecomendada": "revisar granularidade/substituição"
     },
     {
       "categoria": "diacritico_ou_acentuacao",
@@ -1550,12 +1527,11 @@
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "item_nao_apto_sem_divergencia_material",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
+      "evidencia": "Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -1577,12 +1553,11 @@
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "item_nao_apto_sem_divergencia_material",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
+      "evidencia": "Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -1604,12 +1579,11 @@
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "item_nao_apto_sem_divergencia_material",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
+      "evidencia": "Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -1631,12 +1605,11 @@
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "item_nao_apto_sem_divergencia_material",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Auditoria de item não apto: falso_positivo_saneavel.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
+      "evidencia": "Auditoria de item não apto: falso_positivo_saneavel.",
+      "recomendacao": "Tratar como falso positivo saneável: conjunto PAD equivalente fecha com a memória; não alterar aptidão no banco nesta auditoria.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -2988,13 +2961,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (7.94) coincide com o unitario efetivo arredondado (7.94); diferenca 1 dentro da tolerancia 1.51. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (7.94) coincide com o unitario efetivo arredondado (7.94); diferenca 1 dentro da tolerancia 1.51. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3016,13 +2988,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (1.87) coincide com o unitario efetivo arredondado (1.87); diferenca 1 dentro da tolerancia 1.51. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (1.87) coincide com o unitario efetivo arredondado (1.87); diferenca 1 dentro da tolerancia 1.51. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3044,13 +3015,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (188.89) coincide com o unitario efetivo arredondado (188.89); diferenca 0.07 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (188.89) coincide com o unitario efetivo arredondado (188.89); diferenca 0.07 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3072,13 +3042,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (330.53) coincide com o unitario efetivo arredondado (330.53); diferenca 0.1 dentro da tolerancia 0.16. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (330.53) coincide com o unitario efetivo arredondado (330.53); diferenca 0.1 dentro da tolerancia 0.16. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3100,13 +3069,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (330.53) coincide com o unitario efetivo arredondado (330.53); diferenca 0.07 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (330.53) coincide com o unitario efetivo arredondado (330.53); diferenca 0.07 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3128,13 +3096,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (198.38) coincide com o unitario efetivo arredondado (198.38); diferenca 0.1 dentro da tolerancia 0.16. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (198.38) coincide com o unitario efetivo arredondado (198.38); diferenca 0.1 dentro da tolerancia 0.16. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3156,13 +3123,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (209.13) coincide com o unitario efetivo arredondado (209.13); diferenca 0.08 dentro da tolerancia 0.16. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (209.13) coincide com o unitario efetivo arredondado (209.13); diferenca 0.08 dentro da tolerancia 0.16. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3184,13 +3150,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (209.13) coincide com o unitario efetivo arredondado (209.13); diferenca 0.05 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (209.13) coincide com o unitario efetivo arredondado (209.13); diferenca 0.05 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3212,13 +3177,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (90.73) coincide com o unitario efetivo arredondado (90.73); diferenca 0.07 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (90.73) coincide com o unitario efetivo arredondado (90.73); diferenca 0.07 dentro da tolerancia 0.11. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3240,13 +3204,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (7.99) coincide com o unitario efetivo arredondado (7.99); diferenca 0.31 dentro da tolerancia 0.51. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (7.99) coincide com o unitario efetivo arredondado (7.99); diferenca 0.31 dentro da tolerancia 0.51. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3268,13 +3231,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (198.38) coincide com o unitario efetivo arredondado (198.38); diferenca 0.13 dentro da tolerancia 0.21. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (198.38) coincide com o unitario efetivo arredondado (198.38); diferenca 0.13 dentro da tolerancia 0.21. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3296,13 +3258,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (163.77) coincide com o unitario efetivo arredondado (163.77); diferenca 0.02 dentro da tolerancia 0.04. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (163.77) coincide com o unitario efetivo arredondado (163.77); diferenca 0.02 dentro da tolerancia 0.04. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3324,13 +3285,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (98.42) coincide com o unitario efetivo arredondado (98.42); diferenca 0.14 dentro da tolerancia 0.21. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (98.42) coincide com o unitario efetivo arredondado (98.42); diferenca 0.14 dentro da tolerancia 0.21. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3352,13 +3312,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (37.59) coincide com o unitario efetivo arredondado (37.59); diferenca 0.28 dentro da tolerancia 0.3. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (37.59) coincide com o unitario efetivo arredondado (37.59); diferenca 0.28 dentro da tolerancia 0.3. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3380,13 +3339,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2595.3) coincide com o unitario efetivo arredondado (2595.3); diferenca 0.01 dentro da tolerancia 0.03. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2595.3) coincide com o unitario efetivo arredondado (2595.3); diferenca 0.01 dentro da tolerancia 0.03. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3408,13 +3366,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (655.09) coincide com o unitario efetivo arredondado (655.09); diferenca 0.03 dentro da tolerancia 0.06. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (655.09) coincide com o unitario efetivo arredondado (655.09); diferenca 0.03 dentro da tolerancia 0.06. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3436,13 +3393,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2510.22) coincide com o unitario efetivo arredondado (2510.22); diferenca 0.02 dentro da tolerancia 0.04. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2510.22) coincide com o unitario efetivo arredondado (2510.22); diferenca 0.02 dentro da tolerancia 0.04. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3464,13 +3420,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2510.22) coincide com o unitario efetivo arredondado (2510.22); diferenca 0.03 dentro da tolerancia 0.06. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2510.22) coincide com o unitario efetivo arredondado (2510.22); diferenca 0.03 dentro da tolerancia 0.06. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -3492,13 +3447,12 @@
       "bloqueiaPublicacao": false,
       "campoAfetado": "quantidade_valor_unitario_inconsistente",
       "classificacoes": [
-        "duplicidade_ou_ambiguidade_pad",
         "valor_ou_saldo_inconsistente",
         "quantidade_arredondamento_valor_unitario",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Comparador antigo x novo aponta ambiguidade para descrição/convênio compatível. | Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2510.22) coincide com o unitario efetivo arredondado (2510.22); diferenca 0.02 dentro da tolerancia 0.04. O total previsto informado pelo PAD prevalece.",
-      "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
+      "evidencia": "Diferenca explicada pelo arredondamento do valor unitario exibido para 2 casas: unitario exibido (2510.22) coincide com o unitario efetivo arredondado (2510.22); diferenca 0.02 dentro da tolerancia 0.04. O total previsto informado pelo PAD prevalece.",
+      "recomendacao": "Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
       "totalLogs": 16,
@@ -4579,31 +4533,8 @@
       46
     ],
     "exigemDecisaoHumana": [
-      31,
-      32,
-      33,
-      34,
       36,
       37,
-      88,
-      89,
-      90,
-      91,
-      92,
-      93,
-      94,
-      95,
-      96,
-      97,
-      98,
-      99,
-      100,
-      101,
-      102,
-      103,
-      104,
-      105,
-      106,
       128,
       129,
       130
