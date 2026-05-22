@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T16:04:43.801Z",
+  "geradoEm": "2026-05-22T20:12:40.725Z",
   "modo": "dry-run",
   "tolerancias": {
     "quantidade": 0.000001,
@@ -1064,7 +1064,83 @@
       "saldoPadConsolidado": null,
       "padConsolidado": null,
       "rateiosQuantidadeSuspeita": [],
-      "comparacaoSaldoResidualPorNatureza": null,
+      "comparacaoSaldoResidualPorNatureza": {
+        "diagnostico": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
+        "naturezaMemoriaOriginal": "CAPITAL",
+        "naturezaMista": false,
+        "porNatureza": [
+          {
+            "natureza": "CAPITAL",
+            "memoria": {
+              "natureza": "CAPITAL",
+              "quantidade": 11,
+              "valorPrevisto": 22351.09,
+              "valorExecutado": 0,
+              "saldo": 22351.09
+            },
+            "pad": {
+              "descricao": "Saldo Residual",
+              "natureza": "CAPITAL",
+              "quantidade": 1,
+              "valorUnitario": 20704.73,
+              "valorPrevisto": 20704.73,
+              "valorExecutado": 0,
+              "saldo": 20704.73,
+              "totalLinhasPadEquivalentes": 1,
+              "linhas": [
+                {
+                  "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+                  "aba": "938128",
+                  "linha": 61,
+                  "descricao": "Saldo Residual",
+                  "natureza": "CAPITAL",
+                  "quantidade": 1,
+                  "valorUnitario": 20704.73,
+                  "valorPrevisto": 20704.73,
+                  "valorExecutado": 0,
+                  "saldo": 20704.73
+                }
+              ]
+            },
+            "fecha": false,
+            "motivo": "Valor previsto, executado ou saldo divergente para esta natureza."
+          },
+          {
+            "natureza": "CUSTEIO",
+            "memoria": null,
+            "pad": {
+              "descricao": "Saldo Residual",
+              "natureza": "CUSTEIO",
+              "quantidade": 1,
+              "valorUnitario": 71.36,
+              "valorPrevisto": 71.36,
+              "valorExecutado": 0,
+              "saldo": 71.36,
+              "totalLinhasPadEquivalentes": 1,
+              "linhas": [
+                {
+                  "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+                  "aba": "938128",
+                  "linha": 19,
+                  "descricao": "Saldo Residual",
+                  "natureza": "CUSTEIO",
+                  "quantidade": 1,
+                  "valorUnitario": 71.36,
+                  "valorPrevisto": 71.36,
+                  "valorExecutado": 0,
+                  "saldo": 71.36
+                }
+              ]
+            },
+            "fecha": false,
+            "motivo": "Natureza presente no PAD sem parcela correspondente na memoria."
+          }
+        ],
+        "totalMemoriaPrevisto": 22351.09,
+        "totalPadPrevisto": 20776.09,
+        "totalApenasConferencia": true,
+        "todasNaturezasFecham": false
+      },
       "justificativaSugerida": null,
       "motivos": [
         "Divergência já possui decisão resolutiva ou status não analisável."

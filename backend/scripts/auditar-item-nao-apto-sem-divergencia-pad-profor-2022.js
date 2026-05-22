@@ -486,9 +486,30 @@ function montarLinhaRelatorio(divergencia, dados, classificacao, motivos, extras
 
 function classificarDivergencia(divergencia, contexto = {}) {
   if (possuiDecisaoResolutiva(divergencia) || !STATUS_ANALISAVEIS.has(String(divergencia.status || "").toUpperCase())) {
-    return montarLinhaRelatorio(divergencia, montarMemoriaPad(divergencia), "ja_decidido", [
+    const dadosDecidido = montarMemoriaPad(divergencia);
+    // Mesmo ja decidida, uma divergencia de saldo residual precisa carregar a
+    // comparacao por natureza: outros auditores (saldos residuais) usam
+    // todasNaturezasFecham para distinguir falso positivo de divergencia real.
+    // Sem isso, um saldo residual decidido cai indevidamente em
+    // saldo_residual_natureza_divergente so por nao ter sido reavaliado.
+    let comparacaoSaldoResidual = null;
+    const descricaoSaldoResidualDecidido =
+      dadosDecidido.memoria.descricao || dadosDecidido.pad.descricao;
+    if (
+      divergencia.payload
+      && typeof divergencia.payload === "object"
+      && ehSaldoResidualProfor(descricaoSaldoResidualDecidido)
+    ) {
+      comparacaoSaldoResidual = compararSaldoResidualPorNatureza(
+        divergencia,
+        dadosDecidido,
+        divergencia.payload,
+        contexto.itensPad || []
+      );
+    }
+    return montarLinhaRelatorio(divergencia, dadosDecidido, "ja_decidido", [
       "Divergência já possui decisão resolutiva ou status não analisável.",
-    ]);
+    ], { comparacaoSaldoResidualPorNatureza: comparacaoSaldoResidual });
   }
 
   if (!divergencia.payload || typeof divergencia.payload !== "object") {

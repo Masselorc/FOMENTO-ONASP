@@ -252,35 +252,51 @@ function carregarDecisoesAfetadas(divergencias) {
 }
 
 /**
- * Conjunto de divergenciaId cuja comparacao de saldo residual/remanescente
- * fecha quando segregada por natureza. Lido do relatorio de item nao apto, que
- * separa a memoria consolidada e compara cada natureza com a linha PAD de mesma
- * natureza. Para esses itens, ter CAPITAL e CUSTEIO juntos NAO e divergencia:
- * e apenas memoria consolidada com correspondente PAD em cada natureza.
+ * Mapa divergenciaId -> comparacao de saldo residual/remanescente segregada por
+ * natureza, lido do relatorio de item nao apto. A comparacao separa a memoria
+ * consolidada e confronta cada natureza com a linha PAD de mesma natureza.
+ * Inclui itens ja decididos (jaDecididos), pois o auditor de item nao apto
+ * passou a calcular a comparacao por natureza tambem para divergencias com
+ * decisao resolutiva — sem isso, um saldo residual decidido seria rotulado
+ * indevidamente como natureza divergente apenas por nao ter sido reavaliado.
  */
-function carregarSaldosResiduaisFechadosPorNatureza() {
+function carregarComparacoesSaldoResidualPorNatureza() {
   const relatorio = lerJsonSeExistir(
     "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json"
   );
-  const fechados = new Set();
-  if (!relatorio) return fechados;
+  const comparacoes = new Map();
+  if (!relatorio) return comparacoes;
   const listas = [
     relatorio.semDivergenciaMaterialDetectada,
     relatorio.candidatosAceiteAutomatico,
     relatorio.falsosPositivosSaneaveis,
     relatorio.divergenciasMateriais,
+    relatorio.jaDecididos,
   ].filter(Array.isArray);
   for (const item of listas.flat()) {
     const comparacao = item?.comparacaoSaldoResidualPorNatureza;
     const id = Number(item?.id);
-    if (Number.isInteger(id) && comparacao && comparacao.todasNaturezasFecham === true) {
-      fechados.add(id);
-    }
+    if (Number.isInteger(id) && comparacao) comparacoes.set(id, comparacao);
   }
-  return fechados;
+  return comparacoes;
 }
 
-function detectarMisturas(registros, fechadosPorNatureza = new Set()) {
+/**
+ * Indica se uma mistura CAPITAL/CUSTEIO de saldo residual fecha por natureza —
+ * isto e, cada natureza da memoria consolidada tem linha PAD equivalente de
+ * mesma natureza e valor. Quando fecha, a mistura nao e divergencia: era apenas
+ * memoria consolidada com correspondente PAD por natureza.
+ */
+function misturaFechaPorNatureza(comparacao) {
+  return Boolean(
+    comparacao
+    && Array.isArray(comparacao.porNatureza)
+    && comparacao.porNatureza.length
+    && comparacao.todasNaturezasFecham === true
+  );
+}
+
+function detectarMisturas(registros, comparacoesPorNatureza = new Map()) {
   const porDescricao = new Map();
   for (const item of registros) {
     const chave = `${normalizarTextoSaldoResidual(item.numeroConvenio).replace(/\D/g, "")}::${item.descricaoNormalizada}`;
@@ -297,8 +313,14 @@ function detectarMisturas(registros, fechadosPorNatureza = new Set()) {
     if (!chavesMistas.has(chave)) return item;
     // Mistura cuja comparacao fecha em cada natureza: a memoria estava apenas
     // consolidada, com correspondente PAD por natureza. Nao e divergencia real.
-    const fechaPorNatureza = Number.isInteger(Number(item.divergenciaId))
-      && fechadosPorNatureza.has(Number(item.divergenciaId));
+    // A comparacao por natureza e lida do auditor de item nao apto, que a
+    // calcula tambem para divergencias ja decididas — sem isso, um saldo
+    // residual decidido seria rotulado natureza divergente apenas por nao ter
+    // sido reavaliado.
+    const comparacao = Number.isInteger(Number(item.divergenciaId))
+      ? comparacoesPorNatureza.get(Number(item.divergenciaId))
+      : null;
+    const fechaPorNatureza = misturaFechaPorNatureza(comparacao);
     if (fechaPorNatureza && item.classificacao !== "saldo_residual_rateado_indevidamente") {
       return {
         ...item,
@@ -404,8 +426,8 @@ function executar() {
     if (dados) varrerJson(registros, fonte, dados);
   }
 
-  const fechadosPorNatureza = carregarSaldosResiduaisFechadosPorNatureza();
-  const itens = detectarMisturas(registros, fechadosPorNatureza)
+  const comparacoesPorNatureza = carregarComparacoesSaldoResidualPorNatureza();
+  const itens = detectarMisturas(registros, comparacoesPorNatureza)
     .sort((a, b) => String(a.numeroConvenio || "").localeCompare(String(b.numeroConvenio || ""), "pt-BR")
       || String(a.descricaoOriginal || "").localeCompare(String(b.descricaoOriginal || ""), "pt-BR")
       || String(a.origem || "").localeCompare(String(b.origem || ""), "pt-BR"));
@@ -450,10 +472,17 @@ function executar() {
   console.log(`Decisoes anteriores afetadas: ${relatorio.resumo.totalDecisaoAnteriorAfetada}`);
 }
 
-try {
-  executar();
-} catch (erro) {
-  console.error("Falha na auditoria de saldos residuais/remanescentes.");
-  console.error(erro?.stack || erro?.message || erro);
-  process.exit(1);
+if (require.main === module) {
+  try {
+    executar();
+  } catch (erro) {
+    console.error("Falha na auditoria de saldos residuais/remanescentes.");
+    console.error(erro?.stack || erro?.message || erro);
+    process.exit(1);
+  }
 }
+
+module.exports = {
+  detectarMisturas,
+  misturaFechaPorNatureza,
+};

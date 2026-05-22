@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T19:31:52.362Z",
+  "geradoEm": "2026-05-22T20:12:48.697Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -19,7 +19,7 @@
       "itemNaoApto": {
         "caminho": "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T16:04:43.801Z",
+        "geradoEm": "2026-05-22T20:12:40.725Z",
         "erro": null
       },
       "rateioAntigo": {
@@ -37,25 +37,25 @@
       "seguranca": {
         "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T19:02:28.842Z",
+        "geradoEm": "2026-05-22T20:12:47.001Z",
         "erro": null
       },
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T19:02:43.532Z",
+        "geradoEm": "2026-05-22T20:12:48.131Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T19:02:43.555Z",
+        "geradoEm": "2026-05-22T20:12:48.154Z",
         "erro": null
       },
       "saldosResiduais": {
         "caminho": "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T16:08:52.453Z",
+        "geradoEm": "2026-05-22T20:12:41.145Z",
         "erro": null
       }
     }

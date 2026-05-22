@@ -1,18 +1,18 @@
 # PROFOR 2022 - Auditoria de saldos residuais/remanescentes (dry-run)
 
-Gerado em: 2026-05-22T16:08:52.453Z
+Gerado em: 2026-05-22T20:12:41.145Z
 
 Auditoria somente leitura: nao registra decisao, nao altera status, nao publica e nao altera o planoAplicacao oficial.
 
 ## Resumo executivo
 
-- Saldos residuais/remanescentes encontrados: 113
-- Area tecnica correta: 113
+- Saldos residuais/remanescentes encontrados: 117
+- Area tecnica correta: 117
 - Indevidamente rateados por setor: 0
-- Mistura CAPITAL/CUSTEIO: 55
+- Mistura CAPITAL/CUSTEIO: 59
 - Mistura que fecha segregada por natureza (falso positivo saneavel): 5
 - Decisoes anteriores afetadas: 24
-- Pendentes de decisao humana: 80
+- Pendentes de decisao humana: 84
 
 Regra aplicada: Saldo residual/remanescente e item tecnico nao setorializado por area e segregado por natureza. CAPITAL e CUSTEIO nao sao equivalentes.
 
@@ -40,6 +40,10 @@ Regra aplicada: Saldo residual/remanescente e item tecnico nao setorializado por
 | backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json | - | - | - | SALDO REMANESCENTE | CAPITAL | - | 7267.88 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json | - | - | - | SALDO REMANESCENTE | CUSTEIO | - | 5924.45 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json | - | - | - | SALDO REMANESCENTE | CUSTEIO | - | 5924.45 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
+| backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json | - | - | - | Saldo Residual | CAPITAL | - | 20704.73 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
+| backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json | - | - | - | Saldo Residual | CAPITAL | - | 20704.73 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
+| backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json | - | - | - | Saldo Residual | CUSTEIO | - | 71.36 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
+| backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json | - | - | - | Saldo Residual | CUSTEIO | - | 71.36 | `saldo_residual_natureza_divergente` | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. |
 | backend/data/relatorios/profor-2022-rateio-inicial-dry-run.json | - | 937216 | GO | SALDO REMANESCENTE - CONFORME NOTA TECNI | - | - | 0 | `saldo_residual_sem_natureza` | Manter como item tecnico segregado por natureza. |
 | backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json | - | 937216 | GO | Saldo Remanescente - Conforme NOTA TÉCNI | - | - | 0 | `saldo_residual_sem_natureza` | Manter como item tecnico segregado por natureza. |
 | sqlite:itens_conhecidos_rateios | - | 937216 | GO | Saldo Remanescente - Conforme NOTA TÉCNI | CAPITAL | N/A | 34033.34 | `saldo_residual_ok_nao_setorializado` | Manter como item tecnico segregado por natureza. |

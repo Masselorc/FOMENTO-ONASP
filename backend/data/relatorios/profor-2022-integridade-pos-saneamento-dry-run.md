@@ -5,7 +5,7 @@ Modo: dry-run
 
 Auditoria somente leitura. Não publica, não registra decisão, não altera status, não altera a origem ativa, não altera o `planoAplicacao` oficial e não altera o SQLite versionado.
 
-> **Reexecução após correção do classificador operacional.** Esta auditoria foi regenerada depois de corrigir a ordem de avaliação do classificador operacional: divergências com decisão resolutiva canônica deixam de ser rotuladas como `pendencia_operacional_real` apenas por caírem em regra residual de saldo residual. **#18 foi reclassificada** de `pendencia_operacional_real` para `decisao_resolutiva_com_pendencia_tecnica`; **#44 foi preservada** como `pendencia_operacional_real`.
+> **Reexecução após correção do pareamento de saldo residual da #44.** Esta auditoria foi regenerada depois de corrigir dois bugs sistêmicos de pareamento de saldo residual: (A) a reconstrução gerava impedimento `saldo_residual_natureza_divergente` falso para a #44 — a linha PAD CAPITAL de mesma natureza existe; (B) o auditor de item não apto não computava a comparação por natureza para divergências já decididas. **A #44 permanece `pendencia_operacional_real`** por divergência material real de valor (CAPITAL R$ 22.351,09 → R$ 20.704,73). Os impedimentos de reconstrução caíram de 34 para 33. Diagnóstico completo em `profor-2022-divergencia-44-diagnostico-dry-run.md`.
 
 ## 1. Resumo executivo
 
@@ -13,7 +13,8 @@ Auditoria somente leitura. Não publica, não registra decisão, não altera sta
 |---|---:|---:|---|
 | Pendência operacional real | 2 | **1** | Esperado 0 — ainda não atendido (resta #44, material) |
 | Bloqueio técnico de segurança pré-ativação | 35 | 35 | Sem impeditivo por dado oficial alterado |
-| Decisão resolutiva com pendência técnica | 7 | **8** | #18 movida para cá |
+| Decisão resolutiva com pendência técnica | 7 | 8 | #18 (de auditoria anterior) |
+| Impedimentos de reconstrução | 34 | **33** | Falso impedimento da #44 eliminado |
 | Apto para preparar ativação controlada | NÃO | **NÃO** | Bloqueios listados abaixo |
 | Decisão registrada nesta tarefa | 0 | 0 | OK |
 | Dado oficial / publicação alterada | Nenhum | Nenhum | OK |
@@ -66,9 +67,13 @@ Auditoria somente leitura. Não publica, não registra decisão, não altera sta
 
 **Justificativa:** #18 tem decisão resolutiva canônica, sem divergência material de natureza e sem payload alterado. A única pendência é técnica: a decisão #150 rateia o saldo residual por áreas operacionais (OUVIDORIA/CORREGEDORIA/ESCOLA), incompatível com a regra de saldo residual não setorializado. Isso exige **revalidação do efeito da decisão**, não nova decisão de mérito — portanto não é pendência operacional real comum.
 
-### 3.2. #44 preservada como pendência operacional real
+### 3.2. #44 preservada como pendência operacional real (com pareamento corrigido)
 
-#44 (938128/SP, `item_nao_apto`) permanece `pendencia_operacional_real`: saldo residual com natureza divergente material — memória CAPITAL R$ 22.351,09 sem linha PAD de mesma natureza/valor (PAD apresenta CUSTEIO R$ 71,36). A decisão registrada **não resolve o mérito material** da divergência de natureza. Não foi tratada como falso positivo.
+#44 (938128/SP, `item_nao_apto`) permanece `pendencia_operacional_real`. **Diagnóstico aprofundado** (ver `profor-2022-divergencia-44-diagnostico-dry-run.md`): o PAD novo do convênio 938128/SP tem **duas** linhas "Saldo Residual" para a mesma chave — CUSTEIO R$ 71,36 (linha 19) e **CAPITAL R$ 20.704,73 (linha 61)**. A linha PAD de mesma natureza da memória **existe**; o alerta anterior de "natureza divergente sem correspondente" era falso positivo de pareamento.
+
+Dois bugs sistêmicos de pareamento foram corrigidos: (A) a reconstrução gerava impedimento `saldo_residual_natureza_divergente` ao processar a linha PAD CUSTEIO porque os rateios da memória eram todos CAPITAL — agora gera apenas alerta informativo; (B) o auditor de item não apto não computava `comparacaoSaldoResidualPorNatureza` para divergências já decididas — agora computa.
+
+Mesmo com o pareamento corrigido, **persiste divergência material**: natureza CAPITAL memória R$ 22.351,09 vs PAD R$ 20.704,73 (diferença líquida R$ 1.575,00, considerando que a parcela de R$ 71,36 foi reclassificada CAPITAL→CUSTEIO). A decisão #186 (liberação de item não apto) **não resolve o mérito material**. A #44 não foi tratada como falso positivo.
 
 ## 4. Bloco B — Segurança pré-ativação final
 
@@ -98,9 +103,9 @@ Classificação dos 35 bloqueios: **0 impeditivos por dado oficial alterado**; 2
 | Plano reconstruído gerado | Sim (623 linhas, 15 convênios) |
 | `planoAplicacao` oficial alterado | Não |
 | Valor previsto / executado / saldo | R$ 10.654.508,70 / R$ 3.217.739,50 / R$ 7.436.769,20 |
-| Impedimentos | 34 |
+| Impedimentos | **33** (era 34 — falso impedimento da #44 eliminado) |
 
-Saldos residuais reconstruídos com área técnica `NAO INFORMADO` e segregados por natureza. Impedimentos relevantes: `saldo_residual_natureza_divergente` (938128/#44) e `decisao_nao_aplicavel:saldo_residual_rateio_invalido` (937221/#18 — o rateio por área operacional da decisão #150 é rejeitado no dry-run). A reconstrução não foi afetada pela correção do classificador.
+Saldos residuais reconstruídos com área técnica `NAO INFORMADO` e segregados por natureza. A correção do pareamento de saldo residual eliminou o impedimento `saldo_residual_natureza_divergente` da #44 (938128) — era falso positivo: a linha PAD CAPITAL de mesma natureza existe (linha 61, R$ 20.704,73). Em seu lugar há um alerta informativo `saldo_residual_natureza_sem_rateio_memoria`. Impedimento relevante remanescente: `decisao_nao_aplicavel:saldo_residual_rateio_invalido` (937221/#18 — o rateio por área operacional da decisão #150 é rejeitado no dry-run).
 
 `aptoParaAtivacao = false`, `aptoParaPublicacao = false`.
 
@@ -113,7 +118,7 @@ Saldos residuais reconstruídos com área técnica `NAO INFORMADO` e segregados 
 | Diferenças por pendência de decisão | 15 |
 | Itens iguais / novos / ausentes | 460 / 30 / 34 |
 
-Diferença total origem antiga × reconstrução PAD: previsto −R$ 9.506,78, executado +R$ 15.043,60, saldo −R$ 24.550,38. Comparador não afetado pela correção do classificador.
+Diferença total origem antiga × reconstrução PAD: previsto −R$ 9.506,78, executado +R$ 15.043,60, saldo −R$ 24.550,38. Comparador não afetado pela correção do pareamento de saldo residual.
 
 ## 7. Bloco E — Confirmação de não publicação
 
@@ -127,16 +132,16 @@ Diferença total origem antiga × reconstrução PAD: previsto −R$ 9.506,78, e
 | Decisão registrada nesta tarefa | Nenhuma |
 | Status alterado nesta tarefa | Nenhum |
 
-Os arquivos alterados são código (classificador operacional), 1 teste novo, relatórios dry-run e docs de memória.
+Os arquivos alterados são código (reconstrução, auditores de item não apto e de saldos residuais), 1 teste novo, relatórios dry-run e docs de memória.
 
 ## 8. Achados classificados por severidade
 
 **Alto**
-- `pendencia_operacional_real = 1` (#44) — divergência material real de saldo residual; não é candidato a saneamento automático.
+- `pendencia_operacional_real = 1` (#44) — divergência material real de saldo residual (natureza CAPITAL memória R$ 22.351,09 vs PAD R$ 20.704,73); não é candidato a saneamento automático.
 
 **Médio**
 - 35 bloqueios de segurança pré-ativação — `aptoParaProsseguirAtivacao = false`.
-- 34 impedimentos de reconstrução e 30 diferenças críticas no comparador.
+- 33 impedimentos de reconstrução e 30 diferenças críticas no comparador.
 
 **Baixo**
 - 1 decisão legada não canônica (decisão #1, divergência #24, valor `"aceitar"`).
@@ -147,12 +152,12 @@ Os arquivos alterados são código (classificador operacional), 1 teste novo, re
 
 1. Bloco A — `pendencia_operacional_real = 1` (#44, material).
 2. Bloco B — 35 bloqueios de segurança (`aptoParaProsseguirAtivacao = false`).
-3. Bloco C — 34 impedimentos de reconstrução.
+3. Bloco C — 33 impedimentos de reconstrução.
 4. Bloco D — 30 diferenças críticas (itens novos).
 
 **Ressalvas documentadas:**
 - #18 carrega pendência técnica residual — a decisão #150 rateia saldo residual por área operacional; exige revalidação do efeito da decisão em tarefa futura, sem nova decisão de mérito.
-- #44 permanece pendente legitimamente; não foi tratada como falso positivo.
+- #44 permanece pendente legitimamente. O alerta de "natureza divergente" era falso positivo de pareamento (a linha PAD CAPITAL existe); a pendência real é a divergência material de valor na natureza CAPITAL. Diagnóstico completo em `profor-2022-divergencia-44-diagnostico-dry-run.md`.
 
 ## 10. Rollback
 

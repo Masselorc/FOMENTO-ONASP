@@ -979,3 +979,35 @@ Ao atualizar:
 **Comandos executados:** `npm run profor:pad:auditar-pendencias-profundo`, `:seguranca-pre-ativacao:dry-run`, `:seguranca-pre-ativacao:detalhar`, `:reconstruir-plano:dry-run`, `:comparar-plano:dry-run`, `npm run validar:syntax`, `npm run validar:services` (104 testes, 104 aprovados).
 
 **Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar decisões, logs, divergências ou relatórios históricos.
+
+## 22/05/2026 - PROFOR 2022: saldo residual com várias linhas PAD por natureza gerava falso impedimento de natureza divergente
+
+**Classificação:** erro real corrigido
+
+**Contexto:** reconstrução do plano (`gerarLinhasItem` em `profor-pad-plano-reconstrucao-service.js`) e auditor de item não apto (`auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js`), no diagnóstico da divergência `#44` (938128/SP, `item_nao_apto`, Saldo Residual).
+
+**Problema:** a `#44` aparecia como `saldo_residual_natureza_divergente` / `pendencia_operacional_real` com a evidência "Natureza PAD 'CUSTEIO' sem rateio de mesma natureza na memória (rateios: 'CAPITAL')" — sugerindo que o PAD não teria correspondente CAPITAL. Era falso positivo de pareamento.
+
+**Causa raiz:** o PAD novo do convênio 938128/SP tem **duas** linhas "Saldo Residual" para a mesma `chaveItem` — CUSTEIO R$ 71,36 (linha 19) e CAPITAL R$ 20.704,73 (linha 61). Bug A: `gerarLinhasItem` é chamada uma vez por linha PAD, mas recebe os rateios do `itemConhecidoId` (todos CAPITAL, item conhecido #212 partilhado pelas duas linhas); ao processar a linha CUSTEIO, a regra `!naturezasRateio.has(naturezaPad)` gerava o impedimento `saldo_residual_natureza_divergente`. Cada linha PAD de saldo residual é de natureza própria e o PAD é a fonte de verdade da reconstrução — ter uma parcela CUSTEIO no PAD não é divergência de reconstrução. Bug B: o auditor de item não apto só calculava `comparacaoSaldoResidualPorNatureza` para divergências analisáveis; divergências já decididas (status ACEITO) caíam em `ja_decidido` sem esse campo, e o auditor de saldos residuais não conseguia avaliar fechamento por natureza.
+
+**Evidência:** `profor-2022-pad-rateios-dry-run.json` → `itensPadReconhecidos` lista as duas linhas PAD (19 CUSTEIO, 61 CAPITAL). A reconstrução gerou ambas as linhas `938128::SALDO RESIDUAL`. Hash do payload da #44 = hash do snapshot da decisão #186 (payload não alterado). Diagnóstico completo em `backend/data/relatorios/profor-2022-divergencia-44-diagnostico-dry-run.md`.
+
+**Correção aplicada:** (A) na reconstrução, o impedimento `saldo_residual_natureza_divergente` para linha PAD de saldo residual sem rateio de mesma natureza na memória virou alerta informativo `saldo_residual_natureza_sem_rateio_memoria` — a divergência material por natureza é aferida pelo comparador, não pela reconstrução. (B) divergências de saldo residual já decididas passaram a carregar `comparacaoSaldoResidualPorNatureza`. (C) `detectarMisturas` no auditor de saldos residuais lê o mapa completo de comparações por natureza (incluindo `jaDecididos`); rateio por área operacional mantém precedência como impedimento.
+
+**Por que #44 permanece pendente:** corrigido o pareamento, persiste divergência material — natureza CAPITAL memória R$ 22.351,09 vs PAD R$ 20.704,73 (diferença líquida R$ 1.575,00, com a parcela de R$ 71,36 reclassificada CAPITAL→CUSTEIO). A decisão #186 (liberação de item não apto) não resolve esse mérito. A #44 segue `pendencia_operacional_real`.
+
+**Resultado:** impedimentos de reconstrução caíram de 34 para 33 (falso impedimento eliminado). `pendencia_operacional_real` permanece 1 (#44) — a correção não mascarou a pendência real. Nenhuma decisão registrada; nenhum status alterado; `aplicadaAoPlano` permanece false.
+
+**Como prevenir:** ao validar natureza de saldo residual, lembrar que uma `chaveItem` pode ter múltiplas linhas PAD, uma por natureza, e que os rateios da memória pertencem ao item conhecido (consolidado), não a uma linha PAD específica. Verificação de divergência material memória×PAD pertence ao comparador por natureza; a reconstrução só transcreve o PAD.
+
+**Boa prática reutilizável:** auditores que filtram por "já decidido" devem ainda computar os campos comparativos que outros auditores consomem — caso contrário um item decidido fica sem dado e é reclassificado por omissão.
+
+**Aplicável a futuras aplicações:** com adaptação.
+
+**Riscos:** baixo — o caso de rateio por área operacional continua impeditivo (coberto por teste). Suíte: 111 testes, 111 aprovados.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`, `backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js`, `backend/scripts/auditar-saldos-residuais-profor-2022.js`, `tests/services/profor-saldo-residual-pareamento-44.test.js`, `backend/data/relatorios/profor-2022-divergencia-44-diagnostico-dry-run.md`.
+
+**Comandos executados:** `npm run profor:pad:reconstruir-plano:dry-run`, `:item-nao-apto:auditar`, `:saldos-residuais:auditar`, `:seguranca-pre-ativacao:dry-run`, `:seguranca-pre-ativacao:detalhar`, `:comparar-plano:dry-run`, `:auditar-pendencias-profundo`, `npm run validar:syntax` (71 arquivos), `npm run validar:services` (111 testes, 111 aprovados).
+
+**Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar decisões, logs, divergências ou relatórios históricos.

@@ -1,7 +1,7 @@
 # PROFOR 2022 — Segurança pré-ativação PAD: detalhamento de bloqueios (dry-run)
 
-Gerado em: 2026-05-22T19:31:53.234Z
-Fonte: `backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json` (gerado em 2026-05-22T19:31:52.782Z).
+Gerado em: 2026-05-22T20:12:47.498Z
+Fonte: `backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json` (gerado em 2026-05-22T20:12:47.001Z).
 
 Etapa somente leitura: não registra decisão, não altera status, não publica e não altera o `planoAplicacao` oficial.
 
