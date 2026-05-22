@@ -1,6 +1,6 @@
 # Auditoria de pendências residuais de diacrítico — PAD/PROFOR 2022 (dry-run)
 
-*Gerado em:* 21/05/2026, 17:39:37
+*Gerado em:* 21/05/2026, 21:32:27
 
 Esta auditoria é somente leitura: não altera o banco, não publica e não aplica decisão.
 
@@ -10,9 +10,9 @@ Esta auditoria é somente leitura: não altera o banco, não publica e não apli
 | :--- | :---: |
 | **Saneável automaticamente por diacrítico** | 0 |
 | Divergência material | 1 |
-| Histórico não reapresentado sem correspondência | 121 |
+| Histórico não reapresentado sem correspondência | 75 |
 | Dados insuficientes | 0 |
-| Já decidido | 23 |
+| Já decidido | 69 |
 | **Total analisado** | **145** |
 
 ## IDs saneáveis automaticamente
@@ -23,26 +23,26 @@ Nenhum item saneável encontrado nesta execução.
 
 | ID | Convênio | Tipo | Status | Classificação | Motivo |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| #1 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #2 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #3 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #4 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #5 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #6 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #7 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #8 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #9 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #10 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #11 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #12 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #13 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #14 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #15 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #16 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #17 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #18 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #19 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
-| #20 | 937221 | `item_novo_sem_rateio` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_novo_sem_rateio' não é tratada por saneamento de diacrítico. |
+| #1 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #2 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #3 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #4 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #5 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #6 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #7 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #8 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #9 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #10 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #11 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #12 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #13 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #14 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #15 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #16 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #17 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #18 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #19 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #20 | 937221 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #21 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #22 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #23 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
@@ -69,36 +69,36 @@ Nenhum item saneável encontrado nesta execução.
 | #44 | 938128 | `item_nao_apto` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_nao_apto' não é tratada por saneamento de diacrítico. |
 | #45 | 938128 | `item_nao_apto` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #46 | 938277 | `item_nao_apto` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'item_nao_apto' não é tratada por saneamento de diacrítico. |
-| #47 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #48 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #49 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #50 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #51 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #52 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #53 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #54 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #55 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #56 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #57 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #58 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #59 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #60 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #61 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #62 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #63 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #64 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #65 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #66 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #67 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #68 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #69 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #70 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
-| #71 | 937221 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
+| #47 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #48 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #49 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #50 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #51 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #52 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #53 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #54 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #55 | 937221 | `item_ausente_no_pad` | `CORRIGIDO` | **ja_decidido** | Divergência já possui decisão resolutiva com status CORRIGIDO. |
+| #56 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #57 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #58 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #59 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #60 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #61 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #62 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #63 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #64 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #65 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #66 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #67 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #68 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #69 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #70 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
+| #71 | 937221 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #72 | 937782 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #73 | 937782 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #74 | 937782 | `item_ausente_no_pad` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #75 | 937782 | `item_ausente_no_pad` | `CORRIGIDO` | **ja_decidido** | Divergência já possui decisão resolutiva com status CORRIGIDO. |
-| #76 | 937782 | `item_ausente_no_pad` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Item conhecido da memória ausente no PAD sem correspondência de acentuação no matching atual. |
+| #76 | 937782 | `item_ausente_no_pad` | `CORRIGIDO` | **ja_decidido** | Divergência já possui decisão resolutiva com status CORRIGIDO. |
 | #77 | 937782 | `item_ausente_no_pad` | `CORRIGIDO` | **ja_decidido** | Divergência já possui decisão resolutiva com status CORRIGIDO. |
 | #78 | 937782 | `item_ausente_no_pad` | `CORRIGIDO` | **ja_decidido** | Divergência já possui decisão resolutiva com status CORRIGIDO. |
 | #79 | 937698 | `quantidade_valor_unitario_inconsistente` | `PENDENTE` | **historico_nao_reapresentado_sem_correspondencia** | Divergência do tipo 'quantidade_valor_unitario_inconsistente' não é tratada por saneamento de diacrítico. |

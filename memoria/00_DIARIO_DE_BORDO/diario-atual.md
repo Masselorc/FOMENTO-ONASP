@@ -1,5 +1,81 @@
 # Diário de bordo
 
+## 21/05/2026 - PROFOR 2022: auditoria profunda de pendências PAD (dry-run)
+
+- Objetivo:
+  - finalizar a entrega do commit `auditoria` (`d6e265a`), que adicionou o
+    motor `backend/scripts/auditar-pendencias-profor-2022-profundo.js` mas não
+    integrou o script ao fluxo npm, não o incluiu na validação de sintaxe e não
+    versionou os relatórios de saída.
+- Natureza da etapa:
+  - **somente diagnóstico dry-run e documentação**;
+  - nenhuma decisão registrada, nenhum status alterado, nenhuma publicação,
+    origem ativa intacta, `frontend/data/publicados` intacto e `planoAplicacao`
+    oficial não alterado (bloco `garantias` do relatório com todos os campos
+    `false`).
+- Integração concluída:
+  - novo comando `npm run profor:pad:auditar-pendencias-profundo` em
+    `package.json`;
+  - script incluído em `scripts/validar-syntax.js`;
+  - revisão confirmou que o script é estritamente somente-leitura (apenas
+    `SELECT`), grava só em `backend/data/relatorios` e usa corretamente os 8
+    relatórios auxiliares.
+- Comandos executados (esteira auxiliar, nesta ordem):
+  - `npm run profor:pad:auditar-fila-revisao`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`;
+  - `npm run profor:pad:ausentes:auditar-substitutos`;
+  - `npm run profor:pad:item-sem-rateio:auditar-rateio-antigo`;
+  - `npm run profor:pad:item-nao-apto:auditar`;
+  - `npm run profor:pad:diacritico:auditar-pendencias`;
+  - `npm run profor:rateio:auditar-quantidades:dry-run`;
+  - `npm run profor:pad:reconstruir-plano:dry-run`;
+  - `npm run profor:pad:comparar-plano:dry-run`;
+  - `npm run profor:pad:auditar-pendencias-profundo` (auditoria profunda).
+- Relatórios gerados:
+  - `backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.md`.
+- Resumo dos achados:
+  - total de divergências na fila: `145`;
+  - total analisado pela auditoria profunda: `110`;
+  - total `PENDENTE/EM_REVISAO`: `76`;
+  - total bloqueante técnico: `45`;
+  - total bloqueante operacional: `11`;
+  - total com decisão resolutiva: `34` (de `71` decisões registradas);
+  - total de suspeitas/falsos positivos: `62`;
+  - total de pendências reais estimadas: `8`;
+  - bloqueios de segurança pré-ativação: `35` (28 decisões com payload
+    alterado + 7 divergências não reapresentadas).
+- Categorias encontradas:
+  - `valor_ou_saldo_inconsistente`: 67;
+  - `possivel_falso_positivo`: 62;
+  - `ja_saneado_mas_ainda_pendente`: 34;
+  - `duplicidade_ou_ambiguidade_pad`: 30;
+  - `pendencia_real`: 8;
+  - `diacritico_ou_acentuacao`: 1;
+  - `historico_nao_reapresentado`: 1.
+- IDs prioritários:
+  - pendências reais que exigem decisão humana: `31, 32, 33, 34, 38, 39, 44, 46`
+    (todos `item_nao_apto` com divergência material; convênios `937265`,
+    `937817`, `938128`, `938277`);
+  - possível diacrítico com divergência material: `#24` (`937265/MS`,
+    "Meia militar", preço memória R$ 37,15 × PAD R$ 37,59);
+  - histórico não reapresentado: `#28` (`937216/GO`, já `ACEITO`).
+- Próximos passos recomendados:
+  1. revalidar as decisões antigas bloqueadas pela segurança pré-ativação;
+  2. resolver as 8 pendências reais bloqueantes (`item_nao_apto` material);
+  3. tratar os 67 alertas de quantidade × valor unitário por decisão sistêmica
+     auditável, mantendo o total PAD como fonte de verdade;
+  4. manter históricos/saneados fora da lista operacional e avaliar filtro
+     backend para pendência operacional efetiva;
+  5. só depois repetir reconstrução/comparador dry-run e avaliar ativação.
+- Escopo respeitado:
+  - nenhuma publicação;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - nenhuma migration criada;
+  - divergências, decisões e logs preservados.
+
 ## 21/05/2026 - PROFOR 2022: reauditoria e saneamento da divergência `#55` com substituto `#8`
 
 - Objetivo:

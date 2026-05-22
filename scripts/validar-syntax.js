@@ -52,6 +52,7 @@ const ARQUIVOS = [
   "backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js",
   "backend/scripts/auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022.js",
   "backend/scripts/auditar-quantidades-suspeitas-profor-2022.js",
+  "backend/scripts/auditar-pendencias-profor-2022-profundo.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
   "frontend/js/core/ui-components.js",

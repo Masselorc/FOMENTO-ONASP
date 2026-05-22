@@ -1,13 +1,13 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-21T22:22:59.318Z",
+    "geradoEm": "2026-05-22T00:32:18.662Z",
     "modo": "dry-run",
     "totalAusentesAnalisados": 32,
     "substituto_compativel": 0,
-    "possivel_substituto_com_divergencia": 1,
+    "possivel_substituto_com_divergencia": 0,
     "ausencia_real_sem_substituto": 0,
     "dados_insuficientes": 0,
-    "ja_decidido": 31
+    "ja_decidido": 32
   },
   "vinculosSugeridos": [],
   "analisados": [
@@ -104,28 +104,11 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
-      "status": "PENDENTE",
+      "status": "CORRIGIDO",
       "descricaoMemoria": "Forno de Microondas - 32 litros - Branco",
-      "classificacao": "possivel_substituto_com_divergencia",
-      "motivo": "Há candidato a substituto (#8), mas com divergência material — exige revisão humana.",
-      "substituto": {
-        "divergenciaSubstitutaId": 8,
-        "tipoSubstituto": "item_novo_sem_rateio",
-        "statusSubstituto": "ACEITO",
-        "descricaoPadSubstituta": "Forno de Micro-ondas a partir de- 32 lit",
-        "decisaoSubstitutaJaAceita": true,
-        "criterios": {
-          "mesmoConvenio": true,
-          "mesmaUf": true,
-          "naturezaCompativel": true,
-          "quantidadeCompativel": true,
-          "valorUnitarioCompativel": true,
-          "valorPrevistoCompativel": true,
-          "valorExecutadoCompativel": true,
-          "saldoCompativel": true,
-          "descricaoCompativel": false
-        }
-      }
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "substituto": null
     },
     {
       "id": 56,

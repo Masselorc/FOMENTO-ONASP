@@ -1,6 +1,6 @@
 # Auditoria de itens ausentes com substituto provável no PAD — PROFOR 2022 (dry-run)
 
-*Gerado em:* 21/05/2026, 19:22:59
+*Gerado em:* 21/05/2026, 21:32:18
 
 Auditoria somente leitura: não altera o banco, não publica, não confirma ausência.
 
@@ -9,10 +9,10 @@ Auditoria somente leitura: não altera o banco, não publica, não confirma aus�
 | Classificação | Quantidade |
 | :--- | :---: |
 | **Substituto compatível** | 0 |
-| Possível substituto com divergência | 1 |
+| Possível substituto com divergência | 0 |
 | Ausência real sem substituto | 0 |
 | Dados insuficientes | 0 |
-| Já decidido | 31 |
+| Já decidido | 32 |
 | **Total de ausentes analisados** | **32** |
 
 ## Vínculos sugeridos (ausente → substituto)
@@ -31,7 +31,7 @@ Nenhum vínculo sugerido nesta execução.
 | #52 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #53 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #54 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
-| #55 | 937221 | `PENDENTE` | **possivel_substituto_com_divergencia** | #8 | Há candidato a substituto (#8), mas com divergência material — exige revisão humana. |
+| #55 | 937221 | `CORRIGIDO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (CORRIGIDO). |
 | #56 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #57 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |
 | #58 | 937221 | `ACEITO` | **ja_decidido** | — | Divergência já possui decisão resolutiva (ACEITO). |

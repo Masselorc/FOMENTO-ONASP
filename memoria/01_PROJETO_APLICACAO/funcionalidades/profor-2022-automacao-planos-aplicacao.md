@@ -2041,3 +2041,65 @@ O script `backend/scripts/validar-decisao-estruturada-ponta-a-ponta.js` foi cria
 - A limpeza removeu as 6 divergências de teste, decisões e logs vinculados, excluindo também o lote temporário.
 - O banco SQLite de produção retornou exatamente ao baseline original de 145 divergências reais pendentes.
 
+---
+
+## 24. Auditoria Profunda de Pendências PAD (Etapa 9.3 — dry-run)
+
+Em 21/05/2026, foi finalizada a entrega do commit `auditoria` (`d6e265a`), que havia adicionado o motor `backend/scripts/auditar-pendencias-profor-2022-profundo.js` sem integrá-lo ao fluxo npm, sem incluí-lo na validação de sintaxe e sem versionar os relatórios de saída.
+
+### 24.1. Natureza da etapa
+Esta etapa é **somente diagnóstico dry-run e documentação**. Não registra decisão, não altera status, não publica, não altera a origem ativa, não altera `frontend/data/publicados`, não altera o `planoAplicacao` oficial e não cria migration. O relatório gerado carrega o bloco `garantias` com todos os campos `false`.
+
+### 24.2. Integração concluída
+- Novo comando npm: `profor:pad:auditar-pendencias-profundo` → `node backend/scripts/auditar-pendencias-profor-2022-profundo.js`.
+- Script incluído em `scripts/validar-syntax.js`.
+- Revisão do motor confirmou: executa apenas `SELECT` (nenhum `INSERT/UPDATE/DELETE`), grava exclusivamente em `backend/data/relatorios`, e consome corretamente os 8 relatórios auxiliares (ausentes, diacrítico, item não apto, rateio antigo, quantidades, segurança pré-ativação, reconstrução e comparação).
+
+### 24.3. Esteira executada
+Auditorias auxiliares, nesta ordem: `auditar-fila-revisao`, `seguranca-pre-ativacao:dry-run`, `ausentes:auditar-substitutos`, `item-sem-rateio:auditar-rateio-antigo`, `item-nao-apto:auditar`, `diacritico:auditar-pendencias`, `rateio:auditar-quantidades:dry-run`, `reconstruir-plano:dry-run`, `comparar-plano:dry-run`. Em seguida, a auditoria profunda `profor:pad:auditar-pendencias-profundo`. Todos os comandos concluíram sem erro.
+
+### 24.4. Relatórios gerados
+- `backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json`
+- `backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.md`
+
+### 24.5. Resumo dos achados
+- Total de divergências na fila: 145.
+- Total analisado pela auditoria profunda: 110.
+- Total `PENDENTE/EM_REVISAO`: 76.
+- Total bloqueante técnico: 45.
+- Total bloqueante operacional: 11.
+- Total com decisão resolutiva: 34 (de 71 decisões registradas).
+- Total de suspeitas/falsos positivos: 62.
+- Total de pendências reais estimadas: 8.
+- Bloqueios de segurança pré-ativação: 35 (28 decisões com payload alterado após a decisão + 7 divergências não reapresentadas).
+
+### 24.6. Categorias encontradas
+| Categoria | Qtd | Risco |
+|---|---:|---|
+| `valor_ou_saldo_inconsistente` | 67 | médio |
+| `possivel_falso_positivo` | 62 | médio |
+| `ja_saneado_mas_ainda_pendente` | 34 | médio |
+| `duplicidade_ou_ambiguidade_pad` | 30 | alto |
+| `pendencia_real` | 8 | alto |
+| `diacritico_ou_acentuacao` | 1 | baixo |
+| `historico_nao_reapresentado` | 1 | alto |
+
+### 24.7. IDs prioritários
+- Pendências reais que exigem decisão humana: `31, 32, 33, 34, 38, 39, 44, 46` — todas `item_nao_apto` com divergência material entre memória e PAD, nos convênios `937265` (MS), `937817` (RJ), `938128` (SP) e `938277` (MA).
+- Possível diacrítico com divergência material: `#24` (`937265/MS`, "Meia militar") — diferença de acentuação acompanhada de divergência de preço (memória R$ 37,15 × PAD R$ 37,59); não saneável apenas por diacrítico.
+- Histórico não reapresentado: `#28` (`937216/GO`) — já `ACEITO`, deve sair da lista operacional.
+- Não foram encontrados IDs em `quantidade_suspeita`, `decisao_antiga_com_payload_alterado` (por ID), `ausente_com_substituto_*` nem `rateio_*` no conjunto analisado.
+
+### 24.8. Problemas observados
+- Código — decisão legada com valor não canônico em caixa baixa (`decisaoId 1: aceitar`): não entra nos conjuntos resolutivos que comparam valores canônicos em caixa alta; requer saneamento auditável específico ou nova decisão resolutiva.
+- Código/risco — segurança pré-ativação acusa 35 bloqueios (payload alterado / divergência não reapresentada); decisões antigas não devem liberar ativação até revalidação assistida.
+- UX — a filtragem de históricos/saneados ocorre no cliente após carregar a lista da API; recomenda-se filtro backend para pendência operacional efetiva.
+- UX — o rateio manual coleta quantidade por área mas ainda converte para `percentualQuantidade` no payload; evoluir o motor para aceitar quantidade absoluta como fonte primária.
+
+### 24.9. Próximos passos recomendados
+1. Revalidar as decisões antigas bloqueadas pela segurança pré-ativação.
+2. Resolver as 8 pendências reais bloqueantes (`item_nao_apto` material).
+3. Tratar os 67 alertas de quantidade × valor unitário por decisão sistêmica auditável, mantendo o total PAD como fonte de verdade.
+4. Manter históricos/saneados fora da lista operacional e avaliar filtro backend.
+5. Só depois repetir reconstrução/comparador dry-run e avaliar ativação.
+
