@@ -1,5 +1,46 @@
 # Diário de bordo
 
+## 22/05/2026 - PROFOR 2022: harmonização da #46 na regressão de saneamentos
+
+- Objetivo:
+  - harmonizar a linguagem entre a auditoria profunda e o relatório de
+    regressão de saneamentos para a divergência `#46` (`938277/MA`,
+    `Saldo Remanescente`).
+- Diagnóstico:
+  - a auditoria profunda classificava a `#46` como `falso_positivo_saneavel`,
+    com fechamento material por natureza;
+  - o relatório de regressão ainda a chamava de
+    `pendencia_material_potencial_aberta`, por ela estar em grupo PAD
+    multi-linha com naturezas/códigos distintos;
+  - os dois relatórios tinham finalidades diferentes, mas a redação podia
+    induzir interpretação contraditória.
+- Correção:
+  - o auditor de regressão passou a classificar casos abertos já fechados pela
+    auditoria operacional como
+    `alerta_pareamento_sem_pendencia_operacional`;
+  - a `#46` continua monitorada por risco de pareamento, mas não é mais
+    apresentada como pendência material aberta;
+  - `scripts/validar-syntax.js` passou a incluir os auditores de identidade
+    material/regressão e o teste correspondente.
+- Resultado:
+  - `#46`: `alerta_pareamento_sem_pendencia_operacional`;
+  - classificação operacional preservada: `falso_positivo_saneavel`;
+  - pendências materiais potenciais abertas no relatório de regressão: `0`;
+  - alertas de pareamento sem pendência operacional: `5` (`#31-#34` e `#46`).
+- Validações:
+  - `npm run profor:pad:regressao-saneamentos:auditar`;
+  - `npm run validar:syntax`;
+  - `npm run validar:services`.
+- Confirmações de escopo:
+  - nenhuma decisão registrada;
+  - nenhum status alterado;
+  - nenhuma publicação;
+  - origem ativa, banco, `frontend/data/publicados` e `planoAplicacao` oficial
+    não foram alterados.
+- Rollback:
+  - reverter esta alteração e regenerar
+    `profor-2022-regressao-saneamentos-dry-run.*`.
+
 ## 22/05/2026 - PROFOR 2022: correção de saldos residuais por natureza (dry-run)
 
 - Objetivo:

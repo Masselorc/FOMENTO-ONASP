@@ -2366,12 +2366,13 @@ O script `backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js` reav
 - `saneamento_suspeito_chave_fragil`: Saneamento concluído em grupo PAD com múltiplas linhas (exemplo: `#24`), exigindo revalidação manual.
 - `risco_confirmado_ja_diagnosticado`: Caso `#44` (preservado como referência).
 - `divergencia_aberta_com_alerta_pareamento`: Divergência aberta em grupo PAD com múltiplas linhas de mesma natureza/código (exemplos: `#31-#34`).
-- `pendencia_material_potencial_aberta`: Divergência aberta em grupo PAD com múltiplas linhas e divergência de natureza/código (exemplo: `#46`).
+- `alerta_pareamento_sem_pendencia_operacional`: Divergência aberta em grupo PAD multi-linha que permanece monitorada, mas não é pendência material aberta porque a auditoria operacional fechou o item por natureza (exemplo: `#46`).
+- `pendencia_material_potencial_aberta`: Divergência aberta em grupo PAD com múltiplas linhas e divergência de natureza/código sem fechamento operacional por natureza.
 - `pendencia_material_potencial_decidida`: Saneamento concluído em grupo PAD com múltiplas linhas e divergência de natureza/código.
 
 Nenhum saneamento é reaberto automaticamente no banco SQLite. Todo o processo funciona em modo somente leitura (dry-run).
 
 ### 30.4. Resultados da Auditoria (22/05/2026)
 - **Identidade Material**: Detectados 34 grupos com risco de identidade material.
-- **Regressão de Saneamento**: Analisadas 145 divergências. 72 saneamentos concluídos (70 confirmados confiáveis, 1 suspeito (#24), 1 já diagnosticado (#44)). 4 divergências abertas com alerta de pareamento (#31-#34) e 1 pendência material potencial aberta (#46).
+- **Regressão de Saneamento**: Analisadas 145 divergências. 72 saneamentos concluídos. Após harmonização com a auditoria operacional, não há pendência material potencial aberta; `#31-#34` e `#46` permanecem como alertas de pareamento sem pendência operacional material, pois a auditoria profunda classificou esses casos como `falso_positivo_saneavel`.
 

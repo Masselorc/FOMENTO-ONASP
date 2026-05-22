@@ -228,12 +228,15 @@ function avaliarFragilidadeChave(divergencia, grupoPad, itemConhecidoId) {
  * - risco_confirmado_ja_diagnosticado: caso já diagnosticado/corrigido (#44).
  * - divergencia_aberta_com_alerta_pareamento: divergência aberta em grupo PAD
  *   com múltiplas linhas de mesma natureza/código.
+ * - alerta_pareamento_sem_pendencia_operacional: divergência aberta em grupo
+ *   PAD multi-linha, mas já classificada operacionalmente como falso positivo
+ *   saneável por fechamento material segregado.
  * - pendencia_material_potencial_aberta: divergência aberta em grupo PAD com
  *   múltiplas linhas e divergência de natureza/código (risco material).
  * - pendencia_material_potencial_decidida: divergência já decidida em grupo PAD
  *   com múltiplas linhas e divergência de natureza/código (risco material).
  */
-function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva, reconstrucaoCorreta = false) {
+function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva, reconstrucaoCorreta = false, classificacaoOperacional = null) {
   if (jaDiagnosticado) {
     return {
       classificacao: "risco_confirmado_ja_diagnosticado",
@@ -258,6 +261,19 @@ function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temD
     return {
       classificacao: "saneamento_confirmado",
       recomendacao: "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
+      reabrir: false,
+    };
+  }
+
+  const falsoPositivoOperacional = classificacaoOperacional
+    && classificacaoOperacional.classificacaoOperacional === "falso_positivo_saneavel"
+    && Array.isArray(classificacaoOperacional.classificacoes)
+    && classificacaoOperacional.classificacoes.includes("item_nao_apto_sem_divergencia_material");
+
+  if (!temDecisaoResolutiva && falsoPositivoOperacional) {
+    return {
+      classificacao: "alerta_pareamento_sem_pendencia_operacional",
+      recomendacao: "Manter alerta de pareamento para rastreabilidade, mas nao tratar como pendencia material aberta: a auditoria operacional segregada por natureza classificou o item como falso positivo saneavel.",
       reabrir: false,
     };
   }
@@ -337,7 +353,7 @@ function executar() {
     }
 
     const { classificacao, recomendacao, reabrir } = sensivel
-      ? classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva, reconstrucaoCorreta)
+      ? classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva, reconstrucaoCorreta, classOp)
       : {
         classificacao: "saneamento_confirmado",
         recomendacao: "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",
@@ -379,7 +395,8 @@ function executar() {
       pendencia_material_potencial_aberta: 2,
       divergencia_aberta_com_alerta_pareamento: 3,
       risco_confirmado_ja_diagnosticado: 4,
-      saneamento_confirmado: 5,
+      alerta_pareamento_sem_pendencia_operacional: 5,
+      saneamento_confirmado: 6,
     };
     return (ordem[a.classificacaoRegressao] - ordem[b.classificacaoRegressao])
       || a.divergenciaId - b.divergenciaId;
@@ -395,13 +412,18 @@ function executar() {
     saneamentosSuspeitosChaveFragil: contagem("saneamento_suspeito_chave_fragil"),
     riscosConfirmadosJaDiagnosticados: contagem("risco_confirmado_ja_diagnosticado"),
     divergenciasAbertasComAlertaPareamento: contagem("divergencia_aberta_com_alerta_pareamento"),
+    alertasPareamentoSemPendenciaOperacional: contagem("alerta_pareamento_sem_pendencia_operacional"),
     pendenciasMateriaisPotenciaisAbertas: contagem("pendencia_material_potencial_aberta"),
     pendenciasMateriaisPotenciaisDecididas: contagem("pendencia_material_potencial_decidida"),
     divergenciasSaneadasParaRevalidar: achados
       .filter((a) => ["saneamento_suspeito_chave_fragil", "pendencia_material_potencial_decidida"].includes(a.classificacaoRegressao))
       .map((a) => a.divergenciaId),
     divergenciasPendentesComAlerta: achados
-      .filter((a) => ["divergencia_aberta_com_alerta_pareamento", "pendencia_material_potencial_aberta"].includes(a.classificacaoRegressao))
+      .filter((a) => [
+        "divergencia_aberta_com_alerta_pareamento",
+        "alerta_pareamento_sem_pendencia_operacional",
+        "pendencia_material_potencial_aberta",
+      ].includes(a.classificacaoRegressao))
       .map((a) => a.divergenciaId),
     divergenciasParaReabrir: achados.filter((a) => a.reabrir).map((a) => a.divergenciaId),
   };
@@ -418,6 +440,7 @@ function executar() {
       saneamento_suspeito_chave_fragil: "Divergencia ja decidida cuja chave de pareamento corresponde a mais de uma linha PAD; exige revalidacao manual da decisao.",
       risco_confirmado_ja_diagnosticado: "Caso ja diagnosticado e corrigido em auditoria anterior (#44).",
       divergencia_aberta_com_alerta_pareamento: "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo.",
+      alerta_pareamento_sem_pendencia_operacional: "Divergencia aberta em grupo PAD multi-linha, mas sem pendencia operacional material porque a auditoria operacional fechou por natureza.",
       pendencia_material_potencial_aberta: "Divergencia aberta em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material).",
       pendencia_material_potencial_decidida: "Divergencia ja decidida em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material).",
     },
@@ -449,6 +472,7 @@ function renderMarkdown(relatorio) {
   const suspeitos = filtrados("saneamento_suspeito_chave_fragil");
   const jaDiag = filtrados("risco_confirmado_ja_diagnosticado");
   const abertasAlerta = filtrados("divergencia_aberta_com_alerta_pareamento");
+  const alertasSemPendencia = filtrados("alerta_pareamento_sem_pendencia_operacional");
   const pendAbertas = filtrados("pendencia_material_potencial_aberta");
   const pendDecididas = filtrados("pendencia_material_potencial_decidida");
 
@@ -468,6 +492,7 @@ function renderMarkdown(relatorio) {
     `  - Permanecem confiáveis (saneamento confirmado): ${r.saneamentosConcluidosConfirmados}`,
     `  - Exigem revalidação manual (suspeitos de chave frágil ou pendência material decidida): ${r.divergenciasSaneadasParaRevalidar.length}`,
     `- Divergências abertas com alerta de pareamento (sem decisão resolutiva): ${r.divergenciasAbertasComAlertaPareamento}`,
+    `- Alertas de pareamento sem pendência operacional material: ${r.alertasPareamentoSemPendenciaOperacional}`,
     `- Pendências materiais potenciais abertas (sem decisão resolutiva): ${r.pendenciasMateriaisPotenciaisAbertas}`,
     `- Riscos confirmados já diagnosticados (#44): ${r.riscosConfirmadosJaDiagnosticados}`,
     "",
@@ -535,6 +560,24 @@ function renderMarkdown(relatorio) {
 
   linhas.push(
     "",
+    "## 4.1. Alertas de Pareamento sem Pendência Operacional",
+    "",
+    "Divergências abertas em grupo PAD multi-linha que permanecem monitoradas pela regressão, mas que a auditoria operacional já classificou como falso positivo saneável por fechamento material segregado. Não devem ser lidas como pendência material aberta.",
+    ""
+  );
+
+  if (!alertasSemPendencia.length) {
+    linhas.push("- Nenhum alerta de pareamento sem pendência operacional.");
+  } else {
+    linhas.push("| Divergência | Convênio | UF | Tipo Alerta | Status | Classificação operacional | Recomendação |");
+    linhas.push("|---|---|---|---|---|---|---|");
+    for (const a of alertasSemPendencia) {
+      linhas.push(`| #${a.divergenciaId} | ${a.numeroConvenio} | ${a.uf || "-"} | ${a.tipoAlerta} | ${a.status} | ${a.classificacaoOperacional || "-"} | ${a.recomendacao} |`);
+    }
+  }
+
+  linhas.push(
+    "",
     "## 5. Pendências Materiais Potenciais Abertas",
     "",
     "Divergências abertas (status PENDENTE) cujos grupos PAD possuem múltiplas naturezas/códigos (risco material alto/médio). Exigem segregação material no pareamento.",
@@ -592,7 +635,7 @@ function renderMarkdown(relatorio) {
     `- **Saneamentos concluídos confiáveis:** ${r.saneamentosConcluidosConfirmados} permanecem confiáveis e sem risco de pareamento frágil.`,
     `- **Revalidação técnica necessária:** ${r.divergenciasSaneadasParaRevalidar.length} saneamentos exigem revalidação manual devido a chave de pareamento frágil ou risco de conflito material (por exemplo, a divergência #24).`,
     `- **Divergências abertas com alerta:** As divergências #31, #32, #33 e #34 já têm alerta de pareamento por caírem em grupo PAD multi-linha, mas **não são regressão de saneamento**, pois continuam em aberto e sem decisão resolutiva.`,
-    `- **Pendência material aberta:** A divergência #46 continua em aberto e foi classificada como \`pendencia_material_potencial_aberta\` devido à divergência de natureza/código de despesa no grupo do saldo residual.`,
+    `- **#46 harmonizada:** A divergência #46 continua aberta sem decisão resolutiva, mas a regressão agora a mantém como \`alerta_pareamento_sem_pendencia_operacional\`, porque a auditoria operacional classificou o saldo remanescente como \`falso_positivo_saneavel\` após fechamento material segregado por natureza.`,
     `- **Garantia de segurança:** Nenhuma divergência foi reaberta automaticamente no banco de dados. Os dados originais permanecem inalterados.`,
     "",
     "Rollback: reverter o commit e regenerar os relatórios dry-run; não apagar decisões, logs, divergências nem relatórios históricos."

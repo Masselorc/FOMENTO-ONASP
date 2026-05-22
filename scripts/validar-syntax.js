@@ -56,6 +56,8 @@ const ARQUIVOS = [
   "backend/scripts/auditar-quantidades-suspeitas-profor-2022.js",
   "backend/scripts/auditar-saldos-residuais-profor-2022.js",
   "backend/scripts/auditar-pendencias-profor-2022-profundo.js",
+  "backend/scripts/auditar-identidade-material-pad-profor-2022.js",
+  "backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
   "frontend/js/core/ui-components.js",
@@ -70,6 +72,7 @@ const ARQUIVOS = [
   "tests/services/profor-quantidade-parser.test.js",
   "tests/services/profor-pad-item-nao-apto.test.js",
   "tests/services/profor-pad-revisao-operacional.test.js",
+  "tests/services/profor-pad-identidade-material-regressao.test.js",
   "tests/services/profor-saldo-residual.test.js"
 ];
 
