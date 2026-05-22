@@ -1,0 +1,218 @@
+{
+  "geradoEm": "2026-05-22T19:02:43.555Z",
+  "modo": "dry-run",
+  "titulo": "Auditoria integrada de integridade pos-saneamento e seguranca pre-ativacao PAD/PROFOR 2022",
+  "escopo": "Auditoria somente leitura. Nao publica, nao registra decisao, nao altera origem ativa, nao altera o planoAplicacao oficial e nao altera o SQLite versionado.",
+  "fontes": {
+    "filaRevisao": "lote 36 (ABERTO), 138 divergencias reapresentadas, 7 nao reapresentadas",
+    "pendenciasProfundo": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json",
+    "segurancaDryRun": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
+    "segurancaDetalhada": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.json",
+    "reconstrucao": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
+    "comparacao": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json"
+  },
+  "comandosExecutados": [
+    "npm run profor:pad:auditar-fila-revisao",
+    "npm run profor:pad:auditar-pendencias-profundo",
+    "npm run profor:pad:seguranca-pre-ativacao:dry-run",
+    "npm run profor:pad:seguranca-pre-ativacao:detalhar",
+    "npm run profor:pad:reconstruir-plano:dry-run",
+    "npm run profor:pad:comparar-plano:dry-run",
+    "npm run validar:syntax",
+    "npm run validar:services",
+    "git diff --check",
+    "git status --short frontend/data/publicados",
+    "git status --short \"*.sqlite*\""
+  ],
+  "blocoA_integridadePosSaneamento": {
+    "totalDivergenciasNaFila": 145,
+    "totalAnalisadoAuditoriaProfunda": 143,
+    "pendenciaOperacionalReal": 2,
+    "pendenciaOperacionalRealIds": [18, 44],
+    "falsoPositivoSaneavel": 73,
+    "historicoSaneado": 34,
+    "revalidacaoNecessaria": 27,
+    "decisaoResolutivaComPendenciaTecnica": 7,
+    "bloqueioTecnicoSeguranca": 0,
+    "divergenciasPendenteOuEmRevisaoStatus": 73,
+    "decisoesRegistradas": 74,
+    "decisoesResolutivas": 70,
+    "logsExistentes": 2410,
+    "logsDecisaoRegistrada": 73,
+    "divergenciasSemPayloadOuInvalido": 0,
+    "decisoesNaoCanonicas": 1,
+    "decisoesNaoCanonicasDetalhe": [
+      {
+        "decisaoId": 1,
+        "divergenciaId": 24,
+        "valor": "aceitar",
+        "valorCanonico": "ACEITO",
+        "observacao": "Decisao legada anterior ao log decisao_registrada; sem log correspondente (74 decisoes x 73 logs decisao_registrada)."
+      }
+    ],
+    "criterioCentral": "pendencia_operacional_real deve ser 0.",
+    "criterioCentralAtendido": false,
+    "pendenciasOperacionaisReais": [
+      {
+        "id": 18,
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "tipoAlerta": "item_novo_sem_rateio",
+        "status": "ACEITO",
+        "decisao": "ACEITO (decisao #150, sistema-saneamento-pad-al-937221)",
+        "classificacoes": ["saldo_residual_ok_nao_setorializado", "saldo_residual_decisao_anterior_incompativel", "ja_saneado_mas_ainda_pendente"],
+        "causa": "Divergencia ja decidida (status ACEITO) classificada como pendencia_operacional_real pelo classificador operacional, que avalia o ramo de saldo residual antes do ramo de decisao resolutiva. Ha decisao anterior incompativel rastreada como saldo_residual_decisao_anterior_incompativel.",
+        "classificacao": "revalidacao_necessaria (decisao resolutiva presente com pendencia tecnica de saldo residual)"
+      },
+      {
+        "id": 44,
+        "numeroConvenio": "938128",
+        "uf": "SP",
+        "tipoAlerta": "item_nao_apto",
+        "status": "ACEITO",
+        "decisao": "ACEITO (decisao #186, usuario-local)",
+        "classificacoes": ["saldo_residual_natureza_divergente", "saldo_residual_decisao_anterior_incompativel", "ja_saneado_mas_ainda_pendente"],
+        "causa": "Saldo residual com natureza divergente real: memoria CAPITAL R$ 22.351,09 sem linha PAD de mesma natureza e mesmo valor (PAD apresenta CUSTEIO R$ 71,36). Mesmo com status ACEITO, a divergencia de natureza permanece tecnicamente em aberto.",
+        "classificacao": "pendencia tecnica real de saldo residual; exige correspondente PAD de mesma natureza ou decisao retificadora"
+      }
+    ]
+  },
+  "blocoB_segurancaPreAtivacao": {
+    "aptoParaProsseguirAtivacao": false,
+    "totalBloqueios": 35,
+    "payloadAlteradoAposDecisao": 28,
+    "divergenciasComPayloadAlterado": 27,
+    "divergenciasComPayloadAlteradoIds": [47, 48, 49, 50, 51, 52, 53, 54, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74],
+    "decisaoSemSnapshotDeSeguranca": 0,
+    "hashDivergente": 28,
+    "decisaoCanonicaAusenteOuAmbigua": 1,
+    "decisaoCanonicaAusenteOuAmbiguaDetalhe": "decisao #1 (divergencia #24) gravada como 'aceitar' em caixa baixa; nao entra nos conjuntos resolutivos canonicos. Decisao legada.",
+    "decisaoLegadaIncompativel": 1,
+    "divergenciaNaoReapresentadaComDecisaoResolutiva": 7,
+    "divergenciaNaoReapresentadaIds": [25, 26, 27, 28, 75, 77, 78],
+    "bloqueioTecnicoRemanescente": 35,
+    "decisaoComEfeitoInseguroNaReconstrucao": 0,
+    "aplicadaAoPlanoPermaneceFalse": true,
+    "logDecisaoRegistradaParaDecisoesRelevantes": "73 de 74 decisoes possuem log decisao_registrada; apenas a decisao legada #1 nao possui",
+    "criterioCentral": "Nenhum bloqueio tecnico pode impedir a preparacao da ativacao controlada.",
+    "criterioCentralAtendido": false,
+    "classificacaoDosBloqueios": {
+      "impeditivoDeAtivacao": 0,
+      "revalidacaoNecessaria": 28,
+      "historicoDocumentado": 7,
+      "alertaNaoImpeditivo": 0
+    },
+    "observacao": "Os 35 bloqueios sao 28 de revalidacao por payload alterado (exigem revalidacao humana, nao sao alteracao indevida) e 7 de divergencias nao reapresentadas com decisao resolutiva (historico documentado). Nenhum representa decisao com efeito inseguro aplicada ao plano oficial; aplicadaAoPlano permanece false em todas as decisoes auditadas."
+  },
+  "blocoC_reconstrucaoDryRun": {
+    "planoReconstruidoGerado": true,
+    "modo": "dry-run",
+    "planoAplicacaoOficialAlterado": false,
+    "totalLinhasReconstruidas": 623,
+    "totalConveniosReconstruidos": 15,
+    "valorPrevistoReconstruidoTotal": 10654508.7,
+    "valorExecutadoReconstruidoTotal": 3217739.5,
+    "saldoReconstruidoTotal": 7436769.2,
+    "totalImpedimentos": 34,
+    "totalAlertas": 119,
+    "impedimentosPorTipo": {
+      "rateio_percentual_indefinido": 19,
+      "item_conhecido_nao_apto_usado": 6,
+      "decisao_nao_aplicavel:decisao_sem_efeito_definido": 5,
+      "saldo_residual_natureza_divergente": 1,
+      "item_pad_sem_rateio": 1,
+      "decisao_nao_aplicavel:saldo_residual_rateio_invalido": 1,
+      "divergencias_revisao_bloqueiam_publicacao": 1
+    },
+    "tratamentoSaldosResiduais": "Saldo residual reconstruido com area tecnica NAO INFORMADO e segregado por natureza; 1 impedimento saldo_residual_natureza_divergente (convenio 938128, divergencia #44).",
+    "tratamentoItensSaneadosTecnicamente": "Itens com inconsistencia quantidade x valor unitario saneados por arredondamento mantem o total previsto informado pelo PAD; nao geram impedimento de reconstrucao.",
+    "aptoParaAtivacao": false,
+    "aptoParaPublicacao": false
+  },
+  "blocoD_comparador": {
+    "totalLinhasAntigo": 566,
+    "totalLinhasNovo": 623,
+    "itensIguais": 460,
+    "itensNovos": 30,
+    "itensAusentes": 34,
+    "diferencasCriticas": 30,
+    "diferencasCriticasNatureza": "Todas as 30 diferencas criticas sao itens novos (situacao 'novo'): linhas reconstruidas pelo PAD sem correspondencia na origem antiga.",
+    "diferencasEsperadasPorAtualizacaoPad": 12,
+    "diferencasPorPendenciaDeDecisao": 15,
+    "diferencasSaneadasPorDecisao": 0,
+    "diferencasDeArredondamento": "Inconsistencias quantidade x valor unitario tratadas no ciclo anterior; o total do PAD prevalece e nao gera diferenca critica no comparador.",
+    "diferencasPorSaldoResidual": "Area divergente 0, natureza divergente 0 — saldos residuais comparados segregados por natureza sem divergencia de chave.",
+    "itensValorPrevistoDivergente": 14,
+    "itensValorExecutadoDivergente": 13,
+    "itensSaldoDivergente": 27,
+    "itensAmbiguos": 45,
+    "diferencaTotal": { "linhas": 57, "valorPrevisto": -9506.78, "valorExecutado": 15043.6, "saldo": -24550.38 },
+    "diferencasQueImpedemAtivacao": "As 30 diferencas criticas (itens novos) e os 34 impedimentos de reconstrucao impedem a ativacao automatica; exigem conferencia de rateio/area antes da ativacao controlada.",
+    "diferencasApenasInformativas": "7 avisos; 12 diferencas esperadas por atualizacao PAD.",
+    "aptoParaAtivacao": false,
+    "aptoParaPublicacao": false
+  },
+  "blocoE_naoPublicacao": {
+    "frontendDataPublicadosAlterado": false,
+    "sqliteNovoOuAlteradoVersionado": false,
+    "origemAtivaIntacta": true,
+    "planoAplicacaoOficialIntacto": true,
+    "publicacaoAutomaticaExecutada": false,
+    "hookDePublicacaoIgnorouPublicacao": true,
+    "observacao": "git status --short frontend/data/publicados e git status --short \"*.sqlite*\" retornaram vazio. Os unicos arquivos alterados sao relatorios dry-run em backend/data/relatorios/."
+  },
+  "achadosPorSeveridade": {
+    "alto": [
+      {
+        "achado": "pendencia_operacional_real = 2 (#18, #44), nao 0",
+        "detalhe": "#44 e pendencia tecnica real de saldo residual com natureza divergente. #18 esta decidida (ACEITO) mas e reclassificada como pendencia operacional pelo ramo de saldo residual do classificador, antes do ramo de decisao resolutiva.",
+        "impacto": "O criterio central do Bloco A (pendencia_operacional_real = 0) NAO foi atendido."
+      }
+    ],
+    "medio": [
+      {
+        "achado": "35 bloqueios de seguranca pre-ativacao",
+        "detalhe": "28 por payload alterado apos decisao (revalidacao humana) + 7 por divergencia nao reapresentada com decisao resolutiva (historico documentado).",
+        "impacto": "aptoParaProsseguirAtivacao = false; exige revalidacao humana antes da ativacao controlada."
+      },
+      {
+        "achado": "34 impedimentos de reconstrucao e 30 diferencas criticas no comparador",
+        "detalhe": "19 rateios sem percentual definido, 6 itens nao aptos usados, 30 itens novos sem correspondencia na origem antiga.",
+        "impacto": "Reconstrucao e comparacao nao aptas para ativacao automatica."
+      }
+    ],
+    "baixo": [
+      {
+        "achado": "1 decisao legada nao canonica (decisao #1, divergencia #24, valor 'aceitar')",
+        "detalhe": "Decisao anterior ao log decisao_registrada; nao entra nos conjuntos resolutivos canonicos.",
+        "impacto": "Nao bloqueia ativacao; recomenda-se saneamento canonico auditavel em etapa posterior."
+      }
+    ]
+  },
+  "recomendacaoFinal": {
+    "classificacao": "nao_apto_com_bloqueios_listados",
+    "resumo": "A base NAO esta apta para iniciar a ativacao controlada no estado atual. Ha 2 pendencias operacionais reais (#18, #44), 35 bloqueios de seguranca pre-ativacao e 34 impedimentos de reconstrucao. Nenhum bloqueio decorre de alteracao indevida de dado oficial: todos sao revalidacoes ou pendencias tecnicas legitimas registradas em dry-run.",
+    "bloqueios": [
+      "Bloco A: pendencia_operacional_real = 2 (#18, #44) — criterio central nao atendido.",
+      "Bloco B: 35 bloqueios de seguranca (28 revalidacao por payload alterado + 7 nao reapresentadas) — aptoParaProsseguirAtivacao = false.",
+      "Bloco C: 34 impedimentos de reconstrucao (rateio percentual indefinido, item nao apto usado, saldo residual natureza divergente).",
+      "Bloco D: 30 diferencas criticas (itens novos) no comparador."
+    ],
+    "ressalvas": [
+      "O estado informado de 0 pendencias operacionais nao foi confirmado pela evidencia atual (relatorio profundo de 2026-05-22T19:02 aponta 2).",
+      "#18 e candidato a reclassificacao para revalidacao_necessaria/historico_saneado, pois ja possui decisao ACEITO; a correcao do ordenamento do classificador operacional para itens de saldo residual ja decididos pode ser tratada em tarefa de codigo separada."
+    ]
+  },
+  "rollback": "git revert <commit>. Nao apagar decisoes, divergencias, logs nem relatorios historicos. Os relatorios dry-run podem ser regenerados pelos comandos npm correspondentes.",
+  "proximoPassoRecomendado": "1) Revalidar humanamente as 28 decisoes com payload alterado (grupo 1 do planoRevalidacao). 2) Tratar as 7 divergencias nao reapresentadas com decisao resolutiva (grupo 2). 3) Esclarecer #44 (saldo residual 938128) com correspondente PAD de mesma natureza ou decisao retificadora. 4) Avaliar reclassificacao de #18. 5) Sanear a decisao legada nao canonica #1. 6) Reexecutar esta auditoria integrada apos os tratamentos.",
+  "garantias": {
+    "decisaoRegistrada": false,
+    "statusAlterado": false,
+    "publicacaoExecutada": false,
+    "origemAtivaAlterada": false,
+    "planoAplicacaoOficialAlterado": false,
+    "frontendDataPublicadosAlterado": false,
+    "sqliteAlterado": false,
+    "migrationCriada": false
+  }
+}

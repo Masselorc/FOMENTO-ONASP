@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T16:56:56.646Z",
+  "geradoEm": "2026-05-22T19:02:43.555Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
@@ -7351,7 +7351,7 @@
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T16:56:56.613Z",
+    "geradoEm": "2026-05-22T19:02:43.531Z",
     "resumo": {
       "totalDecisoesResolutivasAuditadas": 73,
       "totalPayloadPreservado": 45,

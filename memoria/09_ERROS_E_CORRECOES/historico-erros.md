@@ -923,3 +923,29 @@ Ao atualizar:
 **Validações recomendadas:** `npm run profor:rateio:auditar-quantidades:dry-run`, `npm run profor:pad:auditar-pendencias-profundo`, `npm run validar:services`; conferir #88/#89/#97/#115 como `falso_positivo_saneavel`.
 
 **Rollback:** reverter o commit e regenerar relatórios dry-run; não apagar divergências, decisões ou logs históricos.
+
+---
+
+## 22/05/2026 - PROFOR 2022: auditoria integrada de integridade pós-saneamento (registro de auditoria)
+
+**Classificação:** registro de auditoria — achados de integridade
+
+**Contexto:** auditoria integrada dry-run de integridade pós-saneamento e segurança pré-ativação PAD/PROFOR 2022, combinando fila de revisão, auditoria profunda, segurança pré-ativação, reconstrução e comparador.
+
+**Estado informado vs. observado:** o pedido informou "0 pendências operacionais restantes". A evidência atual (relatórios regenerados em 2026-05-22T19:02) **não confirmou** esse estado.
+
+**Achados:**
+- `pendencia_operacional_real = 2` (`#18` 937221/AL e `#44` 938128/SP), não 0. `#44` é pendência técnica real de saldo residual (memória CAPITAL R$ 22.351,09 sem correspondente PAD de mesma natureza). `#18` está com status ACEITO mas é reclassificada como pendência operacional porque o ramo de saldo residual do classificador (`classificarOperacional` em `auditar-pendencias-profor-2022-profundo.js`) é avaliado antes do ramo de decisão resolutiva.
+- 35 bloqueios de segurança pré-ativação: 28 por payload alterado após decisão (revalidação humana) + 7 por divergência não reapresentada com decisão resolutiva (histórico documentado). Nenhum é impeditivo por dado oficial alterado; `aplicadaAoPlano` permanece `false`.
+- 34 impedimentos de reconstrução e 30 diferenças críticas (itens novos) no comparador.
+- 1 decisão legada não canônica (decisão #1, divergência #24, valor `"aceitar"`).
+
+**Por que registrar:** o classificador operacional pode rotular como `pendencia_operacional_real` uma divergência de saldo residual já decidida (status resolutivo), porque o ramo de saldo residual precede o de decisão resolutiva. Convém avaliar, em tarefa de código separada, reposicionar o ramo de saldo residual ou cruzá-lo com o status resolutivo.
+
+**Como prevenir:** não presumir "0 pendências" sem reexecutar a auditoria profunda; tratar relatório mais recente como verdade.
+
+**Arquivos relacionados:** `backend/scripts/auditar-pendencias-profor-2022-profundo.js`, `backend/scripts/detalhar-seguranca-pre-ativacao-pad-profor-2022.js`, `backend/data/relatorios/profor-2022-integridade-pos-saneamento-dry-run.json`, `backend/data/relatorios/profor-2022-integridade-pos-saneamento-dry-run.md`.
+
+**Recomendação final da auditoria:** NÃO APTO para preparar ativação controlada, com bloqueios listados; nenhum bloqueio decorre de alteração indevida de dado oficial.
+
+**Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar divergências, decisões, logs nem relatórios históricos.

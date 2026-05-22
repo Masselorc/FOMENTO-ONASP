@@ -2312,3 +2312,29 @@ Na geração de 22/05/2026: 67 inconsistências `quantidade_valor_unitario_incon
 
 Esta correção não registra decisão, não altera status, não publica, não altera origem ativa, não muda `frontend/data/publicados`, não altera o `planoAplicacao` oficial e não altera o SQLite versionado. O efeito é limitado a auditoria dry-run e exibição operacional na tela.
 
+## 29. Auditoria integrada de integridade pós-saneamento
+
+### 29.1. Objetivo
+
+Auditoria dry-run que combina integridade pós-saneamento e segurança pré-ativação para confirmar se a base está tecnicamente íntegra para preparar a ativação controlada — sem publicar, sem alterar origem ativa e sem alterar o `planoAplicacao` oficial.
+
+### 29.2. Entregável
+
+Relatório rastreável em `backend/data/relatorios/profor-2022-integridade-pos-saneamento-dry-run.{json,md}`, consolidando cinco blocos: A (integridade pós-saneamento), B (segurança pré-ativação), C (reconstrução dry-run), D (comparador) e E (confirmação de não publicação). Cada execução regenera as fontes pelos comandos `npm` da frente PAD.
+
+### 29.3. Resultado da execução de 22/05/2026
+
+- **Bloco A:** 145 divergências na fila, 143 analisadas. `pendencia_operacional_real = 2` (`#18` 937221/AL, `#44` 938128/SP) — **critério central (0) não atendido**. 73 falsos positivos saneáveis, 34 históricos saneados, 27 revalidações necessárias, 7 decisões resolutivas com pendência técnica. 0 divergências sem payload.
+- **Bloco B:** 35 bloqueios de segurança (`aptoParaProsseguirAtivacao = false`): 28 por payload alterado após decisão (revalidação humana), 7 não reapresentadas com decisão resolutiva (histórico documentado). Nenhum impeditivo por dado oficial alterado; `aplicadaAoPlano` permanece `false`. 1 decisão legada não canônica (#1).
+- **Bloco C:** plano reconstruído com 623 linhas, 15 convênios; previsto R$ 10.654.508,70, executado R$ 3.217.739,50, saldo R$ 7.436.769,20; 34 impedimentos. `planoAplicacao` oficial intacto.
+- **Bloco D:** 30 diferenças críticas (todas itens novos), 12 esperadas por atualização PAD, 0 divergência de área/natureza.
+- **Bloco E:** `frontend/data/publicados`, SQLite versionado, origem ativa e `planoAplicacao` oficial intactos; nenhuma publicação automática.
+
+### 29.4. Recomendação
+
+**Não apto para preparar ativação controlada**, com bloqueios listados nos Blocos A–D. Nenhum bloqueio decorre de alteração indevida de dado oficial — todos são revalidações humanas ou pendências técnicas legítimas. O estado informado de "0 pendências operacionais" não foi confirmado pela evidência atual.
+
+### 29.5. Escopo preservado
+
+A auditoria não registra decisão, não altera status, não publica, não altera origem ativa, não muda `frontend/data/publicados`, não altera o `planoAplicacao` oficial e não altera o SQLite versionado. O efeito é limitado a leitura e geração de relatório dry-run.
+
