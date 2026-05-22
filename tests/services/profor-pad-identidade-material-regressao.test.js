@@ -93,3 +93,53 @@ test("7. Divergência de quantidade x valor unitário por arredondamento não de
   const sensivel = TIPOS_SENSIVEIS_A_PAREAMENTO.has(tipoAlerta);
   assert.equal(sensivel, false);
 });
+
+test("8. Reconstrução de item multi-linha: gerarLinhasItem deve filtrar rateios materialmente correspondentes e evitar duplicação", () => {
+  const { gerarLinhasItem } = require("../../backend/services/profor-2022/profor-pad-plano-reconstrucao-service");
+
+  const rateios = [
+    { area: "OUVIDORIA", natureza: "CUSTEIO", quantidade_referencia: 80, valor_previsto_referencia: 2972.00 },
+    { area: "CORREGEDORIA", natureza: "CUSTEIO", quantidade_referencia: 57, valor_previsto_referencia: 2142.35 }
+  ];
+
+  const itemPad1 = {
+    linha: 50,
+    descricaoOriginal: "Meia Militar",
+    quantidade: 80,
+    valorTotalPrevisto: 2972.00,
+    valorTotalExecutado: 0,
+    natureza: "CUSTEIO",
+    chaveItem: "937265::MEIA MILITAR",
+    codigoNaturezaDespesa: "33903099"
+  };
+
+  const itemPad2 = {
+    linha: 51,
+    descricaoOriginal: "Meia militar",
+    quantidade: 57,
+    valorTotalPrevisto: 2142.35,
+    valorTotalExecutado: 0,
+    natureza: "CUSTEIO",
+    chaveItem: "937265::MEIA MILITAR",
+    codigoNaturezaDespesa: "33903099"
+  };
+
+  // Reseta estado interno temporário (_usado) para os testes
+  rateios.forEach(r => delete r._usado);
+
+  // Processamos a primeira linha física
+  const res1 = gerarLinhasItem(itemPad1, rateios, { fonteRateio: "relatorios-pad-rateados" });
+  assert.equal(res1.linhas.length, 1);
+  assert.equal(res1.linhas[0].area, "OUVIDORIA");
+  assert.equal(res1.linhas[0].quantidade, 80);
+  assert.equal(res1.linhas[0].valorPrevisto, 2972.00);
+  assert.equal(res1.linhas[0].linhaOrigem, 50);
+
+  // Processamos a segunda linha física (equivalência)
+  const res2 = gerarLinhasItem(itemPad2, rateios, { fonteRateio: "equivalencia_por_decisao" });
+  assert.equal(res2.linhas.length, 1);
+  assert.equal(res2.linhas[0].area, "CORREGEDORIA");
+  assert.equal(res2.linhas[0].quantidade, 57);
+  assert.equal(res2.linhas[0].valorPrevisto, 2142.35);
+  assert.equal(res2.linhas[0].linhaOrigem, 51);
+});

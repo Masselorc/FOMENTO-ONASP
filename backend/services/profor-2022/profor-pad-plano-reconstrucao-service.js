@@ -180,7 +180,32 @@ function gerarLinhaTecnicaSaldoResidual(itemPad, contexto) {
   linha.liberadoPorDecisao = Boolean(contexto.liberadoPorDecisao);
   linha.decisaoAplicada = resumoDecisao(contexto.decisaoAplicada);
   linha.saldoResidualTecnico = true;
+  linha.linhaOrigem = itemPad.linha || null;
   return linha;
+}
+
+function normalizarNaturezaLocal(n) {
+  if (!n) return "";
+  const s = String(n).trim().toUpperCase();
+  if (s.includes("CUSTEIO")) return "CUSTEIO";
+  if (s.includes("CAPITAL")) return "CAPITAL";
+  return s;
+}
+
+function rateioCorrespondeMaterialmente(rateio, itemPad) {
+  const qtyRateio = arredondarQuantidadeProfor(rateio.quantidade_referencia);
+  const qtyPad = arredondarQuantidadeProfor(itemPad.quantidade);
+  const qtyMatch = Math.abs(qtyRateio - qtyPad) < 1e-5;
+
+  const valRateio = arredondarMoedaProfor(rateio.valor_previsto_referencia);
+  const valPad = arredondarMoedaProfor(itemPad.valorTotalPrevisto);
+  const valMatch = Math.abs(valRateio - valPad) < 0.05;
+
+  const natRateio = normalizarNaturezaLocal(rateio.natureza);
+  const natPad = normalizarNaturezaLocal(itemPad.natureza);
+  const natMatch = natRateio === natPad;
+
+  return qtyMatch && valMatch && natMatch;
 }
 
 /**
@@ -251,8 +276,17 @@ function gerarLinhasItem(itemPad, rateios, contexto = {}) {
     return { linhas, alertasItem, impedimentosItem };
   }
 
-  const pesosValor = obterPesosRateio(rateios, "percentual_valor", "valor_previsto_referencia");
-  const pesosQuantidade = obterPesosRateio(rateios, "percentual_quantidade", "quantidade_referencia");
+  let rateiosParaUsar = rateios;
+  if (rateios && rateios.length > 1) {
+    const match = rateios.find(r => !r._usado && rateioCorrespondeMaterialmente(r, itemPad));
+    if (match) {
+      match._usado = true;
+      rateiosParaUsar = [match];
+    }
+  }
+
+  const pesosValor = obterPesosRateio(rateiosParaUsar, "percentual_valor", "valor_previsto_referencia");
+  const pesosQuantidade = obterPesosRateio(rateiosParaUsar, "percentual_quantidade", "quantidade_referencia");
   const previstos = distribuirTotal(itemPad.valorTotalPrevisto, pesosValor.pesos, arredondarMoedaProfor);
   const executados = distribuirTotal(itemPad.valorTotalExecutado, pesosValor.pesos, arredondarMoedaProfor);
   const quantidades = distribuirTotal(itemPad.quantidade, pesosQuantidade.pesos, arredondarQuantidadeProfor);
@@ -260,7 +294,7 @@ function gerarLinhasItem(itemPad, rateios, contexto = {}) {
     || executados.residuo !== 0
     || quantidades.residuo !== 0;
 
-  rateios.forEach((rateio, indice) => {
+  rateiosParaUsar.forEach((rateio, indice) => {
     const valorPrevisto = previstos.valores[indice];
     const valorExecutado = executados.valores[indice];
     const quantidade = quantidades.valores[indice];
@@ -303,10 +337,11 @@ function gerarLinhasItem(itemPad, rateios, contexto = {}) {
     linha.valorUnitarioDerivado = valorUnitarioDerivado;
     linha.baseRateioValor = pesosValor.base;
     linha.baseRateioQuantidade = pesosQuantidade.base;
-    linha.ajusteResidualAplicado = houveAjusteResidual && indice === rateios.length - 1;
+    linha.ajusteResidualAplicado = houveAjusteResidual && indice === rateiosParaUsar.length - 1;
     linha.itemAptoParaUso = contexto.itemAptoParaUso !== false;
     linha.liberadoPorDecisao = Boolean(contexto.liberadoPorDecisao);
     linha.decisaoAplicada = resumoDecisao(contexto.decisaoAplicada);
+    linha.linhaOrigem = itemPad.linha || null;
     linhas.push(linha);
   });
 

@@ -1038,3 +1038,32 @@ Ao atualizar:
 
 **Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar divergências, decisões ou relatórios históricos.
 
+---
+
+## 22/05/2026 - PROFOR 2022: duplicação de rateios em itens multi-linha com equivalência por decisão (Divergência #24)
+
+**Classificação:** erro real corrigido
+
+**Contexto:** reconstrução do plano (`gerarLinhasItem` em `profor-pad-plano-reconstrucao-service.js`) e auditoria de regressão de saneamentos PAD/PROFOR 2022, especificamente na divergência `#24` (Meia Militar/MS, Convênio 937265).
+
+**Problema:** itens conhecidos multi-linha que possuíam equivalência estabelecida por decisão repetiam o conjunto completo de rateios ativos para cada uma das linhas físicas correspondentes no PAD. No caso do Meia Militar, a linha 50 (previsto R$ 2.972,00) e a linha 51 (previsto R$ 2.142,35) eram reconstruídas gerando 4 linhas em vez de 2, aplicando indevidamente todos os rateios (Ouvidoria e Corregedoria) nas duas linhas físicas do PAD. Isso fazia com que a divergência `#24` ficasse classificada como `saneamento_suspeito_chave_fragil`.
+
+**Evidência:** o plano de aplicação reconstruído gerava 4 linhas duplicando a soma prevista, e o comparador de planos de aplicação reportava incoerências de valores previstos e executados. O relatório de regressão marcava `#24` como suspeita por chave frágil.
+
+**Causa raiz:** a lógica de reconstrução não comparava as características materiais específicas de cada rateio com a linha física do PAD que estava sendo processada (quantidade, valor previsto e natureza), reaplicando todos os rateios ativos do item conhecido na equivalência de cada linha PAD. Além disso, a auditoria de regressão de saneamentos não conseguia limpar o alerta da divergência `#24` por uma falha de carregamento no JSON do plano reconstruído devido a um erro de digitação na chave (lia `planoAplicacaoReconstrucido` em vez de `planoAplicacaoReconstruido`).
+
+**Correção aplicada:**
+1. No arquivo `profor-pad-plano-reconstrucao-service.js`, refinamos a função `gerarLinhasItem` para filtrar os rateios correspondentes materialmente a cada linha física do PAD quando há múltiplos rateios ativos no item conhecido. A comparação material (`rateioCorrespondeMaterialmente`) valida tolerâncias aceitáveis para quantidade (`1e-5`) e valor previsto (`0.05`), além de verificar a natureza de despesa normalizada.
+2. Marcamos os rateios correspondentes como usados (`_usado = true`) temporariamente por item de modo a evitar que um mesmo rateio seja reaplicado unicamente em múltiplas linhas idênticas do PAD.
+3. Corrigimos a chave de leitura no script `auditar-regressao-saneamentos-pad-profor-2022.js` para ler a chave correta `planoAplicacaoReconstruido` do arquivo JSON `profor-2022-pad-plano-reconstruido-dry-run.json`.
+4. Adicionamos testes unitários cobrindo o comportamento em `profor-pad-identidade-material-regressao.test.js`.
+
+**Por que funcionou:** a reconstrução agora mapeia unicamente a linha PAD 50 (qtd 80, valor R$ 2.972,00) ao rateio da OUVIDORIA e a linha PAD 51 (qtd 57, valor R$ 2.142,35) ao rateio da CORREGEDORIA, gerando exatamente 2 linhas materialmente equivalentes. Com isso, a divergência `#24` foi reavaliada com sucesso como `saneamento_confirmado` e o número de saneamentos suspeitos por chave frágil caiu para 0.
+
+**Como prevenir:** manter e enriquecer a verificação de identidade material no mapeamento multilinear de planos de reconstrução e garantir que o leitor de JSON de relatórios utilize a estrutura tipada unificada do sistema.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`, `backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js`, `tests/services/profor-pad-identidade-material-regressao.test.js`, `backend/data/relatorios/profor-2022-regressao-saneamentos-dry-run.{json,md}`, `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`.
+
+**Validações recomendadas:** `node backend/scripts/reconstruir-plano-pad-profor-2022.js`, `node backend/scripts/comparar-plano-pad-profor-2022.js`, `node backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js`, `node --test tests/services/profor-pad-identidade-material-regressao.test.js`.
+
+**Rollback:** `git revert <commit>` e regenerar relatórios dry-run; não apagar decisões, logs, divergências ou relatórios históricos.

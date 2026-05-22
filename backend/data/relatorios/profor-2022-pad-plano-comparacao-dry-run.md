@@ -1,6 +1,6 @@
 # PROFOR 2022 — Comparação planoAplicacao antigo × reconstruído PAD (dry-run)
 
-Gerado em: 2026-05-22T20:49:12.899Z
+Gerado em: 2026-05-22T21:10:51.447Z
 Modo: dry-run
 Origem antiga: memoria-rateio-persistida (abas-uf capturadas)
 Origem nova: relatorios-pad-rateados
@@ -8,23 +8,23 @@ Origem nova: relatorios-pad-rateados
 ## Resumo geral
 
 - Linhas origem antiga: 566
-- Linhas reconstruídas (PAD): 623
-- Itens iguais: 460
-- Itens novos: 30
-- Itens ausentes: 34
-- Quantidade divergente: 4
-- Valor previsto divergente: 14
-- Valor executado divergente: 13
-- Saldo divergente: 27
-- Área divergente: 0
+- Linhas reconstruídas (PAD): 567
+- Itens iguais: 492
+- Itens novos: 29
+- Itens ausentes: 35
+- Quantidade divergente: 2
+- Valor previsto divergente: 12
+- Valor executado divergente: 21
+- Saldo divergente: 33
+- Área divergente: 1
 - Natureza divergente: 0
-- Diferenças críticas: 30
+- Diferenças críticas: 29
 - Avisos: 7
 - Diferenças esperadas por atualização PAD: 12
-- Diferenças por pendência de decisão: 15
+- Diferenças por pendência de decisão: 22
 - Diferenças saneadas por decisão (dry-run): 0
 - Ausências confirmadas por decisão (dry-run): 27
-- Itens ambíguos: 45
+- Itens ambíguos: 6
 
 ## Decisões de revisão (dry-run)
 
@@ -40,8 +40,8 @@ Origem nova: relatorios-pad-rateados
 | Plano | Linhas | Valor previsto | Valor executado | Saldo |
 | --- | ---: | ---: | ---: | ---: |
 | Origem antiga | 566 | 10.664.015,48 | 3.202.695,90 | 7.461.319,58 |
-| Reconstrução PAD | 623 | 10.654.508,70 | 3.217.739,50 | 7.436.769,20 |
-| Diferença | 57 | -9.506,78 | 15.043,60 | -24.550,38 |
+| Reconstrução PAD | 567 | 10.654.508,70 | 3.217.739,50 | 7.436.769,20 |
+| Diferença | 1 | -9.506,78 | 15.043,60 | -24.550,38 |
 
 ## Aptidão
 
@@ -53,7 +53,7 @@ Origem nova: relatorios-pad-rateados
 - Reconstrução NÃO apta para ativação: 33 impedimento(s) registrado(s).
 - Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.
 - Diferença total origem antiga × reconstrução PAD: previsto -9506.78, executado 15043.6, saldo -24550.38.
-- Diferenças críticas: 30. Itens ambíguos: 45.
+- Diferenças críticas: 29. Itens ambíguos: 6.
 - Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao.
 
 ## Amostra de diferenças críticas
@@ -68,7 +68,6 @@ Origem nova: relatorios-pad-rateados
 - [novo] 937782 | OUVIDORIA | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb
 - [novo] 937782 | CORREGEDORIA | Notebook 4 núcleos 4.2ghz ram ddr 4 8gb
 - [novo] 937265 | CORREGEDORIA | Meia militar
-- [novo] 937265 | OUVIDORIA | Meia militar
 - [novo] 937221 | ESCOLA PENAL | Ar condicionado Split 60.000 BTUs (ESCOLA)
 - [novo] 937221 | CORREGEDORIA | Ar condicionado split, capacidade de 12.
 - [novo] 937221 | CORREGEDORIA | Ar condicionado tipo split, capacidade 3
@@ -78,4 +77,5 @@ Origem nova: relatorios-pad-rateados
 - [novo] 937221 | OUVIDORIA | Equipamentos de rede (switches e roteado
 - [novo] 937221 | ESCOLA | Forno de Micro-ondas a partir de- 32 lit
 - [novo] 937221 | OUVIDORIA | Forno de Microondas - 20L - (OUVIDORIA)
+- [novo] 937221 | CORREGEDORIA | Fragmentadora e papel - Corregedoria
 

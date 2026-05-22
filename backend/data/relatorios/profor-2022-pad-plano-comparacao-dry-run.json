@@ -1,26 +1,26 @@
 {
-  "geradoEm": "2026-05-22T20:49:12.899Z",
+  "geradoEm": "2026-05-22T21:10:51.447Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
     "totalLinhasAntigo": 566,
-    "totalLinhasNovo": 623,
-    "totalItensIguais": 460,
-    "totalItensNovos": 30,
-    "totalItensAusentes": 34,
-    "totalItensQuantidadeDivergente": 4,
-    "totalItensValorPrevistoDivergente": 14,
-    "totalItensValorExecutadoDivergente": 13,
-    "totalItensSaldoDivergente": 27,
-    "totalItensAreaDivergente": 0,
+    "totalLinhasNovo": 567,
+    "totalItensIguais": 492,
+    "totalItensNovos": 29,
+    "totalItensAusentes": 35,
+    "totalItensQuantidadeDivergente": 2,
+    "totalItensValorPrevistoDivergente": 12,
+    "totalItensValorExecutadoDivergente": 21,
+    "totalItensSaldoDivergente": 33,
+    "totalItensAreaDivergente": 1,
     "totalItensNaturezaDivergente": 0,
-    "totalItensAmbiguos": 45,
-    "totalDiferencas": 91,
-    "totalDiferencasCriticas": 30,
+    "totalItensAmbiguos": 6,
+    "totalDiferencas": 97,
+    "totalDiferencasCriticas": 29,
     "totalAvisos": 7,
     "totalDiferencasEsperadasPorAtualizacaoPad": 12,
-    "totalDiferencasPorPendenciaDeDecisao": 15,
+    "totalDiferencasPorPendenciaDeDecisao": 22,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 27,
     "totalDecisoesResolutivasEncontradas": 72,
@@ -39,14 +39,14 @@
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 623,
+      "linhas": 567,
       "valorPrevisto": 10654508.7,
       "valorExecutado": 3217739.5,
       "saldo": 7436769.2
     }
   },
   "diferencaTotal": {
-    "linhas": 57,
+    "linhas": 1,
     "valorPrevisto": -9506.78,
     "valorExecutado": 15043.6,
     "saldo": -24550.38
@@ -103,7 +103,7 @@
         "saldo": 236558.12
       },
       "novo": {
-        "linhas": 128,
+        "linhas": 72,
         "valorPrevisto": 548000,
         "valorExecutado": 311441.88,
         "saldo": 236558.12
@@ -112,7 +112,7 @@
         "valorPrevisto": 0,
         "valorExecutado": 0,
         "saldo": 0,
-        "linhas": 56
+        "linhas": 0
       }
     },
     {
@@ -483,7 +483,7 @@
         "saldo": 236558.12
       },
       "novo": {
-        "linhas": 128,
+        "linhas": 72,
         "valorPrevisto": 548000,
         "valorExecutado": 311441.88,
         "saldo": 236558.12
@@ -492,7 +492,7 @@
         "valorPrevisto": 0,
         "valorExecutado": 0,
         "saldo": 0,
-        "linhas": 56
+        "linhas": 0
       }
     },
     {
@@ -695,16 +695,16 @@
         "saldo": 2048720.27
       },
       "novo": {
-        "linhas": 136,
-        "valorPrevisto": 2580604.59,
-        "valorExecutado": 578163.45,
-        "saldo": 2002441.14
+        "linhas": 119,
+        "valorPrevisto": 2580604.57,
+        "valorExecutado": 538641.45,
+        "saldo": 2041963.12
       },
       "diferenca": {
-        "valorPrevisto": -13473.04,
-        "valorExecutado": 32806.09,
-        "saldo": -46279.13,
-        "linhas": 21
+        "valorPrevisto": -13473.06,
+        "valorExecutado": -6715.91,
+        "saldo": -6757.15,
+        "linhas": 4
       }
     },
     {
@@ -737,16 +737,16 @@
         "saldo": 2860899.75
       },
       "novo": {
-        "linhas": 304,
-        "valorPrevisto": 5095812.26,
-        "valorExecutado": 2251939.62,
-        "saldo": 2843872.64
+        "linhas": 288,
+        "valorPrevisto": 5095812.22,
+        "valorExecutado": 2203964.61,
+        "saldo": 2891847.61
       },
       "diferenca": {
-        "valorPrevisto": -5570.5,
-        "valorExecutado": 11456.61,
-        "saldo": -17027.11,
-        "linhas": 17
+        "valorPrevisto": -5570.54,
+        "valorExecutado": -36518.4,
+        "saldo": 30947.86,
+        "linhas": 1
       }
     },
     {
@@ -800,16 +800,16 @@
         "saldo": 1299845.87
       },
       "novo": {
-        "linhas": 161,
-        "valorPrevisto": 1721046.99,
-        "valorExecutado": 387636.43,
-        "saldo": 1333410.56
+        "linhas": 138,
+        "valorPrevisto": 1721047.05,
+        "valorExecutado": 475133.44,
+        "saldo": 1245913.61
       },
       "diferenca": {
-        "valorPrevisto": 4345.59,
-        "valorExecutado": -29219.1,
-        "saldo": 33564.69,
-        "linhas": 15
+        "valorPrevisto": 4345.65,
+        "valorExecutado": 58277.91,
+        "saldo": -53932.26,
+        "linhas": -8
       }
     }
   ],
@@ -823,7 +823,7 @@
         "saldo": 4714987.99
       },
       "novo": {
-        "linhas": 458,
+        "linhas": 414,
         "valorPrevisto": 7412220.3,
         "valorExecutado": 2715952.65,
         "saldo": 4696267.65
@@ -832,7 +832,7 @@
         "valorPrevisto": -9578.14,
         "valorExecutado": 9142.2,
         "saldo": -18720.34,
-        "linhas": 45
+        "linhas": 1
       }
     },
     {
@@ -844,7 +844,7 @@
         "saldo": 2746331.59
       },
       "novo": {
-        "linhas": 165,
+        "linhas": 153,
         "valorPrevisto": 3242288.4,
         "valorExecutado": 501786.85,
         "saldo": 2740501.55
@@ -853,7 +853,7 @@
         "valorPrevisto": 71.36,
         "valorExecutado": 5901.4,
         "saldo": -5830.04,
-        "linhas": 12
+        "linhas": 0
       }
     }
   ],
@@ -983,20 +983,7 @@
       "natureza": "CUSTEIO",
       "descricao": "Meia militar",
       "situacao": "novo",
-      "valorPrevistoNovo": 897.41,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937265::Meia militar::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia militar",
-      "situacao": "novo",
-      "valorPrevistoNovo": 1244.94,
+      "valorPrevistoNovo": 2142.35,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -1576,6 +1563,19 @@
       "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
+      "chave": "937265::Meia Militar::CORREGEDORIA::CUSTEIO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Meia Militar",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 2142.35,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
       "chave": "937782::Contratação de Bolsa - Aluno Ouvidoria I::OUVIDORIA::CUSTEIO",
       "numeroConvenio": "937782",
       "uf": "AC",
@@ -1724,64 +1724,6 @@
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
-      "chave": "937265::Meia Militar::CORREGEDORIA::CUSTEIO",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "area": "CORREGEDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia Militar",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "quantidade",
-          "valorAntigo": 57,
-          "valorNovo": 33.284671
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937265::Meia Militar::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia Militar",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "quantidade",
-          "valorAntigo": 80,
-          "valorNovo": 46.715329
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
       "chave": "938128::Saldo Residual::NAO INFORMADO::CAPITAL",
       "numeroConvenio": "938128",
       "uf": "SP",
@@ -1840,64 +1782,6 @@
         }
       ],
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
-    },
-    {
-      "chave": "937265::Meia Militar::CORREGEDORIA::CUSTEIO",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "area": "CORREGEDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia Militar",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "quantidade",
-          "valorAntigo": 57,
-          "valorNovo": 33.284671
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937265::Meia Militar::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia Militar",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "quantidade",
-          "valorAntigo": 80,
-          "valorNovo": 46.715329
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "937698::Veículo transporte pessoal, câmbio: manu::CORREGEDORIA::CAPITAL",
@@ -2170,6 +2054,198 @@
     }
   ],
   "itensValorExecutadoDivergente": [
+    {
+      "chave": "937265::Ar condicionado inverter 12.000 BTUs::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 12.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 18920,
+          "valorNovo": 0,
+          "diferenca": -18920
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -8538.79,
+          "valorNovo": 10381.21,
+          "diferenca": 18920
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 12.000 BTUs::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 12.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 18920,
+          "diferenca": 18920
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 10381.21,
+          "valorNovo": -8538.79,
+          "diferenca": -18920
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 24.000 BTUs::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 24.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 13280,
+          "valorNovo": 0,
+          "diferenca": -13280
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -4590.22,
+          "valorNovo": 8689.78,
+          "diferenca": 13280
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 24.000 BTUs::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 24.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 13280,
+          "diferenca": 13280
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 8689.78,
+          "valorNovo": -4590.22,
+          "diferenca": -13280
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Microondas mínimo 20L. branco 110v::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Microondas mínimo 20L. branco 110v",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 1230,
+          "valorNovo": 0,
+          "diferenca": -1230
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 260.86,
+          "valorNovo": 1490.86,
+          "diferenca": 1230
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Microondas mínimo 20L. branco 110v::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Microondas mínimo 20L. branco 110v",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 1230,
+          "diferenca": 1230
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 1490.86,
+          "valorNovo": 260.86,
+          "diferenca": -1230
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Notebook::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 14228,
+          "valorNovo": 0,
+          "diferenca": -14228
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -7114,
+          "valorNovo": 7114,
+          "diferenca": 14228
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Notebook::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 14228,
+          "diferenca": 14228
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 7114,
+          "valorNovo": -7114,
+          "diferenca": -14228
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
     {
       "chave": "937468::ETAPA 1 - OUVIDORIA - Monitor::OUVIDORIA::CAPITAL",
       "numeroConvenio": "937468",
@@ -2514,59 +2590,193 @@
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
-      "chave": "937265::Meia Militar::CORREGEDORIA::CUSTEIO",
+      "chave": "937265::Ar condicionado inverter 12.000 BTUs::ESCOLA PENAL::CAPITAL",
       "numeroConvenio": "937265",
       "uf": "MS",
-      "area": "CORREGEDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia Militar",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 12.000 BTUs",
       "situacao": "divergente",
       "campos": [
         {
-          "campo": "quantidade",
-          "valorAntigo": 57,
-          "valorNovo": 33.284671
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
+          "campo": "valorExecutado",
+          "valorAntigo": 18920,
+          "valorNovo": 0,
+          "diferenca": -18920
         },
         {
           "campo": "saldo",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
+          "valorAntigo": -8538.79,
+          "valorNovo": 10381.21,
+          "diferenca": 18920
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937265::Meia Militar::OUVIDORIA::CUSTEIO",
+      "chave": "937265::Ar condicionado inverter 12.000 BTUs::OUVIDORIA::CAPITAL",
       "numeroConvenio": "937265",
       "uf": "MS",
       "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia Militar",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 12.000 BTUs",
       "situacao": "divergente",
       "campos": [
         {
-          "campo": "quantidade",
-          "valorAntigo": 80,
-          "valorNovo": 46.715329
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 18920,
+          "diferenca": 18920
         },
         {
           "campo": "saldo",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
+          "valorAntigo": 10381.21,
+          "valorNovo": -8538.79,
+          "diferenca": -18920
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 24.000 BTUs::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 24.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 13280,
+          "valorNovo": 0,
+          "diferenca": -13280
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -4590.22,
+          "valorNovo": 8689.78,
+          "diferenca": 13280
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 24.000 BTUs::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 24.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 13280,
+          "diferenca": 13280
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 8689.78,
+          "valorNovo": -4590.22,
+          "diferenca": -13280
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Microondas mínimo 20L. branco 110v::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Microondas mínimo 20L. branco 110v",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 1230,
+          "valorNovo": 0,
+          "diferenca": -1230
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 260.86,
+          "valorNovo": 1490.86,
+          "diferenca": 1230
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Microondas mínimo 20L. branco 110v::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Microondas mínimo 20L. branco 110v",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 1230,
+          "diferenca": 1230
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 1490.86,
+          "valorNovo": 260.86,
+          "diferenca": -1230
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Notebook::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 14228,
+          "valorNovo": 0,
+          "diferenca": -14228
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -7114,
+          "valorNovo": 7114,
+          "diferenca": 14228
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Notebook::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 14228,
+          "diferenca": 14228
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 7114,
+          "valorNovo": -7114,
+          "diferenca": -14228
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -3153,243 +3363,18 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     }
   ],
-  "itensAreaDivergente": [],
+  "itensAreaDivergente": [
+    {
+      "chaveItem": "937265::Meia Militar",
+      "apenasAntigo": [
+        "CORREGEDORIA"
+      ],
+      "apenasNovo": [],
+      "classificacao": "aviso"
+    }
+  ],
   "itensNaturezaDivergente": [],
   "itensAmbiguos": [
-    {
-      "chave": "937265::Ar condicionado inverter 12.000 BTUs::CORREGEDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Ar condicionado inverter 12.000 BTUs::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Ar condicionado inverter 12.000 BTUs::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Ar condicionado inverter 24.000 BTUs::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Ar condicionado inverter 24.000 BTUs::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cadeira Fixa::CORREGEDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cadeira Fixa::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cadeira Fixa::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cadeira Giratória com braços::CORREGEDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cadeira Giratória com braços::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cadeira Giratória com braços::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Calça Tática::CORREGEDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Calça Tática::OUVIDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Camisa Tática::CORREGEDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Camisa Tática::OUVIDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cinto Tático::CORREGEDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Cinto Tático::OUVIDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Computador completo com monitor::CORREGEDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Computador completo com monitor::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Computador completo com monitor::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Coturno::CORREGEDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Coturno::OUVIDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Estante em aço com 6 prateleiras::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Estante em aço com 6 prateleiras::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Geladeira minimo 410L Frost Free 110v Branca::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Geladeira minimo 410L Frost Free 110v Branca::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Longarina com 3 lugares::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Longarina com 3 lugares::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Lousa branca, tamanho minimo 1,80x1,20 c::CORREGEDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Lousa branca, tamanho minimo 1,80x1,20 c::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Mesa em L::CORREGEDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Mesa em L::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Mesa em L::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 3,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Microondas mínimo 20L. branco 110v::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Microondas mínimo 20L. branco 110v::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Notebook::ESCOLA PENAL::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Notebook::OUVIDORIA::CAPITAL",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Persiana Rolo - Tecido Blackout - Altura::CORREGEDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
-    {
-      "chave": "937265::Persiana Rolo - Tecido Blackout - Altura::OUVIDORIA::CUSTEIO",
-      "ocorrenciasAntigo": 1,
-      "ocorrenciasNovo": 2,
-      "detalhe": "Chave com mais de uma linha; não consolidada automaticamente."
-    },
     {
       "chave": "937468::ETAPA 2 - CORREGEDORIA - Cadeira giratór::CORREGEDORIA::CAPITAL",
       "ocorrenciasAntigo": 1,
@@ -3553,20 +3538,7 @@
       "natureza": "CUSTEIO",
       "descricao": "Meia militar",
       "situacao": "novo",
-      "valorPrevistoNovo": 897.41,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937265::Meia militar::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia militar",
-      "situacao": "novo",
-      "valorPrevistoNovo": 1244.94,
+      "valorPrevistoNovo": 2142.35,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -4622,59 +4594,206 @@
       "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
+      "chave": "937265::Ar condicionado inverter 12.000 BTUs::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 12.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 18920,
+          "valorNovo": 0,
+          "diferenca": -18920
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -8538.79,
+          "valorNovo": 10381.21,
+          "diferenca": 18920
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 12.000 BTUs::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 12.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 18920,
+          "diferenca": 18920
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 10381.21,
+          "valorNovo": -8538.79,
+          "diferenca": -18920
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 24.000 BTUs::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 24.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 13280,
+          "valorNovo": 0,
+          "diferenca": -13280
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -4590.22,
+          "valorNovo": 8689.78,
+          "diferenca": 13280
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Ar condicionado inverter 24.000 BTUs::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Ar condicionado inverter 24.000 BTUs",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 13280,
+          "diferenca": 13280
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 8689.78,
+          "valorNovo": -4590.22,
+          "diferenca": -13280
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
       "chave": "937265::Meia Militar::CORREGEDORIA::CUSTEIO",
       "numeroConvenio": "937265",
       "uf": "MS",
       "area": "CORREGEDORIA",
       "natureza": "CUSTEIO",
       "descricao": "Meia Militar",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 2142.35,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "diferenca_por_pendencia_de_decisao",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937265::Microondas mínimo 20L. branco 110v::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Microondas mínimo 20L. branco 110v",
       "situacao": "divergente",
       "campos": [
         {
-          "campo": "quantidade",
-          "valorAntigo": 57,
-          "valorNovo": 33.284671
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
+          "campo": "valorExecutado",
+          "valorAntigo": 1230,
+          "valorNovo": 0,
+          "diferenca": -1230
         },
         {
           "campo": "saldo",
-          "valorAntigo": 2142.35,
-          "valorNovo": 1244.94,
-          "diferenca": -897.41
+          "valorAntigo": 260.86,
+          "valorNovo": 1490.86,
+          "diferenca": 1230
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937265::Meia Militar::OUVIDORIA::CUSTEIO",
+      "chave": "937265::Microondas mínimo 20L. branco 110v::OUVIDORIA::CAPITAL",
       "numeroConvenio": "937265",
       "uf": "MS",
       "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Meia Militar",
+      "natureza": "CAPITAL",
+      "descricao": "Microondas mínimo 20L. branco 110v",
       "situacao": "divergente",
       "campos": [
         {
-          "campo": "quantidade",
-          "valorAntigo": 80,
-          "valorNovo": 46.715329
-        },
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 1230,
+          "diferenca": 1230
         },
         {
           "campo": "saldo",
-          "valorAntigo": 2972,
-          "valorNovo": 1727.06,
-          "diferenca": -1244.94
+          "valorAntigo": 1490.86,
+          "valorNovo": 260.86,
+          "diferenca": -1230
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Notebook::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 14228,
+          "valorNovo": 0,
+          "diferenca": -14228
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": -7114,
+          "valorNovo": 7114,
+          "diferenca": 14228
+        }
+      ],
+      "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937265::Notebook::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 14228,
+          "diferenca": 14228
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 7114,
+          "valorNovo": -7114,
+          "diferenca": -14228
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -4936,174 +5055,6 @@
           "valorAntigo": 1353.83,
           "valorNovo": 263.83,
           "diferenca": -1090
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::ESTABILIZADOR::ESCOLA PENAL::CAPITAL",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "ESTABILIZADOR",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 5238.2,
-          "diferenca": 5238.2
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 2456.4,
-          "valorNovo": -2781.8,
-          "diferenca": -5238.2
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::GRAMPEADOR PROFISSIONAL PARA MADEIRA::ESCOLA PENAL::CUSTEIO",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 3450,
-          "diferenca": 3450
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 946.66,
-          "valorNovo": -2503.34,
-          "diferenca": -3450
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::MANEQUIM DE TREINAMENTO RCPBEBE::ESCOLA PENAL::CAPITAL",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "MANEQUIM DE TREINAMENTO RCPBEBE",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 23130,
-          "valorNovo": 0,
-          "diferenca": -23130
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": -14344.8,
-          "valorNovo": 8785.2,
-          "diferenca": 23130
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::MINIBUS PARA ATENDIMENTO DE CIDADÕES IN::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "MINIBUS PARA ATENDIMENTO DE CIDADÕES IN",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 323838.9,
-          "valorNovo": 323838.87,
-          "diferenca": -0.03
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 323838.9,
-          "valorNovo": 323838.87,
-          "diferenca": -0.03
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::OCULOS DE PROTEÇÃO TIRO ESPORTIVO::ESCOLA PENAL::CUSTEIO",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "OCULOS DE PROTEÇÃO TIRO ESPORTIVO",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 185.4,
-          "diferenca": 185.4
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 2810.7,
-          "valorNovo": 2625.3,
-          "diferenca": -185.4
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::PICK UP::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "PICK UP",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorPrevisto",
-          "valorAntigo": 601790.9,
-          "valorNovo": 601790.88,
-          "diferenca": -0.02
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 601790.9,
-          "valorNovo": 601790.88,
-          "diferenca": -0.02
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::ROLOS DE OBREIA BRANCA::ESCOLA PENAL::CUSTEIO",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "ROLOS DE OBREIA BRANCA",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 150,
-          "diferenca": 150
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 2206,
-          "valorNovo": 2056,
-          "diferenca": -150
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -7351,7 +7302,7 @@
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T20:49:12.865Z",
+    "geradoEm": "2026-05-22T21:10:51.424Z",
     "resumo": {
       "totalDecisoesResolutivasAuditadas": 73,
       "totalPayloadPreservado": 45,
@@ -7678,13 +7629,13 @@
     "totalItensPadSemRateio": 24,
     "totalItensPadSemRateioRemanescentes": 1,
     "totalItensPadSemRateioReconstruidoPorDecisao": 23,
-    "totalLinhasReconstruidas": 623,
+    "totalLinhasReconstruidas": 567,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 6,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
     "totalImpedimentos": 33,
-    "totalAlertas": 120,
+    "totalAlertas": 105,
     "totalDecisoesResolutivasEncontradas": 72,
     "totalDecisoesInterpretadasDryRun": 66,
     "totalDecisoesAplicadasDryRun": 66,
@@ -8001,7 +7952,7 @@
     "Reconstrução NÃO apta para ativação: 33 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
     "Diferença total origem antiga × reconstrução PAD: previsto -9506.78, executado 15043.6, saldo -24550.38.",
-    "Diferenças críticas: 30. Itens ambíguos: 45.",
+    "Diferenças críticas: 29. Itens ambíguos: 6.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

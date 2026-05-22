@@ -233,7 +233,7 @@ function avaliarFragilidadeChave(divergencia, grupoPad, itemConhecidoId) {
  * - pendencia_material_potencial_decidida: divergência já decidida em grupo PAD
  *   com múltiplas linhas e divergência de natureza/código (risco material).
  */
-function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva) {
+function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva, reconstrucaoCorreta = false) {
   if (jaDiagnosticado) {
     return {
       classificacao: "risco_confirmado_ja_diagnosticado",
@@ -250,6 +250,14 @@ function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temD
     return {
       classificacao: "saneamento_confirmado",
       recomendacao: "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      reabrir: false,
+    };
+  }
+
+  if (reconstrucaoCorreta) {
+    return {
+      classificacao: "saneamento_confirmado",
+      recomendacao: "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
       reabrir: false,
     };
   }
@@ -290,6 +298,7 @@ function executar() {
   const decisoes = carregarDecisoesPorDivergencia();
   const itemConhecidoPorChave = carregarItemConhecidoPorChave();
   const classificacaoOperacional = carregarClassificacaoOperacional();
+  const planoReconstruido = lerJson("backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json")?.planoAplicacaoReconstruido || [];
 
   // #44 já foi diagnosticada e corrigida em auditoria anterior.
   const ID_JA_DIAGNOSTICADO = new Set([44]);
@@ -317,8 +326,18 @@ function executar() {
     const sensivel = TIPOS_SENSIVEIS_A_PAREAMENTO.has(divergencia.tipoAlerta);
     const fatores = sensivel ? avaliarFragilidadeChave(divergencia, grupoPad, itemConhecidoId) : [];
     const jaDiagnosticado = ID_JA_DIAGNOSTICADO.has(divergencia.id);
+
+    let reconstrucaoCorreta = false;
+    if (divergencia.chaveItem && grupoPad && grupoPad.totalLinhasPad > 1) {
+      const linhasReconstruidas = planoReconstruido.filter(l => l.chaveItem === divergencia.chaveItem);
+      const linhasOrigemDistintas = new Set(linhasReconstruidas.map(l => l.linhaOrigem).filter(l => l !== null));
+      const temMesmaQuantidadeReconstruida = linhasReconstruidas.length === grupoPad.totalLinhasPad;
+      const semDuplicacaoLinhaOrigem = linhasOrigemDistintas.size === linhasReconstruidas.length;
+      reconstrucaoCorreta = temMesmaQuantidadeReconstruida && semDuplicacaoLinhaOrigem;
+    }
+
     const { classificacao, recomendacao, reabrir } = sensivel
-      ? classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva)
+      ? classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temDecisaoResolutiva, reconstrucaoCorreta)
       : {
         classificacao: "saneamento_confirmado",
         recomendacao: "Tipo de alerta nao depende de pareamento de linha PAD (sem risco de chave fragil).",

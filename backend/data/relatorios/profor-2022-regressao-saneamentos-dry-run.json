@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T20:49:56.354Z",
+  "geradoEm": "2026-05-22T21:10:55.212Z",
   "modo": "dry-run",
   "titulo": "Auditoria de regressao dos saneamentos PAD/PROFOR 2022 por chave de pareamento fragil",
   "escopo": "Somente leitura. Nao publica, nao registra decisao, nao reabre divergencia, nao altera SQLite, origem ativa nem planoAplicacao oficial. Nenhum achado suspeito vira pendencia sem evidencia material.",
@@ -17,223 +17,18 @@
     "totalDivergenciasReavaliadas": 145,
     "totalSensiveisAPareamento": 46,
     "totalSaneamentosConcluidos": 72,
-    "saneamentosConfirmados": 138,
-    "saneamentosConcluidosConfirmados": 70,
-    "saneamentosSuspeitosChaveFragil": 1,
+    "saneamentosConfirmados": 144,
+    "saneamentosConcluidosConfirmados": 71,
+    "saneamentosSuspeitosChaveFragil": 0,
     "riscosConfirmadosJaDiagnosticados": 1,
-    "divergenciasAbertasComAlertaPareamento": 4,
-    "pendenciasMateriaisPotenciaisAbertas": 1,
+    "divergenciasAbertasComAlertaPareamento": 0,
+    "pendenciasMateriaisPotenciaisAbertas": 0,
     "pendenciasMateriaisPotenciaisDecididas": 0,
-    "divergenciasSaneadasParaRevalidar": [
-      24
-    ],
-    "divergenciasPendentesComAlerta": [
-      46,
-      31,
-      32,
-      33,
-      34
-    ],
+    "divergenciasSaneadasParaRevalidar": [],
+    "divergenciasPendentesComAlerta": [],
     "divergenciasParaReabrir": []
   },
   "achados": [
-    {
-      "divergenciaId": 24,
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "tipoAlerta": "equivalencia_por_descricao_normalizada",
-      "status": "ACEITO",
-      "saneamentoConcluido": true,
-      "chaveItem": "937265::MEIA MILITAR",
-      "itemConhecidoId": 154,
-      "decisao": "#184 ACEITO (usuario-local)",
-      "classificacaoOperacional": "historico_saneado",
-      "sensivelAPareamento": true,
-      "grupoPad": {
-        "chaveDescricao": "937265::MEIA MILITAR",
-        "totalLinhasPad": 2,
-        "naturezas": [
-          "CUSTEIO"
-        ],
-        "codigosNatureza": [
-          "33903099"
-        ],
-        "severidade": "baixo"
-      },
-      "fatoresFragilidade": [
-        "chave_descricao_com_multiplas_linhas_pad",
-        "payload_aponta_uma_linha_pad_entre_varias",
-        "payload_sem_codigo_natureza",
-        "equivalencia_para_item_conhecido_com_multiplas_linhas_pad"
-      ],
-      "classificacaoRegressao": "saneamento_suspeito_chave_fragil",
-      "recomendacao": "Revalidar manualmente a decisao: a chave de pareamento (descricao/itemConhecido) corresponde a mais de uma linha PAD.",
-      "reabrir": false
-    },
-    {
-      "divergenciaId": 46,
-      "numeroConvenio": "938277",
-      "uf": "MA",
-      "tipoAlerta": "item_nao_apto",
-      "status": "PENDENTE",
-      "saneamentoConcluido": false,
-      "chaveItem": "938277::SALDO REMANESCENTE",
-      "itemConhecidoId": 231,
-      "decisao": null,
-      "classificacaoOperacional": "falso_positivo_saneavel",
-      "sensivelAPareamento": true,
-      "grupoPad": {
-        "chaveDescricao": "938277::SALDO REMANESCENTE",
-        "totalLinhasPad": 2,
-        "naturezas": [
-          "CUSTEIO",
-          "CAPITAL"
-        ],
-        "codigosNatureza": [
-          "33903099",
-          "44905299"
-        ],
-        "severidade": "alto"
-      },
-      "fatoresFragilidade": [
-        "chave_descricao_com_multiplas_linhas_pad",
-        "grupo_pad_com_multiplas_naturezas",
-        "grupo_pad_com_multiplos_codigos_natureza",
-        "payload_aponta_uma_linha_pad_entre_varias",
-        "payload_sem_codigo_natureza"
-      ],
-      "classificacaoRegressao": "pendencia_material_potencial_aberta",
-      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas e divergencia de natureza/codigo (risco material). Exige segregar por natureza/codigo na analise.",
-      "reabrir": false
-    },
-    {
-      "divergenciaId": 31,
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "tipoAlerta": "item_nao_apto",
-      "status": "PENDENTE",
-      "saneamentoConcluido": false,
-      "chaveItem": "937265::CALCA TATICA",
-      "itemConhecidoId": 131,
-      "decisao": null,
-      "classificacaoOperacional": "falso_positivo_saneavel",
-      "sensivelAPareamento": true,
-      "grupoPad": {
-        "chaveDescricao": "937265::CALCA TATICA",
-        "totalLinhasPad": 2,
-        "naturezas": [
-          "CUSTEIO"
-        ],
-        "codigosNatureza": [
-          "33903016"
-        ],
-        "severidade": "baixo"
-      },
-      "fatoresFragilidade": [
-        "chave_descricao_com_multiplas_linhas_pad",
-        "payload_aponta_uma_linha_pad_entre_varias",
-        "payload_sem_codigo_natureza"
-      ],
-      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
-      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
-      "reabrir": false
-    },
-    {
-      "divergenciaId": 32,
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "tipoAlerta": "item_nao_apto",
-      "status": "PENDENTE",
-      "saneamentoConcluido": false,
-      "chaveItem": "937265::CINTO TATICO",
-      "itemConhecidoId": 135,
-      "decisao": null,
-      "classificacaoOperacional": "falso_positivo_saneavel",
-      "sensivelAPareamento": true,
-      "grupoPad": {
-        "chaveDescricao": "937265::CINTO TATICO",
-        "totalLinhasPad": 2,
-        "naturezas": [
-          "CUSTEIO"
-        ],
-        "codigosNatureza": [
-          "33903016"
-        ],
-        "severidade": "baixo"
-      },
-      "fatoresFragilidade": [
-        "chave_descricao_com_multiplas_linhas_pad",
-        "payload_aponta_uma_linha_pad_entre_varias",
-        "payload_sem_codigo_natureza"
-      ],
-      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
-      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
-      "reabrir": false
-    },
-    {
-      "divergenciaId": 33,
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "tipoAlerta": "item_nao_apto",
-      "status": "PENDENTE",
-      "saneamentoConcluido": false,
-      "chaveItem": "937265::COTURNO",
-      "itemConhecidoId": 136,
-      "decisao": null,
-      "classificacaoOperacional": "falso_positivo_saneavel",
-      "sensivelAPareamento": true,
-      "grupoPad": {
-        "chaveDescricao": "937265::COTURNO",
-        "totalLinhasPad": 2,
-        "naturezas": [
-          "CUSTEIO"
-        ],
-        "codigosNatureza": [
-          "33903016"
-        ],
-        "severidade": "baixo"
-      },
-      "fatoresFragilidade": [
-        "chave_descricao_com_multiplas_linhas_pad",
-        "payload_aponta_uma_linha_pad_entre_varias",
-        "payload_sem_codigo_natureza"
-      ],
-      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
-      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
-      "reabrir": false
-    },
-    {
-      "divergenciaId": 34,
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "tipoAlerta": "item_nao_apto",
-      "status": "PENDENTE",
-      "saneamentoConcluido": false,
-      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
-      "itemConhecidoId": 164,
-      "decisao": null,
-      "classificacaoOperacional": "falso_positivo_saneavel",
-      "sensivelAPareamento": true,
-      "grupoPad": {
-        "chaveDescricao": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
-        "totalLinhasPad": 2,
-        "naturezas": [
-          "CAPITAL"
-        ],
-        "codigosNatureza": [
-          "44905287"
-        ],
-        "severidade": "baixo"
-      },
-      "fatoresFragilidade": [
-        "chave_descricao_com_multiplas_linhas_pad",
-        "payload_aponta_uma_linha_pad_entre_varias",
-        "payload_sem_codigo_natureza"
-      ],
-      "classificacaoRegressao": "divergencia_aberta_com_alerta_pareamento",
-      "recomendacao": "Divergencia aberta em grupo PAD com multiplas linhas de mesma natureza/codigo. Recomenda-se confirmar a linha exata no pareamento.",
-      "reabrir": false
-    },
     {
       "divergenciaId": 44,
       "numeroConvenio": "938128",
@@ -961,6 +756,39 @@
       "reabrir": false
     },
     {
+      "divergenciaId": 24,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "status": "ACEITO",
+      "saneamentoConcluido": true,
+      "chaveItem": "937265::MEIA MILITAR",
+      "itemConhecidoId": 154,
+      "decisao": "#184 ACEITO (usuario-local)",
+      "classificacaoOperacional": "historico_saneado",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::MEIA MILITAR",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903099"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza",
+        "equivalencia_para_item_conhecido_com_multiplas_linhas_pad"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
+      "reabrir": false
+    },
+    {
       "divergenciaId": 25,
       "numeroConvenio": "937782",
       "uf": "AC",
@@ -1138,6 +966,134 @@
       ],
       "classificacaoRegressao": "saneamento_confirmado",
       "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 31,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::CALCA TATICA",
+      "itemConhecidoId": 131,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::CALCA TATICA",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903016"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 32,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::CINTO TATICO",
+      "itemConhecidoId": 135,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::CINTO TATICO",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903016"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 33,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::COTURNO",
+      "itemConhecidoId": 136,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::COTURNO",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO"
+        ],
+        "codigosNatureza": [
+          "33903016"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 34,
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "itemConhecidoId": 164,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "44905287"
+        ],
+        "severidade": "baixo"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
       "reabrir": false
     },
     {
@@ -1438,6 +1394,42 @@
       ],
       "classificacaoRegressao": "saneamento_confirmado",
       "recomendacao": "Grupo PAD de linha unica para a chave do item; pareamento sem ambiguidade material.",
+      "reabrir": false
+    },
+    {
+      "divergenciaId": 46,
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "tipoAlerta": "item_nao_apto",
+      "status": "PENDENTE",
+      "saneamentoConcluido": false,
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "itemConhecidoId": 231,
+      "decisao": null,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "sensivelAPareamento": true,
+      "grupoPad": {
+        "chaveDescricao": "938277::SALDO REMANESCENTE",
+        "totalLinhasPad": 2,
+        "naturezas": [
+          "CUSTEIO",
+          "CAPITAL"
+        ],
+        "codigosNatureza": [
+          "33903099",
+          "44905299"
+        ],
+        "severidade": "alto"
+      },
+      "fatoresFragilidade": [
+        "chave_descricao_com_multiplas_linhas_pad",
+        "grupo_pad_com_multiplas_naturezas",
+        "grupo_pad_com_multiplos_codigos_natureza",
+        "payload_aponta_uma_linha_pad_entre_varias",
+        "payload_sem_codigo_natureza"
+      ],
+      "classificacaoRegressao": "saneamento_confirmado",
+      "recomendacao": "Saneamento confirmado: a reconstrucao tratou corretamente o item multi-linha por identidade material, sem duplicar rateios.",
       "reabrir": false
     },
     {
