@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T21:48:04.430Z",
+  "geradoEm": "2026-05-22T21:58:42.594Z",
   "modo": "dry-run",
   "titulo": "Auditoria de regressao dos saneamentos PAD/PROFOR 2022 por chave de pareamento fragil",
   "escopo": "Somente leitura. Nao publica, nao registra decisao, nao reabre divergencia, nao altera SQLite, origem ativa nem planoAplicacao oficial. Nenhum achado suspeito vira pendencia sem evidencia material.",

@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria de regressão dos saneamentos por chave de pareamento frágil (dry-run)
 
-Gerado em: 2026-05-22T21:48:04.430Z
+Gerado em: 2026-05-22T21:58:42.594Z
 Modo: dry-run — somente leitura. Não publica, não registra decisão, não reabre divergência, não altera SQLite, origem ativa nem `planoAplicacao` oficial.
 
 > Diagnostico da #44 (938128/SP): o PAD tinha multiplas linhas para a mesma descricao. Reavaliacao transversal dos saneamentos que dependem de pareamento de linha PAD.
