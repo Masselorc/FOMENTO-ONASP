@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T21:36:04.766Z",
+  "geradoEm": "2026-05-22T21:48:00.961Z",
   "modo": "dry-run",
   "titulo": "Auditoria de identidade material das linhas PAD/PROFOR 2022",
   "escopo": "Somente leitura. Nao publica, nao registra decisao, nao altera origem ativa, planoAplicacao oficial nem SQLite versionado.",

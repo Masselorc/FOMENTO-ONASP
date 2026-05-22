@@ -1114,3 +1114,49 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 **Validações recomendadas:** `npm run profor:pad:reconstruir-plano:dry-run`, `npm run profor:pad:comparar-plano:dry-run`.
 
 **Rollback:** `git checkout -- memoria/09_ERROS_E_CORRECOES/historico-erros.md`
+
+---
+
+## 22/05/2026 - PROFOR 2022: reavaliação técnica das divergências #31, #32, #33 e #34 do Convênio 937265/MS
+
+**Classificação:** correção aplicada | registro de auditoria
+
+**Contexto:** Saneamento técnico e reavaliação em lote das divergências abertas `#31`, `#32`, `#33` e `#34` do Convênio `937265` (MS) sob o motor PAD/PROFOR 2022.
+
+**Problema:** Divergências de aptidão (`item_nao_apto`) que bloqueavam a publicação do plano reconstruído. Havia necessidade de auditar os quantitativos e valores materiais e certificar se tratavam de falsos positivos saneáveis.
+
+**Evidência:**
+- Relatório do subagent 1 (`divergences_report.md` para #31 e #32) e relatório do subagent 2 (`analysis_results.md` para #33 e #34).
+- Execução do script `npm run profor:pad:item-nao-apto:auditar` classificando os 4 alvos como `falso_positivo_saneavel`.
+- Execução de `npm run profor:pad:reconstruir-plano:dry-run` demonstrando mapeamento correto 1-para-1 entre rateios da memória e linhas físicas do PAD.
+
+**Causa provável:** 
+- Para `#31` (Calça Tática) e `#32` (Cinto Tático): Um erro visual na planilha original `Planilhas/gestao_financeira_ouvidoria.xlsx` inverteu os saldos das linhas de Corregedoria e Ouvidoria (linha 8 Ouvidoria saldo R$ 9.915,80 vs previsto R$ 6.610,53; linha 9 Corregedoria saldo R$ 6.610,53 vs previsto R$ 9.915,80). Isso disparou alertas de inconsistência na importação do Lote 1. No Lote 2, as quantidades e valores unitários foram corrigidos, mas as chaves de "não apto" herdadas continuaram pendentes no banco.
+- Para `#33` (Coturno) e `#34` (Geladeira 410L): O Lote 1 importou as quantidades multiplicadas por 10 (decimal parsing error) e com contas de saldo incorretas na planilha (não deduziam a execução). No Lote 2, o rateio ativo foi corrigido para as quantidades e valores reais (Coturno Ouvidoria 20, Corregedoria 30; Geladeira Ouvidoria 1, Escola Penal 1), batendo exatamente com a soma agregada das linhas físicas do PAD (Coturno total 50; Geladeira total 2). No entanto, o motor reportava divergência porque a auditoria confrontava a memória agregada contra a primeira linha física do PAD encontrada, e a flag herdada de "não apto" impedia a liberação.
+
+**Correção aplicada:**
+- A reavaliação confirmou que a lógica de reconstrução (`reconstruirPlanoAplicacaoPadDryRun`) utiliza pareamento material (`rateioCorrespondeMaterialmente`), distribuindo perfeitamente os recursos para cada área operante sem duplicações ou sobras. 
+- O auditor de item não apto registrou todas as 4 divergências como `falso_positivo_saneavel`. A fila de revisão foi enriquecida e a interface web passará a apresentar os itens como saneados, permitindo sua aprovação assistida em ambiente com backend.
+
+**Por que funcionou:**
+- A auditoria cruzou os rateios ativos corrigidos do Lote 2 com as linhas físicas agregadas do PAD, comprovando exatidão centesimal e de quantidades.
+- A reconstrução demonstrou consistência sem duplicidades, mantendo as 567 linhas corretas.
+
+**Como prevenir:**
+- Sempre realizar auditorias profundas cruzando os rateios agregados e dados materiais (8 pontos) em lote controlado antes de manter travamento sistêmico.
+- Garantir que correções de lotes de importação (como a transição Lote 1 -> Lote 2) atualizem ou limpem as flags de "não apto" de itens conhecidos.
+
+**Arquivos relacionados:**
+- `backend/scripts/auditar-item-nao-apto-sem-divergencia-pad-profor-2022.js`
+- Relatórios dry-run em `backend/data/relatorios/`
+- Relatório do subagent 1: [divergences_report.md](file:///C:/Users/marcelo.cortez/.gemini/antigravity/brain/119a6c74-2b8f-491c-8516-094e46f040b2/divergences_report.md)
+- Relatório do subagent 2: [analysis_results.md](file:///C:/Users/marcelo.cortez/.gemini/antigravity/brain/02518fc7-f710-4218-9242-aa94c1f1fda7/analysis_results.md)
+
+**Validações recomendadas:**
+- `npm.cmd run profor:pad:item-nao-apto:auditar`
+- `npm.cmd run profor:pad:reconstruir-plano:dry-run`
+- `npm.cmd run validar:services`
+
+**Rollback:**
+- Reverter o histórico de erros ou os relatórios gerados via `git checkout --`.
+
