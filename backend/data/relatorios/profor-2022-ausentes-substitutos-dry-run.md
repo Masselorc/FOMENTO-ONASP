@@ -1,6 +1,6 @@
 # Auditoria de itens ausentes com substituto provável no PAD — PROFOR 2022 (dry-run)
 
-*Gerado em:* 21/05/2026, 21:32:18
+*Gerado em:* 21/05/2026, 22:04:47
 
 Auditoria somente leitura: não altera o banco, não publica, não confirma ausência.
 

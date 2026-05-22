@@ -1,6 +1,6 @@
 # Auditoria de pendências residuais de diacrítico — PAD/PROFOR 2022 (dry-run)
 
-*Gerado em:* 21/05/2026, 21:32:27
+*Gerado em:* 21/05/2026, 22:04:58
 
 Esta auditoria é somente leitura: não altera o banco, não publica e não aplica decisão.
 
@@ -9,10 +9,10 @@ Esta auditoria é somente leitura: não altera o banco, não publica e não apli
 | Classificação | Quantidade |
 | :--- | :---: |
 | **Saneável automaticamente por diacrítico** | 0 |
-| Divergência material | 1 |
+| Divergência material | 0 |
 | Histórico não reapresentado sem correspondência | 75 |
 | Dados insuficientes | 0 |
-| Já decidido | 69 |
+| Já decidido | 70 |
 | **Total analisado** | **145** |
 
 ## IDs saneáveis automaticamente
@@ -46,7 +46,7 @@ Nenhum item saneável encontrado nesta execução.
 | #21 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #22 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #23 | 937782 | `item_novo_sem_rateio` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
-| #24 | 937265 | `equivalencia_por_descricao_normalizada` | `PENDENTE` | **divergencia_material** | Diferença de acentuação, mas há divergência material (preço memória R$ 37.15, PAD R$ 37.59; natureza memória CUSTEIO, PAD CUSTEIO). |
+| #24 | 937265 | `equivalencia_por_descricao_normalizada` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #25 | 937782 | `equivalencia_por_descricao_normalizada` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #26 | 937782 | `equivalencia_por_descricao_normalizada` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |
 | #27 | 937782 | `equivalencia_por_descricao_normalizada` | `ACEITO` | **ja_decidido** | Divergência já possui decisão resolutiva com status ACEITO. |

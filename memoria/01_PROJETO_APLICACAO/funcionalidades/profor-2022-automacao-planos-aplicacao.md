@@ -2103,3 +2103,55 @@ Auditorias auxiliares, nesta ordem: `auditar-fila-revisao`, `seguranca-pre-ativa
 4. Manter históricos/saneados fora da lista operacional e avaliar filtro backend.
 5. Só depois repetir reconstrução/comparador dry-run e avaliar ativação.
 
+---
+
+## 25. Detalhamento da Segurança Pré-ativação e Separação Operacional (Etapa 9.4 — dry-run)
+
+Em 22/05/2026, após a resolução manual da divergência `#24` (decisão canônica `#184`, `ACEITO`), a auditoria profunda foi aprofundada com foco nos bloqueios de segurança pré-ativação e na separação explícita entre pendência operacional e bloqueio técnico.
+
+### 25.1. Natureza da etapa
+Etapa **somente diagnóstico dry-run e documentação**. Não registra decisão, não altera status, não publica, não altera a origem ativa, `frontend/data/publicados` nem o `planoAplicacao` oficial, e não cria migration. A `#24` não foi reaberta nem refeita.
+
+### 25.2. Entregas de código
+- Novo script `backend/scripts/detalhar-seguranca-pre-ativacao-pad-profor-2022.js` (comando `npm run profor:pad:seguranca-pre-ativacao:detalhar`), que lê `profor-2022-pad-seguranca-pre-ativacao-dry-run.json` e produz um relatório dedicado de bloqueios.
+- A auditoria profunda (`auditar-pendencias-profor-2022-profundo.js`) ganhou uma **camada operacional** que reduz as 15 classificações detalhadas a 6 categorias mutuamente exclusivas, e passou a incluir na análise as divergências citadas pela segurança pré-ativação (consulta ampliada). Ambos os scripts entraram em `scripts/validar-syntax.js`.
+
+### 25.3. Camada operacional (6 categorias)
+Cada divergência analisada recai em **exatamente uma** categoria operacional:
+
+| Categoria operacional | Critério | Qtd |
+|---|---|---:|
+| `pendencia_operacional_real` | Pendente, sem decisão resolutiva, exige decisão humana substantiva | 12 |
+| `bloqueio_tecnico_seguranca` | Pendente e bloqueante, sem enquadramento operacional/falso positivo | 2 |
+| `decisao_resolutiva_com_pendencia_tecnica` | Já decidido, mas mantém bloqueio técnico (não reapresentada) | 7 |
+| `revalidacao_necessaria` | Decisão resolutiva com payload alterado após a decisão | 27 |
+| `historico_saneado` | Já decidido sem bloqueio, ou pendente histórico/não reapresentado | 34 |
+| `falso_positivo_saneavel` | Pendente com indício de falso positivo saneável por regra | 61 |
+
+Critério-chave: item `ACEITO/CORRIGIDO` **nunca** é contado como pendência operacional, mesmo carregando bloqueio técnico de segurança.
+
+### 25.4. Totais atualizados após a `#24`
+- Divergências na fila: 145; analisadas pela auditoria profunda: 143.
+- `PENDENTE/EM_REVISAO` (status): 75.
+- Bloqueante operacional: 10 (era 11 — a `#24` saiu).
+- Com decisão resolutiva: 68 (de 71 decisões registradas).
+
+### 25.5. Bloqueios de segurança pré-ativação
+Total de 35 bloqueios, detalhados em `profor-2022-seguranca-pre-ativacao-detalhada-dry-run`:
+- 28 decisões com `payload_alterado_apos_decisao`, em 27 divergências distintas (`#47`–`#74`, exceto `#55` e `#76`); todas `item_ausente_no_pad`.
+- 7 divergências `nao_reapresentada_com_decisao_resolutiva` (`#25, #26, #27, #28, #75, #77, #78`).
+- Origem provável da mudança: `provavel_reextracao_ou_regeracao_pad` em 100% dos casos. **Nenhum** bloqueio decorre diretamente da correção do parser de quantidade — os 28 são alertas de existência (`item_ausente_no_pad`), não de quantidade.
+
+### 25.6. Pendências reais (excluída a `#24`)
+Confirmadas `PENDENTE/impeditivo/bloqueante`, nenhuma resolvida:
+`#31` Calça Tática, `#32` Cinto Tático, `#33` Coturno, `#34` Geladeira 410L (`937265/MS`); `#38` Capacete Protetor (`937817/RJ`); `#39` Agenda Planner, `#44` Saldo Residual (`938128/SP`); `#46` Saldo Remanescente (`938277/MA`). A auditoria ainda sinaliza `#88, #89, #97, #115` como pendência operacional adicional (alertas de quantidade × valor unitário sem enquadramento de falso positivo).
+
+### 25.7. Plano de revalidação
+1. **Payload alterado** (27 divergências): revalidar decisão, comparar payload antigo × atual, confirmar origem técnica; registrar nova decisão apenas em etapa posterior.
+2. **Não reapresentadas com decisão resolutiva** (7): manter como histórico; avaliar se ainda devem bloquear a segurança; não exibir como pendência operacional.
+3. **Pendências reais** (8 + 4 adicionais): manter para revisão humana substantiva.
+4. **Falsos positivos saneáveis** (61): propor saneamento sistêmico auditável em etapa posterior.
+
+### 25.8. Confirmações
+Nenhuma decisão registrada nesta etapa; nenhuma publicação; origem ativa, `frontend/data/publicados` e `planoAplicacao` oficial intactos; divergências, decisões e logs preservados.
+

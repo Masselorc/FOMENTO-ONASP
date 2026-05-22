@@ -26,6 +26,17 @@ const CATEGORIAS = [
   "dados_insuficientes",
 ];
 
+// Camada operacional: cada item recai em exatamente uma destas categorias,
+// separando pendência operacional real de bloqueio técnico de segurança.
+const CATEGORIAS_OPERACIONAIS = [
+  "pendencia_operacional_real",
+  "bloqueio_tecnico_seguranca",
+  "decisao_resolutiva_com_pendencia_tecnica",
+  "revalidacao_necessaria",
+  "historico_saneado",
+  "falso_positivo_saneavel",
+];
+
 const RELATORIOS = {
   ausentesSubstitutos: "backend/data/relatorios/profor-2022-ausentes-substitutos-dry-run.json",
   diacritico: "backend/data/relatorios/profor-2022-pendencias-diacritico-dry-run.json",
@@ -214,20 +225,43 @@ function carregarLogs() {
   return mapa;
 }
 
-function carregarDivergencias(decisoesPorDivergencia, logsPorDivergencia) {
+// Reúne os divergenciaId citados pelo relatório de segurança pré-ativação,
+// para que a auditoria profunda também classifique decisões resolutivas
+// bloqueadas por segurança (payload alterado, não reapresentada).
+function coletarIdsBloqueioSeguranca(segurancaRelatorio) {
+  const ids = new Set();
+  if (!segurancaRelatorio) return [];
+  for (const chave of [
+    "payloadAlteradoAposDecisao",
+    "divergenciasNaoReapresentadas",
+    "divergenciasReapresentacaoIndeterminada",
+    "bloqueiosAtivacao",
+  ]) {
+    for (const item of garantirArray(segurancaRelatorio[chave])) {
+      const id = Number(item?.divergenciaId);
+      if (Number.isFinite(id)) ids.add(id);
+    }
+  }
+  return Array.from(ids);
+}
+
+function carregarDivergencias(decisoesPorDivergencia, logsPorDivergencia, idsBloqueioSeguranca = []) {
   const resolutivas = Array.from(DECISOES_RESOLUTIVAS);
   const placeholders = resolutivas.map(() => "?").join(", ");
+  const idsExtras = Array.from(new Set(idsBloqueioSeguranca.map(Number).filter(Number.isFinite)));
+  const placeholdersIds = idsExtras.length ? idsExtras.map(() => "?").join(", ") : "NULL";
   const linhas = db.prepare(`
     SELECT *
     FROM profor_2022_revisao_divergencias d
     WHERE d.status IN ('PENDENTE', 'EM_REVISAO')
        OR d.bloqueia_publicacao = 1
+       OR d.id IN (${placeholdersIds})
        OR NOT EXISTS (
          SELECT 1 FROM profor_2022_revisao_decisoes x
          WHERE x.divergencia_id = d.id AND UPPER(x.decisao) IN (${placeholders})
        )
     ORDER BY d.id
-  `).all(...resolutivas);
+  `).all(...idsExtras, ...resolutivas);
 
   return linhas.map((linha) => {
     const decisoes = decisoesPorDivergencia.get(linha.id) || [];
@@ -359,6 +393,85 @@ function temAmbiguidadePad(divergencia, ambiguidades) {
     const chave = normalizarTexto(item.chave || "");
     return chave.includes(convenio) && descricao && chave.includes(descricao.slice(0, Math.min(descricao.length, 24)));
   });
+}
+
+// Reduz as classificações detalhadas a uma única categoria operacional,
+// separando explicitamente pendência operacional real de bloqueio técnico.
+function classificarOperacional(item, divergencia, mapas) {
+  const status = String(divergencia.status || "").toUpperCase();
+  const statusResolutivo = DECISOES_RESOLUTIVAS.has(status);
+  const temResolutiva = divergencia.temDecisaoResolutiva || statusResolutivo;
+  const temPayloadAlterado = Boolean(mapas.payloadAlterado.get(divergencia.id)?.length);
+  const naoReapresentada = mapas.naoReapresentadas.has(divergencia.id);
+  const reapIndeterminada = mapas.reapresentacaoIndeterminada.has(divergencia.id);
+  const temBloqueioSeguranca = temPayloadAlterado || naoReapresentada || reapIndeterminada;
+  const cls = new Set(item.classificacoes);
+  const bloqueante = Boolean(divergencia.bloqueia_publicacao);
+
+  // 1. Payload alterado após a decisão: exige revalidação humana antes da ativação.
+  if (temPayloadAlterado) {
+    return {
+      categoria: "revalidacao_necessaria",
+      motivo: "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      exigeDecisaoHumanaSubstantiva: false,
+    };
+  }
+  // 2. Decisão resolutiva que ainda carrega bloqueio técnico de segurança.
+  if (temResolutiva && temBloqueioSeguranca) {
+    return {
+      categoria: "decisao_resolutiva_com_pendencia_tecnica",
+      motivo: "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      exigeDecisaoHumanaSubstantiva: false,
+    };
+  }
+  // 3. Decisão resolutiva sem bloqueio de segurança: histórico saneado.
+  if (temResolutiva) {
+    return {
+      categoria: "historico_saneado",
+      motivo: "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      exigeDecisaoHumanaSubstantiva: false,
+    };
+  }
+  // A partir daqui: status pendente, sem decisão resolutiva.
+  // 4. Pendência real: exige decisão humana substantiva.
+  if (cls.has("pendencia_real")) {
+    return {
+      categoria: "pendencia_operacional_real",
+      motivo: "Pendência ainda aberta que exige decisão humana substantiva.",
+      exigeDecisaoHumanaSubstantiva: true,
+    };
+  }
+  // 5. Pendente, mas histórico/não reapresentado: não é prioridade operacional.
+  if (naoReapresentada || reapIndeterminada || cls.has("historico_nao_reapresentado")) {
+    return {
+      categoria: "historico_saneado",
+      motivo: "Pendente, porém não reapresentada na geração atual; tratar como histórico/segurança, não como pendência operacional prioritária.",
+      exigeDecisaoHumanaSubstantiva: false,
+    };
+  }
+  // 6. Falso positivo saneável por regra sistêmica auditável.
+  if (cls.has("possivel_falso_positivo") || cls.has("diacritico_ou_acentuacao")
+    || cls.has("item_nao_apto_sem_divergencia_material") || cls.has("rateio_antigo_compativel")) {
+    return {
+      categoria: "falso_positivo_saneavel",
+      motivo: "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      exigeDecisaoHumanaSubstantiva: false,
+    };
+  }
+  // 7. Bloqueante técnico sem enquadramento operacional ou de falso positivo.
+  if (bloqueante) {
+    return {
+      categoria: "bloqueio_tecnico_seguranca",
+      motivo: "Pendente e bloqueante de publicação, sem enquadramento como pendência operacional real ou falso positivo saneável.",
+      exigeDecisaoHumanaSubstantiva: true,
+    };
+  }
+  // 8. Fallback: pendente sem classificador específico.
+  return {
+    categoria: "pendencia_operacional_real",
+    motivo: "Pendente sem classificador específico; requer revisão humana.",
+    exigeDecisaoHumanaSubstantiva: true,
+  };
 }
 
 function classificarDivergencia(divergencia, mapas) {
@@ -519,7 +632,7 @@ function classificarDivergencia(divergencia, mapas) {
     }
   }
 
-  return {
+  const item = {
     id: divergencia.id,
     chaveDivergencia: divergencia.chave_divergencia,
     numeroConvenio: divergencia.numero_convenio,
@@ -537,6 +650,11 @@ function classificarDivergencia(divergencia, mapas) {
     temDecisaoResolutiva: divergencia.temDecisaoResolutiva,
     totalLogs: divergencia.logs.length,
   };
+  const operacional = classificarOperacional(item, divergencia, mapas);
+  item.classificacaoOperacional = operacional.categoria;
+  item.motivoOperacional = operacional.motivo;
+  item.exigeDecisaoHumanaSubstantiva = operacional.exigeDecisaoHumanaSubstantiva;
+  return item;
 }
 
 function sintetizarCategorias(itens) {
@@ -589,6 +707,51 @@ function sintetizarCategorias(itens) {
       ids: ids.sort((a, b) => a - b),
       risco: riscoPorCategoria[categoria] || "medio",
       acaoRecomendada: acaoPorCategoria[categoria] || "revisar",
+    }))
+    .filter((item) => item.quantidade > 0)
+    .sort((a, b) => b.quantidade - a.quantidade || a.categoria.localeCompare(b.categoria));
+}
+
+function sintetizarCategoriasOperacionais(itens) {
+  const mapa = new Map(CATEGORIAS_OPERACIONAIS.map((categoria) => [categoria, []]));
+  for (const item of itens) {
+    const categoria = item.classificacaoOperacional;
+    if (!mapa.has(categoria)) mapa.set(categoria, []);
+    mapa.get(categoria).push(item.id);
+  }
+  const meta = {
+    pendencia_operacional_real: {
+      risco: "alto",
+      descricao: "Pendência aberta que exige decisão humana substantiva.",
+    },
+    bloqueio_tecnico_seguranca: {
+      risco: "alto",
+      descricao: "Pendente e bloqueante de publicação por critério técnico, sem decisão resolutiva.",
+    },
+    decisao_resolutiva_com_pendencia_tecnica: {
+      risco: "medio",
+      descricao: "Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança.",
+    },
+    revalidacao_necessaria: {
+      risco: "alto",
+      descricao: "Decisão com payload alterado após a decisão; exige revalidação humana.",
+    },
+    historico_saneado: {
+      risco: "baixo",
+      descricao: "Histórico/saneado; fora da fila operacional prioritária.",
+    },
+    falso_positivo_saneavel: {
+      risco: "medio",
+      descricao: "Falso positivo saneável por regra sistêmica auditável.",
+    },
+  };
+  return Array.from(mapa.entries())
+    .map(([categoria, ids]) => ({
+      categoria,
+      quantidade: ids.length,
+      ids: ids.sort((a, b) => a - b),
+      risco: meta[categoria]?.risco || "medio",
+      descricao: meta[categoria]?.descricao || "",
     }))
     .filter((item) => item.quantidade > 0)
     .sort((a, b) => b.quantidade - a.quantidade || a.categoria.localeCompare(b.categoria));
@@ -686,31 +849,47 @@ function renderTabelaCategorias(categorias) {
   return linhas.join("\n");
 }
 
+function renderTabelaCategoriasOperacionais(categoriasOperacionais) {
+  const linhas = [
+    "| Categoria operacional | Qtd | IDs | Risco | Descrição |",
+    "|---|---:|---|---|---|",
+  ];
+  for (const item of categoriasOperacionais) {
+    const ids = item.ids.length > 30 ? `${item.ids.slice(0, 30).join(", ")} ...` : item.ids.join(", ");
+    linhas.push(`| \`${item.categoria}\` | ${item.quantidade} | ${ids || "-"} | ${item.risco} | ${item.descricao} |`);
+  }
+  return linhas.join("\n");
+}
+
 function renderTabelaItens(itens) {
   const linhas = [
-    "| ID | Convênio | UF | Tipo | Descrição | Status | Bloqueio | Classificação | Evidência | Recomendação |",
+    "| ID | Convênio | UF | Tipo | Descrição | Status | Bloqueio | Categoria operacional | Classificação detalhada | Evidência |",
     "|---:|---|---|---|---|---|---|---|---|---|",
   ];
   for (const item of itens) {
-    linhas.push(`| #${item.id} | ${item.numeroConvenio || "-"} | ${item.uf || "-"} | \`${item.tipoAlerta}\` | ${String(item.descricao).replace(/\|/g, "/")} | ${item.status} | ${item.bloqueiaPublicacao ? "sim" : "não"} | ${item.classificacoes.map((c) => `\`${c}\``).join("<br>")} | ${item.evidencia.replace(/\|/g, "/").slice(0, 420)} | ${item.recomendacao.replace(/\|/g, "/").slice(0, 300)} |`);
+    linhas.push(`| #${item.id} | ${item.numeroConvenio || "-"} | ${item.uf || "-"} | \`${item.tipoAlerta}\` | ${String(item.descricao).replace(/\|/g, "/")} | ${item.status} | ${item.bloqueiaPublicacao ? "sim" : "não"} | \`${item.classificacaoOperacional}\` | ${item.classificacoes.map((c) => `\`${c}\``).join("<br>")} | ${item.evidencia.replace(/\|/g, "/").slice(0, 360)} |`);
   }
   return linhas.join("\n");
 }
 
 function renderMarkdown(relatorio) {
   const r = relatorio.resumo;
+  const op = r.separacaoOperacional;
+  const idsOp = (nome) => idsPorCategoria(relatorio.categoriasOperacionais, nome);
+  const listaIds = (ids) => (ids.length ? ids.join(", ") : "nenhum");
   const linhas = [
     "# PROFOR 2022 — Auditoria profunda de pendências PAD (dry-run)",
     "",
     `Gerado em: ${relatorio.geradoEm}`,
     "",
     "Auditoria somente leitura: não registra decisão, não altera status, não publica e não altera o planoAplicacao oficial.",
+    "Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO) — incluindo a divergência `#24`, já resolvida — são classificados como histórico/saneado e ficam fora da fila operacional.",
     "",
     "## 1. Resumo executivo",
     "",
     `- Total de divergências na fila: ${r.totalDivergencias}`,
     `- Total analisado pelos critérios da auditoria: ${r.totalAnalisadas}`,
-    `- Total PENDENTE/EM_REVISAO: ${r.totalPendentesOperacionais}`,
+    `- Total PENDENTE/EM_REVISAO (status): ${r.totalPendentesOperacionais}`,
     `- Total bloqueante técnico: ${r.totalBloqueantes}`,
     `- Total bloqueante operacional: ${r.totalBloqueantesOperacionais}`,
     `- Total com decisão resolutiva: ${r.totalComDecisaoResolutiva}`,
@@ -718,40 +897,70 @@ function renderMarkdown(relatorio) {
     `- Total de pendências reais estimadas: ${r.totalPendenciasReaisEstimadas}`,
     `- Bloqueios de segurança pré-ativação: ${r.totalBloqueiosSegurancaPreAtivacao}`,
     "",
-    "## 2. Tabela por categoria",
+    "Separação operacional (cada item recai em exatamente uma categoria):",
+    "",
+    `- Pendência operacional real: ${op.pendenciaOperacionalReal}`,
+    `- Bloqueio técnico de segurança: ${op.bloqueioTecnicoSeguranca}`,
+    `- Decisão resolutiva com pendência técnica: ${op.decisaoResolutivaComPendenciaTecnica}`,
+    `- Revalidação necessária (payload alterado): ${op.revalidacaoNecessaria}`,
+    `- Histórico/saneado: ${op.historicoSaneado}`,
+    `- Falso positivo saneável: ${op.falsoPositivoSaneavel}`,
+    "",
+    "## 2. Separação operacional × bloqueio técnico",
+    "",
+    renderTabelaCategoriasOperacionais(relatorio.categoriasOperacionais),
+    "",
+    "## 3. Tabela por categoria detalhada",
     "",
     renderTabelaCategorias(relatorio.categorias),
     "",
-    "## 3. Tabela detalhada por item",
+    "## 4. Tabela detalhada por item",
     "",
     renderTabelaItens(relatorio.itens),
     "",
-    "## 4. Lista de saneamentos potenciais",
+    "## 5. Lista de saneamentos potenciais",
     "",
     `- Podem ser saneados por regra auditável: ${relatorio.listasAcao.podemSerSaneadosPorRegra.join(", ") || "nenhum"}`,
     `- Exigem decisão humana: ${relatorio.listasAcao.exigemDecisaoHumana.join(", ") || "nenhum"}`,
     `- Exigem correção de código/parser: ${relatorio.listasAcao.exigemCorrecaoCodigo.join(", ") || "nenhum"}`,
     `- Exigem ajuste de UI/filtro: ${relatorio.listasAcao.exigemAjusteUiFiltro.join(", ") || "nenhum"}`,
     "",
-    "## 5. Problemas de código encontrados",
+    "## 6. Problemas de código encontrados",
     "",
     relatorio.problemasCodigo.length
       ? relatorio.problemasCodigo.map((p) => `- **${p.classificacao}:** ${p.problema} Evidência: ${p.evidencia} Recomendação: ${p.recomendacao}`).join("\n")
       : "- Nenhum problema de código confirmado nesta auditoria.",
     "",
-    "## 6. Problemas de UX encontrados",
+    "## 7. Problemas de UX encontrados",
     "",
     relatorio.problemasUx.length
       ? relatorio.problemasUx.map((p) => `- **${p.classificacao}:** ${p.problema} Evidência: ${p.evidencia} Recomendação: ${p.recomendacao}`).join("\n")
       : "- Nenhum problema de UX confirmado nesta auditoria.",
     "",
-    "## 7. Próximo plano de ação",
+    "## 8. Plano de ação por grupo",
     "",
-    "1. Revalidar decisões antigas bloqueadas pela segurança pré-ativação.",
-    "2. Resolver pendências reais bloqueantes: item não apto material e equivalência pendente.",
-    "3. Tratar alertas de quantidade x valor unitário por decisão sistêmica auditável mantendo total PAD como fonte.",
-    "4. Manter históricos/saneados fora da lista operacional e revisar filtro backend em etapa posterior.",
-    "5. Só depois repetir reconstrução/comparador dry-run e avaliar ativação.",
+    "### Grupo 1 — Revalidação necessária (payload alterado após a decisão)",
+    `- IDs: ${listaIds(idsOp("revalidacao_necessaria"))}`,
+    "- Revalidar a decisão; comparar payload no momento da decisão × payload atual.",
+    "- Confirmar se a alteração decorreu de correção técnica (parser de quantidade) ou reextração do PAD.",
+    "- Registrar nova decisão apenas em etapa posterior; ver `profor-2022-seguranca-pre-ativacao-detalhada-dry-run`.",
+    "",
+    "### Grupo 2 — Decisão resolutiva com pendência técnica (não reapresentada)",
+    `- IDs: ${listaIds(idsOp("decisao_resolutiva_com_pendencia_tecnica"))}`,
+    "- Manter em histórico; avaliar se ainda devem bloquear a segurança pré-ativação.",
+    "- Não exibir como pendência operacional na fila de revisão.",
+    "",
+    "### Grupo 3 — Pendências operacionais reais",
+    `- IDs: ${listaIds(idsOp("pendencia_operacional_real"))}`,
+    "- Manter para revisão humana real; exigem decisão substantiva (não sanear por regra).",
+    "",
+    "### Grupo 4 — Falsos positivos saneáveis",
+    `- IDs: ${listaIds(idsOp("falso_positivo_saneavel"))}`,
+    "- Propor saneamento sistêmico auditável em etapa posterior; sem decisão automática nesta etapa.",
+    "",
+    "### Histórico/saneado e bloqueio técnico puro",
+    `- Histórico/saneado (fora da fila operacional): ${listaIds(idsOp("historico_saneado"))}`,
+    `- Bloqueio técnico de segurança: ${listaIds(idsOp("bloqueio_tecnico_seguranca"))}`,
     "",
     "Rollback: remover este script, seu comando npm, os relatórios gerados e os registros documentais desta auditoria.",
   ];
@@ -762,11 +971,13 @@ function executar() {
   const { relatorios, fontes } = carregarRelatorios();
   const decisoes = carregarDecisoes();
   const logs = carregarLogs();
-  const divergencias = carregarDivergencias(decisoes.porDivergencia, logs);
+  const idsBloqueioSeguranca = coletarIdsBloqueioSeguranca(relatorios.seguranca);
+  const divergencias = carregarDivergencias(decisoes.porDivergencia, logs, idsBloqueioSeguranca);
   const resumoBanco = carregarResumoBanco();
   const mapas = montarMapasRelatorios(relatorios);
   const itens = divergencias.map((divergencia) => classificarDivergencia(divergencia, mapas));
   const categorias = sintetizarCategorias(itens);
+  const categoriasOperacionais = sintetizarCategoriasOperacionais(itens);
   const listasAcao = montarListasAcao(itens);
   const totalPendentesOperacionais = divergencias.filter((item) => STATUS_PENDENTES.has(String(item.status || "").toUpperCase())).length;
   const totalComDecisaoResolutiva = divergencias.filter((item) => item.temDecisaoResolutiva).length;
@@ -790,10 +1001,19 @@ function executar() {
       totalPendenciasReaisEstimadas: idsPorCategoria(categorias, "pendencia_real").length,
       totalBloqueiosSegurancaPreAtivacao: Number(relatorios.seguranca?.resumo?.totalBloqueiosAtivacao || 0),
       totalPayloadAlteradoAposDecisao: idsPorCategoria(categorias, "decisao_antiga_com_payload_alterado").length,
+      separacaoOperacional: {
+        pendenciaOperacionalReal: idsPorCategoria(categoriasOperacionais, "pendencia_operacional_real").length,
+        bloqueioTecnicoSeguranca: idsPorCategoria(categoriasOperacionais, "bloqueio_tecnico_seguranca").length,
+        decisaoResolutivaComPendenciaTecnica: idsPorCategoria(categoriasOperacionais, "decisao_resolutiva_com_pendencia_tecnica").length,
+        revalidacaoNecessaria: idsPorCategoria(categoriasOperacionais, "revalidacao_necessaria").length,
+        historicoSaneado: idsPorCategoria(categoriasOperacionais, "historico_saneado").length,
+        falsoPositivoSaneavel: idsPorCategoria(categoriasOperacionais, "falso_positivo_saneavel").length,
+      },
       porStatus: resumoBanco.porStatus,
       porTipoStatus: resumoBanco.porTipoStatus,
     },
     categorias,
+    categoriasOperacionais,
     itens,
     listasAcao,
     problemasCodigo: montarProblemasCodigo(decisoes.valoresNaoCanonicos, relatorios),
@@ -808,6 +1028,7 @@ function executar() {
       "npm run profor:rateio:auditar-quantidades:dry-run",
       "npm run profor:pad:reconstruir-plano:dry-run",
       "npm run profor:pad:comparar-plano:dry-run",
+      "npm run profor:pad:seguranca-pre-ativacao:detalhar",
     ],
     garantias: {
       decisaoRegistrada: false,
@@ -826,8 +1047,13 @@ function executar() {
   console.log(`JSON: ${SAIDA_JSON}`);
   console.log(`MD:   ${SAIDA_MD}`);
   console.log(`Divergências analisadas: ${relatorio.resumo.totalAnalisadas}`);
-  console.log(`Pendências reais estimadas: ${relatorio.resumo.totalPendenciasReaisEstimadas}`);
-  console.log(`Suspeitas/falsos positivos: ${relatorio.resumo.totalPossiveisFalsosPositivos}`);
+  const sop = relatorio.resumo.separacaoOperacional;
+  console.log(`Pendência operacional real: ${sop.pendenciaOperacionalReal}`);
+  console.log(`Bloqueio técnico de segurança: ${sop.bloqueioTecnicoSeguranca}`);
+  console.log(`Decisão resolutiva com pendência técnica: ${sop.decisaoResolutivaComPendenciaTecnica}`);
+  console.log(`Revalidação necessária (payload alterado): ${sop.revalidacaoNecessaria}`);
+  console.log(`Histórico/saneado: ${sop.historicoSaneado}`);
+  console.log(`Falso positivo saneável: ${sop.falsoPositivoSaneavel}`);
   console.log(`Bloqueios de segurança pré-ativação: ${relatorio.resumo.totalBloqueiosSegurancaPreAtivacao}`);
 }
 

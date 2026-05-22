@@ -1,13 +1,13 @@
 {
   "resumo": {
-    "geradoEm": "2026-05-22T00:32:27.715Z",
+    "geradoEm": "2026-05-22T01:04:58.009Z",
     "modo": "dry-run",
     "totalAnalisado": 145,
     "saneavelAutomaticamente": 0,
-    "divergenciaMaterial": 1,
+    "divergenciaMaterial": 0,
     "historicoNaoReapresentado": 75,
     "dadosInsuficientes": 0,
-    "jaDecidido": 69
+    "jaDecidido": 70
   },
   "idsSaneaveis": [],
   "analisados": [
@@ -269,11 +269,11 @@
       "chaveDivergencia": "equivalencia_por_descricao_normalizada:a666445f21fca80d",
       "numeroConvenio": "937265",
       "tipoAlerta": "equivalencia_por_descricao_normalizada",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "descricaoMemoria": "Meia Militar",
       "descricaoPad": "Meia militar",
-      "classificacao": "divergencia_material",
-      "motivo": "Diferença de acentuação, mas há divergência material (preço memória R$ 37.15, PAD R$ 37.59; natureza memória CUSTEIO, PAD CUSTEIO)."
+      "classificacao": "ja_decidido",
+      "motivo": "Divergência já possui decisão resolutiva com status ACEITO."
     },
     {
       "id": 25,

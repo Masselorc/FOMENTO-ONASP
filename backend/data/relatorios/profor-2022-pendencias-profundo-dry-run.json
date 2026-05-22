@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T00:32:55.357Z",
+  "geradoEm": "2026-05-22T01:06:31.613Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -7,69 +7,77 @@
       "ausentesSubstitutos": {
         "caminho": "backend/data/relatorios/profor-2022-ausentes-substitutos-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:18.662Z",
+        "geradoEm": "2026-05-22T01:04:47.232Z",
         "erro": null
       },
       "diacritico": {
         "caminho": "backend/data/relatorios/profor-2022-pendencias-diacritico-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:27.715Z",
+        "geradoEm": "2026-05-22T01:04:58.009Z",
         "erro": null
       },
       "itemNaoApto": {
         "caminho": "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:26.981Z",
+        "geradoEm": "2026-05-22T01:04:56.898Z",
         "erro": null
       },
       "rateioAntigo": {
         "caminho": "backend/data/relatorios/profor-2022-item-sem-rateio-rateio-antigo-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:25.530Z",
+        "geradoEm": "2026-05-22T01:04:55.681Z",
         "erro": null
       },
       "quantidades": {
         "caminho": "backend/data/relatorios/profor-2022-quantidades-suspeitas-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:33.116Z",
+        "geradoEm": "2026-05-22T01:05:05.828Z",
         "erro": null
       },
       "seguranca": {
         "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:15.635Z",
+        "geradoEm": "2026-05-22T01:04:54.502Z",
         "erro": null
       },
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:35.283Z",
+        "geradoEm": "2026-05-22T01:05:08.587Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T00:32:35.295Z",
+        "geradoEm": "2026-05-22T01:05:08.617Z",
         "erro": null
       }
     }
   },
   "resumo": {
     "totalDivergencias": 145,
-    "totalAnalisadas": 110,
-    "totalPendentesOperacionais": 76,
+    "totalAnalisadas": 143,
+    "totalPendentesOperacionais": 75,
     "totalBloqueantes": 45,
-    "totalBloqueantesOperacionais": 11,
-    "totalComDecisaoResolutiva": 34,
-    "totalDecisoesRegistradas": 71,
-    "totalPossiveisFalsosPositivos": 62,
+    "totalBloqueantesOperacionais": 10,
+    "totalComDecisaoResolutiva": 68,
+    "totalDecisoesRegistradas": 72,
+    "totalPossiveisFalsosPositivos": 65,
     "totalPendenciasReaisEstimadas": 8,
     "totalBloqueiosSegurancaPreAtivacao": 35,
-    "totalPayloadAlteradoAposDecisao": 0,
+    "totalPayloadAlteradoAposDecisao": 27,
+    "separacaoOperacional": {
+      "pendenciaOperacionalReal": 12,
+      "bloqueioTecnicoSeguranca": 2,
+      "decisaoResolutivaComPendenciaTecnica": 7,
+      "revalidacaoNecessaria": 27,
+      "historicoSaneado": 34,
+      "falsoPositivoSaneavel": 61
+    },
     "porStatus": [
       {
         "status": "ACEITO",
-        "total": 64
+        "total": 65
       },
       {
         "status": "CORRIGIDO",
@@ -77,19 +85,14 @@
       },
       {
         "status": "PENDENTE",
-        "total": 76
+        "total": 75
       }
     ],
     "porTipoStatus": [
       {
         "tipoAlerta": "equivalencia_por_descricao_normalizada",
         "status": "ACEITO",
-        "total": 3
-      },
-      {
-        "tipoAlerta": "equivalencia_por_descricao_normalizada",
-        "status": "PENDENTE",
-        "total": 1
+        "total": 4
       },
       {
         "tipoAlerta": "item_ausente_no_pad",
@@ -124,6 +127,82 @@
     ]
   },
   "categorias": [
+    {
+      "categoria": "ja_saneado_mas_ainda_pendente",
+      "quantidade": 68,
+      "ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        35,
+        36,
+        37,
+        40,
+        41,
+        42,
+        43,
+        45,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        77,
+        78
+      ],
+      "risco": "medio",
+      "acaoRecomendada": "remover da operação padrão; revisar segurança"
+    },
     {
       "categoria": "valor_ou_saldo_inconsistente",
       "quantidade": 67,
@@ -201,9 +280,12 @@
     },
     {
       "categoria": "possivel_falso_positivo",
-      "quantidade": 62,
+      "quantidade": 65,
       "ids": [
         24,
+        25,
+        26,
+        27,
         81,
         82,
         83,
@@ -270,48 +352,6 @@
       "acaoRecomendada": "avaliar saneamento sistêmico auditável"
     },
     {
-      "categoria": "ja_saneado_mas_ainda_pendente",
-      "quantidade": 34,
-      "ids": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        28,
-        29,
-        30,
-        35,
-        36,
-        37,
-        40,
-        41,
-        42,
-        43,
-        45
-      ],
-      "risco": "medio",
-      "acaoRecomendada": "remover da operação padrão; revisar segurança"
-    },
-    {
       "categoria": "duplicidade_ou_ambiguidade_pad",
       "quantidade": 30,
       "ids": [
@@ -350,6 +390,41 @@
       "acaoRecomendada": "revisar granularidade/substituição"
     },
     {
+      "categoria": "decisao_antiga_com_payload_alterado",
+      "quantidade": 27,
+      "ids": [
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74
+      ],
+      "risco": "alto",
+      "acaoRecomendada": "revalidar decisão antiga"
+    },
+    {
       "categoria": "pendencia_real",
       "quantidade": 8,
       "ids": [
@@ -366,22 +441,224 @@
       "acaoRecomendada": "decisão humana real"
     },
     {
-      "categoria": "diacritico_ou_acentuacao",
-      "quantidade": 1,
-      "ids": [
-        24
-      ],
-      "risco": "baixo",
-      "acaoRecomendada": "saneamento por diacrítico com critérios materiais"
-    },
-    {
       "categoria": "historico_nao_reapresentado",
-      "quantidade": 1,
+      "quantidade": 7,
       "ids": [
-        28
+        25,
+        26,
+        27,
+        28,
+        75,
+        77,
+        78
       ],
       "risco": "alto",
       "acaoRecomendada": "tratar em etapa de histórico/segurança"
+    },
+    {
+      "categoria": "diacritico_ou_acentuacao",
+      "quantidade": 4,
+      "ids": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "risco": "baixo",
+      "acaoRecomendada": "saneamento por diacrítico com critérios materiais"
+    }
+  ],
+  "categoriasOperacionais": [
+    {
+      "categoria": "falso_positivo_saneavel",
+      "quantidade": 61,
+      "ids": [
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145
+      ],
+      "risco": "medio",
+      "descricao": "Falso positivo saneável por regra sistêmica auditável."
+    },
+    {
+      "categoria": "historico_saneado",
+      "quantidade": 34,
+      "ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        29,
+        30,
+        35,
+        36,
+        37,
+        40,
+        41,
+        42,
+        43,
+        45
+      ],
+      "risco": "baixo",
+      "descricao": "Histórico/saneado; fora da fila operacional prioritária."
+    },
+    {
+      "categoria": "revalidacao_necessaria",
+      "quantidade": 27,
+      "ids": [
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74
+      ],
+      "risco": "alto",
+      "descricao": "Decisão com payload alterado após a decisão; exige revalidação humana."
+    },
+    {
+      "categoria": "pendencia_operacional_real",
+      "quantidade": 12,
+      "ids": [
+        31,
+        32,
+        33,
+        34,
+        38,
+        39,
+        44,
+        46,
+        88,
+        89,
+        97,
+        115
+      ],
+      "risco": "alto",
+      "descricao": "Pendência aberta que exige decisão humana substantiva."
+    },
+    {
+      "categoria": "decisao_resolutiva_com_pendencia_tecnica",
+      "quantidade": 7,
+      "ids": [
+        25,
+        26,
+        27,
+        28,
+        75,
+        77,
+        78
+      ],
+      "risco": "medio",
+      "descricao": "Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança."
+    },
+    {
+      "categoria": "bloqueio_tecnico_seguranca",
+      "quantidade": 2,
+      "ids": [
+        79,
+        80
+      ],
+      "risco": "alto",
+      "descricao": "Pendente e bloqueante de publicação por critério técnico, sem decisão resolutiva."
     }
   ],
   "itens": [
@@ -403,7 +680,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 2,
@@ -423,7 +703,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 3,
@@ -443,7 +726,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 4,
@@ -463,7 +749,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 5,
@@ -483,7 +772,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 6,
@@ -503,7 +795,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 7,
@@ -523,7 +818,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 8,
@@ -543,7 +841,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 9,
@@ -563,7 +864,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 10,
@@ -583,7 +887,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 11,
@@ -603,7 +910,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 12,
@@ -623,7 +933,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 13,
@@ -643,7 +956,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 14,
@@ -663,7 +979,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 15,
@@ -683,7 +1002,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 16,
@@ -703,7 +1025,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 17,
@@ -723,7 +1048,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 18,
@@ -743,7 +1071,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 19,
@@ -763,7 +1094,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 20,
@@ -783,7 +1117,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 21,
@@ -803,7 +1140,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 22,
@@ -823,7 +1163,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 23,
@@ -843,7 +1186,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 24,
@@ -852,19 +1198,101 @@
       "uf": "MS",
       "tipoAlerta": "equivalencia_por_descricao_normalizada",
       "descricao": "Meia militar",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "nivel": "aviso",
       "bloqueiaPublicacao": true,
       "campoAfetado": "descricao",
       "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
         "diacritico_ou_acentuacao",
         "possivel_falso_positivo"
       ],
-      "evidencia": "Auditoria de diacrítico: divergencia_material — Diferença de acentuação, mas há divergência material (preço memória R$ 37.15, PAD R$ 37.59; natureza memória CUSTEIO, PAD CUSTEIO).",
-      "recomendacao": "Saneamento por diacrítico em etapa auditável; não exigir decisão manual se critérios materiais fecharem.",
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Auditoria de diacrítico: ja_decidido — Divergência já possui decisão resolutiva com status ACEITO.",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Saneamento por diacrítico em etapa auditável; não exigir decisão manual se critérios materiais fecharem.",
+      "totalDecisoes": 2,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 18,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 25,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "descricao": "Desktop para edição de vídeo",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "descricao",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "historico_nao_reapresentado",
+        "diacritico_ou_acentuacao",
+        "possivel_falso_positivo"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Divergência não reapresentada na geração atual (nao_reapresentada_com_decisao_resolutiva). | Auditoria de diacrítico: ja_decidido — Divergência já possui decisão resolutiva com status ACEITO.",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Remover da operação padrão e tratar como histórico/segurança antes da ativação. | Saneamento por diacrítico em etapa auditável; não exigir decisão manual se critérios materiais fecharem.",
       "totalDecisoes": 1,
-      "temDecisaoResolutiva": false,
-      "totalLogs": 17
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 26,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:f812a27863b7408a",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "descricao": "Smartphone mínimo de 128gb de memória in",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "descricao",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "historico_nao_reapresentado",
+        "diacritico_ou_acentuacao",
+        "possivel_falso_positivo"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Divergência não reapresentada na geração atual (nao_reapresentada_com_decisao_resolutiva). | Auditoria de diacrítico: ja_decidido — Divergência já possui decisão resolutiva com status ACEITO.",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Remover da operação padrão e tratar como histórico/segurança antes da ativação. | Saneamento por diacrítico em etapa auditável; não exigir decisão manual se critérios materiais fecharem.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 27,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a55de103e70ebde1",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "descricao": "Switcher de vídeo",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "descricao",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "historico_nao_reapresentado",
+        "diacritico_ou_acentuacao",
+        "possivel_falso_positivo"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Divergência não reapresentada na geração atual (nao_reapresentada_com_decisao_resolutiva). | Auditoria de diacrítico: ja_decidido — Divergência já possui decisão resolutiva com status ACEITO.",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Remover da operação padrão e tratar como histórico/segurança antes da ativação. | Saneamento por diacrítico em etapa auditável; não exigir decisão manual se critérios materiais fecharem.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 28,
@@ -885,7 +1313,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Remover da operação padrão e tratar como histórico/segurança antes da ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 29,
@@ -905,7 +1336,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 30,
@@ -925,7 +1359,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 31,
@@ -946,7 +1383,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 32,
@@ -967,7 +1407,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 33,
@@ -988,7 +1431,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 34,
@@ -1009,7 +1455,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 35,
@@ -1029,7 +1478,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 36,
@@ -1050,7 +1502,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Conferir granularidade do PAD antes de decisão humana.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 37,
@@ -1071,7 +1526,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Conferir granularidade do PAD antes de decisão humana.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 38,
@@ -1091,7 +1549,10 @@
       "recomendacao": "Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 39,
@@ -1111,7 +1572,10 @@
       "recomendacao": "Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 40,
@@ -1131,7 +1595,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 41,
@@ -1151,7 +1618,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 42,
@@ -1171,7 +1641,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 43,
@@ -1191,7 +1664,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 44,
@@ -1212,7 +1688,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 45,
@@ -1232,7 +1711,10 @@
       "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
       "totalDecisoes": 1,
       "temDecisaoResolutiva": true,
-      "totalLogs": 17
+      "totalLogs": 17,
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 46,
@@ -1253,7 +1735,730 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Exige decisão humana real; há divergência material entre memória e PAD.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
+      "exigeDecisaoHumanaSubstantiva": true
+    },
+    {
+      "id": 47,
+      "chaveDivergencia": "item_ausente_no_pad:e4caa4f2de2619b3",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Ar condicionado Split 24000 BTUs (CORREG",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 48,
+      "chaveDivergencia": "item_ausente_no_pad:8c26f66ea1caca0d",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Ar condicionado Split 36000 BTUs (ESCOLA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 49,
+      "chaveDivergencia": "item_ausente_no_pad:85aa4ec3ed492a6c",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 50,
+      "chaveDivergencia": "item_ausente_no_pad:6695decd0ced4c5b",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Cadeira Longarina plástica 03 Lugares -",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 51,
+      "chaveDivergencia": "item_ausente_no_pad:ca5226c5cd9dcaf7",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Cadeira Secretária Fixa, Preta, pé palit",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 52,
+      "chaveDivergencia": "item_ausente_no_pad:57810d766febc453",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Cafeteira Elétrica Tradicional Industria",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 53,
+      "chaveDivergencia": "item_ausente_no_pad:5d314260fd60be80",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Computador Desktop (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 54,
+      "chaveDivergencia": "item_ausente_no_pad:da1129758bd0e411",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Forno de Microondas - 20L Branco (OUVID",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 56,
+      "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Frigobar 71L (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 57,
+      "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Geladeira frost free duplex 400 litros (",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 58,
+      "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Gravador de áudio digital 32GB (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 59,
+      "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "HD Externo 2TB (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 60,
+      "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Impressora multifuncional Tanque de Tin",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 61,
+      "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Kit videoconferência (CORREGEDORIA - 03",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 62,
+      "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 63,
+      "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Nobreak 1200VA (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 64,
+      "chaveDivergencia": "item_ausente_no_pad:584b9c4c0a6d70d4",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Notebook (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 65,
+      "chaveDivergencia": "item_ausente_no_pad:0aa793b7aad7dea9",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Pen drive 64Gb (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 66,
+      "chaveDivergencia": "item_ausente_no_pad:9ef6ef8500d7dd16",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Poltronas (CORREGEDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 67,
+      "chaveDivergencia": "item_ausente_no_pad:263c61398f88427a",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 68,
+      "chaveDivergencia": "item_ausente_no_pad:12da4f953a810aba",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Quadro lousa branca 250x120cm (ESCOLA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 69,
+      "chaveDivergencia": "item_ausente_no_pad:8fa2597b2ebf3282",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Tela de projeção 2x2 retrátil com tripé",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 70,
+      "chaveDivergencia": "item_ausente_no_pad:e726b662149c7057",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Televisão 50 (CORREGEDORIA - 03 UN. E OU",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 71,
+      "chaveDivergencia": "item_ausente_no_pad:53e1018ea3c16260",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Webcam full HD (OUVIDORIA)",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 72,
+      "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Contratação de Bolsa - Aluno Ouvidoria I",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 2 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 2,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 18,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 73,
+      "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Contratação de Bolsa -Coordenador Ouvid",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 74,
+      "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Contratação de Bolsa -Pesquisador Ouvid",
+      "status": "ACEITO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "decisao_antiga_com_payload_alterado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Segurança pré-ativação: 1 decisão(ões) com payload alterado após decisão. | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (ACEITO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Revalidar decisão humana ou criar etapa sistêmica auditável; não revalidar automaticamente nesta auditoria.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "revalidacao_necessaria",
+      "motivoOperacional": "Decisão resolutiva com payload alterado após a decisão; exige revalidação humana antes da ativação.",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 75,
+      "chaveDivergencia": "item_ausente_no_pad:ce97612ee9b9e3ce",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Desktop para edição de video",
+      "status": "CORRIGIDO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "historico_nao_reapresentado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (CORRIGIDO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Divergência não reapresentada na geração atual (nao_reapresentada_com_decisao_resolutiva). | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Remover da operação padrão e tratar como histórico/segurança antes da ativação.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 77,
+      "chaveDivergencia": "item_ausente_no_pad:48844ea18c1d3543",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Smartphone minimo de 128gb de memória in",
+      "status": "CORRIGIDO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "historico_nao_reapresentado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (CORRIGIDO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Divergência não reapresentada na geração atual (nao_reapresentada_com_decisao_resolutiva). | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Remover da operação padrão e tratar como histórico/segurança antes da ativação.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      "exigeDecisaoHumanaSubstantiva": false
+    },
+    {
+      "id": 78,
+      "chaveDivergencia": "item_ausente_no_pad:d8099a1f5573201b",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "tipoAlerta": "item_ausente_no_pad",
+      "descricao": "Switcher de video",
+      "status": "CORRIGIDO",
+      "nivel": "aviso",
+      "bloqueiaPublicacao": false,
+      "campoAfetado": "existencia",
+      "classificacoes": [
+        "ja_saneado_mas_ainda_pendente",
+        "historico_nao_reapresentado"
+      ],
+      "evidencia": "Status/decisão resolutiva presente (CORRIGIDO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Divergência não reapresentada na geração atual (nao_reapresentada_com_decisao_resolutiva). | Auditoria de ausentes: ja_decidido — Divergência já possui decisão resolutiva (CORRIGIDO).",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação. | Remover da operação padrão e tratar como histórico/segurança antes da ativação.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
+      "classificacaoOperacional": "decisao_resolutiva_com_pendencia_tecnica",
+      "motivoOperacional": "Item já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança pré-ativação (divergência não reapresentada).",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 79,
@@ -1273,7 +2478,10 @@
       "recomendacao": "Revisar alerta antes de decisão.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "bloqueio_tecnico_seguranca",
+      "motivoOperacional": "Pendente e bloqueante de publicação, sem enquadramento como pendência operacional real ou falso positivo saneável.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 80,
@@ -1293,7 +2501,10 @@
       "recomendacao": "Revisar alerta antes de decisão.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "bloqueio_tecnico_seguranca",
+      "motivoOperacional": "Pendente e bloqueante de publicação, sem enquadramento como pendência operacional real ou falso positivo saneável.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 81,
@@ -1314,7 +2525,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 82,
@@ -1335,7 +2549,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 83,
@@ -1356,7 +2573,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 84,
@@ -1377,7 +2597,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 85,
@@ -1398,7 +2621,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 86,
@@ -1419,7 +2645,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 87,
@@ -1440,7 +2669,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 88,
@@ -1461,7 +2693,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Revisar alerta antes de decisão.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendente sem classificador específico; requer revisão humana.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 89,
@@ -1482,7 +2717,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Revisar alerta antes de decisão.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendente sem classificador específico; requer revisão humana.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 90,
@@ -1504,7 +2742,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 91,
@@ -1526,7 +2767,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 92,
@@ -1548,7 +2792,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 93,
@@ -1570,7 +2817,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 94,
@@ -1592,7 +2842,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 95,
@@ -1614,7 +2867,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 96,
@@ -1636,7 +2892,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 97,
@@ -1657,7 +2916,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Revisar alerta antes de decisão.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendente sem classificador específico; requer revisão humana.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 98,
@@ -1679,7 +2941,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 99,
@@ -1701,7 +2966,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 100,
@@ -1723,7 +2991,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 101,
@@ -1745,7 +3016,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 102,
@@ -1767,7 +3041,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 103,
@@ -1789,7 +3066,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 104,
@@ -1811,7 +3091,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 105,
@@ -1833,7 +3116,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 106,
@@ -1855,7 +3141,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 107,
@@ -1876,7 +3165,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 108,
@@ -1897,7 +3189,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 109,
@@ -1918,7 +3213,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 110,
@@ -1939,7 +3237,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 111,
@@ -1960,7 +3261,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 112,
@@ -1981,7 +3285,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 113,
@@ -2002,7 +3309,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 114,
@@ -2023,7 +3333,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 115,
@@ -2043,7 +3356,10 @@
       "recomendacao": "Revisar alerta antes de decisão.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "pendencia_operacional_real",
+      "motivoOperacional": "Pendente sem classificador específico; requer revisão humana.",
+      "exigeDecisaoHumanaSubstantiva": true
     },
     {
       "id": 116,
@@ -2064,7 +3380,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 117,
@@ -2085,7 +3404,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 118,
@@ -2106,7 +3428,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 119,
@@ -2127,7 +3452,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 120,
@@ -2148,7 +3476,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 121,
@@ -2169,7 +3500,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 122,
@@ -2190,7 +3524,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 123,
@@ -2211,7 +3548,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 124,
@@ -2232,7 +3572,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 125,
@@ -2253,7 +3596,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 126,
@@ -2274,7 +3620,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 127,
@@ -2295,7 +3644,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 128,
@@ -2317,7 +3669,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 129,
@@ -2339,7 +3694,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 130,
@@ -2361,7 +3719,10 @@
       "recomendacao": "Conferir granularidade do PAD antes de decisão humana. | Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 131,
@@ -2382,7 +3743,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 132,
@@ -2403,7 +3767,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 133,
@@ -2424,7 +3791,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 134,
@@ -2445,7 +3815,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 135,
@@ -2466,7 +3839,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 136,
@@ -2487,7 +3863,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 137,
@@ -2508,7 +3887,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 138,
@@ -2529,7 +3911,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 139,
@@ -2550,7 +3935,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 140,
@@ -2571,7 +3959,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 141,
@@ -2592,7 +3983,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 142,
@@ -2613,7 +4007,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 143,
@@ -2634,7 +4031,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 144,
@@ -2655,7 +4055,10 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 145,
@@ -2676,12 +4079,18 @@
       "recomendacao": "Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.",
       "totalDecisoes": 0,
       "temDecisaoResolutiva": false,
-      "totalLogs": 16
+      "totalLogs": 16,
+      "classificacaoOperacional": "falso_positivo_saneavel",
+      "motivoOperacional": "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
+      "exigeDecisaoHumanaSubstantiva": false
     }
   ],
   "listasAcao": {
     "podemSerSaneadosPorRegra": [
-      24
+      24,
+      25,
+      26,
+      27
     ],
     "exigemDecisaoHumana": [
       31,
@@ -2742,6 +4151,10 @@
       21,
       22,
       23,
+      24,
+      25,
+      26,
+      27,
       28,
       29,
       30,
@@ -2752,7 +4165,37 @@
       41,
       42,
       43,
-      45
+      45,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      77,
+      78
     ]
   },
   "problemasCodigo": [
@@ -2796,7 +4239,8 @@
     "npm run profor:pad:diacritico:auditar-pendencias",
     "npm run profor:rateio:auditar-quantidades:dry-run",
     "npm run profor:pad:reconstruir-plano:dry-run",
-    "npm run profor:pad:comparar-plano:dry-run"
+    "npm run profor:pad:comparar-plano:dry-run",
+    "npm run profor:pad:seguranca-pre-ativacao:detalhar"
   ],
   "garantias": {
     "decisaoRegistrada": false,

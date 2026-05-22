@@ -1,13 +1,13 @@
 {
-  "geradoEm": "2026-05-22T00:32:35.295Z",
+  "geradoEm": "2026-05-22T01:05:08.617Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
     "totalLinhasAntigo": 567,
-    "totalLinhasNovo": 628,
+    "totalLinhasNovo": 630,
     "totalItensIguais": 458,
-    "totalItensNovos": 30,
+    "totalItensNovos": 32,
     "totalItensAusentes": 34,
     "totalItensQuantidadeDivergente": 3,
     "totalItensValorPrevistoDivergente": 13,
@@ -16,18 +16,18 @@
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
     "totalItensAmbiguos": 49,
-    "totalDiferencas": 90,
-    "totalDiferencasCriticas": 30,
+    "totalDiferencas": 92,
+    "totalDiferencasCriticas": 32,
     "totalAvisos": 7,
     "totalDiferencasEsperadasPorAtualizacaoPad": 7,
     "totalDiferencasPorPendenciaDeDecisao": 19,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 27,
-    "totalDecisoesResolutivasEncontradas": 69,
-    "totalDecisoesInterpretadasDryRun": 64,
-    "totalDecisoesAplicadasDryRun": 64,
+    "totalDecisoesResolutivasEncontradas": 70,
+    "totalDecisoesInterpretadasDryRun": 65,
+    "totalDecisoesAplicadasDryRun": 65,
     "totalDecisoesNaoAplicaveis": 5,
-    "totalDecisoesComEfeitoNaReconstrucao": 37,
+    "totalDecisoesComEfeitoNaReconstrucao": 38,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
     "totalBloqueiosSegurancaPreAtivacao": 35
   },
@@ -39,17 +39,17 @@
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 628,
-      "valorPrevisto": 10661872.89,
+      "linhas": 630,
+      "valorPrevisto": 10664015.24,
       "valorExecutado": 3217739.5,
-      "saldo": 7444133.39
+      "saldo": 7446275.74
     }
   },
   "diferencaTotal": {
-    "linhas": 61,
-    "valorPrevisto": -2142.59,
+    "linhas": 63,
+    "valorPrevisto": -0.24,
     "valorExecutado": 15043.6,
-    "saldo": -17186.19
+    "saldo": -15043.84
   },
   "diferencasPorConvenio": [
     {
@@ -103,16 +103,16 @@
         "saldo": 236558.12
       },
       "novo": {
-        "linhas": 126,
-        "valorPrevisto": 545857.65,
+        "linhas": 128,
+        "valorPrevisto": 548000,
         "valorExecutado": 311441.88,
-        "saldo": 234415.77
+        "saldo": 236558.12
       },
       "diferenca": {
-        "valorPrevisto": -2142.35,
+        "valorPrevisto": 0,
         "valorExecutado": 0,
-        "saldo": -2142.35,
-        "linhas": 54
+        "saldo": 0,
+        "linhas": 56
       }
     },
     {
@@ -483,16 +483,16 @@
         "saldo": 236558.12
       },
       "novo": {
-        "linhas": 126,
-        "valorPrevisto": 545857.65,
+        "linhas": 128,
+        "valorPrevisto": 548000,
         "valorExecutado": 311441.88,
-        "saldo": 234415.77
+        "saldo": 236558.12
       },
       "diferenca": {
-        "valorPrevisto": -2142.35,
+        "valorPrevisto": 0,
         "valorExecutado": 0,
-        "saldo": -2142.35,
-        "linhas": 54
+        "saldo": 0,
+        "linhas": 56
       }
     },
     {
@@ -695,16 +695,16 @@
         "saldo": 2048720.27
       },
       "novo": {
-        "linhas": 136,
-        "valorPrevisto": 2582876.03,
+        "linhas": 137,
+        "valorPrevisto": 2583773.44,
         "valorExecutado": 578163.45,
-        "saldo": 2004712.58
+        "saldo": 2005609.99
       },
       "diferenca": {
-        "valorPrevisto": -11201.6,
+        "valorPrevisto": -10304.19,
         "valorExecutado": 32806.09,
-        "saldo": -44007.69,
-        "linhas": 21
+        "saldo": -43110.28,
+        "linhas": 22
       }
     },
     {
@@ -800,16 +800,16 @@
         "saldo": 1299845.87
       },
       "novo": {
-        "linhas": 161,
-        "valorPrevisto": 1722970.9,
+        "linhas": 162,
+        "valorPrevisto": 1724215.84,
         "valorExecutado": 387636.43,
-        "saldo": 1335334.47
+        "saldo": 1336579.41
       },
       "diferenca": {
-        "valorPrevisto": 6269.5,
+        "valorPrevisto": 7514.44,
         "valorExecutado": -29219.1,
-        "saldo": 35488.6,
-        "linhas": 15
+        "saldo": 36733.54,
+        "linhas": 16
       }
     }
   ],
@@ -844,16 +844,16 @@
         "saldo": 2746331.59
       },
       "novo": {
-        "linhas": 163,
-        "valorPrevisto": 3240074.69,
+        "linhas": 165,
+        "valorPrevisto": 3242217.04,
         "valorExecutado": 501786.85,
-        "saldo": 2738287.84
+        "saldo": 2740430.19
       },
       "diferenca": {
-        "valorPrevisto": -2142.35,
+        "valorPrevisto": 0,
         "valorExecutado": 5901.4,
-        "saldo": -8043.75,
-        "linhas": 10
+        "saldo": -5901.4,
+        "linhas": 12
       }
     }
   ],
@@ -959,6 +959,32 @@
       "situacao": "novo",
       "valorPrevistoNovo": 3599.99,
       "valorExecutadoNovo": 3114.93,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937265::Meia militar::CORREGEDORIA::CUSTEIO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Meia militar",
+      "situacao": "novo",
+      "valorPrevistoNovo": 897.41,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937265::Meia militar::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Meia militar",
+      "situacao": "novo",
+      "valorPrevistoNovo": 1244.94,
+      "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     },
@@ -3470,6 +3496,32 @@
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
     },
     {
+      "chave": "937265::Meia militar::CORREGEDORIA::CUSTEIO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Meia militar",
+      "situacao": "novo",
+      "valorPrevistoNovo": 897.41,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937265::Meia militar::OUVIDORIA::CUSTEIO",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Meia militar",
+      "situacao": "novo",
+      "valorPrevistoNovo": 1244.94,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
       "chave": "937221::Ar condicionado Split 60.000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
       "numeroConvenio": "937221",
       "uf": "AL",
@@ -5209,6 +5261,13 @@
       "decisaoId": 85
     },
     {
+      "divergenciaId": 24,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a666445f21fca80d",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "decisao": "ACEITO",
+      "decisaoId": 184
+    },
+    {
       "divergenciaId": 25,
       "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
       "tipoAlerta": "equivalencia_por_descricao_normalizada",
@@ -6273,6 +6332,26 @@
       "motivoNaoAplicavel": null
     },
     {
+      "divergenciaId": 24,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a666445f21fca80d",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "chaveItem": "937265::MEIA MILITAR",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "campoAfetado": "descricao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 184,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-22T00:53:03.141Z",
+      "efeito": {
+        "tipo": "equivalencia_aceita",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
       "divergenciaId": 25,
       "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
       "numeroConvenio": "937782",
@@ -7224,22 +7303,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 76,
+    "totalPendentes": 75,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 11,
+    "totalPendentesQueBloqueiamPublicacao": 10,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 69,
+    "totalComDecisaoResolutiva": 70,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 76,
+    "totalSemDecisaoResolutiva": 75,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T00:32:35.282Z",
+    "geradoEm": "2026-05-22T01:05:08.587Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 70,
-      "totalPayloadPreservado": 42,
+      "totalDecisoesResolutivasAuditadas": 71,
+      "totalPayloadPreservado": 43,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -7561,27 +7640,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 501,
     "totalItensPadSemRateio": 24,
-    "totalItensPadSemRateioRemanescentes": 1,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 23,
-    "totalLinhasReconstruidas": 628,
+    "totalItensPadSemRateioRemanescentes": 0,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 24,
+    "totalLinhasReconstruidas": 630,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 35,
-    "totalAlertas": 107,
-    "totalDecisoesResolutivasEncontradas": 69,
-    "totalDecisoesInterpretadasDryRun": 64,
-    "totalDecisoesAplicadasDryRun": 64,
+    "totalImpedimentos": 34,
+    "totalAlertas": 108,
+    "totalDecisoesResolutivasEncontradas": 70,
+    "totalDecisoesInterpretadasDryRun": 65,
+    "totalDecisoesAplicadasDryRun": 65,
     "totalDecisoesNaoAplicaveis": 5,
-    "totalDecisoesComEfeitoNaReconstrucao": 37,
+    "totalDecisoesComEfeitoNaReconstrucao": 38,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 33,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 34,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
-    "valorPrevistoReconstruidoTotal": 10661872.89,
+    "valorPrevistoReconstruidoTotal": 10664015.24,
     "valorExecutadoReconstruidoTotal": 3217739.5,
-    "saldoReconstruidoTotal": 7444133.39
+    "saldoReconstruidoTotal": 7446275.74
   },
   "impedimentosReconstrucao": [
     {
@@ -7655,15 +7734,6 @@
       "descricao": "CAPACETE PROTETOR",
       "chaveItem": "937817::CAPACETE PROTETOR",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "descricao": "Meia militar",
-      "chaveItem": "937265::MEIA MILITAR",
-      "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
     },
     {
       "tipo": "rateio_percentual_indefinido",
@@ -7897,14 +7967,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 11 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 10 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 35 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 34 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -2142.59, executado 15043.6, saldo -17186.19.",
-    "Diferenças críticas: 30. Itens ambíguos: 49.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -0.24, executado 15043.6, saldo -15043.84.",
+    "Diferenças críticas: 32. Itens ambíguos: 49.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

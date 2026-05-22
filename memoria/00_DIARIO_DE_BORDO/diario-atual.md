@@ -1,5 +1,76 @@
 # Diário de bordo
 
+## 22/05/2026 - PROFOR 2022: detalhamento da segurança pré-ativação e separação operacional (dry-run)
+
+- Contexto:
+  - sequência da auditoria profunda integrada no commit `982c12d`;
+  - a divergência `#24` foi resolvida manualmente pelo registrador **antes**
+    desta rodada (decisão canônica `#184`, `ACEITO`, usuário `usuario-local`,
+    em `2026-05-22`); não foi reaberta nem refeita nesta etapa.
+- Natureza da etapa:
+  - **somente diagnóstico dry-run e documentação**;
+  - nenhuma decisão registrada, nenhum status alterado, nenhuma publicação,
+    origem ativa intacta, `frontend/data/publicados` intacto, `planoAplicacao`
+    oficial não alterado, nenhuma migration criada.
+- Entregas de código:
+  - novo script `backend/scripts/detalhar-seguranca-pre-ativacao-pad-profor-2022.js`
+    e comando `npm run profor:pad:seguranca-pre-ativacao:detalhar`;
+  - auditoria profunda (`auditar-pendencias-profor-2022-profundo.js`) atualizada
+    com camada operacional de 6 categorias e consulta ampliada para incluir as
+    divergências citadas pela segurança pré-ativação;
+  - ambos os scripts incluídos em `scripts/validar-syntax.js`.
+- Comandos executados (esteira-base, nesta ordem):
+  - `auditar-fila-revisao`, `seguranca-pre-ativacao:dry-run`,
+    `ausentes:auditar-substitutos`, `item-sem-rateio:auditar-rateio-antigo`,
+    `item-nao-apto:auditar`, `diacritico:auditar-pendencias`,
+    `rateio:auditar-quantidades:dry-run`, `reconstruir-plano:dry-run`,
+    `comparar-plano:dry-run`, `auditar-pendencias-profundo`;
+  - depois `seguranca-pre-ativacao:detalhar`. Todos concluíram sem erro.
+- Totais atualizados após a resolução da `#24`:
+  - divergências na fila: `145`; analisadas pela auditoria profunda: `143`;
+  - `PENDENTE/EM_REVISAO` (status): `75`;
+  - bloqueante operacional: `10` (era `11` — `#24` saiu);
+  - com decisão resolutiva: `68` (`71` decisões registradas).
+- Separação operacional (cada item em exatamente uma categoria):
+  - `pendencia_operacional_real`: 12;
+  - `bloqueio_tecnico_seguranca`: 2 (`#79`, `#80`);
+  - `decisao_resolutiva_com_pendencia_tecnica`: 7 (`#25, #26, #27, #28, #75, #77, #78`);
+  - `revalidacao_necessaria`: 27 (`#47–#74`, exceto `#55` e `#76`);
+  - `historico_saneado`: 34 (inclui a `#24`);
+  - `falso_positivo_saneavel`: 61.
+- Bloqueios de segurança pré-ativação: `35` no total —
+  - `28` decisões com `payload_alterado_apos_decisao` (27 divergências distintas);
+  - `7` divergências `nao_reapresentada_com_decisao_resolutiva`;
+  - origem provável: `provavel_reextracao_ou_regeracao_pad` em 100% dos casos;
+    nenhum bloqueio decorre diretamente da correção do parser de quantidade
+    (todos os 28 são `item_ausente_no_pad`).
+- Distinção pendência operacional × bloqueio técnico:
+  - item `ACEITO/CORRIGIDO` com bloqueio de segurança **não** é pendência
+    operacional — entra em `decisao_resolutiva_com_pendencia_tecnica` ou
+    `revalidacao_necessaria`;
+  - pendente histórico/não reapresentado **não** é pendência operacional
+    prioritária — entra em `historico_saneado`;
+  - `pendencia_operacional_real` reúne só os itens que exigem decisão humana
+    substantiva.
+- Pendências reais bloqueantes confirmadas (excluída a `#24`):
+  - `#31` Calça Tática, `#32` Cinto Tático, `#33` Coturno,
+    `#34` Geladeira 410L — `937265/MS`;
+  - `#38` Capacete Protetor — `937817/RJ`;
+  - `#39` Agenda Planner, `#44` Saldo Residual — `938128/SP`;
+  - `#46` Saldo Remanescente — `938277/MA`;
+  - todas seguem `PENDENTE/impeditivo/bloqueante`; nenhuma foi resolvida.
+  - a auditoria ainda sinaliza `#88, #89, #97, #115` como pendência operacional
+    adicional (`quantidade_valor_unitario_inconsistente` sem enquadramento de
+    falso positivo).
+- Relatórios gerados/atualizados:
+  - `profor-2022-pendencias-profundo-dry-run.json` / `.md`;
+  - `profor-2022-seguranca-pre-ativacao-detalhada-dry-run.json` / `.md`.
+- Confirmações:
+  - nenhuma decisão registrada nesta etapa;
+  - nenhuma publicação; origem ativa, `frontend/data/publicados` e
+    `planoAplicacao` oficial intactos;
+  - divergências, decisões e logs preservados.
+
 ## 21/05/2026 - PROFOR 2022: auditoria profunda de pendências PAD (dry-run)
 
 - Objetivo:

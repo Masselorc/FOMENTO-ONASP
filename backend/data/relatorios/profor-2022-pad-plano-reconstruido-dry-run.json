@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T00:32:35.283Z",
+  "geradoEm": "2026-05-22T01:05:08.587Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -17648,6 +17648,74 @@
       }
     },
     {
+      "uf": "MS",
+      "instrumento": "Convênio",
+      "numero": "937265",
+      "ano": "2022",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Meia militar",
+      "quantidade": 23.715328,
+      "valorUnitario": 37.840927,
+      "valorPrevisto": 897.41,
+      "valorExecutado": 0,
+      "saldo": 897.41,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "origemReconstrucao": "equivalencia_por_decisao",
+      "chaveItem": "937265::MEIA MILITAR",
+      "itemConhecidoId": 154,
+      "codigoNaturezaDespesa": "33903099",
+      "unidade": "un",
+      "valorUnitarioPadReferencia": 37.59,
+      "valorUnitarioDerivado": 37.840927,
+      "baseRateioValor": "percentual",
+      "baseRateioQuantidade": "percentual",
+      "ajusteResidualAplicado": false,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": false,
+      "decisaoAplicada": {
+        "divergenciaId": 24,
+        "chaveDivergencia": "equivalencia_por_descricao_normalizada:a666445f21fca80d",
+        "decisao": "ACEITO",
+        "efeito": "equivalencia_aceita"
+      }
+    },
+    {
+      "uf": "MS",
+      "instrumento": "Convênio",
+      "numero": "937265",
+      "ano": "2022",
+      "area": "OUVIDORIA",
+      "natureza": "CUSTEIO",
+      "descricao": "Meia militar",
+      "quantidade": 33.284672,
+      "valorUnitario": 37.402802,
+      "valorPrevisto": 1244.94,
+      "valorExecutado": 0,
+      "saldo": 1244.94,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "origemReconstrucao": "equivalencia_por_decisao",
+      "chaveItem": "937265::MEIA MILITAR",
+      "itemConhecidoId": 154,
+      "codigoNaturezaDespesa": "33903099",
+      "unidade": "un",
+      "valorUnitarioPadReferencia": 37.59,
+      "valorUnitarioDerivado": 37.402802,
+      "baseRateioValor": "percentual",
+      "baseRateioQuantidade": "percentual",
+      "ajusteResidualAplicado": false,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": false,
+      "decisaoAplicada": {
+        "divergenciaId": 24,
+        "chaveDivergencia": "equivalencia_por_descricao_normalizada:a666445f21fca80d",
+        "decisao": "ACEITO",
+        "efeito": "equivalencia_aceita"
+      }
+    },
+    {
       "uf": "AL",
       "instrumento": "Convênio",
       "numero": "937221",
@@ -18401,27 +18469,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 501,
     "totalItensPadSemRateio": 24,
-    "totalItensPadSemRateioRemanescentes": 1,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 23,
-    "totalLinhasReconstruidas": 628,
+    "totalItensPadSemRateioRemanescentes": 0,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 24,
+    "totalLinhasReconstruidas": 630,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 35,
-    "totalAlertas": 107,
-    "totalDecisoesResolutivasEncontradas": 69,
-    "totalDecisoesInterpretadasDryRun": 64,
-    "totalDecisoesAplicadasDryRun": 64,
+    "totalImpedimentos": 34,
+    "totalAlertas": 108,
+    "totalDecisoesResolutivasEncontradas": 70,
+    "totalDecisoesInterpretadasDryRun": 65,
+    "totalDecisoesAplicadasDryRun": 65,
     "totalDecisoesNaoAplicaveis": 5,
-    "totalDecisoesComEfeitoNaReconstrucao": 37,
+    "totalDecisoesComEfeitoNaReconstrucao": 38,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 33,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 34,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
-    "valorPrevistoReconstruidoTotal": 10661872.89,
+    "valorPrevistoReconstruidoTotal": 10664015.24,
     "valorExecutadoReconstruidoTotal": 3217739.5,
-    "saldoReconstruidoTotal": 7444133.39
+    "saldoReconstruidoTotal": 7446275.74
   },
   "impedimentos": [
     {
@@ -18495,15 +18563,6 @@
       "descricao": "CAPACETE PROTETOR",
       "chaveItem": "937817::CAPACETE PROTETOR",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937265",
-      "uf": "MS",
-      "descricao": "Meia militar",
-      "chaveItem": "937265::MEIA MILITAR",
-      "detalhe": "Item PAD sem rateio aplicável (descricao_original_divergente_da_memoria_rateio)."
     },
     {
       "tipo": "rateio_percentual_indefinido",
@@ -18737,7 +18796,7 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 11 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 10 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "alertas": [
@@ -18937,6 +18996,15 @@
       "uf": null,
       "descricao": null,
       "chaveItem": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::MEIA MILITAR",
       "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
     },
     {
@@ -20000,6 +20068,13 @@
       "tipoAlerta": "item_novo_sem_rateio",
       "decisao": "ACEITO",
       "decisaoId": 85
+    },
+    {
+      "divergenciaId": 24,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a666445f21fca80d",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "decisao": "ACEITO",
+      "decisaoId": 184
     },
     {
       "divergenciaId": 25,
@@ -21066,6 +21141,26 @@
       "motivoNaoAplicavel": null
     },
     {
+      "divergenciaId": 24,
+      "chaveDivergencia": "equivalencia_por_descricao_normalizada:a666445f21fca80d",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "chaveItem": "937265::MEIA MILITAR",
+      "tipoAlerta": "equivalencia_por_descricao_normalizada",
+      "campoAfetado": "descricao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 184,
+      "usuario": "usuario-local",
+      "decididoEm": "2026-05-22T00:53:03.141Z",
+      "efeito": {
+        "tipo": "equivalencia_aceita",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null
+    },
+    {
       "divergenciaId": 25,
       "chaveDivergencia": "equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d",
       "numeroConvenio": "937782",
@@ -22017,22 +22112,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 76,
+    "totalPendentes": 75,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 11,
+    "totalPendentesQueBloqueiamPublicacao": 10,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 69,
+    "totalComDecisaoResolutiva": 70,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 76,
+    "totalSemDecisaoResolutiva": 75,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T00:32:35.282Z",
+    "geradoEm": "2026-05-22T01:05:08.587Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 70,
-      "totalPayloadPreservado": 42,
+      "totalDecisoesResolutivasAuditadas": 71,
+      "totalPayloadPreservado": 43,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
