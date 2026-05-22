@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-22T14:15:54.763Z",
+  "geradoEm": "2026-05-22T14:24:57.008Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -19,7 +19,7 @@
       "itemNaoApto": {
         "caminho": "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-22T14:03:28.690Z",
+        "geradoEm": "2026-05-22T14:15:54.931Z",
         "erro": null
       },
       "rateioAntigo": {

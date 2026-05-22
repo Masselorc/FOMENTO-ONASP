@@ -1,3 +1,6 @@
+const fs = require("node:fs");
+const path = require("node:path");
+
 const repo = require("./profor-pad-revisao-repository");
 const {
   gerarHashPayloadDivergencia,
@@ -19,6 +22,9 @@ const STATUS_POR_DECISAO = {
 
 // Decisões que exigem justificativa obrigatória.
 const DECISOES_JUSTIFICATIVA_OBRIGATORIA = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"]);
+const CAMINHO_PENDENCIAS_PROFUNDO = "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json";
+const CAMINHO_ITEM_NAO_APTO = "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json";
+const CATEGORIA_OPERACIONAL_EFETIVA = "pendencia_operacional_real";
 
 /** Erro de validação de entrada da API (HTTP 400). */
 class RevisaoDecisaoError extends Error {
@@ -36,6 +42,103 @@ function parseJsonSeguro(texto, padrao) {
   } catch {
     return padrao;
   }
+}
+
+function repoRootPadrao() {
+  return path.resolve(__dirname, "../../..");
+}
+
+function lerJsonRelatorio(caminhoRelativo, padrao) {
+  const caminho = path.join(repoRootPadrao(), caminhoRelativo);
+  if (!fs.existsSync(caminho)) return padrao;
+  return parseJsonSeguro(fs.readFileSync(caminho, "utf8"), padrao);
+}
+
+function indexarPorId(lista = []) {
+  const mapa = new Map();
+  for (const item of Array.isArray(lista) ? lista : []) {
+    const id = Number(item?.id ?? item?.divergenciaId);
+    if (Number.isInteger(id) && id > 0) mapa.set(id, item);
+  }
+  return mapa;
+}
+
+function carregarIndicePendenciasProfundo() {
+  const relatorio = lerJsonRelatorio(CAMINHO_PENDENCIAS_PROFUNDO, { itens: [] });
+  return indexarPorId(relatorio.itens || []);
+}
+
+function carregarIndiceItemNaoApto() {
+  const relatorio = lerJsonRelatorio(CAMINHO_ITEM_NAO_APTO, {});
+  const listas = [
+    relatorio.semDivergenciaMaterialDetectada,
+    relatorio.candidatosAceiteAutomatico,
+    relatorio.falsosPositivosSaneaveis,
+    relatorio.divergenciasMateriais,
+    relatorio.dadosMemoriaInsuficientes,
+    relatorio.jaDecididos,
+    relatorio.errosPayload,
+  ].filter(Array.isArray);
+  return indexarPorId(listas.flat());
+}
+
+function carregarIndicesAuditoriaOperacional() {
+  return {
+    pendenciasProfundo: carregarIndicePendenciasProfundo(),
+    itemNaoApto: carregarIndiceItemNaoApto(),
+  };
+}
+
+function montarMemoriaConsolidadaItemNaoApto(itemNaoApto) {
+  if (!itemNaoApto) return null;
+  const padConsolidado = itemNaoApto.padConsolidado || null;
+  return {
+    descricao: itemNaoApto.descricao,
+    natureza: itemNaoApto.naturezaMemoria,
+    quantidade: padConsolidado?.quantidade ?? itemNaoApto.quantidadeMemoria,
+    valorUnitario: itemNaoApto.valorUnitarioMemoria,
+    valorPrevisto: itemNaoApto.valorPrevistoMemoria,
+    valorExecutado: itemNaoApto.valorExecutadoMemoria,
+    saldo: itemNaoApto.saldoMemoria,
+    quantidadeOriginalMemoria: itemNaoApto.quantidadeMemoria,
+  };
+}
+
+function enriquecerDivergenciaComAuditoria(divergencia, indices = carregarIndicesAuditoriaOperacional()) {
+  if (!divergencia) return null;
+  const profundo = indices.pendenciasProfundo?.get(Number(divergencia.id));
+  const itemNaoApto = indices.itemNaoApto?.get(Number(divergencia.id));
+  const categoriaOperacional = profundo?.classificacaoOperacional || null;
+  const classificacaoDetalhada = itemNaoApto?.classificacao
+    || (Array.isArray(profundo?.classificacoes) ? profundo.classificacoes.join(", ") : null);
+  const falsoPositivoSaneavel = categoriaOperacional === "falso_positivo_saneavel"
+    || itemNaoApto?.classificacao === "falso_positivo_saneavel"
+    || Boolean(profundo?.classificacoes?.includes?.("possivel_falso_positivo"));
+  return {
+    ...divergencia,
+    categoriaOperacional,
+    classificacaoDetalhada,
+    riscoOperacional: profundo?.exigeDecisaoHumanaSubstantiva === true ? "alto" : (categoriaOperacional ? "baixo" : null),
+    falsoPositivoSaneavel,
+    padConsolidado: itemNaoApto?.padConsolidado || null,
+    memoriaConsolidada: montarMemoriaConsolidadaItemNaoApto(itemNaoApto),
+    motivosSaneamento: itemNaoApto?.motivos || (profundo?.evidencia ? [profundo.evidencia] : []),
+    acaoOperacionalRecomendada: profundo?.recomendacao || itemNaoApto?.justificativaSugerida || divergencia.acaoSugerida,
+  };
+}
+
+function aplicarFiltrosOperacionais(divergencias, filtros = {}) {
+  let resultado = divergencias;
+  if (filtros.categoriaOperacional) {
+    resultado = resultado.filter((item) => item.categoriaOperacional === filtros.categoriaOperacional);
+  }
+  if (filtros.operacionalEfetiva === true) {
+    resultado = resultado.filter((item) => item.categoriaOperacional === CATEGORIA_OPERACIONAL_EFETIVA);
+  }
+  if (filtros.operacionalEfetiva === false) {
+    resultado = resultado.filter((item) => item.categoriaOperacional !== CATEGORIA_OPERACIONAL_EFETIVA);
+  }
+  return resultado;
 }
 
 /** Converte a linha bruta da divergência num objeto de API, com payload parseado. */
@@ -100,7 +203,14 @@ function formatarLog(linha) {
 
 function listarDivergencias(filtros = {}) {
   const revisaoService = require("./profor-pad-revisao-service");
-  const resultado = repo.listarDivergencias(filtros);
+  const usaFiltroOperacional = filtros.categoriaOperacional || filtros.operacionalEfetiva !== undefined;
+  const limiteSolicitado = Math.min(Math.max(Number(filtros.limite) || 100, 1), 500);
+  const offsetSolicitado = Math.max(Number(filtros.offset) || 0, 0);
+  const filtrosRepo = usaFiltroOperacional
+    ? { ...filtros, limite: 500, offset: 0 }
+    : filtros;
+  const resultado = repo.listarDivergencias(filtrosRepo);
+  const indicesAuditoria = carregarIndicesAuditoriaOperacional();
   
   let chavesGeradas = null;
   try {
@@ -112,19 +222,25 @@ function listarDivergencias(filtros = {}) {
     // ignore
   }
 
-  return {
-    total: resultado.total,
-    limite: resultado.limite,
-    offset: resultado.offset,
-    divergencias: resultado.divergencias.map(linha => {
+  const divergenciasEnriquecidas = resultado.divergencias.map(linha => {
       const d = formatarDivergencia(linha);
       if (chavesGeradas) {
         d.reapresentada = chavesGeradas.has(d.chaveDivergencia);
       } else {
         d.reapresentada = true;
       }
-      return d;
-    }),
+      return enriquecerDivergenciaComAuditoria(d, indicesAuditoria);
+    });
+  const filtradas = aplicarFiltrosOperacionais(divergenciasEnriquecidas, filtros);
+  const pagina = usaFiltroOperacional
+    ? filtradas.slice(offsetSolicitado, offsetSolicitado + limiteSolicitado)
+    : filtradas;
+
+  return {
+    total: usaFiltroOperacional ? filtradas.length : resultado.total,
+    limite: usaFiltroOperacional ? limiteSolicitado : resultado.limite,
+    offset: usaFiltroOperacional ? offsetSolicitado : resultado.offset,
+    divergencias: pagina,
   };
 }
 
@@ -135,7 +251,7 @@ function obterDivergencia(id) {
   if (!linha) {
     throw Object.assign(new Error("Divergência não encontrada."), { statusCode: 404 });
   }
-  const divergencia = formatarDivergencia(linha);
+  let divergencia = formatarDivergencia(linha);
 
   try {
     const path = require("node:path");
@@ -145,6 +261,8 @@ function obterDivergencia(id) {
   } catch (err) {
     divergencia.reapresentada = true;
   }
+
+  divergencia = enriquecerDivergenciaComAuditoria(divergencia);
 
   return {
     ...divergencia,
@@ -272,6 +390,7 @@ module.exports = {
   DECISOES_VALIDAS,
   DECISOES_JUSTIFICATIVA_OBRIGATORIA,
   RevisaoDecisaoError,
+  enriquecerDivergenciaComAuditoria,
   formatarDivergencia,
   listarDivergencias,
   obterDivergencia,

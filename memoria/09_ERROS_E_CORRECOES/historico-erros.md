@@ -845,3 +845,29 @@ Ao atualizar:
 **Validações recomendadas:** `npm run profor:pad:item-nao-apto:auditar`, `npm run profor:pad:auditar-pendencias-profundo`, `npm run validar:services`.
 
 **Rollback:** reverter o commit da correção; a auditoria voltará a classificar o item pela comparação com linha PAD isolada.
+
+---
+
+## 22/05/2026 - PROFOR 2022: tela de revisão sem classificação operacional dry-run
+
+**Classificação:** erro real corrigido
+
+**Contexto:** tela `SISTEMA > Revisão de divergências PAD x memória`.
+
+**Problema:** após a auditoria profunda reclassificar `#31`, `#32`, `#33` e `#34` como `falso_positivo_saneavel`, a tela continuava lendo diretamente `profor_2022_revisao_divergencias` e exibindo a divergência como `PENDENTE/impeditivo` operacional, com comparação contra a linha PAD isolada.
+
+**Evidência:** a API `GET /api/profor-2022/revisao/divergencias/:id` não carregava `profor-2022-pendencias-profundo-dry-run.json` nem `profor-2022-item-nao-apto-auditoria-dry-run.json`.
+
+**Causa provável:** separação entre a fila persistida no SQLite e a classificação operacional calculada em relatórios dry-run, sem camada de enriquecimento para a tela.
+
+**Correção aplicada:** o serviço de decisão da revisão passou a enriquecer lista e detalhe com `categoriaOperacional`, `classificacaoDetalhada`, `falsoPositivoSaneavel`, `padConsolidado`, `memoriaConsolidada`, `motivosSaneamento` e `acaoOperacionalRecomendada`. A tela passou a usar `operacionalEfetiva=true` por padrão e a exibir `Saneado tecnicamente` quando aplicável.
+
+**Por que funcionou:** a UI passou a refletir a auditoria profunda sem alterar status, decisões, logs ou o `planoAplicacao` oficial.
+
+**Como prevenir:** toda classificação operacional derivada por dry-run deve ser exposta por API antes de ser usada para tomada de decisão na interface.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-revisao-decisao-service.js`, `backend/server.js`, `frontend/js/app.js`.
+
+**Validações recomendadas:** conferir `operacionalEfetiva=true`, `categoriaOperacional=falso_positivo_saneavel` e o detalhe da `#31` com PAD consolidado `50` unidades.
+
+**Rollback:** reverter o commit da integração; a tela volta a depender apenas da fila SQLite persistida.

@@ -2190,3 +2190,29 @@ A divergência `#31` deixa de ser pendência operacional real quando o conjunto 
 
 O relatório passa a explicar que o bloqueio anterior decorreu de saldo antigo inconsistente e quantidade legada contaminada, combinados com comparação contra apenas uma linha PAD.
 
+### 26.5. Integração com a tela de revisão
+Em 22/05/2026, a tela `SISTEMA > Revisão de divergências PAD x memória` passou a consumir a classificação operacional da auditoria profunda.
+
+A API de revisão enriquece `listarDivergencias()` e `obterDivergencia()` com:
+- `categoriaOperacional`;
+- `classificacaoDetalhada`;
+- `riscoOperacional`;
+- `falsoPositivoSaneavel`;
+- `padConsolidado`;
+- `memoriaConsolidada`;
+- `motivosSaneamento`;
+- `acaoOperacionalRecomendada`.
+
+Filtros adicionados:
+- `categoriaOperacional=pendencia_operacional_real`;
+- `categoriaOperacional=falso_positivo_saneavel`;
+- `operacionalEfetiva=true`.
+
+Regra de interface:
+- por padrão, a lista usa `operacionalEfetiva=true`;
+- falsos positivos saneáveis não aparecem na fila operacional padrão;
+- ao filtrar `falso_positivo_saneavel`, a divergência `#31` aparece com badge `Saneado tecnicamente`;
+- o detalhe da `#31` exibe memória consolidada e PAD consolidado com `50` unidades e `R$ 16.526,33`, preservando as duas linhas PAD equivalentes (`30 + 20`).
+
+A integração não altera status no banco, não registra decisão, não publica e não altera a origem ativa do `planoAplicacao`.
+

@@ -884,6 +884,7 @@ async function rotearApi(req, res, pathname) {
         tipo: sp.get("tipo") || undefined,
         convenio: sp.get("convenio") || undefined,
         uf: sp.get("uf") || undefined,
+        categoriaOperacional: sp.get("categoriaOperacional") || undefined,
         limite: sp.get("limite") || undefined,
         offset: sp.get("offset") || undefined,
       };
@@ -895,6 +896,9 @@ async function rotearApi(req, res, pathname) {
       }
       if (sp.has("comDecisaoResolutiva")) {
         filtros.comDecisaoResolutiva = lerBooleanQuery("comDecisaoResolutiva");
+      }
+      if (sp.has("operacionalEfetiva")) {
+        filtros.operacionalEfetiva = lerBooleanQuery("operacionalEfetiva");
       }
       if (
         filtros.semDecisaoResolutiva !== undefined

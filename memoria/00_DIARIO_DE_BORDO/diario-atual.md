@@ -6025,3 +6025,60 @@ Logs operacionais gravados:
   - nenhuma pendência desta correção; saneamento material posterior ainda depende de decisão assistida específica.
 - Rollback:
   - reverter o commit desta correção; os relatórios dry-run voltam à classificação anterior.
+
+---
+
+## 22/05/2026 - PROFOR 2022: integração da classificação operacional na revisão
+
+- Horário: 11:23.
+- Branch: `main`.
+- Objetivo:
+  - fazer a tela `SISTEMA > Revisão de divergências PAD x memória` refletir a auditoria profunda, evitando que `#31` continue aparecendo como pendência operacional real após ser classificada como `falso_positivo_saneavel`.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-revisao-decisao-service.js`;
+  - `backend/server.js`;
+  - `frontend/js/app.js`;
+  - `tests/services/profor-pad-revisao-operacional.test.js`;
+  - `scripts/validar-syntax.js`;
+  - `memoria/09_ERROS_E_CORRECOES/historico-erros.md`;
+  - `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md`;
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementação:
+  - backend carrega `backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json`;
+  - backend carrega `backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json`;
+  - `listarDivergencias()` e `obterDivergencia()` retornam categoria operacional, classificação detalhada, falso positivo saneável, motivos e consolidado PAD/memória;
+  - adicionado filtro API `categoriaOperacional`;
+  - adicionado filtro API `operacionalEfetiva=true`;
+  - frontend usa `operacionalEfetiva=true` por padrão;
+  - frontend exibe badge `Saneado tecnicamente`;
+  - comparação da `#31` usa PAD consolidado quando disponível.
+- Checagem direta:
+  - `#31` retorna `categoriaOperacional = falso_positivo_saneavel`;
+  - `#31` retorna `padConsolidado.quantidade = 50`;
+  - `#31` retorna `memoriaConsolidada.quantidade = 50`;
+  - linhas PAD equivalentes: `30` e `20`;
+  - filtro padrão `operacionalEfetiva=true` retorna `7` divergências e não inclui `#31`;
+  - filtro `categoriaOperacional=falso_positivo_saneavel` inclui `#31`.
+- Validações executadas:
+  - `npm run validar:syntax` -> OK (`67` arquivos);
+  - `npm run validar:services` -> OK (`78` testes);
+  - `npm run profor:pad:item-nao-apto:auditar` -> OK;
+  - `npm run profor:pad:auditar-pendencias-profundo` -> OK;
+  - `GET /api/profor-2022/revisao/divergencias?operacionalEfetiva=true&semDecisaoResolutiva=true&limite=500` -> `7` itens, sem `#31`;
+  - `GET /api/profor-2022/revisao/divergencias?categoriaOperacional=falso_positivo_saneavel&semDecisaoResolutiva=true&limite=500` -> inclui `#31`;
+  - `GET /api/profor-2022/revisao/divergencias/31` -> memória/PAD consolidados com `50` unidades e `R$ 16.526,33`;
+  - validação headless da tela -> `#31` ausente na fila padrão, presente no filtro de saneados, detalhe com badge e consolidado `30 + 20`;
+  - `git diff --check` -> OK, apenas avisos de normalização LF/CRLF;
+  - `git status --short frontend/data/publicados` -> sem alterações.
+- Observação:
+  - não existe script `npm run test:e2e` no `package.json`; a validação de tela foi feita por Playwright headless pontual contra `http://127.0.0.1:8790/index.html`.
+- Confirmações de escopo:
+  - nenhuma decisão registrada;
+  - nenhum status alterado no banco;
+  - nenhuma publicação;
+  - origem ativa não alterada;
+  - `frontend/data/publicados` não alterado;
+  - `planoAplicacao` oficial não alterado;
+  - sem migration.
+- Rollback:
+  - reverter o commit desta integração; a tela volta a ler apenas a fila SQLite persistida.

@@ -1992,6 +1992,7 @@ async function carregarLogoParaPDF() {
 
         function calcularBloqueioEfetivoRevisao(item) {
             const status = String(item.status || '').toUpperCase();
+            if (item?.falsoPositivoSaneavel === true || item?.categoriaOperacional === 'falso_positivo_saneavel') return false;
             return item.bloqueiaPublicacao === true && ['PENDENTE', 'EM_REVISAO'].includes(status);
         }
 
@@ -2906,6 +2907,12 @@ async function carregarLogoParaPDF() {
 
         function obterAntesDepoisRevisao(divergencia) {
             const payload = divergencia?.payload || {};
+            if (divergencia?.padConsolidado) {
+                return {
+                    antes: divergencia.memoriaConsolidada || payload.antes || payload.memoria || {},
+                    depois: divergencia.padConsolidado
+                };
+            }
             const antesPlano = {
                 descricao: payload.descricaoMemoria ?? payload.descricaoAnterior ?? payload.descricaoOriginalReferencia,
                 natureza: payload.naturezaMemoria ?? payload.naturezaAnterior,
@@ -2928,6 +2935,45 @@ async function carregarLogoParaPDF() {
                 antes: payload.antes || payload.memoria || payload.itemConhecido || payload.anterior || antesPlano,
                 depois: payload.depois || payload.pad || payload.itemPad || payload.novo || depoisPlano
             };
+        }
+
+        function renderPadConsolidadoRevisao(divergencia) {
+            const padConsolidado = divergencia?.padConsolidado;
+            const linhas = Array.isArray(padConsolidado?.linhas) ? padConsolidado.linhas : [];
+            if (!padConsolidado || !linhas.length) return '';
+            return `
+                <div class="revisao-consolidado-pad mt-3">
+                    <h4>Linhas PAD equivalentes consolidadas</h4>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Linha</th>
+                                    <th>Descrição</th>
+                                    <th>Qtd.</th>
+                                    <th>Valor unit.</th>
+                                    <th>Previsto</th>
+                                    <th>Executado</th>
+                                    <th>Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${linhas.map((linha) => `
+                                    <tr>
+                                        <td>${escapeHtml(String(linha.linha || '-'))}</td>
+                                        <td>${escapeHtml(linha.descricao || '-')}</td>
+                                        <td>${escapeHtml(formatarValorRevisao(linha.quantidade, 'Quantidade'))}</td>
+                                        <td>${escapeHtml(formatarValorRevisao(linha.valorUnitario, 'Valor unitário'))}</td>
+                                        <td>${escapeHtml(formatarValorRevisao(linha.valorPrevisto, 'Valor previsto'))}</td>
+                                        <td>${escapeHtml(formatarValorRevisao(linha.valorExecutado, 'Valor executado'))}</td>
+                                        <td>${escapeHtml(formatarValorRevisao(linha.saldo, 'Saldo'))}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
         }
 
         function renderComparacaoRevisao(divergencia) {
@@ -2976,6 +3022,7 @@ async function carregarLogoParaPDF() {
                         <div class="revisao-comparacao-header"><span>Campo</span><strong>ANTES — memória atual</strong><strong>DEPOIS — PAD novo</strong></div>
                         ${linhas || '<div class="revisao-comparacao-empty">Payload sem campos comparáveis estruturados.</div>'}
                     </div>
+                    ${renderPadConsolidadoRevisao(divergencia)}
                 </section>
             `;
         }
@@ -2987,6 +3034,9 @@ async function carregarLogoParaPDF() {
                     <h3>Diagnóstico automático</h3>
                     <dl class="revisao-diagnostic-list">
                         <div><dt>Motivo provável</dt><dd>${escapeHtml(divergencia.motivoProvavel || '-')}</dd></div>
+                        <div><dt>Categoria operacional</dt><dd>${escapeHtml(divergencia.categoriaOperacional || '-')}</dd></div>
+                        <div><dt>Ação operacional recomendada</dt><dd>${escapeHtml(divergencia.acaoOperacionalRecomendada || '-')}</dd></div>
+                        <div><dt>Motivos de saneamento</dt><dd>${Array.isArray(divergencia.motivosSaneamento) && divergencia.motivosSaneamento.length ? `<ul class="mb-0">${divergencia.motivosSaneamento.map((motivo) => `<li>${escapeHtml(motivo)}</li>`).join('')}</ul>` : '-'}</dd></div>
                         <div><dt>Evidências</dt><dd>${renderObjetoResumoRevisao(payload.evidencias || payload.evidencia || {})}</dd></div>
                         <div><dt>Risco de falso positivo</dt><dd>${escapeHtml(payload.riscoFalsoPositivo || payload.risco_falso_positivo || '-')}</dd></div>
                         <div><dt>Ação sugerida</dt><dd>${escapeHtml(divergencia.acaoSugerida || '-')}</dd></div>
@@ -3114,6 +3164,8 @@ async function carregarLogoParaPDF() {
                             <div class="revisao-detail-meta">
                                 ${renderBadgeRevisao(divergencia.status, classeStatusRevisao(divergencia.status))}
                                 ${renderBadgeRevisao(`Nível original: ${divergencia.nivel}`, classeNivelRevisao(divergencia.nivel))}
+                                ${divergencia.falsoPositivoSaneavel ? renderBadgeRevisao('Saneado tecnicamente', 'success') : ''}
+                                ${divergencia.categoriaOperacional ? renderBadgeRevisao(divergencia.categoriaOperacional, 'secondary') : ''}
                                 ${renderBadgeRevisao(`Convênio ${divergencia.numeroConvenio || '-'}`, 'secondary')}
                                 ${renderBadgeRevisao(`UF ${divergencia.uf || '-'}`, 'secondary')}
                                 ${(() => {
@@ -3214,8 +3266,11 @@ async function carregarLogoParaPDF() {
                 convenio: valor('revisao-filtro-convenio'),
                 uf: valor('revisao-filtro-uf').toUpperCase(),
                 bloqueiaPublicacao: valor('revisao-filtro-bloqueia'),
+                categoriaOperacional: valor('revisao-filtro-categoria-operacional'),
                 limite: '500'
             };
+            const mostrarSaneados = document.getElementById('revisao-filtro-mostrar-saneados')?.checked === true;
+            if (!mostrarSaneados && !filtros.categoriaOperacional) filtros.operacionalEfetiva = 'true';
             if (document.getElementById('revisao-filtro-sem-decisao')?.checked) filtros.semDecisaoResolutiva = 'true';
             if (document.getElementById('revisao-filtro-com-decisao')?.checked) filtros.comDecisaoResolutiva = 'true';
             return filtros;
@@ -3249,9 +3304,11 @@ async function carregarLogoParaPDF() {
         // saneado por diacrítico e divergência com decisão resolutiva não são
         // pendências operacionais — ficam ocultos salvo modo auditoria.
         function ehPendenciaOperacionalRevisao(item) {
+            if (item?.categoriaOperacional) return item.categoriaOperacional === 'pendencia_operacional_real';
             const statusResolutivo = ['ACEITO', 'REJEITADO', 'CORRIGIDO', 'REVERTIDO'].includes(item?.status);
             if (statusResolutivo) return false;
             if (item?.reapresentada === false) return false;
+            if (item?.falsoPositivoSaneavel === true) return false;
             if (divergenciaSaneadaPorDiacriticoRevisao(item)) return false;
             return true;
         }
@@ -3289,9 +3346,10 @@ async function carregarLogoParaPDF() {
                 const payload = await buscarJsonRevisao(`/api/profor-2022/revisao/divergencias${montarQueryRevisao(obterFiltrosRevisao())}`);
                 const recebidas = Array.isArray(payload.divergencias) ? payload.divergencias : [];
                 const mostrarSaneados = document.getElementById('revisao-filtro-mostrar-saneados')?.checked === true;
+                const categoriaOperacionalSelecionada = document.getElementById('revisao-filtro-categoria-operacional')?.value?.trim?.() || '';
                 // Lista operacional padrão: oculta históricos/saneados; modo
                 // auditoria ("Mostrar históricos/saneados") exibe tudo.
-                const visiveis = mostrarSaneados
+                const visiveis = (mostrarSaneados || categoriaOperacionalSelecionada)
                     ? recebidas
                     : recebidas.filter(ehPendenciaOperacionalRevisao);
                 const ocultadas = recebidas.length - visiveis.length;
@@ -3308,11 +3366,11 @@ async function carregarLogoParaPDF() {
                 }
                 tbody.innerHTML = visiveis.map((item) => `
                     <tr>
-                        <td>${renderBadgeRevisao(item.status, classeStatusRevisao(item.status))}</td>
+                        <td>${renderBadgeRevisao(item.status, classeStatusRevisao(item.status))}${item.falsoPositivoSaneavel ? ` ${renderBadgeRevisao('Saneado tecnicamente', 'success')}` : ''}</td>
                         <td>${renderBadgeRevisao(item.nivel, classeNivelRevisao(item.nivel))}</td>
                         <td>${escapeHtml(item.numeroConvenio || '-')}</td>
                         <td>${escapeHtml(item.uf || '-')}</td>
-                        <td>${escapeHtml(item.tipoAlerta || '-')}</td>
+                        <td>${escapeHtml(item.tipoAlerta || '-')}${item.categoriaOperacional ? `<div class="text-muted small">${escapeHtml(item.categoriaOperacional)}</div>` : ''}</td>
                         <td>${escapeHtml(item.campoAfetado || '-')}</td>
                         <td>${escapeHtml(item.motivoProvavel || item.acaoSugerida || '-')}</td>
                         <td>${(() => {
@@ -3480,6 +3538,7 @@ async function carregarLogoParaPDF() {
                         <label><span>Convênio</span><input id="revisao-filtro-convenio" class="form-control" placeholder="937782"></label>
                         <label><span>UF</span><input id="revisao-filtro-uf" class="form-control" maxlength="2" placeholder="AC"></label>
                         <label><span>Bloqueia publicação</span><select id="revisao-filtro-bloqueia" class="form-select"><option value="">Todos</option><option value="true">Sim</option><option value="false">Não</option></select></label>
+                        <label><span>Categoria operacional</span><select id="revisao-filtro-categoria-operacional" class="form-select"><option value="">Fila operacional</option><option value="pendencia_operacional_real">Pendência operacional real</option><option value="falso_positivo_saneavel">Falso positivo/saneado</option><option value="bloqueio_tecnico_seguranca">Bloqueio técnico</option><option value="historico_saneado">Histórico/saneado</option><option value="revalidacao_necessaria">Revalidação necessária</option></select></label>
                         <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-sem-decisao" checked><span>Sem decisão resolutiva</span></label>
 
                         <label class="revisao-checkbox"><input type="checkbox" id="revisao-filtro-com-decisao"><span>Com decisão resolutiva</span></label>
