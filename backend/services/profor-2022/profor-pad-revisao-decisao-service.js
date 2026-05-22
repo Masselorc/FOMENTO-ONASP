@@ -5,6 +5,9 @@ const repo = require("./profor-pad-revisao-repository");
 const {
   gerarHashPayloadDivergencia,
 } = require("./profor-pad-seguranca-pre-ativacao-service");
+const {
+  avaliarDivergenciaQuantidadeValorUnitario,
+} = require("./profor-pad-consistencia-quantidade-service");
 
 // Decisões que o usuário pode registrar pela revisão assistida.
 // COMENTAR mantém o status PENDENTE (apenas registra comentário/log).
@@ -25,6 +28,7 @@ const DECISOES_JUSTIFICATIVA_OBRIGATORIA = new Set(["ACEITO", "REJEITADO", "CORR
 const CAMINHO_PENDENCIAS_PROFUNDO = "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json";
 const CAMINHO_ITEM_NAO_APTO = "backend/data/relatorios/profor-2022-item-nao-apto-auditoria-dry-run.json";
 const CAMINHO_SALDOS_RESIDUAIS = "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json";
+const CAMINHO_PAD_RELATORIOS = "backend/data/relatorios/profor-2022-pad-relatorios-dry-run.json";
 const CATEGORIA_OPERACIONAL_EFETIVA = "pendencia_operacional_real";
 
 /** Erro de validação de entrada da API (HTTP 400). */
@@ -95,11 +99,74 @@ function carregarIndiceSaldosResiduais() {
   return mapa;
 }
 
+/**
+ * Indexa os itens do relatorio PAD por arquivo + linha, para recuperar a
+ * descricao e a natureza do item quando o payload da divergencia so traz o
+ * texto do alerta (caso das divergencias quantidade_valor_unitario_inconsistente
+ * persistidas antes da gravacao de dados estruturados).
+ */
+function carregarIndicePadRelatorios() {
+  const relatorio = lerJsonRelatorio(CAMINHO_PAD_RELATORIOS, { itens: [] });
+  const mapa = new Map();
+  for (const item of Array.isArray(relatorio.itens) ? relatorio.itens : []) {
+    const arquivo = String(item?.arquivo || "");
+    const linha = Number(item?.linha);
+    if (!arquivo || !Number.isInteger(linha)) continue;
+    mapa.set(`${arquivo}::${linha}`, item);
+  }
+  return mapa;
+}
+
 function carregarIndicesAuditoriaOperacional() {
   return {
     pendenciasProfundo: carregarIndicePendenciasProfundo(),
     itemNaoApto: carregarIndiceItemNaoApto(),
     saldosResiduais: carregarIndiceSaldosResiduais(),
+    padRelatorios: carregarIndicePadRelatorios(),
+  };
+}
+
+/**
+ * Monta o bloco de identificacao e auditoria de uma divergencia de
+ * inconsistencia quantidade x valor unitario. Recupera o item do relatorio PAD
+ * (descricao, natureza, linha) e avalia se a diferenca e apenas arredondamento
+ * do valor unitario exibido. Nao registra decisao e nao altera dado oficial.
+ */
+function montarConsistenciaQuantidadeValorUnitario(divergencia, indices) {
+  if (!divergencia || divergencia.tipoAlerta !== "quantidade_valor_unitario_inconsistente") {
+    return null;
+  }
+  const avaliacao = avaliarDivergenciaQuantidadeValorUnitario(divergencia);
+  const payload = divergencia.payload || {};
+  const dados = payload.dadosConsistencia
+    || payload.alertasOriginais?.[0]?.dados
+    || null;
+
+  let itemPad = null;
+  const arquivo = payload.origemRelatorio || payload.alertasOriginais?.[0]?.origem?.arquivo || null;
+  const linha = Number(payload.linhaOrigem ?? payload.alertasOriginais?.[0]?.origem?.linha);
+  if (arquivo && Number.isInteger(linha) && indices?.padRelatorios) {
+    itemPad = indices.padRelatorios.get(`${arquivo}::${linha}`) || null;
+  }
+
+  const descricao = dados?.descricao || itemPad?.descricao || null;
+  const natureza = dados?.natureza || itemPad?.natureza || null;
+  const codigoNaturezaDespesa = dados?.codigoNaturezaDespesa || itemPad?.codigoNaturezaDespesa || null;
+  const linhaPad = dados?.linhaPad ?? itemPad?.linha ?? (Number.isInteger(linha) ? linha : null);
+
+  return {
+    fonteApenasPad: true,
+    descricao,
+    linhaPad,
+    arquivoPad: arquivo,
+    numeroConvenio: divergencia.numeroConvenio || payload.numeroConvenio || null,
+    uf: divergencia.uf || itemPad?.aba || null,
+    codigoNaturezaDespesa,
+    natureza,
+    avaliacao,
+    acaoSugeridaTela: avaliacao?.falsoPositivoPorArredondamento
+      ? "Saneado tecnicamente — total do PAD preservado."
+      : "Conferir o relatório PAD de origem antes de qualquer decisão.",
   };
 }
 
@@ -145,6 +212,7 @@ function enriquecerDivergenciaComAuditoria(divergencia, indices = carregarIndice
       ? "Saldo residual/remanescente é item técnico não setorializado por área, mas segregado por natureza. CAPITAL e CUSTEIO não devem ser pareados nem consolidados como equivalentes."
       : null),
     detalhesSaldoResidual: saldosResiduais,
+    consistenciaQuantidadeValorUnitario: montarConsistenciaQuantidadeValorUnitario(divergencia, indices),
   };
 }
 

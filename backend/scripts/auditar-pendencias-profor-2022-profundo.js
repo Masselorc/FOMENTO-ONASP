@@ -6,6 +6,9 @@ const {
   DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
   ehSaldoResidualProfor,
 } = require("../services/profor-2022/profor-saldo-residual-service");
+const {
+  avaliarDivergenciaQuantidadeValorUnitario,
+} = require("../services/profor-2022/profor-pad-consistencia-quantidade-service");
 
 const SAIDA_JSON = "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json";
 const SAIDA_MD = "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.md";
@@ -28,6 +31,7 @@ const CATEGORIAS = [
   "decisao_antiga_com_payload_alterado",
   "duplicidade_ou_ambiguidade_pad",
   "dados_insuficientes",
+  "quantidade_arredondamento_valor_unitario",
   "saldo_residual_natureza_divergente",
   "saldo_residual_sem_correspondente_mesma_natureza",
   "saldo_residual_rateado_indevidamente",
@@ -486,7 +490,8 @@ function classificarOperacional(item, divergencia, mapas) {
   }
   // 6. Falso positivo saneável por regra sistêmica auditável.
   if (cls.has("possivel_falso_positivo") || cls.has("diacritico_ou_acentuacao")
-    || cls.has("item_nao_apto_sem_divergencia_material") || cls.has("rateio_antigo_compativel")) {
+    || cls.has("item_nao_apto_sem_divergencia_material") || cls.has("rateio_antigo_compativel")
+    || cls.has("quantidade_arredondamento_valor_unitario")) {
     return {
       categoria: "falso_positivo_saneavel",
       motivo: "Pendente, com indício de falso positivo saneável por regra sistêmica auditável.",
@@ -673,15 +678,23 @@ function classificarDivergencia(divergencia, mapas) {
   } else if (tipo === "quantidade_valor_unitario_inconsistente") {
     categorias.add("valor_ou_saldo_inconsistente");
     const analiseQuantidade = extrairQuantidadeAlerta(divergencia);
-    if (analiseQuantidade?.compativelComInflacaoDecimal) {
+    const consistencia = avaliarDivergenciaQuantidadeValorUnitario(divergencia);
+    if (consistencia?.falsoPositivoPorArredondamento) {
+      // Falso positivo por arredondamento do valor unitario exibido: o total
+      // previsto informado pelo PAD prevalece e a diferenca e apenas tecnica.
+      categorias.add("quantidade_arredondamento_valor_unitario");
+      categorias.add("possivel_falso_positivo");
+      evidencias.push(consistencia.motivo);
+      recomendacoes.push("Saneado tecnicamente — total do PAD preservado. Nao registrar decisao manual.");
+    } else if (analiseQuantidade?.compativelComInflacaoDecimal) {
       categorias.add("quantidade_suspeita");
       categorias.add("possivel_falso_positivo");
       evidencias.push(`Quantidade pode refletir inflação decimal: quantidade=${analiseQuantidade.quantidade}, esperada≈${analiseQuantidade.quantidadeEsperada.toFixed(6)}.`);
       recomendacoes.push("Conferir parser e artefato PAD; não decidir até validar quantidade atual.");
-    } else if (analiseQuantidade?.compativelComTruncamentoValorUnitario) {
-      categorias.add("possivel_falso_positivo");
-      evidencias.push("Diferença compatível com truncamento/arredondamento do valor unitário; total PAD deve permanecer fonte de verdade.");
-      recomendacoes.push("Registrar decisão de aceite do total PAD em lote/etapa assistida, se governança aprovar.");
+    } else if (consistencia) {
+      // Avaliado pelo criterio central, mas fora da tolerancia de arredondamento.
+      evidencias.push(consistencia.motivo);
+      recomendacoes.push("Diferenca material: revisar alerta antes de decisao; nao tratar como arredondamento.");
     } else {
       evidencias.push("Inconsistência de quantidade x valor unitário não enquadrada como inflação decimal simples.");
       recomendacoes.push("Revisar alerta antes de decisão.");
@@ -763,6 +776,7 @@ function sintetizarCategorias(itens) {
     decisao_antiga_com_payload_alterado: "alto",
     duplicidade_ou_ambiguidade_pad: "alto",
     dados_insuficientes: "alto",
+    quantidade_arredondamento_valor_unitario: "baixo",
   };
   const acaoPorCategoria = {
     pendencia_real: "decisão humana real",
@@ -780,6 +794,7 @@ function sintetizarCategorias(itens) {
     decisao_antiga_com_payload_alterado: "revalidar decisão antiga",
     duplicidade_ou_ambiguidade_pad: "revisar granularidade/substituição",
     dados_insuficientes: "complementar evidência",
+    quantidade_arredondamento_valor_unitario: "saneado tecnicamente — total do PAD preservado",
   };
 
   return Array.from(mapa.entries())

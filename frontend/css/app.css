@@ -10864,6 +10864,28 @@ table.dataTable thead th {
     margin-top: .6rem;
 }
 
+.revisao-pad-auditoria {
+    display: grid;
+    gap: .85rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.revisao-pad-bloco {
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: .7rem .85rem;
+}
+
+.revisao-pad-bloco h4 {
+    font-size: .85rem;
+    margin-bottom: .5rem;
+}
+
+.revisao-pad-conclusao {
+    grid-column: 1 / -1;
+}
+
 .revisao-diagnostic-list,
 .revisao-keyvalue-list {
     display: grid;

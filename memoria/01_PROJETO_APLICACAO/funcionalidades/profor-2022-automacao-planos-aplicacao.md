@@ -2275,3 +2275,40 @@ Na geração de 22/05/2026:
 
 Esta correção não registra decisão, não altera status, não publica, não altera origem ativa, não muda `frontend/data/publicados` e não altera o `planoAplicacao` oficial. O efeito é limitado a auditoria, reconstrução/comparação dry-run, neutralização de efeitos incompatíveis e exibição operacional na tela.
 
+## 28. Saneamento de inconsistência quantidade × valor unitário
+
+### 28.1. Caso motivador
+
+O relatório PAD exibe o valor unitário arredondado para 2 casas. Quando o valor total previsto informado não é múltiplo exato desse unitário, surge o alerta `quantidade_valor_unitario_inconsistente`. Exemplo `#88` (`937265/MS`, "Alvo Silhueta padrão SAT/ANP cx com 1.000"): quantidade 300, valor unitário exibido R$ 7,94, valor previsto informado R$ 2.381,00. O cálculo exibido (300 × 7,94 = R$ 2.382,00) diverge em R$ 1,00, mas o valor unitário efetivo (2381/300 = 7,93666…) arredonda para R$ 7,94 — é apenas arredondamento de exibição.
+
+### 28.2. Regra técnica
+
+O serviço central `profor-pad-consistencia-quantidade-service.js` calcula:
+
+- `valorCalculadoComUnitarioExibido = quantidade × valorUnitarioExibido`;
+- `valorUnitarioEfetivo = valorPrevistoInformado / quantidade`;
+- `valorUnitarioEfetivoArredondado` (2 casas);
+- `diferencaAbsoluta = |valorCalculadoComUnitarioExibido − valorPrevistoInformado|`;
+- `toleranciaMaxima = quantidade × 0,005 + 0,01`.
+
+Classifica como `falso_positivo_saneavel` quando o valor unitário exibido coincide com o unitário efetivo arredondado **e** a diferença absoluta está dentro da tolerância. Caso contrário, permanece `pendencia_real`. O total previsto informado pelo PAD sempre prevalece quando a diferença é apenas de arredondamento.
+
+### 28.3. Integração
+
+- **Leitor PAD** (`profor-pad-report-reader.js`): grava `dados` estruturados no alerta (descrição, linha PAD, código/natureza, quantidade, valor unitário exibido, valor previsto informado).
+- **Auditoria profunda**: categoria `quantidade_arredondamento_valor_unitario` → operacional `falso_positivo_saneavel`.
+- **Serviço de decisão**: enriquece a divergência (`consistenciaQuantidadeValorUnitario`) recuperando o item do relatório PAD por arquivo + linha quando o payload persistido não traz dados estruturados.
+- **Auditoria de quantidades** (`auditar-quantidades-suspeitas-profor-2022.js`): relatório dry-run com total avaliado, total saneado por arredondamento, total mantido como pendência real e justificativa por ID.
+
+### 28.4. Apresentação na tela
+
+Para alertas de fonte apenas PAD, a tela `SISTEMA > Revisão de divergências` substitui o quadro "Antes — memória / Depois — PAD" por: **Dados do PAD**, **Cálculo exibido**, **Cálculo efetivo** e **Conclusão da auditoria**. A ação sugerida para falso positivo saneável é "Saneado tecnicamente — total do PAD preservado", nunca "Aceitar total do PAD". A lista passa a identificar o item (descrição e linha PAD).
+
+### 28.5. Resultado da auditoria
+
+Na geração de 22/05/2026: 67 inconsistências `quantidade_valor_unitario_inconsistente` avaliadas, 67 saneadas por arredondamento do valor unitário exibido, 0 mantidas como pendência real. As divergências `#88`, `#89`, `#97` e `#115` deixaram de ser `pendencia_operacional_real`.
+
+### 28.6. Escopo preservado
+
+Esta correção não registra decisão, não altera status, não publica, não altera origem ativa, não muda `frontend/data/publicados`, não altera o `planoAplicacao` oficial e não altera o SQLite versionado. O efeito é limitado a auditoria dry-run e exibição operacional na tela.
+

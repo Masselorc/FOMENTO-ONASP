@@ -451,6 +451,9 @@ function divergenciasAlertasLeitorPad(padRelatorios) {
         origemRelatorio: origem.arquivo || null,
         linhaOrigem: origem.linha ?? null,
         alertasOriginais: [alerta],
+        // Dados estruturados do item PAD: identificam o item na tela e
+        // permitem reavaliar a consistencia quantidade x valor unitario.
+        dadosConsistencia: alerta.dados || null,
         riscoFalsoPositivo: tipoAlerta === "quantidade_valor_unitario_inconsistente" ? "alto" : "medio",
         acaoSugerida: "conferir_fonte",
         bloqueiaPublicacao: alerta.nivel === "impeditivo",

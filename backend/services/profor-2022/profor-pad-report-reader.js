@@ -47,14 +47,19 @@ function arredondar(valor) {
   return Math.round((Number(valor || 0) + Number.EPSILON) * 100) / 100;
 }
 
-function criarAlerta({ tipo, nivel = "aviso", arquivo = null, instrumento = null, aba = null, linha = null, detalhe }) {
-  return {
+function criarAlerta({ tipo, nivel = "aviso", arquivo = null, instrumento = null, aba = null, linha = null, detalhe, dados = null }) {
+  const alerta = {
     tipo,
     nivel,
     instrumento,
     detalhe,
     origem: { arquivo, aba, linha },
   };
+  // Dados estruturados do item PAD que originou o alerta. Permitem a tela e a
+  // auditoria identificar o item e reavaliar a consistencia sem reprocessar o
+  // texto livre do detalhe.
+  if (dados && typeof dados === "object") alerta.dados = dados;
+  return alerta;
 }
 
 function listarArquivosPad(repoRoot, pastaRelativa = "Planilhas/profor-2022/instrumentos") {
@@ -232,6 +237,17 @@ function extrairItens(linhas, tabela, contexto, alertas) {
         linha: linhaPlanilha,
         detalhe: `Quantidade (${quantidade.valor}) x valor unitário (${valorUnitario.valor}) = `
           + `${previstoCalculado}, diverge do valor total previsto informado (${valorPrevisto.valor}).`,
+        // Identificacao do item para a tela de revisao e para a auditoria de
+        // arredondamento do valor unitario exibido.
+        dados: {
+          descricao,
+          linhaPad: linhaPlanilha,
+          codigoNaturezaDespesa,
+          natureza,
+          quantidade: quantidade.valor,
+          valorUnitarioExibido: valorUnitario.valor,
+          valorPrevistoInformado: valorPrevisto.valor,
+        },
       }));
     }
 

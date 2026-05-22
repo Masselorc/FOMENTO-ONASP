@@ -897,3 +897,29 @@ Ao atualizar:
 **Validações recomendadas:** `npm run profor:pad:saldos-residuais:auditar`, `npm run profor:pad:auditar-pendencias-profundo`, `npm run profor:pad:reconstruir-plano:dry-run`, `npm run profor:pad:comparar-plano:dry-run`, `npm run validar:services`.
 
 **Rollback:** reverter o commit e regenerar relatórios dry-run; não apagar divergências, decisões ou logs históricos.
+
+---
+
+## 22/05/2026 - PROFOR 2022: arredondamento do valor unitário exibido tratado como pendência real
+
+**Classificação:** erro real corrigido
+
+**Contexto:** frente PAD/PROFOR 2022, divergências do tipo `quantidade_valor_unitario_inconsistente` na tela `SISTEMA > Revisão de divergências`.
+
+**Problema:** divergências como `#88`, `#89`, `#97` e `#115` permaneciam como `pendencia_operacional_real` por uma diferença de poucos centavos entre `quantidade × valor unitário exibido` e o valor total previsto informado pelo PAD. Exemplo `#88` (937265/MS, "Alvo Silhueta padrão SAT/ANP cx com 1.000"): 300 × R$ 7,94 = R$ 2.382,00, mas o PAD informa R$ 2.381,00. A diferença de R$ 1,00 decorre apenas do arredondamento do valor unitário exibido para 2 casas (efetivo: 2381/300 = 7,93666… → 7,94). A tela também não identificava o item nem a linha PAD.
+
+**Evidência:** o critério antigo `compativelComTruncamentoValorUnitario` comparava quantidades (`|quantidade − valorPrevisto/valorUnitario| ≤ 0,01`), o que falhava para #88 (`|300 − 299,87| = 0,126`). Os 67 alertas `quantidade_valor_unitario_inconsistente` ficavam classificados como pendência operacional.
+
+**Causa provável:** ausência de um critério central que comparasse o valor unitário exibido com o valor unitário efetivo arredondado, e payload do alerta sem dados estruturados do item (descrição, natureza, linha PAD).
+
+**Correção aplicada:** criado serviço central `profor-pad-consistencia-quantidade-service.js` que avalia `valorUnitarioEfetivo = valorPrevistoInformado / quantidade`, compara com o unitário exibido arredondado para 2 casas e aplica tolerância `quantidade × 0,005 + 0,01`. A auditoria profunda passou a usar o critério (categoria `quantidade_arredondamento_valor_unitario` → `falso_positivo_saneavel`). O leitor PAD passou a gravar `dados` estruturados no alerta; o serviço de decisão enriquece a divergência recuperando o item do relatório PAD. A tela passou a exibir, para alertas de fonte apenas PAD, uma apresentação própria (Dados do PAD / Cálculo exibido / Cálculo efetivo / Conclusão) e a ação "Saneado tecnicamente — total do PAD preservado".
+
+**Por que funcionou:** o critério correto distingue arredondamento do valor unitário exibido de diferença material; o total previsto informado pelo PAD prevalece. Diferenças grandes continuam como pendência real.
+
+**Como prevenir:** qualquer alerta de inconsistência quantidade × valor unitário deve ser avaliado pelo serviço central; nunca tratar diferença material grande como arredondamento.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-consistencia-quantidade-service.js`, `backend/scripts/auditar-pendencias-profor-2022-profundo.js`, `backend/scripts/auditar-quantidades-suspeitas-profor-2022.js`, `backend/services/profor-2022/profor-pad-report-reader.js`, `backend/services/profor-2022/profor-pad-revisao-service.js`, `backend/services/profor-2022/profor-pad-revisao-decisao-service.js`, `frontend/js/app.js`, `frontend/css/app.css`.
+
+**Validações recomendadas:** `npm run profor:rateio:auditar-quantidades:dry-run`, `npm run profor:pad:auditar-pendencias-profundo`, `npm run validar:services`; conferir #88/#89/#97/#115 como `falso_positivo_saneavel`.
+
+**Rollback:** reverter o commit e regenerar relatórios dry-run; não apagar divergências, decisões ou logs históricos.

@@ -3015,7 +3015,66 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        // Apresentação para alertas cuja fonte é apenas o PAD (inconsistência
+        // quantidade x valor unitário): não há "memória" para comparar, então
+        // exibe Dados do PAD, Cálculo exibido, Cálculo efetivo e Conclusão.
+        function renderConsistenciaQuantidadeRevisao(divergencia) {
+            const c = divergencia?.consistenciaQuantidadeValorUnitario;
+            const a = c?.avaliacao;
+            if (!c || !a) return '';
+            const fp = a.falsoPositivoPorArredondamento;
+            const badge = fp
+                ? '<span class="badge bg-success">Falso positivo saneável</span>'
+                : '<span class="badge bg-warning text-dark">Pendência real</span>';
+            return `
+                <section class="revisao-detail-section">
+                    <h3>Auditoria de quantidade × valor unitário</h3>
+                    <div class="revisao-pad-auditoria">
+                        <div class="revisao-pad-bloco">
+                            <h4>Dados do PAD</h4>
+                            <dl class="revisao-diagnostic-list">
+                                <div><dt>Descrição</dt><dd>${escapeHtml(c.descricao || '-')}</dd></div>
+                                <div><dt>Linha PAD</dt><dd>${escapeHtml(String(c.linhaPad ?? '-'))}</dd></div>
+                                <div><dt>Convênio</dt><dd>${escapeHtml(c.numeroConvenio || '-')}</dd></div>
+                                <div><dt>UF</dt><dd>${escapeHtml(c.uf || '-')}</dd></div>
+                                <div><dt>Código de natureza</dt><dd>${escapeHtml(c.codigoNaturezaDespesa || '-')}</dd></div>
+                                <div><dt>Natureza</dt><dd>${escapeHtml(c.natureza || '-')}</dd></div>
+                                <div><dt>Quantidade</dt><dd>${escapeHtml(formatarValorRevisao(a.quantidade, 'Quantidade'))}</dd></div>
+                            </dl>
+                        </div>
+                        <div class="revisao-pad-bloco">
+                            <h4>Cálculo exibido</h4>
+                            <dl class="revisao-diagnostic-list">
+                                <div><dt>Valor unitário exibido</dt><dd>${escapeHtml(formatarValorRevisao(a.valorUnitarioExibido, 'Valor unitário'))}</dd></div>
+                                <div><dt>Quantidade × unitário exibido</dt><dd>${escapeHtml(formatarValorRevisao(a.valorCalculadoComUnitarioExibido, 'Valor previsto'))}</dd></div>
+                                <div><dt>Valor previsto informado</dt><dd>${escapeHtml(formatarValorRevisao(a.valorPrevistoInformado, 'Valor previsto'))}</dd></div>
+                                <div><dt>Diferença</dt><dd>${escapeHtml(formatarValorRevisao(a.diferencaAbsoluta, 'Valor previsto'))}</dd></div>
+                            </dl>
+                        </div>
+                        <div class="revisao-pad-bloco">
+                            <h4>Cálculo efetivo</h4>
+                            <dl class="revisao-diagnostic-list">
+                                <div><dt>Valor unitário efetivo</dt><dd>${escapeHtml(formatarValorRevisao(a.valorUnitarioEfetivo, 'Valor unitário'))}</dd></div>
+                                <div><dt>Unitário efetivo (2 casas)</dt><dd>${escapeHtml(formatarValorRevisao(a.valorUnitarioEfetivoArredondado, 'Valor unitário'))}</dd></div>
+                                <div><dt>Tolerância aplicada</dt><dd>${escapeHtml(formatarValorRevisao(a.toleranciaMaxima, 'Valor previsto'))}</dd></div>
+                            </dl>
+                        </div>
+                        <div class="revisao-pad-bloco revisao-pad-conclusao">
+                            <h4>Conclusão da auditoria ${badge}</h4>
+                            <p class="mb-1">${escapeHtml(a.motivo || '')}</p>
+                            <p class="mb-0"><strong>Ação sugerida:</strong> ${escapeHtml(c.acaoSugeridaTela || '-')}</p>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
         function renderComparacaoRevisao(divergencia) {
+            // Alertas de inconsistência quantidade x valor unitário têm fonte
+            // apenas no PAD: usam apresentação própria, não Antes/Depois.
+            if (divergencia?.consistenciaQuantidadeValorUnitario?.avaliacao) {
+                return renderConsistenciaQuantidadeRevisao(divergencia);
+            }
             const { antes, depois } = obterAntesDepoisRevisao(divergencia);
             const isExistencia = obterCampoAfetadoRevisao(divergencia) === 'existencia';
             const linhas = [
@@ -3069,6 +3128,12 @@ async function carregarLogoParaPDF() {
 
         function renderDiagnosticoAutomaticoRevisao(divergencia) {
             const payload = divergencia?.payload || {};
+            // Para falso positivo saneável por arredondamento, a ação sugerida
+            // não deve ser "Aceitar total do PAD": o total já é preservado.
+            const consistencia = divergencia?.consistenciaQuantidadeValorUnitario;
+            const acaoSugerida = consistencia?.avaliacao?.falsoPositivoPorArredondamento
+                ? 'Saneado tecnicamente — total do PAD preservado.'
+                : (divergencia.acaoSugerida || '-');
             return `
                 <section class="revisao-detail-section">
                     <h3>Diagnóstico automático</h3>
@@ -3080,7 +3145,7 @@ async function carregarLogoParaPDF() {
                         <div><dt>Saldo residual/remanescente</dt><dd>${divergencia.saldoResidualTecnico ? `<strong>Saldo residual técnico</strong><p class="mb-0 mt-1">${escapeHtml(divergencia.alertaSaldoResidual || 'Item técnico não setorializado por área e segregado por natureza.')}</p>` : '-'}</dd></div>
                         <div><dt>Evidências</dt><dd>${renderObjetoResumoRevisao(payload.evidencias || payload.evidencia || {})}</dd></div>
                         <div><dt>Risco de falso positivo</dt><dd>${escapeHtml(payload.riscoFalsoPositivo || payload.risco_falso_positivo || '-')}</dd></div>
-                        <div><dt>Ação sugerida</dt><dd>${escapeHtml(divergencia.acaoSugerida || '-')}</dd></div>
+                        <div><dt>Ação sugerida</dt><dd>${escapeHtml(acaoSugerida)}</dd></div>
                         <div><dt>Impacto na reconstrução</dt><dd>${escapeHtml(divergencia.impactoReconstrucao || '-')}</dd></div>
                     </dl>
                 </section>
@@ -3413,7 +3478,14 @@ async function carregarLogoParaPDF() {
                         <td>${renderBadgeRevisao(item.nivel, classeNivelRevisao(item.nivel))}</td>
                         <td>${escapeHtml(item.numeroConvenio || '-')}</td>
                         <td>${escapeHtml(item.uf || '-')}</td>
-                        <td>${escapeHtml(item.tipoAlerta || '-')}${item.saldoResidualTecnico ? '<div class="small text-warning">Saldo residual técnico</div>' : ''}${item.categoriaOperacional ? `<div class="text-muted small">${escapeHtml(item.categoriaOperacional)}</div>` : ''}</td>
+                        <td>${escapeHtml(item.tipoAlerta || '-')}${(() => {
+                            const c = item.consistenciaQuantidadeValorUnitario;
+                            if (c && c.descricao) {
+                                return `<div class="small text-body">${escapeHtml(c.descricao)}</div>`
+                                    + `<div class="text-muted small">Linha PAD ${escapeHtml(String(c.linhaPad ?? '-'))}</div>`;
+                            }
+                            return '';
+                        })()}${item.saldoResidualTecnico ? '<div class="small text-warning">Saldo residual técnico</div>' : ''}${item.categoriaOperacional ? `<div class="text-muted small">${escapeHtml(item.categoriaOperacional)}</div>` : ''}</td>
                         <td>${escapeHtml(item.campoAfetado || '-')}</td>
                         <td>${escapeHtml(item.motivoProvavel || item.acaoSugerida || '-')}</td>
                         <td>${(() => {
