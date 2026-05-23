@@ -1,6 +1,6 @@
 # PROFOR 2022 - Revalidacao de payloads alterados apos decisao (dry-run)
 
-Gerado em: 2026-05-23T14:28:19.914Z
+Gerado em: 2026-05-23T14:37:10.799Z
 
 Auditoria somente leitura: nao registra decisao, nao publica, nao altera origem ativa, nao altera `frontend/data/publicados` e nao altera o `planoAplicacao` oficial.
 

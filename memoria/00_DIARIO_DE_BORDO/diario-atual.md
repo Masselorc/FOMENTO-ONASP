@@ -1,5 +1,20 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: harmonização do relatório de segurança pré-ativação final
+
+- Objetivo: ajustar o relatório final de segurança pré-ativação para categorizar corretamente as divergências revalidadas, diferenciando-as de bloqueios ativos vigentes e decisões obsoletas inativas.
+- Alterações Realizadas:
+  - Ajuste na função `montarDiagnosticoPayloadAlterado` em `backend/scripts/auditar-seguranca-pre-ativacao-final-pad-profor-2022.js` para detectar se a decisão vigente foi revalidada (com payload preservado).
+  - Categorização das divergências revalidadas com `classificacaoFinal: "decisao_historica_nao_vigente_com_payload_alterado"`, prioridade `baixa`, ação `nenhuma_historico_preservado`, impacto `historico_revalidado_sem_bloqueio` e recomendação informativa.
+  - Segregação visual e estrutural do relatório em seções separadas:
+    1. **Bloqueios ativos vigentes:** contendo apenas as 7 divergências históricas não reapresentadas (#25, #26, #27, #28, #75, #77, #78).
+    2. **Histórico de decisões vigentes revalidadas:** contendo os 27 payloads revalidados (#47-#74).
+    3. **Histórico de pendências técnicas retificadas:** contendo o item retificado #18.
+- Resultados:
+  - As 27 divergências revalidadas deixaram de aparecer como `revalidacao_humana_necessaria` ativa.
+  - A matriz de bloqueios ativos agora apresenta de forma limpa apenas os 7 bloqueios ativos vigentes.
+  - 130/130 testes passando e relatórios dry-run atualizados com sucesso.
+
 ## 23/05/2026 - PROFOR 2022: revalidação dos 27 payloads alterados em 4 lotes separados
 
 - Objetivo: registrar decisões de revalidação ACEITO para os 27 casos de `payload_alterado_apos_decisao` em lotes e commits separados, baixando formalmente os bloqueios técnicos sem alterar o plano de aplicação oficial nem publicar.

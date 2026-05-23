@@ -134,6 +134,29 @@ function montarDiagnosticoPayloadAlterado(id, entradasSeguranca, pendencia, regr
     .map((item) => obterLogDecisao(divergencia, item.decisaoId))
     .filter(Boolean);
 
+  const vigentePreservado = Boolean(
+    decisaoVigente &&
+    !entradasSeguranca.some((item) => Number(item.decisaoId) === Number(decisaoVigente.id))
+  );
+
+  const classificacaoFinal = vigentePreservado
+    ? "decisao_historica_nao_vigente_com_payload_alterado"
+    : "revalidacao_humana_necessaria";
+
+  const prioridade = vigentePreservado ? "baixa" : "alta";
+
+  const acaoNecessaria = vigentePreservado
+    ? "nenhuma_historico_preservado"
+    : "registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo";
+
+  const recomendacao = vigentePreservado
+    ? "Decisão vigente com payload revalidado. Decisões antigas preservadas apenas para histórico."
+    : "Revalidar humanamente a decisão anterior contra o payload atual; nao mascarar o hash divergente.";
+
+  const impactoMaterial = vigentePreservado
+    ? "historico_revalidado_sem_bloqueio"
+    : "indeterminado_sem_payload_anterior_completo";
+
   return {
     id,
     numeroConvenio: divergencia.numeroConvenio,
@@ -143,18 +166,18 @@ function montarDiagnosticoPayloadAlterado(id, entradasSeguranca, pendencia, regr
     decisaoVigente: decisaoVigente?.decisao || null,
     decisaoId: decisaoVigente?.id || null,
     decisoesComPayloadAlterado: hashes,
-    payloadPreservado: false,
+    payloadPreservado: vigentePreservado,
     snapshotPresente: hashes.every((item) => item.snapshotPresente),
     hashAnterior: hashes.map((item) => `#${item.decisaoId}:${item.hashAnterior}`).join("; "),
     hashAtual: hashAtual(divergencia),
     campoAlteradoInferido: divergencia.campoAfetado || "payload_tecnico",
     tipoBloqueio: "payload_alterado_apos_decisao",
-    classificacaoFinal: "revalidacao_humana_necessaria",
+    classificacaoFinal,
     classificacaoAlteracao: "dados_insuficientes",
-    impactoMaterial: "indeterminado_sem_payload_anterior_completo",
-    recomendacao: "Revalidar humanamente a decisão anterior contra o payload atual; nao mascarar o hash divergente.",
-    prioridade: "alta",
-    acaoNecessaria: "registrar decisao de revalidacao em etapa posterior, se confirmada a aderencia ao PAD novo",
+    impactoMaterial,
+    recomendacao,
+    prioridade,
+    acaoNecessaria,
     categoriaOperacional: pendencia?.classificacaoOperacional || null,
     classificacoesOperacionais: pendencia?.classificacoes || [],
     regressao: regressao?.classificacaoRegressao || null,
@@ -280,11 +303,12 @@ function renderMarkdown(relatorio) {
     "## 1. Resumo executivo",
     "",
     `- Pendência operacional real: ${r.pendenciaOperacionalReal}`,
-    `- Bloqueios técnicos de segurança pré-ativação: ${r.totalBloqueiosSeguranca}`,
+    `- Bloqueios técnicos de segurança pré-ativação (ativos): ${r.totalBloqueiosAtivos}`,
     `- Divergências únicas na matriz final: ${r.totalDivergenciasUnicasMatriz}`,
-    `- Decisões com payload alterado: ${r.totalDecisoesPayloadAlterado}`,
-    `- Divergências com payload alterado: ${r.totalDivergenciasPayloadAlterado}`,
-    `- Decisões resolutivas com pendência técnica: ${r.totalDecisoesResolutivasComPendenciaTecnica}`,
+    `- Decisões vigentes revalidadas com sucesso (não bloqueantes): ${r.totalPayloadsRevalidados}`,
+    `- Decisões vigentes com payload alterado (bloqueantes): ${r.totalPayloadsAlteradosAtivos}`,
+    `- Decisões resolutivas com pendência técnica ativa: ${r.totalPendenciasTecnicasAtivas}`,
+    `- Decisões resolutivas com pendência técnica retificada (não bloqueante): ${r.totalPendenciasTecnicasRetificadas}`,
     `- Apto para ativação controlada: ${r.aptoParaAtivacaoControlada ? "sim" : "não"}`,
     "",
     "## 2. Contagem por classificação final",
@@ -293,17 +317,17 @@ function renderMarkdown(relatorio) {
     "|---|---:|",
     ...Object.entries(r.totalPorClassificacaoFinal).map(([chave, valor]) => `| \`${chave}\` | ${valor} |`),
     "",
-    "## 3. Payload alterado após decisão",
+    "## 3. Bloqueios ativos vigentes",
     "",
-    renderTabela(relatorio.payloadAlteradoAposDecisao),
+    renderTabela(relatorio.bloqueiosAtivos),
     "",
-    "## 4. Decisão resolutiva com pendência técnica",
+    "## 4. Histórico de decisões vigentes revalidadas (não bloqueantes)",
     "",
-    renderTabela(relatorio.decisoesResolutivasComPendenciaTecnica),
+    renderTabela(relatorio.payloadsRevalidados),
     "",
-    "## 5. Matriz final consolidada",
+    "## 5. Histórico de pendências técnicas retificadas (não bloqueantes)",
     "",
-    renderTabela(relatorio.matrizFinal),
+    renderTabela(relatorio.decisoesComPendenciaTecnicaRetificadas),
     "",
     "## 6. Conclusão",
     "",
@@ -374,11 +398,38 @@ function executar() {
   }
   const matrizFinal = Array.from(matrizMap.values()).sort((a, b) => a.id - b.id);
 
+  const bloqueiosAtivos = matrizFinal.filter(
+    (item) =>
+      item.classificacaoFinal !== "decisao_historica_nao_vigente_com_payload_alterado" &&
+      item.classificacaoFinal !== "bloqueio_tecnico_residual_retificado"
+  );
+
+  const payloadsRevalidados = payloadAlteradoAposDecisao.filter(
+    (item) => item.payloadPreservado === true
+  );
+
+  const payloadsAlteradosAtivos = payloadAlteradoAposDecisao.filter(
+    (item) => item.payloadPreservado === false
+  );
+
+  const decisoesComPendenciaTecnicaAtivas = decisoesResolutivasComPendenciaTecnica.filter(
+    (item) => item.classificacaoFinal !== "bloqueio_tecnico_residual_retificado"
+  );
+
+  const decisoesComPendenciaTecnicaRetificadas = decisoesResolutivasComPendenciaTecnica.filter(
+    (item) => item.classificacaoFinal === "bloqueio_tecnico_residual_retificado"
+  );
+
   const resumo = {
     pendenciaOperacionalReal: pendencias.resumo?.separacaoOperacional?.pendenciaOperacionalReal ?? null,
     totalBloqueiosSeguranca: seguranca.resumo?.totalBloqueiosAtivacao ?? null,
     totalBloqueiosDetalhados: segurancaDetalhada.resumo?.totalBloqueios ?? null,
     totalDivergenciasUnicasMatriz: matrizFinal.length,
+    totalBloqueiosAtivos: bloqueiosAtivos.length,
+    totalPayloadsRevalidados: payloadsRevalidados.length,
+    totalPayloadsAlteradosAtivos: payloadsAlteradosAtivos.length,
+    totalPendenciasTecnicasAtivas: decisoesComPendenciaTecnicaAtivas.length,
+    totalPendenciasTecnicasRetificadas: decisoesComPendenciaTecnicaRetificadas.length,
     totalDecisoesPayloadAlterado: seguranca.payloadAlteradoAposDecisao?.length || 0,
     totalDivergenciasPayloadAlterado: payloadAlteradoAposDecisao.length,
     totalDecisoesResolutivasComPendenciaTecnica: decisoesResolutivasComPendenciaTecnica.length,
@@ -396,6 +447,10 @@ function executar() {
     regraNegocio: "PAD_NOVO_PREVALECE_INTEGRALMENTE",
     fontes,
     resumo,
+    bloqueiosAtivos,
+    payloadsRevalidados,
+    payloadsAlteradosAtivos,
+    decisoesComPendenciaTecnicaRetificadas,
     payloadAlteradoAposDecisao,
     decisoesResolutivasComPendenciaTecnica,
     matrizFinal,

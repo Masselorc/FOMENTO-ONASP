@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria profunda de pendências PAD (dry-run)
 
-Gerado em: 2026-05-23T14:28:17.544Z
+Gerado em: 2026-05-23T14:41:15.702Z
 
 Auditoria somente leitura: não registra decisão, não altera status, não publica e não altera o planoAplicacao oficial.
 Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO) — incluindo a divergência `#24`, já resolvida — são classificados como histórico/saneado e ficam fora da fila operacional.
@@ -15,7 +15,7 @@ Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO
 - Total com decisão resolutiva: 70
 - Total de suspeitas/falsos positivos: 78
 - Total de pendências reais estimadas: 0
-- Bloqueios de segurança pré-ativação: 10
+- Bloqueios de segurança pré-ativação: 7
 
 Separação operacional (cada item recai em exatamente uma categoria):
 
@@ -210,7 +210,7 @@ Separação operacional (cada item recai em exatamente uma categoria):
 ## 6. Problemas de código encontrados
 
 - **erro real:** Há decisão com valor não canônico em caixa baixa. Evidência: decisaoId 1: aceitar Recomendação: Criar saneamento auditável específico para normalizar decisão legada ou registrar decisão resolutiva nova.
-- **risco provável:** Segurança pré-ativação bloqueia ativação por payload alterado ou divergência não reapresentada. Evidência: 10 bloqueio(s) no relatório de segurança pré-ativação. Recomendação: Executar etapa de revalidação assistida de decisões antigas, sem alterar automaticamente nesta auditoria.
+- **risco provável:** Segurança pré-ativação bloqueia ativação por payload alterado ou divergência não reapresentada. Evidência: 7 bloqueio(s) no relatório de segurança pré-ativação. Recomendação: Executar etapa de revalidação assistida de decisões antigas, sem alterar automaticamente nesta auditoria.
 
 ## 7. Problemas de UX encontrados
 

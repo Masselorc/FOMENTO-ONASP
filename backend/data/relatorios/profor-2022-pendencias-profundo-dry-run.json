@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T14:28:17.544Z",
+  "geradoEm": "2026-05-23T14:41:15.702Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -37,19 +37,19 @@
       "seguranca": {
         "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T14:26:44.384Z",
+        "geradoEm": "2026-05-23T14:28:18.228Z",
         "erro": null
       },
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T14:26:45.512Z",
+        "geradoEm": "2026-05-23T14:37:06.423Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T14:26:45.539Z",
+        "geradoEm": "2026-05-23T14:37:06.453Z",
         "erro": null
       },
       "saldosResiduais": {
@@ -70,7 +70,7 @@
     "totalDecisoesRegistradas": 102,
     "totalPossiveisFalsosPositivos": 78,
     "totalPendenciasReaisEstimadas": 0,
-    "totalBloqueiosSegurancaPreAtivacao": 10,
+    "totalBloqueiosSegurancaPreAtivacao": 7,
     "totalPayloadAlteradoAposDecisao": 27,
     "separacaoOperacional": {
       "pendenciaOperacionalReal": 0,
@@ -4626,7 +4626,7 @@
     {
       "classificacao": "risco provável",
       "problema": "Segurança pré-ativação bloqueia ativação por payload alterado ou divergência não reapresentada.",
-      "evidencia": "10 bloqueio(s) no relatório de segurança pré-ativação.",
+      "evidencia": "7 bloqueio(s) no relatório de segurança pré-ativação.",
       "impacto": "Decisões antigas não devem liberar ativação até revalidação.",
       "recomendacao": "Executar etapa de revalidação assistida de decisões antigas, sem alterar automaticamente nesta auditoria."
     }
