@@ -1,5 +1,28 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: auditoria integrada final de prontidão pré-ativação controlada (dry-run)
+
+- Objetivo: consolidar a auditoria integrada final em modo leitura para confirmar que o sistema está tecnicamente pronto para **preparar** uma futura ativação controlada, sem ativar, sem publicar e sem alterar o `planoAplicacao` oficial.
+- Comandos executados (todos dry-run):
+  - `git status --short` + `git log --oneline -12` → branch `main`, working tree limpa no início, último commit etapa 10 `10f96c9 ajustes`;
+  - `npm run profor:pad:auditar-pendencias-profundo` → `pendência_operacional_real = 0`, `bloqueio_técnico_segurança = 0`;
+  - `npm run profor:pad:seguranca-pre-ativacao:dry-run`/`:detalhar`/`:final` → `aptoParaAtivacaoControlada = true`, `totalBloqueiosAtivos = 0`, `totalPayloadsAlteradosAtivos = 0`, `totalPendenciasTecnicasAtivas = 0`;
+  - `npm run profor:pad:reconstruir-plano:dry-run` → 568 linhas, 15 convênios, 31 impedimentos técnicos (categorias conhecidas), 0 erros críticos, 0 instrumentos fora carteira;
+  - `npm run profor:pad:comparar-plano:dry-run` → 25 diferenças críticas explicadas (12 atualização PAD + 21 pendência técnica residual), diferença líquida de saldo ≈ −0,20%;
+  - `npm run profor:pad:revalidacao-payloads:auditar` → 27 IDs classificados `revalidacao_por_prevalencia_pad`, chave de divergência preservada em 100%;
+  - `npm run validar:syntax` → 76 arquivos OK;
+  - `npm run validar:services` → 130/130 testes passando;
+  - `git diff --check` → limpo (apenas avisos LF/CRLF em relatórios dry-run regenerados);
+  - `git status --short frontend/data/publicados`/`"*.sqlite*"`/`"*.sqlite-wal"`/`"*.sqlite-shm"` → todos vazios.
+- Matriz final de segurança (35 itens, todos não bloqueantes):
+  - `#18` → `bloqueio_tecnico_residual_retificado` (1);
+  - `#25, #26, #27, #28, #75, #77, #78` → `historico_nao_reapresentado_revalidado_sem_bloqueio` (7);
+  - `#47–#74` (27 IDs, exclui `#55`) → `decisao_historica_nao_vigente_com_payload_alterado` (27).
+- Subagentes (modo leitura, sem alteração) — A (segurança/decisões), B (reconstrução), C (comparador) e D (git/banco/publicação) — sem achado bloqueante; achados consolidados nos relatórios `backend/data/relatorios/profor-2022-prontidao-ativacao-controlada-dry-run.{json,md}`.
+- Classificação final: `PRONTO_PARA_PREPARAR_ATIVACAO_CONTROLADA`. **Sem ressalvas materiais.**
+- Aptidão em dry-run **não autoriza ativação nem publicação**. Próxima etapa recomendada (a executar em momento posterior, não agora): preparar roteiro de ativação controlada com janela, backup, comandos exatos, validações pós-ativação e critérios de rollback.
+- Restrições preservadas: sem ativação, sem publicação, sem alteração de origem ativa, sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem avanço para automação Transferegov, nenhum alerta real mascarado.
+
 ## 23/05/2026 - PROFOR 2022: baixa técnica dos 7 históricos não reapresentados na segurança pré-ativação final
 
 - Objetivo: tratar os 7 bloqueios técnicos residuais (`#25`, `#26`, `#27`, `#28`, `#75`, `#77`, `#78`) sem registrar nova decisão, mantendo dry-run estrito e sem alterar base ativa.

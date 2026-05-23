@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T14:56:30.107Z",
+  "geradoEm": "2026-05-23T17:44:30.503Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
@@ -16,12 +16,12 @@
     "segurancaDetalhadaJson": {
       "caminho": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 77283
+      "tamanhoBytes": 75576
     },
     "segurancaDetalhadaMd": {
       "caminho": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 10001
+      "tamanhoBytes": 9892
     },
     "segurancaJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",

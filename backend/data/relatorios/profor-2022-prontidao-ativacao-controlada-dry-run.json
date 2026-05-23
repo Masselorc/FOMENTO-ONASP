@@ -1,0 +1,188 @@
+{
+  "geradoEm": "2026-05-23T00:00:00.000Z",
+  "modo": "dry-run",
+  "escopo": "auditoria_integrada_final_pre_ativacao_controlada",
+  "regraNegocio": "Aptidao em dry-run NAO autoriza ativacao nem publicacao. Esta auditoria apenas confirma a prontidao tecnica para preparar uma futura ativacao controlada.",
+  "fontes": {
+    "pendenciasProfundo": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json",
+    "segurancaPreAtivacaoDryRun": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
+    "segurancaPreAtivacaoDetalhada": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.json",
+    "segurancaPreAtivacaoFinal": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.json",
+    "reconstrucaoDryRun": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
+    "comparacaoDryRun": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
+    "revalidacaoPayloads": "backend/data/relatorios/profor-2022-revalidacao-payloads-alterados-dry-run.json"
+  },
+  "estadoGit": {
+    "branch": "main",
+    "workingTreeLimpaNoInicio": true,
+    "ultimoCommitEtapa10": {
+      "sha": "10f96c9",
+      "mensagem": "ajustes"
+    },
+    "commitsRelevantes": [
+      "10f96c9 ajustes",
+      "ff2b39e fix(profor-2022): harmoniza relatorio de payloads revalidados",
+      "26d50b9 docs(memoria): registra revalidacoes e correcao do auditor",
+      "f38552f fix(profor-2022): revalida payloads alterados AC lote 4",
+      "ae18456 fix(profor-2022): revalida payloads alterados AL lote 3",
+      "2a25101 fix(profor-2022): revalida payloads alterados AL lote 2",
+      "2fbb931 fix(profor-2022): revalida payloads alterados AL lote 1",
+      "e814f86 chore(profor-2022): audita revalidacao de payloads alterados",
+      "90ff3a9 fix(profor-2022): reconstitui decisao prevalencia PAD da divergencia 44",
+      "db6889a fix(profor-2022): reconstitui decisao prevalencia PAD da divergencia 39",
+      "6fc8ff3 fix(profor-2022): trata saldo residual tecnico da divergencia 18",
+      "889adec chore(profor-2022): consolida seguranca pre-ativacao final"
+    ]
+  },
+  "criteriosAceite": [
+    { "id": 1, "criterio": "pendencia_operacional_real = 0", "status": "ok", "valor": 0 },
+    { "id": 2, "criterio": "bloqueios tecnicos ativos = 0", "status": "ok", "valor": 0 },
+    { "id": 3, "criterio": "seguranca pre-ativacao final apta para ativacao controlada em dry-run", "status": "ok", "valor": true },
+    { "id": 4, "criterio": "reconstrucao dry-run sem impedimento material nao explicado", "status": "ok_com_explicacao", "valor": 31, "explicacao": "31 impedimentos sao saldo residual tecnico, item conhecido nao apto, rateio percentual indefinido e ausencia confirmada por decisao; categorias documentadas; 0 erros criticos de leitura; 0 instrumentos fora carteira; sem dependencia de origem ativa." },
+    { "id": 5, "criterio": "comparador final sem diferenca critica nao explicada", "status": "ok_com_explicacao", "valor": 25, "explicacao": "25 diferencas criticas distribuidas entre 12 atualizacao PAD esperada e 21 pendencia de decisao tecnica residual; diferenca total liquida previsto -0.24, executado 15043.6, saldo -15043.84 (~0.2%); 27 ausencias confirmadas por decisao." },
+    { "id": 6, "criterio": "#18 retificada nao bloqueante", "status": "ok", "valor": "bloqueio_tecnico_residual_retificado" },
+    { "id": 7, "criterio": "#25, #26, #27, #28, #75, #77, #78 historicos nao bloqueantes", "status": "ok", "valor": "historico_nao_reapresentado_revalidado_sem_bloqueio" },
+    { "id": 8, "criterio": "#47-#74 (27 IDs, excluido #55) payloads revalidados nao bloqueantes", "status": "ok", "valor": "decisao_historica_nao_vigente_com_payload_alterado" },
+    { "id": 9, "criterio": "nenhuma decisao nova", "status": "ok", "valor": false },
+    { "id": 10, "criterio": "backend/data/onasp.sqlite nao alterado", "status": "ok", "valor": true },
+    { "id": 11, "criterio": "frontend/data/publicados sem alteracao", "status": "ok", "valor": true },
+    { "id": 12, "criterio": "origem ativa nao alterada", "status": "ok", "valor": true },
+    { "id": 13, "criterio": "planoAplicacao oficial nao alterado", "status": "ok", "valor": true },
+    { "id": 14, "criterio": "*.sqlite-wal e *.sqlite-shm nao versionados", "status": "ok", "valor": true },
+    { "id": 15, "criterio": "validar:syntax OK", "status": "ok", "valor": "76 arquivos" },
+    { "id": 16, "criterio": "validar:services OK", "status": "ok", "valor": "130/130 testes" },
+    { "id": 17, "criterio": "git diff --check limpo", "status": "ok", "valor": "apenas avisos LF/CRLF nao impeditivos" },
+    { "id": 18, "criterio": "relatorio final de prontidao criado", "status": "ok", "valor": "este relatorio" },
+    { "id": 19, "criterio": "diario de bordo atualizado", "status": "ok", "valor": true }
+  ],
+  "subagentes": {
+    "A_seguranca_decisoes": {
+      "modo": "leitura",
+      "fonte": "profor-2022-seguranca-pre-ativacao-final-dry-run.json + profor-2022-pendencias-profundo-dry-run.json + profor-2022-revalidacao-payloads-alterados-dry-run.json",
+      "achados": {
+        "pendenciaOperacionalReal": 0,
+        "totalBloqueiosAtivos": 0,
+        "totalPayloadsAlteradosAtivos": 0,
+        "totalPendenciasTecnicasAtivas": 0,
+        "totalPayloadsRevalidados": 27,
+        "totalPendenciasTecnicasRetificadas": 1,
+        "totalDecisoesPayloadAlterado": 28,
+        "decisao18Status": "CORRIGIDO (decisao 185, hash anterior == hash atual, saldo residual ja saneado por retificadora)",
+        "historicosNaoReapresentados": [25, 26, 27, 28, 75, 77, 78],
+        "payloadsRevalidados": [47,48,49,50,51,52,53,54,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74],
+        "decisaoSemSnapshotRelevante": false,
+        "payloadAlteradoBloqueante": false
+      },
+      "conclusao": "Sem pendencia operacional real, sem bloqueio tecnico ativo, sem payload alterado bloqueante, sem decisao vigente sem snapshot relevante."
+    },
+    "B_reconstrucao": {
+      "modo": "leitura",
+      "fonte": "profor-2022-pad-plano-reconstruido-dry-run.json",
+      "achados": {
+        "linhasReconstruidas": 568,
+        "conveniosReconstruidos": 15,
+        "itensPadProcessados": 525,
+        "impedimentos": 31,
+        "alertas": 106,
+        "errosCriticosLeitura": 0,
+        "instrumentosForaCarteira": 0,
+        "itensConhecidosNaoAptosUsados": 6,
+        "decisoesAplicadasDryRun": 67,
+        "valorPrevistoReconstruidoTotal": 10664015.24,
+        "valorExecutadoReconstruidoTotal": 3217739.50,
+        "saldoReconstruidoTotal": 7446275.74
+      },
+      "separacaoImpedimentos": {
+        "impeditivoReal": 0,
+        "avisoLimitacaoAceitavel": 31,
+        "categorias": ["item_conhecido_nao_apto_usado", "rateio_percentual_indefinido", "saldo_residual_tecnico_segregado_por_natureza"]
+      },
+      "itensAusentesReintroduzidos": false,
+      "saldosResiduaisSegregadosPorNatureza": true,
+      "planoAplicacaoOficialAlterado": false,
+      "conclusao": "Reconstrucao dry-run estavel; 31 impedimentos sao tecnicos e ja categorizados; nenhum item ausente foi reintroduzido; saldos residuais permanecem tecnicos, nao setorializados e segregados por natureza; planoAplicacao oficial intacto."
+    },
+    "C_comparador": {
+      "modo": "leitura",
+      "fonte": "profor-2022-pad-plano-comparacao-dry-run.json",
+      "achados": {
+        "linhasOrigemAntiga": 566,
+        "linhasReconstruidas": 568,
+        "itensIguais": 497,
+        "itensNovos": 25,
+        "itensAusentes": 30,
+        "diferencasCriticas": 25,
+        "itensAmbiguos": 6,
+        "ausenciasConfirmadasPorDecisao": 27,
+        "diferencasEsperadasAtualizacaoPad": 12,
+        "diferencasPorPendenciaDecisao": 21,
+        "totaisAntigo": { "previsto": 10664015.48, "executado": 3202695.90, "saldo": 7461319.58 },
+        "totaisNovo":   { "previsto": 10664015.24, "executado": 3217739.50, "saldo": 7446275.74 },
+        "diferencaTotal": { "previsto": -0.24, "executado": 15043.60, "saldo": -15043.84 }
+      },
+      "diferencasNaoExplicadas": 0,
+      "conclusao": "Diferencas remanescentes sao esperadas e justificadas (atualizacao PAD + ausencias confirmadas por decisao); diferenca total liquida proxima de zero no previsto e abaixo de 0.2% no saldo; nenhuma divergencia nao explicada."
+    },
+    "D_git_banco_publicacao": {
+      "modo": "leitura",
+      "achados": {
+        "branch": "main",
+        "workingTreeLimpaNoInicio": true,
+        "ultimoCommitEtapa10": "10f96c9 ajustes",
+        "frontendDataPublicadosAlterado": false,
+        "sqliteAlteradoOuStaged": false,
+        "sqliteWalShmVersionados": false,
+        "origemAtivaAlterada": false,
+        "publicacaoExecutada": false
+      },
+      "conclusao": "Sem alteracao em base ativa, publicados, SQLite ou artefatos WAL/SHM; sem publicacao; sem ativacao; somente relatorios dry-run foram regenerados em backend/data/relatorios/."
+    }
+  },
+  "validacoes": {
+    "validarSyntax": { "status": "ok", "arquivos": 76 },
+    "validarServices": { "status": "ok", "totalTestes": 130, "pass": 130, "fail": 0 },
+    "gitDiffCheck": { "status": "ok", "observacao": "apenas avisos de normalizacao LF/CRLF em relatorios dry-run regenerados" }
+  },
+  "matrizFinalSeguranca": {
+    "bloqueio_tecnico_residual_retificado": [18],
+    "historico_nao_reapresentado_revalidado_sem_bloqueio": [25, 26, 27, 28, 75, 77, 78],
+    "decisao_historica_nao_vigente_com_payload_alterado": [47,48,49,50,51,52,53,54,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74],
+    "totaisPorClassificacao": {
+      "bloqueio_tecnico_residual_retificado": 1,
+      "historico_nao_reapresentado_revalidado_sem_bloqueio": 7,
+      "decisao_historica_nao_vigente_com_payload_alterado": 27,
+      "total": 35
+    }
+  },
+  "ressalvas": [],
+  "garantias": {
+    "decisaoRegistrada": false,
+    "statusAlterado": false,
+    "publicacaoExecutada": false,
+    "ativacaoExecutada": false,
+    "origemAtivaAlterada": false,
+    "planoAplicacaoOficialAlterado": false,
+    "frontendDataPublicadosAlterado": false,
+    "sqliteAlterado": false,
+    "sqlDireto": false,
+    "novaMigration": false,
+    "logDecisaoApagado": false,
+    "divergenciaApagada": false,
+    "automacaoTransferegovAvancada": false
+  },
+  "classificacaoFinal": "PRONTO_PARA_PREPARAR_ATIVACAO_CONTROLADA",
+  "conclusao": "O sistema esta tecnicamente pronto para preparar uma futura ativacao controlada (em etapa posterior). Pendencia operacional real igual a zero, bloqueios tecnicos ativos igual a zero, matriz final composta apenas por categorias historicas nao bloqueantes (#18 retificada, 7 nao reapresentadas e 27 payloads revalidados). Reconstrucao e comparador apresentam apenas diferencas tecnicas esperadas e ja explicadas. Validacoes de sintaxe e servicos OK. Origem ativa, planoAplicacao oficial, frontend/data/publicados e backend/data/onasp.sqlite intactos. Esta aptidao em dry-run NAO autoriza ativacao nem publicacao.",
+  "proximaEtapaRecomendada": {
+    "titulo": "Preparar roteiro de ativacao controlada (sem executar)",
+    "elementos": [
+      "definir janela de execucao restrita (fora do horario de uso) com responsavel tecnico e responsavel funcional designados;",
+      "backup integral previo de backend/data/onasp.sqlite e do diretorio frontend/data/publicados/, com hash e local de retencao;",
+      "checklist de pre-condicoes: revalidar git status limpo, branch main atualizada, ausencia de WAL/SHM e ausencia de alteracoes em publicados;",
+      "comandos exatos da ativacao controlada (com flags de seguranca, idempotencia e log auditavel) e ordem de execucao;",
+      "validacoes obrigatorias pos-ativacao (auditoria pos-ativacao, reconstrucao definitiva, comparador final e validar:services);",
+      "criterios de rollback: comando exato para reverter o commit de ativacao, restaurar SQLite a partir do backup, reverter publicados a partir do backup e re-rodar a bateria dry-run;",
+      "definicao explicita de NAO publicar e NAO acionar automacao Transferegov nesta etapa;",
+      "registro previo do plano de ativacao em memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md (sem registrar nova decisao)."
+    ]
+  }
+}

@@ -2472,3 +2472,62 @@ Como a identidade da divergência está preservada, a reconstrução do plano n�
 ### 32.4. Garantias e Integridade
 
 Nenhuma decisão foi gravada no banco SQLite local, os dados publicados em `frontend/data/publicados/` e o `planoAplicacao` oficial permaneceram intactos, atendendo estritamente aos requisitos de dry-run.
+
+---
+
+## 33. Auditoria integrada final de prontidão pré-ativação controlada (23/05/2026, dry-run)
+
+### 33.1. Propósito
+
+Consolidar, em modo leitura, a auditoria integrada final para confirmar se a frente PAD/PROFOR 2022 está **tecnicamente pronta para preparar** uma futura ativação controlada, **sem autorizar ativação ou publicação** nesta etapa.
+
+### 33.2. Comandos executados
+
+- `git status --short` + `git log --oneline -12`;
+- `npm run profor:pad:auditar-pendencias-profundo`;
+- `npm run profor:pad:seguranca-pre-ativacao:dry-run` / `:detalhar` / `:final`;
+- `npm run profor:pad:reconstruir-plano:dry-run`;
+- `npm run profor:pad:comparar-plano:dry-run`;
+- `npm run profor:pad:revalidacao-payloads:auditar`;
+- `npm run validar:syntax`;
+- `npm run validar:services`;
+- `git diff --check`;
+- `git status --short frontend/data/publicados`;
+- `git status --short "*.sqlite*"` / `"*.sqlite-wal"` / `"*.sqlite-shm"`.
+
+### 33.3. Resultados consolidados
+
+- `pendencia_operacional_real = 0` (auditor profundo e auditor final);
+- `bloqueios técnicos ativos = 0` (`totalBloqueiosAtivos`, `totalPayloadsAlteradosAtivos`, `totalPendenciasTecnicasAtivas`);
+- `aptoParaAtivacaoControlada = true` no auditor final;
+- reconstrução: 568 linhas, 15 convênios, 31 impedimentos técnicos categorizados, 0 erros críticos de leitura, 0 instrumentos fora carteira;
+- comparador: 25 diferenças críticas explicadas (12 atualização PAD esperada + 21 pendência técnica residual), 27 ausências confirmadas por decisão, diferença líquida total de saldo ≈ −0,20%;
+- revalidação dos 27 payloads: 100% classificados `revalidacao_por_prevalencia_pad`, chave de divergência preservada em todos os casos;
+- validações: `validar:syntax` (76 arquivos) OK; `validar:services` (130/130 testes) OK; `git diff --check` limpo;
+- isolamento: `frontend/data/publicados/`, `backend/data/onasp.sqlite`, `*.sqlite-wal` e `*.sqlite-shm` sem alteração e sem stage.
+
+### 33.4. Matriz final de segurança (35 itens, todos não bloqueantes)
+
+| Classificação | Quantidade | IDs |
+|---|---|---|
+| `bloqueio_tecnico_residual_retificado` | 1 | `#18` |
+| `historico_nao_reapresentado_revalidado_sem_bloqueio` | 7 | `#25, #26, #27, #28, #75, #77, #78` |
+| `decisao_historica_nao_vigente_com_payload_alterado` | 27 | `#47–#54, #56–#74` (exclui `#55`) |
+
+### 33.5. Artefatos gerados
+
+- `backend/data/relatorios/profor-2022-prontidao-ativacao-controlada-dry-run.json`;
+- `backend/data/relatorios/profor-2022-prontidao-ativacao-controlada-dry-run.md`;
+- relatórios dry-run de auditoria/segurança/reconstrução/comparação/revalidação regenerados em `backend/data/relatorios/` (sem alteração material esperada além de timestamps).
+
+### 33.6. Classificação final
+
+`PRONTO_PARA_PREPARAR_ATIVACAO_CONTROLADA` — sem ressalvas materiais. A aptidão em dry-run **não autoriza ativação nem publicação**.
+
+### 33.7. Próxima etapa recomendada (não executar nesta etapa)
+
+Preparar **roteiro de ativação controlada** contendo: janela de execução restrita, responsáveis técnico e funcional designados, backup integral prévio do SQLite e de `frontend/data/publicados/` com hash, checklist de pré-condições, comandos exatos com flags de segurança e ordem de execução, validações obrigatórias pós-ativação, critérios e comandos de rollback (`git revert` + restauração de SQLite e publicados), proibição explícita de publicar e de avançar para automação Transferegov nesta etapa, e registro prévio do plano nesta documentação (sem registrar nova decisão).
+
+### 33.8. Garantias e escopo preservado
+
+Sem ativação, sem publicação, sem alteração de origem ativa, sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem avanço para automação Transferegov, nenhum alerta real mascarado.

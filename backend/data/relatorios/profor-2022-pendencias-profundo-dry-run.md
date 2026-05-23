@@ -1,6 +1,6 @@
 # PROFOR 2022 — Auditoria profunda de pendências PAD (dry-run)
 
-Gerado em: 2026-05-23T14:54:39.610Z
+Gerado em: 2026-05-23T17:44:11.146Z
 
 Auditoria somente leitura: não registra decisão, não altera status, não publica e não altera o planoAplicacao oficial.
 Reflete o estado atual do banco. Itens com decisão resolutiva (ACEITO/CORRIGIDO) — incluindo a divergência `#24`, já resolvida — são classificados como histórico/saneado e ficam fora da fila operacional.

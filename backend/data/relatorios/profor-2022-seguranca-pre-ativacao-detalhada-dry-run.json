@@ -1,10 +1,10 @@
 {
-  "geradoEm": "2026-05-22T20:12:47.498Z",
+  "geradoEm": "2026-05-23T17:44:28.188Z",
   "modo": "dry-run",
   "fonte": {
     "seguranca": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
-    "segurancaGeradoEm": "2026-05-22T20:12:47.001Z",
-    "sqlite": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite"
+    "segurancaGeradoEm": "2026-05-23T17:44:20.445Z",
+    "sqlite": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite"
   },
   "resumo": {
     "totalBloqueios": 35,
