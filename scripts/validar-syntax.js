@@ -32,6 +32,8 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-pad-politica-snapshots-service.js",
   "backend/services/profor-2022/profor-pad-fila-revisao-snapshots-service.js",
   "backend/services/profor-2022/profor-pad-rateio-quantidade-fixa-service.js",
+  "backend/services/profor-2022/profor-pad-integracao-fila-oficial-dry-run-service.js",
+  "backend/services/profor-2022/profor-pad-rateio-quantidade-fixa-reconstrucao-dry-run-service.js",
   "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js",
   "backend/services/profor-2022/profor-saldo-residual-service.js",
@@ -56,6 +58,9 @@ const ARQUIVOS = [
   "backend/scripts/comparar-snapshots-pad-profor-2022.js",
   "backend/scripts/gerar-fila-revisao-snapshots-pad-profor-2022.js",
   "backend/scripts/simular-rateio-quantidade-fixa-pad-profor-2022.js",
+  "backend/scripts/auditar-promocao-snapshot-anterior-oficial-pad-profor-2022.js",
+  "backend/scripts/simular-integracao-fila-oficial-snapshots-pad-profor-2022.js",
+  "backend/scripts/simular-reconstrucao-com-rateio-quantidade-fixa-pad-profor-2022.js",
   "backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js",
   "backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js",
   "backend/scripts/detalhar-seguranca-pre-ativacao-pad-profor-2022.js",
@@ -89,7 +94,10 @@ const ARQUIVOS = [
   "tests/services/profor-pad-comparador-snapshots.test.js",
   "tests/services/profor-pad-politica-snapshots.test.js",
   "tests/services/profor-pad-fila-revisao-snapshots.test.js",
-  "tests/services/profor-pad-rateio-quantidade-fixa.test.js"
+  "tests/services/profor-pad-rateio-quantidade-fixa.test.js",
+  "tests/services/profor-pad-promocao-snapshot-anterior.test.js",
+  "tests/services/profor-pad-integracao-fila-oficial-dry-run.test.js",
+  "tests/services/profor-pad-rateio-fixo-reconstrucao-dry-run.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {
