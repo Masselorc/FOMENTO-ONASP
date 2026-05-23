@@ -1,5 +1,23 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: evolução da fotografia canônica PAD e comparador v0.2
+
+- **Objetivo:** corrigir limitações da versão inicial da fotografia canônica e do comparador de snapshots.
+- **Problemas tratados:** chave frágil por descrição crua, ausência de descrição normalizada, ausência de hash por item, ausência de bloqueio técnico por checksum inválido, ausência de classificação textual/diacrítica.
+- **Resultado:** fotografia canônica v0.2 e comparador v0.2 com chaves materiais, chaves de comparação, hash por item, avisos, bloqueios técnicos e tipos de divergência ampliados.
+- **Arquivos alterados/criados:**
+  - `backend/services/profor-2022/profor-pad-fotografia-service.js`;
+  - `backend/services/profor-2022/profor-pad-comparador-snapshots-service.js`;
+  - `backend/scripts/comparar-snapshots-pad-profor-2022.js`;
+  - `tests/services/profor-pad-fotografia.test.js`;
+  - `tests/services/profor-pad-comparador-snapshots.test.js`;
+  - `backend/data/relatorios/profor-2022-pad-fotografia-canonica.json`;
+  - `backend/data/relatorios/profor-2022-pad-fotografia-canonica.md`;
+  - `backend/data/relatorios/profor-2022-pad-snapshot-e-comparador-implementacao.md`.
+- **Validações:** `git diff --check` OK (apenas avisos LF/CRLF); `npm run validar:syntax` OK (81 arquivos); `npm run validar:services` OK (173/173 testes); `npm run profor:pad:comparar-snapshots:dry-run` OK.
+- **Preservações:** `frontend/data/publicados/`, `.env`, SQLite/WAL/SHM e Transferegov não foram alterados/acionados.
+- **Próximos passos:** integração futura com fila de revisão e rateio por área + quantidade fixa.
+
 ## 23/05/2026 — PROFOR 2022: Evolução PAD - Fotografia Canônica e Comparador de Snapshots (Dry-Run)
 
 - **Objetivo:** definir e implementar a fotografia canônica PAD estruturada e o comparador de snapshots homogêneos (PAD x PAD) em modo estritamente dry-run, garantindo integridade e estabilidade por checksum.
