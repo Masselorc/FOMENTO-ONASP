@@ -29,6 +29,9 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-pad-plano-comparador-service.js",
   "backend/services/profor-2022/profor-pad-fotografia-service.js",
   "backend/services/profor-2022/profor-pad-comparador-snapshots-service.js",
+  "backend/services/profor-2022/profor-pad-politica-snapshots-service.js",
+  "backend/services/profor-2022/profor-pad-fila-revisao-snapshots-service.js",
+  "backend/services/profor-2022/profor-pad-rateio-quantidade-fixa-service.js",
   "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js",
   "backend/services/profor-2022/profor-saldo-residual-service.js",
@@ -51,6 +54,8 @@ const ARQUIVOS = [
   "backend/scripts/reconstruir-plano-pad-profor-2022.js",
   "backend/scripts/comparar-plano-pad-profor-2022.js",
   "backend/scripts/comparar-snapshots-pad-profor-2022.js",
+  "backend/scripts/gerar-fila-revisao-snapshots-pad-profor-2022.js",
+  "backend/scripts/simular-rateio-quantidade-fixa-pad-profor-2022.js",
   "backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js",
   "backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js",
   "backend/scripts/detalhar-seguranca-pre-ativacao-pad-profor-2022.js",
@@ -81,7 +86,10 @@ const ARQUIVOS = [
   "tests/services/profor-saldo-residual.test.js",
   "tests/services/auditar-revalidacao-payloads-alterados.test.js",
   "tests/services/profor-pad-fotografia.test.js",
-  "tests/services/profor-pad-comparador-snapshots.test.js"
+  "tests/services/profor-pad-comparador-snapshots.test.js",
+  "tests/services/profor-pad-politica-snapshots.test.js",
+  "tests/services/profor-pad-fila-revisao-snapshots.test.js",
+  "tests/services/profor-pad-rateio-quantidade-fixa.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {

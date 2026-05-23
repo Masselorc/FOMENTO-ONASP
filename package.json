@@ -34,6 +34,8 @@
     "profor:pad:reconstruir-plano:dry-run": "node backend/scripts/reconstruir-plano-pad-profor-2022.js",
     "profor:pad:comparar-plano:dry-run": "node backend/scripts/comparar-plano-pad-profor-2022.js",
     "profor:pad:comparar-snapshots:dry-run": "node backend/scripts/comparar-snapshots-pad-profor-2022.js",
+    "profor:pad:snapshots:gerar-fila-revisao:dry-run": "node backend/scripts/gerar-fila-revisao-snapshots-pad-profor-2022.js",
+    "profor:pad:rateio-quantidade-fixa:dry-run": "node backend/scripts/simular-rateio-quantidade-fixa-pad-profor-2022.js",
     "profor:pad:decisoes:auditar-aplicacao-dry-run": "node backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js",
     "profor:pad:seguranca-pre-ativacao:dry-run": "node backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js",
     "profor:pad:seguranca-pre-ativacao:detalhar": "node backend/scripts/detalhar-seguranca-pre-ativacao-pad-profor-2022.js",
