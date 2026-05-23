@@ -91,7 +91,7 @@ function gerarHashPayloadDivergencia(divergencia) {
  * Classifica o estado de uma decisão resolutiva quanto ao payload da
  * divergência. Função pura.
  */
-function classificarPayloadDecisao({ temDivergencia, temSnapshot, hashSnapshot, hashAtual, liberaAtivacao }) {
+function classificarPayloadDecisao({ temDivergencia, temSnapshot, hashSnapshot, hashAtual, liberaAtivacao, ehVigente }) {
   if (!temDivergencia) {
     return { classificacao: "divergencia_nao_encontrada_para_decisao", bloqueia: true };
   }
@@ -101,7 +101,8 @@ function classificarPayloadDecisao({ temDivergencia, temSnapshot, hashSnapshot, 
   if (hashSnapshot === hashAtual) {
     return { classificacao: "payload_preservado", bloqueia: false };
   }
-  return { classificacao: "payload_alterado_apos_decisao", bloqueia: true };
+  const bloqueia = ehVigente !== undefined ? Boolean(ehVigente) : true;
+  return { classificacao: "payload_alterado_apos_decisao", bloqueia };
 }
 
 /**
@@ -156,6 +157,15 @@ function auditarPayloadDecisoes() {
     liberadorasPorDecisaoId.set(registro.decisaoId, liberaAtivacao);
   }
 
+  const vigentePorDivergenciaId = new Map();
+  for (const linha of linhas) {
+    const divId = linha.divergencia_id;
+    const decId = linha.decisao_id;
+    if (!vigentePorDivergenciaId.has(divId) || decId > vigentePorDivergenciaId.get(divId)) {
+      vigentePorDivergenciaId.set(divId, decId);
+    }
+  }
+
   const auditadas = [];
   for (const linha of linhas) {
     const temDivergencia = linha.divergencia_db_id !== null && linha.divergencia_db_id !== undefined;
@@ -169,6 +179,7 @@ function auditarPayloadDecisoes() {
     const hashSnapshot = temSnapshot ? snapshot.payloadHashNoMomentoDaDecisao : null;
     const hashAtual = temDivergencia ? gerarHashPayloadDivergencia(linha) : null;
     const liberaAtivacao = liberadorasPorDecisaoId.get(linha.decisao_id) === true;
+    const ehVigente = vigentePorDivergenciaId.get(linha.divergencia_id) === linha.decisao_id;
 
     const classificacao = classificarPayloadDecisao({
       temDivergencia,
@@ -176,6 +187,7 @@ function auditarPayloadDecisoes() {
       hashSnapshot,
       hashAtual,
       liberaAtivacao,
+      ehVigente,
     });
 
     auditadas.push({

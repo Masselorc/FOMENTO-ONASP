@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T12:23:08.833Z",
+  "geradoEm": "2026-05-23T14:22:33.892Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
@@ -26,22 +26,22 @@
     "segurancaJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 36637
+      "tamanhoBytes": 32608
     },
     "reconstrucaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 851927
+      "tamanhoBytes": 845049
     },
     "comparacaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 409622
+      "tamanhoBytes": 402743
     },
     "comparacaoMd": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 3411
+      "tamanhoBytes": 3410
     },
     "regressaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-regressao-saneamentos-dry-run.json",
@@ -56,7 +56,7 @@
   },
   "resumo": {
     "pendenciaOperacionalReal": 0,
-    "totalBloqueiosSeguranca": 35,
+    "totalBloqueiosSeguranca": 26,
     "totalBloqueiosDetalhados": 35,
     "totalDivergenciasUnicasMatriz": 35,
     "totalDecisoesPayloadAlterado": 28,
@@ -85,7 +85,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 153,
+      "decisaoId": 188,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 153,
@@ -122,7 +122,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 154,
+      "decisaoId": 189,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 154,
@@ -159,7 +159,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 155,
+      "decisaoId": 190,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 155,
@@ -196,7 +196,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 156,
+      "decisaoId": 191,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 156,
@@ -233,7 +233,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 157,
+      "decisaoId": 192,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 157,
@@ -270,7 +270,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 158,
+      "decisaoId": 193,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 158,
@@ -307,7 +307,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 159,
+      "decisaoId": 194,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 159,
@@ -344,7 +344,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 160,
+      "decisaoId": 195,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 160,
@@ -1486,7 +1486,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 153,
+      "decisaoId": 188,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 153,
@@ -1523,7 +1523,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 154,
+      "decisaoId": 189,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 154,
@@ -1560,7 +1560,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 155,
+      "decisaoId": 190,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 155,
@@ -1597,7 +1597,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 156,
+      "decisaoId": 191,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 156,
@@ -1634,7 +1634,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 157,
+      "decisaoId": 192,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 157,
@@ -1671,7 +1671,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 158,
+      "decisaoId": 193,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 158,
@@ -1708,7 +1708,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 159,
+      "decisaoId": 194,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 159,
@@ -1745,7 +1745,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 160,
+      "decisaoId": 195,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 160,

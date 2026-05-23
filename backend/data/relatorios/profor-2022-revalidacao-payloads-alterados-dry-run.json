@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T12:58:51.617Z",
+  "geradoEm": "2026-05-23T14:22:34.425Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
@@ -64,8 +64,8 @@
       "chaveDivergencia": "item_ausente_no_pad:e4caa4f2de2619b3",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 153,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 188,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
@@ -104,8 +104,8 @@
       "chaveDivergencia": "item_ausente_no_pad:8c26f66ea1caca0d",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 154,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 189,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
@@ -144,8 +144,8 @@
       "chaveDivergencia": "item_ausente_no_pad:85aa4ec3ed492a6c",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 155,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 190,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
@@ -184,8 +184,8 @@
       "chaveDivergencia": "item_ausente_no_pad:6695decd0ced4c5b",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 156,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 191,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
@@ -224,8 +224,8 @@
       "chaveDivergencia": "item_ausente_no_pad:ca5226c5cd9dcaf7",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 157,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 192,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
@@ -264,8 +264,8 @@
       "chaveDivergencia": "item_ausente_no_pad:57810d766febc453",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 158,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 193,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
@@ -304,8 +304,8 @@
       "chaveDivergencia": "item_ausente_no_pad:5d314260fd60be80",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 159,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 194,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
@@ -344,8 +344,8 @@
       "chaveDivergencia": "item_ausente_no_pad:da1129758bd0e411",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoVigenteId": 160,
-      "totalDecisoesResolutivas": 1,
+      "decisaoVigenteId": 195,
+      "totalDecisoesResolutivas": 2,
       "totalDecisoesAfetadas": 1,
       "decisoesAfetadas": [
         {
