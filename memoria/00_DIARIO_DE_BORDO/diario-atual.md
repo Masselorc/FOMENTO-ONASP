@@ -1,6 +1,21 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: Registro de baseline estável pós-homologação
+
+- **Objetivo:** registrar formalmente a baseline estável pós-homologação técnica e funcional do ciclo PAD/PROFOR 2022, sem alteração de dados funcionais ou execução de novas rotinas.
+- **Parâmetros da Baseline:**
+  - **Commit de Publicação:** `06c4cd7`
+  - **Commit de Homologação:** `288fb99`
+  - **Arquivos Estáticos Publicados:** `aplicacao.json` (origem ativa `"reconstrucao-pad"`), `dashboard-geral.json`, `resumo-publicacao.json`.
+  - **Estado dos Testes:** 153/153 testes de serviço executados com sucesso pós-homologação, `validar:syntax` retornado com sucesso.
+- **Salvaguardas Operacionais:**
+  - Rollbacks de dados, arquivos de publicação e base local SQLite documentados e preservados no repositório de backup externo.
+  - Proibição expressa de execução e acionamento de rotinas automáticas integradas ao Transferegov (`atualizar:profor-2022`, `publicar:profor-2022`) fora de uma frente de trabalho dedicada e previamente autorizada.
+- **Artefatos criados/alterados:**
+  - [profor-2022-baseline-pos-homologacao.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-baseline-pos-homologacao.md)
+
 ## 23/05/2026 — PROFOR 2022: HOMOLOGAÇÃO pós-publicação e encerramento técnico do ciclo
+
 
 - **Objetivo:** registrar a homologação pós-publicação e consolidar o encerramento técnico do ciclo PAD/PROFOR 2022 (sem nova publicação, sem alteração de banco de dados, sem alteração do `.env` ou acionamento do Transferegov).
 - **Validação técnica de homologação pós-publicação:**
