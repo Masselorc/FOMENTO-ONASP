@@ -1,6 +1,19 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: Inventário de resíduos legados e auditoria de fallbacks
+
+- **Objetivo:** inventariar resíduos legados (planilhas locais, parsers legados de abas por UF e scripts de sincronização), classificar riscos e verificar a ocorrência de fallbacks silenciosos para origens obsoletas.
+- **Resultado da Auditoria de Fallback:**
+  - **Backend:** Não foram identificados fallbacks silenciosos para a origem `reconstrucao-pad`. Caso o arquivo de reconstrução esteja ausente ou corrompido, o backend lança exceções explícitas (`ReconstrucaoPadIndisponivelError` / `ReconstrucaoPadInvalidaError`) e aborta a publicação.
+  - **Frontend:** Implementa fallback resiliente em ambiente local/API (caindo para planilha em cache com aviso no console caso o servidor esteja offline), mas consome estritamente o catálogo congelado publicado no modo estático de produção (GitHub Pages).
+- **Classificação dos Resíduos:**
+  - `arquivoPlanilhaConvenios`, `Planilhas/` e helpers `xlsx.readFile` / `carregarPlanoAplicacaoLocal` / `extrairPlanoAplicacaoProforDoWorkbook` classificados como **Manter temporariamente como fallback explícito** para compatibilidade com o desenvolvimento de modos clássicos locais.
+  - Scripts do Transferegov classificados como **Manter como histórico/diagnóstico** sob proibição rígida de execução.
+- **Artefatos criados/alterados:**
+  - [profor-2022-limpeza-legado-pad-linha-base.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-limpeza-legado-pad-linha-base.md)
+
 ## 23/05/2026 — PROFOR 2022: Registro de baseline estável pós-homologação
+
 
 - **Objetivo:** registrar formalmente a baseline estável pós-homologação técnica e funcional do ciclo PAD/PROFOR 2022, sem alteração de dados funcionais ou execução de novas rotinas.
 - **Parâmetros da Baseline:**
