@@ -2570,3 +2570,43 @@ A ativação controlada **não publica**. Publicação é etapa posterior, com *
 ### 34.7. Garantias e escopo preservado
 
 Sem ativação, sem publicação, sem alteração de origem ativa, sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem execução de script de ativação ou de publicação, sem avanço para automação Transferegov, nenhum alerta real mascarado.
+
+---
+
+## 35. Origem de dados `reconstrucao-pad` (23/05/2026, capacidade implementada)
+
+### 35.1. Motivação
+
+O pré-voo da ativação controlada detectou que o §10.1 do roteiro v1.0 referenciava um mecanismo inexecutável: não havia origem `reconstrucao-pad` em `profor-origem-service.js` e não havia planilha-resultado para "repontar `arquivoPlanilhaConvenios`". A ativação foi corretamente abortada e esta seção registra a implementação que viabiliza a futura ativação — **sem alterar a origem ativa**.
+
+### 35.2. O que mudou no código
+
+- `backend/services/profor-2022/profor-origem-service.js`: adicionado `"reconstrucao-pad"` a `ORIGENS_DADOS_PROFOR_2022`; exportada a flag `deveUsarReconstrucaoPadProfor2022`. `ORIGEM_PADRAO_PROFOR_2022` **permanece** `"banco-cache"`. As origens `"planilha"` e `"banco-cache"` continuam suportadas.
+- `backend/services/profor-2022/profor-pad-origem-reconstrucao-service.js` (novo): leitor + validador + adaptador para o relatório dry-run reconstruído. Exporta `carregarPlanoAplicacaoReconstrucaoPad`, `validarEstruturaReconstrucaoPad`, `adaptarItemReconstrucaoPad`, `CAMINHO_PADRAO_RECONSTRUCAO_PAD`, `CAMPOS_OBRIGATORIOS_ITEM` e os erros tipados `ReconstrucaoPadIndisponivelError` e `ReconstrucaoPadInvalidaError`.
+- `backend/services/dashboard-publication-service.js::montarDadosProfor2022Publicacao`: terceiro branch para `origemDados === "reconstrucao-pad"` — usa o novo serviço, propaga `origemDados: "reconstrucao-pad"` ao consolidado e **não** chama `validarConsolidadoProfor2022Publicavel` (gate de publicação `banco-cache`).
+
+### 35.3. Contrato da origem `reconstrucao-pad`
+
+- **Somente leitura.** O serviço não importa `init-db`, `db/`, `onasp.sqlite`, scripts `publicar-*`, Transferegov, e não chama `fs.writeFile*`/`fs.appendFile*` — coberto por teste estático.
+- **Falha explícita.** Se o arquivo `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json` estiver ausente, ilegível ou inválido (sem `planoAplicacaoReconstruido`, payload vazio, item sem campo obrigatório, campo numérico inválido, mínimo de linhas não atingido ou contagem de convênios divergente), o carregamento lança `ReconstrucaoPadIndisponivelError` ou `ReconstrucaoPadInvalidaError`. **Não há fallback silencioso para planilha.**
+- **Campos canônicos.** O adaptador projeta exatamente: `uf`, `instrumento`, `numero`, `ano`, `area`, `natureza`, `descricao`, `quantidade`, `valorUnitario`, `valorPrevisto`, `valorExecutado`, `saldo`, `saldoEconomicidade`, `percentualExecucao` (mesmo formato produzido por `extrairPlanoAplicacaoProforDoWorkbook`).
+- **Sem efeito colateral no banco.** O consolidado é montado em memória com o `planoAplicacao` reconstruído; `validarConsolidadoProfor2022Publicavel` não é chamado porque essa origem **não publica**.
+
+### 35.4. Como ativar (FUTURO, fora desta etapa)
+
+Forma canônica:
+
+```text
+set PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad     # cmd.exe
+$env:PROFOR_2022_ORIGEM_DADOS = "reconstrucao-pad" # PowerShell
+```
+
+A ativação concreta **exige** novo pré-voo e nova autorização expressa, conforme o roteiro `backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md` v1.1, §3, §8 e §10. Publicação continua proibida (etapa separada com autorização própria). Automação Transferegov continua fora de escopo.
+
+### 35.5. Testes
+
+`tests/services/profor-pad-origem-reconstrucao.test.js` — 23 testes cobrindo aceitação da nova origem, fallback preservado, leitura do relatório real (568 linhas / 15 convênios), erros tipados, contrato somente-leitura e ausência de imports proibidos. `validar:services` total: **153/153** passando.
+
+### 35.6. Garantias e escopo preservado
+
+Sem ativação, sem publicação, sem alteração de origem ativa (default permanece `banco-cache`), sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem execução de script de ativação ou de publicação, sem avanço para automação Transferegov, sem remoção das origens `"planilha"` e `"banco-cache"`, nenhum alerta real mascarado.

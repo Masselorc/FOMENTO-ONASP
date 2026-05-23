@@ -3,6 +3,9 @@ const xlsx = require("xlsx");
 const { resolverOrigemDadosProfor2022 } = require("./profor-2022/profor-origem-service");
 const { montarConsolidadoProfor2022 } = require("./profor-2022/profor-consolidado-service");
 const {
+  carregarPlanoAplicacaoReconstrucaoPad,
+} = require("./profor-2022/profor-pad-origem-reconstrucao-service");
+const {
   obterUltimaAtualizacaoDadosProfor2022
 } = require("./profor-2022/profor-atualizacao-meta-service");
 
@@ -563,6 +566,28 @@ function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {
     origemDados: opcoes.origemDados,
     detalhado: true
   });
+
+  if (origemResolvida.origemDados === "reconstrucao-pad") {
+    const carregar = opcoes.carregarPlanoReconstrucaoPad || carregarPlanoAplicacaoReconstrucaoPad;
+    const { planoAplicacao: planoReconstruido, metadados } = carregar({
+      caminho: opcoes.caminhoReconstrucaoPad,
+      conveniosEsperados: opcoes.conveniosEsperadosReconstrucaoPad,
+      minimoLinhasExigido: opcoes.minimoLinhasExigidoReconstrucaoPad,
+    });
+    const montarConsolidado = opcoes.montarConsolidado || montarConsolidadoProfor2022;
+    const consolidado = montarConsolidado({
+      origemDados: "reconstrucao-pad",
+      planoAplicacao: planoReconstruido,
+    });
+    return anexarUltimaAtualizacaoDados(anexarMetadadosOrigemProfor2022(consolidado, {
+      origemDados: "reconstrucao-pad",
+      origemDadosEfetiva: "reconstrucao-pad",
+      avisos: origemResolvida.avisos || [],
+      diagnostico: {
+        reconstrucaoPad: metadados,
+      },
+    }));
+  }
 
   if (origemResolvida.origemDados !== "banco-cache") {
     const dadosPlanilha = extrairProfor2022DoWorkbook(workbook, catalogoAplicacao);

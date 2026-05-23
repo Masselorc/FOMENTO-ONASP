@@ -1,7 +1,11 @@
 {
   "geradoEm": "2026-05-23T00:00:00.000Z",
-  "versao": "1.0",
+  "versao": "1.1",
   "tipo": "roteiro_operacional",
+  "historicoVersoes": [
+    { "versao": "1.0", "data": "2026-05-23", "descricao": "Versao inicial; mecanismo §10.1 descrito como 'repontar arquivoPlanilhaConvenios OU ativar flag' (capacidade ainda nao implementada)." },
+    { "versao": "1.1", "data": "2026-05-23", "descricao": "Mecanismo §10.1 atualizado para PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad, viabilizado pela frente que adicionou a origem reconstrucao-pad ao profor-origem-service e criou profor-pad-origem-reconstrucao-service.js (somente leitura, sem fallback silencioso). Default ORIGEM_PADRAO_PROFOR_2022 permanece 'banco-cache'. Origens 'planilha' e 'banco-cache' preservadas. Ativacao continua exigindo novo pre-voo." }
+  ],
   "estado": "documentacao_nao_executar",
   "preRequisito": {
     "relatorioProntidao": "backend/data/relatorios/profor-2022-prontidao-ativacao-controlada-dry-run.md",
@@ -130,14 +134,15 @@
   },
   "comandosAtivacaoFutura": {
     "status": "NAO_EXECUTAR_NESTA_ETAPA",
-    "formaEsperada": "substituicao controlada da origem ativa do planoAplicacao (planilha das abas UF) pela origem reconstruida a partir dos relatorios PAD/PROFOR 2022, preservando fallback",
+    "formaEsperada": "selecionar PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad para que o fluxo do planoAplicacao consuma o relatorio dry-run reconstruido via profor-pad-origem-reconstrucao-service.js, preservando fallback para banco-cache e planilha",
     "passos": [
-      "10.1 repontar catalogoAplicacao.configuracao.arquivoPlanilhaConvenios para a nova fonte OU ativar flag formal de leitura da reconstrucao PAD, conforme decisao tecnica formalizada na janela",
+      "10.1 selecionar a origem reconstrucao-pad: 'set PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad' (cmd) ou '$env:PROFOR_2022_ORIGEM_DADOS = \"reconstrucao-pad\"' (PowerShell); patch exclusivo, apenas no mecanismo de selecao da origem, fallback preservado, arquivo de reconstrucao integro com hash registrado em <RET>/",
       "10.2 recarregar servicos com cache em memoria (se aplicavel), sem reiniciar processos em producao sem aviso",
       "10.3 NAO chamar publicar:dados, NAO chamar publicar:profor-2022, NAO chamar atualizar:profor-2022, NAO chamar nenhum script Transferegov"
     ],
-    "garantiaNaoPublicacaoAcoplada": "A ativacao nao pode disparar publicacao. Se o script de ativacao chamar publicar-* ou Transferegov, abortar e tratar como bug bloqueante.",
-    "garantiaPRExclusivo": "PR de ativacao deve conter APENAS o catalogo/flag de origem, sem outros arquivos"
+    "garantiaNaoPublicacaoAcoplada": "O servico profor-pad-origem-reconstrucao-service.js e somente leitura, sem require de publicar-*, sem require de init-db/SQLite, sem require de Transferegov, sem fs.writeFile* (coberto por teste estatico em tests/services/profor-pad-origem-reconstrucao.test.js).",
+    "garantiaPRExclusivo": "PR de ativacao deve conter APENAS o mecanismo de selecao da origem (env var/wrapper), sem outros arquivos.",
+    "garantiaFalhaExplicita": "Se PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad for selecionado mas o arquivo de reconstrucao estiver ausente ou invalido, o carregamento lanca ReconstrucaoPadIndisponivelError ou ReconstrucaoPadInvalidaError — nao ha fallback silencioso para planilha; operador deve abortar e ir direto para §14 rollback."
   },
   "comandosValidacaoPosAtivacao": [
     "git status --short",

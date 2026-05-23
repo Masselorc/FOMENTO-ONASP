@@ -1,6 +1,6 @@
 # PROFOR 2022 — Roteiro de ativação controlada (documentação, NÃO EXECUTAR nesta etapa)
 
-- **Versão do roteiro:** 1.0
+- **Versão do roteiro:** 1.1 (mecanismo §10.1 atualizado para `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad`, viabilizado pelo commit que implementou a origem; ativação continua exigindo novo pré-voo)
 - **Data de elaboração:** 2026-05-23
 - **Estado de pré-requisito:** auditoria integrada final de prontidão concluída e versionada no commit `6b89b8c commit` (vide `backend/data/relatorios/profor-2022-prontidao-ativacao-controlada-dry-run.md`).
 - **Classificação de prontidão:** `PRONTO_PARA_PREPARAR_ATIVACAO_CONTROLADA`.
@@ -176,19 +176,26 @@ git status --short      | Tee-Object "<RET>/git-status-pre-ativacao.txt"
 
 > Cada comando deste bloco está **proibido nesta etapa**. Estão listados apenas como referência operacional para futura execução autorizada. A ativação **não** chama `npm run publicar:*` nem dispara automação Transferegov.
 
-> **Forma esperada da ativação:** substituição controlada da origem ativa do `planoAplicacao` (planilha das abas/guias por UF) pela origem reconstruída a partir dos relatórios PAD/PROFOR 2022, **preservando fallback**. A ativação consiste em (i) repointar `catalogoAplicacao.configuracao.arquivoPlanilhaConvenios` para a nova fonte ou (ii) ativar a flag de leitura da reconstrução PAD prevista na frente, conforme decisão técnica formalizada na janela.
+> **Forma esperada da ativação (atualizada):** chavear a variável de ambiente `PROFOR_2022_ORIGEM_DADOS` para o valor `reconstrucao-pad`, fazendo o fluxo do `planoAplicacao` consumir o relatório dry-run reconstruído (`backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`) via o serviço `backend/services/profor-2022/profor-pad-origem-reconstrucao-service.js`. O padrão `ORIGEM_PADRAO_PROFOR_2022 = "banco-cache"` **não muda** — a ativação se dá exclusivamente pela seleção explícita da origem `reconstrucao-pad`. As origens `"planilha"` e `"banco-cache"` permanecem como fallback funcional.
 
 ```text
 # 10.1. [NÃO EXECUTAR NESTA ETAPA]
-#       Repontar a origem ativa para a nova fonte PAD reconstruída,
-#       OU ativar a flag formal de leitura da reconstrução PAD,
-#       conforme decisão técnica formalizada na janela.
+#       Selecionar a origem reconstrucao-pad para o processo que vai consumir
+#       o planoAplicacao reconstruído. Forma canônica:
+#
+#         set PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad
+#         (PowerShell:  $env:PROFOR_2022_ORIGEM_DADOS = "reconstrucao-pad")
+#
 #       O patch a ser aplicado deve:
-#         - alterar APENAS o catálogo da aplicação (campo arquivoPlanilhaConvenios)
-#           OU a flag de origem prevista;
-#         - preservar fallback explícito para a origem antiga;
+#         - alterar APENAS o mecanismo de seleção da origem (env var, script
+#           de orquestração ou wrapper equivalente) e/ou ajustes pontuais que
+#           tornem a seleção persistente no ambiente alvo;
+#         - preservar fallback explícito para "banco-cache" e "planilha";
 #         - não tocar em decisões, divergências, logs nem relatórios;
-#         - ser revisado em PR exclusivo de ativação, sem outros arquivos.
+#         - ser revisado em PR exclusivo de ativação, sem outros arquivos;
+#         - garantir que o arquivo backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json
+#           está presente, íntegro e corresponde ao snapshot da janela
+#           (hash registrado em <RET>/).
 
 # 10.2. [NÃO EXECUTAR NESTA ETAPA]
 #       Recarregar serviços que mantêm cache em memória (se aplicável),
@@ -201,7 +208,9 @@ git status --short      | Tee-Object "<RET>/git-status-pre-ativacao.txt"
 #       NÃO chamar: nenhum script Transferegov.
 ```
 
-> **Garantia de não-publicação acoplada:** a ativação **não pode** disparar publicação. Se o script de ativação a ser implementado fizer qualquer chamada direta a `publicar-*` ou a fluxos Transferegov, **abortar e tratar como bug bloqueante**.
+> **Garantia de não-publicação acoplada:** a ativação **não pode** disparar publicação. O serviço `profor-pad-origem-reconstrucao-service.js` é estritamente leitura (não importa SQLite, não importa scripts `publicar-*`, não importa Transferegov, não escreve arquivos), conforme coberto pelos testes em `tests/services/profor-pad-origem-reconstrucao.test.js`. Se algum script de ativação fizer qualquer chamada direta a `publicar-*` ou a fluxos Transferegov, **abortar e tratar como bug bloqueante**.
+
+> **Comportamento de falha explícita:** se `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` for selecionado mas o arquivo de reconstrução estiver ausente ou inválido, o carregamento lança `ReconstrucaoPadIndisponivelError` ou `ReconstrucaoPadInvalidaError`. **Não há fallback silencioso para planilha** — o operador deve abortar e ir direto para o §14 (rollback).
 
 ## 11. Comandos de validação pós-ativação
 

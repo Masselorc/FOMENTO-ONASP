@@ -1,4 +1,4 @@
-const ORIGENS_DADOS_PROFOR_2022 = Object.freeze(["planilha", "banco-cache"]);
+const ORIGENS_DADOS_PROFOR_2022 = Object.freeze(["planilha", "banco-cache", "reconstrucao-pad"]);
 const ORIGEM_PADRAO_PROFOR_2022 = "banco-cache";
 
 function listarOrigensDadosProfor2022() {
@@ -46,6 +46,10 @@ function deveUsarPlanilhaProfor2022(opcoes = {}) {
   return resolverOrigemDadosProfor2022(opcoes) === "planilha";
 }
 
+function deveUsarReconstrucaoPadProfor2022(opcoes = {}) {
+  return resolverOrigemDadosProfor2022(opcoes) === "reconstrucao-pad";
+}
+
 module.exports = {
   ORIGENS_DADOS_PROFOR_2022,
   ORIGEM_PADRAO_PROFOR_2022,
@@ -54,4 +58,5 @@ module.exports = {
   resolverOrigemDadosProfor2022,
   deveUsarBancoCacheProfor2022,
   deveUsarPlanilhaProfor2022,
+  deveUsarReconstrucaoPadProfor2022,
 };

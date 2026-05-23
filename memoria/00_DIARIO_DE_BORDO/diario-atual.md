@@ -1,5 +1,27 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: implementação da origem `reconstrucao-pad` (capacidade, sem ativação)
+
+- **Motivação:** pré-voo da ativação controlada (tarefa anterior) detectou que o §10.1 do roteiro v1.0 referenciava um mecanismo inexistente — não havia origem `reconstrucao-pad` em `profor-origem-service.js` e não havia planilha-resultado para "repontar `arquivoPlanilhaConvenios`". Ativação foi corretamente abortada e esta frente entregou a capacidade que faltava.
+- **Mudanças de código:**
+  - [backend/services/profor-2022/profor-origem-service.js](FOMENTO-ONASP/backend/services/profor-2022/profor-origem-service.js): adicionado `"reconstrucao-pad"` a `ORIGENS_DADOS_PROFOR_2022` e exportada a flag `deveUsarReconstrucaoPadProfor2022`. **`ORIGEM_PADRAO_PROFOR_2022` permanece `"banco-cache"`** — sem mudança de default nesta etapa.
+  - [backend/services/profor-2022/profor-pad-origem-reconstrucao-service.js](FOMENTO-ONASP/backend/services/profor-2022/profor-pad-origem-reconstrucao-service.js) (novo): leitor + validador + adaptador para o relatório `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`. Erros explícitos `ReconstrucaoPadIndisponivelError` / `ReconstrucaoPadInvalidaError`; nenhum fallback silencioso. Adaptador projeta exatamente os 14 campos canônicos do `planoAplicacao` (uf, instrumento, numero, ano, area, natureza, descricao, quantidade, valorUnitario, valorPrevisto, valorExecutado, saldo, saldoEconomicidade, percentualExecucao). Não importa SQLite/init-db, `publicar-*` nem Transferegov, e não escreve arquivos (somente leitura).
+  - [backend/services/dashboard-publication-service.js](FOMENTO-ONASP/backend/services/dashboard-publication-service.js): adicionado terceiro branch em `montarDadosProfor2022Publicacao` para `origemDados === "reconstrucao-pad"` — usa o novo serviço e propaga `origemDados` para o consolidado, sem chamar `validarConsolidadoProfor2022Publicavel` (gate de publicação `banco-cache`).
+- **Testes novos:** [tests/services/profor-pad-origem-reconstrucao.test.js](FOMENTO-ONASP/tests/services/profor-pad-origem-reconstrucao.test.js) com 23 testes cobrindo:
+  - aceitação da nova origem por `normalizarOrigemDadosProfor2022` e flags por origem;
+  - fallback para padrão quando origem inválida (sem remover origens antigas);
+  - leitura do relatório real bate **568 linhas / 15 convênios** com todos os campos canônicos;
+  - rejeição explícita de payload sem `planoAplicacaoReconstruido`, payload vazio, item sem campo obrigatório, campo numérico inválido, mínimo de linhas não atingido e contagem de convênios divergente;
+  - arquivo ausente e JSON malformado → `Error` específico (sem fallback);
+  - inspeção estática do módulo: sem `require` de publicação, SQLite/init-db, Transferegov; sem `fs.writeFile*` (origem é somente leitura).
+- **Validações:** `npm run validar:syntax` → 76 arquivos OK; `npm run validar:services` → **153/153** testes passando (130 anteriores + 23 novos); bateria dry-run completa preservou `pendenciaOperacionalReal = 0`, `totalBloqueiosAtivos = 0`, `aptoParaAtivacaoControlada = true`, reconstrução 568/15, comparador 25 diferenças críticas explicadas (diferença líquida saldo idêntica à fotografia da prontidão).
+- **Documentação atualizada:**
+  - [backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md](FOMENTO-ONASP/backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md) v1.1 — §10.1 reescrito com o comando real `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad`, garantia de falha explícita e fallback preservado;
+  - [backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.json](FOMENTO-ONASP/backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.json) v1.1 — `historicoVersoes` adicionado; `comandosAtivacaoFutura.passos[10.1]` atualizado; novas garantias `garantiaFalhaExplicita` e `garantiaNaoPublicacaoAcoplada` reescrita citando os testes estáticos;
+  - [memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md](FOMENTO-ONASP/memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-automacao-planos-aplicacao.md) — seção 35 (origem `reconstrucao-pad`).
+- **Isolamento confirmado:** `frontend/data/publicados/` vazio, `*.sqlite*`/`*.sqlite-wal`/`*.sqlite-shm` vazios e não versionados, `git diff --check` limpo (apenas avisos LF/CRLF).
+- **Garantias e escopo preservado:** sem ativação executada, sem publicação executada, sem alteração de origem ativa (default permanece `banco-cache`), sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem avanço para automação Transferegov, sem remoção das origens `"planilha"` e `"banco-cache"`. **A ativação concreta exigirá novo pré-voo e nova autorização expressa.**
+
 ## 23/05/2026 - PROFOR 2022: roteiro de ativação controlada (documentação, sem execução)
 
 - Objetivo: preparar o roteiro operacional para a futura ativação controlada da nova origem PAD/PROFOR 2022, **sem executar** ativação, publicação ou alteração da origem ativa.
