@@ -1,0 +1,42 @@
+{
+  "executadoEm": "2026-05-23T20:07:02.163Z",
+  "origemAtiva": "reconstrucao-pad",
+  "comandoExecutado": "node backend/scripts/publicar-dados-estaticos.js",
+  "sucesso": true,
+  "hashesPrePublicacao": {
+    "aplicacao.json": "20a9cb478e7cd7a30a668d5a3e815501f2cb458ef1f2c9b77768d51b5cfdaf0b",
+    "dashboard-geral.json": "44b331c98971bb754f11132c63d27b9c0bea2b7155c84d53942ede917ba69f28",
+    "formalizacao-profor.json": "d9eaf6360398d86ab5e60bebfdcee6389048c5a4047714dfbec853c25bd545a1",
+    "orcamento-2026.json": "74afab7ac9bbd28da416744ed74dd78072aa2619e9ba1bff93bc8e0b58a2a926",
+    "parametros-minimos.json": "501562d4bcad885c47bcef15f469794da8a74017bc3054b0df9850d9701b1431",
+    "resumo-publicacao.json": "bdc40661b14a6ed149d55c8c0ebb590a974bff222d86f6ce95b83abd5f8910b2"
+  },
+  "hashesPosPublicacao": {
+    "aplicacao.json": "41b90503ca966b305d30324b9f0debdc22e3aeaa58a60b3438dba2c05282226e",
+    "dashboard-geral.json": "fa57880e4cbbdb9c7066a3ed2b1da25b3b69b1ffb955d1c5e9e9b5282ff24d08",
+    "formalizacao-profor.json": "d9eaf6360398d86ab5e60bebfdcee6389048c5a4047714dfbec853c25bd545a1",
+    "orcamento-2026.json": "74afab7ac9bbd28da416744ed74dd78072aa2619e9ba1bff93bc8e0b58a2a926",
+    "parametros-minimos.json": "501562d4bcad885c47bcef15f469794da8a74017bc3054b0df9850d9701b1431",
+    "resumo-publicacao.json": "22bcfebc4716baf271cdd7f88678ce9d23cfacfb30258687fe88a418bde5cea4"
+  },
+  "arquivosModificados": [
+    "frontend/data/publicados/aplicacao.json",
+    "frontend/data/publicados/dashboard-geral.json",
+    "frontend/data/publicados/resumo-publicacao.json"
+  ],
+  "arquivosPreservados": [
+    "frontend/data/publicados/formalizacao-profor.json",
+    "frontend/data/publicados/orcamento-2026.json",
+    "frontend/data/publicados/parametros-minimos.json"
+  ],
+  "backupDir": "C:\\BACKUPS-FOMENTO-ONASP\\PAD-PROFOR-2022\\PUBLICACAO-20260523-170600",
+  "conferencias": {
+    "totalConvenios": 15,
+    "origemDadosEfetiva": "reconstrucao-pad",
+    "validarSyntax": "OK",
+    "validarServices": "OK",
+    "sqliteAlterado": false,
+    "envVersionado": false,
+    "transferegovAcionado": false
+  }
+}

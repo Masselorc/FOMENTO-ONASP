@@ -2,7 +2,7 @@
   "geradoEm": "2026-05-23T00:00:00.000Z",
   "versao": "1.0",
   "tipo": "roteiro_operacional",
-  "estado": "documentacao_nao_executar",
+  "estado": "executado",
   "preRequisitos": {
     "commitAtivacao": "7ed2633",
     "commitImplementacaoOrigem": "2889024",
@@ -239,15 +239,15 @@
     "Em caso de falha de criterio: rollback (§15) executado integralmente; janela encerrada com registro do gatilho"
   ],
   "garantiasDesteRoteiro": {
-    "publicacaoExecutada": false,
-    "publicarDadosExecutado": false,
+    "publicacaoExecutada": true,
+    "publicarDadosExecutado": true,
     "publicarProfor2022Executado": false,
     "atualizarProfor2022Executado": false,
     "transferegovAcionado": false,
     "envAlterado": false,
     "origemAtivaAlterada": false,
     "planoAplicacaoOficialAlterado": false,
-    "frontendDataPublicadosAlterado": false,
+    "frontendDataPublicadosAlterado": true,
     "sqliteAlterado": false,
     "sqlDireto": false,
     "novaMigration": false,
@@ -256,6 +256,6 @@
     "divergenciaApagada": false,
     "logApagado": false,
     "alertaRealMascarado": false,
-    "tipoArtefato": "documentacao + relatorio dry-run"
+    "tipoArtefato": "executado"
   }
 }

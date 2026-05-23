@@ -1,5 +1,34 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: EXECUÇÃO da publicação controlada da origem `reconstrucao-pad`
+
+- **Autorização escrita:** "AUTORIZAÇÃO EXPRESSA DE PUBLICAÇÃO CONTROLADA PAD/PROFOR 2022 (origem ativa: reconstrucao-pad)" — janela autorizada para 2026-05-23T17:05:00-03:00 (operação solo com aceite cruzado concentrado sob responsabilidade do operador).
+- **Operação solo declarada:** o operador assume a custódia técnica e functional concentrada.
+- **Mecanismo executado:** APENAS `npm run publicar:dados` (mapeado para `node backend/scripts/publicar-dados-estaticos.js`), sem acionar Transferegov, sem rodar `publicar:profor-2022` ou `atualizar:profor-2022`, sem alterar `.env` e sem alterar `backend/data/onasp.sqlite`.
+- **Pré-condições técnicas confirmadas:**
+  - Branch `main`, working tree limpa (antes dos dry-runs do pre-voo);
+  - `.env` intacto com `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` (hash `457a06639c0cba917461c8ee61c50cfa6595bf4cb258529bdd60467fd6eef648`);
+  - `profor-2022-pad-plano-reconstruido-dry-run.json` presente com hash material coincidente, apenas alteração de metadados de data `"geradoEm"` decorrente dos dry-runs imediatos;
+  - `pendenciaOperacionalReal = 0`, `totalBloqueiosAtivos = 0`, `aptoParaAtivacaoControlada = true` confirmados;
+  - Reconstrução: 568 linhas / 15 convênios;
+  - Comparador: 25 diferenças críticas explicadas, diff líquido saldo `−R$ 15.043,84`;
+  - `validar:syntax` 76 OK, `validar:services` 153/153 OK;
+  - `git diff --check` limpo.
+- **Backups realizados** em `C:\BACKUPS-FOMENTO-ONASP\PAD-PROFOR-2022\PUBLICACAO-20260523-170600` (fora do repositório):
+  - Diretório `frontend/data/publicados/` pré-publicação copiado integralmente com hash SHA-256 de controle registrado;
+  - Cópia do JSON reconstruído, relatórios de prontidão, diários, logs do git e `.env`.
+- **Publicação:**
+  - Comando executado: `node backend/scripts/publicar-dados-estaticos.js`
+  - Saída: `Dados estaticos publicados com sucesso. { success: true, publicadoEm: '2026-05-23T20:07:02.163Z' }`
+- **Validações pós-publicação:**
+  - `git status --short` indicou que apenas `aplicacao.json`, `dashboard-geral.json` e `resumo-publicacao.json` foram modificados dentro de `frontend/data/publicados/` (além dos relatórios de dry-run atualizados com novos timestamps);
+  - `.env` e `backend/data/onasp.sqlite` permaneceram 100% intactos;
+  - Hashes pós-publicação calculados e salvos no diretório de backups;
+  - `validar:json`, `validar:syntax` (76 OK) e `validar:services` (153/153 passados) executados com sucesso pós-publicação;
+  - Conferência visual de `resumo-publicacao.json` validou: `publicadoEm` correto, totais de convênios = 15, e 5 arquivos serializados no índice. `aplicacao.json` validado com `"origemDados": "reconstrucao-pad"` e `"origemDadosEfetiva": "reconstrucao-pad"`.
+- **Garantias pós-publicação:** sem Transferegov, sem alteração de banco de dados, sem alteração de origem ativa no `.env`.
+- **Rollback disponível:** via restauração direta da cópia de segurança em `C:\BACKUPS-FOMENTO-ONASP\PAD-PROFOR-2022\PUBLICACAO-20260523-170600\publicados.pre-publicacao-hashes.txt`.
+
 ## 23/05/2026 — PROFOR 2022: roteiro de publicação controlada (documentação, sem execução)
 
 - **Objetivo:** preparar o roteiro operacional da publicação controlada dos dados PAD/PROFOR 2022 para `frontend/data/publicados/`, refletindo a origem `reconstrucao-pad` já ativa no ambiente local (commit `7ed2633`). **Sem executar publicação**, sem alterar `.env`, sem alterar origem ativa, sem acionar Transferegov.

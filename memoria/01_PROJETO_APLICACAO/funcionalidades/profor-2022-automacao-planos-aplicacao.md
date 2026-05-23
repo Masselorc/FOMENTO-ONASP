@@ -2694,3 +2694,34 @@ Hash do `.env` deve ser exatamente `457a06639c0cba917461c8ee61c50cfa6595bf4cb258
 ### 37.8. Garantias e escopo preservado
 
 Sem publicação executada, sem `publicar:dados`/`publicar:profor-2022`/`atualizar:*-profor`/`agendar:*` acionados, sem Transferegov/DETRU, sem alteração em `.env`/`backend/data/onasp.sqlite`/decisões/divergências/logs/`planoAplicacao` oficial/origem ativa/`frontend/data/publicados/`, sem SQL direto, sem nova migration, sem versionamento de WAL/SHM, sem remoção das origens `"planilha"` e `"banco-cache"`, sem alteração no default `ORIGEM_PADRAO_PROFOR_2022`, nenhum alerta real mascarado, nenhum log/divergência/decisão apagados.
+
+---
+
+## 38. Publicação controlada executada (23/05/2026, origem `reconstrucao-pad`)
+
+### 38.1. Janela e autorização
+
+- **Autorização escrita:** "AUTORIZAÇÃO EXPRESSA DE PUBLICAÇÃO CONTROLADA PAD/PROFOR 2022 (origem ativa: reconstrucao-pad)" por Marcelo Cortez (operação solo declarada), com adendo escrito para execução em `2026-05-23T17:05:00-03:00`.
+- **Roteiro de referência:** `backend/data/relatorios/profor-2022-roteiro-publicacao-controlada.md` v1.0.
+
+### 38.2. Mecanismo efetivamente aplicado
+
+A publicação foi executada via comando direto:
+`node backend/scripts/publicar-dados-estaticos.js` (mapeado de `npm run publicar:dados`).
+Saída de sucesso: `Dados estaticos publicados com sucesso. { success: true, publicadoEm: '2026-05-23T20:07:02.163Z' }`.
+
+### 38.3. Backups (`<RET>` fora do repo)
+
+`C:\BACKUPS-FOMENTO-ONASP\PAD-PROFOR-2022\PUBLICACAO-20260523-170600\` — Cópia integral de `frontend/data/publicados/` pré-publicação, hashes SHA-256 pré e pós-publicação, logs do git, status e relatórios dry-run correspondentes.
+
+### 38.4. Validações pós-publicação
+
+- `git status --short` indicou que apenas `aplicacao.json`, `dashboard-geral.json` e `resumo-publicacao.json` mudaram dentro de `frontend/data/publicados/`. Os arquivos `formalizacao-profor.json`, `orcamento-2026.json` e `parametros-minimos.json` mantiveram os hashes idênticos (preservados).
+- `validar:json`, `validar:syntax` (76 arquivos OK) e `validar:services` (153/153 OK) passaram com sucesso pós-publicação.
+- Conferência de `resumo-publicacao.json` confirmou total de 15 convênios/UFs PROFOR 2022.
+- Conferência de `aplicacao.json` confirmou `"origemDados": "reconstrucao-pad"` e `"origemDadosEfetiva": "reconstrucao-pad"`.
+- SQLite, WAL, SHM e `.env` permaneceram 100% intactos e não foram versionados.
+
+### 38.5. Garantias e escopo preservado
+
+Sem Transferegov acionado, sem alteração de banco de dados, sem alteração de origem ativa no `.env`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem remoção das origens `"planilha"` e `"banco-cache"`, sem alteração no default `ORIGEM_PADRAO_PROFOR_2022`, nenhum alerta real mascarado, nenhum log/divergência/decisão apagados.

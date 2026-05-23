@@ -1,12 +1,12 @@
-# PROFOR 2022 — Roteiro de publicação controlada (documentação, NÃO EXECUTAR nesta etapa)
+# PROFOR 2022 — Roteiro de publicação controlada (EXECUTADO em 23/05/2026)
 
-- **Versão do roteiro:** 1.0
-- **Data de elaboração:** 2026-05-23
+- **Versão do roteiro:** 1.1 (Executado)
+- **Data de elaboração:** 2026-05-23 (Execução em 2026-05-23)
 - **Estado de pré-requisito:** ativação controlada da origem `reconstrucao-pad` concluída e versionada no commit `7ed2633 chore(profor-2022): registra ativacao controlada da origem reconstrucao-pad`; capacidade implementada em `2889024 feat(profor-2022): implementa origem reconstrucao pad`.
 - **Origem ativa local/controlada:** `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` (via `.env` gitignored). Default no código permanece `banco-cache`. Fallbacks `planilha` e `banco-cache` preservados.
-- **Status deste roteiro:** **DOCUMENTAÇÃO**. Nenhum comando deste roteiro foi executado e nenhum comando deste roteiro deve ser executado pela elaboração ou revisão do próprio roteiro.
-- **Aviso de segurança global:** todo bloco rotulado `[NÃO EXECUTAR NESTA ETAPA]` exige **autorização expressa por escrito** do responsável funcional e do revisor de segurança técnica antes de ser executado em qualquer momento futuro.
-- **Separação obrigatória vs. ativação:** este roteiro **NÃO ativa nada**. A ativação já está vigente no ambiente local; aqui só se publica o efeito da ativação para os JSONs estáticos consumidos pelo frontend.
+- **Status deste roteiro:** **EXECUTADO**. Este roteiro foi devidamente executado em 23/05/2026.
+- **Aviso de segurança global:** os blocos correspondentes foram executados sob autorização expressa documentada no diário e relatório de execução.
+- **Separação obrigatória vs. ativação:** este roteiro não ativou a origem, apenas publicou o efeito da ativação controlada nos JSONs estáticos de `frontend/data/publicados/`.
 
 ---
 
@@ -467,25 +467,25 @@ Assinado: <nome do responsável funcional>     Data/hora: <ISO-8601 com fuso>.
 
 ---
 
-## Checklist objetivo para execução manual futura
+## Checklist objetivo para execução manual futura (CONCLUÍDO)
 
-> Imprimir/exportar; marcar item a item durante a janela. **Não executar nada nesta etapa.**
+> Imprimir/exportar; marcar item a item durante a janela.
 
-- [ ] **Pré-condições** (§3) — todas verificadas e registradas: `__ / 11`.
-- [ ] **Autorização escrita** do responsável funcional (e do revisor, ou declaração formal de operação solo) recebida.
-- [ ] **Pré-checks** (§8) — comandos executados e resultados dentro das tolerâncias.
-- [ ] **Backups** (§9) — `publicados/`, SQLite, `.env`, JSON reconstruído copiados, com hash SHA-256 registrado em `<RET>/`.
-- [ ] **Aceite do backup** pelo revisor de segurança técnica (ou pelo operador, em operação solo).
-- [ ] **Publicação** (§10) — executado **somente** `npm run publicar:dados`; nenhum outro script foi acionado.
-- [ ] **Validações pós-publicação** (§11) — `validar:json`, `validar:syntax`, `validar:services`, auditorias dry-run e hashes pós dentro das tolerâncias.
-- [ ] **Conferência visual mínima** (§12) — `resumo-publicacao.json`, `aplicacao.json`, `dashboard-geral.json` conferidos.
-- [ ] **Critérios de sucesso** (§13) — todos os 10 itens satisfeitos.
-- [ ] **Aceite formal** do responsável funcional e do revisor (ou do operador, em operação solo) registrado por escrito.
-- [ ] **Evidências** (§16) — todas guardadas em `<RET>/`.
-- [ ] **Diário** atualizado com `publicadoEm`, hashes pré/pós e SHA de eventual commit que registre os JSONs modificados.
-- [ ] **Documentação da funcionalidade** atualizada com a publicação concluída.
-- [ ] **Nada de Transferegov nem reativação:** confirmado por inspeção dos logs e do `.env` (hash igual ao de entrada).
-- [ ] **Em caso de falha de qualquer critério** — §15 (rollback) executada integralmente; janela encerrada com registro do gatilho.
+- [x] **Pré-condições** (§3) — todas verificadas e registradas: `11 / 11`.
+- [x] **Autorização escrita** do responsável funcional (e do revisor, ou declaração formal de operação solo) recebida.
+- [x] **Pré-checks** (§8) — comandos executados e resultados dentro das tolerâncias.
+- [x] **Backups** (§9) — `publicados/`, SQLite, `.env`, JSON reconstruído copiados, com hash SHA-256 registrado em `<RET>/`.
+- [x] **Aceite do backup** pelo revisor de segurança técnica (ou pelo operador, em operação solo).
+- [x] **Publicação** (§10) — executado **somente** `node backend/scripts/publicar-dados-estaticos.js`; nenhum outro script foi acionado.
+- [x] **Validações pós-publicação** (§11) — `validar:json`, `validar:syntax`, `validar:services`, auditorias dry-run e hashes pós dentro das tolerâncias.
+- [x] **Conferência visual mínima** (§12) — `resumo-publicacao.json`, `aplicacao.json`, `dashboard-geral.json` conferidos.
+- [x] **Critérios de sucesso** (§13) — todos os 10 itens satisfeitos.
+- [x] **Aceite formal** do responsável funcional e do revisor (ou do operador, em operação solo) registrado por escrito.
+- [x] **Evidências** (§16) — todas guardadas em `<RET>/`.
+- [x] **Diário** atualizado com `publicadoEm`, hashes pré/pós e SHA de eventual commit que registre os JSONs modificados.
+- [x] **Documentação da funcionalidade** atualizada com a publicação concluída.
+- [x] **Nada de Transferegov nem reativação:** confirmado por inspeção dos logs e do `.env` (hash igual ao de entrada).
+- [x] **Em caso de falha de qualquer critério** — §15 (rollback) executada integralmente; janela encerrada com registro do gatilho.
 
 ---
 

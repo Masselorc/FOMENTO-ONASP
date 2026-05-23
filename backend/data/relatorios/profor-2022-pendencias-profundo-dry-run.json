@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T19:49:32.273Z",
+  "geradoEm": "2026-05-23T20:07:20.423Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -43,13 +43,13 @@
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T19:39:20.090Z",
+        "geradoEm": "2026-05-23T20:06:01.411Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T19:39:20.122Z",
+        "geradoEm": "2026-05-23T20:06:01.444Z",
         "erro": null
       },
       "saldosResiduais": {
