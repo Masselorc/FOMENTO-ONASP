@@ -8,6 +8,7 @@ const {
 const {
   gerarFotografiaCanonica,
   salvarFotografia,
+  salvarMarkdownFotografia,
 } = require("../services/profor-2022/profor-pad-fotografia-service");
 
 const {
@@ -19,6 +20,10 @@ const {
 const CAMINHO_SNAPSHOT_NOVO = path.join(
   __dirname,
   "../data/relatorios/profor-2022-pad-fotografia-canonica.json"
+);
+const CAMINHO_SNAPSHOT_NOVO_MD = path.join(
+  __dirname,
+  "../data/relatorios/profor-2022-pad-fotografia-canonica.md"
 );
 const CAMINHO_SNAPSHOT_ANTERIOR = path.join(
   __dirname,
@@ -53,11 +58,13 @@ function main() {
 
     console.log(`Fotografia canônica gerada.`);
     console.log(`- Checksum: ${snapshotAtual.checksum}`);
-    console.log(`- Valor Previsto Total: R$ ${snapshotAtual.resumo.valorPrevistoTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
+    console.log(`- Versão snapshot: ${snapshotAtual.versaoSnapshot}`);
+    console.log(`- Valor Previsto Total: R$ ${snapshotAtual.resumo.totalValorPrevisto.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
 
     // 3. Persistir a fotografia canônica atual
     console.log(`Salvando snapshot atual em: ${CAMINHO_SNAPSHOT_NOVO}`);
     salvarFotografia(CAMINHO_SNAPSHOT_NOVO, snapshotAtual);
+    salvarMarkdownFotografia(CAMINHO_SNAPSHOT_NOVO_MD, snapshotAtual);
     console.log("Snapshot atual salvo com sucesso.");
 
     // 4. Verificar se existe o snapshot anterior para comparação
@@ -71,8 +78,9 @@ function main() {
       console.log("--- Resumo das Alterações ---");
       console.log(`- Itens Idênticos: ${resultadoComparacao.resumo.totalIguais}`);
       console.log(`- Itens Novos (Adicionados): ${resultadoComparacao.resumo.totalNovos}`);
-      console.log(`- Itens Ausentes (Removidos): ${resultadoComparacao.resumo.totalAusentes}`);
+      console.log(`- Itens Ausentes (Removidos): ${resultadoComparacao.resumo.totalRemovidos}`);
       console.log(`- Itens Alterados: ${resultadoComparacao.resumo.totalAlterados}`);
+      console.log(`- Bloqueios Técnicos: ${resultadoComparacao.resumo.totalBloqueiosTecnicos}`);
       console.log("-----------------------------");
       console.log("Diferenças Financeiras Líquidas Agregadas (Novo - Anterior):");
       console.log(`- Previsto: R$ ${resultadoComparacao.diferencasAgregadas.valorPrevisto.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);

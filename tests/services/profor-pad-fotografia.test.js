@@ -7,248 +7,128 @@ const {
   CAMPOS_CANONICOS,
   gerarFotografiaCanonica,
   salvarFotografia,
+  normalizarTextoParaChave,
 } = require("../../backend/services/profor-2022/profor-pad-fotografia-service");
 
-test("Fotografia Canônica - Validações Básicas", () => {
-  assert.throws(() => {
-    gerarFotografiaCanonica(null);
-  }, /fornecido deve ser um array/i);
+function linha(overrides = {}) {
+  return {
+    uf: "DF",
+    instrumento: "Convênio",
+    numero: "123456",
+    ano: "2022",
+    area: "Ouvidoria",
+    natureza: "CUSTEIO",
+    descricao: "Notebook",
+    quantidade: 1,
+    valorPrevisto: 1000,
+    valorExecutado: 100,
+    ...overrides,
+  };
+}
 
-  assert.throws(() => {
-    gerarFotografiaCanonica("não-é-um-array");
-  }, /fornecido deve ser um array/i);
+test("Fotografia canônica v0.2 - valida entrada e metadados", () => {
+  assert.throws(() => gerarFotografiaCanonica(null), /fornecido deve ser um array/i);
+  assert.throws(() => gerarFotografiaCanonica("não-é-um-array"), /fornecido deve ser um array/i);
+
+  const foto = gerarFotografiaCanonica([linha()]);
+  assert.equal(foto.versaoSnapshot, "0.2");
+  assert.equal(foto.origem, "reconstrucao-pad");
+  assert.equal(foto.parserVersao, "profor-pad-fotografia-service@0.2");
+  assert.equal(foto.resumo.totalLinhas, 1);
+  assert.equal(foto.resumo.valorPrevistoTotal, foto.resumo.totalValorPrevisto);
 });
 
-test("Fotografia Canônica - Filtragem estrita dos 14 campos canônicos", () => {
-  const planoMock = [
-    {
-      uf: "DF",
-      instrumento: "Convênio",
-      numero: "123456",
-      ano: "2022",
-      area: "Ouvidoria",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 5,
-      valorUnitario: 1000,
-      valorPrevisto: 5000,
-      valorExecutado: 3000,
-      saldo: 2000,
-      saldoEconomicidade: 0,
-      percentualExecucao: 60,
-      // Metadados extras que devem ser descartados
-      chaveItem: "DF::Notebook",
-      origemReconstrucao: "teste",
-      linhaOrigem: 42,
-    },
-  ];
-
-  const foto = gerarFotografiaCanonica(planoMock);
-
-  assert.equal(foto.resumo.totalLinhas, 1);
+test("Fotografia canônica v0.2 - itens preservam campos antigos e adicionam chaves", () => {
+  const foto = gerarFotografiaCanonica([linha({ descricao: " Câmera   fotográfica " })]);
   const item = foto.planoAplicacao[0];
 
-  // Verifica que todos os 14 campos canônicos estão presentes
   for (const campo of CAMPOS_CANONICOS) {
-    assert.ok(campo in item, `Campo ${campo} deveria estar presente na linha filtrada`);
+    assert.ok(campo in item, `Campo ${campo} deveria permanecer no item canônico`);
   }
 
-  // Verifica que os campos extras foram descartados
-  assert.equal(item.chaveItem, undefined);
-  assert.equal(item.origemReconstrucao, undefined);
-  assert.equal(item.linhaOrigem, undefined);
+  assert.equal(item.descricaoOriginal, "Câmera fotográfica");
+  assert.equal(item.descricaoNormalizada, "CÂMERA FOTOGRÁFICA");
+  assert.match(item.chaveMaterial, /CAMERA FOTOGRAFICA/);
+  assert.match(item.chaveComparacao, /CAMERA FOTOGRAFICA/);
+  assert.match(item.hashItem, /^[a-f0-9]{64}$/);
+  assert.deepEqual(item.avisos, []);
 });
 
-test("Fotografia Canônica - Ordenação Determinística", () => {
-  const planoMock = [
-    {
-      uf: "DF",
-      numero: "222222",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 1,
-    },
-    {
-      uf: "DF",
-      numero: "111111",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 1,
-    },
-    {
-      uf: "AC",
-      numero: "111111",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 1,
-    },
-    {
-      uf: "AC",
-      numero: "111111",
-      area: "CORREGEDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 1,
-    },
-    {
-      uf: "AC",
-      numero: "111111",
-      area: "CORREGEDORIA",
-      natureza: "CAPITAL",
-      descricao: "Notebook",
-      quantidade: 1,
-    },
-    {
-      uf: "AC",
-      numero: "111111",
-      area: "CORREGEDORIA",
-      natureza: "CAPITAL",
-      descricao: "Cadeira",
-      quantidade: 1,
-    },
-  ];
-
-  const foto = gerarFotografiaCanonica(planoMock);
-  const ordenado = foto.planoAplicacao;
-
-  // Verificações de ordem:
-  // 1. numero: "111111" vem antes de "222222"
-  // 2. uf: AC vem antes de DF
-  // 3. area: CORREGEDORIA vem antes de OUVIDORIA
-  // 4. natureza: CAPITAL vem antes de CUSTEIO
-  // 5. descricao: Cadeira vem antes de Notebook
-
-  assert.equal(ordenado[0].uf, "AC");
-  assert.equal(ordenado[0].numero, "111111");
-  assert.equal(ordenado[0].area, "CORREGEDORIA");
-  assert.equal(ordenado[0].natureza, "CAPITAL");
-  assert.equal(ordenado[0].descricao, "Cadeira");
-
-  assert.equal(ordenado[1].descricao, "Notebook"); // mesmo nº, uf, area, nat, desc diferente
-
-  assert.equal(ordenado[2].natureza, "CUSTEIO"); // mesmo nº, uf, area, nat diferente
-
-  assert.equal(ordenado[3].area, "OUVIDORIA"); // mesmo nº, uf, area diferente
-
-  assert.equal(ordenado[4].uf, "DF"); // mesmo nº, uf diferente
-
-  assert.equal(ordenado[5].numero, "222222"); // nº diferente
+test("Fotografia canônica v0.2 - quantidade 1.0 vira 1, nunca 10", () => {
+  const foto = gerarFotografiaCanonica([
+    linha({ quantidade: "1.0" }),
+  ]);
+  assert.equal(foto.planoAplicacao[0].quantidade, 1);
 });
 
-test("Fotografia Canônica - Estabilidade do Checksum", () => {
-  const planoMockA = [
-    {
-      uf: "DF",
-      numero: "123456",
-      area: "Ouvidoria",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 2,
-      valorPrevisto: 1000,
-    },
-  ];
+test("Fotografia canônica v0.2 - hashItem muda com valor previsto e quantidade", () => {
+  const base = gerarFotografiaCanonica([linha()]);
+  const valorAlterado = gerarFotografiaCanonica([linha({ valorPrevisto: 1000.02 })]);
+  const quantidadeAlterada = gerarFotografiaCanonica([linha({ quantidade: 2 })]);
 
-  const planoMockB = [
-    {
-      uf: "DF",
-      numero: "123456",
-      area: "Ouvidoria",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 2.0, // Equivalente numericamente
-      valorPrevisto: 1000.0, // Equivalente numericamente
-    },
-  ];
-
-  const planoMockC = [
-    {
-      uf: "DF",
-      numero: "123456",
-      area: "Ouvidoria",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 2,
-      valorPrevisto: 1000.01, // Modificado em centavos
-    },
-  ];
-
-  const fotoA = gerarFotografiaCanonica(planoMockA);
-  const fotoB = gerarFotografiaCanonica(planoMockB);
-  const fotoC = gerarFotografiaCanonica(planoMockC);
-
-  // A e B devem ter checksums idênticos
-  assert.equal(fotoA.checksum, fotoB.checksum);
-
-  // A e C devem ter checksums diferentes
-  assert.notEqual(fotoA.checksum, fotoC.checksum);
+  assert.notEqual(base.planoAplicacao[0].hashItem, valorAlterado.planoAplicacao[0].hashItem);
+  assert.notEqual(base.planoAplicacao[0].hashItem, quantidadeAlterada.planoAplicacao[0].hashItem);
 });
 
-test("Fotografia Canônica - Arredondamento e Resumos Financeiros", () => {
-  const planoMock = [
-    {
-      uf: "DF",
-      numero: "123",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Item 1",
-      quantidade: 1.3333333, // Deve arredondar para 1.333333
-      valorPrevisto: 100.004, // Deve arredondar para 100.00
-      valorExecutado: 50.006, // Deve arredondar para 50.01
-    },
-  ];
-
-  const foto = gerarFotografiaCanonica(planoMock);
-  const item = foto.planoAplicacao[0];
-
-  assert.equal(item.quantidade, 1.333333);
-  assert.equal(item.valorPrevisto, 100);
-  assert.equal(item.valorExecutado, 50.01);
-  assert.equal(item.saldo, 49.99); // 100 - 50.01
-
-  // Resumo deve bater
-  assert.equal(foto.resumo.totalLinhas, 1);
-  assert.equal(foto.resumo.valorPrevistoTotal, 100);
-  assert.equal(foto.resumo.valorExecutadoTotal, 50.01);
-  assert.equal(foto.resumo.saldoTotal, 49.99);
-  assert.equal(foto.resumo.quantidadeTotal, 1.333333);
+test("Fotografia canônica v0.2 - CAPITAL e CUSTEIO geram chaves diferentes", () => {
+  const foto = gerarFotografiaCanonica([
+    linha({ natureza: "CAPITAL" }),
+    linha({ natureza: "CUSTEIO" }),
+  ]);
+  const [capital, custeio] = foto.planoAplicacao;
+  assert.notEqual(capital.chaveMaterial, custeio.chaveMaterial);
+  assert.notEqual(capital.chaveComparacao, custeio.chaveComparacao);
+  assert.notEqual(capital.hashItem, custeio.hashItem);
 });
 
-test("Fotografia Canônica - Persistência em disco", () => {
+test("Fotografia canônica v0.2 - espaços e pontuação leve não alteram chave normalizada", () => {
+  assert.equal(
+    normalizarTextoParaChave(" Câmera,   fotográfica! "),
+    normalizarTextoParaChave("Camera fotografica")
+  );
+});
+
+test("Fotografia canônica v0.2 - campo essencial ausente gera aviso controlado", () => {
+  const foto = gerarFotografiaCanonica([linha({ descricao: "" })]);
+  assert.equal(foto.resumo.totalAvisos, 1);
+  assert.equal(foto.planoAplicacao[0].avisos[0].tipo, "dados_insuficientes");
+});
+
+test("Fotografia canônica v0.2 - checksum é estável com itens em ordem diferente", () => {
+  const a = gerarFotografiaCanonica([
+    linha({ numero: "222222", descricao: "Mesa" }),
+    linha({ numero: "111111", descricao: "Cadeira" }),
+  ]);
+  const b = gerarFotografiaCanonica([
+    linha({ numero: "111111", descricao: "Cadeira" }),
+    linha({ numero: "222222", descricao: "Mesa" }),
+  ]);
+
+  assert.equal(a.checksum, b.checksum);
+});
+
+test("Fotografia canônica v0.2 - colisão e chave ambígua são registradas", () => {
+  const foto = gerarFotografiaCanonica([
+    linha({ descricao: "Câmera", valorPrevisto: 100 }),
+    linha({ descricao: "Camera", valorPrevisto: 200 }),
+  ]);
+  assert.ok(foto.avisos.some((aviso) => aviso.tipo === "colisao_chave"));
+  assert.ok(foto.avisos.some((aviso) => aviso.tipo === "chave_ambigua"));
+});
+
+test("Fotografia canônica v0.2 - persistência em disco", () => {
   const dirTemporario = path.join(__dirname, "../../backend/data/relatorios/test_temp");
   const caminhoArquivo = path.join(dirTemporario, "foto_teste.json");
-
-  const planoMock = [
-    {
-      uf: "DF",
-      numero: "123",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 1,
-    },
-  ];
-
-  const foto = gerarFotografiaCanonica(planoMock);
+  const foto = gerarFotografiaCanonica([linha()]);
 
   try {
     salvarFotografia(caminhoArquivo, foto);
-
-    assert.ok(fs.existsSync(caminhoArquivo), "Arquivo de snapshot deveria ter sido salvo.");
-    const conteudo = fs.readFileSync(caminhoArquivo, "utf8");
-    const fotoLida = JSON.parse(conteudo);
-
+    assert.ok(fs.existsSync(caminhoArquivo));
+    const fotoLida = JSON.parse(fs.readFileSync(caminhoArquivo, "utf8"));
     assert.equal(fotoLida.checksum, foto.checksum);
-    assert.equal(fotoLida.resumo.totalLinhas, 1);
+    assert.equal(fotoLida.versaoSnapshot, "0.2");
   } finally {
-    // Cleanup
-    if (fs.existsSync(caminhoArquivo)) {
-      fs.unlinkSync(caminhoArquivo);
-    }
-    if (fs.existsSync(dirTemporario)) {
-      fs.rmdirSync(dirTemporario);
-    }
+    if (fs.existsSync(caminhoArquivo)) fs.unlinkSync(caminhoArquivo);
+    if (fs.existsSync(dirTemporario)) fs.rmdirSync(dirTemporario);
   }
 });

@@ -13,183 +13,151 @@ const {
   gerarFotografiaCanonica,
 } = require("../../backend/services/profor-2022/profor-pad-fotografia-service");
 
-test("Comparador Snapshots - Itens novos, ausentes e alterados", () => {
-  // Snapshot Anterior Mock
-  const planoAnterior = [
-    {
-      uf: "DF",
-      numero: "111111",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 5,
-      valorPrevisto: 5000,
-      valorExecutado: 3000,
-      saldo: 2000,
-    },
-    {
-      uf: "DF",
-      numero: "111111",
-      area: "CORREGEDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 3,
-      valorPrevisto: 3000,
-      valorExecutado: 3000,
-      saldo: 0,
-    },
-  ];
+function linha(overrides = {}) {
+  return {
+    uf: "DF",
+    numero: "111111",
+    area: "OUVIDORIA",
+    natureza: "CUSTEIO",
+    descricao: "Notebook",
+    quantidade: 1,
+    valorPrevisto: 1000,
+    valorExecutado: 100,
+    saldo: 900,
+    ...overrides,
+  };
+}
 
-  // Snapshot Novo Mock
-  const planoNovo = [
-    // 1. Item inalterado (DF::111111::CORREGEDORIA::CUSTEIO::Notebook)
-    {
-      uf: "DF",
-      numero: "111111",
-      area: "CORREGEDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 3,
-      valorPrevisto: 3000,
-      valorExecutado: 3000,
-      saldo: 0,
-    },
-    // 2. Item alterado (DF::111111::OUVIDORIA::CUSTEIO::Notebook) - Mudança de previsto e executado
-    {
-      uf: "DF",
-      numero: "111111",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 5,
-      valorPrevisto: 5500, // Era 5000 (+500)
-      valorExecutado: 3200, // Era 3000 (+200)
-      saldo: 2300, // Era 2000 (+300)
-    },
-    // 3. Item Novo (DF::111111::ESCOLA PENAL::CAPITAL::Notebook)
-    {
-      uf: "DF",
-      numero: "111111",
-      area: "ESCOLA PENAL",
-      natureza: "CAPITAL",
-      descricao: "Notebook",
-      quantidade: 2,
-      valorPrevisto: 4000,
-      valorExecutado: 0,
-      saldo: 4000,
-    },
-  ];
+function comparar(planoAnterior, planoNovo) {
+  return compararSnapshotsPad(
+    gerarFotografiaCanonica(planoAnterior),
+    gerarFotografiaCanonica(planoNovo)
+  );
+}
 
-  // Gera fotografias canônicas completas
-  const fotoAnterior = gerarFotografiaCanonica(planoAnterior);
-  const fotoNova = gerarFotografiaCanonica(planoNovo);
+function tipos(rel) {
+  return rel.divergencias.flatMap((item) => item.tipos || [item.tipo]);
+}
 
-  // Executa comparação
-  const rel = compararSnapshotsPad(fotoAnterior, fotoNova);
+test("Comparador v0.2 - ordem diferente dos mesmos itens não gera divergência", () => {
+  const anterior = [linha({ numero: "1" }), linha({ numero: "2", descricao: "Mesa" })];
+  const novo = [linha({ numero: "2", descricao: "Mesa" }), linha({ numero: "1" })];
+  const rel = comparar(anterior, novo);
 
-  // Verificações
-  assert.equal(rel.checksumsValidos, true, "Os checksums deveriam ser válidos.");
-
-  // Itens ausentes (O plano anterior tinha 2 itens, o novo tem 2 iguais/alterados e 1 novo. Nenhum item foi removido.)
-  assert.equal(rel.resumo.totalAusentes, 0);
-
-  // Itens novos
-  assert.equal(rel.resumo.totalNovos, 1);
-  assert.equal(rel.itensNovos[0].area, "ESCOLA PENAL");
-  assert.equal(rel.itensNovos[0].natureza, "CAPITAL");
-  assert.equal(rel.itensNovos[0].valorPrevisto, 4000);
-
-  // Itens alterados
-  assert.equal(rel.resumo.totalAlterados, 1);
-  assert.equal(rel.itensAlterados[0].area, "OUVIDORIA");
-  assert.equal(rel.itensAlterados[0].valores.valorPrevisto.anterior, 5000);
-  assert.equal(rel.itensAlterados[0].valores.valorPrevisto.novo, 5500);
-  assert.equal(rel.itensAlterados[0].valores.valorPrevisto.delta, 500);
-
-  // Totais agregados das diferenças (Novo - Anterior)
-  // Anterior Previsto = 8000. Novo Previsto = 12500. Delta = 4500.
-  // Anterior Executado = 6000. Novo Executado = 6200. Delta = 200.
-  // Anterior Saldo = 2000. Novo Saldo = 6300. Delta = 4300.
-  assert.equal(rel.diferencasAgregadas.valorPrevisto, 4500);
-  assert.equal(rel.diferencasAgregadas.valorExecutado, 200);
-  assert.equal(rel.diferencasAgregadas.saldo, 4300);
-  assert.equal(rel.diferencasAgregadas.linhas, 1); // 3 linhas - 2 linhas
+  assert.equal(rel.versaoComparador, "0.2");
+  assert.equal(rel.checksumsValidos, true);
+  assert.equal(rel.resumo.totalIguais, 2);
+  assert.equal(rel.divergencias.length, 0);
 });
 
-test("Comparador Snapshots - Detecção de item ausente (removido)", () => {
-  const planoAnterior = [
-    {
-      uf: "DF",
-      numero: "111111",
-      area: "OUVIDORIA",
-      natureza: "CUSTEIO",
-      descricao: "Notebook",
-      quantidade: 5,
-      valorPrevisto: 5000,
-      valorExecutado: 3000,
-    },
-  ];
-
-  const planoNovo = []; // Item Notebook foi removido
-
-  const fotoAnterior = gerarFotografiaCanonica(planoAnterior);
-  const fotoNova = gerarFotografiaCanonica(planoNovo);
-
-  const rel = compararSnapshotsPad(fotoAnterior, fotoNova);
-
-  assert.equal(rel.resumo.totalAusentes, 1);
+test("Comparador v0.2 - acento diferente gera descricao_apenas_diacritico", () => {
+  const rel = comparar(
+    [linha({ descricao: "Câmera fotográfica" })],
+    [linha({ descricao: "Camera fotográfica" })]
+  );
+  assert.ok(tipos(rel).includes("descricao_apenas_diacritico"));
   assert.equal(rel.resumo.totalNovos, 0);
-  assert.equal(rel.resumo.totalAlterados, 0);
-  assert.equal(rel.itensAusentes[0].descricao, "Notebook");
+  assert.equal(rel.resumo.totalRemovidos, 0);
 });
 
-test("Comparador Snapshots - Verificação de falha de checksum", () => {
-  const planoAnterior = [
-    { uf: "DF", numero: "111", area: "OUVIDORIA", natureza: "CUSTEIO", descricao: "A", quantidade: 1 },
-  ];
-  const planoNovo = [
-    { uf: "DF", numero: "111", area: "OUVIDORIA", natureza: "CUSTEIO", descricao: "A", quantidade: 1 },
-  ];
+test("Comparador v0.2 - espaços, caixa e pontuação leve geram descricao_apenas_textual", () => {
+  const rel = comparar(
+    [linha({ descricao: "Camera fotografica" })],
+    [linha({ descricao: " camera,   fotografica! " })]
+  );
+  assert.ok(tipos(rel).includes("descricao_apenas_textual"));
+});
 
-  const fotoAnterior = gerarFotografiaCanonica(planoAnterior);
-  const fotoNova = gerarFotografiaCanonica(planoNovo);
+test("Comparador v0.2 - descrição substantiva gera descricao_alterada", () => {
+  const rel = comparar(
+    [linha({ descricao: "Notebook" })],
+    [linha({ descricao: "Desktop" })]
+  );
+  assert.ok(tipos(rel).includes("descricao_alterada"));
+});
 
-  // Corrompe deliberadamente o checksum no metadado
+test("Comparador v0.2 - quantidade e valores materiais são classificados", () => {
+  const rel = comparar(
+    [linha({ quantidade: 1, valorUnitario: 1000, valorPrevisto: 1000, valorExecutado: 100, saldo: 900 })],
+    [linha({ quantidade: 2, valorUnitario: 600, valorPrevisto: 1200, valorExecutado: 200, saldo: 1000 })]
+  );
+
+  assert.ok(tipos(rel).includes("quantidade_alterada"));
+  assert.ok(tipos(rel).includes("valor_unitario_alterado"));
+  assert.ok(tipos(rel).includes("valor_previsto_alterado"));
+  assert.ok(tipos(rel).includes("valor_executado_alterado"));
+  assert.ok(tipos(rel).includes("saldo_alterado"));
+});
+
+test("Comparador v0.2 - natureza e área alteradas são classificadas", () => {
+  const relNatureza = comparar(
+    [linha({ natureza: "CUSTEIO" })],
+    [linha({ natureza: "CAPITAL" })]
+  );
+  assert.ok(tipos(relNatureza).includes("natureza_alterada"));
+  assert.equal(relNatureza.resumo.totalNovos, 0);
+  assert.equal(relNatureza.resumo.totalRemovidos, 0);
+
+  const relArea = comparar(
+    [linha({ area: "OUVIDORIA" })],
+    [linha({ area: "CORREGEDORIA" })]
+  );
+  assert.ok(tipos(relArea).includes("area_alterada"));
+});
+
+test("Comparador v0.2 - item novo e item removido continuam detectados", () => {
+  const relNovo = comparar([], [linha({ descricao: "Novo item" })]);
+  assert.equal(relNovo.resumo.totalNovos, 1);
+  assert.ok(tipos(relNovo).includes("item_novo"));
+
+  const relRemovido = comparar([linha({ descricao: "Item removido" })], []);
+  assert.equal(relRemovido.resumo.totalRemovidos, 1);
+  assert.equal(relRemovido.resumo.totalAusentes, 1);
+  assert.ok(tipos(relRemovido).includes("item_removido"));
+});
+
+test("Comparador v0.2 - checksum inválido gera bloqueio técnico", () => {
+  const fotoAnterior = gerarFotografiaCanonica([linha()]);
+  const fotoNova = gerarFotografiaCanonica([linha()]);
   fotoAnterior.checksum = "hash-corrompido";
 
   const rel = compararSnapshotsPad(fotoAnterior, fotoNova);
-
-  assert.equal(rel.checksumsValidos, false, "checksumsValidos deveria ser false após corromper metadado.");
-  assert.equal(rel.checksumAnterior, "hash-corrompido");
-  assert.notEqual(rel.checksumCalculadoAnterior, "hash-corrompido");
+  assert.equal(rel.checksumsValidos, false);
+  assert.ok(rel.bloqueiosTecnicos.some((bloqueio) => bloqueio.tipo === "checksum_invalido"));
+  assert.equal(rel.resumo.totalBloqueiosTecnicos, 1);
 });
 
-test("Comparador Snapshots - Salvando relatórios no disco", () => {
+test("Comparador v0.2 - colisão de chave e dados insuficientes geram bloqueio técnico", () => {
+  const fotoAnterior = gerarFotografiaCanonica([
+    linha({ descricao: "Camera", valorPrevisto: 100 }),
+    linha({ descricao: "Câmera", valorPrevisto: 200 }),
+  ]);
+  const fotoNova = gerarFotografiaCanonica([linha({ descricao: "" })]);
+
+  const rel = compararSnapshotsPad(fotoAnterior, fotoNova);
+  assert.ok(rel.bloqueiosTecnicos.some((bloqueio) => bloqueio.tipo === "colisao_chave"));
+  assert.ok(rel.bloqueiosTecnicos.some((bloqueio) => bloqueio.tipo === "chave_ambigua"));
+  assert.ok(rel.bloqueiosTecnicos.some((bloqueio) => bloqueio.tipo === "dados_insuficientes"));
+});
+
+test("Comparador v0.2 - salva relatórios no disco", () => {
   const dirTemporario = path.join(__dirname, "../../backend/data/relatorios/test_temp_comp");
   const caminhoJson = path.join(dirTemporario, "comp_teste.json");
   const caminhoMd = path.join(dirTemporario, "comp_teste.md");
-
-  const plano = [{ uf: "DF", numero: "111", area: "OUVIDORIA", natureza: "CUSTEIO", descricao: "Notebook", quantidade: 1 }];
-
-  const foto = gerarFotografiaCanonica(plano);
-  const rel = compararSnapshotsPad(foto, foto); // Compara consigo mesmo (tudo idêntico)
+  const rel = comparar([linha()], [linha()]);
 
   try {
     salvarRelatorioComparacaoSnapshots(rel, caminhoJson, caminhoMd);
+    assert.ok(fs.existsSync(caminhoJson));
+    assert.ok(fs.existsSync(caminhoMd));
 
-    assert.ok(fs.existsSync(caminhoJson), "Relatório JSON deveria ter sido salvo.");
-    assert.ok(fs.existsSync(caminhoMd), "Relatório Markdown deveria ter sido salvo.");
-
-    const jsonConteudo = fs.readFileSync(caminhoJson, "utf8");
-    const relLido = JSON.parse(jsonConteudo);
+    const relLido = JSON.parse(fs.readFileSync(caminhoJson, "utf8"));
     assert.equal(relLido.resumo.totalIguais, 1);
-    assert.equal(relLido.resumo.totalNovos, 0);
 
     const mdConteudo = fs.readFileSync(caminhoMd, "utf8");
-    assert.match(mdConteudo, /# PROFOR 2022 — Comparação de Snapshots PAD/i);
-    assert.match(mdConteudo, /Itens idênticos: \*\*1\*\*/i);
+    assert.match(mdConteudo, /# PROFOR 2022 - Comparação de Snapshots PAD/i);
+    assert.match(montarMarkdownComparacaoSnapshots(rel), /Itens idênticos: 1/i);
   } finally {
-    // Cleanup
     if (fs.existsSync(caminhoJson)) fs.unlinkSync(caminhoJson);
     if (fs.existsSync(caminhoMd)) fs.unlinkSync(caminhoMd);
     if (fs.existsSync(dirTemporario)) fs.rmdirSync(dirTemporario);

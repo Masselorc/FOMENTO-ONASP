@@ -1,103 +1,27 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const crypto = require("node:crypto");
 
 const {
   arredondarMoedaProfor,
 } = require("./profor-plano-aplicacao-service");
 
 const {
-  ehSaldoResidualProfor,
-  normalizarAreaSaldoResidual,
-  normalizarNaturezaSaldoResidual,
-  criarChaveSaldoResidual,
-} = require("./profor-saldo-residual-service");
+  calcularChecksumSnapshot,
+  normalizarTextoCanonico,
+  normalizarTextoParaChave,
+  removerDiacriticos,
+} = require("./profor-pad-fotografia-service");
 
+const VERSAO_COMPARADOR = "0.2";
 const TOLERANCIA_MOEDA = 0.01;
 const TOLERANCIA_QUANTIDADE = 0.000001;
 
-/**
- * Calcula o checksum SHA-256 do plano de aplicação canônico.
- */
-function calcularChecksumSnapshot(linhas) {
-  const jsonStr = JSON.stringify(linhas);
-  return crypto.createHash("sha256").update(jsonStr).digest("hex");
-}
-
-/**
- * Cria a chave única e estável para a linha do plano.
- */
-function criarChaveLinha(linha) {
-  const num = String(linha.numero || "").trim().toUpperCase();
-  const desc = String(linha.descricao || "").trim().toUpperCase();
-  const area = String(linha.area || "").trim().toUpperCase();
-  const nat = String(linha.natureza || "").trim().toUpperCase();
-  return [num, desc, area, nat].join("::");
-}
-
-/**
- * Consolida as linhas de saldo residual do plano (agrupando por convênio e natureza).
- */
-function consolidarLinhasSaldoResidual(linhas) {
-  const resultado = [];
-  const mapa = new Map();
-
-  for (const linha of linhas) {
-    if (!ehSaldoResidualProfor(linha.descricao)) {
-      resultado.push(linha);
-      continue;
-    }
-    const chave = criarChaveSaldoResidual({
-      numeroConvenio: linha.numero ?? linha.numeroConvenio,
-      descricao: linha.descricao,
-      natureza: linha.natureza,
-    });
-    if (!chave) {
-      resultado.push({
-        ...linha,
-        area: normalizarAreaSaldoResidual(linha.area),
-        natureza: normalizarNaturezaSaldoResidual(linha.natureza),
-      });
-      continue;
-    }
-    if (!mapa.has(chave)) {
-      mapa.set(chave, {
-        ...linha,
-        area: "NAO INFORMADO",
-        natureza: normalizarNaturezaSaldoResidual(linha.natureza),
-        quantidade: 0,
-        valorPrevisto: 0,
-        valorExecutado: 0,
-        saldo: 0,
-      });
-      resultado.push(mapa.get(chave));
-    }
-    const agregado = mapa.get(chave);
-    agregado.quantidade += Number(linha.quantidade) || 0;
-    agregado.valorPrevisto = arredondarMoedaProfor(agregado.valorPrevisto + (Number(linha.valorPrevisto) || 0));
-    agregado.valorExecutado = arredondarMoedaProfor(agregado.valorExecutado + (Number(linha.valorExecutado) || 0));
-    agregado.saldo = arredondarMoedaProfor(agregado.valorPrevisto - agregado.valorExecutado);
-    agregado.valorUnitario = agregado.quantidade > 0
-      ? Math.round((agregado.valorPrevisto / agregado.quantidade + Number.EPSILON) * 1e6) / 1e6
-      : 0;
-    agregado.percentualExecucao = agregado.valorPrevisto > 0
-      ? Math.round((agregado.valorExecutado / agregado.valorPrevisto) * 10000) / 100
-      : 0;
-  }
-
-  return resultado;
-}
-
-/**
- * Lê uma fotografia canônica de um caminho do disco ou retorna o objeto se já for um.
- */
 function obterSnapshot(origem) {
   if (typeof origem === "string") {
     if (!fs.existsSync(origem)) {
       throw new Error(`Arquivo de snapshot não encontrado: ${origem}`);
     }
-    const conteudo = fs.readFileSync(origem, "utf8");
-    return JSON.parse(conteudo);
+    return JSON.parse(fs.readFileSync(origem, "utf8"));
   }
   if (origem && typeof origem === "object") {
     return origem;
@@ -105,13 +29,266 @@ function obterSnapshot(origem) {
   throw new Error("Origem de snapshot inválida (deve ser caminho de arquivo ou objeto).");
 }
 
-/**
- * Compara duas fotografias canônicas do PAD (anterior e nova).
- *
- * @param {string|Object} anterior Snapshot anterior (caminho ou objeto).
- * @param {string|Object} novo Snapshot novo (caminho ou objeto).
- * @returns {Object} Resultado detalhado da comparação.
- */
+function criarBloqueioTecnico(tipo, mensagem, detalhes = {}) {
+  return {
+    tipo,
+    mensagem,
+    severidade: "alta",
+    ...detalhes,
+  };
+}
+
+function chaveLegada(linha) {
+  return [
+    normalizarTextoParaChave(linha.numero),
+    normalizarTextoParaChave(linha.uf),
+    normalizarTextoParaChave(linha.natureza),
+    normalizarTextoParaChave(linha.area),
+    normalizarTextoParaChave(linha.descricaoOriginal ?? linha.descricao),
+  ].join("|");
+}
+
+function chaveComparacaoLegada(linha) {
+  return linha.chaveComparacao || chaveLegada(linha);
+}
+
+function chaveMaterialLegada(linha) {
+  return linha.chaveMaterial || chaveLegada(linha);
+}
+
+function chaveContexto(linha) {
+  return linha.chaveContexto || [
+    normalizarTextoParaChave(linha.numero),
+    normalizarTextoParaChave(linha.uf),
+    normalizarTextoParaChave(linha.natureza),
+    normalizarTextoParaChave(linha.area),
+  ].join("|");
+}
+
+function chaveSemNatureza(linha) {
+  return [
+    normalizarTextoParaChave(linha.numero),
+    normalizarTextoParaChave(linha.uf),
+    normalizarTextoParaChave(linha.area),
+    normalizarTextoParaChave(linha.descricaoOriginal ?? linha.descricao),
+  ].join("|");
+}
+
+function chaveSemArea(linha) {
+  return [
+    normalizarTextoParaChave(linha.numero),
+    normalizarTextoParaChave(linha.uf),
+    normalizarTextoParaChave(linha.natureza),
+    normalizarTextoParaChave(linha.descricaoOriginal ?? linha.descricao),
+  ].join("|");
+}
+
+function adicionarAoIndice(mapa, chave, item) {
+  if (!mapa.has(chave)) mapa.set(chave, []);
+  mapa.get(chave).push(item);
+}
+
+function indexarSnapshotPorChaves(snapshot, nomeSnapshot = "snapshot") {
+  const porMaterial = new Map();
+  const porComparacao = new Map();
+  const porContexto = new Map();
+  const porSemNatureza = new Map();
+  const porSemArea = new Map();
+  const bloqueiosTecnicos = [];
+  const itens = Array.isArray(snapshot.planoAplicacao) ? snapshot.planoAplicacao : [];
+
+  for (const item of itens) {
+    adicionarAoIndice(porMaterial, chaveMaterialLegada(item), item);
+    adicionarAoIndice(porComparacao, chaveComparacaoLegada(item), item);
+    adicionarAoIndice(porContexto, chaveContexto(item), item);
+    adicionarAoIndice(porSemNatureza, chaveSemNatureza(item), item);
+    adicionarAoIndice(porSemArea, chaveSemArea(item), item);
+  }
+
+  for (const [chave, grupo] of porMaterial.entries()) {
+    if (grupo.length > 1) {
+      bloqueiosTecnicos.push(criarBloqueioTecnico(
+        "colisao_chave",
+        `Colisão de chave material em ${nomeSnapshot}.`,
+        { chave, totalItens: grupo.length, snapshot: nomeSnapshot }
+      ));
+    }
+  }
+
+  for (const [chave, grupo] of porComparacao.entries()) {
+    if (grupo.length > 1) {
+      bloqueiosTecnicos.push(criarBloqueioTecnico(
+        "chave_ambigua",
+        `Chave de comparação ambígua em ${nomeSnapshot}.`,
+        { chave, totalItens: grupo.length, snapshot: nomeSnapshot }
+      ));
+    }
+  }
+
+  for (const item of itens) {
+    const avisos = Array.isArray(item.avisos) ? item.avisos : [];
+    const erros = Array.isArray(item.erros) ? item.erros : [];
+    for (const aviso of avisos) {
+      if (["dados_insuficientes", "chave_ambigua", "colisao_chave"].includes(aviso.tipo)) {
+        bloqueiosTecnicos.push(criarBloqueioTecnico(aviso.tipo, `Aviso técnico em ${nomeSnapshot}.`, {
+          chave: item.chaveMaterial || null,
+          snapshot: nomeSnapshot,
+          aviso,
+        }));
+      }
+    }
+    for (const erro of erros) {
+      bloqueiosTecnicos.push(criarBloqueioTecnico(erro.tipo || "dados_insuficientes", `Erro técnico em ${nomeSnapshot}.`, {
+        chave: item.chaveMaterial || null,
+        snapshot: nomeSnapshot,
+        erro,
+      }));
+    }
+  }
+
+  return {
+    itens,
+    porMaterial,
+    porComparacao,
+    porContexto,
+    porSemNatureza,
+    porSemArea,
+    bloqueiosTecnicos,
+  };
+}
+
+function textoSemPontuacaoComDiacritico(valor) {
+  return normalizarTextoCanonico(valor)
+    .replace(/[.,;:()[\]{}"'`´^~\\/|_+=*!?<>@#$%&]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function compararTextoDescricao(anterior, novo) {
+  const originalAnterior = String(anterior?.descricaoOriginal ?? anterior?.descricao ?? "");
+  const originalNovo = String(novo?.descricaoOriginal ?? novo?.descricao ?? "");
+  if (originalAnterior === originalNovo) return null;
+
+  const textualAnterior = textoSemPontuacaoComDiacritico(originalAnterior);
+  const textualNovo = textoSemPontuacaoComDiacritico(originalNovo);
+  if (textualAnterior === textualNovo) return "descricao_apenas_textual";
+
+  const chaveAnterior = normalizarTextoParaChave(originalAnterior);
+  const chaveNovo = normalizarTextoParaChave(originalNovo);
+  if (chaveAnterior === chaveNovo && removerDiacriticos(textualAnterior) === removerDiacriticos(textualNovo)) {
+    return "descricao_apenas_diacritico";
+  }
+
+  return "descricao_alterada";
+}
+
+function registrarDiferenca(lista, tipos, tipo, campo, anterior, novo, delta = null) {
+  tipos.add(tipo);
+  lista[campo] = { anterior, novo };
+  if (delta !== null) lista[campo].delta = delta;
+}
+
+function classificarDiferencasItem(anterior, novo) {
+  const tipos = new Set();
+  const valores = {};
+  const tipoDescricao = compararTextoDescricao(anterior, novo);
+  if (tipoDescricao) {
+    registrarDiferenca(valores, tipos, tipoDescricao, "descricao", anterior.descricaoOriginal ?? anterior.descricao, novo.descricaoOriginal ?? novo.descricao);
+  }
+
+  if (normalizarTextoParaChave(anterior.area) !== normalizarTextoParaChave(novo.area)) {
+    registrarDiferenca(valores, tipos, "area_alterada", "area", anterior.area, novo.area);
+  }
+
+  if (normalizarTextoParaChave(anterior.natureza) !== normalizarTextoParaChave(novo.natureza)) {
+    registrarDiferenca(valores, tipos, "natureza_alterada", "natureza", anterior.natureza, novo.natureza);
+  }
+
+  const diffQuantidade = (Number(novo.quantidade) || 0) - (Number(anterior.quantidade) || 0);
+  if (Math.abs(diffQuantidade) > TOLERANCIA_QUANTIDADE) {
+    registrarDiferenca(
+      valores,
+      tipos,
+      "quantidade_alterada",
+      "quantidade",
+      anterior.quantidade,
+      novo.quantidade,
+      Math.round(diffQuantidade * 1e6) / 1e6
+    );
+  }
+
+  for (const [campo, tipo] of [
+    ["valorUnitario", "valor_unitario_alterado"],
+    ["valorPrevisto", "valor_previsto_alterado"],
+    ["valorExecutado", "valor_executado_alterado"],
+    ["saldo", "saldo_alterado"],
+  ]) {
+    const diff = (Number(novo[campo]) || 0) - (Number(anterior[campo]) || 0);
+    if (Math.abs(diff) > TOLERANCIA_MOEDA) {
+      registrarDiferenca(valores, tipos, tipo, campo, anterior[campo], novo[campo], arredondarMoedaProfor(diff));
+    }
+  }
+
+  return {
+    alterado: tipos.size > 0,
+    tipos: [...tipos],
+    valores,
+  };
+}
+
+function resumoVazio() {
+  return {
+    totalIguais: 0,
+    totalNovos: 0,
+    totalRemovidos: 0,
+    totalAusentes: 0,
+    totalAlterados: 0,
+    totalBloqueiosTecnicos: 0,
+    porTipo: {},
+    porUf: {},
+    porNatureza: {},
+  };
+}
+
+function incrementar(contagem, chave, inc = 1) {
+  const k = chave || "NAO_INFORMADO";
+  contagem[k] = (contagem[k] || 0) + inc;
+}
+
+function registrarResumoDivergencia(resumo, divergencia) {
+  for (const tipo of divergencia.tipos || [divergencia.tipo]) {
+    incrementar(resumo.porTipo, tipo);
+  }
+  incrementar(resumo.porUf, divergencia.uf);
+  incrementar(resumo.porNatureza, divergencia.natureza);
+}
+
+function parearPorIndice(indiceAnterior, indiceNovo, usadosAnterior, usadosNovo, pares, origemPareamento) {
+  for (const [chave, grupoAnterior] of indiceAnterior.entries()) {
+    const grupoNovo = indiceNovo.get(chave) || [];
+    const disponiveisAnterior = grupoAnterior.filter((item) => !usadosAnterior.has(item));
+    const disponiveisNovo = grupoNovo.filter((item) => !usadosNovo.has(item));
+    if (disponiveisAnterior.length === 1 && disponiveisNovo.length === 1) {
+      const anterior = disponiveisAnterior[0];
+      const novo = disponiveisNovo[0];
+      usadosAnterior.add(anterior);
+      usadosNovo.add(novo);
+      pares.push({ anterior, novo, chave, origemPareamento });
+    }
+  }
+}
+
+function validarChecksum(snapshot, nome) {
+  const calculado = calcularChecksumSnapshot(snapshot.planoAplicacao || []);
+  const informado = snapshot.checksum || null;
+  return {
+    nome,
+    informado,
+    calculado,
+    valido: informado === calculado,
+  };
+}
+
 function compararSnapshotsPad(anterior, novo) {
   const snapAnterior = obterSnapshot(anterior);
   const snapNovo = obterSnapshot(novo);
@@ -120,161 +297,171 @@ function compararSnapshotsPad(anterior, novo) {
     throw new Error("Estrutura de fotografia canônica inválida: 'planoAplicacao' ausente ou malformado.");
   }
 
-  // Validação dos checksums
-  const checksumCalculadoAnterior = calcularChecksumSnapshot(snapAnterior.planoAplicacao);
-  const checksumCalculadoNovo = calcularChecksumSnapshot(snapNovo.planoAplicacao);
+  const checksumAnterior = validarChecksum(snapAnterior, "anterior");
+  const checksumNovo = validarChecksum(snapNovo, "novo");
+  const checksumsValidos = checksumAnterior.valido && checksumNovo.valido;
 
-  const checksumsValidos =
-    checksumCalculadoAnterior === snapAnterior.checksum &&
-    checksumCalculadoNovo === snapNovo.checksum;
+  const indiceAnterior = indexarSnapshotPorChaves(snapAnterior, "anterior");
+  const indiceNovo = indexarSnapshotPorChaves(snapNovo, "novo");
+  const bloqueiosTecnicos = [...indiceAnterior.bloqueiosTecnicos, ...indiceNovo.bloqueiosTecnicos];
+  const avisos = [];
 
-  // Consolidação de saldos residuais antes de indexar e comparar
-  const planoAnteriorConsolidado = consolidarLinhasSaldoResidual(snapAnterior.planoAplicacao);
-  const planoNovoConsolidado = consolidarLinhasSaldoResidual(snapNovo.planoAplicacao);
-
-  // Indexar planos
-  const indiceAnterior = new Map();
-  for (const linha of planoAnteriorConsolidado) {
-    const chave = criarChaveLinha(linha);
-    indiceAnterior.set(chave, linha);
+  if (!checksumAnterior.valido) {
+    bloqueiosTecnicos.push(criarBloqueioTecnico("checksum_invalido", "Checksum inválido no snapshot anterior.", checksumAnterior));
+  }
+  if (!checksumNovo.valido) {
+    bloqueiosTecnicos.push(criarBloqueioTecnico("checksum_invalido", "Checksum inválido no snapshot novo.", checksumNovo));
   }
 
-  const indiceNovo = new Map();
-  for (const linha of planoNovoConsolidado) {
-    const chave = criarChaveLinha(linha);
-    indiceNovo.set(chave, linha);
+  const usadosAnterior = new Set();
+  const usadosNovo = new Set();
+  const pares = [];
+  parearPorIndice(indiceAnterior.porMaterial, indiceNovo.porMaterial, usadosAnterior, usadosNovo, pares, "chaveMaterial");
+  parearPorIndice(indiceAnterior.porComparacao, indiceNovo.porComparacao, usadosAnterior, usadosNovo, pares, "chaveComparacao");
+  parearPorIndice(indiceAnterior.porContexto, indiceNovo.porContexto, usadosAnterior, usadosNovo, pares, "chaveContexto");
+  parearPorIndice(indiceAnterior.porSemNatureza, indiceNovo.porSemNatureza, usadosAnterior, usadosNovo, pares, "chaveSemNatureza");
+  parearPorIndice(indiceAnterior.porSemArea, indiceNovo.porSemArea, usadosAnterior, usadosNovo, pares, "chaveSemArea");
+
+  for (const [chave, grupoAnterior] of indiceAnterior.porContexto.entries()) {
+    const grupoNovo = indiceNovo.porContexto.get(chave) || [];
+    const pendentesAnterior = grupoAnterior.filter((item) => !usadosAnterior.has(item));
+    const pendentesNovo = grupoNovo.filter((item) => !usadosNovo.has(item));
+    if (pendentesAnterior.length > 1 || pendentesNovo.length > 1) {
+      bloqueiosTecnicos.push(criarBloqueioTecnico("chave_ambigua", "Pareamento por contexto ambíguo.", {
+        chave,
+        totalAnterior: pendentesAnterior.length,
+        totalNovo: pendentesNovo.length,
+      }));
+    }
   }
 
-  const chavesAnterior = new Set(indiceAnterior.keys());
-  const chavesNovo = new Set(indiceNovo.keys());
-  const todasChaves = new Set([...chavesAnterior, ...chavesNovo]);
-
+  const resumo = resumoVazio();
   const itensIguais = [];
   const itensNovos = [];
   const itensAusentes = [];
   const itensAlterados = [];
+  const divergencias = [];
 
-  for (const chave of todasChaves) {
-    const linhaAnterior = indiceAnterior.get(chave) || null;
-    const linhaNova = indiceNovo.get(chave) || null;
-
-    if (linhaAnterior && !linhaNova) {
-      itensAusentes.push(linhaAnterior);
+  for (const par of pares) {
+    const diff = classificarDiferencasItem(par.anterior, par.novo);
+    if (!diff.alterado) {
+      resumo.totalIguais += 1;
+      itensIguais.push(par.novo);
       continue;
     }
 
-    if (!linhaAnterior && linhaNova) {
-      itensNovos.push(linhaNova);
-      continue;
-    }
-
-    // Item em ambos: verificar se há divergências
-    const difs = {};
-    let alterado = false;
-
-    // Comparar quantidade
-    const diffQty = (linhaNova.quantidade || 0) - (linhaAnterior.quantidade || 0);
-    if (Math.abs(diffQty) > TOLERANCIA_QUANTIDADE) {
-      difs.quantidade = {
-        anterior: linhaAnterior.quantidade,
-        novo: linhaNova.quantidade,
-        delta: Math.round(diffQty * 1e6) / 1e6,
-      };
-      alterado = true;
-    }
-
-    // Comparar valorPrevisto
-    const diffPrevisto = (linhaNova.valorPrevisto || 0) - (linhaAnterior.valorPrevisto || 0);
-    if (Math.abs(diffPrevisto) > TOLERANCIA_MOEDA) {
-      difs.valorPrevisto = {
-        anterior: linhaAnterior.valorPrevisto,
-        novo: linhaNova.valorPrevisto,
-        delta: arredondarMoedaProfor(diffPrevisto),
-      };
-      alterado = true;
-    }
-
-    // Comparar valorExecutado
-    const diffExecutado = (linhaNova.valorExecutado || 0) - (linhaAnterior.valorExecutado || 0);
-    if (Math.abs(diffExecutado) > TOLERANCIA_MOEDA) {
-      difs.valorExecutado = {
-        anterior: linhaAnterior.valorExecutado,
-        novo: linhaNova.valorExecutado,
-        delta: arredondarMoedaProfor(diffExecutado),
-      };
-      alterado = true;
-    }
-
-    // Comparar saldo
-    const diffSaldo = (linhaNova.saldo || 0) - (linhaAnterior.saldo || 0);
-    if (Math.abs(diffSaldo) > TOLERANCIA_MOEDA) {
-      difs.saldo = {
-        anterior: linhaAnterior.saldo,
-        novo: linhaNova.saldo,
-        delta: arredondarMoedaProfor(diffSaldo),
-      };
-      alterado = true;
-    }
-
-    if (alterado) {
-      itensAlterados.push({
-        chave,
-        uf: linhaNova.uf,
-        numero: linhaNova.numero,
-        area: linhaNova.area,
-        natureza: linhaNova.natureza,
-        descricao: linhaNova.descricao,
-        valores: difs,
-      });
-    } else {
-      itensIguais.push(linhaNova);
-    }
+    resumo.totalAlterados += 1;
+    const divergencia = {
+      tipo: diff.tipos[0],
+      tipos: diff.tipos,
+      chave: par.chave,
+      origemPareamento: par.origemPareamento,
+      uf: par.novo.uf || par.anterior.uf,
+      numero: par.novo.numero || par.anterior.numero,
+      area: par.novo.area || par.anterior.area,
+      natureza: par.novo.natureza || par.anterior.natureza,
+      descricaoAnterior: par.anterior.descricaoOriginal ?? par.anterior.descricao,
+      descricaoNova: par.novo.descricaoOriginal ?? par.novo.descricao,
+      valores: diff.valores,
+    };
+    itensAlterados.push(divergencia);
+    divergencias.push(divergencia);
+    registrarResumoDivergencia(resumo, divergencia);
   }
 
-  // Agregações financeiras globais (Novo - Anterior)
-  const totalPrevistoAnterior = snapAnterior.resumo.valorPrevistoTotal;
-  const totalPrevistoNovo = snapNovo.resumo.valorPrevistoTotal;
-  const totalExecutadoAnterior = snapAnterior.resumo.valorExecutadoTotal;
-  const totalExecutadoNovo = snapNovo.resumo.valorExecutadoTotal;
-  const totalSaldoAnterior = snapAnterior.resumo.saldoTotal;
-  const totalSaldoNovo = snapNovo.resumo.saldoTotal;
-  const totalQuantidadeAnterior = snapAnterior.resumo.quantidadeTotal;
-  const totalQuantidadeNovo = snapNovo.resumo.quantidadeTotal;
+  for (const item of indiceNovo.itens) {
+    if (usadosNovo.has(item)) continue;
+    resumo.totalNovos += 1;
+    itensNovos.push(item);
+    const divergencia = {
+      tipo: "item_novo",
+      tipos: ["item_novo"],
+      chave: chaveMaterialLegada(item),
+      uf: item.uf,
+      numero: item.numero,
+      area: item.area,
+      natureza: item.natureza,
+      descricaoNova: item.descricaoOriginal ?? item.descricao,
+      item,
+    };
+    divergencias.push(divergencia);
+    registrarResumoDivergencia(resumo, divergencia);
+  }
+
+  for (const item of indiceAnterior.itens) {
+    if (usadosAnterior.has(item)) continue;
+    resumo.totalRemovidos += 1;
+    resumo.totalAusentes += 1;
+    itensAusentes.push(item);
+    const divergencia = {
+      tipo: "item_removido",
+      tipos: ["item_removido"],
+      chave: chaveMaterialLegada(item),
+      uf: item.uf,
+      numero: item.numero,
+      area: item.area,
+      natureza: item.natureza,
+      descricaoAnterior: item.descricaoOriginal ?? item.descricao,
+      item,
+    };
+    divergencias.push(divergencia);
+    registrarResumoDivergencia(resumo, divergencia);
+  }
+
+  for (const bloqueio of bloqueiosTecnicos) {
+    registrarResumoDivergencia(resumo, {
+      tipo: bloqueio.tipo,
+      tipos: [bloqueio.tipo],
+      uf: bloqueio.uf,
+      natureza: bloqueio.natureza,
+    });
+  }
+
+  resumo.totalBloqueiosTecnicos = bloqueiosTecnicos.length;
+
+  const totalPrevistoAnterior = snapAnterior.resumo?.totalValorPrevisto ?? snapAnterior.resumo?.valorPrevistoTotal ?? 0;
+  const totalPrevistoNovo = snapNovo.resumo?.totalValorPrevisto ?? snapNovo.resumo?.valorPrevistoTotal ?? 0;
+  const totalExecutadoAnterior = snapAnterior.resumo?.totalValorExecutado ?? snapAnterior.resumo?.valorExecutadoTotal ?? 0;
+  const totalExecutadoNovo = snapNovo.resumo?.totalValorExecutado ?? snapNovo.resumo?.valorExecutadoTotal ?? 0;
+  const totalSaldoAnterior = snapAnterior.resumo?.totalSaldo ?? snapAnterior.resumo?.saldoTotal ?? 0;
+  const totalSaldoNovo = snapNovo.resumo?.totalSaldo ?? snapNovo.resumo?.saldoTotal ?? 0;
+  const totalQuantidadeAnterior = snapAnterior.resumo?.totalQuantidade ?? snapAnterior.resumo?.quantidadeTotal ?? 0;
+  const totalQuantidadeNovo = snapNovo.resumo?.totalQuantidade ?? snapNovo.resumo?.quantidadeTotal ?? 0;
 
   const diferencasAgregadas = {
     valorPrevisto: arredondarMoedaProfor(totalPrevistoNovo - totalPrevistoAnterior),
     valorExecutado: arredondarMoedaProfor(totalExecutadoNovo - totalExecutadoAnterior),
     saldo: arredondarMoedaProfor(totalSaldoNovo - totalSaldoAnterior),
     quantidade: Math.round((totalQuantidadeNovo - totalQuantidadeAnterior) * 1e6) / 1e6,
-    linhas: snapNovo.resumo.totalLinhas - snapAnterior.resumo.totalLinhas,
+    linhas: (snapNovo.resumo?.totalLinhas || 0) - (snapAnterior.resumo?.totalLinhas || 0),
   };
 
   return {
     geradoEm: new Date().toISOString(),
     modo: "dry-run",
-    checksumAnterior: snapAnterior.checksum,
-    checksumNovo: snapNovo.checksum,
+    versaoComparador: VERSAO_COMPARADOR,
+    checksumAnterior: checksumAnterior.informado,
+    checksumNovo: checksumNovo.informado,
+    checksumCalculadoAnterior: checksumAnterior.calculado,
+    checksumCalculadoNovo: checksumNovo.calculado,
     checksumsValidos,
-    checksumCalculadoAnterior,
-    checksumCalculadoNovo,
+    bloqueiosTecnicos,
+    avisos,
     resumo: {
-      totalLinhasAnterior: snapAnterior.resumo.totalLinhas,
-      totalLinhasNovo: snapNovo.resumo.totalLinhas,
-      totalIguais: itensIguais.length,
-      totalNovos: itensNovos.length,
-      totalAusentes: itensAusentes.length,
-      totalAlterados: itensAlterados.length,
+      totalLinhasAnterior: snapAnterior.resumo?.totalLinhas || 0,
+      totalLinhasNovo: snapNovo.resumo?.totalLinhas || 0,
+      ...resumo,
     },
     diferencasAgregadas,
+    divergencias,
     itensNovos,
     itensAusentes,
+    itensRemovidos: itensAusentes,
     itensAlterados,
+    itensIguais,
   };
 }
 
-/**
- * Formata um valor de moeda para o padrão brasileiro de visualização.
- */
 function formatarMoeda(valor) {
   return (Number(valor) || 0).toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
@@ -282,85 +469,81 @@ function formatarMoeda(valor) {
   });
 }
 
-/**
- * Monta um relatório Markdown legível a partir do resultado da comparação.
- */
 function montarMarkdownComparacaoSnapshots(resultado) {
   const { resumo, diferencasAgregadas } = resultado;
   const linhas = [];
 
-  linhas.push("# PROFOR 2022 — Comparação de Snapshots PAD (dry-run)");
+  linhas.push("# PROFOR 2022 - Comparação de Snapshots PAD (dry-run)");
   linhas.push("");
-  linhas.push(`*Gerado em: ${new Date(resultado.geradoEm).toLocaleString("pt-BR")}*`);
-  linhas.push(`*Checksum Anterior: \`${resultado.checksumAnterior}\`*`);
-  linhas.push(`*Checksum Novo: \`${resultado.checksumNovo}\`*`);
-  linhas.push(`*Checksums íntegros no disco: ${resultado.checksumsValidos ? "SIM" : "NÃO"}*`);
+  linhas.push(`Gerado em: ${resultado.geradoEm}`);
+  linhas.push(`Versão do comparador: ${resultado.versaoComparador || "-"}`);
+  linhas.push(`Checksum anterior: \`${resultado.checksumAnterior || "-"}\``);
+  linhas.push(`Checksum novo: \`${resultado.checksumNovo || "-"}\``);
+  linhas.push(`Checksums válidos: ${resultado.checksumsValidos ? "sim" : "não"}`);
+  linhas.push(`Bloqueios técnicos: ${resultado.bloqueiosTecnicos.length}`);
   linhas.push("");
-  linhas.push("## 1. Resumo da Comparação");
+  linhas.push("## 1. Resumo");
   linhas.push("");
-  linhas.push(`- Itens idênticos: **${resumo.totalIguais}**`);
-  linhas.push(`- Itens novos (adicionados): **${resumo.totalNovos}**`);
-  linhas.push(`- Itens ausentes (removidos): **${resumo.totalAusentes}**`);
-  linhas.push(`- Itens com valores alterados: **${resumo.totalAlterados}**`);
+  linhas.push(`- Itens idênticos: ${resumo.totalIguais}`);
+  linhas.push(`- Itens novos: ${resumo.totalNovos}`);
+  linhas.push(`- Itens removidos: ${resumo.totalRemovidos}`);
+  linhas.push(`- Itens alterados: ${resumo.totalAlterados}`);
+  linhas.push(`- Bloqueios técnicos: ${resumo.totalBloqueiosTecnicos}`);
   linhas.push("");
-  linhas.push("## 2. Totais Financeiros Comparativos");
+  linhas.push("## 2. Tipos de divergência");
   linhas.push("");
-  linhas.push("| Métrica | Snapshot Anterior | Snapshot Novo | Diferença Líquida |");
-  linhas.push("| --- | ---: | ---: | ---: |");
-  linhas.push(`| Linhas do Plano | ${resumo.totalLinhasAnterior} | ${resumo.totalLinhasNovo} | ${diferencasAgregadas.linhas} |`);
+  linhas.push("| Tipo | Qtd |");
+  linhas.push("| --- | ---: |");
+  for (const [tipo, total] of Object.entries(resumo.porTipo || {}).sort()) {
+    linhas.push(`| \`${tipo}\` | ${total} |`);
+  }
+  linhas.push("");
+  linhas.push("## 3. Totais agregados");
+  linhas.push("");
+  linhas.push("| Métrica | Diferença líquida |");
+  linhas.push("| --- | ---: |");
+  linhas.push(`| Linhas | ${diferencasAgregadas.linhas} |`);
+  linhas.push(`| Valor previsto | R$ ${formatarMoeda(diferencasAgregadas.valorPrevisto)} |`);
+  linhas.push(`| Valor executado | R$ ${formatarMoeda(diferencasAgregadas.valorExecutado)} |`);
+  linhas.push(`| Saldo | R$ ${formatarMoeda(diferencasAgregadas.saldo)} |`);
+  linhas.push(`| Quantidade | ${diferencasAgregadas.quantidade} |`);
+  linhas.push("");
 
-  // Para calcular os totais absolutos do anterior e novo, podemos deduzir das diferenças agregadas
-  // mas é mais preciso buscar direto do resultado se expusermos as métricas, ou apenas mostrar o delta.
-  // Vamos mostrar o delta líquido agregando os valores.
-  linhas.push(`| Valor Previsto Total | (ver anterior) | (ver novo) | ${formatarMoeda(diferencasAgregadas.valorPrevisto)} |`);
-  linhas.push(`| Valor Executado Total | (ver anterior) | (ver novo) | ${formatarMoeda(diferencasAgregadas.valorExecutado)} |`);
-  linhas.push(`| Saldo Total | (ver anterior) | (ver novo) | ${formatarMoeda(diferencasAgregadas.saldo)} |`);
-  linhas.push("");
-
-  if (resultado.itensNovos.length > 0) {
-    linhas.push("## 3. Itens Novos (Adicionados)");
+  if (resultado.bloqueiosTecnicos.length) {
+    linhas.push("## 4. Bloqueios técnicos");
     linhas.push("");
-    linhas.push("| Convênio | UF | Área | Natureza | Descrição | Previsto | Executado |");
-    linhas.push("| --- | --- | --- | --- | --- | ---: | ---: |");
-    for (const item of resultado.itensNovos) {
-      linhas.push(`| ${item.numero} | ${item.uf} | ${item.area} | ${item.natureza} | ${item.descricao} | ${formatarMoeda(item.valorPrevisto)} | ${formatarMoeda(item.valorExecutado)} |`);
+    linhas.push("| Tipo | Mensagem | Chave |");
+    linhas.push("| --- | --- | --- |");
+    for (const bloqueio of resultado.bloqueiosTecnicos) {
+      linhas.push(`| \`${bloqueio.tipo}\` | ${bloqueio.mensagem || "-"} | \`${bloqueio.chave || "-"}\` |`);
     }
     linhas.push("");
   }
 
-  if (resultado.itensAusentes.length > 0) {
-    linhas.push("## 4. Itens Ausentes (Removidos)");
+  if (resultado.divergencias.length) {
+    linhas.push("## 5. Divergências");
     linhas.push("");
-    linhas.push("| Convênio | UF | Área | Natureza | Descrição | Previsto | Executado |");
-    linhas.push("| --- | --- | --- | --- | --- | ---: | ---: |");
-    for (const item of resultado.itensAusentes) {
-      linhas.push(`| ${item.numero} | ${item.uf} | ${item.area} | ${item.natureza} | ${item.descricao} | ${formatarMoeda(item.valorPrevisto)} | ${formatarMoeda(item.valorExecutado)} |`);
+    linhas.push("| Tipo | Convênio | UF | Natureza | Área | Descrição |");
+    linhas.push("| --- | --- | --- | --- | --- | --- |");
+    for (const item of resultado.divergencias.slice(0, 200)) {
+      linhas.push(`| \`${item.tipo}\` | ${item.numero || "-"} | ${item.uf || "-"} | ${item.natureza || "-"} | ${item.area || "-"} | ${item.descricaoNova || item.descricaoAnterior || "-"} |`);
+    }
+    if (resultado.divergencias.length > 200) {
+      linhas.push(`| ... | ... | ... | ... | ... | ${resultado.divergencias.length - 200} divergência(s) omitida(s) no Markdown |`);
     }
     linhas.push("");
   }
 
-  if (resultado.itensAlterados.length > 0) {
-    linhas.push("## 5. Detalhamento de Itens Alterados");
-    linhas.push("");
-    for (const item of resultado.itensAlterados) {
-      linhas.push(`### ${item.numero} | ${item.uf} | ${item.area} | ${item.natureza} | ${item.descricao}`);
-      linhas.push("");
-      linhas.push("| Campo | Valor Anterior | Valor Novo | Diferença |");
-      linhas.push("| --- | ---: | ---: | ---: |");
-      for (const [campo, varInfo] of Object.entries(item.valores)) {
-        const fmt = campo === "quantidade" ? (v) => v : formatarMoeda;
-        linhas.push(`| ${campo} | ${fmt(varInfo.anterior)} | ${fmt(varInfo.novo)} | ${fmt(varInfo.delta)} |`);
-      }
-      linhas.push("");
-    }
-  }
+  linhas.push("## 6. Garantias");
+  linhas.push("");
+  linhas.push("- Comparação executada em dry-run.");
+  linhas.push("- Não publica dados.");
+  linhas.push("- Não altera `frontend/data/publicados/`.");
+  linhas.push("- Não altera SQLite, WAL ou SHM.");
 
-  return linhas.join("\n");
+  return `${linhas.join("\n")}\n`;
 }
 
-/**
- * Salva o resultado da comparação em JSON e Markdown.
- */
 function salvarRelatorioComparacaoSnapshots(resultado, caminhoJson, caminhoMarkdown) {
   const dirJson = path.dirname(caminhoJson);
   if (!fs.existsSync(dirJson)) {
@@ -373,7 +556,7 @@ function salvarRelatorioComparacaoSnapshots(resultado, caminhoJson, caminhoMarkd
     if (!fs.existsSync(dirMd)) {
       fs.mkdirSync(dirMd, { recursive: true });
     }
-    fs.writeFileSync(caminhoMarkdown, `${montarMarkdownComparacaoSnapshots(resultado)}\n`, "utf8");
+    fs.writeFileSync(caminhoMarkdown, montarMarkdownComparacaoSnapshots(resultado), "utf8");
   }
 }
 
@@ -381,4 +564,8 @@ module.exports = {
   compararSnapshotsPad,
   montarMarkdownComparacaoSnapshots,
   salvarRelatorioComparacaoSnapshots,
+  indexarSnapshotPorChaves,
+  classificarDiferencasItem,
+  compararTextoDescricao,
+  criarBloqueioTecnico,
 };
