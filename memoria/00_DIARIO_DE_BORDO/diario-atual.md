@@ -1,5 +1,33 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: política de snapshots, fila de revisão e rateio por quantidade fixa
+
+- **Objetivo:** definir política de snapshots PAD, integrar divergências/bloqueios do comparador à fila de revisão PAD e implementar simulação dry-run de rateio por área + quantidade fixa.
+- **Resultado:** política formal criada, fila de revisão por snapshots implementada como dry-run e rateio por quantidade fixa implementado como serviço puro com simulação não oficial.
+- **Política de snapshots:** snapshot anterior oficial permaneceu pendente; não houve promoção nesta etapa.
+- **Arquivos criados/alterados:**
+  - `backend/services/profor-2022/profor-pad-politica-snapshots-service.js`;
+  - `backend/services/profor-2022/profor-pad-fila-revisao-snapshots-service.js`;
+  - `backend/services/profor-2022/profor-pad-rateio-quantidade-fixa-service.js`;
+  - `backend/scripts/gerar-fila-revisao-snapshots-pad-profor-2022.js`;
+  - `backend/scripts/simular-rateio-quantidade-fixa-pad-profor-2022.js`;
+  - `tests/services/profor-pad-politica-snapshots.test.js`;
+  - `tests/services/profor-pad-fila-revisao-snapshots.test.js`;
+  - `tests/services/profor-pad-rateio-quantidade-fixa.test.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`.
+- **Relatórios gerados:**
+  - `backend/data/relatorios/profor-2022-pad-politica-snapshots.md`;
+  - `backend/data/relatorios/profor-2022-pad-politica-snapshots.json`;
+  - `backend/data/relatorios/profor-2022-pad-fila-revisao-snapshots-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pad-fila-revisao-snapshots-dry-run.md`;
+  - `backend/data/relatorios/profor-2022-pad-rateio-quantidade-fixa-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pad-rateio-quantidade-fixa-dry-run.md`;
+  - `backend/data/relatorios/profor-2022-pad-politica-snapshots-fila-revisao-e-rateio-fixo-implementacao.md`.
+- **Validações:** `git diff --check` OK (apenas avisos LF/CRLF); `npm run validar:syntax` OK (89 arquivos); `npm run validar:services` OK (188/188 testes); `npm run profor:pad:comparar-snapshots:dry-run` OK; `npm run profor:pad:snapshots:gerar-fila-revisao:dry-run` OK; `npm run profor:pad:rateio-quantidade-fixa:dry-run` OK.
+- **Preservações:** `frontend/data/publicados/`, `.env`, SQLite/WAL/SHM e Transferegov não foram alterados/acionados.
+- **Próximos passos:** integração controlada com serviço oficial de decisão, quando autorizada, e reconstrução dry-run com rateio por quantidade fixa.
+
 ## 23/05/2026 — PROFOR 2022: evolução da fotografia canônica PAD e comparador v0.2
 
 - **Objetivo:** corrigir limitações da versão inicial da fotografia canônica e do comparador de snapshots.

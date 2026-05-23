@@ -1,0 +1,81 @@
+{
+  "geradoEm": "2026-05-23T22:34:07.178Z",
+  "modo": "dry-run",
+  "origem": "amostra_nao_oficial",
+  "entrada": {
+    "item": {
+      "numero": "AMOSTRA-DRY-RUN",
+      "uf": "NA",
+      "descricao": "Item de simulação de rateio por quantidade fixa",
+      "natureza": "CAPITAL",
+      "quantidade": 10,
+      "valorUnitario": 1000,
+      "valorPrevisto": 10000
+    },
+    "rateios": [
+      {
+        "area": "Ouvidoria",
+        "quantidade": 4
+      },
+      {
+        "area": "Gestao",
+        "quantidade": 6
+      }
+    ]
+  },
+  "resultado": {
+    "modo": "dry-run",
+    "item": {
+      "numero": "AMOSTRA-DRY-RUN",
+      "uf": "NA",
+      "descricao": "Item de simulação de rateio por quantidade fixa",
+      "natureza": "CAPITAL",
+      "quantidade": 10,
+      "valorUnitario": 1000,
+      "valorPrevisto": 10000
+    },
+    "totais": {
+      "quantidadeTotal": 10,
+      "somaQuantidadeRateada": 10,
+      "quantidadeNaoRateada": 0,
+      "valorPrevistoReferencia": 10000,
+      "totalValorRateado": 10000,
+      "diferencaResidualTotal": 0
+    },
+    "rateios": [
+      {
+        "area": "Ouvidoria",
+        "natureza": "CAPITAL",
+        "quantidade": 4,
+        "valorUnitario": 1000,
+        "valorPrevistoRateado": 4000,
+        "percentualDerivado": 40,
+        "diferencaResidual": 0,
+        "avisos": [],
+        "erros": [],
+        "indice": 0
+      },
+      {
+        "area": "Gestao",
+        "natureza": "CAPITAL",
+        "quantidade": 6,
+        "valorUnitario": 1000,
+        "valorPrevistoRateado": 6000,
+        "percentualDerivado": 60,
+        "diferencaResidual": 0,
+        "avisos": [],
+        "erros": [],
+        "indice": 1
+      }
+    ],
+    "avisos": [],
+    "erros": [],
+    "apto": true
+  },
+  "garantias": {
+    "decisaoRegistrada": false,
+    "bancoAlterado": false,
+    "publicacaoExecutada": false,
+    "reconstrucaoOficialAlterada": false
+  }
+}

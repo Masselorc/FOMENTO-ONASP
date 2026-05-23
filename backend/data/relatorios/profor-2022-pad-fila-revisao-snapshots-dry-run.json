@@ -1,0 +1,22 @@
+{
+  "geradoEm": "2026-05-23T22:34:07.181Z",
+  "modo": "dry-run",
+  "origem": "comparador_snapshots_pad",
+  "status": "comparacao_indisponivel",
+  "motivo": "Comparacao de snapshots nao existe; snapshot anterior oficial ainda nao foi promovido.",
+  "snapshotAnteriorOficialPromovido": false,
+  "resumo": {
+    "totalCandidatos": 0,
+    "totalAptosDecisaoHumana": 0,
+    "totalBloqueiosTecnicos": 0,
+    "porTipo": {},
+    "porCategoriaOperacional": {},
+    "porSeveridade": {}
+  },
+  "candidatos": [],
+  "garantias": {
+    "decisaoRegistrada": false,
+    "bancoAlterado": false,
+    "publicacaoExecutada": false
+  }
+}
