@@ -1,44 +1,18 @@
 # PROFOR 2022 - Fila de revisão por snapshots PAD (dry-run)
 
-Gerado em: 2026-05-23T23:02:15.142Z
+Gerado em: 2026-05-23T23:41:58.166Z
 Status: `fila_gerada`
 
 ## Resumo
 
-- Total de candidatos: 107
-- Aptos para decisão humana: 26
-- Bloqueios técnicos: 81
+- Total de candidatos: 76
+- Aptos para decisão humana: 0
+- Bloqueios técnicos: 76
 
 ## Candidatos
 
 | ID | Tipo | Categoria | Severidade | Convênio | UF | Ação |
 | --- | --- | --- | --- | --- | --- | --- |
-| `snap-607d9d015104` | `item_novo` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_inclusao_do_item |
-| `snap-ed5db06e2b95` | `item_novo` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_inclusao_do_item |
-| `snap-fbc43f94b4c1` | `item_novo` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_inclusao_do_item |
-| `snap-009018455e0f` | `item_novo` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_inclusao_do_item |
-| `snap-ca2b048b74b7` | `item_novo` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_inclusao_do_item |
-| `snap-a321182b53d5` | `item_novo` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_inclusao_do_item |
-| `snap-920b76e1c4c8` | `item_novo` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_inclusao_do_item |
-| `snap-29ea92f99ead` | `item_novo` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_inclusao_do_item |
-| `snap-77f596ffc9cf` | `item_novo` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_inclusao_do_item |
-| `snap-c7a331592fe1` | `item_novo` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_inclusao_do_item |
-| `snap-a97147626566` | `item_novo` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_inclusao_do_item |
-| `snap-a0e3c4a0aa6c` | `item_novo` | `pendencia_operacional_real` | alta | 937871 | PR | avaliar_inclusao_do_item |
-| `snap-10c4f4ea7823` | `item_novo` | `pendencia_operacional_real` | alta | 937871 | PR | avaliar_inclusao_do_item |
-| `snap-ed1f5b1610f7` | `item_removido` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_remocao_do_item |
-| `snap-315227965a4a` | `item_removido` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_remocao_do_item |
-| `snap-38a2c698cdfc` | `item_removido` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_remocao_do_item |
-| `snap-a119e7affdd0` | `item_removido` | `pendencia_operacional_real` | alta | 937468 | TO | avaliar_remocao_do_item |
-| `snap-f5e630364280` | `item_removido` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_remocao_do_item |
-| `snap-b5cdbfb3b472` | `item_removido` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_remocao_do_item |
-| `snap-ea15159b0844` | `item_removido` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_remocao_do_item |
-| `snap-8cfed59f9bc8` | `item_removido` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_remocao_do_item |
-| `snap-a1550bdd33ed` | `item_removido` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_remocao_do_item |
-| `snap-7cc7d8ff76cd` | `item_removido` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_remocao_do_item |
-| `snap-85a1e80c5cfc` | `item_removido` | `pendencia_operacional_real` | alta | 937818 | PB | avaliar_remocao_do_item |
-| `snap-9bb779beb474` | `item_removido` | `pendencia_operacional_real` | alta | 937871 | PR | avaliar_remocao_do_item |
-| `snap-3368bbc757de` | `item_removido` | `pendencia_operacional_real` | alta | 937871 | PR | avaliar_remocao_do_item |
 | `snap-efbd574a48b6` | `colisao_chave` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_colisao_de_chave |
 | `snap-8d0ff43d63eb` | `colisao_chave` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_colisao_de_chave |
 | `snap-e1fd9eda0b9c` | `colisao_chave` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_colisao_de_chave |
@@ -115,11 +89,6 @@ Status: `fila_gerada`
 | `snap-d561b6eb855c` | `chave_ambigua` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_chave_ambigua |
 | `snap-c70056478813` | `colisao_chave` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_colisao_de_chave |
 | `snap-cb0939ceb473` | `chave_ambigua` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_chave_ambigua |
-| `snap-27c6c4b2eefb` | `chave_ambigua` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_chave_ambigua |
-| `snap-b15d4e451e4f` | `chave_ambigua` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_chave_ambigua |
-| `snap-471e1f2a4c80` | `chave_ambigua` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_chave_ambigua |
-| `snap-c9446010ef9d` | `chave_ambigua` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_chave_ambigua |
-| `snap-c081e8f1244e` | `chave_ambigua` | `bloqueio_tecnico_seguranca` | alta | - | - | resolver_chave_ambigua |
 
 ## Garantias
 

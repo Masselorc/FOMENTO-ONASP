@@ -1,7 +1,7 @@
 {
-  "geradoEm": "2026-05-23T23:02:12.892Z",
+  "geradoEm": "2026-05-23T23:41:56.824Z",
   "modo": "dry-run",
-  "versaoComparador": "0.2",
+  "versaoComparador": "0.3",
   "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
   "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
   "checksumCalculadoAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
@@ -14,7 +14,9 @@
       "severidade": "alta",
       "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
       "totalItens": 2,
-      "snapshot": "anterior"
+      "snapshot": "anterior",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -22,7 +24,9 @@
       "severidade": "alta",
       "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
       "totalItens": 2,
-      "snapshot": "anterior"
+      "snapshot": "anterior",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -30,7 +34,9 @@
       "severidade": "alta",
       "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
       "totalItens": 2,
-      "snapshot": "anterior"
+      "snapshot": "anterior",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -38,7 +44,9 @@
       "severidade": "alta",
       "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
       "totalItens": 3,
-      "snapshot": "anterior"
+      "snapshot": "anterior",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -46,7 +54,9 @@
       "severidade": "alta",
       "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
       "totalItens": 2,
-      "snapshot": "anterior"
+      "snapshot": "anterior",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -54,7 +64,9 @@
       "severidade": "alta",
       "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
       "totalItens": 2,
-      "snapshot": "anterior"
+      "snapshot": "anterior",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -115,7 +127,9 @@
         "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -141,7 +155,9 @@
         "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -167,7 +183,9 @@
         "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -193,7 +211,9 @@
         "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -219,7 +239,9 @@
         "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -245,7 +267,9 @@
         "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -271,7 +295,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
         "totalItens": 3,
         "hashesDistintos": 3
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -297,7 +323,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
         "totalItens": 3,
         "hashesDistintos": 3
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -323,7 +351,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
         "totalItens": 3,
         "hashesDistintos": 3
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -349,7 +379,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -375,7 +407,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -401,7 +435,9 @@
         "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -427,7 +463,9 @@
         "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -448,7 +486,9 @@
       "severidade": "alta",
       "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
       "totalItens": 2,
-      "snapshot": "novo"
+      "snapshot": "novo",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -456,7 +496,9 @@
       "severidade": "alta",
       "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
       "totalItens": 2,
-      "snapshot": "novo"
+      "snapshot": "novo",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -464,7 +506,9 @@
       "severidade": "alta",
       "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
       "totalItens": 2,
-      "snapshot": "novo"
+      "snapshot": "novo",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -472,7 +516,9 @@
       "severidade": "alta",
       "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
       "totalItens": 3,
-      "snapshot": "novo"
+      "snapshot": "novo",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -480,7 +526,9 @@
       "severidade": "alta",
       "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
       "totalItens": 2,
-      "snapshot": "novo"
+      "snapshot": "novo",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "colisao_chave",
@@ -488,7 +536,9 @@
       "severidade": "alta",
       "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
       "totalItens": 2,
-      "snapshot": "novo"
+      "snapshot": "novo",
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -549,7 +599,9 @@
         "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -575,7 +627,9 @@
         "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -601,7 +655,9 @@
         "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -627,7 +683,9 @@
         "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -653,7 +711,9 @@
         "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -679,7 +739,9 @@
         "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -705,7 +767,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
         "totalItens": 3,
         "hashesDistintos": 3
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -731,7 +795,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
         "totalItens": 3,
         "hashesDistintos": 3
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -757,7 +823,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
         "totalItens": 3,
         "hashesDistintos": 3
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -783,7 +851,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -809,7 +879,9 @@
         "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -835,7 +907,9 @@
         "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -861,7 +935,9 @@
         "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
         "totalItens": 2,
         "hashesDistintos": 2
-      }
+      },
+      "ruidoTecnicoControlado": true,
+      "motivoRuido": "identidade_material_bijetiva_por_hashItem"
     },
     {
       "tipo": "chave_ambigua",
@@ -875,74 +951,67 @@
         "totalItens": 2,
         "hashesDistintos": 2
       }
+    }
+  ],
+  "ruidosTecnicosControlados": [
+    {
+      "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "totalItens": 2,
+      "hashesUnicos": 2,
+      "criterio": "hashItem_bijetivo"
     },
     {
-      "tipo": "chave_ambigua",
-      "mensagem": "Pareamento por contexto ambíguo.",
-      "severidade": "alta",
-      "chave": "937468|TO|CAPITAL|CORREGEDORIA",
-      "totalAnterior": 2,
-      "totalNovo": 2
+      "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "totalItens": 2,
+      "hashesUnicos": 2,
+      "criterio": "hashItem_bijetivo"
     },
     {
-      "tipo": "chave_ambigua",
-      "mensagem": "Pareamento por contexto ambíguo.",
-      "severidade": "alta",
-      "chave": "937468|TO|CAPITAL|ESCOLA PENAL",
-      "totalAnterior": 2,
-      "totalNovo": 2
+      "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "totalItens": 2,
+      "hashesUnicos": 2,
+      "criterio": "hashItem_bijetivo"
     },
     {
-      "tipo": "chave_ambigua",
-      "mensagem": "Pareamento por contexto ambíguo.",
-      "severidade": "alta",
-      "chave": "937818|PB|CAPITAL|CORREGEDORIA",
-      "totalAnterior": 2,
-      "totalNovo": 2
+      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "totalItens": 3,
+      "hashesUnicos": 3,
+      "criterio": "hashItem_bijetivo"
     },
     {
-      "tipo": "chave_ambigua",
-      "mensagem": "Pareamento por contexto ambíguo.",
-      "severidade": "alta",
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "totalAnterior": 5,
-      "totalNovo": 5
+      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "totalItens": 2,
+      "hashesUnicos": 2,
+      "criterio": "hashItem_bijetivo"
     },
     {
-      "tipo": "chave_ambigua",
-      "mensagem": "Pareamento por contexto ambíguo.",
-      "severidade": "alta",
-      "chave": "937871|PR|CAPITAL|OUVIDORIA",
-      "totalAnterior": 2,
-      "totalNovo": 2
+      "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "totalItens": 2,
+      "hashesUnicos": 2,
+      "criterio": "hashItem_bijetivo"
     }
   ],
   "avisos": [],
   "resumo": {
     "totalLinhasAnterior": 568,
     "totalLinhasNovo": 568,
-    "totalIguais": 555,
-    "totalNovos": 13,
-    "totalRemovidos": 13,
-    "totalAusentes": 13,
+    "totalIguais": 568,
+    "totalNovos": 0,
+    "totalRemovidos": 0,
+    "totalAusentes": 0,
     "totalAlterados": 0,
-    "totalBloqueiosTecnicos": 81,
+    "totalBloqueiosTecnicos": 76,
     "porTipo": {
-      "item_novo": 13,
-      "item_removido": 13,
       "colisao_chave": 38,
-      "chave_ambigua": 43
+      "chave_ambigua": 38
     },
     "porUf": {
-      "TO": 8,
-      "PB": 14,
-      "PR": 4,
-      "NAO_INFORMADO": 81
+      "NAO_INFORMADO": 76
     },
     "porNatureza": {
-      "CAPITAL": 26,
-      "NAO_INFORMADO": 81
-    }
+      "NAO_INFORMADO": 76
+    },
+    "totalRuidosTecnicosControlados": 6
   },
   "diferencasAgregadas": {
     "valorPrevisto": 0,
@@ -951,2666 +1020,10 @@
     "quantidade": 0,
     "linhas": 0
   },
-  "divergencias": [
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoNova": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-        "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "quantidade": 16,
-        "valorUnitario": 1200,
-        "valorPrevisto": 19200,
-        "valorExecutado": 0,
-        "saldo": 19200,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-        "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-        "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-        "hashItem": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoNova": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-        "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "quantidade": 3,
-        "valorUnitario": 1200,
-        "valorPrevisto": 3600,
-        "valorExecutado": 0,
-        "saldo": 3600,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-        "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-        "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-        "hashItem": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoNova": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "quantidade": 1,
-        "valorUnitario": 3020.33,
-        "valorPrevisto": 3020.33,
-        "valorExecutado": 0,
-        "saldo": 3020.33,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-        "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-        "hashItem": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoNova": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "quantidade": 1,
-        "valorUnitario": 3933.72,
-        "valorPrevisto": 3933.72,
-        "valorExecutado": 0,
-        "saldo": 3933.72,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-        "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-        "hashItem": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 3.257143,
-        "valorUnitario": 2522.36,
-        "valorPrevisto": 8215.7,
-        "valorExecutado": 0,
-        "saldo": 8215.7,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-        "hashItem": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 2.742857,
-        "valorUnitario": 2634.66,
-        "valorPrevisto": 7226.5,
-        "valorExecutado": 0,
-        "saldo": 7226.5,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-        "hashItem": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoNova": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-        "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "quantidade": 13,
-        "valorUnitario": 1895,
-        "valorPrevisto": 24635,
-        "valorExecutado": 24635,
-        "saldo": 0,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 100,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoNova": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-        "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "quantidade": 2,
-        "valorUnitario": 1895,
-        "valorPrevisto": 3790,
-        "valorExecutado": 0,
-        "saldo": 3790,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoNova": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-        "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "quantidade": 2,
-        "valorUnitario": 1895,
-        "valorPrevisto": 3790,
-        "valorExecutado": 3790,
-        "saldo": 0,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 100,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 13.257143,
-        "valorUnitario": 2561.09,
-        "valorPrevisto": 33952.7,
-        "valorExecutado": 0,
-        "saldo": 33952.7,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 15.742857,
-        "valorUnitario": 2451.92,
-        "valorPrevisto": 38600.3,
-        "valorExecutado": 0,
-        "saldo": 38600.3,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "uf": "PR",
-      "numero": "937871",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricaoNova": "Veículo tipo SUV",
-      "item": {
-        "uf": "PR",
-        "instrumento": "CONVÊNIO",
-        "numero": "937871",
-        "ano": "2022",
-        "area": "OUVIDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "VEÍCULO TIPO SUV",
-        "descricaoOriginal": "Veículo tipo SUV",
-        "descricaoNormalizada": "VEÍCULO TIPO SUV",
-        "quantidade": 1,
-        "valorUnitario": 74366.42,
-        "valorPrevisto": 74366.42,
-        "valorExecutado": 0,
-        "saldo": 74366.42,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-        "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-        "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-        "hashItem": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7"
-      }
-    },
-    {
-      "tipo": "item_novo",
-      "tipos": [
-        "item_novo"
-      ],
-      "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "uf": "PR",
-      "numero": "937871",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricaoNova": "Veículo tipo SUV",
-      "item": {
-        "uf": "PR",
-        "instrumento": "CONVÊNIO",
-        "numero": "937871",
-        "ano": "2022",
-        "area": "OUVIDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "VEÍCULO TIPO SUV",
-        "descricaoOriginal": "Veículo tipo SUV",
-        "descricaoNormalizada": "VEÍCULO TIPO SUV",
-        "quantidade": 1,
-        "valorUnitario": 51133.66,
-        "valorPrevisto": 51133.66,
-        "valorExecutado": 0,
-        "saldo": 51133.66,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-        "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-        "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-        "hashItem": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-        "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "quantidade": 16,
-        "valorUnitario": 1200,
-        "valorPrevisto": 19200,
-        "valorExecutado": 0,
-        "saldo": 19200,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-        "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-        "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-        "hashItem": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-        "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-        "quantidade": 3,
-        "valorUnitario": 1200,
-        "valorPrevisto": 3600,
-        "valorExecutado": 0,
-        "saldo": 3600,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-        "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-        "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-        "hashItem": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "quantidade": 1,
-        "valorUnitario": 3020.33,
-        "valorPrevisto": 3020.33,
-        "valorExecutado": 0,
-        "saldo": 3020.33,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-        "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-        "hashItem": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "uf": "TO",
-      "numero": "937468",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "item": {
-        "uf": "TO",
-        "instrumento": "CONVÊNIO",
-        "numero": "937468",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "quantidade": 1,
-        "valorUnitario": 3933.72,
-        "valorPrevisto": 3933.72,
-        "valorExecutado": 0,
-        "saldo": 3933.72,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-        "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-        "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-        "hashItem": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 3.257143,
-        "valorUnitario": 2522.36,
-        "valorPrevisto": 8215.7,
-        "valorExecutado": 0,
-        "saldo": 8215.7,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-        "hashItem": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "CORREGEDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 2.742857,
-        "valorUnitario": 2634.66,
-        "valorPrevisto": 7226.5,
-        "valorExecutado": 0,
-        "saldo": 7226.5,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-        "hashItem": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-        "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "quantidade": 13,
-        "valorUnitario": 1895,
-        "valorPrevisto": 24635,
-        "valorExecutado": 24635,
-        "saldo": 0,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 100,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-        "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "quantidade": 2,
-        "valorUnitario": 1895,
-        "valorPrevisto": 3790,
-        "valorExecutado": 0,
-        "saldo": 3790,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-        "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-        "quantidade": 2,
-        "valorUnitario": 1895,
-        "valorPrevisto": 3790,
-        "valorExecutado": 3790,
-        "saldo": 0,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 100,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-            "totalItens": 3,
-            "hashesDistintos": 3
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 13.257143,
-        "valorUnitario": 2561.09,
-        "valorPrevisto": 33952.7,
-        "valorExecutado": 0,
-        "saldo": 33952.7,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "uf": "PB",
-      "numero": "937818",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "item": {
-        "uf": "PB",
-        "instrumento": "CONVÊNIO",
-        "numero": "937818",
-        "ano": "2022",
-        "area": "ESCOLA PENAL",
-        "natureza": "CAPITAL",
-        "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-        "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-        "quantidade": 15.742857,
-        "valorUnitario": 2451.92,
-        "valorPrevisto": 38600.3,
-        "valorExecutado": 0,
-        "saldo": 38600.3,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-        "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-        "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-        "hashItem": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "uf": "PR",
-      "numero": "937871",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "Veículo tipo SUV",
-      "item": {
-        "uf": "PR",
-        "instrumento": "CONVÊNIO",
-        "numero": "937871",
-        "ano": "2022",
-        "area": "OUVIDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "VEÍCULO TIPO SUV",
-        "descricaoOriginal": "Veículo tipo SUV",
-        "descricaoNormalizada": "VEÍCULO TIPO SUV",
-        "quantidade": 1,
-        "valorUnitario": 74366.42,
-        "valorPrevisto": 74366.42,
-        "valorExecutado": 0,
-        "saldo": 74366.42,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-        "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-        "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-        "hashItem": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7"
-      }
-    },
-    {
-      "tipo": "item_removido",
-      "tipos": [
-        "item_removido"
-      ],
-      "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "uf": "PR",
-      "numero": "937871",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricaoAnterior": "Veículo tipo SUV",
-      "item": {
-        "uf": "PR",
-        "instrumento": "CONVÊNIO",
-        "numero": "937871",
-        "ano": "2022",
-        "area": "OUVIDORIA",
-        "natureza": "CAPITAL",
-        "descricao": "VEÍCULO TIPO SUV",
-        "descricaoOriginal": "Veículo tipo SUV",
-        "descricaoNormalizada": "VEÍCULO TIPO SUV",
-        "quantidade": 1,
-        "valorUnitario": 51133.66,
-        "valorPrevisto": 51133.66,
-        "valorExecutado": 0,
-        "saldo": 51133.66,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [
-          {
-            "tipo": "colisao_chave",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          },
-          {
-            "tipo": "chave_ambigua",
-            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-            "totalItens": 2,
-            "hashesDistintos": 2
-          }
-        ],
-        "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-        "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-        "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-        "hashItem": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c"
-      }
-    }
-  ],
-  "itensNovos": [
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "quantidade": 16,
-      "valorUnitario": 1200,
-      "valorPrevisto": 19200,
-      "valorExecutado": 0,
-      "saldo": 19200,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-      "hashItem": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "quantidade": 3,
-      "valorUnitario": 1200,
-      "valorPrevisto": 3600,
-      "valorExecutado": 0,
-      "saldo": 3600,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-      "hashItem": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "quantidade": 1,
-      "valorUnitario": 3020.33,
-      "valorPrevisto": 3020.33,
-      "valorExecutado": 0,
-      "saldo": 3020.33,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-      "hashItem": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "quantidade": 1,
-      "valorUnitario": 3933.72,
-      "valorPrevisto": 3933.72,
-      "valorExecutado": 0,
-      "saldo": 3933.72,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-      "hashItem": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 3.257143,
-      "valorUnitario": 2522.36,
-      "valorPrevisto": 8215.7,
-      "valorExecutado": 0,
-      "saldo": 8215.7,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-      "hashItem": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 2.742857,
-      "valorUnitario": 2634.66,
-      "valorPrevisto": 7226.5,
-      "valorExecutado": 0,
-      "saldo": 7226.5,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-      "hashItem": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 13,
-      "valorUnitario": 1895,
-      "valorPrevisto": 24635,
-      "valorExecutado": 24635,
-      "saldo": 0,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 100,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 2,
-      "valorUnitario": 1895,
-      "valorPrevisto": 3790,
-      "valorExecutado": 0,
-      "saldo": 3790,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 2,
-      "valorUnitario": 1895,
-      "valorPrevisto": 3790,
-      "valorExecutado": 3790,
-      "saldo": 0,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 100,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 13.257143,
-      "valorUnitario": 2561.09,
-      "valorPrevisto": 33952.7,
-      "valorExecutado": 0,
-      "saldo": 33952.7,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 15.742857,
-      "valorUnitario": 2451.92,
-      "valorPrevisto": 38600.3,
-      "valorExecutado": 0,
-      "saldo": 38600.3,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020"
-    },
-    {
-      "uf": "PR",
-      "instrumento": "CONVÊNIO",
-      "numero": "937871",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "VEÍCULO TIPO SUV",
-      "descricaoOriginal": "Veículo tipo SUV",
-      "descricaoNormalizada": "VEÍCULO TIPO SUV",
-      "quantidade": 1,
-      "valorUnitario": 74366.42,
-      "valorPrevisto": 74366.42,
-      "valorExecutado": 0,
-      "saldo": 74366.42,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-      "hashItem": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7"
-    },
-    {
-      "uf": "PR",
-      "instrumento": "CONVÊNIO",
-      "numero": "937871",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "VEÍCULO TIPO SUV",
-      "descricaoOriginal": "Veículo tipo SUV",
-      "descricaoNormalizada": "VEÍCULO TIPO SUV",
-      "quantidade": 1,
-      "valorUnitario": 51133.66,
-      "valorPrevisto": 51133.66,
-      "valorExecutado": 0,
-      "saldo": 51133.66,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-      "hashItem": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c"
-    }
-  ],
-  "itensAusentes": [
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "quantidade": 16,
-      "valorUnitario": 1200,
-      "valorPrevisto": 19200,
-      "valorExecutado": 0,
-      "saldo": 19200,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-      "hashItem": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "quantidade": 3,
-      "valorUnitario": 1200,
-      "valorPrevisto": 3600,
-      "valorExecutado": 0,
-      "saldo": 3600,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-      "hashItem": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "quantidade": 1,
-      "valorUnitario": 3020.33,
-      "valorPrevisto": 3020.33,
-      "valorExecutado": 0,
-      "saldo": 3020.33,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-      "hashItem": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "quantidade": 1,
-      "valorUnitario": 3933.72,
-      "valorPrevisto": 3933.72,
-      "valorExecutado": 0,
-      "saldo": 3933.72,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-      "hashItem": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 3.257143,
-      "valorUnitario": 2522.36,
-      "valorPrevisto": 8215.7,
-      "valorExecutado": 0,
-      "saldo": 8215.7,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-      "hashItem": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 2.742857,
-      "valorUnitario": 2634.66,
-      "valorPrevisto": 7226.5,
-      "valorExecutado": 0,
-      "saldo": 7226.5,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-      "hashItem": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 13,
-      "valorUnitario": 1895,
-      "valorPrevisto": 24635,
-      "valorExecutado": 24635,
-      "saldo": 0,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 100,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 2,
-      "valorUnitario": 1895,
-      "valorPrevisto": 3790,
-      "valorExecutado": 0,
-      "saldo": 3790,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 2,
-      "valorUnitario": 1895,
-      "valorPrevisto": 3790,
-      "valorExecutado": 3790,
-      "saldo": 0,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 100,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 13.257143,
-      "valorUnitario": 2561.09,
-      "valorPrevisto": 33952.7,
-      "valorExecutado": 0,
-      "saldo": 33952.7,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 15.742857,
-      "valorUnitario": 2451.92,
-      "valorPrevisto": 38600.3,
-      "valorExecutado": 0,
-      "saldo": 38600.3,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020"
-    },
-    {
-      "uf": "PR",
-      "instrumento": "CONVÊNIO",
-      "numero": "937871",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "VEÍCULO TIPO SUV",
-      "descricaoOriginal": "Veículo tipo SUV",
-      "descricaoNormalizada": "VEÍCULO TIPO SUV",
-      "quantidade": 1,
-      "valorUnitario": 74366.42,
-      "valorPrevisto": 74366.42,
-      "valorExecutado": 0,
-      "saldo": 74366.42,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-      "hashItem": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7"
-    },
-    {
-      "uf": "PR",
-      "instrumento": "CONVÊNIO",
-      "numero": "937871",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "VEÍCULO TIPO SUV",
-      "descricaoOriginal": "Veículo tipo SUV",
-      "descricaoNormalizada": "VEÍCULO TIPO SUV",
-      "quantidade": 1,
-      "valorUnitario": 51133.66,
-      "valorPrevisto": 51133.66,
-      "valorExecutado": 0,
-      "saldo": 51133.66,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-      "hashItem": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c"
-    }
-  ],
-  "itensRemovidos": [
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "quantidade": 16,
-      "valorUnitario": 1200,
-      "valorPrevisto": 19200,
-      "valorExecutado": 0,
-      "saldo": 19200,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-      "hashItem": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
-      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
-      "quantidade": 3,
-      "valorUnitario": 1200,
-      "valorPrevisto": 3600,
-      "valorExecutado": 0,
-      "saldo": 3600,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
-      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
-      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-      "hashItem": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "quantidade": 1,
-      "valorUnitario": 3020.33,
-      "valorPrevisto": 3020.33,
-      "valorExecutado": 0,
-      "saldo": 3020.33,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-      "hashItem": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "quantidade": 1,
-      "valorUnitario": 3933.72,
-      "valorPrevisto": 3933.72,
-      "valorExecutado": 0,
-      "saldo": 3933.72,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
-      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
-      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
-      "hashItem": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 3.257143,
-      "valorUnitario": 2522.36,
-      "valorPrevisto": 8215.7,
-      "valorExecutado": 0,
-      "saldo": 8215.7,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-      "hashItem": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 2.742857,
-      "valorUnitario": 2634.66,
-      "valorPrevisto": 7226.5,
-      "valorExecutado": 0,
-      "saldo": 7226.5,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
-      "hashItem": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 13,
-      "valorUnitario": 1895,
-      "valorPrevisto": 24635,
-      "valorExecutado": 24635,
-      "saldo": 0,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 100,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 2,
-      "valorUnitario": 1895,
-      "valorPrevisto": 3790,
-      "valorExecutado": 0,
-      "saldo": 3790,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
-      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
-      "quantidade": 2,
-      "valorUnitario": 1895,
-      "valorPrevisto": 3790,
-      "valorExecutado": 3790,
-      "saldo": 0,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 100,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-          "totalItens": 3,
-          "hashesDistintos": 3
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 13.257143,
-      "valorUnitario": 2561.09,
-      "valorPrevisto": 33952.7,
-      "valorExecutado": 0,
-      "saldo": 33952.7,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99"
-    },
-    {
-      "uf": "PB",
-      "instrumento": "CONVÊNIO",
-      "numero": "937818",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
-      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
-      "quantidade": 15.742857,
-      "valorUnitario": 2451.92,
-      "valorPrevisto": 38600.3,
-      "valorExecutado": 0,
-      "saldo": 38600.3,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
-      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
-      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
-      "hashItem": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020"
-    },
-    {
-      "uf": "PR",
-      "instrumento": "CONVÊNIO",
-      "numero": "937871",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "VEÍCULO TIPO SUV",
-      "descricaoOriginal": "Veículo tipo SUV",
-      "descricaoNormalizada": "VEÍCULO TIPO SUV",
-      "quantidade": 1,
-      "valorUnitario": 74366.42,
-      "valorPrevisto": 74366.42,
-      "valorExecutado": 0,
-      "saldo": 74366.42,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-      "hashItem": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7"
-    },
-    {
-      "uf": "PR",
-      "instrumento": "CONVÊNIO",
-      "numero": "937871",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "VEÍCULO TIPO SUV",
-      "descricaoOriginal": "Veículo tipo SUV",
-      "descricaoNormalizada": "VEÍCULO TIPO SUV",
-      "quantidade": 1,
-      "valorUnitario": 51133.66,
-      "valorPrevisto": 51133.66,
-      "valorExecutado": 0,
-      "saldo": 51133.66,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [
-        {
-          "tipo": "colisao_chave",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        },
-        {
-          "tipo": "chave_ambigua",
-          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-          "totalItens": 2,
-          "hashesDistintos": 2
-        }
-      ],
-      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
-      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
-      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
-      "hashItem": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c"
-    }
-  ],
+  "divergencias": [],
+  "itensNovos": [],
+  "itensAusentes": [],
+  "itensRemovidos": [],
   "itensAlterados": [],
   "itensIguais": [
     {
@@ -16377,6 +13790,474 @@
       "chaveComparacao": "938277|MA|CUSTEIO|OUVIDORIA|ADMINISTRACAO CONF CURSO DE E NEGOCIACAO",
       "chaveContexto": "938277|MA|CUSTEIO|OUVIDORIA",
       "hashItem": "b77a57d61d21c22f8e2a3c251a412526e218bc24168b2ce658b5a6cfcda3cdb4"
+    },
+    {
+      "uf": "TO",
+      "instrumento": "CONVÊNIO",
+      "numero": "937468",
+      "ano": "2022",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
+      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
+      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
+      "quantidade": 16,
+      "valorUnitario": 1200,
+      "valorPrevisto": 19200,
+      "valorExecutado": 0,
+      "saldo": 19200,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
+      "hashItem": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59"
+    },
+    {
+      "uf": "TO",
+      "instrumento": "CONVÊNIO",
+      "numero": "937468",
+      "ano": "2022",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
+      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
+      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - CADEIRA GIRATÓR",
+      "quantidade": 3,
+      "valorUnitario": 1200,
+      "valorPrevisto": 3600,
+      "valorExecutado": 0,
+      "saldo": 3600,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
+      "hashItem": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8"
+    },
+    {
+      "uf": "TO",
+      "instrumento": "CONVÊNIO",
+      "numero": "937468",
+      "ano": "2022",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "quantidade": 1,
+      "valorUnitario": 3020.33,
+      "valorPrevisto": 3020.33,
+      "valorExecutado": 0,
+      "saldo": 3020.33,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
+      "hashItem": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6"
+    },
+    {
+      "uf": "TO",
+      "instrumento": "CONVÊNIO",
+      "numero": "937468",
+      "ano": "2022",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "descricaoOriginal": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "descricaoNormalizada": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "quantidade": 1,
+      "valorUnitario": 3933.72,
+      "valorPrevisto": 3933.72,
+      "valorExecutado": 0,
+      "saldo": 3933.72,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "chaveContexto": "937468|TO|CAPITAL|ESCOLA PENAL",
+      "hashItem": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653"
+    },
+    {
+      "uf": "PB",
+      "instrumento": "CONVÊNIO",
+      "numero": "937818",
+      "ano": "2022",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "quantidade": 3.257143,
+      "valorUnitario": 2522.36,
+      "valorPrevisto": 8215.7,
+      "valorExecutado": 0,
+      "saldo": 8215.7,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
+      "hashItem": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2"
+    },
+    {
+      "uf": "PB",
+      "instrumento": "CONVÊNIO",
+      "numero": "937818",
+      "ano": "2022",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "quantidade": 2.742857,
+      "valorUnitario": 2634.66,
+      "valorPrevisto": 7226.5,
+      "valorExecutado": 0,
+      "saldo": 7226.5,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveContexto": "937818|PB|CAPITAL|CORREGEDORIA",
+      "hashItem": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db"
+    },
+    {
+      "uf": "PB",
+      "instrumento": "CONVÊNIO",
+      "numero": "937818",
+      "ano": "2022",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "quantidade": 13,
+      "valorUnitario": 1895,
+      "valorPrevisto": 24635,
+      "valorExecutado": 24635,
+      "saldo": 0,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 100,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "totalItens": 3,
+          "hashesDistintos": 3
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+          "totalItens": 3,
+          "hashesDistintos": 3
+        }
+      ],
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
+      "hashItem": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f"
+    },
+    {
+      "uf": "PB",
+      "instrumento": "CONVÊNIO",
+      "numero": "937818",
+      "ano": "2022",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "quantidade": 2,
+      "valorUnitario": 1895,
+      "valorPrevisto": 3790,
+      "valorExecutado": 0,
+      "saldo": 3790,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "totalItens": 3,
+          "hashesDistintos": 3
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+          "totalItens": 3,
+          "hashesDistintos": 3
+        }
+      ],
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
+      "hashItem": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005"
+    },
+    {
+      "uf": "PB",
+      "instrumento": "CONVÊNIO",
+      "numero": "937818",
+      "ano": "2022",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "descricaoOriginal": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "descricaoNormalizada": "CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "quantidade": 2,
+      "valorUnitario": 1895,
+      "valorPrevisto": 3790,
+      "valorExecutado": 3790,
+      "saldo": 0,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 100,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "totalItens": 3,
+          "hashesDistintos": 3
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+          "totalItens": 3,
+          "hashesDistintos": 3
+        }
+      ],
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
+      "hashItem": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e"
+    },
+    {
+      "uf": "PB",
+      "instrumento": "CONVÊNIO",
+      "numero": "937818",
+      "ano": "2022",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "quantidade": 13.257143,
+      "valorUnitario": 2561.09,
+      "valorPrevisto": 33952.7,
+      "valorExecutado": 0,
+      "saldo": 33952.7,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
+      "hashItem": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99"
+    },
+    {
+      "uf": "PB",
+      "instrumento": "CONVÊNIO",
+      "numero": "937818",
+      "ano": "2022",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "descricaoOriginal": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNormalizada": "NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "quantidade": 15.742857,
+      "valorUnitario": 2451.92,
+      "valorPrevisto": 38600.3,
+      "valorExecutado": 0,
+      "saldo": 38600.3,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveContexto": "937818|PB|CAPITAL|ESCOLA PENAL",
+      "hashItem": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020"
+    },
+    {
+      "uf": "PR",
+      "instrumento": "CONVÊNIO",
+      "numero": "937871",
+      "ano": "2022",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "VEÍCULO TIPO SUV",
+      "descricaoOriginal": "Veículo tipo SUV",
+      "descricaoNormalizada": "VEÍCULO TIPO SUV",
+      "quantidade": 1,
+      "valorUnitario": 74366.42,
+      "valorPrevisto": 74366.42,
+      "valorExecutado": 0,
+      "saldo": 74366.42,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
+      "hashItem": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7"
+    },
+    {
+      "uf": "PR",
+      "instrumento": "CONVÊNIO",
+      "numero": "937871",
+      "ano": "2022",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "VEÍCULO TIPO SUV",
+      "descricaoOriginal": "Veículo tipo SUV",
+      "descricaoNormalizada": "VEÍCULO TIPO SUV",
+      "quantidade": 1,
+      "valorUnitario": 51133.66,
+      "valorPrevisto": 51133.66,
+      "valorExecutado": 0,
+      "saldo": 51133.66,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [
+        {
+          "tipo": "colisao_chave",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        },
+        {
+          "tipo": "chave_ambigua",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+          "totalItens": 2,
+          "hashesDistintos": 2
+        }
+      ],
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "chaveContexto": "937871|PR|CAPITAL|OUVIDORIA",
+      "hashItem": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c"
     }
   ]
 }

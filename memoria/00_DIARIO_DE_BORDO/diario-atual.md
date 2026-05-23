@@ -1,5 +1,45 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: redução de ruído no comparador de snapshots por identidade material bijetiva (sem auditoria nova dos 81 bloqueios)
+
+- **Premissa preservada:** os 81 bloqueios técnicos pós-promoção do snapshot anterior oficial (commit `93f2b98`) **não foram auditados do zero**. A memória completa em `memoria/09_ERROS_E_CORRECOES/historico-erros.md` foi considerada como contexto consolidado. As causas estruturais já estavam documentadas: chave frágil por descrição; itens PAD em múltiplas linhas; saldo residual/remanescente segregado por natureza; CAPITAL e CUSTEIO não fundem; rateio antigo multiplicava linhas; arredondamento de valor unitário; diacrítico não é divergência material; substitutos compatíveis no PAD; identidade material prevalece sobre chave textual.
+- **Escopo desta etapa:** redução de ruído do comparador para impedir que pares colidentes com **identidade material bijetiva** (mesmo `hashItem`) gerem `item_novo` + `item_removido` artificiais. **Nenhuma frente nova foi aberta** (múltiplos Excel permanece separada).
+- **Patch aplicado** em `backend/services/profor-2022/profor-pad-comparador-snapshots-service.js` (v0.2 → **v0.3**):
+  - Nova etapa 6 de pareamento `parearGruposMateriaisPorHash`: pareia grupos com `chaveMaterial` colidente em ambos os snapshots **somente** se os `hashItem` forem bijetivos (multiset idêntico).
+  - Bloqueios técnicos **não são apagados** — apenas marcados com `ruidoTecnicoControlado=true` + `motivoRuido="identidade_material_bijetiva_por_hashItem"`.
+  - Novo campo `ruidosTecnicosControlados[]` no relatório (JSON + seção 4a no Markdown).
+- **Resultado antes/depois (snapshots reais):**
+  - Itens iguais: 555 → **568**.
+  - Itens novos: 13 → **0**.
+  - Itens removidos: 13 → **0**.
+  - Itens alterados: 0 → 0.
+  - Bloqueios técnicos: 81 (38 colisão + 43 ambígua) → **76 (38 colisão + 38 ambígua)**. Os 5 `chave_ambigua` a menos eram derivados do pareamento por contexto que deixou de disparar porque os pendentes foram absorvidos por hash bijetivo — redução de derivado, não supressão de bloqueio estrutural.
+  - Ruídos técnicos controlados: 6 (todos `colisao_chave` correspondentes ficaram marcados).
+  - Δ financeiro líquido (previsto/executado/saldo): R$ 0,00 / R$ 0,00 / R$ 0,00 (preservado).
+  - **Candidatos na fila dry-run: 107 → 76** (26 artificiais `item_novo`/`item_removido` eliminados + 5 derivados).
+- **Testes:** 6 novos casos em `tests/services/profor-pad-comparador-snapshots.test.js` cobrindo:
+  - colisão preexistente bijetiva NÃO vira novo+removido;
+  - colisão com diferença material continua gerando divergência/bloqueio;
+  - Δ R$ 0,00 sozinha não oculta divergência;
+  - bloqueios técnicos não são reduzidos pelo ruído controlado;
+  - ruído controlado aparece no JSON e no Markdown;
+  - fila dry-run não cria pendência operacional artificial para ruído.
+  Suíte completa: **225/225** passando (`validar:services`).
+- **Bloqueios remanescentes:** 76 (38 colisão + 38 ambígua) — todos preexistentes e já explicados pela memória; ruído controlado: 6.
+- **Preservações:**
+  - `frontend/data/publicados/` intacto.
+  - `.env` inalterado.
+  - SQLite/WAL/SHM intactos e não versionados.
+  - Snapshot atual e snapshot anterior oficial **não foram tocados**.
+  - `planoAplicacao` oficial e fila oficial real **não foram alterados**.
+  - Nenhuma decisão automática registrada.
+  - Transferegov não foi acionado.
+- **Arquivos criados:**
+  - `backend/data/relatorios/profor-2022-pad-consolidacao-bloqueios-pos-promocao-snapshot.md` — mapeamento das causas estruturais já documentadas.
+  - `backend/data/relatorios/profor-2022-pad-ajuste-comparador-bloqueios-controlados.md` — descrição do patch aplicado.
+- **Arquivos regenerados pelos comandos:** `profor-2022-pad-comparacao-snapshots-dry-run.{json,md}`, `profor-2022-pad-fila-revisao-snapshots-dry-run.{json,md}`.
+- **Rollback:** `git revert <commit>` reverte código + testes; regenerar comparação dry-run com v0.2. Não apagar relatórios históricos.
+
 ## 23/05/2026 — PROFOR 2022: promoção controlada do snapshot anterior oficial + integração dry-run do rateio fixo à reconstrução
 
 - **Aprovação humana expressa registrada:**
