@@ -1,5 +1,25 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: roteiro de ativação controlada (documentação, sem execução)
+
+- Objetivo: preparar o roteiro operacional para a futura ativação controlada da nova origem PAD/PROFOR 2022, **sem executar** ativação, publicação ou alteração da origem ativa.
+- Pré-condição validada: commit `6b89b8c commit` (auditoria de prontidão), classificação `PRONTO_PARA_PREPARAR_ATIVACAO_CONTROLADA`.
+- Comandos permitidos executados (leitura/dry-run):
+  - `git status --short` + `git log --oneline -8` → branch `main`, working tree limpa, último commit auditoria;
+  - `npm run profor:pad:auditar-pendencias-profundo` → `pendência_operacional_real = 0`, `bloqueio_técnico_segurança = 0`;
+  - `npm run profor:pad:seguranca-pre-ativacao:final` → `aptoParaAtivacaoControlada = true`;
+  - `npm run profor:pad:reconstruir-plano:dry-run` → 568 linhas, 15 convênios, 31 impedimentos categorizados, 0 erros críticos;
+  - `npm run profor:pad:comparar-plano:dry-run` → 25 diferenças críticas explicadas, diferença líquida saldo ≈ −R$ 15.043,84;
+  - `npm run validar:syntax` → 76 arquivos OK;
+  - `npm run validar:services` → 130/130 OK;
+  - `git diff --check`/`git status` em `frontend/data/publicados`/`*.sqlite*`/`*.sqlite-wal`/`*.sqlite-shm` → todos limpos.
+- Mapeamento do mecanismo concreto de ativação: substituição controlada da origem ativa do `planoAplicacao` (planilha das abas/guias por UF, hoje em `catalogoAplicacao.configuracao.arquivoPlanilhaConvenios`) pela origem reconstruída a partir dos relatórios PAD/PROFOR 2022, com fallback preservado. Não existe e **não deve existir** um script único de "ativar" que dispare publicação automática.
+- Artefatos criados:
+  - `backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md` — roteiro completo com escopo, fora de escopo, pré-condições, responsáveis, janela, backups, arquivos protegidos, pré-checks, comandos de ativação rotulados como **`[NÃO EXECUTAR NESTA ETAPA]`**, validações pós-ativação, critérios de sucesso/parada/rollback, riscos, plano de comunicação, evidências, próxima etapa, proibição expressa de publicação automática e proibição expressa de automação Transferegov;
+  - `backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.json` — versão estruturada com `garantiasDesteRoteiro.tipoArtefato = "documentacao + relatorio dry-run"` e todas as garantias `false` (ativação, publicação, decisão, origem ativa, planoAplicacao, publicados, SQLite, automação Transferegov, aviso real mascarado etc.).
+- Próxima etapa concreta: **autorização expressa por escrito** do responsável funcional e do revisor de segurança técnica para executar, em janela separada, os blocos 8 → 9 → 10 → 11 → 12 do roteiro, com rollback obrigatório ao primeiro gatilho da seção 13.
+- Restrições preservadas: sem ativação, sem publicação, sem alteração de origem ativa, sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem avanço para automação Transferegov, nenhum alerta real mascarado.
+
 ## 23/05/2026 - PROFOR 2022: auditoria integrada final de prontidão pré-ativação controlada (dry-run)
 
 - Objetivo: consolidar a auditoria integrada final em modo leitura para confirmar que o sistema está tecnicamente pronto para **preparar** uma futura ativação controlada, sem ativar, sem publicar e sem alterar o `planoAplicacao` oficial.

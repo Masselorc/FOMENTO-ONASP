@@ -1,0 +1,285 @@
+{
+  "geradoEm": "2026-05-23T00:00:00.000Z",
+  "versao": "1.0",
+  "tipo": "roteiro_operacional",
+  "estado": "documentacao_nao_executar",
+  "preRequisito": {
+    "relatorioProntidao": "backend/data/relatorios/profor-2022-prontidao-ativacao-controlada-dry-run.md",
+    "classificacaoFinal": "PRONTO_PARA_PREPARAR_ATIVACAO_CONTROLADA",
+    "commitProntidao": "6b89b8c"
+  },
+  "avisoGlobal": "Todo bloco rotulado [NAO EXECUTAR NESTA ETAPA] exige autorizacao expressa por escrito do responsavel funcional e do revisor de seguranca tecnica antes de ser executado em qualquer momento futuro.",
+  "escopo": [
+    "confirmar estado pre-ativacao (auditorias, sintaxe, servicos, isolamento de artefatos sensiveis)",
+    "snapshots e backups integros do estado anterior",
+    "substituicao controlada da origem ativa do planoAplicacao (planilha das abas UF) pela origem reconstruida a partir dos relatorios PAD",
+    "validacoes pos-ativacao imediatas",
+    "comparacao pos-ativacao contra os totais reconstruidos esperados",
+    "criterios objetivos de aceite, parada e rollback",
+    "separacao total entre ativacao e publicacao"
+  ],
+  "foraDeEscopo": [
+    "publicacao para frontend/data/publicados/",
+    "automacao Transferegov",
+    "alteracao de decisoes, logs ou divergencias",
+    "criacao de migration",
+    "SQL direto em backend/data/onasp.sqlite",
+    "reabertura de decisoes consolidadas (#18, #25-#28, #75, #77, #78, #47-#74)",
+    "qualquer alteracao em frontend/data/publicados/",
+    "qualquer alteracao no planoAplicacao oficial fora da ativacao controlada formalmente autorizada"
+  ],
+  "preCondicoes": [
+    "branch main",
+    "git status --short vazio",
+    "ultimo commit = auditoria de prontidao (6b89b8c) ou posterior que apenas atualize relatorios dry-run",
+    "relatorio profor-2022-prontidao-ativacao-controlada-dry-run.json com classificacaoFinal = PRONTO_PARA_PREPARAR_ATIVACAO_CONTROLADA",
+    "profor-2022-seguranca-pre-ativacao-final-dry-run.json com pendenciaOperacionalReal = 0, totalBloqueiosAtivos = 0, aptoParaAtivacaoControlada = true",
+    "validar:syntax OK e validar:services OK dentro de ate 24h antes",
+    "git diff --check limpo",
+    "frontend/data/publicados/, backend/data/onasp.sqlite, *.sqlite-wal, *.sqlite-shm sem alteracao e sem stage",
+    "autorizacao expressa por escrito do responsavel funcional e do revisor de seguranca tecnica, com janela definida",
+    "ambiente confirmadamente fora do horario de uso"
+  ],
+  "responsaveis": {
+    "responsavelFuncional": "Autorizar a janela, validar interpretacao de numeros e aprovar/rejeitar aceite formal pos-ativacao",
+    "responsavelTecnico": "Executar comandos exatos, registrar evidencias, abortar a primeira falha e acionar rollback",
+    "revisorSegurancaTecnica": "Acompanhar a janela em modo leitura, validar pre-condicoes, conferir hashes e atestar integridade dos backups",
+    "custodiaBackups": "Guardar localmente e fora do repositorio os snapshots de SQLite e publicados/ com hash registrado",
+    "designacao": "Nao nomeada nesta etapa; sera feita no momento da autorizacao da janela"
+  },
+  "janela": {
+    "duracaoBlocoCriticoMin": 60,
+    "decomposicaoBlocoCritico": {
+      "preChecksMin": 20,
+      "backupMin": 15,
+      "ativacaoMin": 10,
+      "validacoesPosMin": 15
+    },
+    "bufferRollbackMin": 60,
+    "duracaoTotalRecomendadaMin": 120,
+    "horarioRecomendado": "fora do horario de uso (preferencialmente noturno em dia util ou diurno em fim de semana)",
+    "preAvisoInternoH": 24
+  },
+  "backupsObrigatorios": [
+    { "artefato": "backend/data/onasp.sqlite", "fora_repo": true, "hash": "SHA-256" },
+    { "artefato": "backend/data/onasp.sqlite-wal (se existir)", "fora_repo": true, "hash": "SHA-256" },
+    { "artefato": "backend/data/onasp.sqlite-shm (se existir)", "fora_repo": true, "hash": "SHA-256" },
+    { "artefato": "frontend/data/publicados/ (diretorio)", "fora_repo": true, "hash": "SHA-256 agregado por arquivo" },
+    { "artefato": "planilha apontada por catalogoAplicacao.configuracao.arquivoPlanilhaConvenios", "fora_repo": true, "hash": "SHA-256" },
+    { "artefato": "profor-2022-prontidao-ativacao-controlada-dry-run.{json,md}", "fora_repo": true, "hash": "opcional" },
+    { "artefato": "profor-2022-seguranca-pre-ativacao-final-dry-run.json", "fora_repo": true, "hash": "opcional" },
+    { "artefato": "git log --oneline -20 e git status --short", "fora_repo": true, "hash": "n/a (texto)" }
+  ],
+  "arquivosProtegidos": [
+    "frontend/data/publicados/**",
+    "backend/data/onasp.sqlite",
+    "*.sqlite-wal",
+    "*.sqlite-shm",
+    "decisoes e logs persistidos",
+    "planilha de origem ativa (substituicao controlada e auditavel; nao edicao livre)",
+    "todos os relatorios dry-run anteriores a esta janela (historico imutavel)"
+  ],
+  "comandosAuditoriaPrevia": [
+    "git status --short",
+    "git log --oneline -8",
+    "npm run profor:pad:auditar-pendencias-profundo",
+    "npm run profor:pad:seguranca-pre-ativacao:final",
+    "npm run profor:pad:reconstruir-plano:dry-run",
+    "npm run profor:pad:comparar-plano:dry-run",
+    "npm run validar:syntax",
+    "npm run validar:services",
+    "git diff --check",
+    "git status --short frontend/data/publicados",
+    "git status --short \"*.sqlite*\"",
+    "git status --short \"*.sqlite-wal\"",
+    "git status --short \"*.sqlite-shm\""
+  ],
+  "resultadosEsperadosPreChecks": {
+    "pendenciaOperacionalReal": 0,
+    "totalBloqueiosAtivos": 0,
+    "aptoParaAtivacaoControlada": true,
+    "reconstrucaoLinhas": 568,
+    "reconstrucaoConvenios": 15,
+    "reconstrucaoImpedimentosCategorizados": 31,
+    "reconstrucaoErrosCriticos": 0,
+    "reconstrucaoInstrumentosForaCarteira": 0,
+    "comparadorDiferencasCriticasExplicadas": 25,
+    "comparadorDiferencaSaldoLiquidoToleranciaR$": 1.00,
+    "validarSyntaxArquivos": 76,
+    "validarServicesTestes": 130,
+    "isolamento": {
+      "publicados": "vazio",
+      "sqlite": "vazio",
+      "sqliteWal": "vazio",
+      "sqliteShm": "vazio"
+    }
+  },
+  "comandosBackup": {
+    "observacao": "Comandos rotulados e parametrizaveis. Substituir <RET> pelo diretorio de retencao combinado com a custodia de backups, fora do repositorio.",
+    "etapas": [
+      "9.1 cp -p backend/data/onasp.sqlite \"<RET>/onasp.sqlite.pre-ativacao-<TS>\"",
+      "9.1 copiar tambem onasp.sqlite-wal e onasp.sqlite-shm se existirem (nao versionar)",
+      "9.2 Get-FileHash \"<RET>/onasp.sqlite.pre-ativacao-*\" -Algorithm SHA256",
+      "9.3 robocopy frontend/data/publicados \"<RET>/publicados.pre-ativacao-<TS>\" /E /COPY:DAT /R:1 /W:1",
+      "9.4 Get-ChildItem -Recurse -File \"<RET>/publicados.pre-ativacao-*\" | Sort-Object FullName | Get-FileHash -Algorithm SHA256 | Tee-Object \"<RET>/publicados.pre-ativacao-hashes.txt\"",
+      "9.5 cp -p \"<CAMINHO_PLANILHA>\" \"<RET>/planilha-origem-ativa.pre-ativacao-<TS>\" + Get-FileHash",
+      "9.6 cp dos relatorios de prontidao e seguranca final",
+      "9.7 evidencia git: git log --oneline -20 e git status --short para arquivos texto em <RET>/"
+    ],
+    "aceiteBackup": "Bloco de ativacao so inicia apos hashes registrados, inspecao manual da pasta <RET>/ e atestacao do revisor de seguranca tecnica."
+  },
+  "comandosAtivacaoFutura": {
+    "status": "NAO_EXECUTAR_NESTA_ETAPA",
+    "formaEsperada": "substituicao controlada da origem ativa do planoAplicacao (planilha das abas UF) pela origem reconstruida a partir dos relatorios PAD/PROFOR 2022, preservando fallback",
+    "passos": [
+      "10.1 repontar catalogoAplicacao.configuracao.arquivoPlanilhaConvenios para a nova fonte OU ativar flag formal de leitura da reconstrucao PAD, conforme decisao tecnica formalizada na janela",
+      "10.2 recarregar servicos com cache em memoria (se aplicavel), sem reiniciar processos em producao sem aviso",
+      "10.3 NAO chamar publicar:dados, NAO chamar publicar:profor-2022, NAO chamar atualizar:profor-2022, NAO chamar nenhum script Transferegov"
+    ],
+    "garantiaNaoPublicacaoAcoplada": "A ativacao nao pode disparar publicacao. Se o script de ativacao chamar publicar-* ou Transferegov, abortar e tratar como bug bloqueante.",
+    "garantiaPRExclusivo": "PR de ativacao deve conter APENAS o catalogo/flag de origem, sem outros arquivos"
+  },
+  "comandosValidacaoPosAtivacao": [
+    "git status --short",
+    "git diff --check",
+    "git status --short frontend/data/publicados",
+    "git status --short \"*.sqlite*\"",
+    "git status --short \"*.sqlite-wal\"",
+    "git status --short \"*.sqlite-shm\"",
+    "npm run profor:pad:auditar-pendencias-profundo",
+    "npm run profor:pad:seguranca-pre-ativacao:final",
+    "npm run profor:pad:reconstruir-plano:dry-run",
+    "npm run profor:pad:comparar-plano:dry-run",
+    "npm run validar:syntax",
+    "npm run validar:services"
+  ],
+  "toleranciasPos": {
+    "reconstrucao": "mesma contagem de linhas (568), convenios (15) e impedimentos categorizados",
+    "comparador": "diferenca liquida total de saldo identica a pre-checagem (tolerancia <= R$ 1,00)",
+    "seguranca": "pendenciaOperacionalReal = 0, totalBloqueiosAtivos = 0, aptoParaAtivacaoControlada = true",
+    "validacoes": "validar:syntax OK e validar:services OK (130/130)"
+  },
+  "criteriosSucesso": [
+    "todas as pre-condicoes da secao 3 satisfeitas no inicio da janela",
+    "todos os backups concluidos com hash registrado e aceitos pelo revisor",
+    "apenas os arquivos previstos na ativacao foram alterados (catalogo/flag)",
+    "git status --short pos-ativacao contem apenas o arquivo da ativacao prevista",
+    "todas as auditorias pos-ativacao dentro das tolerancias declaradas",
+    "validar:syntax OK e validar:services OK",
+    "aceite formal por escrito do revisor de seguranca tecnica",
+    "aceite formal por escrito do responsavel funcional",
+    "nenhum aviso real mascarado, suprimido ou rebatizado"
+  ],
+  "criteriosParada": [
+    "qualquer pre-condicao falhar dentro da janela",
+    "qualquer backup falhar, retornar tamanho zero ou divergir em hash",
+    "ativacao tentar alterar publicados/, SQLite, WAL/SHM, decisoes, divergencias ou logs",
+    "ativacao disparar (ou conter referencia ativa a) qualquer script de publicacao ou Transferegov",
+    "auditorias pos-ativacao reportarem pendenciaOperacionalReal > 0 ou totalBloqueiosAtivos > 0",
+    "comparador pos-ativacao divergir alem da tolerancia",
+    "validar:syntax falhar ou validar:services apresentar teste em falha",
+    "divergencia nova ou regressao de divergencia previamente saneada (#18, #25-#28, #75, #77, #78, #39, #44, #47-#74)",
+    "mensagem operacional sem confirmacao do revisor e do responsavel funcional",
+    "perda de comunicacao com responsavel funcional ou revisor antes do aceite formal"
+  ],
+  "criteriosRollback": {
+    "objetivo": "Restaurar estado identico ao inicio da janela, sem perda de decisoes, divergencias ou logs",
+    "comandos": [
+      "git revert <sha-do-commit-de-ativacao>",
+      "conferir hash, restaurar SQLite a partir do backup integro se necessario",
+      "robocopy <RET>/publicados.pre-ativacao-<TS> frontend/data/publicados /E /COPY:DAT /PURGE /R:1 /W:1 (se publicados foi tocado)",
+      "reexecutar bateria dry-run completa para confirmar restauro"
+    ],
+    "registroPos": "entrada em diario-atual.md e (se houver erro novo) em historico-erros.md; nenhuma decisao/log/divergencia apagada"
+  },
+  "riscos": [
+    { "id": "R1", "risco": "Substituicao da origem alterar planoAplicacao exibido antes do aceite", "probabilidade": "baixa", "impacto": "alto", "mitigacao": "fora de horario, fallback explicito, abortar a primeira divergencia inesperada" },
+    { "id": "R2", "risco": "Script de ativacao acoplar publicacao automatica", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "PR exclusivo, review obrigatorio, criterio de parada 4" },
+    { "id": "R3", "risco": "Backup SQLite gerado durante checkpoint WAL incompleto", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "confirmar ausencia de processo escrevendo; copiar WAL/SHM; conferir hash" },
+    { "id": "R4", "risco": "Diferencas criticas fora da tolerancia pos-ativacao", "probabilidade": "baixa", "impacto": "alto", "mitigacao": "comparar contagens e diferenca liquida com pre-checagem; abortar e rollback" },
+    { "id": "R5", "risco": "Perda de comunicacao com responsavel/revisor durante a janela", "probabilidade": "media", "impacto": "alto", "mitigacao": "pre-aviso 24h, janela por escrito, abortar ao primeiro sinal" },
+    { "id": "R6", "risco": "Avanco indevido para automacao Transferegov dentro da janela", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "proibicao expressa (secao 20); criterio de parada 4" },
+    { "id": "R7", "risco": "Alteracao em publicados/ por hook/watcher/colateral", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "monitorar git status publicados/ antes, durante e depois; criterio de parada 3" },
+    { "id": "R8", "risco": "Versionamento acidental de *.sqlite-wal/*.sqlite-shm", "probabilidade": "baixa", "impacto": "medio", "mitigacao": "git status WAL/SHM; criterio de parada 3" },
+    { "id": "R9", "risco": "Mascaramento involuntario de alerta real por reclassificacao", "probabilidade": "baixa", "impacto": "alto", "mitigacao": "toda reclassificacao exige aceite formal; proibido criar nova categoria sem PR proprio fora da janela" }
+  ],
+  "planoComunicacao": [
+    "D-1 (24h antes): envio formal por escrito a responsavel funcional, revisor e custodia com janela, escopo, roteiro e hashes",
+    "D-0 abertura: check-in textual com presenca dos tres papeis; reexecucao dos pre-checks ao vivo",
+    "Durante: registro textual de cada bloco com horario, comando e resumo do retorno",
+    "Apos backup, antes da ativacao: aceite explicito do revisor de seguranca tecnica",
+    "Apos validacao pos-ativacao: aceite explicito do responsavel funcional OU acionamento imediato do rollback",
+    "Pos-janela (ate D+1): registro consolidado, atualizacao do diario e da documentacao da funcionalidade"
+  ],
+  "evidenciasAGuardar": [
+    "saidas completas dos pre-checks",
+    "hashes SHA-256 de SQLite, WAL/SHM (se existirem), planilha origem ativa e publicados/",
+    "arquivo de hashes agregados do publicados/ pre-ativacao",
+    "saidas completas das validacoes pos-ativacao",
+    "copia local dos relatorios de prontidao e seguranca final no instante da janela",
+    "texto integral do aceite formal (revisor e responsavel funcional) ou do gatilho de aborto",
+    "git log --oneline -20 e git status --short antes e depois",
+    "em caso de rollback: SHA do git revert, hashes pos-restauro e nova bateria dry-run"
+  ],
+  "proximaEtapaAposAtivacaoValidada": [
+    "Janela isolada de publicacao (autorizacao propria, roteiro proprio)",
+    "Acompanhamento operacional minimo de uma semana com seguranca-pre-ativacao:final diario",
+    "Documentacao de aceite definitivo na funcionalidade",
+    "Encerramento formal da frente quanto a substituicao das abas/guias por UF"
+  ],
+  "proibicaoPublicacaoAutomatica": {
+    "regra": "A ativacao controlada NAO publica.",
+    "scriptsProibidosNaJanela": [
+      "backend/scripts/publicar-dados-estaticos.js (npm run publicar:dados)",
+      "backend/scripts/publicar-profor-2022-estatico.js (npm run publicar:profor-2022)",
+      "qualquer caminho que escreva em frontend/data/publicados/",
+      "qualquer rotina consolidada que dispare gravacao em frontend/data/publicados/"
+    ],
+    "publicacao": "etapa posterior, com autorizacao propria e janela propria"
+  },
+  "proibicaoTransferegovNestaFase": {
+    "regra": "Automacao Transferegov nao habilitada por esta ativacao.",
+    "scriptsProibidosNaJanela": [
+      "npm run atualizar:rendimentos-profor",
+      "npm run agendar:detru-profor",
+      "npm run agendar:profor-2022",
+      "qualquer chamada a Transferegov, DETRU, autenticacao federada ou jobs correlatos"
+    ],
+    "ressalva": "Mesmo apos a publicacao posterior, a automacao Transferegov continua exigindo roteiro proprio, autorizacao propria e janela propria"
+  },
+  "checklistExecucaoManualFutura": [
+    "Pre-condicoes (secao 3) verificadas e registradas",
+    "Autorizacao escrita do responsavel funcional e do revisor recebida",
+    "Pre-checks executados e resultados dentro das tolerancias",
+    "Backups concluidos com hash SHA-256 registrado em <RET>/",
+    "Aceite do backup pelo revisor de seguranca tecnica",
+    "Ativacao executada somente apos aceite do backup; apenas arquivo previsto alterado",
+    "Validacoes pos-ativacao dentro das tolerancias",
+    "Criterios de sucesso (9 itens) satisfeitos",
+    "Aceite formal por escrito do responsavel funcional e do revisor",
+    "Evidencias guardadas em <RET>/",
+    "Diario atualizado com SHA do commit de ativacao e hashes dos backups",
+    "Documentacao da funcionalidade atualizada",
+    "Proxima etapa de publicacao NAO iniciada na mesma janela",
+    "Em caso de falha de criterio: rollback executado integralmente; janela encerrada com registro do gatilho"
+  ],
+  "garantiasDesteRoteiro": {
+    "ativacaoExecutada": false,
+    "publicacaoExecutada": false,
+    "decisaoRegistrada": false,
+    "origemAtivaAlterada": false,
+    "planoAplicacaoOficialAlterado": false,
+    "frontendDataPublicadosAlterado": false,
+    "sqliteAlterado": false,
+    "sqlDireto": false,
+    "novaMigration": false,
+    "scriptAtivacaoExecutado": false,
+    "scriptPublicacaoExecutado": false,
+    "automacaoTransferegovAvancada": false,
+    "decisaoApagada": false,
+    "divergenciaApagada": false,
+    "logApagado": false,
+    "alertaRealMascarado": false,
+    "tipoArtefato": "documentacao + relatorio dry-run"
+  }
+}

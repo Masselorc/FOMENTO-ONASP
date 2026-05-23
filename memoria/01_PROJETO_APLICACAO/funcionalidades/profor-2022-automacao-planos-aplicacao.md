@@ -2531,3 +2531,42 @@ Preparar **roteiro de ativação controlada** contendo: janela de execução res
 ### 33.8. Garantias e escopo preservado
 
 Sem ativação, sem publicação, sem alteração de origem ativa, sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem avanço para automação Transferegov, nenhum alerta real mascarado.
+
+---
+
+## 34. Roteiro de ativação controlada (23/05/2026, documentação)
+
+### 34.1. Propósito
+
+Documentar a sequência operacional **futura** para realizar a ativação controlada da nova origem PAD/PROFOR 2022 como fonte do `planoAplicacao`, substituindo as abas/guias por UF referenciadas em `catalogoAplicacao.configuracao.arquivoPlanilhaConvenios`. Esta seção é **somente documentação**; nenhum comando de ativação foi executado.
+
+### 34.2. Artefatos gerados
+
+- `backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md` — roteiro completo (20 seções obrigatórias + checklist).
+- `backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.json` — versão estruturada (escopo, pré-condições, responsáveis, janela, backups, comandos rotulados, critérios de sucesso/parada/rollback, riscos, plano de comunicação, evidências, garantias).
+
+### 34.3. Mecanismo concreto de ativação esperado
+
+A ativação **futura** consiste em: (i) repontar `catalogoAplicacao.configuracao.arquivoPlanilhaConvenios` para a nova fonte reconstruída a partir dos relatórios PAD/PROFOR 2022, **ou** (ii) ativar a flag formal de leitura da reconstrução PAD prevista nesta frente — preservando fallback para a origem antiga. O PR de ativação deve ser **exclusivo** (apenas o catálogo/flag) e **não pode** chamar `publicar:*` nem rotinas Transferegov.
+
+### 34.4. Pré-condições reconfirmadas no momento da documentação
+
+- branch `main`, working tree limpa;
+- commit pré-requisito: `6b89b8c commit` (auditoria de prontidão);
+- `pendenciaOperacionalReal = 0`, `totalBloqueiosAtivos = 0`, `aptoParaAtivacaoControlada = true`;
+- reconstrução 568 linhas, 15 convênios, 31 impedimentos categorizados, 0 erros críticos;
+- comparador 25 diferenças críticas explicadas, diferença líquida saldo ≈ −R$ 15.043,84;
+- `validar:syntax` OK (76 arquivos), `validar:services` OK (130/130);
+- `frontend/data/publicados/`, `*.sqlite*`, `*.sqlite-wal`, `*.sqlite-shm` limpos.
+
+### 34.5. Separação obrigatória entre ativação e publicação
+
+A ativação controlada **não publica**. Publicação é etapa posterior, com **autorização própria**, **janela própria** e roteiro próprio (ainda a ser elaborado após a ativação aceita). A automação Transferegov é frente separada e permanece **não habilitada** mesmo após eventual publicação.
+
+### 34.6. Próxima etapa concreta
+
+**Autorização expressa por escrito** do responsável funcional e do revisor de segurança técnica para executar, em janela separada, os blocos 8 → 9 → 10 → 11 → 12 do roteiro, com rollback obrigatório ao primeiro gatilho da seção 13.
+
+### 34.7. Garantias e escopo preservado
+
+Sem ativação, sem publicação, sem alteração de origem ativa, sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem execução de script de ativação ou de publicação, sem avanço para automação Transferegov, nenhum alerta real mascarado.
