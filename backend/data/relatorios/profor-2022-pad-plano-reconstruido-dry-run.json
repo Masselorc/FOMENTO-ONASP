@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T14:22:04.845Z",
+  "geradoEm": "2026-05-23T14:25:09.688Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -17269,7 +17269,7 @@
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
     "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 36,
     "totalConsistenciaSaneadaPorDecisao": 0,
-    "totalBloqueiosSegurancaPreAtivacao": 7,
+    "totalBloqueiosSegurancaPreAtivacao": 18,
     "valorPrevistoReconstruidoTotal": 10664015.24,
     "valorExecutadoReconstruidoTotal": 3217739.5,
     "saldoReconstruidoTotal": 7446275.74
@@ -18994,56 +18994,56 @@
       "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 161
+      "decisaoId": 196
     },
     {
       "divergenciaId": 57,
       "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 162
+      "decisaoId": 197
     },
     {
       "divergenciaId": 58,
       "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 163
+      "decisaoId": 198
     },
     {
       "divergenciaId": 59,
       "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 164
+      "decisaoId": 199
     },
     {
       "divergenciaId": 60,
       "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 165
+      "decisaoId": 200
     },
     {
       "divergenciaId": 61,
       "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 166
+      "decisaoId": 201
     },
     {
       "divergenciaId": 62,
       "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 167
+      "decisaoId": 202
     },
     {
       "divergenciaId": 63,
       "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 168
+      "decisaoId": 203
     },
     {
       "divergenciaId": 64,
@@ -23363,9 +23363,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 161,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.571Z",
+      "decisaoId": 196,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.429Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23414,19 +23414,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 56,
           "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "4d0d505ff3e46815f7c5097f73ba46a2b2162f92812ca6a8c8e6c7dab575f4cc",
-          "registradoEm": "2026-05-21T21:41:09.571Z"
+          "payloadHashNoMomentoDaDecisao": "90e87cecd7ffc00ca6d3647f1fd246b6e5174a06cbf421ed2ff6dde9d93d6bef",
+          "registradoEm": "2026-05-23T14:24:58.427Z"
         }
       }
     },
@@ -23440,9 +23442,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 162,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "decisaoId": 197,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.431Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23491,19 +23493,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 57,
           "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "dc27073406a970eeecf721a77c6e0a4235050b16df845e67c09c85bbc18ded5c",
-          "registradoEm": "2026-05-21T21:41:09.572Z"
+          "payloadHashNoMomentoDaDecisao": "d99a415063fd8b4ad000be67052c6b18d24361204fe4516dc4091ecf221a250f",
+          "registradoEm": "2026-05-23T14:24:58.431Z"
         }
       }
     },
@@ -23517,9 +23521,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 163,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "decisaoId": 198,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.432Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23568,19 +23572,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 58,
           "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "0e0c8969439088bfbb57042db735e2c9fd64a23e48aeb8129d7fe4c2b9d2a8db",
-          "registradoEm": "2026-05-21T21:41:09.572Z"
+          "payloadHashNoMomentoDaDecisao": "85d1799eddbd185e17d1681d654a0af6574b5a09dc78baa636e158415ea28122",
+          "registradoEm": "2026-05-23T14:24:58.432Z"
         }
       }
     },
@@ -23594,9 +23600,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 164,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "decisaoId": 199,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.432Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23645,19 +23651,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 59,
           "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "5497ee0c84e7fe2353d0e8477efabc3790a698c53632f1dfe1fc023dffacb90d",
-          "registradoEm": "2026-05-21T21:41:09.572Z"
+          "payloadHashNoMomentoDaDecisao": "7f40d81d76de073175367b5d2686695440d17e1ce0d9d6be1a376599fbd6fcee",
+          "registradoEm": "2026-05-23T14:24:58.432Z"
         }
       }
     },
@@ -23671,9 +23679,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 165,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.573Z",
+      "decisaoId": 200,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.433Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23722,19 +23730,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 60,
           "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "adfbd0e28217874ed231d0dd3cbede1c3fef44550bf2eaad372d8c2f1120d465",
-          "registradoEm": "2026-05-21T21:41:09.573Z"
+          "payloadHashNoMomentoDaDecisao": "d78b977a7a8b1b48e97f20d45b35ddb88e17b5c78763493e88c0e52c7508e972",
+          "registradoEm": "2026-05-23T14:24:58.433Z"
         }
       }
     },
@@ -23748,9 +23758,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 166,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.574Z",
+      "decisaoId": 201,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.433Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23799,19 +23809,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 61,
           "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "220e00ced39df47d0963ed5823ec15a5c26577a60aac205040a58a16db5a3f6b",
-          "registradoEm": "2026-05-21T21:41:09.574Z"
+          "payloadHashNoMomentoDaDecisao": "9059e304e5224c18da1071fe96ab771293570f632b79056b33b7be2a4c477c2d",
+          "registradoEm": "2026-05-23T14:24:58.433Z"
         }
       }
     },
@@ -23825,9 +23837,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 167,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.574Z",
+      "decisaoId": 202,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.433Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23876,19 +23888,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 62,
           "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "eaa5c3cdaa21c18b8c0776fb958bd4640ed3564531e1f667fb3ec2526b4fa642",
-          "registradoEm": "2026-05-21T21:41:09.574Z"
+          "payloadHashNoMomentoDaDecisao": "b902ce23ab90cd368fc75114dab31f7f381542003eee6bb6d0d5a60a40cb75ed",
+          "registradoEm": "2026-05-23T14:24:58.433Z"
         }
       }
     },
@@ -23902,9 +23916,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 168,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "decisaoId": 203,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.434Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -23953,19 +23967,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 63,
           "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "5e68b4c138f9cc47e5dae617a556509456a9da630dafdf58ba48290999d74182",
-          "registradoEm": "2026-05-21T21:41:09.575Z"
+          "payloadHashNoMomentoDaDecisao": "2584d36f00835b1623dd121a782fd9c29609e6a95d08ad6d4826d187c225e567",
+          "registradoEm": "2026-05-23T14:24:58.434Z"
         }
       }
     },
@@ -25163,10 +25179,10 @@
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-23T14:22:04.845Z",
+    "geradoEm": "2026-05-23T14:25:09.688Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 82,
-      "totalPayloadPreservado": 54,
+      "totalDecisoesResolutivasAuditadas": 90,
+      "totalPayloadPreservado": 62,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -25174,12 +25190,111 @@
       "totalDivergenciasReapresentadas": 138,
       "totalDivergenciasNaoReapresentadas": 7,
       "totalDivergenciasReapresentacaoIndeterminada": 0,
-      "totalBloqueiosAtivacao": 7,
+      "totalBloqueiosAtivacao": 18,
       "totalAvisos": 0,
       "geracaoAtualDisponivel": true,
       "aptoParaProsseguirAtivacao": false
     },
     "bloqueiosAtivacao": [
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 108,
+        "divergenciaId": 72,
+        "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 109,
+        "divergenciaId": 73,
+        "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 110,
+        "divergenciaId": 74,
+        "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 169,
+        "divergenciaId": 64,
+        "chaveDivergencia": "item_ausente_no_pad:584b9c4c0a6d70d4",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 170,
+        "divergenciaId": 65,
+        "chaveDivergencia": "item_ausente_no_pad:0aa793b7aad7dea9",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 171,
+        "divergenciaId": 67,
+        "chaveDivergencia": "item_ausente_no_pad:263c61398f88427a",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 172,
+        "divergenciaId": 68,
+        "chaveDivergencia": "item_ausente_no_pad:12da4f953a810aba",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 173,
+        "divergenciaId": 69,
+        "chaveDivergencia": "item_ausente_no_pad:8fa2597b2ebf3282",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 174,
+        "divergenciaId": 70,
+        "chaveDivergencia": "item_ausente_no_pad:e726b662149c7057",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 175,
+        "divergenciaId": 71,
+        "chaveDivergencia": "item_ausente_no_pad:53e1018ea3c16260",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
+      {
+        "origem": "payload_decisao",
+        "classificacao": "payload_alterado_apos_decisao",
+        "decisaoId": 182,
+        "divergenciaId": 66,
+        "chaveDivergencia": "item_ausente_no_pad:9ef6ef8500d7dd16",
+        "decisao": "ACEITO",
+        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
+      },
       {
         "origem": "divergencia_nao_reapresentada",
         "classificacao": "nao_reapresentada_com_decisao_resolutiva",
