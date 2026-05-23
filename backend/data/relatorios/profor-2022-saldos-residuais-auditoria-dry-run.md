@@ -1,6 +1,6 @@
 # PROFOR 2022 - Auditoria de saldos residuais/remanescentes (dry-run)
 
-Gerado em: 2026-05-23T11:53:10.753Z
+Gerado em: 2026-05-23T12:19:57.456Z
 
 Auditoria somente leitura: nao registra decisao, nao altera status, nao publica e nao altera o planoAplicacao oficial.
 

@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T11:53:12.882Z",
+  "geradoEm": "2026-05-23T12:19:56.530Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -43,13 +43,13 @@
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T11:47:12.723Z",
+        "geradoEm": "2026-05-23T11:53:18.738Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T11:47:12.760Z",
+        "geradoEm": "2026-05-23T11:53:18.766Z",
         "erro": null
       },
       "saldosResiduais": {
@@ -63,27 +63,27 @@
   "resumo": {
     "totalDivergencias": 145,
     "totalAnalisadas": 143,
-    "totalPendentesOperacionais": 75,
+    "totalPendentesOperacionais": 74,
     "totalBloqueantes": 45,
-    "totalBloqueantesOperacionais": 10,
-    "totalComDecisaoResolutiva": 68,
-    "totalDecisoesRegistradas": 73,
+    "totalBloqueantesOperacionais": 9,
+    "totalComDecisaoResolutiva": 69,
+    "totalDecisoesRegistradas": 74,
     "totalPossiveisFalsosPositivos": 78,
-    "totalPendenciasReaisEstimadas": 1,
+    "totalPendenciasReaisEstimadas": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "totalPayloadAlteradoAposDecisao": 27,
     "separacaoOperacional": {
-      "pendenciaOperacionalReal": 1,
+      "pendenciaOperacionalReal": 0,
       "bloqueioTecnicoSeguranca": 0,
       "decisaoResolutivaComPendenciaTecnica": 8,
       "revalidacaoNecessaria": 27,
-      "historicoSaneado": 33,
+      "historicoSaneado": 34,
       "falsoPositivoSaneavel": 74
     },
     "porStatus": [
       {
         "status": "ACEITO",
-        "total": 64
+        "total": 65
       },
       {
         "status": "CORRIGIDO",
@@ -91,7 +91,7 @@
       },
       {
         "status": "PENDENTE",
-        "total": 75
+        "total": 74
       }
     ],
     "porTipoStatus": [
@@ -113,12 +113,12 @@
       {
         "tipoAlerta": "item_nao_apto",
         "status": "ACEITO",
-        "total": 11
+        "total": 12
       },
       {
         "tipoAlerta": "item_nao_apto",
         "status": "PENDENTE",
-        "total": 8
+        "total": 7
       },
       {
         "tipoAlerta": "item_novo_sem_rateio",
@@ -226,7 +226,7 @@
     },
     {
       "categoria": "ja_saneado_mas_ainda_pendente",
-      "quantidade": 68,
+      "quantidade": 69,
       "ids": [
         1,
         2,
@@ -261,6 +261,7 @@
         35,
         36,
         37,
+        39,
         40,
         41,
         42,
@@ -550,15 +551,6 @@
       "acaoRecomendada": "revisar"
     },
     {
-      "categoria": "pendencia_real",
-      "quantidade": 1,
-      "ids": [
-        39
-      ],
-      "risco": "alto",
-      "acaoRecomendada": "decisão humana real"
-    },
-    {
       "categoria": "saldo_residual_decisao_anterior_incompativel",
       "quantidade": 1,
       "ids": [
@@ -662,7 +654,7 @@
     },
     {
       "categoria": "historico_saneado",
-      "quantidade": 33,
+      "quantidade": 34,
       "ids": [
         1,
         2,
@@ -692,6 +684,7 @@
         35,
         36,
         37,
+        39,
         40,
         41,
         42,
@@ -751,15 +744,6 @@
       ],
       "risco": "medio",
       "descricao": "Já decidido de forma resolutiva, mas mantém bloqueio técnico de segurança."
-    },
-    {
-      "categoria": "pendencia_operacional_real",
-      "quantidade": 1,
-      "ids": [
-        39
-      ],
-      "risco": "alto",
-      "descricao": "Pendência aberta que exige decisão humana substantiva."
     }
   ],
   "itens": [
@@ -1741,23 +1725,23 @@
       "uf": "SP",
       "tipoAlerta": "item_nao_apto",
       "descricao": "Agenda Planner",
-      "status": "PENDENTE",
+      "status": "ACEITO",
       "nivel": "impeditivo",
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
-        "pendencia_real"
+        "ja_saneado_mas_ainda_pendente"
       ],
-      "evidencia": "Auditoria de item não apto: ja_decidido. | Pendência sem classificador específico; exige revisão humana.",
-      "recomendacao": "Revisar payload e logs antes de decisão.",
-      "totalDecisoes": 0,
-      "temDecisaoResolutiva": false,
-      "totalLogs": 16,
+      "evidencia": "Status/decisão resolutiva presente (ACEITO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Auditoria de item não apto: ja_decidido.",
+      "recomendacao": "Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
       "saldoResidualTecnico": false,
       "alertaSaldoResidual": null,
-      "classificacaoOperacional": "pendencia_operacional_real",
-      "motivoOperacional": "Pendência ainda aberta que exige decisão humana substantiva.",
-      "exigeDecisaoHumanaSubstantiva": true
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
+      "exigeDecisaoHumanaSubstantiva": false
     },
     {
       "id": 40,
@@ -4546,7 +4530,6 @@
     "exigemDecisaoHumana": [
       36,
       37,
-      39,
       128,
       129,
       130
@@ -4586,6 +4569,7 @@
       35,
       36,
       37,
+      39,
       40,
       41,
       42,

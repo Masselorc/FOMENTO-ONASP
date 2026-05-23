@@ -1,12 +1,12 @@
 # PROFOR 2022 - Segurança pré-ativação final (dry-run)
 
-Gerado em: 2026-05-23T11:53:20.356Z
+Gerado em: 2026-05-23T12:20:00.878Z
 
 Auditoria somente leitura: não registra decisão, não publica, não altera origem ativa, não altera `frontend/data/publicados` e não altera o `planoAplicacao` oficial.
 
 ## 1. Resumo executivo
 
-- Pendência operacional real: 1
+- Pendência operacional real: 0
 - Bloqueios técnicos de segurança pré-ativação: 35
 - Divergências únicas na matriz final: 35
 - Decisões com payload alterado: 28

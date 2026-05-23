@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T11:53:18.738Z",
+  "geradoEm": "2026-05-23T12:19:59.706Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -8742,9 +8742,14 @@
       "baseRateioValor": "percentual",
       "baseRateioQuantidade": "percentual",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 39,
+        "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
+        "decisao": "ACEITO",
+        "efeito": "nao_apto_liberado"
+      },
       "linhaOrigem": 16
     },
     {
@@ -17241,18 +17246,18 @@
     "totalItensPadSemRateioReconstruidoPorDecisao": 24,
     "totalLinhasReconstruidas": 568,
     "totalConveniosReconstruidos": 15,
-    "totalItensConhecidosNaoAptosUsados": 8,
+    "totalItensConhecidosNaoAptosUsados": 7,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 33,
+    "totalImpedimentos": 32,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 70,
-    "totalDecisoesInterpretadasDryRun": 65,
-    "totalDecisoesAplicadasDryRun": 65,
+    "totalDecisoesResolutivasEncontradas": 71,
+    "totalDecisoesInterpretadasDryRun": 66,
+    "totalDecisoesAplicadasDryRun": 66,
     "totalDecisoesNaoAplicaveis": 5,
-    "totalDecisoesComEfeitoNaReconstrucao": 38,
+    "totalDecisoesComEfeitoNaReconstrucao": 39,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 34,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 35,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "valorPrevistoReconstruidoTotal": 10664015.24,
@@ -17303,15 +17308,6 @@
       "uf": "MA",
       "descricao": "SALDO REMANESCENTE",
       "chaveItem": "938277::SALDO REMANESCENTE",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Agenda Planner",
-      "chaveItem": "938128::AGENDA PLANNER",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
@@ -17555,7 +17551,7 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 10 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 9 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "alertas": [
@@ -18879,6 +18875,13 @@
       "tipoAlerta": "item_nao_apto",
       "decisao": "ACEITO",
       "decisaoId": 65
+    },
+    {
+      "divergenciaId": 39,
+      "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "ACEITO",
+      "decisaoId": 186
     },
     {
       "divergenciaId": 40,
@@ -21760,6 +21763,143 @@
           "campoAfetado": "aptidao",
           "payloadHashNoMomentoDaDecisao": "aeec411e3f23485781081d2858a27ab3ed1cd29d13e606d11a68d75cf696f096",
           "registradoEm": "2026-05-21T17:36:22.924Z"
+        }
+      }
+    },
+    {
+      "divergenciaId": 39,
+      "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::AGENDA PLANNER",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "ACEITO",
+      "decisaoId": 186,
+      "usuario": "sistema-prevalencia-pad-938128-39",
+      "decididoEm": "2026-05-23T12:19:42.331Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null,
+      "payload": {
+        "campoAfetado": "aptidao",
+        "numeroConvenio": "938128",
+        "uf": "SP",
+        "chaveItem": "938128::AGENDA PLANNER",
+        "memoria": {
+          "descricao": "Agenda Planner",
+          "area": "NAO INFORMADO",
+          "natureza": "CAPITAL",
+          "quantidade": 10,
+          "valorUnitario": 113.43,
+          "valorPrevisto": 1134.3,
+          "valorExecutado": 0,
+          "saldo": 1134.3,
+          "totalRateiosAtivos": 1
+        },
+        "antes": {
+          "descricao": "Agenda Planner",
+          "area": "NAO INFORMADO",
+          "natureza": "CAPITAL",
+          "quantidade": 10,
+          "valorUnitario": 113.43,
+          "valorPrevisto": 1134.3,
+          "valorExecutado": 0,
+          "saldo": 1134.3,
+          "totalRateiosAtivos": 1
+        },
+        "pad": {
+          "descricao": "Agenda Planner",
+          "natureza": "CUSTEIO",
+          "quantidade": 10,
+          "valorUnitario": 113.43,
+          "valorPrevisto": 1134.27,
+          "valorExecutado": 0,
+          "saldo": 1134.27
+        },
+        "depois": {
+          "descricao": "Agenda Planner",
+          "natureza": "CUSTEIO",
+          "quantidade": 10,
+          "valorUnitario": 113.43,
+          "valorPrevisto": 1134.27,
+          "valorExecutado": 0,
+          "saldo": 1134.27
+        },
+        "descricaoMemoria": "Agenda Planner",
+        "areaMemoria": "NAO INFORMADO",
+        "naturezaMemoria": "CAPITAL",
+        "quantidadeMemoria": 10,
+        "valorUnitarioMemoria": 113.43,
+        "valorPrevistoMemoria": 1134.3,
+        "valorExecutadoMemoria": 0,
+        "saldoMemoria": 1134.3,
+        "totalRateiosAtivosMemoria": 1,
+        "descricaoPad": "Agenda Planner",
+        "naturezaPad": "CUSTEIO",
+        "quantidadePad": 10,
+        "valorUnitarioPad": 113.43,
+        "valorPrevistoPad": 1134.27,
+        "valorExecutadoPad": 0,
+        "saldoPad": 1134.27,
+        "alertasOriginais": [
+          {
+            "tipo": "linha_sem_numero_ano_uf",
+            "nivel": "impeditivo",
+            "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+            "loteImportacaoId": 1,
+            "origem": {
+              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+              "aba": "SP",
+              "linha": 42
+            }
+          },
+          {
+            "tipo": "area_vazia",
+            "nivel": "impeditivo",
+            "detalhe": "Linha da aba UF sem area classificada.",
+            "loteImportacaoId": 1,
+            "origem": {
+              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+              "aba": "SP",
+              "linha": 42
+            }
+          }
+        ],
+        "rateiosAtivos": [
+          {
+            "area": "NAO INFORMADO",
+            "natureza": "CAPITAL",
+            "quantidadeReferencia": 10,
+            "valorPrevistoReferencia": 1134.3,
+            "valorExecutadoReferencia": 0,
+            "percentualQuantidade": 100,
+            "percentualValor": 100
+          }
+        ],
+        "riscoFalsoPositivo": "baixo",
+        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+        "linhaOrigem": 16,
+        "acaoSugerida": "liberar_ou_manter_bloqueado",
+        "bloqueiaPublicacao": true
+      },
+      "payloadDecisao": {
+        "origem": "reconstituicao-decisao-prevalencia-pad-938128-39",
+        "tipoSaneamento": "nao_apto_liberado",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivoReconstituicao": "decisao_original_perdida_em_wal_nao_checkpointed_antes_de_c43f327",
+        "_segurancaPreAtivacao": {
+          "versao": 1,
+          "divergenciaId": 39,
+          "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
+          "tipoAlerta": "item_nao_apto",
+          "campoAfetado": "aptidao",
+          "payloadHashNoMomentoDaDecisao": "84dc2c702c85bc5310b843a3d937eaea3be8b5884bb9e3852803804c14656b60",
+          "registradoEm": "2026-05-23T12:19:42.330Z"
         }
       }
     },
@@ -24829,22 +24969,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 75,
+    "totalPendentes": 74,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 10,
+    "totalPendentesQueBloqueiamPublicacao": 9,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 70,
+    "totalComDecisaoResolutiva": 71,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 75,
+    "totalSemDecisaoResolutiva": 74,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-23T11:53:18.738Z",
+    "geradoEm": "2026-05-23T12:19:59.706Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 72,
-      "totalPayloadPreservado": 44,
+      "totalDecisoesResolutivasAuditadas": 73,
+      "totalPayloadPreservado": 45,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,

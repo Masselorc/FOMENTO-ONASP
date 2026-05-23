@@ -1,5 +1,58 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: reconstitui decisão prevalência PAD da divergência #39 (gap pré-existente)
+
+- Objetivo: corrigir `pendencia_operacional_real = 1` exposto após
+  regeneração dos dry-runs no commit `6fc8ff3`.
+- Investigação:
+  - `git log --all -- backend/data/onasp.sqlite` mostra que **apenas
+    `0f850fb` (versionamento inicial em 22/05 10:47) e `6fc8ff3`** já
+    tocaram esse arquivo; commits intermediários `c43f327`/`889adec`
+    nunca atualizaram o `onasp.sqlite` versionado;
+  - em `0f850fb`, `889adec` e `c43f327` o banco já tinha `max(id)
+    decisões = 183`, com `#39 PENDENTE/0 decisões` e `#44 PENDENTE/0
+    decisões`;
+  - relatórios commitados naqueles commits descreviam `#39 ACEITO
+    historico_saneado` e `#44 CORRIGIDO historico_saneado` — gerados
+    contra banco+WAL local que **nunca foi checkpointed** antes do
+    commit;
+  - sem rastros das decisões originais em 63 backups
+    `backend/data/backups/*`, em outras branches, em blobs dangling
+    (`git fsck`) ou em WAL atual (0 bytes).
+- Causa raiz: **inconsistência pré-existente** entre relatórios
+  commitados e banco commitado, originada em `0f850fb`. Meu commit
+  `6fc8ff3` apenas expôs o gap ao executar
+  `db.pragma('wal_checkpoint(TRUNCATE)')` antes de stage do
+  `onasp.sqlite` (hygiene correta).
+- Ação aplicada nesta etapa (autorizada):
+  - decisão `ACEITO #186` registrada via
+    `profor-pad-revisao-decisao-service.registrarDecisao` para a
+    divergência `#39` (`938128/SP`, "Agenda Planner",
+    `item_nao_apto`);
+  - regra: **prevalência integral do PAD novo** (CUSTEIO/R$ 1.134,27)
+    sobre memória antiga (CAPITAL/R$ 1.134,30); diferença de centavos
+    é arredondamento, troca de natureza é configuração oficial do PAD;
+  - `aplicadaAoPlano=false`, snapshot `_segurancaPreAtivacao` injetado
+    automaticamente (hash `84dc2c70…`), log `decisao_registrada #2522`
+    gravado;
+  - `wal_checkpoint(TRUNCATE)` executado antes de stage para garantir
+    que a decisão chegue ao arquivo versionado.
+- Estado restaurado:
+  - `#39 status=ACEITO totalDecisoes=1 classificacao=historico_saneado`;
+  - `pendencia_operacional_real = 0` (era `1`);
+  - `Histórico/saneado: 33 → 34`;
+  - bloqueios de segurança pré-ativação: `35` (inalterado);
+  - `#44` permanece `falso_positivo_saneavel` por
+    `saldo_residual_prevalencia_pad` (não é pendência operacional);
+    decisão própria de #44 fica para o próximo commit.
+- Confirmações de escopo:
+  - sem publicação;
+  - origem ativa intacta; `planoAplicacao` oficial intacto;
+  - `frontend/data/publicados` intacto;
+  - `*.sqlite-wal` / `*.sqlite-shm` continuam fora do versionamento;
+  - nenhuma decisão/log apagado;
+  - `npm run validar:syntax` OK; `npm run validar:services` OK.
+
 ## 23/05/2026 - PROFOR 2022: retificadora técnica da divergência #18 (Saldo Residual / 937221 AL)
 
 - Objetivo: tratar #18 como bloqueio técnico isolado da segurança pré-ativação

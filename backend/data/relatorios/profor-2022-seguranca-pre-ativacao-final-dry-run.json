@@ -1,17 +1,17 @@
 {
-  "geradoEm": "2026-05-23T11:53:20.356Z",
+  "geradoEm": "2026-05-23T12:20:00.878Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
     "pendenciasJson": {
       "caminho": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 208395
+      "tamanhoBytes": 208213
     },
     "pendenciasMd": {
       "caminho": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 72769
+      "tamanhoBytes": 72687
     },
     "segurancaDetalhadaJson": {
       "caminho": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.json",
@@ -31,12 +31,12 @@
     "reconstrucaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 841457
+      "tamanhoBytes": 846128
     },
     "comparacaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 399596
+      "tamanhoBytes": 404106
     },
     "comparacaoMd": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
@@ -55,7 +55,7 @@
     }
   },
   "resumo": {
-    "pendenciaOperacionalReal": 1,
+    "pendenciaOperacionalReal": 0,
     "totalBloqueiosSeguranca": 35,
     "totalBloqueiosDetalhados": 35,
     "totalDivergenciasUnicasMatriz": 35,

@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T11:53:10.753Z",
+  "geradoEm": "2026-05-23T12:19:57.456Z",
   "modo": "dry-run",
   "regra": {
     "diagnostico": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",

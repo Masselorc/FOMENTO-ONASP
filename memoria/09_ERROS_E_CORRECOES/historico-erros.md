@@ -1245,3 +1245,37 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 - Decisões antigas com payload tecnicamente inválido pela regra atual devem ser tratadas via **retificadora CORRIGIDO** (preservando a decisão original) e **classificador data-driven**, nunca apagando a decisão original.
 
 **Rollback:** `git revert <commit>` reverte código e teste. Decisão `#185` permanece no banco — para neutralizá-la, registrar `REVERTIDO` via serviço. Não apagar `#150`, `#185`, logs ou divergências.
+
+## 23/05/2026 - PROFOR 2022: gap pré-existente entre relatórios commitados e banco versionado (causa raiz)
+
+**Classificação:** erro real | correção aplicada (reconstituição via serviço) | boa prática | prevenção
+
+**Contexto:** Após a retificadora `#18` em `6fc8ff3`, a regeneração dos dry-runs reportou `pendencia_operacional_real = 1` para `#39`, contradizendo a `pendencia_operacional_real = 0` dos relatórios commitados em `c43f327`/`889adec`. Investigação para identificar a causa.
+
+**Problema:** O arquivo `backend/data/onasp.sqlite` versionado **não tinha as decisões `#185(orig)/#186/#187`** descritas no diário e nos relatórios commitados.
+
+**Evidência conclusiva:**
+- `git log --all --oneline -- backend/data/onasp.sqlite` retorna apenas dois commits: `0f850fb` (versionamento inicial em 22/05 10:47) e `6fc8ff3` (meu). Os commits `c43f327`, `889adec` **nunca staged/atualizaram o `onasp.sqlite` versionado**.
+- Em `0f850fb`, `c43f327` e `889adec`: `max(id) decisões = 183`, `#39 PENDENTE/0 decisões`, `#44 PENDENTE/0 decisões`.
+- 63 backups em `backend/data/backups/*`: **nenhum contém a tabela `profor_2022_revisao_decisoes`** (todos anteriores ao trabalho PROFOR).
+- Branches `feature/mapa-contatos-ufs*`: não tocam `backend/data/onasp.sqlite`.
+- `git fsck --no-reflogs`: nenhum blob dangling com magic bytes SQLite (`5351 4c69 7465 2066 6f72 6d61 7420 33`).
+- `backend/data/onasp.sqlite-wal` atual: 0 bytes (truncated).
+
+**Causa raiz:** As decisões `#185(orig)/#186/#187` referenciadas no diário foram registradas via serviço numa sessão local em 22/05, ficaram no WAL (`backend/data/onasp.sqlite-wal` — gitignored) e **nunca foram checkpointadas** antes dos commits `c43f327`/`889adec`. Os relatórios `dry-run.{json,md}` daqueles commits foram gerados contra `banco principal + WAL local`, mas só os relatórios foram staged; `onasp.sqlite` ficou na versão de `0f850fb` (= `max(id) = 183`). O WAL foi posteriormente truncado (provavelmente por checkpoint automático de execuções subsequentes), perdendo as decisões. Meu commit `6fc8ff3` apenas expôs o gap ao executar `wal_checkpoint(TRUNCATE)` antes de stage.
+
+**Correção aplicada (reconstituição via serviço, autorizada):**
+- **#39** `938128/SP` `item_nao_apto` "Agenda Planner": decisão `ACEITO #186` registrada via `profor-pad-revisao-decisao-service.registrarDecisao`, regra prevalência integral do PAD novo (CUSTEIO/R$ 1.134,27 prevalece sobre memória CAPITAL/R$ 1.134,30), `aplicadaAoPlano=false`, snapshot `_segurancaPreAtivacao` automático (hash `84dc2c70…`), log `decisao_registrada #2522`.
+- **#44** `938128/SP` `item_nao_apto` "Saldo Residual": registrada em commit separado (próximo) com decisão `CORRIGIDO` e mesma regra de prevalência do PAD.
+
+**Resultado parcial (após #39):**
+- `pendencia_operacional_real`: `1 → 0`.
+- `#39 status=ACEITO totalDecisoes=1 classificacao=historico_saneado`.
+- `#44` permanece `falso_positivo_saneavel` (não-bloqueante) por `saldo_residual_prevalencia_pad`; decisão própria fica para commit seguinte.
+
+**Como prevenir regressão (boa prática crítica):**
+- **Sempre executar `db.pragma('wal_checkpoint(TRUNCATE)')` antes de `git add backend/data/onasp.sqlite`**. Sem isso, decisões em WAL ficam invisíveis no banco versionado.
+- Considerar configurar `PRAGMA journal_mode=DELETE` para o ambiente de versionamento, OU criar um pre-commit hook que verifique se o WAL tem frames não-checkpointed quando `onasp.sqlite` está staged.
+- Validar coerência: `git status` precisa mostrar `backend/data/onasp.sqlite` modificado sempre que uma nova decisão tiver sido registrada na sessão.
+
+**Rollback:** `git revert <commit>` reverte a reconstituição. A decisão `#186` permaneceria no banco — para neutralizá-la, registrar `REVERTIDO` via serviço. Não apagar `#186`, logs ou divergências.
