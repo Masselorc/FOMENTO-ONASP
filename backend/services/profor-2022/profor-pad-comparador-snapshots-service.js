@@ -12,7 +12,7 @@ const {
   removerDiacriticos,
 } = require("./profor-pad-fotografia-service");
 
-const VERSAO_COMPARADOR = "0.2";
+const VERSAO_COMPARADOR = "0.3";
 const TOLERANCIA_MOEDA = 0.01;
 const TOLERANCIA_QUANTIDADE = 0.000001;
 
@@ -278,6 +278,75 @@ function parearPorIndice(indiceAnterior, indiceNovo, usadosAnterior, usadosNovo,
   }
 }
 
+// Pareia grupos materiais com colisão de chave (>1 item em ambos os lados)
+// usando `hashItem` (identidade material byte-a-byte) como critério bijetivo.
+// Atua somente quando: mesmo número de itens pendentes em ambos os lados E
+// multiset de hashes do anterior == multiset de hashes do novo. Bloqueios
+// técnicos NÃO são apagados — apenas marcados como `ruidoTecnicoControlado`
+// nos pares produzidos para visibilidade do relatório. Diferença financeira
+// agregada nunca é critério único aqui: a identidade vem do hash do item.
+function parearGruposMateriaisPorHash(indiceAnterior, indiceNovo, usadosAnterior, usadosNovo, pares, bloqueiosTecnicos) {
+  const ruidos = [];
+  for (const [chave, grupoAnterior] of indiceAnterior.entries()) {
+    const grupoNovo = indiceNovo.get(chave) || [];
+    const pendentesAnterior = grupoAnterior.filter((item) => !usadosAnterior.has(item));
+    const pendentesNovo = grupoNovo.filter((item) => !usadosNovo.has(item));
+    if (pendentesAnterior.length < 2 || pendentesAnterior.length !== pendentesNovo.length) continue;
+    if (pendentesAnterior.some((item) => !item.hashItem) || pendentesNovo.some((item) => !item.hashItem)) continue;
+
+    // Multiset de hashes precisa ser idêntico nos dois lados.
+    const contagemAnterior = new Map();
+    for (const item of pendentesAnterior) {
+      contagemAnterior.set(item.hashItem, (contagemAnterior.get(item.hashItem) || 0) + 1);
+    }
+    const contagemNovo = new Map();
+    for (const item of pendentesNovo) {
+      contagemNovo.set(item.hashItem, (contagemNovo.get(item.hashItem) || 0) + 1);
+    }
+    if (contagemAnterior.size !== contagemNovo.size) continue;
+    let bijetivo = true;
+    for (const [hash, total] of contagemAnterior.entries()) {
+      if (contagemNovo.get(hash) !== total) { bijetivo = false; break; }
+    }
+    if (!bijetivo) continue;
+
+    // Pareia 1:1 consumindo do novo pelo mesmo hash.
+    const fila = new Map();
+    for (const item of pendentesNovo) {
+      if (!fila.has(item.hashItem)) fila.set(item.hashItem, []);
+      fila.get(item.hashItem).push(item);
+    }
+    for (const anterior of pendentesAnterior) {
+      const disponiveis = fila.get(anterior.hashItem) || [];
+      const novo = disponiveis.shift();
+      if (!novo) continue;
+      usadosAnterior.add(anterior);
+      usadosNovo.add(novo);
+      pares.push({ anterior, novo, chave, origemPareamento: "grupo_material_ruido_chave_preexistente" });
+    }
+    ruidos.push({
+      chave,
+      totalItens: pendentesAnterior.length,
+      hashesUnicos: contagemAnterior.size,
+      criterio: "hashItem_bijetivo",
+    });
+  }
+
+  // Marca os bloqueios técnicos de colisão de chave correspondentes como
+  // ruído controlado, sem removê-los do relatório.
+  if (ruidos.length > 0) {
+    const chavesRuido = new Set(ruidos.map((r) => r.chave));
+    for (const bloqueio of bloqueiosTecnicos) {
+      if (bloqueio.tipo === "colisao_chave" && chavesRuido.has(bloqueio.chave)) {
+        bloqueio.ruidoTecnicoControlado = true;
+        bloqueio.motivoRuido = "identidade_material_bijetiva_por_hashItem";
+      }
+    }
+  }
+
+  return ruidos;
+}
+
 function validarChecksum(snapshot, nome) {
   const calculado = calcularChecksumSnapshot(snapshot.planoAplicacao || []);
   const informado = snapshot.checksum || null;
@@ -321,6 +390,13 @@ function compararSnapshotsPad(anterior, novo) {
   parearPorIndice(indiceAnterior.porContexto, indiceNovo.porContexto, usadosAnterior, usadosNovo, pares, "chaveContexto");
   parearPorIndice(indiceAnterior.porSemNatureza, indiceNovo.porSemNatureza, usadosAnterior, usadosNovo, pares, "chaveSemNatureza");
   parearPorIndice(indiceAnterior.porSemArea, indiceNovo.porSemArea, usadosAnterior, usadosNovo, pares, "chaveSemArea");
+  // Sexta etapa: absorve grupos materiais com colisão preexistente cuja
+  // identidade é bijetiva por hashItem. Não apaga bloqueios técnicos — apenas
+  // os marca como ruído controlado e impede que virem `item_novo`/`item_removido`.
+  const ruidosTecnicosControlados = parearGruposMateriaisPorHash(
+    indiceAnterior.porMaterial, indiceNovo.porMaterial,
+    usadosAnterior, usadosNovo, pares, bloqueiosTecnicos
+  );
 
   for (const [chave, grupoAnterior] of indiceAnterior.porContexto.entries()) {
     const grupoNovo = indiceNovo.porContexto.get(chave) || [];
@@ -446,11 +522,13 @@ function compararSnapshotsPad(anterior, novo) {
     checksumCalculadoNovo: checksumNovo.calculado,
     checksumsValidos,
     bloqueiosTecnicos,
+    ruidosTecnicosControlados,
     avisos,
     resumo: {
       totalLinhasAnterior: snapAnterior.resumo?.totalLinhas || 0,
       totalLinhasNovo: snapNovo.resumo?.totalLinhas || 0,
       ...resumo,
+      totalRuidosTecnicosControlados: ruidosTecnicosControlados.length,
     },
     diferencasAgregadas,
     divergencias,
@@ -512,10 +590,24 @@ function montarMarkdownComparacaoSnapshots(resultado) {
   if (resultado.bloqueiosTecnicos.length) {
     linhas.push("## 4. Bloqueios técnicos");
     linhas.push("");
-    linhas.push("| Tipo | Mensagem | Chave |");
-    linhas.push("| --- | --- | --- |");
+    linhas.push("| Tipo | Mensagem | Chave | Ruído controlado |");
+    linhas.push("| --- | --- | --- | --- |");
     for (const bloqueio of resultado.bloqueiosTecnicos) {
-      linhas.push(`| \`${bloqueio.tipo}\` | ${bloqueio.mensagem || "-"} | \`${bloqueio.chave || "-"}\` |`);
+      linhas.push(
+        `| \`${bloqueio.tipo}\` | ${bloqueio.mensagem || "-"} | \`${bloqueio.chave || "-"}\` | ${bloqueio.ruidoTecnicoControlado ? "sim" : "não"} |`,
+      );
+    }
+    linhas.push("");
+  }
+
+  const ruidos = Array.isArray(resultado.ruidosTecnicosControlados) ? resultado.ruidosTecnicosControlados : [];
+  if (ruidos.length) {
+    linhas.push("## 4a. Ruído técnico controlado (pareamento por identidade material)");
+    linhas.push("");
+    linhas.push("| Chave | Itens | Hashes únicos | Critério |");
+    linhas.push("| --- | ---: | ---: | --- |");
+    for (const ruido of ruidos) {
+      linhas.push(`| \`${ruido.chave}\` | ${ruido.totalItens} | ${ruido.hashesUnicos} | \`${ruido.criterio}\` |`);
     }
     linhas.push("");
   }
