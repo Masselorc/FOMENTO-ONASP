@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T12:19:59.706Z",
+  "geradoEm": "2026-05-23T12:23:07.726Z",
   "modo": "dry-run",
   "origem": "relatorios-pad-rateados",
   "planoAplicacaoReconstruido": [
@@ -8837,9 +8837,14 @@
       "baseRateioValor": "saldo_residual_nao_setorializado",
       "baseRateioQuantidade": "saldo_residual_nao_setorializado",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 44,
+        "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+        "decisao": "CORRIGIDO",
+        "efeito": "nao_apto_liberado"
+      },
       "saldoResidualTecnico": true,
       "linhaOrigem": 19
     },
@@ -10125,9 +10130,14 @@
       "baseRateioValor": "saldo_residual_nao_setorializado",
       "baseRateioQuantidade": "saldo_residual_nao_setorializado",
       "ajusteResidualAplicado": false,
-      "itemAptoParaUso": false,
-      "liberadoPorDecisao": false,
-      "decisaoAplicada": null,
+      "itemAptoParaUso": true,
+      "liberadoPorDecisao": true,
+      "decisaoAplicada": {
+        "divergenciaId": 44,
+        "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+        "decisao": "CORRIGIDO",
+        "efeito": "nao_apto_liberado"
+      },
       "saldoResidualTecnico": true,
       "linhaOrigem": 61
     },
@@ -17246,18 +17256,18 @@
     "totalItensPadSemRateioReconstruidoPorDecisao": 24,
     "totalLinhasReconstruidas": 568,
     "totalConveniosReconstruidos": 15,
-    "totalItensConhecidosNaoAptosUsados": 7,
+    "totalItensConhecidosNaoAptosUsados": 6,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 32,
+    "totalImpedimentos": 31,
     "totalAlertas": 106,
-    "totalDecisoesResolutivasEncontradas": 71,
-    "totalDecisoesInterpretadasDryRun": 66,
-    "totalDecisoesAplicadasDryRun": 66,
+    "totalDecisoesResolutivasEncontradas": 72,
+    "totalDecisoesInterpretadasDryRun": 67,
+    "totalDecisoesAplicadasDryRun": 67,
     "totalDecisoesNaoAplicaveis": 5,
-    "totalDecisoesComEfeitoNaReconstrucao": 39,
+    "totalDecisoesComEfeitoNaReconstrucao": 40,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 35,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 36,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
     "valorPrevistoReconstruidoTotal": 10664015.24,
@@ -17308,15 +17318,6 @@
       "uf": "MA",
       "descricao": "SALDO REMANESCENTE",
       "chaveItem": "938277::SALDO REMANESCENTE",
-      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
-    },
-    {
-      "tipo": "item_conhecido_nao_apto_usado",
-      "nivel": "impeditivo",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "descricao": "Saldo Residual",
-      "chaveItem": "938128::SALDO RESIDUAL",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
@@ -17551,7 +17552,7 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 9 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 8 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "alertas": [
@@ -18910,6 +18911,13 @@
       "tipoAlerta": "item_nao_apto",
       "decisao": "ACEITO",
       "decisaoId": 69
+    },
+    {
+      "divergenciaId": 44,
+      "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+      "tipoAlerta": "item_nao_apto",
+      "decisao": "CORRIGIDO",
+      "decisaoId": 187
     },
     {
       "divergenciaId": 45,
@@ -22419,6 +22427,164 @@
       }
     },
     {
+      "divergenciaId": 44,
+      "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "tipoAlerta": "item_nao_apto",
+      "campoAfetado": "aptidao",
+      "bloqueiaPublicacao": true,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 187,
+      "usuario": "sistema-prevalencia-pad-938128-44",
+      "decididoEm": "2026-05-23T12:22:53.878Z",
+      "efeito": {
+        "tipo": "nao_apto_liberado",
+        "afetaReconstrucao": true
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null,
+      "payload": {
+        "campoAfetado": "aptidao",
+        "numeroConvenio": "938128",
+        "uf": "SP",
+        "chaveItem": "938128::SALDO RESIDUAL",
+        "memoria": {
+          "descricao": "Saldo Residual",
+          "area": "N/A, NAO INFORMADO",
+          "natureza": "CAPITAL",
+          "quantidade": 1.003203,
+          "valorUnitario": 22279.73,
+          "valorPrevisto": 22351.09,
+          "valorExecutado": 0,
+          "saldo": 22351.09,
+          "totalRateiosAtivos": 2
+        },
+        "antes": {
+          "descricao": "Saldo Residual",
+          "area": "N/A, NAO INFORMADO",
+          "natureza": "CAPITAL",
+          "quantidade": 1.003203,
+          "valorUnitario": 22279.73,
+          "valorPrevisto": 22351.09,
+          "valorExecutado": 0,
+          "saldo": 22351.09,
+          "totalRateiosAtivos": 2
+        },
+        "pad": {
+          "descricao": "Saldo Residual",
+          "natureza": "CUSTEIO",
+          "quantidade": 1,
+          "valorUnitario": 71.36,
+          "valorPrevisto": 71.36,
+          "valorExecutado": 0,
+          "saldo": 71.36
+        },
+        "depois": {
+          "descricao": "Saldo Residual",
+          "natureza": "CUSTEIO",
+          "quantidade": 1,
+          "valorUnitario": 71.36,
+          "valorPrevisto": 71.36,
+          "valorExecutado": 0,
+          "saldo": 71.36
+        },
+        "descricaoMemoria": "Saldo Residual",
+        "areaMemoria": "N/A, NAO INFORMADO",
+        "naturezaMemoria": "CAPITAL",
+        "quantidadeMemoria": 1.003203,
+        "valorUnitarioMemoria": 22279.73,
+        "valorPrevistoMemoria": 22351.09,
+        "valorExecutadoMemoria": 0,
+        "saldoMemoria": 22351.09,
+        "totalRateiosAtivosMemoria": 2,
+        "descricaoPad": "Saldo Residual",
+        "naturezaPad": "CUSTEIO",
+        "quantidadePad": 1,
+        "valorUnitarioPad": 71.36,
+        "valorPrevistoPad": 71.36,
+        "valorExecutadoPad": 0,
+        "saldoPad": 71.36,
+        "alertasOriginais": [
+          {
+            "tipo": "linha_sem_numero_ano_uf",
+            "nivel": "impeditivo",
+            "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
+            "loteImportacaoId": 1,
+            "origem": {
+              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+              "aba": "SP",
+              "linha": 43
+            }
+          },
+          {
+            "tipo": "area_vazia",
+            "nivel": "impeditivo",
+            "detalhe": "Linha da aba UF sem area classificada.",
+            "loteImportacaoId": 1,
+            "origem": {
+              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+              "aba": "SP",
+              "linha": 43
+            }
+          },
+          {
+            "tipo": "valor_unitario_divergente_na_mesma_chave",
+            "nivel": "aviso",
+            "detalhe": "Mesma chave operacional apareceu com valores unitarios diferentes: 22279.73, 71.36.",
+            "loteImportacaoId": 1,
+            "origem": {
+              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
+              "aba": "SP",
+              "linha": 40
+            }
+          }
+        ],
+        "rateiosAtivos": [
+          {
+            "area": "N/A",
+            "natureza": "CAPITAL",
+            "quantidadeReferencia": 10,
+            "valorPrevistoReferencia": 22279.73,
+            "valorExecutadoReferencia": 0,
+            "percentualQuantidade": 90.909091,
+            "percentualValor": 99.680731
+          },
+          {
+            "area": "NAO INFORMADO",
+            "natureza": "CAPITAL",
+            "quantidadeReferencia": 1,
+            "valorPrevistoReferencia": 71.36,
+            "valorExecutadoReferencia": 0,
+            "percentualQuantidade": 9.090909,
+            "percentualValor": 0.319269
+          }
+        ],
+        "riscoFalsoPositivo": "baixo",
+        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+        "linhaOrigem": 19,
+        "acaoSugerida": "liberar_ou_manter_bloqueado",
+        "bloqueiaPublicacao": true
+      },
+      "payloadDecisao": {
+        "origem": "reconstituicao-decisao-prevalencia-pad-938128-44",
+        "tipoSaneamento": "nao_apto_liberado",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivoReconstituicao": "decisao_original_perdida_em_wal_nao_checkpointed_antes_de_c43f327",
+        "observacaoSaldoResidual": "Saldo residual e item tecnico nao setorializado por area; segregado por natureza (CAPITAL/CUSTEIO). PAD novo prevalece sobre memoria antiga.",
+        "_segurancaPreAtivacao": {
+          "versao": 1,
+          "divergenciaId": 44,
+          "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
+          "tipoAlerta": "item_nao_apto",
+          "campoAfetado": "aptidao",
+          "payloadHashNoMomentoDaDecisao": "1c2ba2d2a7b70c0bfc36366addb04d35924b149d8195735a5974a00c1f960f0e",
+          "registradoEm": "2026-05-23T12:22:53.877Z"
+        }
+      }
+    },
+    {
       "divergenciaId": 45,
       "chaveDivergencia": "item_nao_apto:8f122bb171e311cd",
       "numeroConvenio": "938128",
@@ -24969,22 +25135,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 74,
+    "totalPendentes": 73,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 9,
+    "totalPendentesQueBloqueiamPublicacao": 8,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 71,
+    "totalComDecisaoResolutiva": 72,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 74,
+    "totalSemDecisaoResolutiva": 73,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-23T12:19:59.706Z",
+    "geradoEm": "2026-05-23T12:23:07.726Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 73,
-      "totalPayloadPreservado": 45,
+      "totalDecisoesResolutivasAuditadas": 74,
+      "totalPayloadPreservado": 46,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,

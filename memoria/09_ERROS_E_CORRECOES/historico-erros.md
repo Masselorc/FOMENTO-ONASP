@@ -1273,6 +1273,12 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 - `#39 status=ACEITO totalDecisoes=1 classificacao=historico_saneado`.
 - `#44` permanece `falso_positivo_saneavel` (não-bloqueante) por `saldo_residual_prevalencia_pad`; decisão própria fica para commit seguinte.
 
+**Resultado final (após #44 — commit seguinte):**
+- decisão `CORRIGIDO #187` registrada para `#44` via serviço, prevalência integral do PAD (CUSTEIO/R$ 71,36 sobre memória CAPITAL/R$ 22.351,09); saldo residual mantido como item técnico não setorializado por área; CAPITAL e CUSTEIO segregados; `aplicadaAoPlano=false`; snapshot hash `1c2ba2d2…`; log `decisao_registrada #2523`.
+- `#44 status=CORRIGIDO totalDecisoes=1 classificacao=historico_saneado`.
+- `Histórico/saneado: 35`; `Falso positivo saneável: 73` — **idênticos** aos relatórios commitados em `c43f327`/`889adec` antes do gap ser exposto.
+- ID `#187` coincidente com o referenciado no diário original — pura coincidência de alocação sequencial após `#186`.
+
 **Como prevenir regressão (boa prática crítica):**
 - **Sempre executar `db.pragma('wal_checkpoint(TRUNCATE)')` antes de `git add backend/data/onasp.sqlite`**. Sem isso, decisões em WAL ficam invisíveis no banco versionado.
 - Considerar configurar `PRAGMA journal_mode=DELETE` para o ambiente de versionamento, OU criar um pre-commit hook que verifique se o WAL tem frames não-checkpointed quando `onasp.sqlite` está staged.

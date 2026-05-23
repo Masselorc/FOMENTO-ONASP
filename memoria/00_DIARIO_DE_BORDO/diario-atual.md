@@ -1,5 +1,58 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: reconstitui decisão prevalência PAD da divergência #44 (gap pré-existente)
+
+- Objetivo: completar o saneamento das decisões perdidas pelo gap
+  pré-existente, registrando explicitamente a decisão prevista para
+  `#44` em `historico-erros.md` (decisão complementar do trabalho de
+  prevalência PAD na divergência `#44`).
+- Contexto: o commit anterior `db6889a` reconstituiu `#39` e levou
+  `pendencia_operacional_real = 1 → 0`. `#44` já estava classificada
+  como `falso_positivo_saneavel` (não-bloqueante) via regra de
+  `saldo_residual_prevalencia_pad`, mas sem decisão explícita no
+  histórico, replicando o gap original.
+- Ação aplicada (autorizada):
+  - decisão `CORRIGIDO #187` registrada via
+    `profor-pad-revisao-decisao-service.registrarDecisao` para a
+    divergência `#44` (`938128/SP`, "Saldo Residual",
+    `item_nao_apto`);
+  - regra: **prevalência integral do PAD novo** (CUSTEIO/R$ 71,36)
+    sobre memória antiga consolidada (CAPITAL/R$ 22.351,09);
+  - saldo residual mantido como item técnico **não setorializado**
+    por área (NAO INFORMADO); CAPITAL e CUSTEIO segregados por
+    natureza;
+  - `aplicadaAoPlano=false`, snapshot `_segurancaPreAtivacao` injetado
+    automaticamente (hash `1c2ba2d2…`), log `decisao_registrada #2523`
+    gravado;
+  - `wal_checkpoint(TRUNCATE)` executado antes de stage.
+- Estado final consolidado:
+  - `#18 status=CORRIGIDO totalDecisoes=2` (#150 ACEITO + #185
+    CORRIGIDO retificadora) → `bloqueio_tecnico_residual_retificado`;
+  - `#39 status=ACEITO totalDecisoes=1` (#186) → `historico_saneado`;
+  - `#44 status=CORRIGIDO totalDecisoes=1` (#187) →
+    `historico_saneado` (saldo_residual_prevalencia_pad);
+  - `pendencia_operacional_real = 0`;
+  - `Histórico/saneado: 35`; `Falso positivo saneável: 73`
+    (idênticos aos relatórios em `c43f327` antes do gap ser exposto);
+  - bloqueios de segurança pré-ativação: `35`;
+  - reconstrução: `31 impedimentos` (era `33` antes; redução pela
+    aplicação das decisões #186/#187 sobre item_nao_apto);
+  - diferença total prevista origem antiga × reconstrução PAD:
+    `-0,24` (inalterada);
+  - aptidão para ativação controlada: **continua não apto** (bloqueios
+    técnicos remanescentes fora do escopo de #18/#39/#44).
+- ID coincidente: a nova decisão para `#44` recebeu id **#187** por
+  sequência natural (`max(id) = 186` antes desta operação). Coincide
+  nominalmente com o id mencionado no `historico-erros.md` original —
+  pura coincidência de alocação sequencial, sem relação histórica.
+- Confirmações de escopo:
+  - sem publicação;
+  - origem ativa intacta; `planoAplicacao` oficial intacto;
+  - `frontend/data/publicados` intacto;
+  - `*.sqlite-wal` / `*.sqlite-shm` continuam fora do versionamento;
+  - nenhuma decisão/log apagado;
+  - `npm run validar:syntax` OK; `npm run validar:services` OK.
+
 ## 23/05/2026 - PROFOR 2022: reconstitui decisão prevalência PAD da divergência #39 (gap pré-existente)
 
 - Objetivo: corrigir `pendencia_operacional_real = 1` exposto após

@@ -1,6 +1,6 @@
 # PROFOR 2022 - Segurança pré-ativação final (dry-run)
 
-Gerado em: 2026-05-23T12:20:00.878Z
+Gerado em: 2026-05-23T12:23:08.833Z
 
 Auditoria somente leitura: não registra decisão, não publica, não altera origem ativa, não altera `frontend/data/publicados` e não altera o `planoAplicacao` oficial.
 

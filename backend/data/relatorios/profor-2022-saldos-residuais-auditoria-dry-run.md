@@ -1,6 +1,6 @@
 # PROFOR 2022 - Auditoria de saldos residuais/remanescentes (dry-run)
 
-Gerado em: 2026-05-23T12:19:57.456Z
+Gerado em: 2026-05-23T12:23:04.884Z
 
 Auditoria somente leitura: nao registra decisao, nao altera status, nao publica e nao altera o planoAplicacao oficial.
 
@@ -12,7 +12,7 @@ Auditoria somente leitura: nao registra decisao, nao altera status, nao publica 
 - Mistura CAPITAL/CUSTEIO: 61
 - Mistura que fecha segregada por natureza (falso positivo saneavel): 5
 - Resolvidos por prevalencia do PAD novo: 56
-- Decisoes anteriores afetadas: 24
+- Decisoes anteriores afetadas: 25
 - Pendentes de decisao humana: 25
 
 Regra aplicada: Saldo residual/remanescente e item tecnico nao setorializado por area e segregado por natureza. CAPITAL e CUSTEIO nao sao equivalentes.
@@ -166,5 +166,6 @@ Regra aplicada: Saldo residual/remanescente e item tecnico nao setorializado por
 - Decisao #151 / divergencia #19: saldo_residual_decisao_anterior_incompativel. Impedir efeito automatico no dry-run e revalidar por decisao retificadora se necessario.
 - Decisao #152 / divergencia #20: saldo_residual_decisao_anterior_incompativel. Impedir efeito automatico no dry-run e revalidar por decisao retificadora se necessario.
 - Decisao #185 / divergencia #18: saldo_residual_decisao_anterior_relacionada. Manter rastreada para auditoria.
+- Decisao #187 / divergencia #44: saldo_residual_decisao_anterior_relacionada. Manter rastreada para auditoria.
 
 Rollback: reverter o commit e regenerar os relatorios dry-run; nao apagar decisoes/logs historicos.

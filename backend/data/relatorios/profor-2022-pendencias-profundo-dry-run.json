@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T12:19:56.530Z",
+  "geradoEm": "2026-05-23T12:23:03.070Z",
   "modo": "dry-run",
   "fonte": {
     "sqlite": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\onasp.sqlite",
@@ -43,19 +43,19 @@
       "reconstrucao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T11:53:18.738Z",
+        "geradoEm": "2026-05-23T12:19:59.706Z",
         "erro": null
       },
       "comparacao": {
         "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T11:53:18.766Z",
+        "geradoEm": "2026-05-23T12:19:59.726Z",
         "erro": null
       },
       "saldosResiduais": {
         "caminho": "backend/data/relatorios/profor-2022-saldos-residuais-auditoria-dry-run.json",
         "disponivel": true,
-        "geradoEm": "2026-05-23T11:53:10.753Z",
+        "geradoEm": "2026-05-23T12:19:57.456Z",
         "erro": null
       }
     }
@@ -63,11 +63,11 @@
   "resumo": {
     "totalDivergencias": 145,
     "totalAnalisadas": 143,
-    "totalPendentesOperacionais": 74,
+    "totalPendentesOperacionais": 73,
     "totalBloqueantes": 45,
-    "totalBloqueantesOperacionais": 9,
-    "totalComDecisaoResolutiva": 69,
-    "totalDecisoesRegistradas": 74,
+    "totalBloqueantesOperacionais": 8,
+    "totalComDecisaoResolutiva": 70,
+    "totalDecisoesRegistradas": 75,
     "totalPossiveisFalsosPositivos": 78,
     "totalPendenciasReaisEstimadas": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
@@ -77,8 +77,8 @@
       "bloqueioTecnicoSeguranca": 0,
       "decisaoResolutivaComPendenciaTecnica": 8,
       "revalidacaoNecessaria": 27,
-      "historicoSaneado": 34,
-      "falsoPositivoSaneavel": 74
+      "historicoSaneado": 35,
+      "falsoPositivoSaneavel": 73
     },
     "porStatus": [
       {
@@ -87,11 +87,11 @@
       },
       {
         "status": "CORRIGIDO",
-        "total": 6
+        "total": 7
       },
       {
         "status": "PENDENTE",
-        "total": 74
+        "total": 73
       }
     ],
     "porTipoStatus": [
@@ -117,8 +117,13 @@
       },
       {
         "tipoAlerta": "item_nao_apto",
+        "status": "CORRIGIDO",
+        "total": 1
+      },
+      {
+        "tipoAlerta": "item_nao_apto",
         "status": "PENDENTE",
-        "total": 7
+        "total": 6
       },
       {
         "tipoAlerta": "item_novo_sem_rateio",
@@ -226,7 +231,7 @@
     },
     {
       "categoria": "ja_saneado_mas_ainda_pendente",
-      "quantidade": 69,
+      "quantidade": 70,
       "ids": [
         1,
         2,
@@ -266,6 +271,7 @@
         41,
         42,
         43,
+        44,
         45,
         47,
         48,
@@ -572,14 +578,13 @@
   "categoriasOperacionais": [
     {
       "categoria": "falso_positivo_saneavel",
-      "quantidade": 74,
+      "quantidade": 73,
       "ids": [
         31,
         32,
         33,
         34,
         38,
-        44,
         46,
         79,
         80,
@@ -654,7 +659,7 @@
     },
     {
       "categoria": "historico_saneado",
-      "quantidade": 34,
+      "quantidade": 35,
       "ids": [
         1,
         2,
@@ -689,6 +694,7 @@
         41,
         42,
         43,
+        44,
         45
       ],
       "risco": "baixo",
@@ -1850,23 +1856,24 @@
       "uf": "SP",
       "tipoAlerta": "item_nao_apto",
       "descricao": "Saldo Residual",
-      "status": "PENDENTE",
+      "status": "CORRIGIDO",
       "nivel": "impeditivo",
       "bloqueiaPublicacao": true,
       "campoAfetado": "aptidao",
       "classificacoes": [
         "saldo_residual_prevalencia_pad",
-        "possivel_falso_positivo"
+        "possivel_falso_positivo",
+        "ja_saneado_mas_ainda_pendente"
       ],
-      "evidencia": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. PAD novo prevalece sobre a memoria antiga quando a linha PAD esta corretamente identificada por natureza. | Auditoria de item não apto: ja_decidido.",
-      "recomendacao": "Tratar como resolvido por prevalencia do PAD novo; manter diferenca memoria x PAD apenas como rastreabilidade.",
-      "totalDecisoes": 0,
-      "temDecisaoResolutiva": false,
-      "totalLogs": 16,
+      "evidencia": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. PAD novo prevalece sobre a memoria antiga quando a linha PAD esta corretamente identificada por natureza. | Status/decisão resolutiva presente (CORRIGIDO); incluído na auditoria por bloqueio técnico, histórico ou critério sem decisão canônica. | Auditoria de item não apto: ja_decidido.",
+      "recomendacao": "Tratar como resolvido por prevalencia do PAD novo; manter diferenca memoria x PAD apenas como rastreabilidade. | Manter fora da lista operacional padrão; revisar apenas bloqueios de segurança antes de ativação.",
+      "totalDecisoes": 1,
+      "temDecisaoResolutiva": true,
+      "totalLogs": 17,
       "saldoResidualTecnico": true,
       "alertaSaldoResidual": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes.",
-      "classificacaoOperacional": "falso_positivo_saneavel",
-      "motivoOperacional": "Saldo residual/remanescente divergente apenas por prevalencia do PAD novo; memoria antiga e historica/comparativa.",
+      "classificacaoOperacional": "historico_saneado",
+      "motivoOperacional": "Item já decidido de forma resolutiva e sem bloqueio de segurança; fora da fila operacional, mantido como histórico.",
       "exigeDecisaoHumanaSubstantiva": false
     },
     {
@@ -4574,6 +4581,7 @@
       41,
       42,
       43,
+      44,
       45,
       47,
       48,
