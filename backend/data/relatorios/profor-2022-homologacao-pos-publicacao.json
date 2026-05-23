@@ -1,0 +1,41 @@
+{
+  "tipo": "homologacao_pos_publicacao",
+  "ciclo": "PAD/PROFOR 2022",
+  "data": "2026-05-23",
+  "commitPublicacao": "06c4cd7",
+  "status": "HOMOLOGADO",
+  "arquivosPublicados": {
+    "modificados": [
+      "frontend/data/publicados/aplicacao.json",
+      "frontend/data/publicados/dashboard-geral.json",
+      "frontend/data/publicados/resumo-publicacao.json"
+    ],
+    "preservados": [
+      "frontend/data/publicados/formalizacao-profor.json",
+      "frontend/data/publicados/orcamento-2026.json",
+      "frontend/data/publicados/parametros-minimos.json"
+    ]
+  },
+  "validacoes": {
+    "validarSyntax": "OK",
+    "validarServices": "OK (153/153 testes)",
+    "consoleSemErros": true,
+    "dashboardCarregado": true,
+    "painelProforCarregado": true,
+    "dadosIndicadoresConferidos": {
+      "quantidadeConvenios": 15,
+      "quantidadeItensReconstruidos": 568,
+      "totalFomento": 6028180.90,
+      "totalConveniosOuvidoria": 1669823.90,
+      "valorGlobalProfor": 10664015.24,
+      "valorRepasseProfor": 10217254.54
+    }
+  },
+  "isolamento": {
+    "sqliteNaoAlterado": true,
+    "envNaoAlterado": true,
+    "transferegovNaoAcionado": true
+  },
+  "conclusao": "HOMOLOGADO POS-PUBLICACAO PAD/PROFOR 2022",
+  "assinatura": "Marcelo Cortez (Responsável Técnico / Operador)"
+}

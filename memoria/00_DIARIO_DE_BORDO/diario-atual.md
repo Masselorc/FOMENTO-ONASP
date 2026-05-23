@@ -1,6 +1,33 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: HOMOLOGAÇÃO pós-publicação e encerramento técnico do ciclo
+
+- **Objetivo:** registrar a homologação pós-publicação e consolidar o encerramento técnico do ciclo PAD/PROFOR 2022 (sem nova publicação, sem alteração de banco de dados, sem alteração do `.env` ou acionamento do Transferegov).
+- **Validação técnica de homologação pós-publicação:**
+  - Carregamento de telas (Dashboard Geral e Painel PROFOR 2022) efetuado com sucesso na porta local `8790`.
+  - Dados consistentes com a origem `reconstrucao-pad`: 15 convênios e 568 itens de plano de aplicação reconstruídos.
+  - Valores auditados conferidos: Valor de repasse PROFOR = `R$ 10.217.254,54`, Valor Global = `R$ 10.664.015,24`, Total Fomento Geral = `R$ 6.028.180,90`.
+  - Console do navegador limpo (0 erros 404, 0 erros de parse JSON, 0 propriedades `undefined`).
+  - Testes automatizados executados pós-publicação: `validar:syntax` retornou OK, `validar:services` retornou sucesso (153/153 testes passados, 0 falhas).
+- **Consolidação do encerramento técnico do ciclo:**
+  - Saneamento de divergências críticas (Divergências #18, #39, #44 e revalidação de 27 payloads alterados #47-#74) concluído na fase de segurança pré-ativação.
+  - Ativação controlada da origem `reconstrucao-pad` via `.env` (gitignored) realizada e testada com sucesso.
+  - Publicação controlada efetuada atomicamente via `npm run publicar:dados` alterando estritamente `aplicacao.json`, `dashboard-geral.json` e `resumo-publicacao.json`.
+  - Status geral final atestado: **HOMOLOGADO POS-PUBLICACAO PAD/PROFOR 2022**.
+- **Isolamento de ambiente:**
+  - Nenhuma publicação ou atualização rodada nesta etapa.
+  - `frontend/data/publicados/` sem alterações pós-publicação.
+  - SQLite/WAL/SHM sem qualquer alteração.
+  - `.env` sem alterações.
+  - Transferegov não foi acionado.
+  - `git diff --check` limpo.
+- **Artefatos criados/alterados:**
+  - [profor-2022-homologacao-pos-publicacao.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-homologacao-pos-publicacao.md)
+  - [profor-2022-homologacao-pos-publicacao.json](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-homologacao-pos-publicacao.json)
+  - [profor-2022-encerramento-tecnico-pad-profor-2022.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-encerramento-tecnico-pad-profor-2022.md)
+
 ## 23/05/2026 — PROFOR 2022: EXECUÇÃO da publicação controlada da origem `reconstrucao-pad`
+
 
 - **Autorização escrita:** "AUTORIZAÇÃO EXPRESSA DE PUBLICAÇÃO CONTROLADA PAD/PROFOR 2022 (origem ativa: reconstrucao-pad)" — janela autorizada para 2026-05-23T17:05:00-03:00 (operação solo com aceite cruzado concentrado sob responsabilidade do operador).
 - **Operação solo declarada:** o operador assume a custódia técnica e functional concentrada.

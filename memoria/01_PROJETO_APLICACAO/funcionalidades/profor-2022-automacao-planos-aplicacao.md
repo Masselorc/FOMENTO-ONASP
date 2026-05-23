@@ -2725,3 +2725,36 @@ Saída de sucesso: `Dados estaticos publicados com sucesso. { success: true, pub
 ### 38.5. Garantias e escopo preservado
 
 Sem Transferegov acionado, sem alteração de banco de dados, sem alteração de origem ativa no `.env`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem remoção das origens `"planilha"` e `"banco-cache"`, sem alteração no default `ORIGEM_PADRAO_PROFOR_2022`, nenhum alerta real mascarado, nenhum log/divergência/decisão apagados.
+
+---
+
+## 39. Homologação pós-publicação e encerramento do ciclo (23/05/2026)
+
+### 39.1. Propósito
+
+Registrar a homologação definitiva das telas e indicadores e consolidar o encerramento do ciclo técnico PAD/PROFOR 2022 após a execução da publicação controlada a partir da origem `reconstrucao-pad`.
+
+### 39.2. Indicadores e Telas Homologadas
+
+Telas inspecionadas localmente via navegador na porta `8790` com sucesso:
+- **Dashboard Geral:** total de fomento exibindo `R$ 6.028.180,90`, convênios somando `R$ 1.669.823,90` e 15 UFs ativas.
+- **Painel PROFOR 2022:** 15 convênios, ano de referência 2022, Valor Global de `R$ 10.664.015,24` e Valor de Repasse de `R$ 10.217.254,54` (dados correspondentes à reconstrução-pad).
+- **Consola:** Sem erros de requisições 404, parse JSON ou campos `undefined`.
+
+### 39.3. Integridade do Envolvimento Tecnológico
+
+- **Testes:** Bateria de testes de serviços em `validar:services` passou com 100% de sucesso (153/153 testes).
+- **Sintaxe:** `validar:syntax` retornou OK para todos os arquivos JS.
+- **SQLite/WAL/SHM:** Banco SQLite e arquivos temporários de transação permaneceram intactos, sem nenhuma alteração no status do git.
+- **.env:** Sem alterações na variável `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad`.
+- **Transferegov:** A API e scripts externos integrados ao Transferegov não foram ativados.
+
+### 39.4. Artefatos de Homologação e Encerramento
+
+- [profor-2022-homologacao-pos-publicacao.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-homologacao-pos-publicacao.md)
+- [profor-2022-homologacao-pos-publicacao.json](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-homologacao-pos-publicacao.json)
+- [profor-2022-encerramento-tecnico-pad-profor-2022.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-encerramento-tecnico-pad-profor-2022.md)
+
+### 39.5. Garantias e Fechamento
+
+O ciclo encerra-se com status de **HOMOLOGADO** e com as working trees de dados (`frontend/data/publicados/`) limpas de qualquer alteração pós-publicação. Os fallbacks locais (`banco-cache` e `planilha`) permanecem documentados e disponíveis para rollback a qualquer momento através do arquivo de configuração `.env` ou restauração do backup de publicação.
