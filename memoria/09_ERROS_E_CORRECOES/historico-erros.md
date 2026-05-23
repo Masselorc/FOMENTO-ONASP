@@ -1285,3 +1285,25 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 - Validar coerência: `git status` precisa mostrar `backend/data/onasp.sqlite` modificado sempre que uma nova decisão tiver sido registrada na sessão.
 
 **Rollback:** `git revert <commit>` reverte a reconstituição. A decisão `#186` permaneceria no banco — para neutralizá-la, registrar `REVERTIDO` via serviço. Não apagar `#186`, logs ou divergências.
+
+## 23/05/2026 - PROFOR 2022: conclusão da auditoria dry-run de revalidação dos 27 payloads alterados
+
+**Classificação:** boa prática | prevenção
+
+**Contexto:** Frente PAD/PROFOR 2022. As 27 divergências únicas (28 decisões afetadas) estavam marcadas com o bloqueio formal de `payload_alterado_apos_decisao` devido à diferença entre o hash atual do payload e o hash gravado no snapshot no momento da decisão.
+
+**Problema:** O bloqueio formal impede a ativação ou publicação mesmo quando a decisão de ausência confirmada é materialmente coerente e as divergências não possuem impedimentos ou diferenças críticas.
+
+**Evidência:** Relatório gerado em `backend/data/relatorios/profor-2022-revalidacao-payloads-alterados-dry-run.json` e `.md`.
+
+**Causa provável:** O snapshot original de decisões gravava apenas o hash do payload. Com re-extrações ou normalizações subsequentes, o payload atual mudou seu hash, disparando o bloqueio formal de segurança, embora o juízo material (item ausente) tenha se mantido estável.
+
+**Correção/ação aplicada (dry-run):** Conclusão da auditoria dry-run. Foi corrigida uma inconsistência do script que consultava `comparacao.impedimentos` (campo correto é `comparacao.impedimentosReconstrucao`). O script foi integrado aos comandos do package.json, validar-syntax e testes unitários.
+
+**Resultado:** A auditoria classificou as 27 divergências na categoria `revalidacao_por_prevalencia_pad`. A pendência operacional permaneceu em `0`, e nenhuma decisão foi registrada no banco SQLite local, mantendo o dry-run estrito.
+
+**Como prevenir regressão:**
+- Não baixar os bloqueios formais por alteração em massa genérica ou SQL direto.
+- Em etapa futura devidamente autorizada, registrar decisões de revalidação (ACEITO) para cada ID-alvo usando o serviço existente (`profor-pad-revisao-decisao-service.registrarDecisao`) com `aplicadaAoPlano=false` para atualizar os snapshots e baixar os bloqueios formais de forma auditável e segura.
+
+**Rollback:** Reverter o commit de documentação/testes e regenerar relatórios dry-run.

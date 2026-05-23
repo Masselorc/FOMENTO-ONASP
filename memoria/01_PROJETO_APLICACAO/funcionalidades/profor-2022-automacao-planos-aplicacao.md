@@ -2440,3 +2440,35 @@ Nenhum bloqueio foi baixado automaticamente. Nenhuma decisão foi registrada.
 
 A auditoria final não publica, não altera origem ativa, não altera `frontend/data/publicados`, não altera o `planoAplicacao` oficial, não registra decisão e não altera SQLite por SQL direto. O efeito é limitado a relatório dry-run e documentação de próximos passos.
 
+---
+
+## 32. Auditoria dry-run de revalidação dos 27 payloads alterados (23/05/2026)
+
+### 32.1. Propósito e Execução
+
+Foi realizada uma auditoria dry-run focada especificamente nos **27 payloads alterados após a decisão** (`payload_alterado_apos_decisao`) da frente PAD/PROFOR 2022. O objetivo foi validar se os itens sob bloqueio formal ainda mantêm coerência técnica material com o PAD novo, avaliando sua aptidão para saída do bloqueio em etapa futura.
+
+O script foi executado via:
+```bash
+node backend/scripts/auditar-revalidacao-payloads-alterados-pad-profor-2022.js
+```
+
+### 32.2. Resultados Obtidos
+
+- **Total de divergências avaliadas:** 27.
+- **Total de decisões afetadas:** 28 (divergência `#72` possui duas decisões afetadas: `#107` e `#108`).
+- **Classificação final:** 100% dos casos (`27 de 27`) classificados como `revalidacao_por_prevalencia_pad`.
+- **Chave de divergência:** Permaneceu idêntica nos 27 casos (`chaveDivergenciaPreservadaSempre = true`).
+- **Impedimentos de reconstrução/críticas na chaveItem:** 0 para todos os 27 IDs.
+
+### 32.3. Diagnóstico e Recomendação
+
+Os 27 IDs avaliados (`#47-#54`, `#56-#74`) compartilham o mesmo padrão: são casos de `item_ausente_no_pad` com decisão `ACEITO` (ausência confirmada). Com a re-extração/normalização do PAD novo, o hash do payload mudou em relação ao snapshot (que guardava apenas hash).
+
+Como a identidade da divergência está preservada, a reconstrução do plano não insere o item e o comparador aplica a ausência como confirmada, **as decisões antigas continuam materialmente aderentes ao PAD novo**.
+
+**Recomendação:** A liberação do bloqueio formal de segurança pré-ativação de forma segura deve ocorrer em etapa posterior mediante o registro de novas decisões de revalidação (`ACEITO`) via serviço padrão (`profor-pad-revisao-decisao-service.registrarDecisao`) com a flag `aplicadaAoPlano=false` para atualizar os snapshots de hash no banco de dados local.
+
+### 32.4. Garantias e Integridade
+
+Nenhuma decisão foi gravada no banco SQLite local, os dados publicados em `frontend/data/publicados/` e o `planoAplicacao` oficial permaneceram intactos, atendendo estritamente aos requisitos de dry-run.

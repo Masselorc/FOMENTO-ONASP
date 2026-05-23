@@ -1,5 +1,27 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: conclusão da auditoria dry-run de revalidação dos 27 payloads alterados
+
+- Objetivo: concluir e validar a auditoria dry-run das 27 divergências únicas (28 decisões afetadas, incluindo a #72 com duas decisões) marcadas com o bloqueio formal de `payload_alterado_apos_decisao`.
+- Contexto: a revalidação é necessária devido à alteração no hash de payload após a re-extração/normalização, mantendo as decisões antigas e a prevalência do PAD.
+- Resultados da Auditoria:
+  - Total divergências únicas avaliadas: 27.
+  - Total decisões afetadas: 28 (divergência #72 detalhada com 2 decisões afetadas: #107 e #108).
+  - Classificação final majoritária: `revalidacao_por_prevalencia_pad` (27 de 27).
+  - Ação recomendada para o futuro: registrar decisão de revalidação (ACEITO) via serviço existente (`profor-pad-revisao-decisao-service`) com `aplicadaAoPlano=false` para reescrever o snapshot de hash e liberar o bloqueio de segurança pré-ativação de forma segura.
+- Garantias aplicadas (dry-run estrito):
+  - Nenhuma decisão registrada no banco SQLite local.
+  - `backend/data/onasp.sqlite` permaneceu inalterado.
+  - `pendencia_operacional_real` permaneceu em `0`.
+  - `frontend/data/publicados/` permaneceu inalterado.
+  - Não houve ativação nem publicação de dados.
+- Entregas de código e infra:
+  - Correção na leitura do comparador JSON em `backend/scripts/auditar-revalidacao-payloads-alterados-pad-profor-2022.js` para usar `impedimentosReconstrucao` em vez do campo incorreto `impedimentos`.
+  - Script adicionado ao `package.json` como: `"profor:pad:revalidacao-payloads:auditar": "node backend/scripts/auditar-revalidacao-payloads-alterados-pad-profor-2022.js"`.
+  - Script integrado a `scripts/validar-syntax.js`.
+  - Criado teste de serviço unitário em `tests/services/auditar-revalidacao-payloads-alterados.test.js` e integrado a `validar-syntax.js`.
+  - Relatórios gerados em JSON e MD nos diretórios correspondentes.
+
 ## 23/05/2026 - PROFOR 2022: reconstitui decisão prevalência PAD da divergência #44 (gap pré-existente)
 
 - Objetivo: completar o saneamento das decisões perdidas pelo gap
