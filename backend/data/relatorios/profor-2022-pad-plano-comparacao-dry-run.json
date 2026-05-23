@@ -1,13 +1,13 @@
 {
-  "geradoEm": "2026-05-22T22:30:25.427Z",
+  "geradoEm": "2026-05-23T11:53:18.766Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
     "totalLinhasAntigo": 566,
-    "totalLinhasNovo": 567,
+    "totalLinhasNovo": 568,
     "totalItensIguais": 497,
-    "totalItensNovos": 24,
+    "totalItensNovos": 25,
     "totalItensAusentes": 30,
     "totalItensQuantidadeDivergente": 2,
     "totalItensValorPrevistoDivergente": 12,
@@ -16,18 +16,18 @@
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
     "totalItensAmbiguos": 6,
-    "totalDiferencas": 87,
-    "totalDiferencasCriticas": 24,
+    "totalDiferencas": 88,
+    "totalDiferencasCriticas": 25,
     "totalAvisos": 3,
-    "totalDiferencasEsperadasPorAtualizacaoPad": 12,
-    "totalDiferencasPorPendenciaDeDecisao": 21,
+    "totalDiferencasEsperadasPorAtualizacaoPad": 7,
+    "totalDiferencasPorPendenciaDeDecisao": 26,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 27,
-    "totalDecisoesResolutivasEncontradas": 72,
-    "totalDecisoesInterpretadasDryRun": 66,
-    "totalDecisoesAplicadasDryRun": 66,
-    "totalDecisoesNaoAplicaveis": 6,
-    "totalDecisoesComEfeitoNaReconstrucao": 39,
+    "totalDecisoesResolutivasEncontradas": 70,
+    "totalDecisoesInterpretadasDryRun": 65,
+    "totalDecisoesAplicadasDryRun": 65,
+    "totalDecisoesNaoAplicaveis": 5,
+    "totalDecisoesComEfeitoNaReconstrucao": 38,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
     "totalBloqueiosSegurancaPreAtivacao": 35
   },
@@ -39,17 +39,17 @@
       "saldo": 7461319.58
     },
     "novo": {
-      "linhas": 567,
-      "valorPrevisto": 10654508.7,
+      "linhas": 568,
+      "valorPrevisto": 10664015.24,
       "valorExecutado": 3217739.5,
-      "saldo": 7436769.2
+      "saldo": 7446275.74
     }
   },
   "diferencaTotal": {
-    "linhas": 1,
-    "valorPrevisto": -9506.78,
+    "linhas": 2,
+    "valorPrevisto": -0.24,
     "valorExecutado": 15043.6,
-    "saldo": -24550.38
+    "saldo": -15043.84
   },
   "diferencasPorConvenio": [
     {
@@ -82,16 +82,16 @@
         "saldo": 171603.5
       },
       "novo": {
-        "linhas": 27,
-        "valorPrevisto": 162096.96,
+        "linhas": 28,
+        "valorPrevisto": 171603.5,
         "valorExecutado": 0,
-        "saldo": 162096.96
+        "saldo": 171603.5
       },
       "diferenca": {
-        "valorPrevisto": -9506.54,
+        "valorPrevisto": 0,
         "valorExecutado": 0,
-        "saldo": -9506.54,
-        "linhas": -6
+        "saldo": 0,
+        "linhas": -5
       }
     },
     {
@@ -399,16 +399,16 @@
         "saldo": 171603.5
       },
       "novo": {
-        "linhas": 27,
-        "valorPrevisto": 162096.96,
+        "linhas": 28,
+        "valorPrevisto": 171603.5,
         "valorExecutado": 0,
-        "saldo": 162096.96
+        "saldo": 171603.5
       },
       "diferenca": {
-        "valorPrevisto": -9506.54,
+        "valorPrevisto": 0,
         "valorExecutado": 0,
-        "saldo": -9506.54,
-        "linhas": -6
+        "saldo": 0,
+        "linhas": -5
       }
     },
     {
@@ -779,16 +779,16 @@
         "saldo": 1235824.77
       },
       "novo": {
-        "linhas": 15,
-        "valorPrevisto": 1234249.74,
+        "linhas": 16,
+        "valorPrevisto": 1243756.28,
         "valorExecutado": 0,
-        "saldo": 1234249.74
+        "saldo": 1243756.28
       },
       "diferenca": {
-        "valorPrevisto": -1575.03,
+        "valorPrevisto": 7931.51,
         "valorExecutado": 0,
-        "saldo": -1575.03,
-        "linhas": 1
+        "saldo": 7931.51,
+        "linhas": 2
       }
     },
     {
@@ -823,16 +823,16 @@
         "saldo": 4714987.99
       },
       "novo": {
-        "linhas": 414,
-        "valorPrevisto": 7412220.3,
+        "linhas": 415,
+        "valorPrevisto": 7421726.84,
         "valorExecutado": 2715952.65,
-        "saldo": 4696267.65
+        "saldo": 4705774.19
       },
       "diferenca": {
-        "valorPrevisto": -9578.14,
+        "valorPrevisto": -71.6,
         "valorExecutado": 9142.2,
-        "saldo": -18720.34,
-        "linhas": 1
+        "saldo": -9213.8,
+        "linhas": 2
       }
     },
     {
@@ -1127,6 +1127,19 @@
       "descricao": "Refrigerador frigobar, com capacidade no",
       "situacao": "novo",
       "valorPrevistoNovo": 2844,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::NAO INFORMADO::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 9506.54,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -1620,7 +1633,7 @@
           "diferenca": -1646.36
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     }
   ],
   "itensValorPrevistoDivergente": [
@@ -1819,7 +1832,7 @@
           "diferenca": -0.03
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Computador desktop P348 30ER0002BO, para::ESCOLA PENAL::CAPITAL",
@@ -1843,7 +1856,7 @@
           "diferenca": -0.02
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Livros para o acervo da Biblioteca da Es::ESCOLA PENAL::CAPITAL",
@@ -1867,7 +1880,7 @@
           "diferenca": -0.02
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Mesa de Reunião Redonda para Escritório,::ESCOLA PENAL::CAPITAL",
@@ -1891,7 +1904,7 @@
           "diferenca": 1575
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Saldo Residual::NAO INFORMADO::CAPITAL",
@@ -1920,7 +1933,7 @@
           "diferenca": -1646.36
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     }
   ],
   "itensValorExecutadoDivergente": [
@@ -3081,7 +3094,7 @@
           "diferenca": -0.03
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Computador desktop P348 30ER0002BO, para::ESCOLA PENAL::CAPITAL",
@@ -3105,7 +3118,7 @@
           "diferenca": -0.02
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Livros para o acervo da Biblioteca da Es::ESCOLA PENAL::CAPITAL",
@@ -3129,7 +3142,7 @@
           "diferenca": -0.02
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Mesa de Reunião Redonda para Escritório,::ESCOLA PENAL::CAPITAL",
@@ -3153,7 +3166,7 @@
           "diferenca": 1575
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938128::Saldo Residual::NAO INFORMADO::CAPITAL",
@@ -3182,7 +3195,7 @@
           "diferenca": -1646.36
         }
       ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+      "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
       "chave": "938277::Headphone/Fone de ouvido::ESCOLA PENAL::CUSTEIO",
@@ -3543,6 +3556,19 @@
       "descricao": "Refrigerador frigobar, com capacidade no",
       "situacao": "novo",
       "valorPrevistoNovo": 2844,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
+      "chave": "937221::Saldo Residual::NAO INFORMADO::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "Saldo Residual",
+      "situacao": "novo",
+      "valorPrevistoNovo": 9506.54,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -4983,8 +5009,8 @@
       "divergenciaId": 18,
       "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
       "tipoAlerta": "item_novo_sem_rateio",
-      "decisao": "ACEITO",
-      "decisaoId": 150
+      "decisao": "CORRIGIDO",
+      "decisaoId": 185
     },
     {
       "divergenciaId": 19,
@@ -5092,13 +5118,6 @@
       "decisaoId": 65
     },
     {
-      "divergenciaId": 39,
-      "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
-      "tipoAlerta": "item_nao_apto",
-      "decisao": "ACEITO",
-      "decisaoId": 185
-    },
-    {
       "divergenciaId": 40,
       "chaveDivergencia": "item_nao_apto:861780b809d58dba",
       "tipoAlerta": "item_nao_apto",
@@ -5125,13 +5144,6 @@
       "tipoAlerta": "item_nao_apto",
       "decisao": "ACEITO",
       "decisaoId": 69
-    },
-    {
-      "divergenciaId": 44,
-      "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
-      "tipoAlerta": "item_nao_apto",
-      "decisao": "CORRIGIDO",
-      "decisaoId": 187
     },
     {
       "divergenciaId": 45,
@@ -6557,6 +6569,79 @@
       }
     },
     {
+      "divergenciaId": 18,
+      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 185,
+      "usuario": "sistema-retificadora-saldo-residual-18",
+      "decididoEm": "2026-05-23T11:46:42.055Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "NAO INFORMADO",
+            "natureza": "CAPITAL",
+            "percentual_valor": 100,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null,
+      "payload": {
+        "campoAfetado": "rateio",
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::SALDO RESIDUAL",
+        "descricaoPad": "Saldo Residual",
+        "naturezaPad": "CAPITAL",
+        "quantidadePad": 1,
+        "valorUnitarioPad": 9506.54,
+        "valorPrevistoPad": 9506.54,
+        "valorExecutadoPad": 0,
+        "saldoPad": 9506.54,
+        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_552380858078419559992.xls",
+        "linhaOrigem": 37,
+        "acaoSugerida": "definir_rateio",
+        "bloqueiaPublicacao": true
+      },
+      "payloadDecisao": {
+        "origem": "retificadora-tecnica-saldo-residual",
+        "tipoSaneamento": "rateio_manual",
+        "fonteClassificacao": "profor-saldo-residual-service.js",
+        "retificaDecisaoId": 150,
+        "motivoRetificacao": "saldo_residual_decisao_anterior_incompativel",
+        "rateio": [
+          {
+            "area": "NAO INFORMADO",
+            "natureza": "CAPITAL",
+            "quantidade": 1,
+            "percentualQuantidade": 100,
+            "percentualValor": 100
+          }
+        ],
+        "_segurancaPreAtivacao": {
+          "versao": 1,
+          "divergenciaId": 18,
+          "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
+          "tipoAlerta": "item_novo_sem_rateio",
+          "campoAfetado": "rateio",
+          "payloadHashNoMomentoDaDecisao": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
+          "registradoEm": "2026-05-23T11:46:42.054Z"
+        }
+      }
+    },
+    {
       "divergenciaId": 19,
       "chaveDivergencia": "item_novo_sem_rateio:e3d3a1545c56f329",
       "numeroConvenio": "937221",
@@ -7916,143 +8001,6 @@
       }
     },
     {
-      "divergenciaId": 39,
-      "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "chaveItem": "938128::AGENDA PLANNER",
-      "tipoAlerta": "item_nao_apto",
-      "campoAfetado": "aptidao",
-      "bloqueiaPublicacao": true,
-      "decisao": "ACEITO",
-      "decisaoId": 185,
-      "usuario": "usuario-local",
-      "decididoEm": "2026-05-22T14:34:27.140Z",
-      "efeito": {
-        "tipo": "nao_apto_liberado",
-        "afetaReconstrucao": true
-      },
-      "aplicavel": true,
-      "motivoNaoAplicavel": null,
-      "payload": {
-        "campoAfetado": "aptidao",
-        "numeroConvenio": "938128",
-        "uf": "SP",
-        "chaveItem": "938128::AGENDA PLANNER",
-        "memoria": {
-          "descricao": "Agenda Planner",
-          "area": "NAO INFORMADO",
-          "natureza": "CAPITAL",
-          "quantidade": 10,
-          "valorUnitario": 113.43,
-          "valorPrevisto": 1134.3,
-          "valorExecutado": 0,
-          "saldo": 1134.3,
-          "totalRateiosAtivos": 1
-        },
-        "antes": {
-          "descricao": "Agenda Planner",
-          "area": "NAO INFORMADO",
-          "natureza": "CAPITAL",
-          "quantidade": 10,
-          "valorUnitario": 113.43,
-          "valorPrevisto": 1134.3,
-          "valorExecutado": 0,
-          "saldo": 1134.3,
-          "totalRateiosAtivos": 1
-        },
-        "pad": {
-          "descricao": "Agenda Planner",
-          "natureza": "CUSTEIO",
-          "quantidade": 10,
-          "valorUnitario": 113.43,
-          "valorPrevisto": 1134.27,
-          "valorExecutado": 0,
-          "saldo": 1134.27
-        },
-        "depois": {
-          "descricao": "Agenda Planner",
-          "natureza": "CUSTEIO",
-          "quantidade": 10,
-          "valorUnitario": 113.43,
-          "valorPrevisto": 1134.27,
-          "valorExecutado": 0,
-          "saldo": 1134.27
-        },
-        "descricaoMemoria": "Agenda Planner",
-        "areaMemoria": "NAO INFORMADO",
-        "naturezaMemoria": "CAPITAL",
-        "quantidadeMemoria": 10,
-        "valorUnitarioMemoria": 113.43,
-        "valorPrevistoMemoria": 1134.3,
-        "valorExecutadoMemoria": 0,
-        "saldoMemoria": 1134.3,
-        "totalRateiosAtivosMemoria": 1,
-        "descricaoPad": "Agenda Planner",
-        "naturezaPad": "CUSTEIO",
-        "quantidadePad": 10,
-        "valorUnitarioPad": 113.43,
-        "valorPrevistoPad": 1134.27,
-        "valorExecutadoPad": 0,
-        "saldoPad": 1134.27,
-        "alertasOriginais": [
-          {
-            "tipo": "linha_sem_numero_ano_uf",
-            "nivel": "impeditivo",
-            "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
-            "loteImportacaoId": 1,
-            "origem": {
-              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
-              "aba": "SP",
-              "linha": 42
-            }
-          },
-          {
-            "tipo": "area_vazia",
-            "nivel": "impeditivo",
-            "detalhe": "Linha da aba UF sem area classificada.",
-            "loteImportacaoId": 1,
-            "origem": {
-              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
-              "aba": "SP",
-              "linha": 42
-            }
-          }
-        ],
-        "rateiosAtivos": [
-          {
-            "area": "NAO INFORMADO",
-            "natureza": "CAPITAL",
-            "quantidadeReferencia": 10,
-            "valorPrevistoReferencia": 1134.3,
-            "valorExecutadoReferencia": 0,
-            "percentualQuantidade": 100,
-            "percentualValor": 100
-          }
-        ],
-        "riscoFalsoPositivo": "baixo",
-        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
-        "linhaOrigem": 16,
-        "acaoSugerida": "liberar_ou_manter_bloqueado",
-        "bloqueiaPublicacao": true
-      },
-      "payloadDecisao": {
-        "origem": "interface-revisao-divergencias",
-        "tipoSaneamento": "liberacao_item_nao_apto",
-        "liberarUsoDryRun": true,
-        "motivo": "liberação validada por decisão humana",
-        "_segurancaPreAtivacao": {
-          "versao": 1,
-          "divergenciaId": 39,
-          "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
-          "tipoAlerta": "item_nao_apto",
-          "campoAfetado": "aptidao",
-          "payloadHashNoMomentoDaDecisao": "84dc2c702c85bc5310b843a3d937eaea3be8b5884bb9e3852803804c14656b60",
-          "registradoEm": "2026-05-22T14:34:27.140Z"
-        }
-      }
-    },
-    {
       "divergenciaId": 40,
       "chaveDivergencia": "item_nao_apto:861780b809d58dba",
       "numeroConvenio": "938128",
@@ -8564,205 +8512,6 @@
           "campoAfetado": "aptidao",
           "payloadHashNoMomentoDaDecisao": "da3738e4a41fe7b022ca297cafd5b7d154262710297cf615c5142ac759773b60",
           "registradoEm": "2026-05-21T17:36:22.926Z"
-        }
-      }
-    },
-    {
-      "divergenciaId": 44,
-      "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
-      "numeroConvenio": "938128",
-      "uf": "SP",
-      "chaveItem": "938128::SALDO RESIDUAL",
-      "tipoAlerta": "item_nao_apto",
-      "campoAfetado": "aptidao",
-      "bloqueiaPublicacao": true,
-      "decisao": "CORRIGIDO",
-      "decisaoId": 187,
-      "usuario": "sistema-prevalencia-pad",
-      "decididoEm": "2026-05-22T22:29:43.978Z",
-      "efeito": {
-        "tipo": "nao_apto_liberado",
-        "afetaReconstrucao": true
-      },
-      "aplicavel": true,
-      "motivoNaoAplicavel": null,
-      "payload": {
-        "campoAfetado": "aptidao",
-        "numeroConvenio": "938128",
-        "uf": "SP",
-        "chaveItem": "938128::SALDO RESIDUAL",
-        "memoria": {
-          "descricao": "Saldo Residual",
-          "area": "N/A, NAO INFORMADO",
-          "natureza": "CAPITAL",
-          "quantidade": 1.003203,
-          "valorUnitario": 22279.73,
-          "valorPrevisto": 22351.09,
-          "valorExecutado": 0,
-          "saldo": 22351.09,
-          "totalRateiosAtivos": 2
-        },
-        "antes": {
-          "descricao": "Saldo Residual",
-          "area": "N/A, NAO INFORMADO",
-          "natureza": "CAPITAL",
-          "quantidade": 1.003203,
-          "valorUnitario": 22279.73,
-          "valorPrevisto": 22351.09,
-          "valorExecutado": 0,
-          "saldo": 22351.09,
-          "totalRateiosAtivos": 2
-        },
-        "pad": {
-          "descricao": "Saldo Residual",
-          "natureza": "CUSTEIO",
-          "quantidade": 1,
-          "valorUnitario": 71.36,
-          "valorPrevisto": 71.36,
-          "valorExecutado": 0,
-          "saldo": 71.36
-        },
-        "depois": {
-          "descricao": "Saldo Residual",
-          "natureza": "CUSTEIO",
-          "quantidade": 1,
-          "valorUnitario": 71.36,
-          "valorPrevisto": 71.36,
-          "valorExecutado": 0,
-          "saldo": 71.36
-        },
-        "descricaoMemoria": "Saldo Residual",
-        "areaMemoria": "N/A, NAO INFORMADO",
-        "naturezaMemoria": "CAPITAL",
-        "quantidadeMemoria": 1.003203,
-        "valorUnitarioMemoria": 22279.73,
-        "valorPrevistoMemoria": 22351.09,
-        "valorExecutadoMemoria": 0,
-        "saldoMemoria": 22351.09,
-        "totalRateiosAtivosMemoria": 2,
-        "descricaoPad": "Saldo Residual",
-        "naturezaPad": "CUSTEIO",
-        "quantidadePad": 1,
-        "valorUnitarioPad": 71.36,
-        "valorPrevistoPad": 71.36,
-        "valorExecutadoPad": 0,
-        "saldoPad": 71.36,
-        "alertasOriginais": [
-          {
-            "tipo": "linha_sem_numero_ano_uf",
-            "nivel": "impeditivo",
-            "detalhe": "Linha sem numero, ano ou UF valida para a aba de UF processada.",
-            "loteImportacaoId": 1,
-            "origem": {
-              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
-              "aba": "SP",
-              "linha": 43
-            }
-          },
-          {
-            "tipo": "area_vazia",
-            "nivel": "impeditivo",
-            "detalhe": "Linha da aba UF sem area classificada.",
-            "loteImportacaoId": 1,
-            "origem": {
-              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
-              "aba": "SP",
-              "linha": 43
-            }
-          },
-          {
-            "tipo": "valor_unitario_divergente_na_mesma_chave",
-            "nivel": "aviso",
-            "detalhe": "Mesma chave operacional apareceu com valores unitarios diferentes: 22279.73, 71.36.",
-            "loteImportacaoId": 1,
-            "origem": {
-              "arquivo": "Planilhas/gestao_financeira_ouvidoria.xlsx",
-              "aba": "SP",
-              "linha": 40
-            }
-          }
-        ],
-        "rateiosAtivos": [
-          {
-            "area": "N/A",
-            "natureza": "CAPITAL",
-            "quantidadeReferencia": 10,
-            "valorPrevistoReferencia": 22279.73,
-            "valorExecutadoReferencia": 0,
-            "percentualQuantidade": 90.909091,
-            "percentualValor": 99.680731
-          },
-          {
-            "area": "NAO INFORMADO",
-            "natureza": "CAPITAL",
-            "quantidadeReferencia": 1,
-            "valorPrevistoReferencia": 71.36,
-            "valorExecutadoReferencia": 0,
-            "percentualQuantidade": 9.090909,
-            "percentualValor": 0.319269
-          }
-        ],
-        "riscoFalsoPositivo": "baixo",
-        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
-        "linhaOrigem": 19,
-        "acaoSugerida": "liberar_ou_manter_bloqueado",
-        "bloqueiaPublicacao": true
-      },
-      "payloadDecisao": {
-        "origem": "prevalencia-pad-novo-divergencia-44",
-        "tipoSaneamento": "prevalencia_pad_novo_saldo_residual",
-        "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
-        "aplicadaAoPlano": false,
-        "divergenciaId": 44,
-        "numeroConvenio": "938128",
-        "uf": "SP",
-        "chaveItem": "938128::SALDO RESIDUAL",
-        "memoriaAntiga": {
-          "natureza": "CAPITAL",
-          "valorPrevisto": 22351.09,
-          "valorExecutado": 0,
-          "saldo": 22351.09
-        },
-        "padNovo": {
-          "linhas": [
-            {
-              "linha": 61,
-              "descricao": "Saldo Residual",
-              "natureza": "CAPITAL",
-              "codigoNaturezaDespesa": "44905299",
-              "valorPrevisto": 20704.73,
-              "valorExecutado": 0,
-              "saldo": 20704.73
-            },
-            {
-              "linha": 19,
-              "descricao": "Saldo Residual",
-              "natureza": "CUSTEIO",
-              "codigoNaturezaDespesa": "33903099",
-              "valorPrevisto": 71.36,
-              "valorExecutado": 0,
-              "saldo": 71.36
-            }
-          ]
-        },
-        "diferencasRastreadas": {
-          "diferencaBrutaCapital": -1646.36,
-          "diferencaLiquidaConsiderandoCusteio": -1575
-        },
-        "garantias": {
-          "capitalECusteioSegregados": true,
-          "areaTecnicaNaoSetorializada": true,
-          "semPublicacao": true,
-          "semAlteracaoPlanoOficial": true
-        },
-        "_segurancaPreAtivacao": {
-          "versao": 1,
-          "divergenciaId": 44,
-          "chaveDivergencia": "item_nao_apto:dd1819a39a127a99",
-          "tipoAlerta": "item_nao_apto",
-          "campoAfetado": "aptidao",
-          "payloadHashNoMomentoDaDecisao": "1c2ba2d2a7b70c0bfc36366addb04d35924b149d8195735a5974a00c1f960f0e",
-          "registradoEm": "2026-05-22T22:29:43.976Z"
         }
       }
     },
@@ -10981,77 +10730,6 @@
   ],
   "decisoesNaoAplicaveis": [
     {
-      "divergenciaId": 18,
-      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "tipoAlerta": "item_novo_sem_rateio",
-      "campoAfetado": "rateio",
-      "bloqueiaPublicacao": true,
-      "decisao": "ACEITO",
-      "decisaoId": 150,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.553Z",
-      "efeito": {
-        "tipo": "saldo_residual_rateio_invalido",
-        "afetaReconstrucao": false
-      },
-      "aplicavel": false,
-      "motivoNaoAplicavel": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'.",
-      "payload": {
-        "campoAfetado": "rateio",
-        "numeroConvenio": "937221",
-        "uf": "AL",
-        "chaveItem": "937221::SALDO RESIDUAL",
-        "descricaoPad": "Saldo Residual",
-        "naturezaPad": "CAPITAL",
-        "quantidadePad": 1,
-        "valorUnitarioPad": 9506.54,
-        "valorPrevistoPad": 9506.54,
-        "valorExecutadoPad": 0,
-        "saldoPad": 9506.54,
-        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_552380858078419559992.xls",
-        "linhaOrigem": 37,
-        "acaoSugerida": "definir_rateio",
-        "bloqueiaPublicacao": true
-      },
-      "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "rateio_manual",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "rateio": [
-          {
-            "area": "OUVIDORIA",
-            "natureza": "CAPITAL",
-            "quantidade": 0.333333,
-            "percentualQuantidade": 33.33
-          },
-          {
-            "area": "CORREGEDORIA",
-            "natureza": "CAPITAL",
-            "quantidade": 0.333333,
-            "percentualQuantidade": 33.33
-          },
-          {
-            "area": "ESCOLA",
-            "natureza": "CAPITAL",
-            "quantidade": 0.333333,
-            "percentualQuantidade": 33.33
-          }
-        ],
-        "_segurancaPreAtivacao": {
-          "versao": 1,
-          "divergenciaId": 18,
-          "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
-          "tipoAlerta": "item_novo_sem_rateio",
-          "campoAfetado": "rateio",
-          "payloadHashNoMomentoDaDecisao": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
-          "registradoEm": "2026-05-21T21:41:09.553Z"
-        }
-      }
-    },
-    {
       "divergenciaId": 55,
       "chaveDivergencia": "item_ausente_no_pad:27e43486e8eb1131",
       "numeroConvenio": "937221",
@@ -11388,22 +11066,22 @@
   ],
   "auditoriaRevisao": {
     "totalDivergencias": 145,
-    "totalPendentes": 73,
+    "totalPendentes": 75,
     "totalEmRevisao": 0,
     "totalImpeditivas": 44,
     "totalBloqueiamPublicacao": 45,
-    "totalPendentesQueBloqueiamPublicacao": 8,
+    "totalPendentesQueBloqueiamPublicacao": 10,
     "totalEmRevisaoQueBloqueiamPublicacao": 0,
-    "totalComDecisaoResolutiva": 72,
+    "totalComDecisaoResolutiva": 70,
     "totalComComentario": 0,
-    "totalSemDecisaoResolutiva": 73,
+    "totalSemDecisaoResolutiva": 75,
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-22T22:30:25.397Z",
+    "geradoEm": "2026-05-23T11:53:18.738Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 74,
-      "totalPayloadPreservado": 46,
+      "totalDecisoesResolutivasAuditadas": 72,
+      "totalPayloadPreservado": 44,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -11725,27 +11403,27 @@
     "totalItensPadProcessados": 525,
     "totalItensPadComRateioAplicado": 501,
     "totalItensPadSemRateio": 24,
-    "totalItensPadSemRateioRemanescentes": 1,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 23,
-    "totalLinhasReconstruidas": 567,
+    "totalItensPadSemRateioRemanescentes": 0,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 24,
+    "totalLinhasReconstruidas": 568,
     "totalConveniosReconstruidos": 15,
-    "totalItensConhecidosNaoAptosUsados": 6,
+    "totalItensConhecidosNaoAptosUsados": 8,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
     "totalImpedimentos": 33,
-    "totalAlertas": 105,
-    "totalDecisoesResolutivasEncontradas": 72,
-    "totalDecisoesInterpretadasDryRun": 66,
-    "totalDecisoesAplicadasDryRun": 66,
-    "totalDecisoesNaoAplicaveis": 6,
-    "totalDecisoesComEfeitoNaReconstrucao": 39,
+    "totalAlertas": 106,
+    "totalDecisoesResolutivasEncontradas": 70,
+    "totalDecisoesInterpretadasDryRun": 65,
+    "totalDecisoesAplicadasDryRun": 65,
+    "totalDecisoesNaoAplicaveis": 5,
+    "totalDecisoesComEfeitoNaReconstrucao": 38,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 35,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 34,
     "totalConsistenciaSaneadaPorDecisao": 0,
     "totalBloqueiosSegurancaPreAtivacao": 35,
-    "valorPrevistoReconstruidoTotal": 10654508.7,
+    "valorPrevistoReconstruidoTotal": 10664015.24,
     "valorExecutadoReconstruidoTotal": 3217739.5,
-    "saldoReconstruidoTotal": 7436769.2
+    "saldoReconstruidoTotal": 7446275.74
   },
   "impedimentosReconstrucao": [
     {
@@ -11791,6 +11469,24 @@
       "uf": "MA",
       "descricao": "SALDO REMANESCENTE",
       "chaveItem": "938277::SALDO REMANESCENTE",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricao": "Agenda Planner",
+      "chaveItem": "938128::AGENDA PLANNER",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricao": "Saldo Residual",
+      "chaveItem": "938128::SALDO RESIDUAL",
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
@@ -11947,15 +11643,6 @@
       "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Saldo Residual",
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
-    },
-    {
       "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
@@ -11981,15 +11668,6 @@
       "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
       "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
       "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "decisao_nao_aplicavel:saldo_residual_rateio_invalido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": null,
-      "descricao": null,
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'."
     },
     {
       "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
@@ -12043,14 +11721,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Há 8 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+      "detalhe": "Há 10 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
     }
   ],
   "conclusaoOperacional": [
     "Reconstrução NÃO apta para ativação: 33 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -9506.78, executado 15043.6, saldo -24550.38.",
-    "Diferenças críticas: 24. Itens ambíguos: 6.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -0.24, executado 15043.6, saldo -15043.84.",
+    "Diferenças críticas: 25. Itens ambíguos: 6.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,

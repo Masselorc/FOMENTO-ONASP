@@ -1,5 +1,76 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: retificadora técnica da divergência #18 (Saldo Residual / 937221 AL)
+
+- Objetivo: tratar #18 como bloqueio técnico isolado da segurança pré-ativação
+  PAD/PROFOR 2022, a única `decisao_retificadora_necessaria` da matriz final.
+- Causa diagnosticada:
+  - decisão `#150` (ACEITO) sobre a divergência `item_novo_sem_rateio` em
+    `937221::SALDO RESIDUAL` registrou rateio em áreas operacionais
+    (OUVIDORIA 33,33%, CORREGEDORIA 33,33%, ESCOLA 33,33%) — violação da
+    regra atual: saldo residual é item técnico não setorializado por área,
+    segregado apenas por natureza (CAPITAL/CUSTEIO);
+  - reconstrução já neutralizava o efeito via
+    `validarRateioSaldoResidual` (`profor-pad-decisao-aplicacao-service.js`),
+    emitindo impedimento `decisao_nao_aplicavel:saldo_residual_rateio_invalido`
+    para a chaveItem e reconstruindo a linha do PAD como
+    `area=NAO INFORMADO`, `natureza=CAPITAL`, `9.506,54`.
+- Ação aplicada (autorizada pelo usuário):
+  - retificadora **CORRIGIDO `#185`** registrada via
+    `profor-pad-revisao-decisao-service.registrarDecisao` (serviço existente),
+    com `aplicadaAoPlano=false`, snapshot `_segurancaPreAtivacao` injetado
+    automaticamente (hash `26c10f0a…` igual ao da divergência), justificativa
+    explícita e payload com **rateio único** `area=NAO INFORMADO`,
+    `natureza=CAPITAL`, `100%`;
+  - decisão `#150` preservada no histórico; `divergencia.status` evoluiu de
+    `ACEITO` para `CORRIGIDO`;
+  - log `decisao_registrada` (id `#2521`) gravado.
+- Patch no auditor `auditar-seguranca-pre-ativacao-final-pad-profor-2022.js`:
+  - bug corrigido em `ultimoResolutivo`: o repositório devolve `decisoes`
+    ordenadas `DESC` por id; o código usava `.at(-1)` (pegava o mais antigo);
+    troca para `.find(...)` (primeira correspondência → mais recente);
+  - classificação de #18 passa a ser **data-driven**: lê impedimentos da
+    reconstrução por `chaveItem`; se a retificadora vigente (CORRIGIDO/REVERTIDO)
+    eliminou o `decisao_nao_aplicavel:saldo_residual_rateio_invalido`, a
+    classificação passa de `decisao_retificadora_necessaria` para
+    `bloqueio_tecnico_residual_retificado` (novo valor) com
+    `impactoMaterial=tecnico_residual_saldo_residual_saneado_por_retificadora`;
+  - hardcode `id === 18` removido das demais propriedades (recomendacao,
+    prioridade, acaoNecessaria); todas derivam do estado técnico atual.
+- Teste novo: `tests/services/auditar-seguranca-pre-ativacao-final.test.js`
+  com 5 casos cobrindo `ultimoResolutivo` (retificadora prevalece, COMENTAR
+  ignorado, case-insensitive, vazio → null, contrato DESC documentado).
+- Efeito material no plano reconstruído:
+  - linha `937221::SALDO RESIDUAL` agora aplicada via rateio `NAO INFORMADO`
+    (`#185`), valor `9.506,54`;
+  - diferença total previsto: `-9.506,78` → **`-0,24`**;
+  - saldo divergente total: `-24.550,38` → `-15.043,84`;
+  - impedimento `decisao_nao_aplicavel:saldo_residual_rateio_invalido`
+    desapareceu para a chaveItem #18.
+- Status pré-ativação:
+  - `decisao_retificadora_necessaria`: `1 → 0`;
+  - `bloqueio_tecnico_residual_retificado`: novo, `1` (apenas #18);
+  - `bloqueio_tecnico_residual`: `7` (#25, #26, #27, #28, #75, #77, #78);
+  - `revalidacao_humana_necessaria`: `27`;
+  - **apto para ativação controlada: `não`** (33 impedimentos remanescentes
+    fora do escopo de #18).
+- Confirmações de escopo:
+  - nenhuma publicação executada;
+  - origem ativa não alterada;
+  - `planoAplicacao` oficial não alterado;
+  - `frontend/data/publicados` não alterado;
+  - `*.sqlite*` não staged (banco modificado **apenas** via serviço, em
+    `backend/data/onasp.sqlite` que é versionado — verificar status antes do
+    commit);
+  - decisão `#150`, logs e demais divergências preservados;
+  - `npm run validar:syntax`: OK (74 arquivos);
+  - `npm run validar:services`: OK (125 testes, 0 falhas);
+  - `git diff --check`: limpo.
+- Rollback: `git revert <commit>` (reverte código + retificadora). A
+  decisão `#185` permanecerá no banco — para neutralizá-la operacionalmente,
+  registrar nova decisão `REVERTIDO` via serviço. Não apagar `#150`, `#185`,
+  logs ou divergências.
+
 ## 22/05/2026 - PROFOR 2022: segurança pré-ativação final após zerar pendências operacionais
 
 - Objetivo:

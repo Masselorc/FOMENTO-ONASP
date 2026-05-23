@@ -1,61 +1,61 @@
 {
-  "geradoEm": "2026-05-22T22:44:27.140Z",
+  "geradoEm": "2026-05-23T11:53:20.356Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
     "pendenciasJson": {
       "caminho": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 208519
+      "tamanhoBytes": 208395
     },
     "pendenciasMd": {
       "caminho": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 72753
+      "tamanhoBytes": 72769
     },
     "segurancaDetalhadaJson": {
       "caminho": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 75585
+      "tamanhoBytes": 77283
     },
     "segurancaDetalhadaMd": {
       "caminho": "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 9892
+      "tamanhoBytes": 10001
     },
     "segurancaJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 35740
+      "tamanhoBytes": 36637
     },
     "reconstrucaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 852091
+      "tamanhoBytes": 841457
     },
     "comparacaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 410567
+      "tamanhoBytes": 399596
     },
     "comparacaoMd": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 3418
+      "tamanhoBytes": 3410
     },
     "regressaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-regressao-saneamentos-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 115303
+      "tamanhoBytes": 118568
     },
     "regressaoMd": {
       "caminho": "backend/data/relatorios/profor-2022-regressao-saneamentos-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 7054
+      "tamanhoBytes": 7149
     }
   },
   "resumo": {
-    "pendenciaOperacionalReal": 0,
+    "pendenciaOperacionalReal": 1,
     "totalBloqueiosSeguranca": 35,
     "totalBloqueiosDetalhados": 35,
     "totalDivergenciasUnicasMatriz": 35,
@@ -63,7 +63,7 @@
     "totalDivergenciasPayloadAlterado": 27,
     "totalDecisoesResolutivasComPendenciaTecnica": 8,
     "totalPorClassificacaoFinal": {
-      "decisao_retificadora_necessaria": 1,
+      "bloqueio_tecnico_residual_retificado": 1,
       "bloqueio_tecnico_residual": 7,
       "revalidacao_humana_necessaria": 27
     },
@@ -72,7 +72,7 @@
       "nao_reapresentada_com_decisao_resolutiva": 7,
       "payload_alterado_apos_decisao": 27
     },
-    "divergencia44ClassificacaoOperacional": "historico_saneado",
+    "divergencia44ClassificacaoOperacional": "falso_positivo_saneavel",
     "aptoParaAtivacaoControlada": false,
     "reconstrucaoApta": false,
     "comparacaoApta": false
@@ -973,7 +973,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 107,
+      "decisaoId": 108,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 107,
@@ -1091,19 +1091,19 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "tipoAlerta": "item_novo_sem_rateio",
-      "statusAtual": "ACEITO",
-      "decisaoVigente": "ACEITO",
-      "decisaoId": 150,
+      "statusAtual": "CORRIGIDO",
+      "decisaoVigente": "CORRIGIDO",
+      "decisaoId": 185,
       "payloadPreservado": true,
       "snapshotPresente": true,
       "hashAnterior": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
       "hashAtual": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
       "tipoBloqueio": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacaoFinal": "decisao_retificadora_necessaria",
-      "impactoMaterial": "tecnico_residual_saldo_residual_rateio_operacional",
-      "recomendacao": "Revalidar/retificar o efeito da decisao antiga de saldo residual para impedir rateio por area operacional.",
-      "prioridade": "alta",
-      "acaoNecessaria": "decisao_retificadora_futura_ou_neutralizacao_tecnica_do_efeito",
+      "classificacaoFinal": "bloqueio_tecnico_residual_retificado",
+      "impactoMaterial": "tecnico_residual_saldo_residual_saneado_por_retificadora",
+      "recomendacao": "Saldo residual ja saneado por decisao retificadora (CORRIGIDO/REVERTIDO); manter como historico tecnico, sem nova decisao.",
+      "prioridade": "media",
+      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "saldo_residual_ok_nao_setorializado",
@@ -1113,7 +1113,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": true,
-      "naoReapresentada": false
+      "naoReapresentada": false,
+      "saldoResidualRetificado": true
     },
     {
       "id": 25,
@@ -1143,7 +1144,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 26,
@@ -1173,7 +1175,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 27,
@@ -1203,7 +1206,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 28,
@@ -1231,7 +1235,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 75,
@@ -1259,7 +1264,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 77,
@@ -1287,7 +1293,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 78,
@@ -1315,7 +1322,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     }
   ],
   "matrizFinal": [
@@ -1324,19 +1332,19 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "tipoAlerta": "item_novo_sem_rateio",
-      "statusAtual": "ACEITO",
-      "decisaoVigente": "ACEITO",
-      "decisaoId": 150,
+      "statusAtual": "CORRIGIDO",
+      "decisaoVigente": "CORRIGIDO",
+      "decisaoId": 185,
       "payloadPreservado": true,
       "snapshotPresente": true,
       "hashAnterior": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
       "hashAtual": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
       "tipoBloqueio": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacaoFinal": "decisao_retificadora_necessaria",
-      "impactoMaterial": "tecnico_residual_saldo_residual_rateio_operacional",
-      "recomendacao": "Revalidar/retificar o efeito da decisao antiga de saldo residual para impedir rateio por area operacional.",
-      "prioridade": "alta",
-      "acaoNecessaria": "decisao_retificadora_futura_ou_neutralizacao_tecnica_do_efeito",
+      "classificacaoFinal": "bloqueio_tecnico_residual_retificado",
+      "impactoMaterial": "tecnico_residual_saldo_residual_saneado_por_retificadora",
+      "recomendacao": "Saldo residual ja saneado por decisao retificadora (CORRIGIDO/REVERTIDO); manter como historico tecnico, sem nova decisao.",
+      "prioridade": "media",
+      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "saldo_residual_ok_nao_setorializado",
@@ -1346,7 +1354,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": true,
-      "naoReapresentada": false
+      "naoReapresentada": false,
+      "saldoResidualRetificado": true
     },
     {
       "id": 25,
@@ -1376,7 +1385,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 26,
@@ -1406,7 +1416,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 27,
@@ -1436,7 +1447,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 28,
@@ -1464,7 +1476,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 47,
@@ -2361,7 +2374,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 107,
+      "decisaoId": 108,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 107,
@@ -2498,7 +2511,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 77,
@@ -2526,7 +2540,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     },
     {
       "id": 78,
@@ -2554,7 +2569,8 @@
       "regressao": "saneamento_confirmado",
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
-      "naoReapresentada": true
+      "naoReapresentada": true,
+      "saldoResidualRetificado": false
     }
   ],
   "conclusao": "Não apto para ativação controlada nesta etapa: a pendência operacional real está zerada, mas permanecem bloqueios técnicos de segurança pré-ativação que exigem revalidação humana ou tratamento técnico posterior. Nenhuma publicação deve ser executada.",

@@ -1209,3 +1209,39 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 **Como prevenir regressão:** Não baixar `payload_alterado_apos_decisao` por regra genérica. Exigir revalidação humana ou decisão retificadora auditável quando o hash atual divergir do snapshot de decisão.
 
 **Rollback:** Reverter o commit da auditoria/documentação e regenerar relatórios dry-run. Não apagar decisões, logs, divergências ou relatórios históricos.
+
+## 23/05/2026 - PROFOR 2022: retificadora técnica da divergência #18 + bug em `ultimoResolutivo`
+
+**Classificação:** erro real | correção aplicada (código + decisão de saneamento) | boa prática
+
+**Contexto:** `decisao_retificadora_necessaria` da divergência `#18` (Saldo Residual / 937221 AL) na matriz pré-ativação final. Decisão `#150` (ACEITO) carregava rateio em áreas operacionais (OUVIDORIA/CORREGEDORIA/ESCOLA) — violação da regra de saldo residual (não setorializado, segregado apenas por natureza).
+
+**Problema 1 — efeito técnico:** Reconstrução já neutralizava o rateio inválido via `validarRateioSaldoResidual`, mas emitia impedimento `decisao_nao_aplicavel:saldo_residual_rateio_invalido` que mantinha `aptoParaAtivacao=false`.
+
+**Problema 2 — bug no auditor:** `ultimoResolutivo` em `backend/scripts/auditar-seguranca-pre-ativacao-final-pad-profor-2022.js` usava `.at(-1)` sobre `divergencia.decisoes`. O repositório retorna decisões ordenadas `DESC` por id (mais recente primeiro), portanto `.at(-1)` retornava a decisão **mais antiga**. Antes da retificadora isso não importava (uma decisão por divergência); após registrar `#185`, a divergência tinha duas decisões e o auditor selecionava `#150` (errado) como vigente.
+
+**Evidência:**
+- `payloadDecisao` de `#150`: rateio com 3 áreas operacionais ([`profor-2022-pad-plano-comparacao-dry-run.json`](backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json)).
+- `validarRateioSaldoResidual` rejeita por `areaSaldoResidualEhOperacional("OUVIDORIA")` ([`profor-pad-decisao-aplicacao-service.js:116-144`](backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js#L116-L144)).
+- `listarDecisoesDaDivergencia` ordena `ORDER BY id DESC` ([`profor-pad-revisao-repository.js:306`](backend/services/profor-2022/profor-pad-revisao-repository.js#L306)).
+- Hash do payload preservado (`26c10f0a…`) — snapshot `_segurancaPreAtivacao` válido em ambas as decisões.
+
+**Correção aplicada:**
+1. **Retificadora técnica:** decisão `CORRIGIDO #185` registrada via `profor-pad-revisao-decisao-service.registrarDecisao` com `aplicadaAoPlano=false`, snapshot automático, payload `rateio: [{ area: "NAO INFORMADO", natureza: "CAPITAL", quantidade: 1, percentualQuantidade: 100, percentualValor: 100 }]`. Decisão `#150` preservada no histórico.
+2. **Bug fix:** `ultimoResolutivo` passa a usar `.find(...)` (primeira correspondência → mais recente, dado o `DESC`).
+3. **Classificação data-driven:** hardcode `id === 18` em `montarDiagnosticoPendenciaTecnica` substituído por leitura do `reconstrucao.impedimentos` indexados por `chaveItem`. Novo valor `bloqueio_tecnico_residual_retificado` quando a divergência tinha `saldo_residual_decisao_anterior_incompativel` mas a decisão vigente retificadora (CORRIGIDO/REVERTIDO) eliminou o impedimento de reconstrução.
+4. **Teste:** [`tests/services/auditar-seguranca-pre-ativacao-final.test.js`](tests/services/auditar-seguranca-pre-ativacao-final.test.js) com 5 casos para `ultimoResolutivo`.
+
+**Resultado:**
+- `#18`: `decisao_retificadora_necessaria` → `bloqueio_tecnico_residual_retificado`.
+- Reconstrução: diferença total previsto `-9.506,78` → `-0,24` (linha SALDO RESIDUAL agora integrada via retificadora).
+- `decisao_retificadora_necessaria`: `1 → 0`.
+- `npm run validar:services`: `125/125` (5 novos testes incluídos).
+- Aptidão geral mantida em **não apto** (33 impedimentos remanescentes fora do escopo de #18).
+
+**Como prevenir regressão:**
+- Nunca usar `.at(-1)` em arrays que dependem de ordem do banco sem documentar o ordenamento esperado. Preferir `.find(...)` quando intenção for "primeira correspondência".
+- Não hardcodar `id === N` em classificadores de auditoria. Classificações devem derivar do estado técnico (impedimentos da reconstrução, presença de retificadora vigente).
+- Decisões antigas com payload tecnicamente inválido pela regra atual devem ser tratadas via **retificadora CORRIGIDO** (preservando a decisão original) e **classificador data-driven**, nunca apagando a decisão original.
+
+**Rollback:** `git revert <commit>` reverte código e teste. Decisão `#185` permanece no banco — para neutralizá-la, registrar `REVERTIDO` via serviço. Não apagar `#150`, `#185`, logs ou divergências.

@@ -62,10 +62,14 @@ function escreverTexto(caminhoRelativo, conteudo) {
 }
 
 function ultimoResolutivo(divergencia) {
+  // `divergencia.decisoes` chega ordenada DESC por id (mais recente primeiro),
+  // conforme `listarDecisoesDaDivergencia` no repositório. Para devolver a
+  // decisão resolutiva mais recente, pegamos a primeira correspondência —
+  // assim retificadoras (CORRIGIDO/REVERTIDO) posteriores prevalecem sobre
+  // o ACEITO original.
   const resolutivas = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"]);
   return (divergencia.decisoes || [])
-    .filter((decisao) => resolutivas.has(String(decisao.decisao || "").toUpperCase()))
-    .at(-1) || null;
+    .find((decisao) => resolutivas.has(String(decisao.decisao || "").toUpperCase())) || null;
 }
 
 function obterLogDecisao(divergencia, decisaoId) {
@@ -158,7 +162,7 @@ function montarDiagnosticoPayloadAlterado(id, entradasSeguranca, pendencia, regr
   };
 }
 
-function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNaoReapresentada) {
+function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNaoReapresentada, impedimentosPorChaveItem) {
   const divergencia = revisao.obterDivergencia(id);
   const decisaoVigente = ultimoResolutivo(divergencia);
   const snapshot = decisaoVigente?.payloadDecisao?._segurancaPreAtivacao || null;
@@ -168,9 +172,50 @@ function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNa
     : null;
   const ehSaldoResidual = Boolean(pendencia?.saldoResidualTecnico);
   const naoReapresentada = Boolean(segurancaNaoReapresentada);
-  const classificacaoFinal = id === 18
-    ? "decisao_retificadora_necessaria"
-    : "bloqueio_tecnico_residual";
+  const classificacoesOperacionais = pendencia?.classificacoes || [];
+  const temSaldoResidualIncompativel = classificacoesOperacionais.includes(
+    "saldo_residual_decisao_anterior_incompativel"
+  );
+  // Reconstrução ainda emite impedimento `decisao_nao_aplicavel:saldo_residual_rateio_invalido`
+  // para esta chaveItem? Se sim, o efeito técnico da decisão antiga continua
+  // incompatível; se não, uma retificadora (CORRIGIDO/REVERTIDO) já saneou o
+  // efeito e o bloqueio residual é puramente classificatório.
+  const impedimentosChave = impedimentosPorChaveItem?.get(divergencia.chaveItem) || [];
+  const impedimentoSaldoResidualAtivo = impedimentosChave.some(
+    (imp) => imp.tipo === "decisao_nao_aplicavel:saldo_residual_rateio_invalido"
+  );
+  const decisaoVigenteRetificadora = decisaoVigente
+    && ["CORRIGIDO", "REVERTIDO"].includes(String(decisaoVigente.decisao || "").toUpperCase());
+  const saldoResidualRetificado = temSaldoResidualIncompativel
+    && decisaoVigenteRetificadora
+    && !impedimentoSaldoResidualAtivo;
+
+  const blocoSaldoResidualPendente = temSaldoResidualIncompativel && impedimentoSaldoResidualAtivo;
+
+  let classificacaoFinal;
+  let impactoMaterial;
+  let recomendacao;
+  let prioridade;
+  let acaoNecessaria;
+  if (blocoSaldoResidualPendente) {
+    classificacaoFinal = "decisao_retificadora_necessaria";
+    impactoMaterial = "tecnico_residual_saldo_residual_rateio_operacional";
+    recomendacao = "Revalidar/retificar o efeito da decisao antiga de saldo residual para impedir rateio por area operacional.";
+    prioridade = "alta";
+    acaoNecessaria = "decisao_retificadora_futura_ou_neutralizacao_tecnica_do_efeito";
+  } else if (saldoResidualRetificado) {
+    classificacaoFinal = "bloqueio_tecnico_residual_retificado";
+    impactoMaterial = "tecnico_residual_saldo_residual_saneado_por_retificadora";
+    recomendacao = "Saldo residual ja saneado por decisao retificadora (CORRIGIDO/REVERTIDO); manter como historico tecnico, sem nova decisao.";
+    prioridade = "media";
+    acaoNecessaria = "revalidacao_tecnica_sem_decisao";
+  } else {
+    classificacaoFinal = "bloqueio_tecnico_residual";
+    impactoMaterial = "historico_nao_reapresentado_sem_pendencia_operacional";
+    recomendacao = "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.";
+    prioridade = "media";
+    acaoNecessaria = "revalidacao_tecnica_sem_decisao";
+  }
 
   return {
     id,
@@ -188,22 +233,17 @@ function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNa
       ? "nao_reapresentada_com_decisao_resolutiva"
       : "decisao_resolutiva_com_pendencia_tecnica",
     classificacaoFinal,
-    impactoMaterial: id === 18
-      ? "tecnico_residual_saldo_residual_rateio_operacional"
-      : "historico_nao_reapresentado_sem_pendencia_operacional",
-    recomendacao: id === 18
-      ? "Revalidar/retificar o efeito da decisao antiga de saldo residual para impedir rateio por area operacional."
-      : "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-    prioridade: id === 18 ? "alta" : "media",
-    acaoNecessaria: id === 18
-      ? "decisao_retificadora_futura_ou_neutralizacao_tecnica_do_efeito"
-      : "revalidacao_tecnica_sem_decisao",
+    impactoMaterial,
+    recomendacao,
+    prioridade,
+    acaoNecessaria,
     categoriaOperacional: pendencia?.classificacaoOperacional || null,
-    classificacoesOperacionais: pendencia?.classificacoes || [],
+    classificacoesOperacionais,
     regressao: regressao?.classificacaoRegressao || null,
     logDecisaoRegistradaPresente: Boolean(decisaoVigente && obterLogDecisao(divergencia, decisaoVigente.id)),
     saldoResidualTecnico: ehSaldoResidual,
     naoReapresentada,
+    saldoResidualRetificado,
   };
 }
 
@@ -302,6 +342,12 @@ function executar() {
   const regressaoPorId = indexarRegressao(regressao);
   const payloadPorDivergencia = agruparPayloadPorDivergencia(seguranca.payloadAlteradoAposDecisao);
   const naoReapPorId = new Map((seguranca.divergenciasNaoReapresentadas || []).map((item) => [Number(item.divergenciaId), item]));
+  const impedimentosPorChaveItem = new Map();
+  for (const imp of Array.isArray(reconstrucao.impedimentos) ? reconstrucao.impedimentos : []) {
+    if (!imp?.chaveItem) continue;
+    if (!impedimentosPorChaveItem.has(imp.chaveItem)) impedimentosPorChaveItem.set(imp.chaveItem, []);
+    impedimentosPorChaveItem.get(imp.chaveItem).push(imp);
+  }
 
   const payloadAlteradoAposDecisao = IDS_PAYLOAD_ALTERADO_ESPERADOS.map((id) => (
     montarDiagnosticoPayloadAlterado(
@@ -317,7 +363,8 @@ function executar() {
       id,
       pendenciasPorId.get(id),
       regressaoPorId.get(id),
-      naoReapPorId.get(id)
+      naoReapPorId.get(id),
+      impedimentosPorChaveItem
     )
   ));
 
@@ -384,3 +431,8 @@ if (require.main === module) {
     process.exit(1);
   }
 }
+
+module.exports = {
+  ultimoResolutivo,
+  montarDiagnosticoPendenciaTecnica,
+};
