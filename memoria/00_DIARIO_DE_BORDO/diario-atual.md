@@ -1,5 +1,32 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: roteiro de publicação controlada (documentação, sem execução)
+
+- **Objetivo:** preparar o roteiro operacional da publicação controlada dos dados PAD/PROFOR 2022 para `frontend/data/publicados/`, refletindo a origem `reconstrucao-pad` já ativa no ambiente local (commit `7ed2633`). **Sem executar publicação**, sem alterar `.env`, sem alterar origem ativa, sem acionar Transferegov.
+- **Pipeline mapeada** (em modo leitura):
+  - `npm run publicar:dados` → `backend/scripts/publicar-dados-estaticos.js` (17 linhas) → `static-publication-service.publicarDadosEstaticos()` → `consolidarCatalogoDashboard()` → `montarDadosProfor2022Publicacao()` → branch `reconstrucao-pad` (porque `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` no `.env`) → escreve **6 JSONs atomicamente** em `frontend/data/publicados/` via `escreverJsonAtomico` (`.tmp` + `fs.renameSync`).
+  - `npm run publicar:profor-2022` → orquestrador que chama `atualizar:profor-2022` **(Transferegov)** antes de `publicar:dados`. **PROIBIDO** nesta etapa por violar a restrição de não-Transferegov.
+  - Conclusão: a publicação controlada usa **apenas `publicar:dados`** (caminho direto).
+- **Comandos permitidos executados** (leitura/dry-run):
+  - `git status --short` + `git log --oneline -8` → branch `main`, working tree limpa, último commit `7ed2633` (ativação);
+  - `grep "^PROFOR_2022_ORIGEM_DADOS" .env` → `reconstrucao-pad` (origem ativa local preservada);
+  - `npm run profor:pad:auditar-pendencias-profundo` → `pendência_operacional_real = 0`, `bloqueio_técnico_segurança = 0`;
+  - `npm run profor:pad:seguranca-pre-ativacao:final` → `aptoParaAtivacaoControlada = sim`, `pendenciaOperacionalReal = 0`;
+  - `npm run profor:pad:reconstruir-plano:dry-run` → 568 linhas / 15 convênios / 31 impedimentos categorizados;
+  - `npm run profor:pad:comparar-plano:dry-run` → 25 diferenças críticas explicadas, diff líquido saldo `−R$ 15.043,84`;
+  - `npm run validar:syntax` → 76 arquivos OK; `npm run validar:services` → 153/153;
+  - `git diff --check`/`git status` em `frontend/data/publicados`/`*.sqlite*`/WAL/SHM → todos limpos.
+- **Arquivos a serem afetados pela publicação futura** (snapshot dos hashes atuais registrado no roteiro §7):
+  - **Esperado mudar:** `aplicacao.json`, `dashboard-geral.json`, `resumo-publicacao.json` (contêm `publicadoEm` e `dadosProfor2022.origemDadosEfetiva = "reconstrucao-pad"`);
+  - **Esperado preservar:** `formalizacao-profor.json`, `orcamento-2026.json`, `parametros-minimos.json` (não dependem da origem PAD);
+  - Critério de parada §14.8: alteração de menos de 3 ou mais de 6 arquivos aborta.
+- **Artefatos criados:**
+  - [backend/data/relatorios/profor-2022-roteiro-publicacao-controlada.md](FOMENTO-ONASP/backend/data/relatorios/profor-2022-roteiro-publicacao-controlada.md) v1.0 — 20 seções obrigatórias + checklist + texto de autorização;
+  - [backend/data/relatorios/profor-2022-roteiro-publicacao-controlada.json](FOMENTO-ONASP/backend/data/relatorios/profor-2022-roteiro-publicacao-controlada.json) v1.0 — versão estruturada com `garantiasDesteRoteiro.tipoArtefato = "documentacao + relatorio dry-run"` e todas as garantias `false` (publicação, Transferegov, `.env`, origem ativa, planoAplicacao, publicados, SQLite, decisão etc.).
+- **Lição aplicada da janela de ativação:** o §9 + JSON deste roteiro instruem usar **timestamp da janela efetiva** no nome do diretório `<RET>/` raiz, para evitar a divergência de nomenclatura que ocorreu na ativação (vide diário do commit `7ed2633`).
+- **Próxima etapa concreta (NÃO executar agora):** preencher o texto da §20 do roteiro (autorização expressa) com janela, responsáveis e mecanismo §10 confirmado; submeter para nova rodada de pré-voo; só então executar os blocos 8 → 9 → 10 → 11 → 12 → 13.
+- **Restrições preservadas:** sem publicação, sem `publicar:dados`/`publicar:profor-2022` executados, sem `atualizar:*-profor`, sem `agendar:*`, sem Transferegov/DETRU, sem alteração em `.env`/SQLite/decisões/divergências/logs/`planoAplicacao` oficial/origem ativa/`frontend/data/publicados/`, sem SQL direto, sem nova migration, sem versionamento de WAL/SHM, nenhum alerta real mascarado.
+
 ## 23/05/2026 — PROFOR 2022: ATIVAÇÃO CONTROLADA da origem `reconstrucao-pad` (janela antecipada, sem publicação)
 
 - **Autorização escrita:** "AUTORIZAÇÃO EXPRESSA DE ATIVAÇÃO CONTROLADA PAD/PROFOR 2022 (origem reconstrucao-pad)" — janela autorizada formalmente para 2026-05-24 20h00–21h00, **antecipada pelo operador via adendo escrito** ("Execute agora!") emitido em 2026-05-23. Assinada por Marcelo Cortez, ISO-8601 `2026-05-24T20:00:00-03:00`. Roteiro de referência: `backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md` (v1.1). Commit pré-requisito: `2889024 feat(profor-2022): implementa origem reconstrucao pad`.

@@ -1,0 +1,261 @@
+{
+  "geradoEm": "2026-05-23T00:00:00.000Z",
+  "versao": "1.0",
+  "tipo": "roteiro_operacional",
+  "estado": "documentacao_nao_executar",
+  "preRequisitos": {
+    "commitAtivacao": "7ed2633",
+    "commitImplementacaoOrigem": "2889024",
+    "origemAtivaLocal": "reconstrucao-pad",
+    "envHashEsperado": "457a06639c0cba917461c8ee61c50cfa6595bf4cb258529bdd60467fd6eef648",
+    "jsonReconstruidoHashEsperado": "ed1639ece4258e1fd9a5e524f6604c5f70010d779eccd553c7f11dd49d6f0886",
+    "roteiroAtivacao": "backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md (v1.1)"
+  },
+  "avisoGlobal": "Todo bloco rotulado [NAO EXECUTAR NESTA ETAPA] exige autorizacao expressa por escrito do responsavel funcional e do revisor de seguranca tecnica antes de ser executado em qualquer momento futuro.",
+  "separacaoAtivacaoPublicacao": "Este roteiro NAO ativa nada e NAO altera origem ativa. A ativacao ja esta vigente no ambiente local (commit 7ed2633); aqui apenas se publica o efeito da ativacao para os JSONs estaticos consumidos pelo frontend.",
+  "escopo": [
+    "confirmar estado pre-publicacao (auditorias, sintaxe, servicos, isolamento e origem ativa local)",
+    "snapshots e backups integros de frontend/data/publicados/ (sera sobrescrito) e do SQLite (defesa em profundidade)",
+    "execucao isolada APENAS de npm run publicar:dados (caminho direto, sem orquestrador)",
+    "validacoes pos-publicacao imediatas (validar:json, validar:syntax, validar:services)",
+    "auditoria de vazamento dos JSONs publicados",
+    "conferencia visual minima dos 6 JSONs gerados",
+    "criterios objetivos de aceite, parada e rollback",
+    "encerramento sem encadeamento automatico"
+  ],
+  "foraDeEscopo": [
+    "npm run publicar:profor-2022 (chama atualizar:profor-2022 -> Transferegov)",
+    "npm run atualizar:profor-2022 (Transferegov direto)",
+    "npm run atualizar:detru-profor, atualizar:rendimentos-profor, agendar:*",
+    "alteracao de .env (origem ativa permanece reconstrucao-pad)",
+    "alteracao de backend/data/onasp.sqlite",
+    "registro/exclusao de decisoes, divergencias ou logs",
+    "criacao de migration ou SQL direto",
+    "alteracao do planoAplicacao oficial",
+    "roteamento para outras instancias/maquinas (esta publicacao reflete o ambiente local)"
+  ],
+  "preCondicoes": [
+    "branch main",
+    "git status --short vazio",
+    "ultimo commit = 7ed2633 (ativacao) ou posterior que apenas atualize relatorios dry-run/documentacao",
+    "linha do .env: PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad",
+    "SHA-256 do .env = 457a06639c0cba917461c8ee61c50cfa6595bf4cb258529bdd60467fd6eef648",
+    "SHA-256 do JSON reconstruido = ed1639ece4258e1fd9a5e524f6604c5f70010d779eccd553c7f11dd49d6f0886",
+    "seguranca pre-ativacao final: pendenciaOperacionalReal=0, totalBloqueiosAtivos=0, aptoParaAtivacaoControlada=true",
+    "validar:syntax OK e validar:services OK ate 1h antes",
+    "git diff --check limpo",
+    "frontend/data/publicados/, *.sqlite*, *.sqlite-wal, *.sqlite-shm sem alteracao e sem stage antes do §10",
+    "autorizacao expressa por escrito do responsavel funcional (e revisor, ou declaracao de operacao solo) com janela definida",
+    "ambiente confirmadamente fora do horario de uso"
+  ],
+  "responsaveis": {
+    "responsavelFuncional": "Autorizar a janela, validar interpretacao visual dos numeros nos JSONs publicados e aprovar/rejeitar aceite formal pos-publicacao",
+    "responsavelTecnico": "Executar comandos exatos, registrar evidencias, abortar a primeira falha e acionar rollback",
+    "revisorSegurancaTecnica": "Acompanhar a janela em modo leitura, validar pre-condicoes, conferir hashes, auditar JSONs publicados e atestar integridade dos backups",
+    "custodiaBackups": "Guardar localmente e fora do repositorio os snapshots de publicados/, SQLite, .env, JSON reconstruido com hash registrado",
+    "designacao": "Nao nomeada nesta etapa; sera feita no momento da autorizacao da janela"
+  },
+  "janela": {
+    "duracaoBlocoCriticoMin": 45,
+    "decomposicaoBlocoCritico": {
+      "preChecksMin": 15,
+      "backupMin": 10,
+      "publicacaoMin": 5,
+      "validacoesPosMin": 15
+    },
+    "bufferRollbackMin": 45,
+    "duracaoTotalRecomendadaMin": 90,
+    "horarioRecomendado": "fora do horario de uso (preferencialmente noturno em dia util ou diurno em fim de semana)",
+    "preAvisoInternoH": 24,
+    "nomenclaturaRet": "Usar timestamp da JANELA EFETIVA no nome do diretorio raiz <RET>/ (licao registrada apos a ativacao, commit 7ed2633)"
+  },
+  "backupsObrigatorios": [
+    { "artefato": "frontend/data/publicados/ (diretorio integral, sera sobrescrito)", "fora_repo": true, "hash": "SHA-256 agregado por arquivo" },
+    { "artefato": "backend/data/onasp.sqlite", "fora_repo": true, "hash": "SHA-256" },
+    { "artefato": "backend/data/onasp.sqlite-wal (se existir)", "fora_repo": true, "hash": "SHA-256" },
+    { "artefato": "backend/data/onasp.sqlite-shm (se existir)", "fora_repo": true, "hash": "SHA-256" },
+    { "artefato": ".env (estado da origem ativa)", "fora_repo": true, "hash": "SHA-256 esperado 457a0663...ef648" },
+    { "artefato": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json", "fora_repo": true, "hash": "SHA-256 esperado ed1639ec...0886" },
+    { "artefato": "Relatorios de prontidao, seguranca final, roteiro de ativacao e este roteiro", "fora_repo": true, "hash": "opcional" },
+    { "artefato": "git log --oneline -20 e git status --short (texto)", "fora_repo": true, "hash": "n/a" }
+  ],
+  "arquivosPublicadosAProteger": {
+    "diretorio": "frontend/data/publicados/",
+    "arquivos": [
+      { "nome": "aplicacao.json", "esperaMudar": true, "hashAtual": "20a9cb478e7cd7a30a668d5a3e815501f2cb458ef1f2c9b77768d51b5cfdaf0b" },
+      { "nome": "dashboard-geral.json", "esperaMudar": true, "hashAtual": "44b331c98971bb754f11132c63d27b9c0bea2b7155c84d53942ede917ba69f28" },
+      { "nome": "formalizacao-profor.json", "esperaMudar": false, "hashAtual": "d9eaf6360398d86ab5e60bebfdcee6389048c5a4047714dfbec853c25bd545a1" },
+      { "nome": "orcamento-2026.json", "esperaMudar": false, "hashAtual": "74afab7ac9bbd28da416744ed74dd78072aa2619e9ba1bff93bc8e0b58a2a926" },
+      { "nome": "parametros-minimos.json", "esperaMudar": false, "hashAtual": "501562d4bcad885c47bcef15f469794da8a74017bc3054b0df9850d9701b1431" },
+      { "nome": "resumo-publicacao.json", "esperaMudar": true, "hashAtual": "bdc40661b14a6ed149d55c8c0ebb590a974bff222d86f6ce95b83abd5f8910b2" }
+    ]
+  },
+  "comandosAuditoriaPrePublicacao": [
+    "git status --short",
+    "git log --oneline -8",
+    "grep \"^PROFOR_2022_ORIGEM_DADOS\" .env",
+    "sha256sum .env",
+    "sha256sum backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
+    "npm run profor:pad:auditar-pendencias-profundo",
+    "npm run profor:pad:seguranca-pre-ativacao:final",
+    "npm run profor:pad:reconstruir-plano:dry-run",
+    "npm run profor:pad:comparar-plano:dry-run",
+    "npm run validar:syntax",
+    "npm run validar:services",
+    "git diff --check",
+    "git status --short frontend/data/publicados",
+    "git status --short \"*.sqlite*\"",
+    "git status --short \"*.sqlite-wal\"",
+    "git status --short \"*.sqlite-shm\""
+  ],
+  "comandosPublicacaoFutura": {
+    "status": "NAO_EXECUTAR_NESTA_ETAPA",
+    "formaEsperada": "Executar APENAS npm run publicar:dados (caminho direto), que invoca backend/scripts/publicar-dados-estaticos.js -> static-publication-service.publicarDadosEstaticos() -> consolidarCatalogoDashboard() -> montarDadosProfor2022Publicacao() com origem reconstrucao-pad",
+    "passos": [
+      "10.1 confirmar 'grep \"^PROFOR_2022_ORIGEM_DADOS\" .env' = PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad",
+      "10.2 npm run publicar:dados (esperado: 'Dados estaticos publicados com sucesso. { success: true, publicadoEm: <ISO> }')",
+      "10.3 NAO chamar publicar:profor-2022, atualizar:profor-2022, atualizar:*-profor, agendar:*, nem qualquer Transferegov/DETRU",
+      "10.4 Recarregar servicos com cache em memoria (se aplicavel), sem reiniciar processos em producao sem aviso"
+    ],
+    "garantiaNaoTransferegov": "publicar:dados -> publicar-dados-estaticos.js (17 linhas) -> static-publication-service nao importa cliente Transferegov, nao chama transferegov-*, nao dispara atualizar:profor-2022.",
+    "garantiaAtomicidade": "static-publication-service usa escreverJsonAtomico (.tmp + fs.renameSync); crash a meio caminho deixa o arquivo antigo intacto."
+  },
+  "comandosValidacaoPosPublicacao": [
+    "git status --short",
+    "git diff --check",
+    "git status --short frontend/data/publicados",
+    "git status --short \"*.sqlite*\"",
+    "git status --short \"*.sqlite-wal\"",
+    "git status --short \"*.sqlite-shm\"",
+    "npm run validar:json",
+    "npm run validar:syntax",
+    "npm run validar:services",
+    "npm run profor:pad:auditar-pendencias-profundo",
+    "npm run profor:pad:seguranca-pre-ativacao:final",
+    "npm run profor:pad:reconstruir-plano:dry-run",
+    "npm run profor:pad:comparar-plano:dry-run",
+    "sha256sum frontend/data/publicados/*.json (gerar publicados.pos-publicacao-hashes.txt)",
+    "diff publicados.pre-publicacao-hashes.txt publicados.pos-publicacao-hashes.txt"
+  ],
+  "conferenciaVisualMinima": [
+    "resumo-publicacao.json: publicadoEm dentro da janela; arquivos com 5 entradas; totais.dashboard.totalConvenios=15 e totais.conveniosProfor2022=15",
+    "aplicacao.json: dadosProfor2022.origemDados=reconstrucao-pad, origemDadosEfetiva=reconstrucao-pad, convenios.length=15, amostra de 2 convenios com campos monetarios numericos coerentes (sem NaN/null)",
+    "dashboard-geral.json: resumoEsperado.totalConvenios=15",
+    "Opcional: subir npm start, abrir frontend, conferir tela PROFOR 2022 mostra 15 convenios e numeros batem com aplicacao.json (sem interacoes de escrita)"
+  ],
+  "criteriosSucesso": [
+    "todas as pre-condicoes da §3 satisfeitas no inicio",
+    "backups concluidos com hash e aceitos pelo revisor (ou operador em solo)",
+    "apenas arquivos previstos em publicados/ alterados (3 a 6 canonicos); nada em SQLite/WAL/SHM/.env/decisoes/divergencias/logs",
+    "git status --short pos contem apenas arquivos canonicos de publicados/",
+    "validacoes da §11 dentro das tolerancias",
+    "conferencia visual minima da §12 passou em todos os pontos",
+    "aceite formal do revisor (ou operador em solo)",
+    "aceite formal do responsavel funcional",
+    "nenhum aviso real mascarado",
+    "nenhuma chamada Transferegov/DETRU/servico externo durante a janela"
+  ],
+  "criteriosParada": [
+    "qualquer pre-condicao da §3 falhar",
+    "qualquer backup falhar, retornar tamanho zero ou divergir em hash",
+    "publicacao tentar alterar SQLite, WAL/SHM, .env, decisoes, divergencias ou logs",
+    "qualquer chamada Transferegov/DETRU/servico externo detectada nos logs",
+    "validar:json, validar:syntax ou validar:services falhar pos-publicacao",
+    "auditorias dry-run pos mudarem pendenciaOperacionalReal, totalBloqueiosAtivos, contagem linhas/convenios ou diff liquido de saldo",
+    "conferencia visual falhar (qualquer item da §12)",
+    "git status --short publicados/ listar mais ou menos arquivos que o esperado (3 a 6)",
+    "aplicacao.json.dadosProfor2022.origemDados nao for reconstrucao-pad",
+    "mensagem operacional sem confirmacao do revisor (ou operador em solo)",
+    "perda de comunicacao antes do aceite formal"
+  ],
+  "criteriosRollback": {
+    "objetivo": "Restaurar frontend/data/publicados/ ao estado identico ao inicio da janela, sem perda de decisoes/divergencias/logs e sem reverter a ativacao",
+    "comandos": [
+      "Apagar publicados/*.json e copiar de <RET>/publicados.pre-publicacao-<TS>/",
+      "Conferir hashes pos-restauro (devem bater com pre-publicacao-hashes.txt)",
+      "Se houve alteracao inesperada no SQLite: restaurar de <RET>/onasp.sqlite.pre-publicacao-<TS> (defesa em profundidade)",
+      "Reexecutar validar:json, validar:syntax, validar:services, auditorias dry-run e git diff --check"
+    ],
+    "registroPos": "entrada em diario-atual.md com gatilho da §14 que disparou, hashes pre/pos e SHA de eventual commit relacionado. Somente se erro novo, registrar em historico-erros.md.",
+    "atencao": "Rollback NAO desfaz a ativacao da origem reconstrucao-pad. Se quiser tambem reverter a ativacao, executar separadamente o §14 do roteiro de ativacao com sua propria autorizacao."
+  },
+  "evidenciasAGuardar": [
+    "saidas completas dos pre-checks",
+    "hashes SHA-256 de publicados/ (agregado), SQLite, WAL/SHM (se existirem), .env, JSON reconstruido",
+    "publicados.pre-publicacao-hashes.txt e publicados.pos-publicacao-hashes.txt com diff entre os dois",
+    "saidas completas das validacoes pos-publicacao",
+    "copia dos relatorios de prontidao, seguranca final, roteiro de ativacao e este roteiro",
+    "texto integral do aceite formal (revisor e responsavel funcional) ou do gatilho de aborto",
+    "git log --oneline -20 e git status --short antes e depois",
+    "em caso de rollback: SHA do git revert (se aplicavel), hashes pos-restauro e nova bateria validar+dry-run",
+    "captura de tela ou texto do resumo-publicacao.json pos-publicacao (publicadoEm e totais)"
+  ],
+  "riscos": [
+    { "id": "R1", "risco": "Publicacao acoplar Transferegov (executar publicar:profor-2022 em vez de publicar:dados)", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "§10.3 + criterio de parada 4 + revisor confere antes do §10" },
+    { "id": "R2", "risco": "Origem ativa mudar entre ativacao e publicacao", "probabilidade": "baixa", "impacto": "alto", "mitigacao": "§3 criterio 4 exige hash identico do .env" },
+    { "id": "R3", "risco": "JSON reconstruido com hash diferente entre janelas", "probabilidade": "media", "impacto": "alto", "mitigacao": "§3 criterio 5 + §6 item 5: comparar hash atual com hash da ativacao; divergencia exige decisao explicita" },
+    { "id": "R4", "risco": "Backup de publicados/ falhar e publicacao sobrescrever sem rollback", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "§9.1 exige hashes; §13 criterio 2 bloqueia §10 sem aceite do backup" },
+    { "id": "R5", "risco": "Outro processo escrever em publicados/ durante a janela", "probabilidade": "baixa", "impacto": "alto", "mitigacao": "§3 criterio 11 fora do horario; monitorar git status publicados/ antes/durante/depois" },
+    { "id": "R6", "risco": "Auditoria de vazamento acusar padrao proibido (sessao, cookie, path)", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "publicar:dados nao tem auditoria interna; o orquestrador publicar:profor-2022 tem, e esta proibido. Mitigacao alternativa: rodar manualmente grep dos padroes em publicados/ pos-publicacao." },
+    { "id": "R7", "risco": "dotenv nao recarregar env (cache de processo)", "probabilidade": "baixa", "impacto": "medio", "mitigacao": "cada npm run cria processo novo; §10.1 confirma env antes do bloco 10" },
+    { "id": "R8", "risco": "Publicacao com dadosProfor2022.origemDados='planilha' (sinal de env nao lida)", "probabilidade": "baixa", "impacto": "critico", "mitigacao": "§14 criterio 9 aborta" },
+    { "id": "R9", "risco": "Sobrescrita parcial por crash entre .tmp e rename", "probabilidade": "baixissima", "impacto": "medio", "mitigacao": "escreverJsonAtomico usa .tmp+rename (atomico); crash deixa arquivo antigo intacto" },
+    { "id": "R10", "risco": "Reativacao inadvertida de outra origem", "probabilidade": "baixa", "impacto": "alto", "mitigacao": "§2 fora de escopo proibe alterar .env; §14 criterio 3 aborta se .env for tocado" }
+  ],
+  "proibicaoTransferegov": {
+    "regra": "Nenhuma chamada Transferegov/DETRU/siconv/gov.br nesta janela.",
+    "scriptsProibidosNaJanela": [
+      "npm run publicar:profor-2022 (orquestrador acoplado a Transferegov)",
+      "npm run atualizar:profor-2022 (Transferegov direto)",
+      "npm run atualizar:rendimentos-profor",
+      "npm run atualizar:detru-profor",
+      "npm run agendar:detru-profor",
+      "npm run agendar:profor-2022",
+      "qualquer chamada a Transferegov, DETRU, autenticacao federada ou jobs correlatos"
+    ],
+    "deteccao": "Qualquer log do processo de publicacao mencionando transferegov, detru, siconv ou gov.br/login dispara §14 criterio 4"
+  },
+  "proibicaoNovaAtivacao": {
+    "regra": "Esta janela NAO reativa nada e NAO altera origem ativa.",
+    "envHashEntradaSaida": "457a06639c0cba917461c8ee61c50cfa6595bf4cb258529bdd60467fd6eef648 (identico antes e depois)",
+    "flagPermanente": "PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad permanece como unica origem ativa local",
+    "reversaoFora": "Reverter ativacao exige usar §14 do roteiro de ativacao FORA desta janela, com autorizacao propria"
+  },
+  "checklistExecucaoManualFutura": [
+    "Pre-condicoes (§3) verificadas e registradas",
+    "Autorizacao escrita do responsavel funcional (e revisor, ou operacao solo) recebida",
+    "Pre-checks executados e dentro das tolerancias",
+    "Backups concluidos com SHA-256 em <RET>/",
+    "Aceite do backup pelo revisor (ou operador em solo)",
+    "Publicacao executada SOMENTE com 'npm run publicar:dados'; nenhum outro script",
+    "Validacoes pos-publicacao dentro das tolerancias",
+    "Conferencia visual minima passou nos 3 JSONs criticos",
+    "Criterios de sucesso (10 itens) satisfeitos",
+    "Aceite formal por escrito do responsavel funcional e do revisor (ou operador em solo)",
+    "Evidencias guardadas em <RET>/",
+    "Diario atualizado com publicadoEm, hashes pre/pos e SHA de commit (se houver)",
+    "Documentacao da funcionalidade atualizada",
+    "Confirmado: nada de Transferegov; .env hash identico antes e depois",
+    "Em caso de falha de criterio: rollback (§15) executado integralmente; janela encerrada com registro do gatilho"
+  ],
+  "garantiasDesteRoteiro": {
+    "publicacaoExecutada": false,
+    "publicarDadosExecutado": false,
+    "publicarProfor2022Executado": false,
+    "atualizarProfor2022Executado": false,
+    "transferegovAcionado": false,
+    "envAlterado": false,
+    "origemAtivaAlterada": false,
+    "planoAplicacaoOficialAlterado": false,
+    "frontendDataPublicadosAlterado": false,
+    "sqliteAlterado": false,
+    "sqlDireto": false,
+    "novaMigration": false,
+    "novaDecisao": false,
+    "decisaoApagada": false,
+    "divergenciaApagada": false,
+    "logApagado": false,
+    "alertaRealMascarado": false,
+    "tipoArtefato": "documentacao + relatorio dry-run"
+  }
+}

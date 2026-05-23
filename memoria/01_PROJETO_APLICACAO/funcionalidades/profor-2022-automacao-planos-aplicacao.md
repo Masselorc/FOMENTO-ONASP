@@ -2655,3 +2655,42 @@ Publicação para `frontend/data/publicados/` exigirá **janela própria e autor
 ### 36.8. Garantias e escopo preservado
 
 Sem publicação executada, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem execução de script de publicação, sem avanço para automação Transferegov, sem remoção das origens `"planilha"` e `"banco-cache"`, sem alteração no default `ORIGEM_PADRAO_PROFOR_2022`, nenhum alerta real mascarado, nenhum log/divergência/decisão apagados.
+
+---
+
+## 37. Roteiro de publicação controlada (23/05/2026, documentação)
+
+### 37.1. Propósito
+
+Documentar a sequência operacional **futura** para publicar os JSONs estáticos de `frontend/data/publicados/` refletindo a origem `reconstrucao-pad` já ativa no ambiente local (commit `7ed2633`). Esta seção é **somente documentação**; nenhum comando de publicação foi executado.
+
+### 37.2. Caminho de publicação escolhido
+
+**`npm run publicar:dados`** (`backend/scripts/publicar-dados-estaticos.js`) — caminho direto que invoca `static-publication-service.publicarDadosEstaticos()` → `consolidarCatalogoDashboard()` → `montarDadosProfor2022Publicacao()` no branch `reconstrucao-pad`. Grava 6 JSONs atomicamente (`.tmp` + `fs.renameSync`).
+
+**NÃO usar** `npm run publicar:profor-2022` — orquestrador que chama `atualizar:profor-2022` (Transferegov), violando a restrição de não-Transferegov.
+
+### 37.3. Mecanismo de atomicidade
+
+Toda escrita em `frontend/data/publicados/` passa por `escreverJsonAtomico` (em [backend/services/static-publication-service.js](FOMENTO-ONASP/backend/services/static-publication-service.js#L12)): escreve em `.tmp` e faz `fs.renameSync`. Um crash a meio caminho deixa o arquivo antigo intacto.
+
+### 37.4. Arquivos esperados
+
+Tabela em §7 do roteiro com hash atual pré-publicação. Esperado mudar: `aplicacao.json`, `dashboard-geral.json`, `resumo-publicacao.json`. Esperado preservar: `formalizacao-profor.json`, `orcamento-2026.json`, `parametros-minimos.json`.
+
+### 37.5. Pré-condições críticas
+
+Hash do `.env` deve ser exatamente `457a06639c0cba917461c8ee61c50cfa6595bf4cb258529bdd60467fd6eef648`; hash do JSON reconstruído deve ser `ed1639ece4258e1fd9a5e524f6604c5f70010d779eccd553c7f11dd49d6f0886`. Qualquer divergência aborta o pré-voo.
+
+### 37.6. Artefatos gerados nesta etapa
+
+- `backend/data/relatorios/profor-2022-roteiro-publicacao-controlada.md` (v1.0, 20 seções).
+- `backend/data/relatorios/profor-2022-roteiro-publicacao-controlada.json` (v1.0, estruturado).
+
+### 37.7. Próxima etapa concreta
+
+**Autorização expressa por escrito** do responsável funcional (e do revisor, ou declaração formal de operação solo) — texto exato no §20 do roteiro. Só então rodar pré-voo, backups, `npm run publicar:dados` e validações pós.
+
+### 37.8. Garantias e escopo preservado
+
+Sem publicação executada, sem `publicar:dados`/`publicar:profor-2022`/`atualizar:*-profor`/`agendar:*` acionados, sem Transferegov/DETRU, sem alteração em `.env`/`backend/data/onasp.sqlite`/decisões/divergências/logs/`planoAplicacao` oficial/origem ativa/`frontend/data/publicados/`, sem SQL direto, sem nova migration, sem versionamento de WAL/SHM, sem remoção das origens `"planilha"` e `"banco-cache"`, sem alteração no default `ORIGEM_PADRAO_PROFOR_2022`, nenhum alerta real mascarado, nenhum log/divergência/decisão apagados.
