@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T18:28:56.014Z",
+  "geradoEm": "2026-05-23T19:39:17.008Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
@@ -31,17 +31,17 @@
     "reconstrucaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 878700
+      "tamanhoBytes": 853421
     },
     "comparacaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 422948
+      "tamanhoBytes": 411115
     },
     "comparacaoMd": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
       "existe": true,
-      "tamanhoBytes": 3491
+      "tamanhoBytes": 3410
     },
     "regressaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-regressao-saneamentos-dry-run.json",

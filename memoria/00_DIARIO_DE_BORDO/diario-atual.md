@@ -1,5 +1,45 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: ATIVAÇÃO CONTROLADA da origem `reconstrucao-pad` (janela antecipada, sem publicação)
+
+- **Autorização escrita:** "AUTORIZAÇÃO EXPRESSA DE ATIVAÇÃO CONTROLADA PAD/PROFOR 2022 (origem reconstrucao-pad)" — janela autorizada formalmente para 2026-05-24 20h00–21h00, **antecipada pelo operador via adendo escrito** ("Execute agora!") emitido em 2026-05-23. Assinada por Marcelo Cortez, ISO-8601 `2026-05-24T20:00:00-03:00`. Roteiro de referência: `backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md` (v1.1). Commit pré-requisito: `2889024 feat(profor-2022): implementa origem reconstrucao pad`.
+- **Operação solo declarada** (desvio formal do roteiro):
+  - **Por que:** o usuário declarou expressamente "operação solo, com aceite cruzado concentrado sob responsabilidade do operador" no texto da autorização, e antecipou a janela em adendo escrito separado.
+  - **Como aplicar:** uma única pessoa (Marcelo Cortez) assume os papéis de responsável funcional, responsável técnico/operador e custódia de backups; o aceite cruzado dos §16.4 e §16.5 do roteiro fica concentrado no operador, sem segundo par de olhos. Documentar isso explicitamente em toda janela de ativação solo.
+- **Janela efetiva:** abertura 2026-05-23T16:34:44-03:00; encerramento na sequência (duração curta dado servidor parado).
+- **Bloco 8 — pré-checks ao vivo:** após `git restore backend/data/relatorios/` para satisfazer §3 item 2 (tree limpa), branch `main`, último commit `2889024`, auditorias preservando `pendenciaOperacionalReal = 0`, `totalBloqueiosAtivos = 0`, `aptoParaAtivacaoControlada = sim`, reconstrução 568/15, comparador diff líquido saldo `−R$ 15.043,84`, `validar:syntax` 76 OK, `validar:services` 153/153.
+- **Bloco 9 — backups em `<RET>` = `C:\BACKUPS-FOMENTO-ONASP\PAD-PROFOR-2022\2026-05-24T20-00-00-03-00\`** (fora do repo):
+  - `onasp.sqlite.pre-ativacao-20260523-163640` → SHA-256 `124e10f3c064b1004a07fe1948936c26b05cf68db4b32510fbbc4d7fb3ce40a1` (igual à origem);
+  - `onasp.sqlite-wal.pre-ativacao-...` → `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` (0 bytes, vazio);
+  - `onasp.sqlite-shm.pre-ativacao-...` → `e9d4be5b3603487435afc2bd77e93ec2cde39407346f7ce24fa06e446db3db56`;
+  - `planilha-origem-ativa.pre-ativacao-....xlsx` (`Planilhas/gestao_financeira_ouvidoria.xlsx`) → `e3a39919e61a85d7f34e0224be44bdca1fbd4a907a26e586f18703d94883c611`;
+  - **`profor-2022-pad-plano-reconstruido-dry-run.json`** (fonte material da nova origem) → **SHA-256 `ed1639ece4258e1fd9a5e524f6604c5f70010d779eccd553c7f11dd49d6f0886`**;
+  - `profor-2022-prontidao-ativacao-controlada-dry-run.{json,md}`, `profor-2022-seguranca-pre-ativacao-final-dry-run.json`, `profor-2022-roteiro-ativacao-controlada.md` (cópias);
+  - `publicados.pre-ativacao-.../` (6 arquivos, hashes individuais em `publicados.pre-ativacao-hashes.txt`);
+  - `git-log-pre-ativacao.txt` e `git-status-pre-ativacao.txt`;
+  - **Conferência origem↔backup:** 5 hashes idênticos (SQLite, WAL, SHM, planilha, JSON reconstruído) — integridade comprovada. Aceite do backup concentrado no operador.
+- **Bloco 10.1 — ATIVAÇÃO:** editada a linha 6 de `.env` (gitignored, mecanismo canônico carregado por `dotenv` em [backend/server.js](FOMENTO-ONASP/backend/server.js#L1)):
+  - **ANTES:** `PROFOR_2022_ORIGEM_DADOS=banco-cache` — `.env` com SHA-256 `85356fdb2831993260def671cf55f1325a501ab9bf06cf24b25e00587f573e9b`.
+  - **DEPOIS:** `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` — `.env` com SHA-256 `457a06639c0cba917461c8ee61c50cfa6595bf4cb258529bdd60467fd6eef648`.
+  - **Diff:** somente a linha 6 (+2 linhas de comentário de auditoria com timestamp e responsável).
+  - **Snapshots:** `<RET>/.env.pre-ativacao-20260523-163640` e `<RET>/.env.pos-ativacao-20260523-163640`.
+  - **Não houve commit no repo** — `.env` é gitignored por desenho (linha 1 de `.gitignore`); a auditoria fica pelos snapshots em `<RET>/` + esta entrada do diário com hashes ANTES/DEPOIS. Trade-off conhecido vs. PR versionado: a ativação fica isolada à instância local e não vaza para outras instalações.
+- **Bloco 10.2:** N/A — nenhum servidor rodando nesta janela; nada para recarregar.
+- **Bloco 10.3 (proibições):** nenhum script de publicação ou Transferegov foi acionado. Confirmado.
+- **Bloco 11 — validações pós-ativação:** repetidas as auditorias do §8 + **checagem comportamental ponto a ponto** (`require('dotenv').config()` → `process.env.PROFOR_2022_ORIGEM_DADOS = "reconstrucao-pad"` → `resolverOrigemDadosProfor2022({detalhado:true}) = { origemDados: "reconstrucao-pad", fonte: "env", avisos: [] }` → `deveUsarReconstrucaoPad = true`, `deveUsarBancoCache = false` → `carregarPlanoAplicacaoReconstrucaoPad({conveniosEsperados:15, minimoLinhasExigido:568})` carregou 568 linhas e 15 convênios com os 14 campos canônicos; item exemplo do MT/937698 com `valorPrevisto = 41743`, `valorExecutado = 33573`, `saldo = 8170`). Métricas das auditorias **idênticas** à pré-checagem (diff saldo `−R$ 15.043,84`, 31 impedimentos categorizados, 25 diferenças críticas explicadas). `validar:syntax` 76 OK, `validar:services` 153/153.
+- **Bloco 12 — critérios de sucesso:** 9/9 atendidos (com desvio "operação solo" registrado no item 7 e arquivo da ativação `.env` gitignored no item 4 — ambos formalmente aceitos pelo operador).
+- **Isolamento pós-ativação:**
+  - `frontend/data/publicados/` → **vazio** (sem alteração).
+  - `*.sqlite*`, `*.sqlite-wal`, `*.sqlite-shm` → **vazios e não versionados**.
+  - `git diff --check` limpo (apenas avisos LF/CRLF nos relatórios regenerados).
+  - `git status --short` mostra apenas 7 relatórios dry-run regenerados pelo §11 (sem `.env` por gitignore).
+- **Origem ativa agora:** `reconstrucao-pad`. **Origens preservadas como fallback:** `planilha` e `banco-cache`. **Default no código:** `banco-cache` (inalterado).
+- **Garantias finais:** sem publicação, sem alteração em `frontend/data/publicados/`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem avanço para automação Transferegov, nenhum alerta real mascarado, nenhum log/divergência/decisão apagados.
+- **Próxima etapa (NÃO executar agora):** se em algum momento o servidor for iniciado e a operação real validar visualmente os números, a publicação para `frontend/data/publicados/` continua **proibida** sem autorização própria e janela própria. Rollback completo descrito em §14 do roteiro v1.1 (incluindo restaurar `.env` a partir de `<RET>/.env.pre-ativacao-20260523-163640`).
+- **Observações de auditoria registradas após o encerramento da janela:**
+  - **Escopo desta ativação = ambiente local/controlado.** Como `.env` é gitignored, outras instâncias do projeto (outros checkouts, outras máquinas, CI, produção) **não herdam** automaticamente esta ativação — por desenho. Para ativar em outro ambiente é obrigatório reaplicar o §10.1 deste roteiro naquele ambiente, com pré-voo, backup, hashes e aceite próprios. O default no código permanece `banco-cache`; qualquer ambiente sem essa variável ajustada continua usando o default.
+  - **Divergência de nomenclatura em `<RET>`.** O diretório de retenção foi nomeado conforme a janela **formal** autorizada (`2026-05-24T20-00-00-03-00`), mas a janela **efetiva** foi `2026-05-23T16:34:44-03:00 → 16:42:21-03:00` (após o adendo "Execute agora!" antecipando a janela). Os artefatos internos do `<RET>/` usam o timestamp efetivo (`...pre-ativacao-20260523-163640`, `...pos-ativacao-20260523-163640`). Os hashes registrados garantem rastreabilidade material; a divergência é apenas de nomenclatura do diretório raiz, não de conteúdo. Se for refeito o backup em janela futura, sugere-se usar o timestamp efetivo no nome do diretório raiz para evitar confusão.
+
 ## 23/05/2026 - PROFOR 2022: implementação da origem `reconstrucao-pad` (capacidade, sem ativação)
 
 - **Motivação:** pré-voo da ativação controlada (tarefa anterior) detectou que o §10.1 do roteiro v1.0 referenciava um mecanismo inexistente — não havia origem `reconstrucao-pad` em `profor-origem-service.js` e não havia planilha-resultado para "repontar `arquivoPlanilhaConvenios`". Ativação foi corretamente abortada e esta frente entregou a capacidade que faltava.

@@ -2610,3 +2610,48 @@ A ativação concreta **exige** novo pré-voo e nova autorização expressa, con
 ### 35.6. Garantias e escopo preservado
 
 Sem ativação, sem publicação, sem alteração de origem ativa (default permanece `banco-cache`), sem alteração de `planoAplicacao` oficial, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem execução de script de ativação ou de publicação, sem avanço para automação Transferegov, sem remoção das origens `"planilha"` e `"banco-cache"`, nenhum alerta real mascarado.
+
+---
+
+## 36. Ativação controlada executada (23/05/2026, origem `reconstrucao-pad`)
+
+### 36.1. Janela e autorização
+
+- **Autorização escrita:** "AUTORIZAÇÃO EXPRESSA DE ATIVAÇÃO CONTROLADA PAD/PROFOR 2022 (origem reconstrucao-pad)" por Marcelo Cortez (operação solo declarada), com adendo escrito antecipando a janela formal `2026-05-24 20h00–21h00` para execução imediata em `2026-05-23T16:34:44-03:00`.
+- **Commit pré-requisito:** `2889024 feat(profor-2022): implementa origem reconstrucao pad`.
+- **Roteiro de referência:** [backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md](FOMENTO-ONASP/backend/data/relatorios/profor-2022-roteiro-ativacao-controlada.md) v1.1.
+
+### 36.2. Mecanismo §10.1 efetivamente aplicado
+
+A ativação foi feita por edição da linha 6 do arquivo `.env` (gitignored, carregado por `dotenv` em [backend/server.js](FOMENTO-ONASP/backend/server.js#L1)):
+
+- **ANTES:** `PROFOR_2022_ORIGEM_DADOS=banco-cache` (SHA-256 `85356fdb...573e9b`).
+- **DEPOIS:** `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` (SHA-256 `457a0663...ef648`).
+
+Não houve commit no repositório (o `.env` é ignorado pelo `.gitignore` por desenho). A auditoria fica pelos snapshots íntegros em `<RET>/` (com os dois hashes registrados) + entrada do diário.
+
+### 36.3. Backups (`<RET>` fora do repo)
+
+`<RET> = C:\BACKUPS-FOMENTO-ONASP\PAD-PROFOR-2022\2026-05-24T20-00-00-03-00\` — 5 hashes íntegros origem↔backup (SQLite, WAL, SHM, planilha de origem antiga, JSON reconstruído). Hash de referência da fonte material da nova origem: **`profor-2022-pad-plano-reconstruido-dry-run.json` → `ed1639ec...0886`**.
+
+### 36.4. Comportamento confirmado pós-ativação
+
+Em processo Node carregando `dotenv`, `process.env.PROFOR_2022_ORIGEM_DADOS = "reconstrucao-pad"` → `resolverOrigemDadosProfor2022` retorna `{ origemDados: "reconstrucao-pad", fonte: "env", avisos: [] }` → `carregarPlanoAplicacaoReconstrucaoPad({ conveniosEsperados: 15, minimoLinhasExigido: 568 })` carrega exatamente 568 linhas e 15 convênios com os 14 campos canônicos. Auditorias `auditar-pendencias-profundo`, `seguranca-pre-ativacao:final`, `reconstruir-plano:dry-run` e `comparar-plano:dry-run` produziram resultados **idênticos** à pré-checagem da janela (mesmo diff líquido saldo `−R$ 15.043,84`, mesma matriz final).
+
+### 36.5. Estado pós-ativação
+
+- **Origem ativa agora:** `reconstrucao-pad` (via `.env`).
+- **Fallbacks preservados:** `planilha` e `banco-cache` (mesmo array `ORIGENS_DADOS_PROFOR_2022`, mesmo `ORIGEM_PADRAO_PROFOR_2022 = "banco-cache"`).
+- **Sem publicação:** `frontend/data/publicados/` permanece intacto. `backend/data/onasp.sqlite` permanece intacto. Nenhum script de publicação ou Transferegov foi acionado.
+
+### 36.6. Rollback
+
+Caso seja necessário reverter (qualquer gatilho da §13 do roteiro v1.1): restaurar `.env` a partir de `<RET>/.env.pre-ativacao-20260523-163640` (hash `85356fdb...573e9b`), reexecutar bateria dry-run completa e registrar o evento no diário. Decisões, divergências e logs nunca podem ser apagados durante o rollback.
+
+### 36.7. Próxima etapa (NÃO autorizada por esta janela)
+
+Publicação para `frontend/data/publicados/` exigirá **janela própria e autorização própria** (`profor-2022-roteiro-publicacao-controlada.*` ainda a ser elaborado). Automação Transferegov continua **fora de escopo**.
+
+### 36.8. Garantias e escopo preservado
+
+Sem publicação executada, sem alteração em `frontend/data/publicados`, sem alteração em `backend/data/onasp.sqlite`, sem SQL direto, sem nova decisão registrada, sem nova migration, sem versionamento de WAL/SHM, sem execução de script de publicação, sem avanço para automação Transferegov, sem remoção das origens `"planilha"` e `"banco-cache"`, sem alteração no default `ORIGEM_PADRAO_PROFOR_2022`, nenhum alerta real mascarado, nenhum log/divergência/decisão apagados.
