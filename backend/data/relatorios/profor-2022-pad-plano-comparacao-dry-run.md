@@ -1,6 +1,6 @@
 # PROFOR 2022 — Comparação planoAplicacao antigo × reconstruído PAD (dry-run)
 
-Gerado em: 2026-05-23T14:25:09.713Z
+Gerado em: 2026-05-23T14:26:45.539Z
 Modo: dry-run
 Origem antiga: memoria-rateio-persistida (abas-uf capturadas)
 Origem nova: relatorios-pad-rateados
@@ -33,7 +33,7 @@ Origem nova: relatorios-pad-rateados
 - Decisões com efeito na reconstrução: 40
 - Decisões sem efeito na reconstrução: 27
 - Decisões não aplicáveis: 5
-- Bloqueios de segurança pré-ativação: 18
+- Bloqueios de segurança pré-ativação: 10
 
 ## Totais origem antiga × reconstrução PAD
 

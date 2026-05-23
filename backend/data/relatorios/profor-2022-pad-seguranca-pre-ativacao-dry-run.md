@@ -1,12 +1,12 @@
 # PROFOR 2022 — Segurança pré-ativação PAD (dry-run)
 
-Gerado em: 2026-05-23T14:25:08.503Z
+Gerado em: 2026-05-23T14:26:44.384Z
 Modo: dry-run
 
 ## Resumo
 
-- Decisões resolutivas auditadas: 90
-- Payload preservado: 62
+- Decisões resolutivas auditadas: 98
+- Payload preservado: 70
 - Payload alterado após a decisão: 28
 - Decisões sem snapshot de payload: 0
 - Decisões com divergência não encontrada: 0
@@ -14,7 +14,7 @@ Modo: dry-run
 - Divergências reapresentadas: 138
 - Divergências não reapresentadas: 7
 - Divergências com reapresentação indeterminada: 0
-- Bloqueios de ativação: 18
+- Bloqueios de ativação: 10
 - Avisos: 0
 - Geração atual da fila disponível: sim
 - Apto para prosseguir ativação: não
@@ -24,14 +24,6 @@ Modo: dry-run
 - [payload_alterado_apos_decisao] payload_decisao | divergência 72 (item_ausente_no_pad:bdf5314acea3f24d) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
 - [payload_alterado_apos_decisao] payload_decisao | divergência 73 (item_ausente_no_pad:ecb3d1cdb44b3bab) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
 - [payload_alterado_apos_decisao] payload_decisao | divergência 74 (item_ausente_no_pad:66458163e66df12a) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 64 (item_ausente_no_pad:584b9c4c0a6d70d4) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 65 (item_ausente_no_pad:0aa793b7aad7dea9) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 67 (item_ausente_no_pad:263c61398f88427a) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 68 (item_ausente_no_pad:12da4f953a810aba) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 69 (item_ausente_no_pad:8fa2597b2ebf3282) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 70 (item_ausente_no_pad:e726b662149c7057) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 71 (item_ausente_no_pad:53e1018ea3c16260) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
-- [payload_alterado_apos_decisao] payload_decisao | divergência 66 (item_ausente_no_pad:9ef6ef8500d7dd16) | Payload da divergência mudou após a decisão; a decisão precisa ser revalidada.
 - [nao_reapresentada_com_decisao_resolutiva] divergencia_nao_reapresentada | divergência 25 (equivalencia_por_descricao_normalizada:86b5ea3a6ef8831d) | Divergência com decisão resolutiva não aparece na geração atual da fila.
 - [nao_reapresentada_com_decisao_resolutiva] divergencia_nao_reapresentada | divergência 26 (equivalencia_por_descricao_normalizada:f812a27863b7408a) | Divergência com decisão resolutiva não aparece na geração atual da fila.
 - [nao_reapresentada_com_decisao_resolutiva] divergencia_nao_reapresentada | divergência 27 (equivalencia_por_descricao_normalizada:a55de103e70ebde1) | Divergência com decisão resolutiva não aparece na geração atual da fila.
