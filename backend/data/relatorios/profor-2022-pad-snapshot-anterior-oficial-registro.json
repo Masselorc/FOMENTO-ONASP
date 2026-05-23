@@ -1,0 +1,45 @@
+{
+  "geradoEm": "2026-05-23T23:01:47.318Z",
+  "politica": {
+    "versaoPolitica": "1.0",
+    "snapshotAnteriorOficialPromovidoNestaEtapa": true
+  },
+  "snapshotPromovido": {
+    "caminhoOrigemJson": "backend\\data\\relatorios\\profor-2022-pad-fotografia-canonica.json",
+    "caminhoOrigemMd": "backend\\data\\relatorios\\profor-2022-pad-fotografia-canonica.md",
+    "caminhoDestinoJson": "backend\\data\\relatorios\\profor-2022-pad-fotografia-canonica-anterior.json",
+    "caminhoDestinoMd": "backend\\data\\relatorios\\profor-2022-pad-fotografia-canonica-anterior.md",
+    "versaoSnapshot": "0.2",
+    "parserVersao": "profor-pad-fotografia-service@0.2",
+    "origem": "reconstrucao-pad",
+    "geradoEm": "2026-05-23T22:19:12.037Z",
+    "checksum": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+    "totalLinhas": 568,
+    "totalAvisos": 12,
+    "totalErros": 0
+  },
+  "commitReferencia": "6e6cbcf56e2662a9ac4e5cc5d3cc9079fdb1831c",
+  "aprovacaoHumana": {
+    "expressa": true,
+    "textoAutorizacao": "Autorizo a promoção controlada do snapshot PAD atual como snapshot anterior oficial para fins exclusivos de comparação dry-run futura, sem publicação, sem alteração do plano oficial, sem decisão automática, sem alteração de banco e sem acionamento do Transferegov.",
+    "responsavel": "Marcelo Cortez"
+  },
+  "copia": {
+    "jsonCopiado": true,
+    "mdCopiado": true
+  },
+  "garantias": {
+    "publicacaoExecutada": false,
+    "decisaoAutomaticaRegistrada": false,
+    "planoAplicacaoOficialAlterado": false,
+    "frontendDataPublicadosAlterado": false,
+    "bancoAlterado": false,
+    "sqlDireto": false,
+    "novaMigration": false,
+    "envAlterado": false,
+    "transferegovAcionado": false,
+    "snapshotAtualAlterado": false,
+    "snapshotAnteriorOficialSobrescrito": false,
+    "filaOficialAlterada": false
+  }
+}

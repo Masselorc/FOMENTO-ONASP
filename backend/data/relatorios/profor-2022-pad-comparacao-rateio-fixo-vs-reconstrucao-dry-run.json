@@ -1,0 +1,86 @@
+{
+  "geradoEm": "2026-05-23T23:07:36.934Z",
+  "modo": "dry-run",
+  "origem": "comparacao_plano_original_vs_rateio_fixo",
+  "resumoIntegracao": {
+    "totalItensPlanoOriginal": 494,
+    "totalInstrucoesRecebidas": 2,
+    "totalItensComRateioFixoAplicado": 2,
+    "totalItensBloqueados": 0,
+    "totalItensSemInstrucao": 492,
+    "totalBloqueios": 0,
+    "saldoNaoRateadoTotal": 0,
+    "diferencaResidualTotal": 0
+  },
+  "totaisOriginal": {
+    "totalLinhas": 568,
+    "quantidadeTotal": 33943,
+    "valorPrevistoTotal": 10664015.24,
+    "valorExecutadoTotal": 3217739.5,
+    "saldoTotal": 7446275.74
+  },
+  "totaisSimulado": {
+    "totalLinhas": 568,
+    "quantidadeTotal": 33943,
+    "valorPrevistoTotal": 10664015.24,
+    "valorExecutadoTotal": 3217739.5,
+    "saldoTotal": 7446275.74
+  },
+  "diferencasAgregadas": {
+    "deltaQuantidade": 0,
+    "deltaValorPrevisto": 0,
+    "deltaValorExecutado": 0,
+    "deltaSaldo": 0,
+    "deltaLinhas": 0
+  },
+  "grupos": [
+    {
+      "chave": "937871::AR CONDICIONADO",
+      "apto": true,
+      "linhasOriginais": 3,
+      "linhasSimuladas": 3,
+      "deltaLinhas": 0,
+      "quantidadeOriginal": 8,
+      "quantidadeSimulada": 8,
+      "valorPrevistoOriginal": 17565.76,
+      "valorPrevistoSimulado": 17565.76,
+      "saldoNaoRateado": 0,
+      "diferencaResidual": 0,
+      "bloqueios": 0
+    },
+    {
+      "chave": "937871::GRAVADOR DE VOZ",
+      "apto": true,
+      "linhasOriginais": 2,
+      "linhasSimuladas": 2,
+      "deltaLinhas": 0,
+      "quantidadeOriginal": 16,
+      "quantidadeSimulada": 16,
+      "valorPrevistoOriginal": 6248.48,
+      "valorPrevistoSimulado": 6248.48,
+      "saldoNaoRateado": 0,
+      "diferencaResidual": 0,
+      "bloqueios": 0
+    }
+  ],
+  "bloqueios": [],
+  "garantias": {
+    "reconstrutorOficialAlterado": false,
+    "planoAplicacaoOficialAlterado": false,
+    "bancoAlterado": false,
+    "publicacaoExecutada": false,
+    "decisaoRegistrada": false,
+    "sqlDireto": false,
+    "novaMigration": false,
+    "envAlterado": false,
+    "transferegovAcionado": false,
+    "frontendDataPublicadosAlterado": false,
+    "filaOficialAlterada": false
+  },
+  "fonteInstrucoes": "amostra_controlada_gerada_pelo_script",
+  "notasAmostra": [
+    "amostra_controlada_gerada_a_partir_do_plano_reconstruido",
+    "nenhuma_instrucao_real_em_disco",
+    "total_amostras=2"
+  ]
+}

@@ -1,19 +1,4550 @@
 {
-  "geradoEm": "2026-05-23T22:34:07.181Z",
+  "geradoEm": "2026-05-23T23:02:15.142Z",
   "modo": "dry-run",
   "origem": "comparador_snapshots_pad",
-  "status": "comparacao_indisponivel",
-  "motivo": "Comparacao de snapshots nao existe; snapshot anterior oficial ainda nao foi promovido.",
-  "snapshotAnteriorOficialPromovido": false,
+  "status": "fila_gerada",
+  "snapshotAnteriorOficialPromovido": true,
+  "checksumsValidos": true,
   "resumo": {
-    "totalCandidatos": 0,
-    "totalAptosDecisaoHumana": 0,
-    "totalBloqueiosTecnicos": 0,
-    "porTipo": {},
-    "porCategoriaOperacional": {},
-    "porSeveridade": {}
+    "totalCandidatos": 107,
+    "totalAptosDecisaoHumana": 26,
+    "totalBloqueiosTecnicos": 81,
+    "porTipo": {
+      "item_novo": 13,
+      "item_removido": 13,
+      "colisao_chave": 38,
+      "chave_ambigua": 43
+    },
+    "porCategoriaOperacional": {
+      "pendencia_operacional_real": 26,
+      "bloqueio_tecnico_seguranca": 81
+    },
+    "porSeveridade": {
+      "alta": 107
+    }
   },
-  "candidatos": [],
+  "candidatos": [
+    {
+      "idCandidato": "snap-607d9d015104",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "hashAnterior": null,
+      "hashNovo": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.138Z"
+    },
+    {
+      "idCandidato": "snap-ed5db06e2b95",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "hashAnterior": null,
+      "hashNovo": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-fbc43f94b4c1",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "hashAnterior": null,
+      "hashNovo": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-009018455e0f",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "hashAnterior": null,
+      "hashNovo": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-ca2b048b74b7",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-a321182b53d5",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-920b76e1c4c8",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "hashAnterior": null,
+      "hashNovo": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-29ea92f99ead",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "hashAnterior": null,
+      "hashNovo": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-77f596ffc9cf",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "hashAnterior": null,
+      "hashNovo": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-c7a331592fe1",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-a97147626566",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-a0e3c4a0aa6c",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PR",
+      "numero": "937871",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "Veículo tipo SUV",
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "hashAnterior": null,
+      "hashNovo": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-10c4f4ea7823",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_novo",
+      "tiposDivergencia": [
+        "item_novo"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PR",
+      "numero": "937871",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": null,
+      "descricaoNova": "Veículo tipo SUV",
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "hashAnterior": null,
+      "hashNovo": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_inclusao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": true,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_novo classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-ed1f5b1610f7",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "hashAnterior": null,
+      "hashNovo": "2cab0d7c813fcb4ac336607d9b53acdd125e4ad94a73345140da0e120beb0c59",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.139Z"
+    },
+    {
+      "idCandidato": "snap-315227965a4a",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 2 - CORREGEDORIA - Cadeira giratór",
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "hashAnterior": null,
+      "hashNovo": "48714d2406a7717a4856a90de5df81192fcc3ee0b9b0fb74ba5b9e7c0f2f43c8",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-38a2c698cdfc",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "hashAnterior": null,
+      "hashNovo": "5e7b1dd3e0ea59b9b816137fc70751d6cf63077cb747670fd7437624537295e6",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-a119e7affdd0",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "hashAnterior": null,
+      "hashNovo": "a43671bf31cc8c35e1ea5aea0bd9eaeffa50f66fd94f1c7d49bd1abbf0dfb653",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-f5e630364280",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "750b6d5d341b4069ff0cfde814cf3146877bfa84f0d391392c772635dbd82ea2",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-b5cdbfb3b472",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "ca3c653950e31688ba788c7c0a6551b6bb1eebc19c46040339f494311239b7db",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-ea15159b0844",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "hashAnterior": null,
+      "hashNovo": "3fc97295ed9dab33599e71daedb594cd9a43cfbe769852a60a72d937b3e7640f",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-8cfed59f9bc8",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "hashAnterior": null,
+      "hashNovo": "8740d03465379a7b86adcb11b4eb5587a308016765929f88f568770ceb76b005",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-a1550bdd33ed",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "CONDICIONADOR de ar tipo split Hi Wall,",
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "hashAnterior": null,
+      "hashNovo": "ee18ffa3503e305963d3df340563921d8a85e2ea9dc2f0cfac7e3bcb47acbf5e",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-7cc7d8ff76cd",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "1d096aeec5dda423374ddb2777bbc59375f48a0082ce05ec78356ceca98c4c99",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-85a1e80c5cfc",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PB",
+      "numero": "937818",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "NOTEBOOK TIPO II Processador: AMD Ryzen",
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "hashAnterior": null,
+      "hashNovo": "69d64e334f0921ff7cb273e6ccab4c3ca82de3118ec1e226e3b64f881bf8f020",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-9bb779beb474",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PR",
+      "numero": "937871",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Veículo tipo SUV",
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "hashAnterior": null,
+      "hashNovo": "9f3e9167d9f88e0025efa405a923669b6586666666adb21fefb8149087aaf7c7",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-3368bbc757de",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "item_removido",
+      "tiposDivergencia": [
+        "item_removido"
+      ],
+      "categoriaOperacional": "pendencia_operacional_real",
+      "severidade": "alta",
+      "uf": "PR",
+      "numero": "937871",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Veículo tipo SUV",
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "hashAnterior": null,
+      "hashNovo": "c32a2147900fadedffd0b32a690a8801451adaf38db90630a7da8179445e707c",
+      "valores": {},
+      "bloqueiosTecnicos": [],
+      "acaoSugerida": "avaliar_remocao_do_item",
+      "aptaParaDecisaoHumana": true,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Divergencia item_removido classificada a partir do comparador de snapshots.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-efbd574a48b6",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-8d0ff43d63eb",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-e1fd9eda0b9c",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-ff931658d6ea",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "totalItens": 3,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-98242f1a124c",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-e13ba8d92460",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em anterior.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-84d8ddb381ed",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-3a16da195900",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-3496287d21c2",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-9ee7360bb8fc",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+          "totalItens": 3,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-e5ab351886ac",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-0f67bf326053",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em anterior.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+          "totalItens": 2,
+          "snapshot": "anterior"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-61fca914147d",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-1ee432039429",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-b51fd4db5714",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-803338eef66c",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-082d08f0a312",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.140Z"
+    },
+    {
+      "idCandidato": "snap-85c6e235e6f6",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-2e1c3dc6c734",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-0647a3c45e87",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-1b62d0010971",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-a912d9bb2f24",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-9bf730bc6432",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-d3a581cd6ddd",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-5eb82c762fad",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-96eee12c0897",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-e8d5c907bbcb",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-a1e85b989d71",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-c7d97fa03c18",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-2025cba2049b",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-e414329495a7",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-e1349fa4820b",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-e712d4b8f853",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-972d2e74d1c2",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-bf139ffe2a99",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-b791e07745fe",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-36ab8b08d8a8",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-02e3fdaaee41",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em anterior.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "anterior",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em anterior.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-905386bfa6d3",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-4bd28d8f24f4",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-890d02b902af",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-ab0e865b55c5",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "totalItens": 3,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-fdc5cd89c4bc",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-f1c9d18decd1",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Colisão de chave material em novo.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Colisão de chave material em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-e7c0e07676ac",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-6d7c80f3ef51",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-bc0ff53cf371",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-f9e721b2f36a",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+          "totalItens": 3,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-a3bb54c15321",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-3aad2fa53642",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Chave de comparação ambígua em novo.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+          "totalItens": 2,
+          "snapshot": "novo"
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Chave de comparação ambígua em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-d5db9bcc2dc2",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-2ce47ce7af12",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-5ea0eca427f8",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-4fdbf295606b",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CADEIRA CORREGEDORIA ETAPA GIRATOR",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-844b4fcff4e3",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-a8de31ff2bf6",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-4004c32820fd",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-6113279b4482",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL|ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937468|TO|CAPITAL|ESCOLA PENAL|- 3 ALUMINIO BEBEDOURO DE ESCOLA ETAPA",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-f48ccd870684",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-4b679d031473",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-c4e7a7ae70dd",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-ada11c7d2850",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|CORREGEDORIA|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-f158d461734f",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-62c3d3a8adca",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-93a7069c626b",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-47b5c3e63673",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-95ef8009ee94",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-3630620c1655",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AR CONDICIONADOR DE HI SPLIT TIPO WALL",
+            "totalItens": 3,
+            "hashesDistintos": 3
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-614ef7d4dc59",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-f896c5f6a8c6",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-c1067792afa4",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-b0692b8aea40",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937818|PB|CAPITAL|ESCOLA PENAL|AMD II NOTEBOOK PROCESSADOR RYZEN TIPO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-b40dac00c900",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-d561b6eb855c",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-c70056478813",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "colisao_chave",
+      "tiposDivergencia": [
+        "colisao_chave"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "colisao_chave",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "colisao_chave",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_colisao_de_chave",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-cb0939ceb473",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Aviso técnico em novo.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV",
+          "snapshot": "novo",
+          "aviso": {
+            "tipo": "chave_ambigua",
+            "chave": "937871|PR|CAPITAL|OUVIDORIA|SUV TIPO VEICULO",
+            "totalItens": 2,
+            "hashesDistintos": 2
+          }
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Aviso técnico em novo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-27c6c4b2eefb",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Pareamento por contexto ambíguo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|CORREGEDORIA",
+          "totalAnterior": 2,
+          "totalNovo": 2
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Pareamento por contexto ambíguo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-b15d4e451e4f",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937468|TO|CAPITAL|ESCOLA PENAL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Pareamento por contexto ambíguo.",
+          "severidade": "alta",
+          "chave": "937468|TO|CAPITAL|ESCOLA PENAL",
+          "totalAnterior": 2,
+          "totalNovo": 2
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Pareamento por contexto ambíguo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.141Z"
+    },
+    {
+      "idCandidato": "snap-471e1f2a4c80",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|CORREGEDORIA",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Pareamento por contexto ambíguo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|CORREGEDORIA",
+          "totalAnterior": 2,
+          "totalNovo": 2
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Pareamento por contexto ambíguo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.142Z"
+    },
+    {
+      "idCandidato": "snap-c9446010ef9d",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937818|PB|CAPITAL|ESCOLA PENAL",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Pareamento por contexto ambíguo.",
+          "severidade": "alta",
+          "chave": "937818|PB|CAPITAL|ESCOLA PENAL",
+          "totalAnterior": 5,
+          "totalNovo": 5
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Pareamento por contexto ambíguo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.142Z"
+    },
+    {
+      "idCandidato": "snap-c081e8f1244e",
+      "origem": "comparador_snapshots_pad",
+      "tipoDivergencia": "chave_ambigua",
+      "tiposDivergencia": [
+        "chave_ambigua"
+      ],
+      "categoriaOperacional": "bloqueio_tecnico_seguranca",
+      "severidade": "alta",
+      "uf": null,
+      "numero": null,
+      "area": null,
+      "natureza": null,
+      "descricaoAnterior": null,
+      "descricaoNova": null,
+      "chaveMaterial": "937871|PR|CAPITAL|OUVIDORIA",
+      "chaveComparacao": null,
+      "hashAnterior": null,
+      "hashNovo": null,
+      "valores": {},
+      "bloqueiosTecnicos": [
+        {
+          "tipo": "chave_ambigua",
+          "mensagem": "Pareamento por contexto ambíguo.",
+          "severidade": "alta",
+          "chave": "937871|PR|CAPITAL|OUVIDORIA",
+          "totalAnterior": 2,
+          "totalNovo": 2
+        }
+      ],
+      "acaoSugerida": "resolver_chave_ambigua",
+      "aptaParaDecisaoHumana": false,
+      "requerRateio": false,
+      "requerRevisaoTecnica": true,
+      "motivo": "Pareamento por contexto ambíguo.",
+      "snapshotReferencia": {
+        "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+        "versaoComparador": "0.2"
+      },
+      "criadoEm": "2026-05-23T23:02:15.142Z"
+    }
+  ],
   "garantias": {
     "decisaoRegistrada": false,
     "bancoAlterado": false,

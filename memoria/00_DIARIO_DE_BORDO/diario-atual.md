@@ -1,5 +1,51 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: promoção controlada do snapshot anterior oficial + integração dry-run do rateio fixo à reconstrução
+
+- **Aprovação humana expressa registrada:**
+  > "Autorizo a promoção controlada do snapshot PAD atual como snapshot anterior oficial para fins exclusivos de comparação dry-run futura, sem publicação, sem alteração do plano oficial, sem decisão automática, sem alteração de banco e sem acionamento do Transferegov."
+  Responsável: Marcelo Cortez (operação solo declarada, padrão já estabelecido em commits anteriores da frente).
+- **Snapshot promovido:**
+  - Origem: `backend/data/relatorios/profor-2022-pad-fotografia-canonica.json`
+  - Destino: `backend/data/relatorios/profor-2022-pad-fotografia-canonica-anterior.json`
+  - **Checksum SHA-256:** `799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678`
+  - **Commit de referência:** `6e6cbcf56e2662a9ac4e5cc5d3cc9079fdb1831c`
+  - 568 linhas, 12 avisos (não-classificados), 0 erros críticos.
+  - Cópia atômica (`.tmp` + `rename`), snapshot atual permaneceu intacto, sobrescrita silenciosa do anterior bloqueada por política.
+  - Registro: `profor-2022-pad-snapshot-anterior-oficial-registro.{json,md}`.
+- **Comparador pós-promoção (`comparar-snapshots:dry-run`):**
+  - 568 vs 568 linhas; 555 iguais; 13 "novos" e 13 "removidos" reflexos de pares com chave colidente preexistente; 0 alterados.
+  - **Diferenças financeiras líquidas: R$ 0,00 (previsto, executado, saldo)** — confirma identidade material da cópia.
+  - 81 bloqueios técnicos (38 colisões de chave + 43 chaves ambíguas) herdados do estado atual; não-impeditivos.
+- **Fila dry-run pós-promoção (`snapshots:gerar-fila-revisao:dry-run`):**
+  - Status: `fila_gerada`; 107 candidatos; 81 bloqueios técnicos.
+  - **Fila oficial real não foi tocada.**
+- **Reconstrução dry-run com rateio fixo (`profor:pad:reconstruir-plano-com-rateio-fixo:dry-run`):**
+  - Plano original: 494 itens distintos / 568 linhas preservadas intactas.
+  - Instruções: 2 (amostra controlada gerada pelo script; não há arquivo real de instruções em disco).
+  - Itens com rateio fixo aplicado: 2; bloqueados: 0; sem instrução (preservados): 492.
+  - Saldo não rateado: 0; diferença residual: 0; Δ linhas/previsto/saldo = 0 para amostra-espelho.
+  - Plano simulado gerado em separado (não substitui o plano original); executado distribuído proporcionalmente ao valor previsto rateado para preservar totais.
+- **Garantias atestadas (todas as `false`):** `publicacaoExecutada`, `decisaoAutomaticaRegistrada`, `planoAplicacaoOficialAlterado`, `frontendDataPublicadosAlterado`, `bancoAlterado`, `sqlDireto`, `novaMigration`, `envAlterado`, `transferegovAcionado`, `snapshotAtualAlterado`, `snapshotAnteriorOficialSobrescrito`, `filaOficialAlterada`, `reconstrutorOficialAlterado`.
+- **Arquivos criados:**
+  - `backend/scripts/promover-snapshot-anterior-oficial-pad-profor-2022.js` (+ entry `profor:pad:snapshot-anterior:promover`)
+  - `backend/services/profor-2022/profor-pad-reconstrucao-rateio-fixo-integracao-service.js`
+  - `backend/scripts/reconstruir-plano-com-rateio-fixo-pad-profor-2022.js` (+ entry `profor:pad:reconstruir-plano-com-rateio-fixo:dry-run`)
+  - `tests/services/profor-pad-promocao-snapshot-anterior-real.test.js` (10 testes)
+  - `tests/services/profor-pad-reconstrucao-rateio-fixo-integracao.test.js` (13 testes)
+  - `backend/data/relatorios/profor-2022-pad-fotografia-canonica-anterior.{json,md}` (cópia controlada)
+  - `backend/data/relatorios/profor-2022-pad-snapshot-anterior-oficial-registro.{json,md}`
+  - `backend/data/relatorios/profor-2022-pad-plano-reconstruido-com-rateio-fixo-dry-run.{json,md}`
+  - `backend/data/relatorios/profor-2022-pad-comparacao-rateio-fixo-vs-reconstrucao-dry-run.{json,md}`
+  - `backend/data/relatorios/profor-2022-pad-promocao-snapshot-e-reconstrucao-rateio-fixo-execucao.md`
+- **Validações:**
+  - `validar:syntax` → 100 arquivos OK.
+  - `validar:services` → **219/219** passando (23 testes novos).
+  - `git diff --check` → limpo (apenas avisos LF/CRLF).
+  - Bateria dry-run completa rodada sem regressão.
+- **Rollback documentado:** apagar snapshot anterior + registros + `git revert` dos commits desta execução; reexecutar bateria dry-run; **não apagar decisões, logs ou divergências**.
+- **Preservações:** `frontend/data/publicados/` intacto; SQLite/WAL/SHM intactos e não versionados; `.env` inalterado; snapshot atual intacto; reconstrutor oficial inalterado; decisões/divergências/logs preservados.
+
 ## 23/05/2026 — PROFOR 2022: simulações preparatórias de promoção, fila oficial e rateio na reconstrução
 
 - **Objetivo:** preparar a promoção controlada do snapshot anterior oficial, a integração dos candidatos de snapshots à fila oficial de revisão PAD e a integração do rateio por quantidade fixa à reconstrução dry-run.
