@@ -1,0 +1,55 @@
+{
+  "versaoPolitica": "1.0",
+  "geradoEm": "2026-05-23",
+  "snapshotAnteriorOficialPromovidoNestaEtapa": false,
+  "status": "snapshot_anterior_oficial_pendente",
+  "conceitos": [
+    "snapshot_atual",
+    "snapshot_candidato",
+    "snapshot_anterior_oficial",
+    "snapshot_temporario",
+    "snapshot_homologado",
+    "snapshot_rejeitado"
+  ],
+  "requisitosPromocao": [
+    "versaoSnapshot",
+    "checksum",
+    "parserVersao",
+    "origem",
+    "geradoEm",
+    "resumo.totalLinhas",
+    "planoAplicacao_nao_vazio",
+    "checksum_validavel",
+    "origem_rastreavel",
+    "commit_referencia",
+    "relatorio_markdown_correspondente",
+    "validacoes_registradas",
+    "ausencia_erros_criticos_nao_tratados",
+    "avisos_classificados",
+    "aprovacao_humana_expressa"
+  ],
+  "proibicoes": [
+    "nao_promover_snapshot_temporario",
+    "nao_promover_checksum_invalido",
+    "nao_promover_sem_origem",
+    "nao_promover_sem_commit_referencia",
+    "nao_sobrescrever_snapshot_anterior_oficial_silenciosamente",
+    "nao_usar_snapshot_anterior_oficial_para_publicar_dados_automaticamente",
+    "nao_tratar_snapshot_anterior_oficial_como_decisao_humana",
+    "nao_tratar_snapshot_anterior_oficial_como_planoAplicacao_oficial"
+  ],
+  "arquivos": {
+    "snapshotAtual": [
+      "backend/data/relatorios/profor-2022-pad-fotografia-canonica.json",
+      "backend/data/relatorios/profor-2022-pad-fotografia-canonica.md"
+    ],
+    "snapshotAnteriorOficial": [
+      "backend/data/relatorios/profor-2022-pad-fotografia-canonica-anterior.json",
+      "backend/data/relatorios/profor-2022-pad-fotografia-canonica-anterior.md"
+    ],
+    "registroPromocao": [
+      "backend/data/relatorios/profor-2022-pad-snapshot-anterior-oficial-registro.md",
+      "backend/data/relatorios/profor-2022-pad-snapshot-anterior-oficial-registro.json"
+    ]
+  }
+}
