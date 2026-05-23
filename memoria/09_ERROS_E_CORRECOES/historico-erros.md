@@ -63,6 +63,34 @@ Critério operacional: se não houver evidência concreta, registrar como risco,
 
 ## Erros reais já encontrados
 
+## ER-00X - Classificador final mantinha histórico não reapresentado como bloqueio técnico ativo
+
+**Classificação:** erro real | correção aplicada | prevenção
+
+**Contexto:** Segurança pré-ativação final PAD/PROFOR 2022 após harmonização dos payloads revalidados.
+
+**Problema:** IDs `#25`, `#26`, `#27`, `#28`, `#75`, `#77`, `#78` permaneciam em `bloqueio_tecnico_residual` com `pendencia_operacional_real=0`, embora apresentassem decisão resolutiva vigente, payload preservado e snapshot/log íntegros.
+
+**Evidência:** `backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.json` (antes do ajuste) mostrava `tipoBloqueio=nao_reapresentada_com_decisao_resolutiva` para os 7 IDs em `bloqueiosAtivos`.
+
+**Causa provável:** regra do script final `auditar-seguranca-pre-ativacao-final-pad-profor-2022.js` classificava automaticamente não reapresentação com decisão resolutiva como bloqueio residual, sem separar histórico revalidado sem efeito material.
+
+**Correção aplicada:** inclusão da classificação `historico_nao_reapresentado_revalidado_sem_bloqueio` com critérios explícitos (decisão resolutiva vigente, payload/snapshot/log preservados, ausência de `diferencasCriticas` vinculadas e ausência de impedimento material de reconstrução vinculado).
+
+**Por que funcionou:** separou o bloqueio material de não conformidade técnica histórica, preservando rastreabilidade sem mascarar risco real.
+
+**Como prevenir:** manter no classificador final o critério de materialidade vinculado ao comparador (`diferencasCriticas` e `impedimentosReconstrucao`), evitando usar impedimentos técnicos sem efeito como bloqueio ativo.
+
+**Boa prática reutilizável:** em auditorias pré-ativação, classificar histórico não reapresentado com decisão vigente preservada em trilha própria não bloqueante, quando não houver impacto material.
+
+**Aplicável a futuras aplicações:** com adaptação.
+
+**Arquivos relacionados:** `backend/scripts/auditar-seguranca-pre-ativacao-final-pad-profor-2022.js`, `backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.json`, `backend/data/relatorios/profor-2022-seguranca-pre-ativacao-final-dry-run.md`.
+
+**Validações recomendadas:** `npm run profor:pad:auditar-pendencias-profundo`, `npm run profor:pad:seguranca-pre-ativacao:final`, `npm run profor:pad:reconstruir-plano:dry-run`, `npm run profor:pad:comparar-plano:dry-run`, `npm run validar:syntax`, `npm run validar:services`, `git diff --check`.
+
+**Rollback:** reverter commit da correção e regenerar relatórios dry-run.
+
 ### ER-001 — Churn de `publicadoEm` em JSONs publicados sem ganho funcional
 
 **Classificação:** erro real

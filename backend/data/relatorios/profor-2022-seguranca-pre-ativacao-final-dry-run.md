@@ -1,39 +1,31 @@
 # PROFOR 2022 - Segurança pré-ativação final (dry-run)
 
-Gerado em: 2026-05-23T14:41:22.309Z
+Gerado em: 2026-05-23T14:56:30.107Z
 
 Auditoria somente leitura: não registra decisão, não publica, não altera origem ativa, não altera `frontend/data/publicados` e não altera o `planoAplicacao` oficial.
 
 ## 1. Resumo executivo
 
 - Pendência operacional real: 0
-- Bloqueios técnicos de segurança pré-ativação (ativos): 7
+- Bloqueios técnicos de segurança pré-ativação (ativos): 0
 - Divergências únicas na matriz final: 35
 - Decisões vigentes revalidadas com sucesso (não bloqueantes): 27
 - Decisões vigentes com payload alterado (bloqueantes): 0
-- Decisões resolutivas com pendência técnica ativa: 7
+- Decisões resolutivas com pendência técnica ativa: 0
 - Decisões resolutivas com pendência técnica retificada (não bloqueante): 1
-- Apto para ativação controlada: não
+- Apto para ativação controlada: sim
 
 ## 2. Contagem por classificação final
 
 | Classificação | Qtd |
 |---|---:|
 | `bloqueio_tecnico_residual_retificado` | 1 |
-| `bloqueio_tecnico_residual` | 7 |
+| `historico_nao_reapresentado_revalidado_sem_bloqueio` | 7 |
 | `decisao_historica_nao_vigente_com_payload_alterado` | 27 |
 
 ## 3. Bloqueios ativos vigentes
 
-| ID | Convênio/UF | Tipo | Status | Decisão | Payload preservado | Snapshot | Tipo bloqueio | Classificação final | Impacto material | Prioridade | Ação |
-|---:|---|---|---|---|---|---|---|---|---|---|---|
-| #25 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #104 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
-| #26 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #105 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
-| #27 | 937782/AC | `equivalencia_por_descricao_normalizada` | ACEITO | ACEITO #106 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
-| #28 | 937216/GO | `item_nao_apto` | ACEITO | ACEITO #60 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
-| #75 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #117 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
-| #77 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #118 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
-| #78 | 937782/AC | `item_ausente_no_pad` | CORRIGIDO | CORRIGIDO #119 | sim | sim | `nao_reapresentada_com_decisao_resolutiva` | `bloqueio_tecnico_residual` | historico_nao_reapresentado_sem_pendencia_operacional | media | revalidacao_tecnica_sem_decisao |
+- Nenhum item.
 
 ## 4. Histórico de decisões vigentes revalidadas (não bloqueantes)
 
@@ -75,7 +67,7 @@ Auditoria somente leitura: não registra decisão, não publica, não altera ori
 
 ## 6. Conclusão
 
-Não apto para ativação controlada nesta etapa: a pendência operacional real está zerada, mas permanecem bloqueios técnicos de segurança pré-ativação que exigem revalidação humana ou tratamento técnico posterior. Nenhuma publicação deve ser executada.
+Apto para ativacao controlada do ponto de vista da seguranca pre-ativacao (dry-run): sem pendencia operacional real e sem bloqueios tecnicos ativos. Isso nao autoriza ativacao nem publicacao nesta etapa.
 
 ## 7. Garantias
 

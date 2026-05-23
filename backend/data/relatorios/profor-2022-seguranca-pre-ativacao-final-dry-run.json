@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T14:41:22.309Z",
+  "geradoEm": "2026-05-23T14:56:30.107Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
@@ -59,17 +59,17 @@
     "totalBloqueiosSeguranca": 7,
     "totalBloqueiosDetalhados": 35,
     "totalDivergenciasUnicasMatriz": 35,
-    "totalBloqueiosAtivos": 7,
+    "totalBloqueiosAtivos": 0,
     "totalPayloadsRevalidados": 27,
     "totalPayloadsAlteradosAtivos": 0,
-    "totalPendenciasTecnicasAtivas": 7,
+    "totalPendenciasTecnicasAtivas": 0,
     "totalPendenciasTecnicasRetificadas": 1,
     "totalDecisoesPayloadAlterado": 28,
     "totalDivergenciasPayloadAlterado": 27,
     "totalDecisoesResolutivasComPendenciaTecnica": 8,
     "totalPorClassificacaoFinal": {
       "bloqueio_tecnico_residual_retificado": 1,
-      "bloqueio_tecnico_residual": 7,
+      "historico_nao_reapresentado_revalidado_sem_bloqueio": 7,
       "decisao_historica_nao_vigente_com_payload_alterado": 27
     },
     "totalPorTipoBloqueio": {
@@ -78,221 +78,11 @@
       "payload_alterado_apos_decisao": 27
     },
     "divergencia44ClassificacaoOperacional": "historico_saneado",
-    "aptoParaAtivacaoControlada": false,
+    "aptoParaAtivacaoControlada": true,
     "reconstrucaoApta": false,
     "comparacaoApta": false
   },
-  "bloqueiosAtivos": [
-    {
-      "id": 25,
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "tipoAlerta": "equivalencia_por_descricao_normalizada",
-      "statusAtual": "ACEITO",
-      "decisaoVigente": "ACEITO",
-      "decisaoId": 104,
-      "payloadPreservado": true,
-      "snapshotPresente": true,
-      "hashAnterior": "2049e7d14a9b1a6c32b189ed84ff130e4841cc0e4c9d9c66f26c893b5299790f",
-      "hashAtual": "2049e7d14a9b1a6c32b189ed84ff130e4841cc0e4c9d9c66f26c893b5299790f",
-      "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
-      "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacoesOperacionais": [
-        "ja_saneado_mas_ainda_pendente",
-        "historico_nao_reapresentado",
-        "diacritico_ou_acentuacao",
-        "possivel_falso_positivo"
-      ],
-      "regressao": "saneamento_confirmado",
-      "logDecisaoRegistradaPresente": true,
-      "saldoResidualTecnico": false,
-      "naoReapresentada": true,
-      "saldoResidualRetificado": false
-    },
-    {
-      "id": 26,
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "tipoAlerta": "equivalencia_por_descricao_normalizada",
-      "statusAtual": "ACEITO",
-      "decisaoVigente": "ACEITO",
-      "decisaoId": 105,
-      "payloadPreservado": true,
-      "snapshotPresente": true,
-      "hashAnterior": "439e3da160de6770d9130c1e880c67d8ee5251e0379970598c38e2ce97eb7b5e",
-      "hashAtual": "439e3da160de6770d9130c1e880c67d8ee5251e0379970598c38e2ce97eb7b5e",
-      "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
-      "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacoesOperacionais": [
-        "ja_saneado_mas_ainda_pendente",
-        "historico_nao_reapresentado",
-        "diacritico_ou_acentuacao",
-        "possivel_falso_positivo"
-      ],
-      "regressao": "saneamento_confirmado",
-      "logDecisaoRegistradaPresente": true,
-      "saldoResidualTecnico": false,
-      "naoReapresentada": true,
-      "saldoResidualRetificado": false
-    },
-    {
-      "id": 27,
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "tipoAlerta": "equivalencia_por_descricao_normalizada",
-      "statusAtual": "ACEITO",
-      "decisaoVigente": "ACEITO",
-      "decisaoId": 106,
-      "payloadPreservado": true,
-      "snapshotPresente": true,
-      "hashAnterior": "5717ad7b21a3e97351e4b75991b9943338dca30884b04858b7e83c2dc7816ff4",
-      "hashAtual": "5717ad7b21a3e97351e4b75991b9943338dca30884b04858b7e83c2dc7816ff4",
-      "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
-      "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacoesOperacionais": [
-        "ja_saneado_mas_ainda_pendente",
-        "historico_nao_reapresentado",
-        "diacritico_ou_acentuacao",
-        "possivel_falso_positivo"
-      ],
-      "regressao": "saneamento_confirmado",
-      "logDecisaoRegistradaPresente": true,
-      "saldoResidualTecnico": false,
-      "naoReapresentada": true,
-      "saldoResidualRetificado": false
-    },
-    {
-      "id": 28,
-      "numeroConvenio": "937216",
-      "uf": "GO",
-      "tipoAlerta": "item_nao_apto",
-      "statusAtual": "ACEITO",
-      "decisaoVigente": "ACEITO",
-      "decisaoId": 60,
-      "payloadPreservado": true,
-      "snapshotPresente": true,
-      "hashAnterior": "64e6e242cc8f1bdc0761b5eaff3fe502ad4b3981c0f457ca7fb536b940502bd0",
-      "hashAtual": "64e6e242cc8f1bdc0761b5eaff3fe502ad4b3981c0f457ca7fb536b940502bd0",
-      "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
-      "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacoesOperacionais": [
-        "ja_saneado_mas_ainda_pendente",
-        "historico_nao_reapresentado"
-      ],
-      "regressao": "saneamento_confirmado",
-      "logDecisaoRegistradaPresente": true,
-      "saldoResidualTecnico": false,
-      "naoReapresentada": true,
-      "saldoResidualRetificado": false
-    },
-    {
-      "id": 75,
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "tipoAlerta": "item_ausente_no_pad",
-      "statusAtual": "CORRIGIDO",
-      "decisaoVigente": "CORRIGIDO",
-      "decisaoId": 117,
-      "payloadPreservado": true,
-      "snapshotPresente": true,
-      "hashAnterior": "0f40de6857afe191effca2a70c4b2024173fe2feef512cf9070a8304cb8b5d5b",
-      "hashAtual": "0f40de6857afe191effca2a70c4b2024173fe2feef512cf9070a8304cb8b5d5b",
-      "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
-      "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacoesOperacionais": [
-        "ja_saneado_mas_ainda_pendente",
-        "historico_nao_reapresentado"
-      ],
-      "regressao": "saneamento_confirmado",
-      "logDecisaoRegistradaPresente": true,
-      "saldoResidualTecnico": false,
-      "naoReapresentada": true,
-      "saldoResidualRetificado": false
-    },
-    {
-      "id": 77,
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "tipoAlerta": "item_ausente_no_pad",
-      "statusAtual": "CORRIGIDO",
-      "decisaoVigente": "CORRIGIDO",
-      "decisaoId": 118,
-      "payloadPreservado": true,
-      "snapshotPresente": true,
-      "hashAnterior": "3dace5b838b7ccc20d5bd84dfcbb7ddd06ebbf5d3c193a79d342419ea8d59f7d",
-      "hashAtual": "3dace5b838b7ccc20d5bd84dfcbb7ddd06ebbf5d3c193a79d342419ea8d59f7d",
-      "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
-      "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacoesOperacionais": [
-        "ja_saneado_mas_ainda_pendente",
-        "historico_nao_reapresentado"
-      ],
-      "regressao": "saneamento_confirmado",
-      "logDecisaoRegistradaPresente": true,
-      "saldoResidualTecnico": false,
-      "naoReapresentada": true,
-      "saldoResidualRetificado": false
-    },
-    {
-      "id": 78,
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "tipoAlerta": "item_ausente_no_pad",
-      "statusAtual": "CORRIGIDO",
-      "decisaoVigente": "CORRIGIDO",
-      "decisaoId": 119,
-      "payloadPreservado": true,
-      "snapshotPresente": true,
-      "hashAnterior": "c6e702686dc08d4c6539452c49de9ef93cf2d07c8f17b93a268467852e99458e",
-      "hashAtual": "c6e702686dc08d4c6539452c49de9ef93cf2d07c8f17b93a268467852e99458e",
-      "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
-      "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
-      "classificacoesOperacionais": [
-        "ja_saneado_mas_ainda_pendente",
-        "historico_nao_reapresentado"
-      ],
-      "regressao": "saneamento_confirmado",
-      "logDecisaoRegistradaPresente": true,
-      "saldoResidualTecnico": false,
-      "naoReapresentada": true,
-      "saldoResidualRetificado": false
-    }
-  ],
+  "bloqueiosAtivos": [],
   "payloadsRevalidados": [
     {
       "id": 47,
@@ -1331,7 +1121,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": true,
       "naoReapresentada": false,
-      "saldoResidualRetificado": true
+      "saldoResidualRetificado": true,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     }
   ],
   "payloadAlteradoAposDecisao": [
@@ -2371,7 +2163,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": true,
       "naoReapresentada": false,
-      "saldoResidualRetificado": true
+      "saldoResidualRetificado": true,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 25,
@@ -2386,11 +2180,11 @@
       "hashAnterior": "2049e7d14a9b1a6c32b189ed84ff130e4841cc0e4c9d9c66f26c893b5299790f",
       "hashAtual": "2049e7d14a9b1a6c32b189ed84ff130e4841cc0e4c9d9c66f26c893b5299790f",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2402,7 +2196,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 26,
@@ -2417,11 +2213,11 @@
       "hashAnterior": "439e3da160de6770d9130c1e880c67d8ee5251e0379970598c38e2ce97eb7b5e",
       "hashAtual": "439e3da160de6770d9130c1e880c67d8ee5251e0379970598c38e2ce97eb7b5e",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2433,7 +2229,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 27,
@@ -2448,11 +2246,11 @@
       "hashAnterior": "5717ad7b21a3e97351e4b75991b9943338dca30884b04858b7e83c2dc7816ff4",
       "hashAtual": "5717ad7b21a3e97351e4b75991b9943338dca30884b04858b7e83c2dc7816ff4",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2464,7 +2262,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 28,
@@ -2479,11 +2279,11 @@
       "hashAnterior": "64e6e242cc8f1bdc0761b5eaff3fe502ad4b3981c0f457ca7fb536b940502bd0",
       "hashAtual": "64e6e242cc8f1bdc0761b5eaff3fe502ad4b3981c0f457ca7fb536b940502bd0",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2493,7 +2293,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 75,
@@ -2508,11 +2310,11 @@
       "hashAnterior": "0f40de6857afe191effca2a70c4b2024173fe2feef512cf9070a8304cb8b5d5b",
       "hashAtual": "0f40de6857afe191effca2a70c4b2024173fe2feef512cf9070a8304cb8b5d5b",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2522,7 +2324,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 77,
@@ -2537,11 +2341,11 @@
       "hashAnterior": "3dace5b838b7ccc20d5bd84dfcbb7ddd06ebbf5d3c193a79d342419ea8d59f7d",
       "hashAtual": "3dace5b838b7ccc20d5bd84dfcbb7ddd06ebbf5d3c193a79d342419ea8d59f7d",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2551,7 +2355,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 78,
@@ -2566,11 +2372,11 @@
       "hashAnterior": "c6e702686dc08d4c6539452c49de9ef93cf2d07c8f17b93a268467852e99458e",
       "hashAtual": "c6e702686dc08d4c6539452c49de9ef93cf2d07c8f17b93a268467852e99458e",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2580,7 +2386,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     }
   ],
   "matrizFinal": [
@@ -2612,7 +2420,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": true,
       "naoReapresentada": false,
-      "saldoResidualRetificado": true
+      "saldoResidualRetificado": true,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 25,
@@ -2627,11 +2437,11 @@
       "hashAnterior": "2049e7d14a9b1a6c32b189ed84ff130e4841cc0e4c9d9c66f26c893b5299790f",
       "hashAtual": "2049e7d14a9b1a6c32b189ed84ff130e4841cc0e4c9d9c66f26c893b5299790f",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2643,7 +2453,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 26,
@@ -2658,11 +2470,11 @@
       "hashAnterior": "439e3da160de6770d9130c1e880c67d8ee5251e0379970598c38e2ce97eb7b5e",
       "hashAtual": "439e3da160de6770d9130c1e880c67d8ee5251e0379970598c38e2ce97eb7b5e",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2674,7 +2486,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 27,
@@ -2689,11 +2503,11 @@
       "hashAnterior": "5717ad7b21a3e97351e4b75991b9943338dca30884b04858b7e83c2dc7816ff4",
       "hashAtual": "5717ad7b21a3e97351e4b75991b9943338dca30884b04858b7e83c2dc7816ff4",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2705,7 +2519,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 28,
@@ -2720,11 +2536,11 @@
       "hashAnterior": "64e6e242cc8f1bdc0761b5eaff3fe502ad4b3981c0f457ca7fb536b940502bd0",
       "hashAtual": "64e6e242cc8f1bdc0761b5eaff3fe502ad4b3981c0f457ca7fb536b940502bd0",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -2734,7 +2550,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 47,
@@ -3755,11 +3573,11 @@
       "hashAnterior": "0f40de6857afe191effca2a70c4b2024173fe2feef512cf9070a8304cb8b5d5b",
       "hashAtual": "0f40de6857afe191effca2a70c4b2024173fe2feef512cf9070a8304cb8b5d5b",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -3769,7 +3587,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 77,
@@ -3784,11 +3604,11 @@
       "hashAnterior": "3dace5b838b7ccc20d5bd84dfcbb7ddd06ebbf5d3c193a79d342419ea8d59f7d",
       "hashAtual": "3dace5b838b7ccc20d5bd84dfcbb7ddd06ebbf5d3c193a79d342419ea8d59f7d",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -3798,7 +3618,9 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     },
     {
       "id": 78,
@@ -3813,11 +3635,11 @@
       "hashAnterior": "c6e702686dc08d4c6539452c49de9ef93cf2d07c8f17b93a268467852e99458e",
       "hashAtual": "c6e702686dc08d4c6539452c49de9ef93cf2d07c8f17b93a268467852e99458e",
       "tipoBloqueio": "nao_reapresentada_com_decisao_resolutiva",
-      "classificacaoFinal": "bloqueio_tecnico_residual",
-      "impactoMaterial": "historico_nao_reapresentado_sem_pendencia_operacional",
-      "recomendacao": "Tratar como historico saneado; definir em etapa posterior se o bloqueio de nao reapresentacao pode ser baixado sem nova decisao.",
-      "prioridade": "media",
-      "acaoNecessaria": "revalidacao_tecnica_sem_decisao",
+      "classificacaoFinal": "historico_nao_reapresentado_revalidado_sem_bloqueio",
+      "impactoMaterial": "historico_nao_reapresentado_sem_efeito_operacional_ativo",
+      "recomendacao": "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.",
+      "prioridade": "baixa",
+      "acaoNecessaria": "nenhuma_historico_revalidado",
       "categoriaOperacional": "decisao_resolutiva_com_pendencia_tecnica",
       "classificacoesOperacionais": [
         "ja_saneado_mas_ainda_pendente",
@@ -3827,10 +3649,12 @@
       "logDecisaoRegistradaPresente": true,
       "saldoResidualTecnico": false,
       "naoReapresentada": true,
-      "saldoResidualRetificado": false
+      "saldoResidualRetificado": false,
+      "temDiferencaCriticaMaterial": false,
+      "temImpedimentoReconstrucao": false
     }
   ],
-  "conclusao": "Não apto para ativação controlada nesta etapa: a pendência operacional real está zerada, mas permanecem bloqueios técnicos de segurança pré-ativação que exigem revalidação humana ou tratamento técnico posterior. Nenhuma publicação deve ser executada.",
+  "conclusao": "Apto para ativacao controlada do ponto de vista da seguranca pre-ativacao (dry-run): sem pendencia operacional real e sem bloqueios tecnicos ativos. Isso nao autoriza ativacao nem publicacao nesta etapa.",
   "garantias": {
     "decisaoRegistrada": false,
     "statusAlterado": false,

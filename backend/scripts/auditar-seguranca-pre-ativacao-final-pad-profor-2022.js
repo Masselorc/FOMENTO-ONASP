@@ -185,7 +185,16 @@ function montarDiagnosticoPayloadAlterado(id, entradasSeguranca, pendencia, regr
   };
 }
 
-function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNaoReapresentada, impedimentosPorChaveItem) {
+function montarDiagnosticoPendenciaTecnica(
+  id,
+  pendencia,
+  regressao,
+  segurancaNaoReapresentada,
+  impedimentosPorChaveItem,
+  diferencasCriticasPorChaveItem,
+  impedimentosComparacaoPorChaveItem,
+  impedimentosComparacaoPorDivergenciaId
+) {
   const divergencia = revisao.obterDivergencia(id);
   const decisaoVigente = ultimoResolutivo(divergencia);
   const snapshot = decisaoVigente?.payloadDecisao?._segurancaPreAtivacao || null;
@@ -214,6 +223,27 @@ function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNa
     && !impedimentoSaldoResidualAtivo;
 
   const blocoSaldoResidualPendente = temSaldoResidualIncompativel && impedimentoSaldoResidualAtivo;
+  const temDiferencaCriticaMaterial = (
+    diferencasCriticasPorChaveItem?.get(divergencia.chaveItem)?.length || 0
+  ) > 0;
+  const impedimentosComparacaoChave = impedimentosComparacaoPorChaveItem?.get(divergencia.chaveItem) || [];
+  const impedimentosComparacaoId = impedimentosComparacaoPorDivergenciaId?.get(id) || [];
+  const impedimentosComparacaoMaterial = [...impedimentosComparacaoChave, ...impedimentosComparacaoId]
+    .filter((imp) => imp?.tipo !== "decisao_nao_aplicavel:decisao_sem_efeito_definido");
+  const temImpedimentoReconstrucao = impedimentosComparacaoMaterial.length > 0;
+  const decisaoResolutivaValida = Boolean(
+    decisaoVigente
+    && ["ACEITO", "CORRIGIDO", "REVERTIDO", "REJEITADO"].includes(
+      String(decisaoVigente.decisao || "").toUpperCase()
+    )
+  );
+  const historicoNaoReapresentadoRevalidado = naoReapresentada
+    && decisaoResolutivaValida
+    && payloadPreservado === true
+    && Boolean(snapshot)
+    && Boolean(obterLogDecisao(divergencia, decisaoVigente?.id))
+    && !temDiferencaCriticaMaterial
+    && !temImpedimentoReconstrucao;
 
   let classificacaoFinal;
   let impactoMaterial;
@@ -232,6 +262,12 @@ function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNa
     recomendacao = "Saldo residual ja saneado por decisao retificadora (CORRIGIDO/REVERTIDO); manter como historico tecnico, sem nova decisao.";
     prioridade = "media";
     acaoNecessaria = "revalidacao_tecnica_sem_decisao";
+  } else if (historicoNaoReapresentadoRevalidado) {
+    classificacaoFinal = "historico_nao_reapresentado_revalidado_sem_bloqueio";
+    impactoMaterial = "historico_nao_reapresentado_sem_efeito_operacional_ativo";
+    recomendacao = "Nao reapresentacao historica com decisao resolutiva preservada, sem diferenca critica material e sem impedimento de reconstrucao vinculado.";
+    prioridade = "baixa";
+    acaoNecessaria = "nenhuma_historico_revalidado";
   } else {
     classificacaoFinal = "bloqueio_tecnico_residual";
     impactoMaterial = "historico_nao_reapresentado_sem_pendencia_operacional";
@@ -267,6 +303,8 @@ function montarDiagnosticoPendenciaTecnica(id, pendencia, regressao, segurancaNa
     saldoResidualTecnico: ehSaldoResidual,
     naoReapresentada,
     saldoResidualRetificado,
+    temDiferencaCriticaMaterial,
+    temImpedimentoReconstrucao,
   };
 }
 
@@ -367,10 +405,33 @@ function executar() {
   const payloadPorDivergencia = agruparPayloadPorDivergencia(seguranca.payloadAlteradoAposDecisao);
   const naoReapPorId = new Map((seguranca.divergenciasNaoReapresentadas || []).map((item) => [Number(item.divergenciaId), item]));
   const impedimentosPorChaveItem = new Map();
+  const diferencasCriticasPorChaveItem = new Map();
+  const impedimentosComparacaoPorChaveItem = new Map();
+  const impedimentosComparacaoPorDivergenciaId = new Map();
   for (const imp of Array.isArray(reconstrucao.impedimentos) ? reconstrucao.impedimentos : []) {
     if (!imp?.chaveItem) continue;
     if (!impedimentosPorChaveItem.has(imp.chaveItem)) impedimentosPorChaveItem.set(imp.chaveItem, []);
     impedimentosPorChaveItem.get(imp.chaveItem).push(imp);
+  }
+  for (const dif of Array.isArray(comparacao.diferencasCriticas) ? comparacao.diferencasCriticas : []) {
+    if (!dif?.chaveItem) continue;
+    if (!diferencasCriticasPorChaveItem.has(dif.chaveItem)) diferencasCriticasPorChaveItem.set(dif.chaveItem, []);
+    diferencasCriticasPorChaveItem.get(dif.chaveItem).push(dif);
+  }
+  for (const imp of Array.isArray(comparacao.impedimentosReconstrucao) ? comparacao.impedimentosReconstrucao : []) {
+    if (imp?.chaveItem) {
+      if (!impedimentosComparacaoPorChaveItem.has(imp.chaveItem)) {
+        impedimentosComparacaoPorChaveItem.set(imp.chaveItem, []);
+      }
+      impedimentosComparacaoPorChaveItem.get(imp.chaveItem).push(imp);
+    }
+    if (Number.isFinite(Number(imp?.divergenciaId))) {
+      const did = Number(imp.divergenciaId);
+      if (!impedimentosComparacaoPorDivergenciaId.has(did)) {
+        impedimentosComparacaoPorDivergenciaId.set(did, []);
+      }
+      impedimentosComparacaoPorDivergenciaId.get(did).push(imp);
+    }
   }
 
   const payloadAlteradoAposDecisao = IDS_PAYLOAD_ALTERADO_ESPERADOS.map((id) => (
@@ -388,7 +449,10 @@ function executar() {
       pendenciasPorId.get(id),
       regressaoPorId.get(id),
       naoReapPorId.get(id),
-      impedimentosPorChaveItem
+      impedimentosPorChaveItem,
+      diferencasCriticasPorChaveItem,
+      impedimentosComparacaoPorChaveItem,
+      impedimentosComparacaoPorDivergenciaId
     )
   ));
 
@@ -401,7 +465,8 @@ function executar() {
   const bloqueiosAtivos = matrizFinal.filter(
     (item) =>
       item.classificacaoFinal !== "decisao_historica_nao_vigente_com_payload_alterado" &&
-      item.classificacaoFinal !== "bloqueio_tecnico_residual_retificado"
+      item.classificacaoFinal !== "bloqueio_tecnico_residual_retificado" &&
+      item.classificacaoFinal !== "historico_nao_reapresentado_revalidado_sem_bloqueio"
   );
 
   const payloadsRevalidados = payloadAlteradoAposDecisao.filter(
@@ -413,7 +478,9 @@ function executar() {
   );
 
   const decisoesComPendenciaTecnicaAtivas = decisoesResolutivasComPendenciaTecnica.filter(
-    (item) => item.classificacaoFinal !== "bloqueio_tecnico_residual_retificado"
+    (item) =>
+      item.classificacaoFinal !== "bloqueio_tecnico_residual_retificado" &&
+      item.classificacaoFinal !== "historico_nao_reapresentado_revalidado_sem_bloqueio"
   );
 
   const decisoesComPendenciaTecnicaRetificadas = decisoesResolutivasComPendenciaTecnica.filter(
@@ -436,7 +503,11 @@ function executar() {
     totalPorClassificacaoFinal: contagemPorCampo(matrizFinal, "classificacaoFinal"),
     totalPorTipoBloqueio: contagemPorCampo(matrizFinal, "tipoBloqueio"),
     divergencia44ClassificacaoOperacional: pendenciasPorId.get(44)?.classificacaoOperacional || null,
-    aptoParaAtivacaoControlada: false,
+    aptoParaAtivacaoControlada: (
+      (pendencias.resumo?.separacaoOperacional?.pendenciaOperacionalReal ?? 1) === 0 &&
+      bloqueiosAtivos.length === 0 &&
+      payloadsAlteradosAtivos.length === 0
+    ),
     reconstrucaoApta: Boolean(reconstrucao.aptoParaAtivacao),
     comparacaoApta: Boolean(comparacao.aptoParaPublicacao),
   };
@@ -454,7 +525,9 @@ function executar() {
     payloadAlteradoAposDecisao,
     decisoesResolutivasComPendenciaTecnica,
     matrizFinal,
-    conclusao: "Não apto para ativação controlada nesta etapa: a pendência operacional real está zerada, mas permanecem bloqueios técnicos de segurança pré-ativação que exigem revalidação humana ou tratamento técnico posterior. Nenhuma publicação deve ser executada.",
+    conclusao: resumo.aptoParaAtivacaoControlada
+      ? "Apto para ativacao controlada do ponto de vista da seguranca pre-ativacao (dry-run): sem pendencia operacional real e sem bloqueios tecnicos ativos. Isso nao autoriza ativacao nem publicacao nesta etapa."
+      : "Nao apto para ativacao controlada nesta etapa: a pendencia operacional real esta zerada, mas permanecem bloqueios tecnicos de seguranca pre-ativacao que exigem revalidacao humana ou tratamento tecnico posterior. Nenhuma publicacao deve ser executada.",
     garantias: {
       decisaoRegistrada: false,
       statusAlterado: false,

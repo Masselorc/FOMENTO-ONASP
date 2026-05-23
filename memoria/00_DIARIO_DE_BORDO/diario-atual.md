@@ -1,5 +1,34 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: baixa técnica dos 7 históricos não reapresentados na segurança pré-ativação final
+
+- Objetivo: tratar os 7 bloqueios técnicos residuais (`#25`, `#26`, `#27`, `#28`, `#75`, `#77`, `#78`) sem registrar nova decisão, mantendo dry-run estrito e sem alterar base ativa.
+- Arquivo alterado:
+  - `backend/scripts/auditar-seguranca-pre-ativacao-final-pad-profor-2022.js`.
+- Correção aplicada no classificador:
+  - criada classificação não bloqueante `historico_nao_reapresentado_revalidado_sem_bloqueio`;
+  - critérios: decisão resolutiva vigente, `payloadPreservado=true`, snapshot presente, log `decisao_registrada`, sem `diferencasCriticas` vinculadas e sem impedimento material de reconstrução vinculado;
+  - impedimento técnico `decisao_nao_aplicavel:decisao_sem_efeito_definido` passou a ser tratado como histórico técnico não material para essa etapa.
+- Resultado:
+  - `pendencia_operacional_real = 0`;
+  - `bloqueios técnicos ativos = 0` no relatório final;
+  - os 7 IDs migraram de bloqueio ativo para histórico não bloqueante;
+  - `#47-#74` permaneceram históricos revalidados não bloqueantes;
+  - `#18` permaneceu retificada não bloqueante;
+  - `Apto para ativação controlada = sim` no relatório de segurança final (sem autorização de ativar/publicar).
+- Validações executadas:
+  - `npm run profor:pad:auditar-pendencias-profundo` -> OK;
+  - `npm run profor:pad:reconstruir-plano:dry-run` -> OK;
+  - `npm run profor:pad:comparar-plano:dry-run` -> OK;
+  - `npm run profor:pad:seguranca-pre-ativacao:final` -> OK;
+  - `npm run validar:syntax` -> OK;
+  - `npm run validar:services` -> OK;
+  - `git diff --check` -> sem erro estrutural (apenas avisos LF/CRLF);
+  - `git status --short frontend/data/publicados` -> sem alterações;
+  - `git status --short "*.sqlite*"`/`"*.sqlite-wal"`/`"*.sqlite-shm"` -> sem alterações.
+- Restrições preservadas:
+  - sem publicação, sem ativação, sem alteração de origem ativa, sem alteração de `planoAplicacao` oficial, sem alteração em SQLite, sem SQL direto, sem registro de decisão.
+
 ## 23/05/2026 - PROFOR 2022: harmonização do relatório de segurança pré-ativação final
 
 - Objetivo: ajustar o relatório final de segurança pré-ativação para categorizar corretamente as divergências revalidadas, diferenciando-as de bloqueios ativos vigentes e decisões obsoletas inativas.
