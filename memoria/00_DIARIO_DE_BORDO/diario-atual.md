@@ -1,5 +1,35 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: simulações preparatórias de promoção, fila oficial e rateio na reconstrução
+
+- **Objetivo:** preparar a promoção controlada do snapshot anterior oficial, a integração dos candidatos de snapshots à fila oficial de revisão PAD e a integração do rateio por quantidade fixa à reconstrução dry-run.
+- **Resultado:** auditoria de promoção criada sem promover snapshot; integração com fila oficial simulada sem candidatos integráveis; reconstrução com rateio fixo simulada com amostras controladas.
+- **Promoção de snapshot:** sem aprovação humana expressa; `profor-2022-pad-fotografia-canonica-anterior.json` não foi criado.
+- **Integração com fila oficial:** apenas simulação; nenhuma fila real, banco, decisão, divergência ou log foi alterado.
+- **Rateio na reconstrução:** apenas simulação; o reconstrutor oficial e o `planoAplicacao` oficial não foram alterados.
+- **Arquivos criados/alterados:**
+  - `backend/scripts/auditar-promocao-snapshot-anterior-oficial-pad-profor-2022.js`;
+  - `backend/scripts/simular-integracao-fila-oficial-snapshots-pad-profor-2022.js`;
+  - `backend/scripts/simular-reconstrucao-com-rateio-quantidade-fixa-pad-profor-2022.js`;
+  - `backend/services/profor-2022/profor-pad-integracao-fila-oficial-dry-run-service.js`;
+  - `backend/services/profor-2022/profor-pad-rateio-quantidade-fixa-reconstrucao-dry-run-service.js`;
+  - `tests/services/profor-pad-promocao-snapshot-anterior.test.js`;
+  - `tests/services/profor-pad-integracao-fila-oficial-dry-run.test.js`;
+  - `tests/services/profor-pad-rateio-fixo-reconstrucao-dry-run.test.js`;
+  - `package.json`;
+  - `scripts/validar-syntax.js`.
+- **Relatórios gerados:**
+  - `backend/data/relatorios/profor-2022-pad-snapshot-anterior-oficial-auditoria-promocao-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pad-snapshot-anterior-oficial-auditoria-promocao-dry-run.md`;
+  - `backend/data/relatorios/profor-2022-pad-integracao-fila-oficial-snapshots-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pad-integracao-fila-oficial-snapshots-dry-run.md`;
+  - `backend/data/relatorios/profor-2022-pad-reconstrucao-com-rateio-quantidade-fixa-dry-run.json`;
+  - `backend/data/relatorios/profor-2022-pad-reconstrucao-com-rateio-quantidade-fixa-dry-run.md`;
+  - `backend/data/relatorios/profor-2022-pad-promocao-snapshot-integracao-fila-e-rateio-reconstrucao-dry-run.md`.
+- **Validações:** `git diff --check` OK (apenas avisos LF/CRLF); `npm run validar:syntax` OK (97 arquivos); `npm run validar:services` OK (196/196 testes); `npm run profor:pad:snapshot-anterior:auditar-promocao:dry-run` OK; `npm run profor:pad:snapshots:simular-integracao-fila-oficial:dry-run` OK; `npm run profor:pad:reconstruir-com-rateio-fixo:dry-run` OK.
+- **Preservações:** `frontend/data/publicados/`, `.env`, SQLite/WAL/SHM e Transferegov não foram alterados/acionados.
+- **Próximos passos:** aprovar formalmente promoção de snapshot, definir contrato real da fila oficial e integrar rateio fixo ao reconstrutor apenas em novo ciclo dry-run.
+
 ## 23/05/2026 — PROFOR 2022: política de snapshots, fila de revisão e rateio por quantidade fixa
 
 - **Objetivo:** definir política de snapshots PAD, integrar divergências/bloqueios do comparador à fila de revisão PAD e implementar simulação dry-run de rateio por área + quantidade fixa.

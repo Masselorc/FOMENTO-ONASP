@@ -1,0 +1,143 @@
+{
+  "geradoEm": "2026-05-23T22:47:48.125Z",
+  "modo": "dry-run",
+  "origem": "simulacao_controlada_rateio_quantidade_fixa",
+  "resumo": {
+    "totalItensSimulados": 3,
+    "itensAptos": 2,
+    "itensComErro": 1,
+    "quantidadeTotal": 18,
+    "quantidadeRateada": 16,
+    "saldoNaoRateado": 2,
+    "diferencasResiduais": 200,
+    "totalBloqueios": 1
+  },
+  "itens": [
+    {
+      "indice": 0,
+      "numero": "AMOSTRA-DRY-RUN-1",
+      "uf": "NA",
+      "descricao": "Item apto para rateio fixo",
+      "natureza": "CAPITAL",
+      "apto": true,
+      "quantidadeTotal": 10,
+      "quantidadeRateada": 10,
+      "saldoNaoRateado": 0,
+      "diferencaResidual": 0,
+      "bloqueios": [],
+      "rateiosSimulados": [
+        {
+          "area": "Ouvidoria",
+          "natureza": "CAPITAL",
+          "quantidade": 4,
+          "valorUnitario": 1000,
+          "valorPrevistoRateado": 4000,
+          "percentualDerivado": 40,
+          "diferencaResidual": 0,
+          "avisos": [],
+          "erros": [],
+          "indice": 0
+        },
+        {
+          "area": "Gestao",
+          "natureza": "CAPITAL",
+          "quantidade": 6,
+          "valorUnitario": 1000,
+          "valorPrevistoRateado": 6000,
+          "percentualDerivado": 60,
+          "diferencaResidual": 0,
+          "avisos": [],
+          "erros": [],
+          "indice": 1
+        }
+      ],
+      "avisos": []
+    },
+    {
+      "indice": 1,
+      "numero": "AMOSTRA-DRY-RUN-2",
+      "uf": "NA",
+      "descricao": "Item com saldo nao rateado",
+      "natureza": "CUSTEIO",
+      "apto": true,
+      "quantidadeTotal": 5,
+      "quantidadeRateada": 2,
+      "saldoNaoRateado": 3,
+      "diferencaResidual": 300,
+      "bloqueios": [],
+      "rateiosSimulados": [
+        {
+          "area": "Ouvidoria",
+          "natureza": "CUSTEIO",
+          "quantidade": 2,
+          "valorUnitario": 100,
+          "valorPrevistoRateado": 200,
+          "percentualDerivado": 40,
+          "diferencaResidual": 300,
+          "avisos": [],
+          "erros": [],
+          "indice": 0
+        }
+      ],
+      "avisos": [
+        {
+          "tipo": "quantidade_nao_rateada",
+          "quantidade": 3
+        },
+        {
+          "tipo": "diferenca_residual_total",
+          "valor": 300
+        }
+      ]
+    },
+    {
+      "indice": 2,
+      "numero": "AMOSTRA-DRY-RUN-3",
+      "uf": "NA",
+      "descricao": "Item bloqueado por excesso de quantidade",
+      "natureza": "CAPITAL",
+      "apto": false,
+      "quantidadeTotal": 3,
+      "quantidadeRateada": 4,
+      "saldoNaoRateado": -1,
+      "diferencaResidual": -100,
+      "bloqueios": [
+        {
+          "tipo": "soma_rateios_superior_quantidade_total",
+          "indice": 2,
+          "erro": {
+            "tipo": "soma_rateios_superior_quantidade_total",
+            "quantidadeExcedente": 1
+          }
+        }
+      ],
+      "rateiosSimulados": [
+        {
+          "area": "Ouvidoria",
+          "natureza": "CAPITAL",
+          "quantidade": 4,
+          "valorUnitario": 100,
+          "valorPrevistoRateado": 400,
+          "percentualDerivado": 133.3333,
+          "diferencaResidual": -100,
+          "avisos": [],
+          "erros": [],
+          "indice": 0
+        }
+      ],
+      "avisos": [
+        {
+          "tipo": "diferenca_residual_total",
+          "valor": -100
+        }
+      ]
+    }
+  ],
+  "garantias": {
+    "reconstrutorOficialAlterado": false,
+    "planoAplicacaoOficialAlterado": false,
+    "bancoAlterado": false,
+    "publicacaoExecutada": false,
+    "decisaoRegistrada": false
+  }
+}

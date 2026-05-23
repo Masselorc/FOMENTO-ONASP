@@ -1,0 +1,18 @@
+{
+  "geradoEm": "2026-05-23T22:47:48.125Z",
+  "modo": "dry-run",
+  "status": "sem_candidatos_integraveis",
+  "motivo": "Comparacao de snapshots indisponivel; nenhum candidato artificial foi criado.",
+  "resumo": {
+    "totalCandidatosOrigem": 0,
+    "totalIntegraveis": 0,
+    "totalNaoIntegraveis": 0
+  },
+  "itens": [],
+  "garantias": {
+    "filaOficialAlterada": false,
+    "decisaoRegistrada": false,
+    "bancoAlterado": false,
+    "publicacaoExecutada": false
+  }
+}

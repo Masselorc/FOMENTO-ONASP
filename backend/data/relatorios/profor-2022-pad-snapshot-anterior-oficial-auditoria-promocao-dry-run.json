@@ -1,0 +1,51 @@
+{
+  "geradoEm": "2026-05-23T22:47:38.654Z",
+  "modo": "dry-run",
+  "politica": {
+    "versaoPolitica": "1.0",
+    "snapshotAnteriorOficialPromovidoNestaEtapa": false
+  },
+  "snapshot": {
+    "caminho": "backend\\data\\relatorios\\profor-2022-pad-fotografia-canonica.json",
+    "versaoSnapshot": "0.2",
+    "parserVersao": "profor-pad-fotografia-service@0.2",
+    "origem": "reconstrucao-pad",
+    "geradoEm": "2026-05-23T22:19:12.037Z",
+    "checksum": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+    "totalLinhas": 568,
+    "totalAvisos": 12,
+    "totalErros": 0
+  },
+  "validacoes": {
+    "checksumValido": true,
+    "origemValida": true,
+    "parserVersaoPresente": true,
+    "versaoSnapshotPresente": true,
+    "planoAplicacaoNaoVazio": true,
+    "relatorioMarkdownPresente": true,
+    "errosCriticos": 0,
+    "avisosNaoClassificados": 12,
+    "aprovacaoHumanaExpressa": false,
+    "snapshotAnteriorOficialExisteAntes": false,
+    "snapshotAnteriorOficialCriadoNestaEtapa": false
+  },
+  "avaliacao": {
+    "podeSerCandidato": false,
+    "podePromover": false,
+    "impedimentos": [
+      "commit_referencia_ausente",
+      "aprovacao_humana_ausente"
+    ],
+    "avisos": [
+      "avisos_nao_classificados"
+    ]
+  },
+  "conclusao": "Snapshot não pode ser promovido nesta etapa; aprovação humana expressa e/ou requisitos pendentes bloqueiam a promoção.",
+  "garantias": {
+    "snapshotCopiado": false,
+    "snapshotAnteriorOficialCriado": false,
+    "bancoAlterado": false,
+    "publicacaoExecutada": false,
+    "decisaoRegistrada": false
+  }
+}
