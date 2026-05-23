@@ -231,6 +231,36 @@ Critério operacional: se não houver evidência concreta, registrar como risco,
 
 **Rollback:** reverter o commit que removeu o botão duplicado.
 
+### ER-007 — Auditor de segurança pré-ativação bloqueava incondicionalmente decisões antigas de payload alterado
+
+**Classificação:** erro real
+
+**Contexto:** auditoria de segurança pré-ativação final e detalhada (`profor-pad-seguranca-pre-ativacao-service.js`), no tratamento de divergências classificadas como `payload_alterado_apos_decisao`.
+
+**Problema:** quando o payload de uma divergência mudava (por exemplo, após re-extração do PAD), o auditor bloqueava a ativação de forma incondicional para *todas* as decisões resolutivas daquela divergência encontradas no banco de dados. Mesmo se o usuário registrasse uma nova decisão de revalidação vigente com o hash correto, a decisão antiga obsoleta continuava cadastrada no banco e continuava gerando bloqueio técnico de segurança, impedindo a homologação do plano.
+
+**Evidência:** durante o processamento do Lote 1 (#47 a #54), após registrar as novas decisões de revalidação vigentes com o hash do payload atualizado, o relatório final de segurança continuou reportando exatamente os mesmos 35 bloqueios técnicos ativos. A divergência #47, por exemplo, continuava listada como bloqueante devido à decisão antiga #153 possuir o hash desatualizado, ignorando que a decisão vigente agora era a #188 (com hash correto).
+
+**Causa provável:** a função `classificarPayloadDecisao` retornava `bloqueia: true` incondicionalmente se `hashSnapshot !== hashAtual`, sem verificar se a decisão avaliada era de fato a decisão vigente (ativa) para aquela divergência.
+
+**Correção aplicada:**
+- Ajuste no método `classificarPayloadDecisao` para receber o parâmetro `ehVigente` e retornar `bloqueia: Boolean(ehVigente)` em caso de payload alterado. Se `ehVigente` for omitido (como em testes legados), o padrão assume `true` para retrocompatibilidade.
+- Ajuste no método `auditarPayloadDecisoes` para mapear as decisões vigentes (maior ID de decisão resolutiva para cada divergência) utilizando um `Map` (`vigentePorDivergenciaId`) e passar o valor de `ehVigente` correspondente na chamada de classificação.
+
+**Por que funcionou:** as decisões antigas e obsoletas com hash desatualizado passaram a não bloquear a ativação, permitindo que a nova decisão de revalidação com o hash correto baixasse formalmente o bloqueio técnico de segurança da divergência correspondente, mantendo o histórico de decisões intacto no banco de dados.
+
+**Como prevenir:** ao auditar segurança de entidades com histórico de revisões/decisões, certificar-se de distinguir entre a decisão vigente (ativa) e as decisões históricas (inativas) para fins de bloqueio imediato do sistema.
+
+**Boa prática reutilizável:** regras de validação de snapshot devem ser aplicadas apenas sobre o estado ativo/vigente que rege a transação atual, tratando estados anteriores apenas como trilha de auditoria somente leitura.
+
+**Aplicável a futuras aplicações:** sim.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js`, `tests/services/profor-pad-seguranca-pre-ativacao.test.js`.
+
+**Validações recomendadas:** `node backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js`, `node --test tests/services/*.test.js`, `npm run validar:syntax`.
+
+**Rollback:** reverter o commit das modificações em `backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js`.
+
 ## Correções aplicadas
 
 ### CA-001 — Saneamento do hook de publicação

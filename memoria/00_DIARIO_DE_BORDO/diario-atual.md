@@ -1,5 +1,24 @@
 # Diário de bordo
 
+## 23/05/2026 - PROFOR 2022: revalidação dos 27 payloads alterados em 4 lotes separados
+
+- Objetivo: registrar decisões de revalidação ACEITO para os 27 casos de `payload_alterado_apos_decisao` em lotes e commits separados, baixando formalmente os bloqueios técnicos sem alterar o plano de aplicação oficial nem publicar.
+- Contexto: A revalidação foi dividida em 4 lotes operacionais, sendo cada lote auditado pelo respectivo subagente e verificado pós-lote pelo Subagent C de segurança.
+- Resultados e Validações por Lote:
+  - **Lote 1 (#47-#54, AL/937221):** Decisões #188 a #195 registradas. Commit `2fbb931` pushed.
+  - **Lote 2 (#56-#63, AL/937221):** Decisões #196 a #203 registradas. Commit `2a25101` pushed.
+  - **Lote 3 (#64-#71, AL/937221):** Decisões #204 a #211 registradas. Commit `ae18456` pushed.
+  - **Lote 4 (#72-#74, AC/937782):** Decisões #212 a #214 registradas (ID #72 revalidado com decisões antigas #107/#108 preservadas). Commit `f38552f` pushed.
+- Ações no Auditor de Segurança:
+  - Correção localizada no serviço `backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js` (`classificarPayloadDecisao` e `auditarPayloadDecisoes`) para fazer a classificação de `payload_alterado_apos_decisao` respeitar a vigência da decisão (`ehVigente`). Decisões antigas e obsoletas com hash desatualizado passam a não bloquear a ativação, permitindo que a nova decisão de revalidação baixe formalmente o bloqueio técnico.
+- Estado Final Integrado:
+  - Bloqueios técnicos por payload alterado caíram de 27 para 0.
+  - Total de bloqueios de ativação ativos na matriz de segurança caiu de 35 para 7 (restam apenas as 7 divergências históricas não reapresentadas).
+  - `pendencia_operacional_real` permaneceu em `0`.
+  - `wal_checkpoint(TRUNCATE)` executado antes de cada commit do SQLite.
+  - 130/130 testes passando com sucesso.
+  - Nenhuma publicação ou ativação de dados executada.
+
 ## 23/05/2026 - PROFOR 2022: conclusão da auditoria dry-run de revalidação dos 27 payloads alterados
 
 - Objetivo: concluir e validar a auditoria dry-run das 27 divergências únicas (28 decisões afetadas, incluindo a #72 com duas decisões) marcadas com o bloqueio formal de `payload_alterado_apos_decisao`.
