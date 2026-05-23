@@ -1,5 +1,38 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: Evolução PAD - Fotografia Canônica e Comparador de Snapshots (Dry-Run)
+
+- **Objetivo:** definir e implementar a fotografia canônica PAD estruturada e o comparador de snapshots homogêneos (PAD x PAD) em modo estritamente dry-run, garantindo integridade e estabilidade por checksum.
+- **Implementações:**
+  - `profor-pad-fotografia-service.js` (Novo): Filtra os 14 campos canônicos do plano de aplicação reconstruído, ordena deterministicamente por chaves primárias e gera checksum SHA-256 do JSON correspondente.
+  - `profor-pad-comparador-snapshots-service.js` (Novo): Carrega e parea dois snapshots canônicos do PAD usando chave composta estável, aplica consolidação de saldos residuais (evitando colisões técnicas), detecta alterações/novidades/remoções de itens, e gera relatórios em JSON e Markdown.
+  - `comparar-snapshots-pad-profor-2022.js` (Novo Script CLI): Executa a reconstrução, gera e persiste a fotografia canônica atual, e opcionalmente compara com uma fotografia anterior gerando relatórios de dry-run.
+  - Integrado o script `"profor:pad:comparar-snapshots:dry-run"` no `package.json`.
+  - Registrados novos caminhos no script de sintaxe `validar-syntax.js`.
+- **Testes novos:**
+  - `profor-pad-fotografia.test.js` (Novo): Valida filtragem, ordenação determinística, estabilidade do checksum, resumos agregados e gravação.
+  - `profor-pad-comparador-snapshots.test.js` (Novo): Valida detecção de itens novos/ausentes/alterados, deltas financeiros agregados, corrupção de checksum e gravação de relatórios.
+- **Validações realizadas:**
+  - Executado `node scripts/validar-syntax.js` com sucesso (81 arquivos sem erros).
+  - Executado `node --test tests/services/*.test.js` com sucesso (163/163 testes passando).
+  - Executado manualmente o script CLI do comparador de snapshots demonstrando geração da fotografia canônica atual (`2ddec07c1212a9e41dad4ad984f5a4c01a664927a330ffcb77603beb3d6b3cfe`, total R$ 10.664.015,24) e execução do comparativo com sucesso.
+- **Isolamento de ambiente:**
+  - Nenhuma publicação executada; `frontend/data/publicados/` sem qualquer alteração.
+  - SQLite/WAL/SHM sem qualquer alteração.
+  - `.env` intacto e sem alteração da origem ativa.
+  - Transferegov não acionado.
+- **Risco de regressão:** nulo, por se tratar de ferramentas de análise e auditoria estritamente em modo dry-run e isoladas dos serviços operacionais ativos.
+- **Rollback:** os novos arquivos podem ser descartados com o Git, e o script de npm removido do `package.json`.
+- **Artefatos criados/alterados:**
+  - [profor-pad-fotografia-service.js](../../backend/services/profor-2022/profor-pad-fotografia-service.js) [NEW]
+  - [profor-pad-comparador-snapshots-service.js](../../backend/services/profor-2022/profor-pad-comparador-snapshots-service.js) [NEW]
+  - [comparar-snapshots-pad-profor-2022.js](../../backend/scripts/comparar-snapshots-pad-profor-2022.js) [NEW]
+  - [profor-pad-fotografia.test.js](../../tests/services/profor-pad-fotografia.test.js) [NEW]
+  - [profor-pad-comparador-snapshots.test.js](../../tests/services/profor-pad-comparador-snapshots.test.js) [NEW]
+  - [package.json](../../package.json) [MODIFY]
+  - [validar-syntax.js](../../scripts/validar-syntax.js) [MODIFY]
+  - [profor-2022-pad-fotografia-canonica.json](../../backend/data/relatorios/profor-2022-pad-fotografia-canonica.json) [NEW]
+
 ## 23/05/2026 — PROFOR 2022: Inventário de resíduos legados e auditoria de fallbacks
 
 - **Objetivo:** inventariar resíduos legados (planilhas locais, parsers legados de abas por UF e scripts de sincronização), classificar riscos e verificar a ocorrência de fallbacks silenciosos para origens obsoletas.

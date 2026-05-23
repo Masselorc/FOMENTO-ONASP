@@ -33,6 +33,7 @@
     "profor:pad:revisao:teste-decisao": "node backend/scripts/testar-decisao-revisao-pad-profor-2022.js",
     "profor:pad:reconstruir-plano:dry-run": "node backend/scripts/reconstruir-plano-pad-profor-2022.js",
     "profor:pad:comparar-plano:dry-run": "node backend/scripts/comparar-plano-pad-profor-2022.js",
+    "profor:pad:comparar-snapshots:dry-run": "node backend/scripts/comparar-snapshots-pad-profor-2022.js",
     "profor:pad:decisoes:auditar-aplicacao-dry-run": "node backend/scripts/auditar-aplicacao-decisoes-pad-profor-2022.js",
     "profor:pad:seguranca-pre-ativacao:dry-run": "node backend/scripts/auditar-seguranca-pre-ativacao-pad-profor-2022.js",
     "profor:pad:seguranca-pre-ativacao:detalhar": "node backend/scripts/detalhar-seguranca-pre-ativacao-pad-profor-2022.js",
