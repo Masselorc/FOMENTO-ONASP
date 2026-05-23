@@ -1,5 +1,14 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: encerramento da frente de ajuste do comparador de snapshots v0.3
+
+- **Status da frente:** comparador de snapshots PAD/PROFOR 2022 **v0.3 aprovado** para uso operacional em modo dry-run.
+- **Controle de ruído técnico:** pareamento por `hashItem` bijetivo consolidado; bloqueios técnicos preservados com marcação de ruído controlado.
+- **Resultado de divergências artificiais:** `item_novo`/`item_removido` artificiais reduzidos a **zero** na comparação dry-run.
+- **Resultado da fila dry-run:** candidatos reduzidos de **107 para 76**.
+- **Escopo e limites preservados:** sem publicação, sem acionamento de Transferegov, sem alteração de banco, sem alteração de `planoAplicacao` oficial e sem alteração de fila oficial real.
+- **Fronteiras de trabalho:** a frente de múltiplos Excel permanece separada e fora desta etapa.
+
 ## 23/05/2026 — PROFOR 2022: redução de ruído no comparador de snapshots por identidade material bijetiva (sem auditoria nova dos 81 bloqueios)
 
 - **Premissa preservada:** os 81 bloqueios técnicos pós-promoção do snapshot anterior oficial (commit `93f2b98`) **não foram auditados do zero**. A memória completa em `memoria/09_ERROS_E_CORRECOES/historico-erros.md` foi considerada como contexto consolidado. As causas estruturais já estavam documentadas: chave frágil por descrição; itens PAD em múltiplas linhas; saldo residual/remanescente segregado por natureza; CAPITAL e CUSTEIO não fundem; rateio antigo multiplicava linhas; arredondamento de valor unitário; diacrítico não é divergência material; substitutos compatíveis no PAD; identidade material prevalece sobre chave textual.

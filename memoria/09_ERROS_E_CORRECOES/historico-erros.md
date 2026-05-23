@@ -1365,3 +1365,35 @@ Toda a redução de 56 linhas ocorreu no Convênio `937265` (MS). O detalhamento
 - Em etapa futura devidamente autorizada, registrar decisões de revalidação (ACEITO) para cada ID-alvo usando o serviço existente (`profor-pad-revisao-decisao-service.registrarDecisao`) com `aplicadaAoPlano=false` para atualizar os snapshots e baixar os bloqueios formais de forma auditável e segura.
 
 **Rollback:** Reverter o commit de documentação/testes e regenerar relatórios dry-run.
+
+---
+
+## 23/05/2026 - PROFOR 2022: encerramento operacional da frente do comparador de snapshots v0.3
+
+**Classificação:** correção aplicada | boa prática | prevenção
+
+**Contexto:** Fechamento da frente de ajuste do comparador de snapshots PAD/PROFOR 2022 em dry-run, mantendo as restrições de não publicação e não alteração do fluxo oficial.
+
+**Problema:** O comparador anterior gerava ruído técnico por colisões contextuais que se manifestavam como `item_novo` + `item_removido` artificiais, inflando a fila de revisão dry-run.
+
+**Evidência:** Registros operacionais no diário apontando a consolidação do pareamento por identidade material bijetiva (`hashItem`) e a redução dos candidatos de fila dry-run de 107 para 76.
+
+**Causa provável:** Pareamento prévio com chave contextual frágil diante de grupos materialmente idênticos já preservados por hash.
+
+**Correção aplicada:** Encerramento com comparador v0.3 aprovado, ruído técnico controlado por `hashItem` bijetivo e preservação dos bloqueios técnicos remanescentes sem baixa artificial.
+
+**Por que funcionou:** O comparador passou a absorver pareamentos materialmente equivalentes antes de classificar diferenças, zerando `item_novo`/`item_removido` artificiais sem ocultar bloqueios reais.
+
+**Como prevenir:** Manter a regra de pareamento bijetivo por `hashItem` como barreira obrigatória antes da emissão de divergências de inclusão/remoção em snapshots equivalentes.
+
+**Boa prática reutilizável:** Separar correção de ruído técnico de saneamento material, preservando trilha de bloqueio técnico e evitando decisões automáticas.
+
+**Aplicável a futuras aplicações:** com adaptação.
+
+**Arquivos relacionados:** `backend/services/profor-2022/profor-pad-comparador-snapshots-service.js`, `backend/data/relatorios/profor-2022-pad-comparacao-snapshots-dry-run.{json,md}`, `backend/data/relatorios/profor-2022-pad-fila-revisao-snapshots-dry-run.{json,md}`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+
+**Validações recomendadas:** `npm run profor:pad:comparar-snapshots:dry-run`, `npm run profor:pad:snapshots:gerar-fila-revisao:dry-run`, `git diff --check`.
+
+**Escopo preservado:** publicação e Transferegov fora de escopo; frente de múltiplos Excel separada.
+
+**Rollback:** `git revert <hash_do_commit>` e reexecução dos dry-runs comparativos, sem apagar divergências, decisões, logs ou relatórios históricos.
