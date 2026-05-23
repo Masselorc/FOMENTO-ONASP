@@ -1,6 +1,6 @@
 # PROFOR 2022 - Revalidacao de payloads alterados apos decisao (dry-run)
 
-Gerado em: 2026-05-23T14:26:46.415Z
+Gerado em: 2026-05-23T14:28:19.914Z
 
 Auditoria somente leitura: nao registra decisao, nao publica, nao altera origem ativa, nao altera `frontend/data/publicados` e nao altera o `planoAplicacao` oficial.
 
@@ -49,13 +49,13 @@ Auditoria somente leitura: nao registra decisao, nao publica, nao altera origem 
 | #69 | 937221/AL | `item_ausente_no_pad` | Tela de projeção 2x2 retrátil com tripé | ACEITO | ACEITO | #209 | 1 | 9efd230b... | 2b064b99... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
 | #70 | 937221/AL | `item_ausente_no_pad` | Televisão 50 (CORREGEDORIA - 03 UN. E OU | ACEITO | ACEITO | #210 | 1 | 51d2c1da... | e8ba491e... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
 | #71 | 937221/AL | `item_ausente_no_pad` | Webcam full HD (OUVIDORIA) | ACEITO | ACEITO | #211 | 1 | 0fe8856b... | 1550a236... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
-| #72 | 937782/AC | `item_ausente_no_pad` | Contratação de Bolsa - Aluno Ouvidoria I | ACEITO | ACEITO | #108 | 2 | 4cf7908b... | f099e5ba... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
-| #73 | 937782/AC | `item_ausente_no_pad` | Contratação de Bolsa -Coordenador Ouvid | ACEITO | ACEITO | #109 | 1 | a24b35e7... | ced153b3... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
-| #74 | 937782/AC | `item_ausente_no_pad` | Contratação de Bolsa -Pesquisador Ouvid | ACEITO | ACEITO | #110 | 1 | 71d83020... | b18ba342... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
+| #72 | 937782/AC | `item_ausente_no_pad` | Contratação de Bolsa - Aluno Ouvidoria I | ACEITO | ACEITO | #212 | 2 | 4cf7908b... | f099e5ba... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
+| #73 | 937782/AC | `item_ausente_no_pad` | Contratação de Bolsa -Coordenador Ouvid | ACEITO | ACEITO | #213 | 1 | a24b35e7... | ced153b3... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
+| #74 | 937782/AC | `item_ausente_no_pad` | Contratação de Bolsa -Pesquisador Ouvid | ACEITO | ACEITO | #214 | 1 | 71d83020... | b18ba342... | sim | sim | sim | 0 | 0 | `revalidacao_por_prevalencia_pad` | sim | sim, mediante decisao de revalidacao registrada via servico | Registrar decisao ACEITO de revalidacao via servico (aplicad |
 
 ## 4. Detalhe da divergencia #72 (duas decisoes afetadas)
 
-- Vigente: ACEITO #108
+- Vigente: ACEITO #212
 - Total decisoes afetadas: 2
   - #108 ACEITO em 2026-05-21T19:55:11.354Z | hash_snapshot=4cf7908b8a7ecb29004a858d58344abdab28566b102c45b6bbfef25a5c6f2ee4 | chaveDivergencia_snapshot=item_ausente_no_pad:bdf5314acea3f24d
   - #107 ACEITO em 2026-05-21T19:54:58.387Z | hash_snapshot=4cf7908b8a7ecb29004a858d58344abdab28566b102c45b6bbfef25a5c6f2ee4 | chaveDivergencia_snapshot=item_ausente_no_pad:bdf5314acea3f24d

@@ -1,12 +1,12 @@
 {
-  "geradoEm": "2026-05-23T14:26:44.795Z",
+  "geradoEm": "2026-05-23T14:28:18.665Z",
   "modo": "dry-run",
   "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
   "fontes": {
     "pendenciasJson": {
       "caminho": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 208629
+      "tamanhoBytes": 208630
     },
     "pendenciasMd": {
       "caminho": "backend/data/relatorios/profor-2022-pendencias-profundo-dry-run.md",
@@ -26,17 +26,17 @@
     "segurancaJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 27040
+      "tamanhoBytes": 25996
     },
     "reconstrucaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 852488
+      "tamanhoBytes": 853026
     },
     "comparacaoJson": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
       "existe": true,
-      "tamanhoBytes": 410183
+      "tamanhoBytes": 410721
     },
     "comparacaoMd": {
       "caminho": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
@@ -56,7 +56,7 @@
   },
   "resumo": {
     "pendenciaOperacionalReal": 0,
-    "totalBloqueiosSeguranca": 10,
+    "totalBloqueiosSeguranca": 7,
     "totalBloqueiosDetalhados": 35,
     "totalDivergenciasUnicasMatriz": 35,
     "totalDecisoesPayloadAlterado": 28,
@@ -973,7 +973,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 108,
+      "decisaoId": 212,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 107,
@@ -1017,7 +1017,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 109,
+      "decisaoId": 213,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 109,
@@ -1054,7 +1054,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 110,
+      "decisaoId": 214,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 110,
@@ -2374,7 +2374,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 108,
+      "decisaoId": 212,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 107,
@@ -2418,7 +2418,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 109,
+      "decisaoId": 213,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 109,
@@ -2455,7 +2455,7 @@
       "tipoAlerta": "item_ausente_no_pad",
       "statusAtual": "ACEITO",
       "decisaoVigente": "ACEITO",
-      "decisaoId": 110,
+      "decisaoId": 214,
       "decisoesComPayloadAlterado": [
         {
           "decisaoId": 110,

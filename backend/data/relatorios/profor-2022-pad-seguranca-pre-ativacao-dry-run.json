@@ -1,5 +1,5 @@
 {
-  "geradoEm": "2026-05-23T14:26:44.384Z",
+  "geradoEm": "2026-05-23T14:28:18.228Z",
   "modo": "dry-run",
   "payloadAlteradoAposDecisao": [
     {
@@ -34,7 +34,7 @@
       "payloadHashNoMomentoDaDecisao": "4cf7908b8a7ecb29004a858d58344abdab28566b102c45b6bbfef25a5c6f2ee4",
       "payloadHashAtual": "f099e5ba0aeecd4e8709bd6d605063f4e96a933f3565845446b9013d8f16bc16",
       "classificacao": "payload_alterado_apos_decisao",
-      "bloqueia": true
+      "bloqueia": false
     },
     {
       "decisaoId": 109,
@@ -51,7 +51,7 @@
       "payloadHashNoMomentoDaDecisao": "a24b35e71814d8fb61228db0517358ba91119ed89b98966a6fe393e92e8cc4fa",
       "payloadHashAtual": "ced153b36b9b1bee7ce8d6d1cd5f4867605d7421c655220dd843b9f30fef2940",
       "classificacao": "payload_alterado_apos_decisao",
-      "bloqueia": true
+      "bloqueia": false
     },
     {
       "decisaoId": 110,
@@ -68,7 +68,7 @@
       "payloadHashNoMomentoDaDecisao": "71d8302097781195f4b4ed1e18e277d51548380b737dbbb53abb1631a2c78846",
       "payloadHashAtual": "b18ba34219040730126ab783edc3f588faac5213f3d39af6073984e18c4d32e8",
       "classificacao": "payload_alterado_apos_decisao",
-      "bloqueia": true
+      "bloqueia": false
     },
     {
       "decisaoId": 153,
@@ -577,33 +577,6 @@
   "divergenciasReapresentacaoIndeterminada": [],
   "bloqueiosAtivacao": [
     {
-      "origem": "payload_decisao",
-      "classificacao": "payload_alterado_apos_decisao",
-      "decisaoId": 108,
-      "divergenciaId": 72,
-      "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
-      "decisao": "ACEITO",
-      "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-    },
-    {
-      "origem": "payload_decisao",
-      "classificacao": "payload_alterado_apos_decisao",
-      "decisaoId": 109,
-      "divergenciaId": 73,
-      "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
-      "decisao": "ACEITO",
-      "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-    },
-    {
-      "origem": "payload_decisao",
-      "classificacao": "payload_alterado_apos_decisao",
-      "decisaoId": 110,
-      "divergenciaId": 74,
-      "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
-      "decisao": "ACEITO",
-      "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-    },
-    {
       "origem": "divergencia_nao_reapresentada",
       "classificacao": "nao_reapresentada_com_decisao_resolutiva",
       "divergenciaId": 25,
@@ -655,8 +628,8 @@
   ],
   "avisos": [],
   "resumo": {
-    "totalDecisoesResolutivasAuditadas": 98,
-    "totalPayloadPreservado": 70,
+    "totalDecisoesResolutivasAuditadas": 101,
+    "totalPayloadPreservado": 73,
     "totalPayloadAlteradoAposDecisao": 28,
     "totalDecisoesSemSnapshotPayload": 0,
     "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -664,7 +637,7 @@
     "totalDivergenciasReapresentadas": 138,
     "totalDivergenciasNaoReapresentadas": 7,
     "totalDivergenciasReapresentacaoIndeterminada": 0,
-    "totalBloqueiosAtivacao": 10,
+    "totalBloqueiosAtivacao": 7,
     "totalAvisos": 0,
     "geracaoAtualDisponivel": true,
     "aptoParaProsseguirAtivacao": false
