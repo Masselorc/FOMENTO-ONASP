@@ -10,7 +10,7 @@
   - `arquivoPlanilhaConvenios`, `Planilhas/` e helpers `xlsx.readFile` / `carregarPlanoAplicacaoLocal` / `extrairPlanoAplicacaoProforDoWorkbook` classificados como **Manter temporariamente como fallback explícito** para compatibilidade com o desenvolvimento de modos clássicos locais.
   - Scripts do Transferegov classificados como **Manter como histórico/diagnóstico** sob proibição rígida de execução.
 - **Artefatos criados/alterados:**
-  - [profor-2022-limpeza-legado-pad-linha-base.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-limpeza-legado-pad-linha-base.md)
+  - [profor-2022-limpeza-legado-pad-linha-base.md](../../backend/data/relatorios/profor-2022-limpeza-legado-pad-linha-base.md)
 
 ## 23/05/2026 — PROFOR 2022: Registro de baseline estável pós-homologação
 
@@ -23,9 +23,10 @@
   - **Estado dos Testes:** 153/153 testes de serviço executados com sucesso pós-homologação, `validar:syntax` retornado com sucesso.
 - **Salvaguardas Operacionais:**
   - Rollbacks de dados, arquivos de publicação e base local SQLite documentados e preservados no repositório de backup externo.
+  - Eventual retorno de contingência para a origem `banco-cache` dar-se-á estritamente por meio de reversão manual, explícita, temporária e expressamente autorizada das variáveis de ambiente local (sem fallbacks silenciosos ou automatizados integrados ao software).
   - Proibição expressa de execução e acionamento de rotinas automáticas integradas ao Transferegov (`atualizar:profor-2022`, `publicar:profor-2022`) fora de uma frente de trabalho dedicada e previamente autorizada.
 - **Artefatos criados/alterados:**
-  - [profor-2022-baseline-pos-homologacao.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-baseline-pos-homologacao.md)
+  - [profor-2022-baseline-pos-homologacao.md](../../backend/data/relatorios/profor-2022-baseline-pos-homologacao.md)
 
 ## 23/05/2026 — PROFOR 2022: HOMOLOGAÇÃO pós-publicação e encerramento técnico do ciclo
 
@@ -50,9 +51,9 @@
   - Transferegov não foi acionado.
   - `git diff --check` limpo.
 - **Artefatos criados/alterados:**
-  - [profor-2022-homologacao-pos-publicacao.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-homologacao-pos-publicacao.md)
-  - [profor-2022-homologacao-pos-publicacao.json](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-homologacao-pos-publicacao.json)
-  - [profor-2022-encerramento-tecnico-pad-profor-2022.md](file:///c:/Users/marce/OneDrive%20-%20MINISTERIO%20DA%20JUSTI%C3%87A/1.%20SENAPPEN/2.%20OUVIDORIA/GITHUB/FOMENTO-ONASP/FOMENTO-ONASP/backend/data/relatorios/profor-2022-encerramento-tecnico-pad-profor-2022.md)
+  - [profor-2022-homologacao-pos-publicacao.md](../../backend/data/relatorios/profor-2022-homologacao-pos-publicacao.md)
+  - [profor-2022-homologacao-pos-publicacao.json](../../backend/data/relatorios/profor-2022-homologacao-pos-publicacao.json)
+  - [profor-2022-encerramento-tecnico-pad-profor-2022.md](../../backend/data/relatorios/profor-2022-encerramento-tecnico-pad-profor-2022.md)
 
 ## 23/05/2026 — PROFOR 2022: EXECUÇÃO da publicação controlada da origem `reconstrucao-pad`
 

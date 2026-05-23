@@ -50,7 +50,7 @@ A integridade do código e a estabilidade das funções de mapeamento de dados d
 Caso seja necessário reverter o ambiente para o estado anterior à transição da origem de dados, os seguintes caminhos estão assegurados:
 
 1.  **Restauração dos JSONs Públicos:** Cópia de segurança física de `frontend/data/publicados/` pré-publicação armazenada no diretório de retenção externa `C:\BACKUPS-FOMENTO-ONASP\PAD-PROFOR-2022\PUBLICACAO-20260523-170600\`.
-2.  **Reversão da Origem Ativa:** Alteração da variável `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` para `banco-cache` no arquivo de configuração local `.env` (gitignored).
+2.  **Reversão da Origem Ativa:** Alteração manual, explícita, temporária e expressamente autorizada da variável `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` para `banco-cache` no arquivo de configuração local `.env` (gitignored). Fica enfatizado que este processo é uma intervenção humana de contingência e nunca um fallback automático ou silencioso do sistema.
 3.  **Restauração do SQLite:** Backup físico do banco `onasp.sqlite` pré-saneamento de segurança mantido fora do repositório.
 
 ---
