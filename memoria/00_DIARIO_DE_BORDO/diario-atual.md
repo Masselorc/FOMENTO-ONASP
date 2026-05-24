@@ -1,5 +1,32 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: fechamento do ciclo de limpeza — bloqueio do último fallback workbook silencioso
+
+- **Escopo correto:** esta etapa fecha o ciclo previsto pelo plano original de limpeza (inventário, classificação, linha de base, bloqueio do que for perigoso). **Não é remoção ampla** dos fallbacks por workbook.
+- **Pré-requisito:** os commits `773ea98` (bloqueio do script legado da aba `Geral`) e `055bcdc` (documentação) já haviam inventariado e bloqueado o que era trivial. Esta etapa identifica e bloqueia o **fallback silencioso remanescente**.
+- **Achado crítico (fallback silencioso perigoso):** `backend/server.js::montarConsolidadoProfor2022Local` lê workbook sem consultar `PROFOR_2022_ORIGEM_DADOS`. O endpoint `GET /api/profor-2022/consolidado` devolvia dados extraídos da planilha antiga mesmo com origem ativa `reconstrucao-pad` — risco de operador interpretar a tela como reflexo da origem ativa.
+- **Patch aplicado:**
+  - Nova função `assertWorkbookFallbackPermitido(contexto)` em `backend/server.js`.
+  - Chamada na entrada de `montarConsolidadoProfor2022Local`.
+  - Quando `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` e a flag `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK` não é `1` → lança erro claro orientando uso temporário em dev e descontinuação em produção.
+  - `montarComparacaoOrigensProfor2022Local` (endpoint `comparar-origens`) **não** está sujeito ao gate por desenho — é fallback explícito de desenvolvimento; comentário inline reforça isso.
+  - `.env.example` recebeu o novo gate documentado com aviso "NUNCA usar 1 sem aviso".
+- **Outros achados (mantidos sem alteração):**
+  - `montarDadosProfor2022Publicacao` no `dashboard-publication-service.js` — já estruturado por branch de origem; sem fallback silencioso para planilha quando origem é `reconstrucao-pad`.
+  - `profor-atualizacao-consolidada-service.carregarPlanoAplicacaoLocal` — não mexer por risco alto; faz parte do orquestrador `atualizar:profor-2022` que já é proibido pelos roteiros de ativação/publicação controladas.
+  - `tests/services/profor-pad-origem-reconstrucao.test.js` — compatibilidade de teste; preserva.
+- **Teste ao vivo do gate (sem subir servidor):**
+  - Com `.env` apontando `PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad` e sem flag → bloqueado corretamente.
+  - Com `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK=1` → liberado corretamente.
+- **Validações:** `git diff --check` limpo; `validar:syntax` 100 OK; `validar:services` 225/225; reconstrução / comparador / comparação de snapshots sem regressão.
+- **Preservações:** `frontend/data/publicados/` intacto; SQLite/WAL/SHM intactos; `.env` inalterado; snapshots PAD (atual e anterior oficial) intactos; `planoAplicacao` oficial e fila oficial real inalterados; decisões/divergências/logs preservados; Transferegov não acionado.
+- **Arquivos criados/alterados:**
+  - `backend/server.js` (patch: `assertWorkbookFallbackPermitido` + comentário em `montarComparacaoOrigensProfor2022Local`).
+  - `.env.example` (gate documentado).
+  - `backend/data/relatorios/profor-2022-auditoria-final-fallback-workbook.md` (relatório de fechamento).
+- **Rollback:** `git revert` dos 2 commits desta etapa; não apagar histórico.
+- **Próximos passos (frentes dedicadas, não nesta etapa):** reescrever `/api/profor-2022/consolidado` para consumir origem ativa via `montarDadosProfor2022Publicacao`; descontinuar `carregarPlanoAplicacaoLocal` em conjunto com aposentadoria do orquestrador `atualizar:profor-2022`.
+
 ## 23/05/2026 — PROFOR 2022: limpeza técnica pós-migração da planilha antiga por abas
 
 - **Objetivo da etapa:** limpeza pós-migração (não migração). A origem PAD/reconstrução já está funcional; esta frente tratou resíduos legados de planilha antiga por abas/UF.
