@@ -1,5 +1,15 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: correção da recarga PAD e dos totais do painel
+
+- **Escopo:** ajuste operacional pontual, sem publicação, sem DETRU/Transferegov, sem `.env`, sem `frontend/data/publicados/` e sem SQLite/WAL/SHM.
+- **Correção 1 (recarga PAD):** `backend/services/profor-2022/profor-pad-recarga-operacional-service.js` passou a gravar e reportar somente `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json` (remoção da grafia antiga do caminho).
+- **Correção 2 (painel):** `frontend/js/app.js` passou a mapear convênios do consolidado PAD com fallback de campos reais (`previstoOuvidoria` → `valorGlobal`/`valorTotal`; `valorExecutadoOuvidoria` → `valorExecutadoGeral`/`valorExecutado`) e a forçar origem efetiva `reconstrucao-pad` no fluxo local/API.
+- **Correção 3 (KPI total):** `TOTAL DE FOMENTO` agora soma explicitamente `convênios + FAF + doações` a partir do `resumoInstrumentos`, evitando subcontagem quando o total contratado global não refletia os convênios reconstruídos.
+- **Testes ajustados:** `tests/services/profor-pad-recarga-operacional.test.js` (caminho correto) e `tests/services/profor-pad-origem-reconstrucao.test.js` (consolidado/publicação com convênios > 0, UFs > 0 e soma do total de fomento).
+- **Validações executadas:** `git diff --check`, `npm run validar:syntax`, `npm run validar:services`, `npm run profor:pad:ler-relatorios:dry-run`, `npm run profor:pad:reconstruir-plano:dry-run`, `npm run profor:pad:comparar-plano:dry-run`, `npm run profor:pad:comparar-snapshots:dry-run`.
+- **Preservações:** sem alteração de fila oficial, decisões, divergências, logs, snapshots oficiais e planoAplicacao oficial.
+
 ## 24/05/2026 — PROFOR 2022: remoção física do legado da planilha antiga por abas
 
 - **Escopo:** limpeza pós-migração, não migração. A origem PAD/reconstrução já estava funcional; esta etapa removeu resíduos da planilha antiga por abas/UF (`Planilhas/gestao_financeira_ouvidoria.xlsx`).

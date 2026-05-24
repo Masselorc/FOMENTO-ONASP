@@ -42,6 +42,10 @@ test("2. recarregarPadsOperacional escreve os relatórios nos caminhos apropriad
   const repoRoot = path.resolve(__dirname, "../..");
   const caminhoJson = path.join(repoRoot, "backend/data/relatorios/profor-2022-pad-recarga-operacional.json");
   const caminhoMd = path.join(repoRoot, "backend/data/relatorios/profor-2022-pad-recarga-operacional.md");
+  const caminhoReconstrucaoCorreto = path.join(
+    repoRoot,
+    "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json"
+  );
 
   // Remove os arquivos se já existirem para certificar que serão criados/atualizados
   if (fs.existsSync(caminhoJson)) fs.unlinkSync(caminhoJson);
@@ -51,6 +55,12 @@ test("2. recarregarPadsOperacional escreve os relatórios nos caminhos apropriad
 
   assert.ok(fs.existsSync(caminhoJson), "O arquivo JSON de recarga operacional deve ser criado");
   assert.ok(fs.existsSync(caminhoMd), "O arquivo MD de recarga operacional deve ser criado");
+  assert.ok(fs.existsSync(caminhoReconstrucaoCorreto), "A recarga deve atualizar o arquivo de reconstrução com nome correto");
+  assert.equal(
+    resultado.caminhosRelatorios.reconstrucaoJson,
+    "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
+    "O caminho de reconstrução retornado pela recarga deve usar 'reconstruido'"
+  );
 
   const dadosPersistidos = JSON.parse(fs.readFileSync(caminhoJson, "utf8"));
   assert.equal(dadosPersistidos.dataHora, resultado.dataHora, "A data e hora no arquivo persistido deve coincidir com o resultado");
@@ -157,4 +167,15 @@ test("5. recarga operacional não publica dados, não aciona DETRU nem Transfere
       `O código de recarga operacional não deve conter referências ao termo proibido '${termo}'`
     );
   }
+});
+
+test("6. serviço de recarga contém apenas o caminho canônico de reconstrução", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const servicePath = path.join(repoRoot, "backend/services/profor-2022/profor-pad-recarga-operacional-service.js");
+  const serviceCode = fs.readFileSync(servicePath, "utf8");
+  assert.equal(
+    serviceCode.includes("profor-2022-pad-plano-reconstruido-dry-run.json"),
+    true,
+    "O serviço de recarga deve usar o caminho canônico de reconstrução"
+  );
 });

@@ -24,6 +24,10 @@ const {
   adaptarItemReconstrucaoPad,
   carregarPlanoAplicacaoReconstrucaoPad,
 } = require("../../backend/services/profor-2022/profor-pad-origem-reconstrucao-service");
+const {
+  montarDadosProfor2022Publicacao,
+  consolidarCatalogoDashboard,
+} = require("../../backend/services/dashboard-publication-service");
 
 function itemReconstrucaoValido(overrides = {}) {
   return {
@@ -265,4 +269,39 @@ test("modulo de origem reconstrucao-pad NAO importa publicacao, SQLite, init-db 
   // Nenhuma escrita em arquivos via fs.writeFile* ou fs.appendFile* — a origem e somente leitura.
   assert.ok(!/fs\.writeFile|fs\.writeFileSync|fs\.appendFile|fs\.appendFileSync/.test(codigoExecutavel),
     "Origem reconstrucao-pad nao pode escrever em arquivos (somente leitura).");
+});
+
+test("montarDadosProfor2022Publicacao inclui convenios reconstruidos com valor total positivo", () => {
+  const dados = montarDadosProfor2022Publicacao(null, {}, { origemDados: "reconstrucao-pad" });
+  assert.ok(Array.isArray(dados.convenios) && dados.convenios.length > 0);
+
+  const totalConvenios = dados.convenios.reduce((acc, convenio) => {
+    const valor = Number(convenio.previstoOuvidoria ?? convenio.valorGlobal ?? convenio.valorTotal) || 0;
+    return acc + valor;
+  }, 0);
+  const ufsComConvenio = new Set(
+    dados.convenios
+      .map((convenio) => String(convenio.uf || "").trim())
+      .filter(Boolean)
+  );
+
+  assert.ok(totalConvenios > 0, "Total de convenios reconstruidos deve ser maior que zero.");
+  assert.ok(ufsComConvenio.size > 0, "UFs de convenios reconstruidos nao podem ficar zeradas.");
+});
+
+test("consolidarCatalogoDashboard inclui convenios PROFOR/PAD no total geral do painel", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const catalogoPath = path.join(repoRoot, "backend/data/aplicacao.json");
+  const catalogo = JSON.parse(fs.readFileSync(catalogoPath, "utf8"));
+
+  const consolidado = consolidarCatalogoDashboard(catalogo, new Date().toISOString());
+  const { resumoDashboard } = consolidado;
+
+  assert.ok(resumoDashboard.totalConvenios > 0, "Total em convenios nao pode ficar zerado.");
+  assert.ok(resumoDashboard.quantidadeUfsConvenios > 0, "UFs com convenios nao podem ficar zeradas.");
+  assert.equal(
+    resumoDashboard.totalFomento,
+    resumoDashboard.totalConvenios + resumoDashboard.totalFaf + resumoDashboard.totalDoacoes,
+    "Total de fomento deve somar convenios + FAF + doacoes."
+  );
 });

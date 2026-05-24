@@ -1482,25 +1482,34 @@ async function carregarLogoParaPDF() {
         }
 
         function montarItensDashboardProforBancoCache(dadosProfor) {
-            if (!dadosProfor || dadosProfor.origemDadosEfetiva !== 'banco-cache') {
+            const origemDadosEfetiva = String(
+                dadosProfor?.origemDadosEfetiva || dadosProfor?.origemDados || ''
+            ).toLowerCase();
+            const origemReconstrucaoPad = origemDadosEfetiva === 'reconstrucao-pad' || origemDadosEfetiva === 'banco-cache';
+
+            if (!dadosProfor || !origemReconstrucaoPad) {
                 return null;
             }
 
             return (dadosProfor.convenios || []).map((convenio) => {
-                const valorTotal = Number(convenio.previstoOuvidoria) || 0;
-                const valorExecutado = Number(convenio.valorExecutadoOuvidoria) || 0;
+                const valorTotal = Number(
+                    convenio.previstoOuvidoria ?? convenio.valorGlobal ?? convenio.valorTotal
+                ) || 0;
+                const valorExecutado = Number(
+                    convenio.valorExecutadoOuvidoria ?? convenio.valorExecutadoGeral ?? convenio.valorExecutado
+                ) || 0;
                 return {
                     uf: convenio.uf,
                     regiao: '',
                     instrumento: 'Convênio PROFOR 2022',
                     objeto: `PROFOR 2022 - Convênio ${convenio.numero || convenio.numeroConvenio || ''}/${convenio.ano || ''}`.trim(),
-                    quantidade: Number(convenio.totalItensOuvidoria) || 1,
+                    quantidade: Number(convenio.totalItensOuvidoria ?? convenio.totalItens) || 1,
                     valorUnitario: valorTotal,
                     valorTotal,
                     valorExecutado,
                     saldo: valorTotal - valorExecutado,
                     percentualExecucao: valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0,
-                    origemDados: 'banco-cache'
+                    origemDados: 'reconstrucao-pad'
                 };
             });
         }
@@ -1534,7 +1543,10 @@ async function carregarLogoParaPDF() {
             }
 
             try {
-                return await carregarConsolidadoProfor2022BancoCacheLocal();
+                const consolidado = await carregarConsolidadoProfor2022BancoCacheLocal();
+                consolidado.origemDados = 'reconstrucao-pad';
+                consolidado.origemDadosEfetiva = 'reconstrucao-pad';
+                return consolidado;
             } catch (error) {
                 avisoFallbackProfor2022 = 'Falha ao carregar o consolidado PAD/reconstrucao. Mantidos os dados estáticos publicados.';
                 console.warn(avisoFallbackProfor2022, error);
@@ -14724,20 +14736,16 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
         }
 
         function renderKPIs(global, ufsList, resumoInstrumentos) {
-            // Calcular Total de Fomento = Total Repassado + Total em Doações
-            const totalRepassado = Number(global.totalContratado) || 0;
-            const totalDoado = Number(global.totalDoado) || 0;
-            const totalFomentoOuvidoria = totalRepassado + totalDoado;
-            
+            const convenios = resumoInstrumentos.convenios;
+            const faf = resumoInstrumentos.faf;
+            const doacao = resumoInstrumentos.doacao;
+            const totalFomentoOuvidoria = Number(convenios.total || 0) + Number(faf.total || 0) + Number(doacao.total || 0);
+
             $('#kpi-total-fomento-ouvidoria').text(formatMoney(totalFomentoOuvidoria)).attr('title', formatMoney(totalFomentoOuvidoria));
             $('#kpi-total-contratado').text(formatMoney(global.totalContratado)).attr('title', formatMoney(global.totalContratado));
             $('#kpi-total-executado').text(formatMoney(global.totalExecutado)).attr('title', formatMoney(global.totalExecutado));
             $('#kpi-percentual-global').text(formatPercent(global.percentual));
             $('#kpi-total-doado').text(formatMoney(global.totalDoado)).attr('title', formatMoney(global.totalDoado));
-
-            const convenios = resumoInstrumentos.convenios;
-            const faf = resumoInstrumentos.faf;
-            const doacao = resumoInstrumentos.doacao;
 
             $('#kpi-total-convenios').text(formatMoney(convenios.total)).attr('title', formatMoney(convenios.total));
             $('#kpi-percentual-convenios').text(formatPercent(convenios.percentual));

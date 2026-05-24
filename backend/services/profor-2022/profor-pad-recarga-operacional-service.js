@@ -34,7 +34,7 @@ async function recarregarPadsOperacional(opcoes = {}) {
 
   const CAMINHO_RECONSTRUCAO_JSON = path.join(
     repoRoot,
-    "backend/data/relatorios/profor-2022-pad-plano-reconstrucido-dry-run.json"
+    "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json"
   );
   const CAMINHO_COMPARACAO_JSON = path.join(
     repoRoot,
@@ -170,7 +170,7 @@ async function recarregarPadsOperacional(opcoes = {}) {
     const caminhosRelatorios = {
       recargaJson: "backend/data/relatorios/profor-2022-pad-recarga-operacional.json",
       recargaMd: "backend/data/relatorios/profor-2022-pad-recarga-operacional.md",
-      reconstrucaoJson: "backend/data/relatorios/profor-2022-pad-plano-reconstrucido-dry-run.json",
+      reconstrucaoJson: "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
       comparacaoJson: "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
       comparacaoMd: "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
     };
