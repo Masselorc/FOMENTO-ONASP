@@ -1,5 +1,3 @@
-const path = require("path");
-const xlsx = require("xlsx");
 const { resolverOrigemDadosProfor2022 } = require("./profor-2022/profor-origem-service");
 const { montarConsolidadoProfor2022 } = require("./profor-2022/profor-consolidado-service");
 const {
@@ -9,195 +7,12 @@ const {
   obterUltimaAtualizacaoDadosProfor2022
 } = require("./profor-2022/profor-atualizacao-meta-service");
 
-const ABA_RESUMO_CONVENIOS = "Geral";
-const COLUNA_VALOR_OUVIDORIA_GERAL = 18;
-const TOLERANCIA_VALIDACAO_CENTAVOS = 1;
-
-const COLUNAS_GERAL_PROFOR = {
-  uf: 0,
-  instrumento: 1,
-  numero: 2,
-  ano: 3,
-  processoSei: 4,
-  vencimento: 5,
-  quantidadeTa: 6,
-  solicitouProrrogacao: 7,
-  valorGlobal: 8,
-  valorRepasse: 9,
-  valorContrapartida: 10,
-  repasseDesembolsado: 11,
-  rendimentoAprovado: 12,
-  saldoRendimentosAtual: 13,
-  saldoResidualCapital: 14,
-  saldoResidualCusteio: 15,
-  contrapartidaIntegralizada: 16,
-  valorExecutadoGeral: 17,
-  previstoOuvidoria: 18,
-  previstoCorregedoria: 19,
-  previstoEscolaPenal: 20,
-  valorRelativoOuvidoria: 21,
-  execucaoOuvidoriaPercentual: 22,
-  execucaoCorregedoriaPercentual: 23,
-  execucaoEscolaPenalPercentual: 24,
-  saldoDisponivelOuvidoria: 25
-};
-
-const COLUNAS_PLANO_PROFOR = {
-  uf: 0,
-  instrumento: 1,
-  numero: 2,
-  ano: 3,
-  area: 4,
-  natureza: 5,
-  descricao: 6,
-  quantidade: 7,
-  valorUnitario: 8,
-  valorPrevisto: 9,
-  valorExecutado: 10,
-  saldo: 11,
-  saldoEconomicidade: 12
-};
-
-const COLUNAS_CONVENIO = {
-  uf: 0,
-  classificacao: 4,
-  objeto: 6,
-  quantidade: 7,
-  valorUnitario: 8,
-  valorTotal: 9,
-  valorExecutado: 10
-};
-
-function normalizarTexto(valor) {
-  return String(valor ?? "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim()
-    .toUpperCase();
-}
-
-function limparTexto(valor) {
-  return String(valor ?? "").replace(/\s+/g, " ").trim();
-}
-
-function converterNumeroPlanilha(valor) {
-  if (typeof valor === "number") {
-    return Number.isFinite(valor) ? valor : 0;
-  }
-
-  if (typeof valor !== "string") {
-    return 0;
-  }
-
-  const texto = valor.trim();
-  if (!texto) return 0;
-
-  const numeroNormalizado = texto
-    .replace(/\s+/g, "")
-    .replace(/^R\$/i, "")
-    .replace(/%$/, "");
-
-  if (numeroNormalizado.includes(",") && numeroNormalizado.includes(".")) {
-    return Number.parseFloat(numeroNormalizado.replace(/\./g, "").replace(",", ".")) || 0;
-  }
-
-  if (numeroNormalizado.includes(",")) {
-    return Number.parseFloat(numeroNormalizado.replace(",", ".")) || 0;
-  }
-
-  return Number.parseFloat(numeroNormalizado) || 0;
-}
-
-function converterPercentualPlanilha(valor) {
-  const numero = converterNumeroPlanilha(valor);
-  return Math.abs(numero) <= 1.5 ? numero * 100 : numero;
-}
-
-function arredondarMoeda(valor) {
-  return Math.round((Number(valor) + Number.EPSILON) * 100) / 100;
-}
-
 function moedaParaCentavos(valor) {
   return Math.round((Number(valor) || 0) * 100);
 }
 
 function centavosParaMoeda(centavos) {
   return centavos / 100;
-}
-
-function somarCampoMoeda(itens, campo) {
-  const totalCentavos = itens.reduce((total, item) => (
-    total + moedaParaCentavos(item[campo])
-  ), 0);
-
-  return centavosParaMoeda(totalCentavos);
-}
-
-function obterLinhasPlanilha(sheet) {
-  return xlsx.utils.sheet_to_json(sheet, {
-    header: 1,
-    raw: true,
-    defval: null,
-    blankrows: false
-  });
-}
-
-function obterTextoCelula(linha, indice, fallback = "-") {
-  if (indice < 0 || linha[indice] === undefined || linha[indice] === null) {
-    return fallback;
-  }
-
-  const texto = limparTexto(linha[indice]);
-  return texto || fallback;
-}
-
-function formatarDataPtBr(data, usarUtc = false) {
-  const dia = usarUtc ? data.getUTCDate() : data.getDate();
-  const mes = usarUtc ? data.getUTCMonth() + 1 : data.getMonth() + 1;
-  const ano = usarUtc ? data.getUTCFullYear() : data.getFullYear();
-  return `${String(dia).padStart(2, "0")}/${String(mes).padStart(2, "0")}/${ano}`;
-}
-
-function formatarDataPlanilha(valor) {
-  if (valor === undefined || valor === null || valor === "") {
-    return "";
-  }
-
-  if (valor instanceof Date && !Number.isNaN(valor.getTime())) {
-    return formatarDataPtBr(valor);
-  }
-
-  if (typeof valor === "number" && Number.isFinite(valor)) {
-    if (valor <= 0) return "";
-    const dataFormatada = xlsx.SSF?.format?.("dd/mm/yyyy", valor);
-    if (dataFormatada) return limparTexto(dataFormatada);
-
-    const data = new Date(Date.UTC(1899, 11, 30) + Math.round(valor * 86400000));
-    return formatarDataPtBr(data, true);
-  }
-
-  const texto = limparTexto(valor);
-  const textoNumerico = texto.replace(",", ".");
-  if (/^\d+([.,]\d+)?$/.test(texto) && Number(textoNumerico) > 20000 && Number(textoNumerico) < 80000) {
-    return formatarDataPlanilha(Number(textoNumerico));
-  }
-
-  return texto;
-}
-
-function obterDataCelula(linha, indice) {
-  if (indice < 0 || linha[indice] === undefined || linha[indice] === null) {
-    return "";
-  }
-
-  return formatarDataPlanilha(linha[indice]);
-}
-
-function formatarMoedaMensagem(centavos) {
-  return centavosParaMoeda(centavos).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-  });
 }
 
 function anexarMetadadosOrigemProfor2022(dados, metadados = {}) {
@@ -267,7 +82,17 @@ function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {
 }
 
 function removerConveniosDoDadosBase(dadosBase) {
-  return (dadosBase || []).filter((item) => !normalizarTexto(item.instrumento).includes("CONV"));
+  if (!dadosBase) return [];
+  const regexConv = /conv/i;
+  const len = dadosBase.length;
+  const resultado = [];
+  for (let i = 0; i < len; i++) {
+    const item = dadosBase[i];
+    if (!regexConv.test(item?.instrumento || "")) {
+      resultado.push(item);
+    }
+  }
+  return resultado;
 }
 
 function calcularResumoDashboard(dadosBase) {
@@ -279,19 +104,27 @@ function calcularResumoDashboard(dadosBase) {
     ufsConvenios: new Set()
   };
 
-  dadosBase.forEach((item) => {
-    const instrumento = normalizarTexto(item.instrumento);
-    const valorTotalCentavos = moedaParaCentavos(item.valorTotal);
+  const regexConv = /conv/i;
+  const regexFaf = /faf/i;
+  const regexDoa = /doa/i;
 
-    if (instrumento.includes("CONV")) {
+  const len = dadosBase.length;
+  for (let i = 0; i < len; i++) {
+    const item = dadosBase[i];
+    const instrumento = item?.instrumento || "";
+    const valorTotalCentavos = moedaParaCentavos(item?.valorTotal);
+
+    if (regexConv.test(instrumento)) {
       resumo.totalConveniosCentavos += valorTotalCentavos;
-      if (item.uf && valorTotalCentavos > 0) resumo.ufsConvenios.add(item.uf);
-    } else if (instrumento.includes("FAF")) {
+      if (item?.uf && valorTotalCentavos > 0) {
+        resumo.ufsConvenios.add(item.uf);
+      }
+    } else if (regexFaf.test(instrumento)) {
       resumo.totalFafCentavos += valorTotalCentavos;
-    } else if (instrumento.includes("DOA")) {
+    } else if (regexDoa.test(instrumento)) {
       resumo.totalDoacoesCentavos += valorTotalCentavos;
     }
-  });
+  }
 
   resumo.totalFomentoCentavos = resumo.totalConveniosCentavos
     + resumo.totalFafCentavos
@@ -308,16 +141,17 @@ function calcularResumoDashboard(dadosBase) {
 }
 
 function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
-  const dadosBaseConsolidado = [
-    ...removerConveniosDoDadosBase(catalogoAplicacao.dadosBase)
-  ];
+  const dadosBaseConsolidado = removerConveniosDoDadosBase(catalogoAplicacao?.dadosBase);
   const dadosProfor2022 = montarDadosProfor2022Publicacao(null, catalogoAplicacao, {
     origemDados: "reconstrucao-pad",
   });
   const conveniosProfor = Array.isArray(dadosProfor2022?.convenios)
     ? dadosProfor2022.convenios
     : [];
-  for (const convenio of conveniosProfor) {
+
+  const len = conveniosProfor.length;
+  for (let i = 0; i < len; i++) {
+    const convenio = conveniosProfor[i];
     dadosBaseConsolidado.push({
       instrumento: convenio.instrumento || "Convênio",
       uf: convenio.uf || "",
@@ -355,8 +189,8 @@ function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
     },
     resumoDashboard,
     totaisExtracao: {
-      itensConvenio: conveniosProfor.length,
-      conveniosProfor2022: conveniosProfor.length
+      itensConvenio: len,
+      conveniosProfor2022: len
     }
   };
 }
