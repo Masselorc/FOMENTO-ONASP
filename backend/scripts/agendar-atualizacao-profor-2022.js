@@ -7,11 +7,31 @@
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") });
 
-const { inicializarBanco } = require("../db/init-db");
 const {
-  atualizarProfor2022Consolidado,
-  resumirAtualizacaoConsolidada,
-} = require("../services/profor-2022/profor-atualizacao-consolidada-service");
+  assertAgendadorPermitido,
+} = require("../services/profor-2022/profor-workbook-fallback-guard-service");
+
+let inicializarBanco;
+let atualizarProfor2022Consolidado;
+let resumirAtualizacaoConsolidada;
+
+function carregarDependenciasOperacionais() {
+  if (inicializarBanco) return;
+  ({ inicializarBanco } = require("../db/init-db"));
+  ({
+    atualizarProfor2022Consolidado,
+    resumirAtualizacaoConsolidada,
+  } = require("../services/profor-2022/profor-atualizacao-consolidada-service"));
+}
+
+function bloquearSeNaoAutorizado() {
+  try {
+    assertAgendadorPermitido("script_agendar_atualizacao_profor_2022");
+  } catch (erro) {
+    console.error(erro?.message || erro);
+    process.exit(2);
+  }
+}
 
 const HORARIO_PADRAO = "12:00";
 
@@ -40,6 +60,7 @@ function formatarData(data) {
 }
 
 async function executarCiclo() {
+  carregarDependenciasOperacionais();
   console.log(`[${new Date().toISOString()}] Iniciando atualizacao consolidada PROFOR 2022...`);
   try {
     const resultado = await atualizarProfor2022Consolidado();
@@ -63,6 +84,8 @@ function agendarProximaExecucao(hora, minuto) {
 }
 
 function iniciar() {
+  bloquearSeNaoAutorizado();
+  carregarDependenciasOperacionais();
   inicializarBanco();
 
   const { hora, minuto } = parsearHora(process.env.PROFOR_2022_ATUALIZACAO_DIARIA_HORA);

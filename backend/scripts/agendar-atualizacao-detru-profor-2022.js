@@ -5,19 +5,58 @@
 // Mantém o processo ativo e agenda a próxima execução após cada ciclo.
 
 const path = require("path");
-const { inicializarBanco } = require("../db/init-db");
-const { cruzarCarteiraComDetru, resumirCruzamentoDetru } = require("../services/profor-2022/profor-detru-sync-service");
+require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") });
+
 const {
-  calcularHashArquivo,
-  salvarSnapshotDetru,
-  registrarAtualizacaoDetruInicio,
-  registrarAtualizacaoDetruFim,
-  registrarAtualizacaoDetruErro,
-} = require("../services/profor-2022/profor-detru-cache-service");
-const {
-  obterConfiguracaoDetru,
-  garantirArquivoDetruAtualizado,
-} = require("../services/profor-2022/detru-download-service");
+  assertAgendadorPermitido,
+  assertChamadaExternaPermitida,
+} = require("../services/profor-2022/profor-workbook-fallback-guard-service");
+
+let dependencias;
+
+function carregarDependenciasOperacionais() {
+  if (dependencias) return dependencias;
+  const { inicializarBanco } = require("../db/init-db");
+  const {
+    cruzarCarteiraComDetru,
+    resumirCruzamentoDetru,
+  } = require("../services/profor-2022/profor-detru-sync-service");
+  const {
+    calcularHashArquivo,
+    salvarSnapshotDetru,
+    registrarAtualizacaoDetruInicio,
+    registrarAtualizacaoDetruFim,
+    registrarAtualizacaoDetruErro,
+  } = require("../services/profor-2022/profor-detru-cache-service");
+  const {
+    obterConfiguracaoDetru,
+    garantirArquivoDetruAtualizado,
+  } = require("../services/profor-2022/detru-download-service");
+
+  dependencias = {
+    inicializarBanco,
+    cruzarCarteiraComDetru,
+    resumirCruzamentoDetru,
+    calcularHashArquivo,
+    salvarSnapshotDetru,
+    registrarAtualizacaoDetruInicio,
+    registrarAtualizacaoDetruFim,
+    registrarAtualizacaoDetruErro,
+    obterConfiguracaoDetru,
+    garantirArquivoDetruAtualizado,
+  };
+  return dependencias;
+}
+
+function bloquearSeNaoAutorizado() {
+  try {
+    assertAgendadorPermitido("script_agendar_atualizacao_detru_profor_2022");
+    assertChamadaExternaPermitida("script_agendar_atualizacao_detru_profor_2022", { tipo: "DETRU" });
+  } catch (erro) {
+    console.error(erro?.message || erro);
+    process.exit(2);
+  }
+}
 
 function parsearHora(horaStr) {
   const [hh, mm] = (horaStr || "12:00").split(":").map(Number);
@@ -41,6 +80,17 @@ function formatarData(data) {
 }
 
 async function executarAtualizacao() {
+  const {
+    cruzarCarteiraComDetru,
+    resumirCruzamentoDetru,
+    calcularHashArquivo,
+    salvarSnapshotDetru,
+    registrarAtualizacaoDetruInicio,
+    registrarAtualizacaoDetruFim,
+    registrarAtualizacaoDetruErro,
+    garantirArquivoDetruAtualizado,
+  } = carregarDependenciasOperacionais();
+
   console.log(`[${new Date().toISOString()}] Iniciando atualização agendada do cache DETRU...`);
 
   let caminhoZip;
@@ -85,6 +135,8 @@ function agendarProximaExecucao(hora, minuto) {
 }
 
 function iniciar() {
+  bloquearSeNaoAutorizado();
+  const { inicializarBanco, obterConfiguracaoDetru } = carregarDependenciasOperacionais();
   inicializarBanco();
 
   const config = obterConfiguracaoDetru();
