@@ -42,6 +42,7 @@ const ARQUIVOS = [
   "backend/services/data-service.js",
   "backend/services/analytics.js",
   "backend/scripts/extrair-rateios-profor-2022.js",
+  "backend/scripts/bloquear-atualizar-profor-2022-legado.js",
   "backend/scripts/importar-rateio-inicial-profor-2022.js",
   "backend/scripts/rollback-rateio-inicial-profor-2022.js",
   "backend/scripts/ler-relatorios-pad-profor-2022.js",

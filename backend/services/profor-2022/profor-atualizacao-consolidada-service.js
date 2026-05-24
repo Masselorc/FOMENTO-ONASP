@@ -47,6 +47,8 @@ function carregarCatalogoAplicacaoLocal() {
   return JSON.parse(fs.readFileSync(CATALOGO_APLICACAO_PATH, "utf8"));
 }
 
+// Legado interno do orquestrador descontinuado. Não deve ser usado por fluxo
+// operacional; `atualizarProfor2022Consolidado` bloqueia cedo pelo guard.
 function carregarPlanoAplicacaoLocal() {
   const catalogo = carregarCatalogoAplicacaoLocal();
   const planilhaRelativa = catalogo?.configuracao?.arquivoPlanilhaConvenios;

@@ -5,16 +5,17 @@ const {
   isAmbienteProducao,
   assertWorkbookFallbackPermitido,
   assertOrquestradorLegadoPermitido,
+  assertEndpointDevPermitido,
 } = require("../../backend/services/profor-2022/profor-workbook-fallback-guard-service");
 
 // Os testes usam env-stubs locais (opcoes.env) para evitar mutação global.
 
 function envDev(extra = {}) {
-  return { NODE_ENV: "development", APP_ENV: "", AMBIENTE: "", ...extra };
+  return { FOMENTO_AMBIENTE: "", NODE_ENV: "development", APP_ENV: "", AMBIENTE: "", ...extra };
 }
 
 function envProd(extra = {}) {
-  return { NODE_ENV: "production", APP_ENV: "", AMBIENTE: "", ...extra };
+  return { FOMENTO_AMBIENTE: "", NODE_ENV: "production", APP_ENV: "", AMBIENTE: "", ...extra };
 }
 
 test("isAmbienteProducao reconhece NODE_ENV=production", () => {
@@ -31,6 +32,22 @@ test("isAmbienteProducao reconhece APP_ENV=production/producao", () => {
 test("isAmbienteProducao reconhece AMBIENTE=producao", () => {
   assert.equal(isAmbienteProducao({ AMBIENTE: "producao" }), true);
   assert.equal(isAmbienteProducao({ AMBIENTE: "production" }), true);
+});
+
+test("isAmbienteProducao reconhece FOMENTO_AMBIENTE em valores de produção", () => {
+  assert.equal(isAmbienteProducao({ FOMENTO_AMBIENTE: "producao" }), true);
+  assert.equal(isAmbienteProducao({ FOMENTO_AMBIENTE: "produção" }), true);
+  assert.equal(isAmbienteProducao({ FOMENTO_AMBIENTE: "production" }), true);
+  assert.equal(isAmbienteProducao({ FOMENTO_AMBIENTE: "prod" }), true);
+});
+
+test("isAmbienteProducao é conservador quando variáveis se contradizem", () => {
+  assert.equal(isAmbienteProducao({
+    FOMENTO_AMBIENTE: "producao",
+    NODE_ENV: "development",
+    APP_ENV: "staging",
+    AMBIENTE: "homologacao",
+  }), true);
 });
 
 test("isAmbienteProducao falsifica em development/staging/teste/vazio", () => {
@@ -107,6 +124,19 @@ test("workbook gate: produção via APP_ENV/AMBIENTE também bloqueia mesmo com 
   );
 });
 
+test("workbook gate: FOMENTO_AMBIENTE=producao bloqueia mesmo com flag", () => {
+  assert.throws(
+    () => assertWorkbookFallbackPermitido("teste", {
+      env: envDev({
+        FOMENTO_AMBIENTE: "producao",
+        ALLOW_PROFOR_2022_WORKBOOK_FALLBACK: "1",
+      }),
+      origemAtiva: "reconstrucao-pad",
+    }),
+    /PROIBIDA em produção/,
+  );
+});
+
 test("workbook gate: flag com valor != '1' não libera (ex.: 'true', '0', '')", () => {
   for (const valor of ["true", "0", "", "yes", "sim"]) {
     assert.throws(
@@ -159,6 +189,54 @@ test("orquestrador gate: produção via APP_ENV/AMBIENTE também bloqueia com fl
   );
 });
 
+test("orquestrador gate: FOMENTO_AMBIENTE=producao bloqueia mesmo com flag", () => {
+  assert.throws(
+    () => assertOrquestradorLegadoPermitido("teste", {
+      env: envDev({
+        FOMENTO_AMBIENTE: "producao",
+        ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO: "1",
+      }),
+    }),
+    /PROIBIDA em produção/,
+  );
+});
+
+// --- assertEndpointDevPermitido / comparar-origens ---
+
+test("endpoint dev gate: comparar-origens bloqueia sem flag em desenvolvimento", () => {
+  assert.throws(
+    () => assertEndpointDevPermitido("api_profor_2022_comparar_origens", { env: envDev() }),
+    /Endpoint dev\/auditoria bloqueado/,
+  );
+});
+
+test("endpoint dev gate: comparar-origens libera com flag em desenvolvimento", () => {
+  assert.doesNotThrow(() => assertEndpointDevPermitido("api_profor_2022_comparar_origens", {
+    env: envDev({ ALLOW_PROFOR_2022_ENDPOINTS_DEV: "1" }),
+  }));
+});
+
+test("endpoint dev gate: comparar-origens bloqueia em produção mesmo com flag", () => {
+  assert.throws(
+    () => assertEndpointDevPermitido("api_profor_2022_comparar_origens", {
+      env: envProd({ ALLOW_PROFOR_2022_ENDPOINTS_DEV: "1" }),
+    }),
+    /bloqueado em produção/,
+  );
+});
+
+test("endpoint dev gate: FOMENTO_AMBIENTE=producao bloqueia em produção mesmo com flag", () => {
+  assert.throws(
+    () => assertEndpointDevPermitido("api_profor_2022_comparar_origens", {
+      env: envDev({
+        FOMENTO_AMBIENTE: "produção",
+        ALLOW_PROFOR_2022_ENDPOINTS_DEV: "1",
+      }),
+    }),
+    /bloqueado em produção/,
+  );
+});
+
 test("orquestrador gate: contexto aparece na mensagem", () => {
   assert.throws(
     () => assertOrquestradorLegadoPermitido("ctx_especifico", { env: envDev() }),
@@ -173,6 +251,44 @@ test("workbook gate: contexto aparece na mensagem", () => {
     }),
     /\[ctx_workbook\]/,
   );
+});
+
+test("server aplica guard dev/auditoria antes de montar comparar-origens", () => {
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const conteudo = fs.readFileSync(
+    path.resolve(__dirname, "../../backend/server.js"),
+    "utf8",
+  );
+  assert.match(conteudo, /assertEndpointDevPermitido\("api_profor_2022_comparar_origens"\)/);
+});
+
+test("atualizar:profor-2022 aponta para wrapper aposentado, não para orquestrador legado", () => {
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const pacote = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../package.json"), "utf8"));
+  assert.equal(
+    pacote.scripts["atualizar:profor-2022"],
+    "node backend/scripts/bloquear-atualizar-profor-2022-legado.js",
+  );
+  assert.equal(
+    pacote.scripts["profor:legado:atualizar-consolidado:dev"],
+    "node backend/scripts/atualizar-profor-2022-consolidado.js",
+  );
+});
+
+test("wrapper aposentado de atualizar:profor-2022 falha cedo com exit code 2", () => {
+  const path = require("node:path");
+  const { spawnSync } = require("node:child_process");
+  const resultado = spawnSync(process.execPath, [
+    path.resolve(__dirname, "../../backend/scripts/bloquear-atualizar-profor-2022-legado.js"),
+  ], {
+    encoding: "utf8",
+    env: { PATH: process.env.PATH },
+  });
+  assert.equal(resultado.status, 2);
+  assert.match(resultado.stderr, /aposentado/);
+  assert.doesNotMatch(`${resultado.stdout}\n${resultado.stderr}`, /Transferegov.*conclu/i);
 });
 
 // Garantia estrutural: o módulo não deve importar SQLite, dotenv, scripts de
