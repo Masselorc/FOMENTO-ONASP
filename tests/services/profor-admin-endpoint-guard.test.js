@@ -6,7 +6,6 @@ const { spawnSync } = require("node:child_process");
 
 const {
   isAmbienteProducao,
-  assertEndpointDevPermitido,
   assertEndpointAdminPermitido,
   assertChamadaExternaPermitida,
   assertAgendadorPermitido,
@@ -42,26 +41,13 @@ test("FOMENTO_AMBIENTE=producao prevalece sobre NODE_ENV=development", () => {
   assert.equal(isAmbienteProducao(envProd()), true);
 });
 
-test("endpoint dev/auditoria bloqueia em produção mesmo com flag", () => {
-  assert.throws(
-    () => assertEndpointDevPermitido("comparar_origens", {
-      env: envProd({ ALLOW_PROFOR_2022_ENDPOINTS_DEV: "1" }),
-    }),
-    /bloqueado em produção/,
-  );
+test("FOMENTO_AMBIENTE reconhece valores de producao suportados", () => {
+  for (const valor of ["producao", "produção", "production", "prod"]) {
+    assert.equal(isAmbienteProducao(envDev({ FOMENTO_AMBIENTE: valor })), true);
+  }
 });
 
-test("endpoint dev/auditoria exige flag em desenvolvimento", () => {
-  assert.throws(
-    () => assertEndpointDevPermitido("comparar_origens", { env: envDev() }),
-    /Endpoint dev\/auditoria bloqueado/,
-  );
-  assert.doesNotThrow(() => assertEndpointDevPermitido("comparar_origens", {
-    env: envDev({ ALLOW_PROFOR_2022_ENDPOINTS_DEV: "1" }),
-  }));
-});
-
-test("endpoint administrativo exige flag em desenvolvimento e bloqueia produção", () => {
+test("endpoint administrativo exige flag em desenvolvimento e bloqueia producao", () => {
   assert.throws(
     () => assertEndpointAdminPermitido("detru_atualizar", { env: envDev() }),
     /Endpoint administrativo PROFOR 2022 bloqueado/,
@@ -84,7 +70,7 @@ test("chamada externa DETRU/Transferegov bloqueia sem flag", () => {
   );
 });
 
-test("chamada externa bloqueia em produção mesmo com flag", () => {
+test("chamada externa bloqueia em producao mesmo com flag", () => {
   assert.throws(
     () => assertChamadaExternaPermitida("rendimentos", {
       env: envProd({ ALLOW_PROFOR_2022_EXTERNAL_CALLS: "1" }),
@@ -107,7 +93,7 @@ test("chamada externa bloqueia em teste mesmo com flag", () => {
   );
 });
 
-test("agendador PROFOR bloqueia sem flag e bloqueia produção", () => {
+test("agendador PROFOR bloqueia sem flag e bloqueia producao", () => {
   assert.throws(
     () => assertAgendadorPermitido("agendar_profor", { env: envDev() }),
     /Agendador PROFOR 2022 bloqueado/,
@@ -131,20 +117,23 @@ test("server aplica guard admin e externo antes dos endpoints DETRU/Transferegov
   assert.match(server, /tipo: "Transferegov"/);
 });
 
-test("/api/profor-2022/consolidado continua por origem ativa", () => {
+test("/api/profor-2022/consolidado continua operacional por PAD/reconstrucao", () => {
   const server = ler("backend/server.js");
   assert.match(server, /montarConsolidadoProfor2022PorOrigemAtiva/);
-  assert.match(server, /origemAtiva === "reconstrucao-pad"/);
+  assert.match(server, /origemAtiva !== "reconstrucao-pad"/);
   assert.match(server, /montarDadosProfor2022Publicacao\(null, catalogoAplicacao/);
+  assert.doesNotMatch(server, /montarConsolidadoProfor2022Local/);
+  assert.doesNotMatch(server, /carregarWorkbookProfor2022/);
 });
 
-test("comparar-origens continua dev/auditoria, não operacional", () => {
+test("rota comparar-origens foi removida e nao le workbook antigo", () => {
   const server = ler("backend/server.js");
-  assert.match(server, /assertEndpointDevPermitido\("api_profor_2022_comparar_origens"\)/);
-  assert.doesNotMatch(server, /\/api\/profor-2022\/comparar-origens[\s\S]{0,400}assertEndpointAdminPermitido/);
+  assert.doesNotMatch(server, /\/api\/profor-2022\/comparar-origens/);
+  assert.doesNotMatch(server, /montarComparacaoOrigensProfor2022Local/);
+  assert.doesNotMatch(server, /gestao_financeira_ouvidoria\.xlsx/);
 });
 
-test("scripts npm sensíveis apontam para entradas governadas", () => {
+test("scripts npm ordinarios nao expoem planilha antiga nem legado dev", () => {
   const pacote = JSON.parse(ler("package.json"));
   assert.equal(
     pacote.scripts["atualizar:profor-2022"],
@@ -154,30 +143,44 @@ test("scripts npm sensíveis apontam para entradas governadas", () => {
     pacote.scripts["agendar:profor-2022"],
     "node backend/scripts/bloquear-agendar-profor-2022-legado.js",
   );
-  assert.equal(
-    pacote.scripts["agendar:detru-profor"],
-    "node backend/scripts/agendar-atualizacao-detru-profor-2022.js",
-  );
+  assert.equal(pacote.scripts["import:profor-convenios"], undefined);
+  assert.equal(pacote.scripts["profor:legado:atualizar-consolidado:dev"], undefined);
+  assert.equal(pacote.scripts["profor:legado:agendar-atualizacao:dev"], undefined);
 });
 
-test("wrapper de agendar:profor-2022 falha cedo sem banco, rede ou Transferegov", () => {
-  const resultado = spawnSync(process.execPath, [
-    path.join(ROOT, "backend/scripts/bloquear-agendar-profor-2022-legado.js"),
-  ], {
-    encoding: "utf8",
-    env: { PATH: process.env.PATH },
-  });
-  assert.equal(resultado.status, 2);
-  assert.match(resultado.stderr, /bloqueado/);
-  assert.doesNotMatch(`${resultado.stdout}\n${resultado.stderr}`, /conclu[ií]d|Cache atualizado/i);
+test("wrappers legados falham cedo sem banco, rede ou workbook", () => {
+  for (const script of [
+    "backend/scripts/bloquear-atualizar-profor-2022-legado.js",
+    "backend/scripts/bloquear-agendar-profor-2022-legado.js",
+  ]) {
+    const resultado = spawnSync(process.execPath, [path.join(ROOT, script)], {
+      encoding: "utf8",
+      env: { PATH: process.env.PATH },
+    });
+    assert.equal(resultado.status, 2);
+    assert.match(resultado.stderr, /bloquead|aposentado/);
+    assert.doesNotMatch(`${resultado.stdout}\n${resultado.stderr}`, /conclu[ií]d|Cache atualizado/i);
+  }
 });
 
-test("scripts externos e agendadores carregam guards antes das dependências operacionais", () => {
+test("flags antigas de workbook e endpoints dev foram removidas do exemplo de ambiente", () => {
+  const exemplo = ler(".env.example");
+  assert.doesNotMatch(exemplo, /ALLOW_PROFOR_2022_WORKBOOK_FALLBACK/);
+  assert.doesNotMatch(exemplo, /ALLOW_PROFOR_2022_ENDPOINTS_DEV/);
+  assert.doesNotMatch(exemplo, /ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO/);
+});
+
+test("catalogo local nao aponta mais para a planilha antiga por abas", () => {
+  const catalogo = ler("backend/data/aplicacao.json");
+  assert.doesNotMatch(catalogo, /arquivoPlanilhaConvenios/);
+  assert.doesNotMatch(catalogo, /gestao_financeira_ouvidoria\.xlsx/);
+});
+
+test("scripts externos e agendador DETRU carregam guards antes das dependencias operacionais", () => {
   const arquivos = [
     "backend/scripts/atualizar-cache-detru-profor-2022.js",
     "backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js",
     "backend/scripts/agendar-atualizacao-detru-profor-2022.js",
-    "backend/scripts/agendar-atualizacao-profor-2022.js",
   ];
 
   for (const arquivo of arquivos) {

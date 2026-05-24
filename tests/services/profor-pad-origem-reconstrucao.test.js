@@ -52,14 +52,12 @@ function escreverArquivoTemporario(payload) {
   return caminho;
 }
 
-test("ORIGENS_DADOS_PROFOR_2022 inclui reconstrucao-pad sem remover origens antigas", () => {
-  assert.ok(ORIGENS_DADOS_PROFOR_2022.includes("planilha"));
-  assert.ok(ORIGENS_DADOS_PROFOR_2022.includes("banco-cache"));
-  assert.ok(ORIGENS_DADOS_PROFOR_2022.includes("reconstrucao-pad"));
+test("ORIGENS_DADOS_PROFOR_2022 aceita apenas reconstrucao-pad como origem operacional", () => {
+  assert.deepEqual(ORIGENS_DADOS_PROFOR_2022, ["reconstrucao-pad"]);
 });
 
-test("ORIGEM_PADRAO_PROFOR_2022 permanece banco-cache (sem mudanca de default nesta etapa)", () => {
-  assert.equal(ORIGEM_PADRAO_PROFOR_2022, "banco-cache");
+test("ORIGEM_PADRAO_PROFOR_2022 e reconstrucao-pad", () => {
+  assert.equal(ORIGEM_PADRAO_PROFOR_2022, "reconstrucao-pad");
 });
 
 test("normalizarOrigemDadosProfor2022 aceita reconstrucao-pad em variacoes de caixa/espaco", () => {
@@ -68,12 +66,12 @@ test("normalizarOrigemDadosProfor2022 aceita reconstrucao-pad em variacoes de ca
   assert.equal(normalizarOrigemDadosProfor2022("  reconstrucao-pad  "), "reconstrucao-pad");
 });
 
-test("normalizarOrigemDadosProfor2022 preserva planilha e banco-cache", () => {
-  assert.equal(normalizarOrigemDadosProfor2022("planilha"), "planilha");
-  assert.equal(normalizarOrigemDadosProfor2022("banco-cache"), "banco-cache");
+test("normalizarOrigemDadosProfor2022 nao preserva origens legadas", () => {
+  assert.equal(normalizarOrigemDadosProfor2022("planilha"), "reconstrucao-pad");
+  assert.equal(normalizarOrigemDadosProfor2022("banco-cache"), "reconstrucao-pad");
 });
 
-test("normalizarOrigemDadosProfor2022 cai para padrao quando origem invalida (fallback preservado)", () => {
+test("normalizarOrigemDadosProfor2022 cai para reconstrucao-pad quando origem invalida", () => {
   assert.equal(normalizarOrigemDadosProfor2022("origem-inexistente"), ORIGEM_PADRAO_PROFOR_2022);
   assert.equal(normalizarOrigemDadosProfor2022(""), ORIGEM_PADRAO_PROFOR_2022);
   assert.equal(normalizarOrigemDadosProfor2022(undefined), ORIGEM_PADRAO_PROFOR_2022);
@@ -93,18 +91,18 @@ test("resolverOrigemDadosProfor2022 aceita reconstrucao-pad sem avisos", () => {
   assert.deepEqual(r.avisos, []);
 });
 
-test("flags por origem retornam booleanos coerentes para cada origem suportada", () => {
-  assert.equal(deveUsarBancoCacheProfor2022({ origemDados: "banco-cache" }), true);
+test("flags por origem retornam true apenas para reconstrucao-pad", () => {
+  assert.equal(deveUsarBancoCacheProfor2022({ origemDados: "banco-cache" }), false);
   assert.equal(deveUsarBancoCacheProfor2022({ origemDados: "planilha" }), false);
   assert.equal(deveUsarBancoCacheProfor2022({ origemDados: "reconstrucao-pad" }), false);
 
-  assert.equal(deveUsarPlanilhaProfor2022({ origemDados: "planilha" }), true);
+  assert.equal(deveUsarPlanilhaProfor2022({ origemDados: "planilha" }), false);
   assert.equal(deveUsarPlanilhaProfor2022({ origemDados: "banco-cache" }), false);
   assert.equal(deveUsarPlanilhaProfor2022({ origemDados: "reconstrucao-pad" }), false);
 
   assert.equal(deveUsarReconstrucaoPadProfor2022({ origemDados: "reconstrucao-pad" }), true);
-  assert.equal(deveUsarReconstrucaoPadProfor2022({ origemDados: "banco-cache" }), false);
-  assert.equal(deveUsarReconstrucaoPadProfor2022({ origemDados: "planilha" }), false);
+  assert.equal(deveUsarReconstrucaoPadProfor2022({ origemDados: "banco-cache" }), true);
+  assert.equal(deveUsarReconstrucaoPadProfor2022({ origemDados: "planilha" }), true);
 });
 
 test("resolverCaminhoReconstrucaoPad usa padrao quando nada e informado", () => {

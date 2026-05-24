@@ -1,5 +1,5 @@
-const ORIGENS_DADOS_PROFOR_2022 = Object.freeze(["planilha", "banco-cache", "reconstrucao-pad"]);
-const ORIGEM_PADRAO_PROFOR_2022 = "banco-cache";
+const ORIGENS_DADOS_PROFOR_2022 = Object.freeze(["reconstrucao-pad"]);
+const ORIGEM_PADRAO_PROFOR_2022 = "reconstrucao-pad";
 
 function listarOrigensDadosProfor2022() {
   return [...ORIGENS_DADOS_PROFOR_2022];

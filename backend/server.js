@@ -2,7 +2,6 @@ const fs = require("fs");
 const http = require("http");
 const os = require("os");
 const path = require("path");
-const xlsx = require("xlsx");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env"), quiet: true });
 
 const { prepararBanco } = require("./db/preparar-banco");
@@ -40,17 +39,12 @@ const {
 const { atualizarCacheDetruProfor2022 } = require("./services/profor-2022/profor-detru-update-service");
 const { obterUltimaAtualizacaoDetru } = require("./services/profor-2022/profor-detru-cache-service");
 const { obterUltimaConsultaRendimentos } = require("./services/profor-2022/transferegov-rendimentos-cache-service");
-const { montarConsolidadoProfor2022 } = require("./services/profor-2022/profor-consolidado-service");
-const { compararBasesProfor2022 } = require("./services/profor-2022/profor-comparador-service");
 const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
 const {
-  assertWorkbookFallbackPermitido,
-  assertEndpointDevPermitido,
   assertEndpointAdminPermitido,
   assertChamadaExternaPermitida,
 } = require("./services/profor-2022/profor-workbook-fallback-guard-service");
 const {
-  atualizarProfor2022Consolidado,
   executarEtapaRendimentos
 } = require("./services/profor-2022/profor-atualizacao-consolidada-service");
 const {
@@ -58,8 +52,7 @@ const {
 } = require("./services/profor-2022/profor-atualizacao-meta-service");
 const revisaoDecisaoService = require("./services/profor-2022/profor-pad-revisao-decisao-service");
 const {
-  montarDadosProfor2022Publicacao,
-  extrairPlanoAplicacaoProforDoWorkbook
+  montarDadosProfor2022Publicacao
 } = require("./services/dashboard-publication-service");
 const {
   exportarParametrosMinimosExcel,
@@ -298,70 +291,21 @@ function carregarCatalogoAplicacaoLocal() {
   return JSON.parse(fs.readFileSync(catalogoAplicacaoPath, "utf8"));
 }
 
-function carregarWorkbookProfor2022(catalogoAplicacao) {
-  const planilhaRelativa = catalogoAplicacao?.configuracao?.arquivoPlanilhaConvenios;
-  if (!planilhaRelativa) {
-    throw new Error("Catalogo da aplicacao sem configuracao.arquivoPlanilhaConvenios.");
-  }
-
-  return xlsx.readFile(path.join(rootDir, planilhaRelativa), { cellDates: true });
-}
-
-// Legado interno: leitura por workbook protegida pelo gate centralizado em
-// `profor-workbook-fallback-guard-service.js`. Em produção, a flag não libera
-// — falha sempre. Mantida apenas para o endpoint comparativo dev
-// (`comparar-origens`) e para o caminho de fallback em desenvolvimento quando
-// a flag ALLOW_PROFOR_2022_WORKBOOK_FALLBACK estiver em `1`.
-function montarConsolidadoProfor2022Local() {
-  assertWorkbookFallbackPermitido("consolidado_local");
-  const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
-  const workbook = carregarWorkbookProfor2022(catalogoAplicacao);
-  const planoAplicacao = extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
-  return montarConsolidadoProfor2022({
-    origemDados: "banco-cache",
-    planoAplicacao
-  });
-}
-
 // Wrapper centralizado para o endpoint `/api/profor-2022/consolidado`. Resolve
-// a origem ativa e despacha:
-//  - `reconstrucao-pad` → `montarDadosProfor2022Publicacao` (sem workbook);
-//  - `banco-cache`/`planilha` → caminho legado via workbook, sob gate.
-// Se a origem resolvida cair em algo inesperado (defensivo), erro explícito.
+// a origem ativa e monta o consolidado somente por PAD/reconstrucao.
 function montarConsolidadoProfor2022PorOrigemAtiva() {
   const origemAtiva = resolverOrigemDadosProfor2022();
-  if (origemAtiva === "reconstrucao-pad") {
-    const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
-    return montarDadosProfor2022Publicacao(null, catalogoAplicacao, {
-      origemDados: "reconstrucao-pad",
-    });
+  if (origemAtiva !== "reconstrucao-pad") {
+    throw new Error(
+      `[consolidado_por_origem_ativa] Origem ativa removida: '${origemAtiva}'. ` +
+        `A planilha antiga por abas e o banco-cache legado não são mais fontes operacionais. ` +
+        `Use reconstrucao-pad.`
+    );
   }
-  if (origemAtiva === "banco-cache" || origemAtiva === "planilha") {
-    return montarConsolidadoProfor2022Local();
-  }
-  throw new Error(
-    `[consolidado_por_origem_ativa] Origem ativa não suportada: '${origemAtiva}'. ` +
-      `Esperado: reconstrucao-pad | banco-cache | planilha.`
-  );
-}
-
-// Fallback explícito de desenvolvimento: este endpoint COMPARA planilha antiga
-// vs banco-cache por desenho. A leitura de workbook aqui é intencional e
-// documentada, mas só pode ocorrer em endpoint dev/auditoria liberado pelo
-// guard centralizado. Em produção, a flag não libera.
-function montarComparacaoOrigensProfor2022Local() {
-  assertEndpointDevPermitido("api_profor_2022_comparar_origens");
   const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
-  const workbook = carregarWorkbookProfor2022(catalogoAplicacao);
-  const planoAplicacao = extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
-  const baseAntiga = montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, {
-    origemDados: "planilha"
+  return montarDadosProfor2022Publicacao(null, catalogoAplicacao, {
+    origemDados: "reconstrucao-pad",
   });
-  const baseNova = montarConsolidadoProfor2022({
-    origemDados: "banco-cache",
-    planoAplicacao
-  });
-  return compararBasesProfor2022(baseAntiga, baseNova);
 }
 
 function enviarArquivoEstatico(req, res, pathname) {
@@ -645,26 +589,6 @@ async function rotearApi(req, res, pathname) {
       return;
     }
 
-    if (req.method === "GET" && pathname === "/api/profor-2022/comparar-origens") {
-      try {
-        const comparacao = montarComparacaoOrigensProfor2022Local();
-        enviarJson(res, 200, {
-          success: true,
-          comparacao,
-          resumo: comparacao.resumo,
-          avisos: []
-        });
-      } catch (erro) {
-        console.error("Falha ao comparar origens PROFOR 2022:", erro);
-        const statusCode = Number.isInteger(Number(erro?.statusCode)) ? Number(erro.statusCode) : 500;
-        enviarJson(res, statusCode, {
-          success: false,
-          message: erro?.message || "Não foi possível comparar as origens PROFOR 2022 no momento."
-        });
-      }
-      return;
-    }
-
     if (req.method === "POST" && pathname === "/api/profor-2022/detru/atualizar") {
       const body = await lerJsonBody(req);
       try {
@@ -733,32 +657,12 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/atualizar") {
-      const body = await lerJsonBody(req);
-      try {
-        assertEndpointAdminPermitido("api_profor_2022_atualizar");
-        assertChamadaExternaPermitida("api_profor_2022_atualizar", {
-          tipo: "DETRU/Transferegov",
-        });
-        const resultado = await atualizarProfor2022Consolidado(body || {});
-        enviarJson(res, 200, {
-          success: true,
-          message: resultado.sucesso
-            ? "Atualizacao consolidada PROFOR 2022 concluida."
-            : "Atualizacao consolidada PROFOR 2022 concluida com avisos/erros.",
-          resultado
-        });
-      } catch (erro) {
-        const statusCode = Number.isInteger(Number(erro?.statusCode)) && Number(erro?.statusCode) >= 400 && Number(erro?.statusCode) < 600
-          ? Number(erro.statusCode)
-          : 500;
-        if (statusCode >= 500) {
-          console.error("Falha ao executar atualizacao consolidada PROFOR 2022:", erro);
-        }
-        enviarJson(res, statusCode, {
-          success: false,
-          message: erro?.message || "Erro ao atualizar PROFOR 2022."
-        });
-      }
+      enviarJson(res, 410, {
+        success: false,
+        message:
+          "Atualizacao consolidada legada PROFOR 2022 removida. " +
+          "Use os fluxos PAD/reconstrucao; este endpoint nao aciona DETRU, Transferegov ou workbook."
+      });
       return;
     }
 

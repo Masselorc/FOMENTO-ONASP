@@ -6,9 +6,7 @@
 // Esta origem NÃO publica, NÃO altera frontend/data/publicados, NÃO altera
 // backend/data/onasp.sqlite e NÃO altera a origem ativa. Em caso de arquivo
 // ausente ou inválido, lança erro explícito — nunca cai silenciosamente para
-// a planilha. Está disponível apenas via PROFOR_2022_ORIGEM_DADOS=reconstrucao-pad
-// ou opcoes.origemDados explícito; o padrão ORIGEM_PADRAO_PROFOR_2022 segue
-// "banco-cache".
+// a planilha. Esta é a origem operacional padrão do PROFOR 2022.
 
 const fs = require("fs");
 const path = require("path");

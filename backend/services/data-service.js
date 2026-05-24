@@ -3852,22 +3852,6 @@ async function carregarWorkbookPorCaminho(caminhoPlanilha, nomeErro) {
     return lerWorkbookDeArrayBuffer(await resposta.arrayBuffer());
 }
 
-async function carregarConveniosDaPlanilha(catalogoAplicacao) {
-    if (window.location.protocol === 'file:') {
-        throw new Error('Abra a aplicacao por um servidor local ou selecione a planilha manualmente.');
-    }
-
-    const planilhaUrl = aplicarVersaoDados(new URL(`../../${catalogoAplicacao.configuracao.arquivoPlanilhaConvenios}`, import.meta.url));
-    const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
-
-    if (!resposta.ok) {
-        throw new Error(`Nao foi possivel carregar a planilha de convenios (${resposta.status}).`);
-    }
-
-    const workbook = await lerWorkbookDeArrayBuffer(await resposta.arrayBuffer());
-    return extrairDadosFinanceirosDoWorkbook(workbook, catalogoAplicacao);
-}
-
 // Carrega a base orçamentária 2026. A estrutura esperada é:
 // - Base_Dados: cadastro financeiro dos itens;
 // - Processos_Normais: andamento dos itens comuns;
@@ -4466,26 +4450,6 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
         return dadosBase;
     }
 
-    try {
-        const dadosConvenio = await carregarConveniosDaPlanilha(catalogo);
-        console.log(`Convenios carregados da planilha: ${dadosConvenio.length} itens.`);
-        const dadosMontados = montarDadosComConvenios(catalogo, dadosConvenio);
-        if (Array.isArray(dadosMontados) && dadosMontados.length > 0) {
-            registrarPerfOnasp('carregarDadosAplicacao', {
-                modo: 'api',
-                origem: 'planilha',
-                totalItens: dadosMontados.length,
-                tempoTotalMs: debugPerf && typeof performance !== 'undefined'
-                    ? Number((performance.now() - inicioAplicacao).toFixed(2))
-                    : null
-            });
-            registrarModoDadosOnasp('profor2022', 'api');
-            return dadosMontados;
-        }
-    } catch (error) {
-        console.warn('Falha ao carregar convenios dinamicos. Tentando dadosBase estatico do catalogo da aplicacao.', error);
-    }
-
     if (dadosBase.length > 0) {
         console.warn('Usando dadosBase estatico do catalogo da aplicacao.');
         registrarModoDadosOnasp('aplicacao', 'estatico');
@@ -4501,15 +4465,5 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
         return dadosBase;
     }
 
-    throw new Error('Nao foi possivel carregar dados da Home: planilha indisponivel e dadosBase ausente no catalogo da aplicacao.');
-}
-
-// Usado quando o usuário escolhe manualmente a planilha de convênios no browser.
-// O arquivo selecionado não é persistido; ele só substitui os dados em memória.
-export async function processarArquivoPlanilhaSelecionado(arquivoSelecionado, catalogoAplicacao = null) {
-    const catalogo = catalogoAplicacao || await carregarCatalogoAplicacao();
-    await carregarPlanilhaOrcamento();
-    const workbook = await lerWorkbookDeArrayBuffer(await arquivoSelecionado.arrayBuffer());
-    const dadosConvenio = extrairDadosFinanceirosDoWorkbook(workbook, catalogo);
-    return montarDadosComConvenios(catalogo, dadosConvenio);
+    throw new Error('Nao foi possivel carregar dados da Home: dadosBase ausente no catalogo da aplicacao.');
 }

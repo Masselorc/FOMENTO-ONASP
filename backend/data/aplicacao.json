@@ -1,10 +1,6 @@
 {
   "configuracao": {
-    "arquivoPlanilhaConvenios": "Planilhas/gestao_financeira_ouvidoria.xlsx",
-    "abasPlanilhaIgnoradas": [
-      "Geral"
-    ],
-    "classificacaoPlanilhaConvenios": "OUVIDORIA"
+    "origemProfor2022": "reconstrucao-pad"
   },
   "detru": {
     "urlSiconvConvenio": "",

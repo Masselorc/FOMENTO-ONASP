@@ -19,7 +19,6 @@ import {
     obterDadosProfor2022,
     resolverOrigemDadosProfor2022Local,
     carregarConsolidadoProfor2022BancoCacheLocal,
-    processarArquivoPlanilhaSelecionado,
     obterDadosOrcamento,
     obterDadosContatos,
     carregarDadosContatos,
@@ -1263,8 +1262,11 @@ async function carregarLogoParaPDF() {
         }
 
         function abrirSeletorManualPlanilha() {
-            const input = document.getElementById('input-planilha-convenios');
-            if (input) input.click();
+            mostrarAlertaCarregamentoPlanilha(
+                'Selecao manual da planilha antiga removida. Use os dados PAD/reconstrucao.',
+                false,
+                'info'
+            );
         }
 
         function mostrarAlertaCarregamentoPlanilha(mensagem, permitirSelecaoManual = false, tipo = 'warning') {
@@ -1339,8 +1341,8 @@ async function carregarLogoParaPDF() {
                 renderProfor2022View();
             }
             mostrarAlertaCarregamentoPlanilha(
-                `Dados financeiros indisponiveis: a planilha nao foi carregada ou validada. ${error.message}`,
-                true,
+                `Dados financeiros indisponiveis: ${error.message}`,
+                false,
                 'danger'
             );
         }
@@ -1351,16 +1353,7 @@ async function carregarLogoParaPDF() {
 
             try {
         showLoading('Lendo e validando planilha...');
-                dadosFaf = await processarArquivoPlanilhaSelecionado(arquivoSelecionado, catalogoAplicacao);
-                configurarEstadoDadosValidados(true);
-                ocultarAlertaCarregamentoPlanilha();
-                initDashboard(dadosFaf);
-                renderDetailsView();
-                if (document.body.dataset.currentView === 'profor2022') {
-                    renderProfor2022View();
-                } else if (document.body.dataset.currentView === 'profor-convenio-detalhe' && proforConvenioAtual) {
-                    abrirDetalheConvenioProfor(proforConvenioAtual, proforFiltroAreaAtual);
-                }
+                throw new Error('Selecao manual da planilha antiga removida. Use PAD/reconstrucao.');
             } catch (error) {
                 console.error('Falha ao processar a planilha selecionada manualmente:', error);
                 bloquearDadosFinanceiros(error);
@@ -1531,30 +1524,30 @@ async function carregarLogoParaPDF() {
             try {
                 origem = await resolverOrigemDadosProfor2022Local();
             } catch (error) {
-                avisoFallbackProfor2022 = 'Não foi possível consultar a origem local/API do PROFOR 2022. Mantida a origem planilha.';
+                avisoFallbackProfor2022 = 'Não foi possível consultar a origem local/API do PROFOR 2022. Mantidos os dados estáticos publicados.';
                 console.warn(avisoFallbackProfor2022, error);
                 return obterDadosProfor2022();
             }
 
-            if (origem.origemDados !== 'banco-cache') {
+            if (origem.origemDados !== 'reconstrucao-pad') {
                 return obterDadosProfor2022();
             }
 
             try {
                 return await carregarConsolidadoProfor2022BancoCacheLocal();
             } catch (error) {
-                avisoFallbackProfor2022 = 'Falha ao carregar o consolidado banco-cache. Mantida a origem planilha.';
+                avisoFallbackProfor2022 = 'Falha ao carregar o consolidado PAD/reconstrucao. Mantidos os dados estáticos publicados.';
                 console.warn(avisoFallbackProfor2022, error);
-                const dadosPlanilha = obterDadosProfor2022();
-                if (dadosPlanilha) {
-                    dadosPlanilha.fallbackUsado = true;
-                    dadosPlanilha.origemDadosEfetiva = dadosPlanilha.origemDadosEfetiva || 'planilha';
-                    dadosPlanilha.avisos = [
-                        ...(dadosPlanilha.avisos || []),
+                const dadosPublicados = obterDadosProfor2022();
+                if (dadosPublicados) {
+                    dadosPublicados.fallbackUsado = true;
+                    dadosPublicados.origemDadosEfetiva = dadosPublicados.origemDadosEfetiva || 'publicado';
+                    dadosPublicados.avisos = [
+                        ...(dadosPublicados.avisos || []),
                         avisoFallbackProfor2022
                     ];
                 }
-                return dadosPlanilha;
+                return dadosPublicados;
             }
         }
 
@@ -1563,8 +1556,7 @@ async function carregarLogoParaPDF() {
                 return baseAplicacaoCarregamentoPromise;
             }
 
-            const catalogoAplicacaoCarregado = Boolean(catalogoAplicacao?.dadosBase?.length)
-                && Boolean(catalogoAplicacao?.configuracao?.arquivoPlanilhaConvenios);
+            const catalogoAplicacaoCarregado = Boolean(catalogoAplicacao?.dadosBase?.length);
             if (catalogoAplicacaoCarregado && Array.isArray(dadosFaf) && dadosFaf.length && dadosFinanceirosValidados) {
                 return { catalogoAplicacao, dadosFaf };
             }

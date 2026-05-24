@@ -1,20 +1,11 @@
-// Guards centralizados para uso legado de workbook (planilha antiga) e para o
-// orquestrador `atualizar:profor-2022`. Concentra a lógica de:
+// Guards centralizados para rotinas sensíveis PROFOR 2022. Concentra a lógica de:
 //
 // 1. Detecção de ambiente de produção (FOMENTO_AMBIENTE, NODE_ENV, APP_ENV, AMBIENTE).
-// 2. Bloqueio do fallback de workbook quando a origem ativa é `reconstrucao-pad`
-//    e a flag `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK` não está explicitamente
-//    em `1`. Em produção, a flag não libera — falha sempre.
-// 3. Bloqueio do orquestrador legado `atualizar:profor-2022` (que aciona
-//    Transferegov) salvo se `ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO=1` estiver
-//    setado. Em produção, a flag não libera — falha sempre.
-// 4. Governança de endpoints dev/admin, chamadas externas e agendadores.
+// 2. Governança de endpoints administrativos, chamadas externas e agendadores.
 //
 // Esses guards são chamados em pontos de entrada operacionais (server.js,
-// script de orquestração). Não acessam banco, não publicam, não chamam serviços
-// externos. São puros sobre `process.env` e `resolverOrigemDadosProfor2022`.
-
-const { resolverOrigemDadosProfor2022 } = require("./profor-origem-service");
+// scripts sensíveis). Não acessam banco, não publicam e não chamam serviços
+// externos. São puros sobre `process.env`.
 
 const VALORES_PRODUCAO_NODE_ENV = new Set(["production", "prod"]);
 const VALORES_PRODUCAO_APP_ENV = new Set(["production", "prod", "producao"]);
@@ -57,76 +48,6 @@ function erroGovernanca(mensagem, statusCode = 403) {
   const erro = new Error(mensagem);
   erro.statusCode = statusCode;
   return erro;
-}
-
-// Bloqueia leitura de workbook quando a origem ativa é `reconstrucao-pad`,
-// salvo se `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK=1`. Em produção, a flag NÃO
-// libera. Em `planilha` e `banco-cache`, não age (fluxo legado preservado).
-function assertWorkbookFallbackPermitido(contexto = "workbook", opcoes = {}) {
-  const env = opcoes.env || process.env;
-  const origemAtiva = opcoes.origemAtiva
-    || resolverOrigemDadosProfor2022({ origemDados: opcoes.origemDados });
-  if (origemAtiva !== "reconstrucao-pad") return;
-
-  if (isAmbienteProducao(env)) {
-    throw new Error(
-      `[${contexto}] Leitura de workbook PROIBIDA em produção: origem ativa ` +
-        `PROFOR_2022_ORIGEM_DADOS=${origemAtiva}. ALLOW_PROFOR_2022_WORKBOOK_FALLBACK ` +
-        `não libera workbook em produção. Para inspeção, use ambiente de desenvolvimento.`
-    );
-  }
-
-  if (flagAtiva(env, "ALLOW_PROFOR_2022_WORKBOOK_FALLBACK")) return;
-
-  throw new Error(
-    `[${contexto}] Leitura de workbook bloqueada: origem ativa PROFOR_2022_ORIGEM_DADOS=` +
-      `${origemAtiva}, mas o caminho local ainda lê a planilha antiga. ` +
-      `Para uso temporário em desenvolvimento, defina ALLOW_PROFOR_2022_WORKBOOK_FALLBACK=1 ` +
-      `na sessão do servidor; em produção, descontinuar o caminho de workbook.`
-  );
-}
-
-// Bloqueia execução do orquestrador legado `atualizar:profor-2022` (que aciona
-// Transferegov e lê workbook via carregarPlanoAplicacaoLocal). Em produção,
-// falha sempre. Em desenvolvimento, exige `ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO=1`.
-function assertOrquestradorLegadoPermitido(contexto = "orquestrador_atualizacao", opcoes = {}) {
-  const env = opcoes.env || process.env;
-  if (isAmbienteProducao(env)) {
-    throw new Error(
-      `[${contexto}] Execução do orquestrador legado 'atualizar:profor-2022' PROIBIDA em ` +
-        `produção: aciona Transferegov e lê workbook. ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO ` +
-        `não libera em produção. Use o fluxo PAD/reconstrução.`
-    );
-  }
-
-  if (flagAtiva(env, "ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO")) return;
-
-  throw new Error(
-    `[${contexto}] Orquestrador legado 'atualizar:profor-2022' está em descontinuação. ` +
-      `Para execução pontual em desenvolvimento, defina ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO=1; ` +
-      `em produção, o fluxo PAD/reconstrução é obrigatório.`
-  );
-}
-
-// Endpoints de desenvolvimento/auditoria não são fluxo operacional. Em
-// produção são sempre bloqueados; em desenvolvimento exigem liberação explícita.
-function assertEndpointDevPermitido(contexto = "endpoint_dev", opcoes = {}) {
-  const env = opcoes.env || process.env;
-  if (isAmbienteProducao(env)) {
-    const erro = erroGovernanca(
-      `[${contexto}] Endpoint dev/auditoria bloqueado em produção. ` +
-        `ALLOW_PROFOR_2022_ENDPOINTS_DEV não libera endpoints dev em produção.`
-    );
-    throw erro;
-  }
-
-  if (flagAtiva(env, "ALLOW_PROFOR_2022_ENDPOINTS_DEV")) return;
-
-  const erro = erroGovernanca(
-    `[${contexto}] Endpoint dev/auditoria bloqueado. Para auditoria local controlada, ` +
-      `defina ALLOW_PROFOR_2022_ENDPOINTS_DEV=1 em ambiente de desenvolvimento.`
-  );
-  throw erro;
 }
 
 function assertEndpointAdminPermitido(contexto = "endpoint_admin", opcoes = {}) {
@@ -202,9 +123,6 @@ function assertAgendadorPermitido(contexto = "agendador", opcoes = {}) {
 module.exports = {
   isAmbienteProducao,
   isAmbienteTeste,
-  assertWorkbookFallbackPermitido,
-  assertOrquestradorLegadoPermitido,
-  assertEndpointDevPermitido,
   assertEndpointAdminPermitido,
   assertChamadaExternaPermitida,
   assertAgendadorPermitido,

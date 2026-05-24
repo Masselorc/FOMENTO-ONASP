@@ -651,19 +651,27 @@ function calcularResumoDashboard(dadosBase) {
 }
 
 function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
-  const planilhaRelativa = catalogoAplicacao?.configuracao?.arquivoPlanilhaConvenios;
-  if (!planilhaRelativa) {
-    throw new Error("Catalogo da aplicacao sem configuracao.arquivoPlanilhaConvenios.");
-  }
-
-  const planilhaPath = path.join(__dirname, "..", "..", planilhaRelativa);
-  const workbook = xlsx.readFile(planilhaPath, { cellDates: true });
-  const dadosConvenio = extrairConveniosDoWorkbook(workbook, catalogoAplicacao);
   const dadosBaseConsolidado = [
-    ...removerConveniosDoDadosBase(catalogoAplicacao.dadosBase),
-    ...dadosConvenio
+    ...removerConveniosDoDadosBase(catalogoAplicacao.dadosBase)
   ];
-  const dadosProfor2022 = montarDadosProfor2022Publicacao(workbook, catalogoAplicacao);
+  const dadosProfor2022 = montarDadosProfor2022Publicacao(null, catalogoAplicacao, {
+    origemDados: "reconstrucao-pad",
+  });
+  const conveniosProfor = Array.isArray(dadosProfor2022?.convenios)
+    ? dadosProfor2022.convenios
+    : [];
+  for (const convenio of conveniosProfor) {
+    dadosBaseConsolidado.push({
+      instrumento: convenio.instrumento || "Convênio",
+      uf: convenio.uf || "",
+      numero: convenio.numero || convenio.numeroConvenio || "",
+      ano: convenio.ano || "2022",
+      valorTotal: convenio.valorGlobal || 0,
+      valorExecutado: convenio.valorExecutado || 0,
+      saldo: convenio.saldo || 0,
+      programaOrigem: "PROFOR 2022"
+    });
+  }
   const resumoDashboard = calcularResumoDashboard(dadosBaseConsolidado);
 
   if (resumoDashboard.totalConvenios <= 0 || resumoDashboard.quantidadeUfsConvenios <= 0) {
@@ -678,7 +686,7 @@ function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
       metadadosPublicacao: {
         publicadoEm,
         fonteDadosBase: "dados consolidados da Home local",
-        arquivoPlanilhaConvenios: planilhaRelativa
+        origemProfor2022: "reconstrucao-pad"
       }
     },
     dashboardGeral: {
