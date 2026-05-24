@@ -213,9 +213,10 @@ PROFOR 2022, planos de aplicação, itens de convênio e automação por instrum
 - Ler `backend/services/profor-2022/profor-consolidado-service.js`.
 - Ler `backend/services/profor-2022/profor-plano-aplicacao-service.js`.
 - Ler `backend/services/static-publication-service.js`, quando houver publicação estática.
-- Não tratar `Planilhas/gestao_financeira_ouvidoria.xlsx` (abas por UF/aba Geral) como origem operacional ativa do `planoAplicacao`; uso apenas como legado/histórico ou fallback explícito de desenvolvimento.
-- Não fazer o frontend ler arquivos Excel diretamente.
-- Preservar fallback, modo local/API e modo estático/GitHub Pages.
+- Não tratar `Planilhas/gestao_financeira_ouvidoria.xlsx` (abas por UF/aba Geral) como origem operacional, fallback, auditoria, comparação ou rota dev.
+- Preservar `xlsx` e os leitores dos arquivos PAD atuais em Excel.
+- Não fazer o frontend ler a planilha antiga de convênios diretamente.
+- Preservar modo local/API e modo estático/GitHub Pages sem reintroduzir fallback para a planilha antiga.
 
 Git, branch, PR, merge e rollback:
 

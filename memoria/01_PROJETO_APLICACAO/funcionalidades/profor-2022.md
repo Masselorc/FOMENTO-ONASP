@@ -1,6 +1,6 @@
 # PROFOR 2022 — Documentação técnica da funcionalidade
 
-> Nota de obsolescência parcial (23/05/2026): este documento contém trechos históricos da fase de migração. A migração funcional para a sistemática baseada em arquivos PAD/reconstrução já foi concluída. Nesta data, a planilha antiga por abas/UF e aba `Geral` deve ser tratada como legado, não como origem operacional ativa do `planoAplicacao`.
+> Estado vigente (24/05/2026): a origem operacional do PROFOR 2022 é PAD/reconstrução. A planilha antiga por abas/UF (`Planilhas/gestao_financeira_ouvidoria.xlsx`) foi removida como origem, fallback, auditoria, comparação e rota dev. Trechos abaixo que descrevem `planilha`, `banco-cache`, comparadores antigos ou importações da aba `Geral` são histórico da migração, não orientação operacional atual.
 
 ## Identificação da funcionalidade
 
@@ -9,7 +9,7 @@
 | Nome da funcionalidade | PROFOR 2022 |
 | Arquivo deste documento | `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` |
 | Status do documento | rascunho técnico |
-| Última revisão | 18/05/2026 |
+| Última revisão | 24/05/2026 |
 | Responsável pela revisão | ONASP / FOMENTO-ONASP |
 | Funcionalidade crítica? | sim |
 | Requer atualização quando alterar código? | sim |
@@ -458,10 +458,10 @@ Por restrição técnica, `backend/services/data-service.js` também é importad
 
 A publicação estática foi preparada em código para remover a seção interna `detru` do catálogo público antes de gerar `frontend/data/publicados/aplicacao.json`. O comando `npm run publicar:dados` não foi executado neste bloco e nenhum JSON publicado foi alterado.
 
-Bloco 18 criou duas rotas locais/API somente leitura para validar a nova origem sem ativá-la como padrão:
+Bloco 18 criou duas rotas locais/API somente leitura para validar a nova origem sem ativá-la como padrão. **Nota de obsolescência (24/05/2026):** a rota comparativa da planilha antiga foi removida na frente de remoção física do legado; não deve ser recriada.
 
-- `GET /api/profor-2022/consolidado`: monta o consolidado `banco-cache` no backend Node, usando o compositor e o plano de aplicação extraído da planilha local, sem importar dependências Node/SQLite no navegador.
-- `GET /api/profor-2022/comparar-origens`: monta a origem antiga `planilha`, monta a origem nova `banco-cache` e compara as bases pelo comparador PROFOR 2022.
+- `GET /api/profor-2022/consolidado`: estado atual monta o consolidado por PAD/reconstrução no backend Node, sem leitura da planilha antiga.
+- `GET /api/profor-2022/comparar-origens`: **removida em 24/05/2026**; a comparação planilha antiga x banco-cache deixou de existir como rota dev/auditoria.
 
 A validação inicial do Bloco 18 retornou 15 convênios na origem `planilha` e 15 convênios na origem `banco-cache`, sem ausentes, mas ainda com caches incompletos. Após a validação operacional posterior do DETRU e a correção do fluxo Transferegov em 18/05/2026, o consolidado local passou a indicar `totalComDetru = 15`, `totalComPlano = 15` e `totalComRendimentos = 15`. A comparação continua com `totalIguais = 0` e `totalComDivergencia = 15`, agora por diferenças entre fontes oficiais/cálculos/cache atual e valores manuais antigos da aba `Geral`. Esse resultado mantém a ativação de `banco-cache` bloqueada por governança, não por ausência técnica de cache.
 
@@ -498,7 +498,7 @@ git push origin HEAD
 - Tabela `profor_convenios_monitorados` criada em `backend/db/init-db.js` por `garantirTabelaConveniosMonitoradosProfor2022()`. Migration aditiva, sem dados populados. `npm run init-db` executou sem erro. Schema documentado em `memoria/08_ROTAS_BANCO_API/schema-banco.md`.
 - Serviço `backend/services/profor-2022/convenios-monitorados-service.js` criado com as funções: `listarConveniosMonitorados`, `obterConvenioMonitoradoPorId`, `obterConvenioMonitoradoPorNumero`, `criarConvenioMonitorado`, `atualizarConvenioMonitorado` e `inativarConvenioMonitorado`. Retorno em camelCase. Inativação lógica (`ativo = 0`). Validações de `numero_convenio`, `ano` e `uf`. Sem rota criada nesta etapa.
 - Rotas criadas em `backend/server.js` (Etapa 5): `GET /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados/:id/salvar`, `POST /api/profor-2022/convenios-monitorados/:id/inativar`. API recebe e retorna camelCase. Helpers `camelParaSnakeConvenio` e `extrairIdConvenioMonitorado` adicionados ao servidor. Testado ao vivo com servidor real: GET, POST criar, POST salvar, POST inativar, erros de validação e duplicidade — todos corretos. Registro de teste criado (id=1) e inativado (`ativo=0`) durante a validação.
-- Script de importação criado em `backend/scripts/importar-convenios-monitorados-profor-2022.js` (Etapa 6). Fonte: aba `Geral` da planilha `Planilhas/gestao_financeira_ouvidoria.xlsx`. Importa apenas: `numero_convenio`, `ano`, `uf`, `instrumento`, `programa_origem = "PROFOR 2022"`. Não importa valores financeiros. Script idempotente: detecta registros existentes (ativos ou inativos) sem reativar nem duplicar. Registro de teste 999999 explicitamente ignorado. Relatório no console com 5 contadores. Script disponível como `npm run import:profor-convenios`. Resultado da execução inicial: 15 convênios inseridos (carteira completa da aba Geral), 0 erros. Caminho da planilha agora lido dinamicamente de `backend/data/aplicacao.json` com fallback seguro (Etapa 7, correção).
+- Script de importação criado em `backend/scripts/importar-convenios-monitorados-profor-2022.js` (Etapa 6). **Nota de obsolescência (24/05/2026):** o script e o comando `npm run import:profor-convenios` foram removidos junto com o legado da planilha antiga por abas; a aba `Geral` não é mais fonte de importação.
 - Interface da Carteira Monitorada criada na página PROFOR 2022 (Etapa 7). Seção "Carteira Monitorada" adicionada ao final da view, abaixo da tabela financeira existente. Lista convênios da tabela `profor_convenios_monitorados` via `GET /api/profor-2022/convenios-monitorados`. Suporte a "Ver inativos" (checkbox). Modal para criar e editar (botão "Novo" + ícone de lápis por linha). Inativação por botão por linha (ícone de proibido). Modo estático mostra aviso de somente leitura e oculta botões de escrita. Validação mínima no frontend: número obrigatório e apenas dígitos, ano com 4 dígitos, UF com 2 caracteres. Testado ao vivo: criação, edição, inativação e listagem com inativos — todos corretos.
 - Ajuste visual da Carteira Monitorada (Etapa 7.1). A seção "Carteira Monitorada" é área administrativa local — **não deve ficar aberta por padrão** para evitar duplicação visual com a tabela principal de convênios. Alterações: painel colapsado por padrão (`hidden`); botão "Gerenciar carteira" alterna visibilidade com ícone chevron; carregamento lazy na primeira abertura; checkbox "Ver inativos" e botão "Novo" movidos para dentro do painel. Mojibake `Conv�nio` corrigido pontualmente na renderização com `normalizarInstrumento()`. Registros fictícios de teste (`999999`, `888888`, `777777`) todos inativados localmente — não são dados reais e não devem aparecer como ativos.
 - Leitor local do DETRU criado em `backend/services/profor-2022/detru-convenio-reader.js` (Etapa 8). Aceita caminho local para `siconv_convenio.csv.zip`. Funções exportadas: `localizarCsvNoZip`, `lerCsvDetruConvenio`, `normalizarCabecalhoDetru`, `parseCsvLinha`, `detectarSeparadorCsv`, `listarColunasDetruConvenio`. Localiza o primeiro CSV compatível (`siconv_convenio*.csv`) dentro do ZIP com fallback para qualquer CSV. Lê conteúdo como `latin1` (encoding frequente em arquivos do governo). Detecta separador (`;` ou `,`). Retorna array de objetos com chaves normalizadas (maiúsculas, underscores). Erros claros para arquivo ausente, extensão inválida, ZIP sem CSV e CSV vazio. **Não integra ainda com a carteira do banco. Não substitui a aba Geral. Não popula dados. Não altera rotas nem frontend.** Dependência `adm-zip` adicionada (v0.5.17, puro JavaScript, síncrono) — Node.js não tem suporte nativo a ZIP; `zlib` cobre DEFLATE/GZIP; `xlsx` lê ZIPs de planilha, não ZIP genérico. Arquivo DETRU não versionado.
@@ -511,7 +511,7 @@ git push origin HEAD
 - Bloco 15: cálculos internos e filtro seguro do plano criados em serviços puros. `backend/services/profor-2022/profor-plano-aplicacao-service.js` centraliza normalização, filtro por UF/número/ano/área/natureza, bloqueio de filtro por UF quando há risco de mistura de convênios, agrupamento e resumo do plano. `backend/services/profor-2022/profor-calculos-service.js` consolida valores de DETRU/cache, saldo de rendimentos de Transferegov/cache e cálculos por área/natureza do plano filtrado. A página PROFOR 2022 ainda usa a origem antiga em `data-service.js`; não houve integração com telas, rotas, banco ou publicação. `saldoDisponivelOuvidoria` segue pendente até fórmula segura ou compositor.
 - Bloco 16: compositor consolidado, comparador e flag de origem criados sem ativação na página. `backend/services/profor-2022/profor-origem-service.js` mantém a origem padrão `planilha` e reserva `banco-cache` para ativação futura. `backend/services/profor-2022/profor-consolidado-service.js` monta objeto PROFOR 2022 consolidado a partir da carteira local, cache DETRU, cache Transferegov e plano de aplicação filtrado por UF + número + ano. `backend/services/profor-2022/profor-comparador-service.js` compara origem antiga versus nova com tolerâncias monetária e percentual. `data-service.js`, frontend, rotas, banco e publicação estática não foram alterados. `saldoDisponivelOuvidoria` continua pendente e sai como `null` com aviso.
 - Bloco 17: integração controlada da origem consolidada com fallback. `backend/services/data-service.js` preserva a origem `planilha` e acrescenta metadados seguros ao objeto PROFOR 2022 sem mudar o shape consumido pela tela. `backend/services/dashboard-publication-service.js` passa a resolver a origem por flag/opção: `planilha` mantém o fluxo antigo; `banco-cache` chama `profor-consolidado-service.js` com plano extraído das abas UF; falhas retornam para `planilha` com aviso. `backend/services/static-publication-service.js` sanitiza o catálogo público para não publicar a seção interna `detru`. Frontend, rotas, banco, `backend/data/aplicacao.json` e JSONs publicados não foram alterados; `npm run publicar:dados` não foi executado.
-- Bloco 18: validação final local e rotas somente leitura. `backend/server.js` recebeu `GET /api/profor-2022/consolidado` e `GET /api/profor-2022/comparar-origens`, ambas locais/API e sem consulta externa. O comparador passou a tratar `quantidadeTa` como número simples. A validação real retornou 15 convênios em cada origem, sem ausentes, mas 15 divergentes porque os caches DETRU e Transferegov ainda não possuem dados para a carteira (`totalComDetru = 0`, `totalComRendimentos = 0`). Home e página PROFOR 2022 carregaram com origem padrão `planilha` e sem erro de console. Banco-cache segue bloqueado para ativação como padrão.
+- Bloco 18: validação final local e rotas somente leitura. Histórico: `backend/server.js` recebeu `GET /api/profor-2022/consolidado` e `GET /api/profor-2022/comparar-origens`. **Estado atual (24/05/2026):** `/consolidado` permanece operacional e usa PAD/reconstrução; `/comparar-origens` foi removida; planilha antiga e banco-cache legado não são mais origens operacionais.
 - Correção do fluxo público Transferegov (18/05/2026): `backend/services/profor-2022/transferegov-rendimentos-client.js` passou a reproduzir o fluxo público completo de rendimentos por sessão Acesso Livre: inicialização guest, consulta pública por `numeroConvenio`, extração de `idConvenio`, seleção do instrumento e leitura da tela de Rendimento de Aplicação. O cliente tenta HTTP com cookie jar em memória e, quando o IdP/SAML impede sessão por HTTP simples, usa fallback local com Playwright/Chromium já disponível no projeto, sem login, sem credenciais e sem cookies persistidos. Testes reais: `880892` → `idConvenio=732378`, R$ 131.799,75; `937216` → `idConvenio=1031156`, -R$ 25.373,11. `npm run atualizar:rendimentos-profor` populou o cache para 15/15 convênios. `totalComRendimentos` passou a 15. Banco-cache continua fora do padrão.
 - Rotina operacional consolidada (18/05/2026): `backend/services/profor-2022/profor-atualizacao-consolidada-service.js` criado como orquestrador único. Executa DETRU → rendimentos Transferegov → montagem do consolidado → validação de diagnóstico, com `executarEtapaComProtecao` envolvendo cada etapa para preservar relatório e nunca apagar caches anteriores (todas as gravações continuam sendo upsert). Funções: `atualizarProfor2022Consolidado()`, `validarDiagnosticoConsolidado()`, `resumirAtualizacaoConsolidada()`, `executarEtapaComProtecao()`. Script CLI `npm run atualizar:profor-2022` e agendador `npm run agendar:profor-2022` adicionados (horário configurável por `PROFOR_2022_ATUALIZACAO_DIARIA_HORA`, fallback `06:30`). Rotas locais/API administrativas criadas: `POST /api/profor-2022/atualizar` e `GET /api/profor-2022/atualizacao/status`. Frontend recebeu botão `btnAtualizarProfor2022` e linha de status, ambos restritos ao modo local/API. Teste real: 15/15 DETRU, 15/15 rendimentos, 15/15 consolidado em 119s. Publicação estática NÃO executada. JSONs publicados NÃO alterados.
 
@@ -609,9 +609,9 @@ Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas est
 | 18/05/2026 | Rotina semiautomática de publicação recorrente | Script `backend/scripts/publicar-profor-2022-estatico.js` criado e exposto via `npm run publicar:profor-2022`. Executa atualização consolidada, publicação estática, validações e auditoria de vazamento, sem commit/push automático. Flag `--permitir-alteracoes-locais` permite teste controlado com working tree já modificado. |
 | 18/05/2026 | Auditoria campo a campo da aba `Geral` | Criado `profor-2022-auditoria-aba-geral.md`. Decisao registrada: aba `Geral` sera descontinuada como fonte operacional e preservada fisicamente apenas como historico/controle. Proxima etapa recomendada: retirar fallback da aba `Geral` em implementacao conservadora, revisar calculos pendentes e nao exibir divergencias aceitas ao usuario final. |
 
-## 13. Critérios de aceitação da futura origem `banco-cache`
+## 13. Critérios de aceitação da origem `banco-cache` (histórico)
 
-Após a conclusão do diagnóstico de 17/05/2026 (DETRU resolvido, plano de aplicação casando), a ativação do `banco-cache` como origem padrão deixou de ser problema técnico e passou a ser **decisão de governança**.
+Esta seção registra a fase histórica anterior ao PAD/reconstrução. Em 24/05/2026, `banco-cache` deixou de ser origem operacional; a origem vigente é `reconstrucao-pad`.
 
 ### 13.1. Princípio operativo
 
@@ -630,11 +630,11 @@ Classificar uma divergência como erro requer evidência. Aceitar uma divergênc
 | DETRU oficial | Plataforma SICONV/DETRU (`siconv_convenio.csv.zip`) | Sempre, para campos cadastrais e financeiros oficiais |
 | Cálculo do plano | Soma `valorPrevisto`, `valorExecutado` e `valorPrevisto - valorExecutado` dos itens do plano filtrado por UF + nº + ano | Sempre, para campos por área/natureza |
 | Transferegov público | Página pública de Rendimento de Aplicação (sessão pública do convênio) | Quando a sessão pública estiver estabelecida; sem login/captcha |
-| Aba `Geral` (manual) | Planilha `Planilhas/gestao_financeira_ouvidoria.xlsx` aba `Geral` | Transitória; deve ser substituída pelas três anteriores |
+| Aba `Geral` (manual) | Planilha antiga por abas/UF | **Removida do fluxo ativo em 24/05/2026; histórico apenas** |
 
 ### 13.3. Critérios para ativação
 
-A ativação como padrão (`PROFOR_2022_ORIGEM_DADOS=banco-cache`) só deve ocorrer quando **todos** os critérios abaixo forem atendidos:
+A ativação como padrão (`PROFOR_2022_ORIGEM_DADOS=banco-cache`) era condicionada aos critérios abaixo. A orientação atual é não ativar `banco-cache`; usar `reconstrucao-pad`.
 
 1. ✅ `totalComDetru = 15` (técnico — atingido).
 2. ✅ `totalComPlano = 15` (técnico — atingido).
@@ -747,16 +747,16 @@ Restrições:
 
 ## 14. Origem de dados operacional (sem fallback para aba `Geral`)
 
-A origem operacional padrão do PROFOR 2022 é **`banco-cache`**. A aba `Geral` da planilha PROFOR 2022 permanece fisicamente apenas como histórico/controle e **não é mais usada como fallback silencioso** da aplicação.
+A origem operacional padrão do PROFOR 2022 é **`reconstrucao-pad`**. A planilha antiga por abas/UF e a aba `Geral` foram removidas do fluxo ativo; permanecem apenas em relatórios/memórias históricas.
 
 ### Regras
 
 - `backend/services/profor-2022/profor-origem-service.js`:
-  - `ORIGEM_PADRAO_PROFOR_2022 = "banco-cache"`.
-  - Valor inválido em `PROFOR_2022_ORIGEM_DADOS` aciona aviso e cai no padrão `banco-cache`.
-  - O modo `planilha` continua disponível como **escolha técnica explícita** via `PROFOR_2022_ORIGEM_DADOS=planilha` ou via `opcoes.origemDados`, mas não como fallback automático.
+  - `ORIGEM_PADRAO_PROFOR_2022 = "reconstrucao-pad"`.
+  - Valor inválido em `PROFOR_2022_ORIGEM_DADOS` aciona aviso e cai no padrão `reconstrucao-pad`.
+  - Os modos `planilha` e `banco-cache` não são mais origens operacionais.
 - `backend/services/dashboard-publication-service.js`:
-  - `montarDadosProfor2022Publicacao` em modo `banco-cache` NÃO cai mais para `extrairProfor2022DoWorkbook` em caso de falha.
+  - `montarDadosProfor2022Publicacao` usa PAD/reconstrução como origem operacional do PROFOR 2022.
   - Nova função `validarConsolidadoProfor2022Publicavel(dados)` rejeita publicação se `convenios.length !== 15`, `totalCarteira !== 15`, `totalComDetru !== 15`, `totalComPlano !== 15`, `totalComRendimentos !== 15` ou se `dadosProfor2022.ultimaAtualizacaoDados.dataHora` estiver ausente.
   - A mensagem de erro segue o padrão `Publicação bloqueada: consolidado PROFOR 2022 incompleto. Esperado 15/15/15. Obtido carteira=X, detru=Y, plano=Z, rendimentos=W.`.
 - `backend/scripts/publicar-profor-2022-estatico.js`:
@@ -766,7 +766,7 @@ A origem operacional padrão do PROFOR 2022 é **`banco-cache`**. A aba `Geral` 
 
 ### Comparador planilha × banco-cache
 
-Permanece como **ferramenta técnica de diagnóstico** em `GET /api/profor-2022/comparar-origens`. Não é mais fonte operacional.
+Removido em 24/05/2026. Não há mais rota dev/auditoria, fallback ou comparação baseada na planilha antiga por abas.
 
 ### Campos removidos da interface
 

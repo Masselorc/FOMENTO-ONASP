@@ -1,5 +1,18 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: remoção física do legado da planilha antiga por abas
+
+- **Escopo:** limpeza pós-migração, não migração. A origem PAD/reconstrução já estava funcional; esta etapa removeu resíduos da planilha antiga por abas/UF (`Planilhas/gestao_financeira_ouvidoria.xlsx`).
+- **Correção de escopo preservada:** não foi criado, proposto ou documentado sistema de login/autenticação/autorização por usuário. As flags remanescentes seguem apenas como proteção técnica contra execução acidental. A dependência `xlsx` foi preservada porque os PADs atuais continuam em Excel.
+- **Remoções principais:** rota `GET /api/profor-2022/comparar-origens`; helpers `carregarWorkbookProfor2022`, `montarConsolidadoProfor2022Local`, `montarComparacaoOrigensProfor2022Local`; scripts legados de importação da aba `Geral`, orquestrador/agendador legado e rateio inicial da planilha antiga; flags `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK`, `ALLOW_PROFOR_2022_ENDPOINTS_DEV` e `ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO`.
+- **Origem ativa:** `profor-origem-service.js` passou a aceitar apenas `reconstrucao-pad`; valores antigos `planilha`/`banco-cache` caem no padrão `reconstrucao-pad`.
+- **Fluxos ajustados:** `/api/profor-2022/consolidado` monta apenas por PAD/reconstrução; publicação/dashboard local deixa de ler `arquivoPlanilhaConvenios`; seleção manual/automática da planilha antiga no frontend foi neutralizada; wrappers `atualizar:profor-2022` e `agendar:profor-2022` continuam falhando cedo.
+- **Preservações:** sem publicação; `frontend/data/publicados/` intacto; `.env` não exibido/alterado; SQLite/WAL/SHM preservados; sem migration; sem decisão por SQL direto; fila oficial, snapshots, decisões, divergências, logs, relatórios históricos e `planoAplicacao` oficial preservados; DETRU e Transferegov não acionados.
+- **Validações:** `git diff --check`; `npm run validar:syntax` (103 arquivos); `npm run validar:services` (239 testes); `npm run profor:pad:ler-relatorios:dry-run`; `npm run profor:pad:reconstruir-plano:dry-run`; `npm run profor:pad:comparar-plano:dry-run`; `npm run profor:pad:comparar-snapshots:dry-run`. Relatórios dry-run derivados restaurados para não versionar artefatos sem relação material com esta frente.
+- **Relatório:** `backend/data/relatorios/profor-2022-remocao-legado-planilha-antiga.md`.
+- **Risco residual:** funções antigas de parsing de workbook ainda existem em módulos compartilhados de Excel, mas não permanecem como fallback/auditoria/rota dev da planilha antiga PROFOR. `xlsx` permanece necessário aos PADs e a outras planilhas atuais.
+- **Próximos passos:** validar a suíte completa e, em frente separada, renomear utilitários internos genéricos de Excel se a equipe quiser reduzir ruído sem afetar PAD, Orçamento, Formalização, Contatos e Diagnóstico.
+
 ## 24/05/2026 — PROFOR 2022: governança de endpoints externos/dev, agendadores e workbook legado
 
 - **Objetivo:** fechar a governança remanescente após a aposentadoria operacional dos fallbacks workbook: DETRU, Transferegov, endpoints administrativos/dev, agendadores e limpeza final por isolamento.
