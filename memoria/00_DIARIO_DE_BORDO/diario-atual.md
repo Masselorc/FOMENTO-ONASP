@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: encerramento dos fallbacks workbook e endpoints dev/auditoria
+
+- **Objetivo:** executar as pendências finais de fechamento do fallback workbook: bloquear `comparar-origens` em produção, adicionar `FOMENTO_AMBIENTE`, aposentar `atualizar:profor-2022`, isolar funções workbook remanescentes e registrar política de endpoints dev/auditoria.
+- **Correção da ressalva:** `/api/profor-2022/comparar-origens` agora chama `assertEndpointDevPermitido("api_profor_2022_comparar_origens")` antes de qualquer leitura de workbook. Em produção bloqueia sempre; em desenvolvimento exige `ALLOW_PROFOR_2022_ENDPOINTS_DEV=1`.
+- **Ambiente:** `FOMENTO_AMBIENTE` integrado ao guard central. Valores `producao`, `produção`, `production` e `prod` são produção; se qualquer variável (`FOMENTO_AMBIENTE`, `NODE_ENV`, `APP_ENV`, `AMBIENTE`) indicar produção, o bloqueio prevalece.
+- **Aposentadoria:** `npm run atualizar:profor-2022` passou a apontar para wrapper bloqueador (`backend/scripts/bloquear-atualizar-profor-2022-legado.js`), que falha cedo com exit code `2`, sem `.env`, banco, workbook ou Transferegov. O orquestrador antigo ficou apenas como `profor:legado:atualizar-consolidado:dev`, ainda proibido em produção.
+- **Funções workbook:** `carregarPlanoAplicacaoLocal` e `montarConsolidadoProfor2022Local` permanecem como legado interno/auditoria dev, não como fluxo operacional padrão. Remoção total fica para frente própria.
+- **Política:** endpoints operacionais devem respeitar origem ativa; endpoints dev/auditoria não podem ler workbook em produção; endpoints que acionam DETRU/Transferegov ficam fora desta frente e exigem governança própria.
+- **Preservações:** sem publicação; sem alteração em `frontend/data/publicados/`; `.env` não exibido/alterado; SQLite/WAL/SHM preservados; sem migration; sem decisão por SQL direto; fila oficial, snapshots, relatórios históricos e `planoAplicacao` oficial preservados; Transferegov não acionado.
+- **Relatório:** `backend/data/relatorios/profor-2022-encerramento-fallbacks-workbook-e-endpoints-dev.md`.
+- **Próximos passos:** definir política/gate administrativa para endpoints sensíveis de DETRU/rendimentos e planejar remoção final das funções workbook quando a auditoria dev por planilha for aposentada.
+
 ## 24/05/2026 — PROFOR 2022: reescrita do /consolidado por origem ativa + isolamento do orquestrador legado + endurecimento dos gates em produção
 
 - **Escopo da frente:** fechar as três próximas etapas listadas em `profor-2022-auditoria-final-fallback-workbook.md` (commit `6bf047a`).
