@@ -44,6 +44,9 @@ const { montarConsolidadoProfor2022 } = require("./services/profor-2022/profor-c
 const { compararBasesProfor2022 } = require("./services/profor-2022/profor-comparador-service");
 const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
 const {
+  assertWorkbookFallbackPermitido,
+} = require("./services/profor-2022/profor-workbook-fallback-guard-service");
+const {
   atualizarProfor2022Consolidado,
   executarEtapaRendimentos
 } = require("./services/profor-2022/profor-atualizacao-consolidada-service");
@@ -301,23 +304,11 @@ function carregarWorkbookProfor2022(catalogoAplicacao) {
   return xlsx.readFile(path.join(rootDir, planilhaRelativa), { cellDates: true });
 }
 
-// Bloqueia leitura silenciosa de workbook quando a origem ativa configurada é
-// `reconstrucao-pad`. Sem este gate, o endpoint /api/profor-2022/consolidado
-// devolveria dados extraídos da planilha antiga mesmo após a migração para
-// reconstrução PAD. Fluxos de desenvolvimento legítimos podem manter o caminho
-// antigo ativando explicitamente `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK=1`.
-function assertWorkbookFallbackPermitido(contexto = "consolidado_local") {
-  const origemAtiva = resolverOrigemDadosProfor2022();
-  if (origemAtiva !== "reconstrucao-pad") return;
-  if (process.env.ALLOW_PROFOR_2022_WORKBOOK_FALLBACK === "1") return;
-  throw new Error(
-    `[${contexto}] Leitura de workbook bloqueada: origem ativa PROFOR_2022_ORIGEM_DADOS=` +
-      `${origemAtiva}, mas o caminho local ainda lê a planilha antiga. ` +
-      `Para uso temporário em desenvolvimento, defina ALLOW_PROFOR_2022_WORKBOOK_FALLBACK=1 ` +
-      `na sessão do servidor; em produção, descontinuar o caminho de workbook.`
-  );
-}
-
+// Legado interno: leitura por workbook protegida pelo gate centralizado em
+// `profor-workbook-fallback-guard-service.js`. Em produção, a flag não libera
+// — falha sempre. Mantida apenas para o endpoint comparativo dev
+// (`comparar-origens`) e para o caminho de fallback em desenvolvimento quando
+// a flag ALLOW_PROFOR_2022_WORKBOOK_FALLBACK estiver em `1`.
 function montarConsolidadoProfor2022Local() {
   assertWorkbookFallbackPermitido("consolidado_local");
   const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
@@ -327,6 +318,28 @@ function montarConsolidadoProfor2022Local() {
     origemDados: "banco-cache",
     planoAplicacao
   });
+}
+
+// Wrapper centralizado para o endpoint `/api/profor-2022/consolidado`. Resolve
+// a origem ativa e despacha:
+//  - `reconstrucao-pad` → `montarDadosProfor2022Publicacao` (sem workbook);
+//  - `banco-cache`/`planilha` → caminho legado via workbook, sob gate.
+// Se a origem resolvida cair em algo inesperado (defensivo), erro explícito.
+function montarConsolidadoProfor2022PorOrigemAtiva() {
+  const origemAtiva = resolverOrigemDadosProfor2022();
+  if (origemAtiva === "reconstrucao-pad") {
+    const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
+    return montarDadosProfor2022Publicacao(null, catalogoAplicacao, {
+      origemDados: "reconstrucao-pad",
+    });
+  }
+  if (origemAtiva === "banco-cache" || origemAtiva === "planilha") {
+    return montarConsolidadoProfor2022Local();
+  }
+  throw new Error(
+    `[consolidado_por_origem_ativa] Origem ativa não suportada: '${origemAtiva}'. ` +
+      `Esperado: reconstrucao-pad | banco-cache | planilha.`
+  );
 }
 
 // Fallback explícito de desenvolvimento: este endpoint COMPARA planilha antiga
@@ -603,10 +616,10 @@ async function rotearApi(req, res, pathname) {
 
     if (req.method === "GET" && pathname === "/api/profor-2022/consolidado") {
       try {
-        const data = montarConsolidadoProfor2022Local();
+        const data = montarConsolidadoProfor2022PorOrigemAtiva();
         enviarJson(res, 200, {
           success: true,
-          origemDados: "banco-cache",
+          origemDados: data.origemDados,
           data: {
             resumo: data.resumo,
             convenios: data.convenios,
@@ -614,6 +627,7 @@ async function rotearApi(req, res, pathname) {
             avisos: data.avisos,
             diagnostico: data.diagnostico,
             origemDados: data.origemDados,
+            origemDadosEfetiva: data.origemDadosEfetiva,
             geradoEm: data.geradoEm,
             ultimaAtualizacaoDados: data.ultimaAtualizacaoDados || obterUltimaAtualizacaoDadosProfor2022Seguro()
           }
@@ -745,7 +759,7 @@ async function rotearApi(req, res, pathname) {
       let diagnosticoConsolidado = null;
       let geradoEmConsolidado = null;
       try {
-        const consolidado = montarConsolidadoProfor2022Local();
+        const consolidado = montarConsolidadoProfor2022PorOrigemAtiva();
         diagnosticoConsolidado = consolidado?.diagnostico || null;
         geradoEmConsolidado = consolidado?.geradoEm || null;
       } catch (err) {

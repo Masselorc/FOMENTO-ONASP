@@ -35,6 +35,7 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-pad-integracao-fila-oficial-dry-run-service.js",
   "backend/services/profor-2022/profor-pad-rateio-quantidade-fixa-reconstrucao-dry-run-service.js",
   "backend/services/profor-2022/profor-pad-reconstrucao-rateio-fixo-integracao-service.js",
+  "backend/services/profor-2022/profor-workbook-fallback-guard-service.js",
   "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js",
   "backend/services/profor-2022/profor-saldo-residual-service.js",
