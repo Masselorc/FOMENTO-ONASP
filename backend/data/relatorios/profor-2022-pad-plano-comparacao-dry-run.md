@@ -1,6 +1,6 @@
 # PROFOR 2022 — Comparação planoAplicacao antigo × reconstruído PAD (dry-run)
 
-Gerado em: 2026-05-24T10:21:17.228Z
+Gerado em: 2026-05-24T12:33:34.955Z
 Modo: dry-run
 Origem antiga: memoria-rateio-persistida (abas-uf capturadas)
 Origem nova: relatorios-pad-rateados

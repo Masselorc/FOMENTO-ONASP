@@ -3701,6 +3701,31 @@ async function carregarLogoParaPDF() {
                     <div>A reconstrução e a publicação continuam bloqueadas enquanto houver divergências pendentes ou em revisão que bloqueiem publicação.</div>
                     <div>Esta tela é de revisão e saneamento; não publica dados.</div>
                 </section>
+                <section class="revisao-panel mb-4" id="secao-recarga-pad-operacional">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Carga de dados</p>
+                            <h2>Recarga de PADs</h2>
+                        </div>
+                    </div>
+                    <div class="mb-3 d-flex flex-column gap-2">
+                        <div class="text-muted small">
+                            <span class="d-block">⚠️ Esta ação não publica dados.</span>
+                            <span class="d-block">⚠️ Esta ação não consulta DETRU/Transferegov.</span>
+                            <span class="d-block">⚠️ Esta ação usa os PADs atualmente salvos em <code>Planilhas/profor-2022/instrumentos</code>.</span>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-recarregar-pads">
+                                <i class="fas fa-sync-alt me-1"></i> Recarregar PADs
+                            </button>
+                        </div>
+                    </div>
+                    <div id="recarga-pad-progresso" class="d-none mb-3 text-primary">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                        <span>Processando recarga dos PADs, por favor aguarde...</span>
+                    </div>
+                    <div id="recarga-pad-resultado" class="mb-0"></div>
+                </section>
                 <section class="revisao-panel mb-4">
                     <div class="section-header compact">
                         <div>
@@ -3738,6 +3763,7 @@ async function carregarLogoParaPDF() {
             document.getElementById('revisao-filtros-container').innerHTML = renderFiltrosRevisao();
             registrarEventosRevisaoDivergencias();
             await carregarListaRevisao();
+            await carregarUltimaRecargaPadUI();
             aplicarModoSomenteLeituraControlada();
         }
 
@@ -3783,6 +3809,11 @@ async function carregarLogoParaPDF() {
                     const detalhe = document.getElementById('revisao-divergencia-detalhe');
                     if (detalhe) detalhe.innerHTML = `<div class="revisao-detail-panel text-danger">${escapeHtml(error.message || 'Falha ao carregar detalhe.')}</div>`;
                 }
+            });
+
+            const btnRecarregar = document.getElementById('btn-recarregar-pads');
+            btnRecarregar?.addEventListener('click', async () => {
+                await executarRecargaPadsOperacionalUI();
             });
         }
 
@@ -3878,6 +3909,175 @@ async function carregarLogoParaPDF() {
                     if (botao) botao.disabled = false;
                 }
             });
+        }
+
+        async function carregarUltimaRecargaPadUI() {
+            const container = document.getElementById('recarga-pad-resultado');
+            if (!container) return;
+            try {
+                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/ultima-recarga');
+                const recarga = responseBody?.payload;
+                if (resposta.ok && recarga && recarga.sucesso !== false && recarga.dataHora) {
+                    renderResultadoRecargaPad(recarga);
+                } else {
+                    container.innerHTML = `<div class="text-muted small">Nenhuma recarga de PADs realizada recentemente.</div>`;
+                }
+            } catch (error) {
+                console.error('Erro ao buscar última recarga de PADs:', error);
+                container.innerHTML = `<div class="text-muted small">Nenhuma recarga de PADs realizada recentemente.</div>`;
+            }
+        }
+
+        async function executarRecargaPadsOperacionalUI() {
+            const confirmado = confirm('Deseja realmente recarregar os 15 PADs de Planilhas/profor-2022/instrumentos? Esta ação reanalisará os dados e atualizará a reconstrução local.');
+            if (!confirmado) return;
+
+            const btnRecarregar = document.getElementById('btn-recarregar-pads');
+            const progresso = document.getElementById('recarga-pad-progresso');
+            const resultadoContainer = document.getElementById('recarga-pad-resultado');
+
+            if (btnRecarregar) btnRecarregar.disabled = true;
+            if (progresso) progresso.classList.remove('d-none');
+            if (resultadoContainer) resultadoContainer.innerHTML = '';
+
+            try {
+                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/recarregar', {
+                    method: 'POST'
+                });
+
+                const recarga = responseBody?.payload;
+                if (!resposta.ok || !responseBody || responseBody.success === false || !recarga || recarga.sucesso === false) {
+                    throw new Error(responseBody?.message || recarga?.mensagem || `Falha na API de recarga de PADs (status ${resposta.status}).`);
+                }
+
+                renderResultadoRecargaPad(recarga);
+                await carregarAuditoriaRevisao();
+                await carregarListaRevisao();
+            } catch (error) {
+                console.error('Falha ao recarregar PADs:', error);
+                if (resultadoContainer) {
+                    resultadoContainer.innerHTML = `
+                        <div class="alert alert-danger mb-0">
+                            <strong>Erro ao recarregar PADs:</strong> ${escapeHtml(error.message || 'Erro desconhecido')}
+                        </div>
+                    `;
+                }
+            } finally {
+                if (btnRecarregar) btnRecarregar.disabled = false;
+                if (progresso) progresso.classList.add('d-none');
+            }
+        }
+
+        function renderResultadoRecargaPad(resultado) {
+            const container = document.getElementById('recarga-pad-resultado');
+            if (!container) return;
+
+            let dataHoraFmt = '';
+            if (resultado.dataHora) {
+                try {
+                    dataHoraFmt = new Date(resultado.dataHora).toLocaleString('pt-BR');
+                } catch {
+                    dataHoraFmt = resultado.dataHora;
+                }
+            }
+
+            let alertaStatusHtml = '';
+            if (resultado.totalImpedimentos > 0) {
+                let listaImpedimentos = '';
+                if (Array.isArray(resultado.impedimentos) && resultado.impedimentos.length > 0) {
+                    listaImpedimentos = `
+                        <ul class="mb-0 mt-2 ps-3 text-danger small">
+                            ${resultado.impedimentos.map(imp => `
+                                <li>
+                                    <strong>[${escapeHtml(imp.tipo || 'Impedimento')}]</strong> 
+                                    ${imp.numeroConvenio ? `(Convênio ${escapeHtml(String(imp.numeroConvenio))})` : ''} 
+                                    ${escapeHtml(imp.detalhe || '')}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                }
+                alertaStatusHtml = `
+                    <div class="alert alert-danger mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Recarga concluída com ${resultado.totalImpedimentos} impedimento(s).</strong>
+                        <span>O plano local não está pronto para publicação.</span>
+                        ${listaImpedimentos}
+                    </div>
+                `;
+            } else if (resultado.aptoParaUsoLocal) {
+                let msgPublicacao = '';
+                if (resultado.aptoParaPublicacao) {
+                    msgPublicacao = ' O plano também está <strong>apto para publicação</strong>.';
+                } else {
+                    msgPublicacao = ' A publicação para produção continua <strong>bloqueada por divergências</strong> pendentes ou em revisão.';
+                }
+                alertaStatusHtml = `
+                    <div class="alert alert-success mb-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Sucesso!</strong> A reconstrução local foi atualizada e está pronta para uso.${msgPublicacao}
+                    </div>
+                `;
+            } else {
+                alertaStatusHtml = `
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Aviso:</strong> A recarga foi concluída, mas o plano local não está marcado como apto para uso local.
+                    </div>
+                `;
+            }
+
+            let alertaAvisosHtml = '';
+            if (Array.isArray(resultado.alertas) && resultado.alertas.length > 0) {
+                alertaAvisosHtml = `
+                    <div class="alert alert-warning mb-3">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Alertas de Processamento (${resultado.alertas.length}):</strong>
+                        <ul class="mb-0 mt-2 ps-3 small text-warning-emphasis">
+                            ${resultado.alertas.map(alt => `
+                                <li>
+                                    <strong>[${escapeHtml(alt.tipo || 'Aviso')}]</strong>
+                                    ${alt.numeroConvenio || alt.instrumento ? `(Convênio ${escapeHtml(String(alt.numeroConvenio || alt.instrumento))})` : ''}
+                                    ${escapeHtml(alt.detalhe || '')}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            const stats = [
+                { rotulo: 'Arquivos lidos', valor: `${resultado.totalRelatoriosLidos ?? 0}/${resultado.totalArquivosPad ?? 0}` },
+                { rotulo: 'Itens processados', valor: resultado.totalItensPad ?? 0 },
+                { rotulo: 'Linhas reconstruídas', valor: resultado.totalLinhasReconstruidas ?? 0 },
+                { rotulo: 'Convênios reconstruídos', valor: resultado.totalConveniosReconstruidos ?? 0 },
+                { rotulo: 'Rateios aplicados', valor: resultado.totalItensComRateioAplicado ?? 0 },
+                { rotulo: 'Itens novos', valor: resultado.totalItensNovos ?? 0 },
+                { rotulo: 'Itens suprimidos', valor: resultado.totalItensSuprimidos ?? 0 },
+                { rotulo: 'Itens sem rateio', valor: resultado.totalItensSemRateio ?? 0 }
+            ];
+
+            const gridHtml = `
+                <div class="row g-2 mb-3">
+                    ${stats.map(st => `
+                        <div class="col-6 col-md-3">
+                            <div class="p-2 border rounded bg-light text-center">
+                                <span class="d-block text-muted small text-uppercase" style="font-size: 0.65rem;">${escapeHtml(st.rotulo)}</span>
+                                <strong class="fs-5 text-dark">${escapeHtml(String(st.valor))}</strong>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            container.innerHTML = `
+                <div class="mt-3">
+                    <p class="text-muted small mb-2">Última execução: <strong>${escapeHtml(dataHoraFmt)}</strong></p>
+                    ${alertaStatusHtml}
+                    ${alertaAvisosHtml}
+                    ${gridHtml}
+                </div>
+            `;
         }
 
         function renderPainelLogsOperacionaisHtml() {

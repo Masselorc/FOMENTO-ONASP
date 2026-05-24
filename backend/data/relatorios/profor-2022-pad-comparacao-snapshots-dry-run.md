@@ -1,18 +1,18 @@
 # PROFOR 2022 - Comparação de Snapshots PAD (dry-run)
 
-Gerado em: 2026-05-24T10:21:18.750Z
+Gerado em: 2026-05-24T12:33:35.069Z
 Versão do comparador: 0.3
 Checksum anterior: `799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678`
-Checksum novo: `799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678`
+Checksum novo: `2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50`
 Checksums válidos: sim
 Bloqueios técnicos: 76
 
 ## 1. Resumo
 
-- Itens idênticos: 568
+- Itens idênticos: 563
 - Itens novos: 0
 - Itens removidos: 0
-- Itens alterados: 0
+- Itens alterados: 5
 - Bloqueios técnicos: 76
 
 ## 2. Tipos de divergência
@@ -21,6 +21,8 @@ Bloqueios técnicos: 76
 | --- | ---: |
 | `chave_ambigua` | 38 |
 | `colisao_chave` | 38 |
+| `descricao_apenas_diacritico` | 4 |
+| `descricao_apenas_textual` | 1 |
 
 ## 3. Totais agregados
 
@@ -123,6 +125,16 @@ Bloqueios técnicos: 76
 | `937818|PB|CAPITAL|ESCOLA PENAL|CONDICIONADOR DE AR TIPO SPLIT HI WALL` | 3 | 3 | `hashItem_bijetivo` |
 | `937818|PB|CAPITAL|ESCOLA PENAL|NOTEBOOK TIPO II PROCESSADOR AMD RYZEN` | 2 | 2 | `hashItem_bijetivo` |
 | `937871|PR|CAPITAL|OUVIDORIA|VEICULO TIPO SUV` | 2 | 2 | `hashItem_bijetivo` |
+
+## 5. Divergências
+
+| Tipo | Convênio | UF | Natureza | Área | Descrição |
+| --- | --- | --- | --- | --- | --- |
+| `descricao_apenas_textual` | 937265 | MS | CUSTEIO | CORREGEDORIA | Meia Militar |
+| `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | CORREGEDORIA | Smartphone minimo de 128gb de memória in |
+| `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | ESCOLA PENAL | Desktop para edição de video |
+| `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | ESCOLA PENAL | Switcher de video |
+| `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | OUVIDORIA | Smartphone minimo de 128gb de memória in |
 
 ## 6. Garantias
 

@@ -52,6 +52,10 @@ const {
 } = require("./services/profor-2022/profor-atualizacao-meta-service");
 const revisaoDecisaoService = require("./services/profor-2022/profor-pad-revisao-decisao-service");
 const {
+  recarregarPadsOperacional,
+  obterUltimaRecargaOperacional,
+} = require("./services/profor-2022/profor-pad-recarga-operacional-service");
+const {
   montarDadosProfor2022Publicacao
 } = require("./services/dashboard-publication-service");
 const {
@@ -663,6 +667,40 @@ async function rotearApi(req, res, pathname) {
           "Atualizacao consolidada legada PROFOR 2022 removida. " +
           "Use os fluxos PAD/reconstrucao; este endpoint nao aciona DETRU, Transferegov ou workbook."
       });
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar") {
+      try {
+        const resultado = await recarregarPadsOperacional();
+        enviarJson(res, 200, {
+          success: resultado.sucesso,
+          payload: resultado
+        });
+      } catch (erro) {
+        console.error("Falha ao recarregar PADs:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao recarregar PADs."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/pad/ultima-recarga") {
+      try {
+        const resultado = obterUltimaRecargaOperacional();
+        enviarJson(res, 200, {
+          success: resultado.sucesso !== false,
+          payload: resultado
+        });
+      } catch (erro) {
+        console.error("Falha ao obter ultima recarga:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao obter última recarga."
+        });
+      }
       return;
     }
 

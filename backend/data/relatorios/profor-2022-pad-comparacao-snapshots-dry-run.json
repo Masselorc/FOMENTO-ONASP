@@ -1,11 +1,11 @@
 {
-  "geradoEm": "2026-05-24T10:21:18.750Z",
+  "geradoEm": "2026-05-24T12:33:35.069Z",
   "modo": "dry-run",
   "versaoComparador": "0.3",
   "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
-  "checksumNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+  "checksumNovo": "2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50",
   "checksumCalculadoAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
-  "checksumCalculadoNovo": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+  "checksumCalculadoNovo": "2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50",
   "checksumsValidos": true,
   "bloqueiosTecnicos": [
     {
@@ -995,20 +995,26 @@
   "resumo": {
     "totalLinhasAnterior": 568,
     "totalLinhasNovo": 568,
-    "totalIguais": 568,
+    "totalIguais": 563,
     "totalNovos": 0,
     "totalRemovidos": 0,
     "totalAusentes": 0,
-    "totalAlterados": 0,
+    "totalAlterados": 5,
     "totalBloqueiosTecnicos": 76,
     "porTipo": {
+      "descricao_apenas_textual": 1,
+      "descricao_apenas_diacritico": 4,
       "colisao_chave": 38,
       "chave_ambigua": 38
     },
     "porUf": {
+      "MS": 1,
+      "AC": 4,
       "NAO_INFORMADO": 76
     },
     "porNatureza": {
+      "CUSTEIO": 1,
+      "CAPITAL": 4,
       "NAO_INFORMADO": 76
     },
     "totalRuidosTecnicosControlados": 6
@@ -1020,11 +1026,213 @@
     "quantidade": 0,
     "linhas": 0
   },
-  "divergencias": [],
+  "divergencias": [
+    {
+      "tipo": "descricao_apenas_textual",
+      "tipos": [
+        "descricao_apenas_textual"
+      ],
+      "chave": "937265|MS|CUSTEIO|CORREGEDORIA|MEIA MILITAR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "MS",
+      "numero": "937265",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricaoAnterior": "Meia militar",
+      "descricaoNova": "Meia Militar",
+      "valores": {
+        "descricao": {
+          "anterior": "Meia militar",
+          "novo": "Meia Militar"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|CORREGEDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Smartphone mínimo de 128gb de memória in",
+      "descricaoNova": "Smartphone minimo de 128gb de memória in",
+      "valores": {
+        "descricao": {
+          "anterior": "Smartphone mínimo de 128gb de memória in",
+          "novo": "Smartphone minimo de 128gb de memória in"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|ESCOLA PENAL|DESKTOP PARA EDICAO DE VIDEO",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Desktop para edição de vídeo",
+      "descricaoNova": "Desktop para edição de video",
+      "valores": {
+        "descricao": {
+          "anterior": "Desktop para edição de vídeo",
+          "novo": "Desktop para edição de video"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|ESCOLA PENAL|SWITCHER DE VIDEO",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Switcher de vídeo",
+      "descricaoNova": "Switcher de video",
+      "valores": {
+        "descricao": {
+          "anterior": "Switcher de vídeo",
+          "novo": "Switcher de video"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|OUVIDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Smartphone mínimo de 128gb de memória in",
+      "descricaoNova": "Smartphone minimo de 128gb de memória in",
+      "valores": {
+        "descricao": {
+          "anterior": "Smartphone mínimo de 128gb de memória in",
+          "novo": "Smartphone minimo de 128gb de memória in"
+        }
+      }
+    }
+  ],
   "itensNovos": [],
   "itensAusentes": [],
   "itensRemovidos": [],
-  "itensAlterados": [],
+  "itensAlterados": [
+    {
+      "tipo": "descricao_apenas_textual",
+      "tipos": [
+        "descricao_apenas_textual"
+      ],
+      "chave": "937265|MS|CUSTEIO|CORREGEDORIA|MEIA MILITAR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "MS",
+      "numero": "937265",
+      "area": "CORREGEDORIA",
+      "natureza": "CUSTEIO",
+      "descricaoAnterior": "Meia militar",
+      "descricaoNova": "Meia Militar",
+      "valores": {
+        "descricao": {
+          "anterior": "Meia militar",
+          "novo": "Meia Militar"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|CORREGEDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Smartphone mínimo de 128gb de memória in",
+      "descricaoNova": "Smartphone minimo de 128gb de memória in",
+      "valores": {
+        "descricao": {
+          "anterior": "Smartphone mínimo de 128gb de memória in",
+          "novo": "Smartphone minimo de 128gb de memória in"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|ESCOLA PENAL|DESKTOP PARA EDICAO DE VIDEO",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Desktop para edição de vídeo",
+      "descricaoNova": "Desktop para edição de video",
+      "valores": {
+        "descricao": {
+          "anterior": "Desktop para edição de vídeo",
+          "novo": "Desktop para edição de video"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|ESCOLA PENAL|SWITCHER DE VIDEO",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Switcher de vídeo",
+      "descricaoNova": "Switcher de video",
+      "valores": {
+        "descricao": {
+          "anterior": "Switcher de vídeo",
+          "novo": "Switcher de video"
+        }
+      }
+    },
+    {
+      "tipo": "descricao_apenas_diacritico",
+      "tipos": [
+        "descricao_apenas_diacritico"
+      ],
+      "chave": "937782|AC|CAPITAL|OUVIDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "origemPareamento": "chaveMaterial",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Smartphone mínimo de 128gb de memória in",
+      "descricaoNova": "Smartphone minimo de 128gb de memória in",
+      "valores": {
+        "descricao": {
+          "anterior": "Smartphone mínimo de 128gb de memória in",
+          "novo": "Smartphone minimo de 128gb de memória in"
+        }
+      }
+    }
+  ],
   "itensIguais": [
     {
       "uf": "GO",
@@ -3739,29 +3947,6 @@
       "chaveComparacao": "937265|MS|CUSTEIO|CORREGEDORIA|COTURNO",
       "chaveContexto": "937265|MS|CUSTEIO|CORREGEDORIA",
       "hashItem": "fed59ad8f3fd835e4aecd2cbff52880b9574e857c13530e0d73b10c730a5affd"
-    },
-    {
-      "uf": "MS",
-      "instrumento": "CONVÊNIO",
-      "numero": "937265",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "MEIA MILITAR",
-      "descricaoOriginal": "Meia militar",
-      "descricaoNormalizada": "MEIA MILITAR",
-      "quantidade": 57,
-      "valorUnitario": 37.59,
-      "valorPrevisto": 2142.35,
-      "valorExecutado": 0,
-      "saldo": 2142.35,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937265|MS|CUSTEIO|CORREGEDORIA|MEIA MILITAR",
-      "chaveComparacao": "937265|MS|CUSTEIO|CORREGEDORIA|MEIA MILITAR",
-      "chaveContexto": "937265|MS|CUSTEIO|CORREGEDORIA",
-      "hashItem": "565150855d1202d7d0b9e970922c6c5b1b8edb75e1330aea1d4cb3d81f9e4a11"
     },
     {
       "uf": "MS",
@@ -7149,29 +7334,6 @@
       "instrumento": "CONVÊNIO",
       "numero": "937782",
       "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
-      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
-      "descricaoNormalizada": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
-      "quantidade": 1,
-      "valorUnitario": 2341.24,
-      "valorPrevisto": 2341.24,
-      "valorExecutado": 950,
-      "saldo": 1391.24,
-      "saldoEconomicidade": 1391.24,
-      "percentualExecucao": 40.58,
-      "avisos": [],
-      "chaveMaterial": "937782|AC|CAPITAL|CORREGEDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "chaveComparacao": "937782|AC|CAPITAL|CORREGEDORIA|128GB DE IN MEMORIA MINIMO SMARTPHONE",
-      "chaveContexto": "937782|AC|CAPITAL|CORREGEDORIA",
-      "hashItem": "4e5bbd4c41975efd6b38c9401d160556cfdd9c307e5dd6a1537ef92a81c6a108"
-    },
-    {
-      "uf": "AC",
-      "instrumento": "CONVÊNIO",
-      "numero": "937782",
-      "ano": "2022",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
       "descricao": "ARMÁRIO ALTO COM 02 PORTAS E PRATELEIRAS",
@@ -7212,29 +7374,6 @@
       "chaveComparacao": "937782|AC|CAPITAL|ESCOLA PENAL|2 ARMARIO BAIXO PORTAS",
       "chaveContexto": "937782|AC|CAPITAL|ESCOLA PENAL",
       "hashItem": "0e0f1861b9fd3d83411987014863045b57e9445adc8b6be62e4bdbcfca413cb3"
-    },
-    {
-      "uf": "AC",
-      "instrumento": "CONVÊNIO",
-      "numero": "937782",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "DESKTOP PARA EDIÇÃO DE VÍDEO",
-      "descricaoOriginal": "Desktop para edição de vídeo",
-      "descricaoNormalizada": "DESKTOP PARA EDIÇÃO DE VÍDEO",
-      "quantidade": 1,
-      "valorUnitario": 14849,
-      "valorPrevisto": 14849,
-      "valorExecutado": 0,
-      "saldo": 14849,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937782|AC|CAPITAL|ESCOLA PENAL|DESKTOP PARA EDICAO DE VIDEO",
-      "chaveComparacao": "937782|AC|CAPITAL|ESCOLA PENAL|DE DESKTOP EDICAO PARA VIDEO",
-      "chaveContexto": "937782|AC|CAPITAL|ESCOLA PENAL",
-      "hashItem": "9a597fc3e443d0fe62203ad9a0bbf2f65e38c0e8af92bedd52744da4ca2904cd"
     },
     {
       "uf": "AC",
@@ -7542,29 +7681,6 @@
       "ano": "2022",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "SWITCHER DE VÍDEO",
-      "descricaoOriginal": "Switcher de vídeo",
-      "descricaoNormalizada": "SWITCHER DE VÍDEO",
-      "quantidade": 2,
-      "valorUnitario": 3901,
-      "valorPrevisto": 7802,
-      "valorExecutado": 7802,
-      "saldo": 0,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 100,
-      "avisos": [],
-      "chaveMaterial": "937782|AC|CAPITAL|ESCOLA PENAL|SWITCHER DE VIDEO",
-      "chaveComparacao": "937782|AC|CAPITAL|ESCOLA PENAL|DE SWITCHER VIDEO",
-      "chaveContexto": "937782|AC|CAPITAL|ESCOLA PENAL",
-      "hashItem": "8b88c6c039e8cc7e500a87cb429f31731693f2b9e4b0298decd02a6903203659"
-    },
-    {
-      "uf": "AC",
-      "instrumento": "CONVÊNIO",
-      "numero": "937782",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
       "descricao": "TELEPROMPT",
       "descricaoOriginal": "Teleprompt",
       "descricaoNormalizada": "TELEPROMPT",
@@ -7856,29 +7972,6 @@
       "chaveComparacao": "937782|AC|CAPITAL|OUVIDORIA|2GHZ 4 8GB DDR NOTEBOOK NUCLEOS RAM",
       "chaveContexto": "937782|AC|CAPITAL|OUVIDORIA",
       "hashItem": "d78344c978a25c087cdb249fb06b68bca2faab5a1dedf3c31ac11c2a13182b02"
-    },
-    {
-      "uf": "AC",
-      "instrumento": "CONVÊNIO",
-      "numero": "937782",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
-      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
-      "descricaoNormalizada": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
-      "quantidade": 1,
-      "valorUnitario": 2341.24,
-      "valorPrevisto": 2341.24,
-      "valorExecutado": 950,
-      "saldo": 1391.24,
-      "saldoEconomicidade": 1391.24,
-      "percentualExecucao": 40.58,
-      "avisos": [],
-      "chaveMaterial": "937782|AC|CAPITAL|OUVIDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
-      "chaveComparacao": "937782|AC|CAPITAL|OUVIDORIA|128GB DE IN MEMORIA MINIMO SMARTPHONE",
-      "chaveContexto": "937782|AC|CAPITAL|OUVIDORIA",
-      "hashItem": "be86927f50e5a20a48ba9bc2514805d8ba46993e0fa2021a412c74a4d3f38208"
     },
     {
       "uf": "AC",

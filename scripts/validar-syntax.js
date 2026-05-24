@@ -34,6 +34,7 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-pad-integracao-fila-oficial-dry-run-service.js",
   "backend/services/profor-2022/profor-pad-rateio-quantidade-fixa-reconstrucao-dry-run-service.js",
   "backend/services/profor-2022/profor-pad-reconstrucao-rateio-fixo-integracao-service.js",
+  "backend/services/profor-2022/profor-pad-recarga-operacional-service.js",
   "backend/services/profor-2022/profor-workbook-fallback-guard-service.js",
   "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js",
@@ -103,7 +104,8 @@ const ARQUIVOS = [
   "tests/services/profor-pad-rateio-quantidade-fixa.test.js",
   "tests/services/profor-pad-promocao-snapshot-anterior.test.js",
   "tests/services/profor-pad-integracao-fila-oficial-dry-run.test.js",
-  "tests/services/profor-pad-rateio-fixo-reconstrucao-dry-run.test.js"
+  "tests/services/profor-pad-rateio-fixo-reconstrucao-dry-run.test.js",
+  "tests/services/profor-pad-recarga-operacional.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {

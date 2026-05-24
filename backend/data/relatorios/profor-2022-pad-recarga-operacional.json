@@ -1,0 +1,3100 @@
+{
+  "dataHora": "2026-05-24T12:33:34.521Z",
+  "sucesso": true,
+  "aptoParaUsoLocal": false,
+  "aptoParaPublicacao": false,
+  "totalArquivosPad": 15,
+  "totalRelatoriosLidos": 15,
+  "totalItensPad": 525,
+  "totalLinhasReconstruidas": 568,
+  "totalConveniosReconstruidos": 15,
+  "totalItensComRateioAplicado": 501,
+  "totalItensSemRateio": 0,
+  "totalItensNovos": 25,
+  "totalItensSuprimidos": 30,
+  "totalImpedimentos": 96,
+  "totalAlertas": 174,
+  "impedimentos": [
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937698",
+      "detalhe": "Quantidade (5700) x valor unitário (7.32) = 41724, diverge do valor total previsto informado (41743).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_502640165341861864722.xls",
+        "aba": "937698",
+        "linha": 16
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937698",
+      "detalhe": "Quantidade (5713) x valor unitário (4.12) = 23537.56, diverge do valor total previsto informado (23556.6).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_502640165341861864722.xls",
+        "aba": "937698",
+        "linha": 18
+      }
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricao": "Calça Tática",
+      "chaveItem": "937265::CALCA TATICA",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricao": "Cinto Tático",
+      "chaveItem": "937265::CINTO TATICO",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricao": "Coturno",
+      "chaveItem": "937265::COTURNO",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937265",
+      "uf": "MS",
+      "descricao": "Geladeira minimo 410L Frost Free 110v Branca",
+      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "descricao": "SALDO REMANESCENTE",
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "item_conhecido_nao_apto_usado",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937817",
+      "uf": "RJ",
+      "descricao": "CAPACETE PROTETOR",
+      "chaveItem": "937817::CAPACETE PROTETOR",
+      "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Ar condicionado split, capacidade de 12.",
+      "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Ar condicionado tipo split, capacidade 3",
+      "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Ar-condicionado tipo Split, capacidade d",
+      "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+      "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
+      "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Equipamentos de rede (switches e roteado",
+      "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
+      "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
+      "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Fragmentadora e papel - Corregedoria",
+      "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+      "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Impressora multifuncional (OUVIDORIA)",
+      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+      "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+      "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Quadro Lousa branca",
+      "chaveItem": "937221::QUADRO LOUSA BRANCA",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Refrigerador frigobar, com capacidade no",
+      "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Televisão Smart LED, mínimo de 50 polega",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Televisão smart LED, minimo de 50 polegadas",
+      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "rateio_percentual_indefinido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
+      "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
+      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::DESKTOP PARA EDICAO DE VIDEO",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937782::SWITCHER DE VIDEO",
+      "detalhe": "CORRIGIDO não tem efeito definido para item ausente no PAD."
+    },
+    {
+      "tipo": "divergencias_revisao_bloqueiam_publicacao",
+      "nivel": "impeditivo",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Há 8 divergência(s) com status PENDENTE/EM_REVISAO e bloqueia_publicacao = 1 na fila de revisão assistida."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "938128",
+      "detalhe": "Diferença crítica no item \"Saldo Residual\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "detalhe": "Diferença crítica no item \"Contratação de 01 (um) Supervisor por 12\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "detalhe": "Diferença crítica no item \"Contratação de 02 (dois) Auxiliares Admi\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "detalhe": "Diferença crítica no item \"Notebook 4 núcleos 4.2ghz ram ddr 4 8gb\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937782",
+      "detalhe": "Diferença crítica no item \"Notebook 4 núcleos 4.2ghz ram ddr 4 8gb\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Ar condicionado Split 60.000 BTUs (ESCOLA)\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Ar condicionado split, capacidade de 12.\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Ar condicionado tipo split, capacidade 3\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Ar-condicionado tipo Split, capacidade d\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Cafeteira elétrica 1,0 litros bivolt\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Equipamentos de rede (switches e roteado\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Forno de Micro-ondas a partir de- 32 lit\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Forno de Microondas - 20L - (OUVIDORIA)\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Fragmentadora e papel - Corregedoria\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Frigobar 45L INVERTER BIVOLT (OUVIDORIA)\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Impressora multifuncional (OUVIDORIA)\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Nobreak 1200 BIVOLT(OUVIDORIA)\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Notebook i7 16 gb, 1 TB SSD, Windows 11\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Quadro Lousa branca\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Refrigerador frigobar, com capacidade no\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Saldo Residual\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Televisão Smart LED, mínimo de 50 polega\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"Televisão smart LED, minimo de 50 polegadas\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "diferenca_critica_plano",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "detalhe": "Diferença crítica no item \"kit com 2 Poltronas (CORREGEDORIA).\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em anterior."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Chave de comparação ambígua em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    },
+    {
+      "tipo": "chave_ambigua",
+      "nivel": "impeditivo",
+      "detalhe": "Aviso técnico em novo."
+    }
+  ],
+  "alertas": [
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937698",
+      "detalhe": "Quantidade (4) x valor unitário (3462.23) = 13848.92, diverge do valor total previsto informado (13848.91).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_502640165341861864722.xls",
+        "aba": "937698",
+        "linha": 19
+      },
+      "dados": {
+        "descricao": "** TA Contrapartida - Computador Desktop",
+        "linhaPad": 19,
+        "codigoNaturezaDespesa": "44905200",
+        "natureza": "CAPITAL",
+        "quantidade": 4,
+        "valorUnitarioExibido": 3462.23,
+        "valorPrevistoInformado": 13848.91
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937698",
+      "detalhe": "Quantidade (5) x valor unitário (8.58) = 42.9, diverge do valor total previsto informado (42.88).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_502640165341861864722.xls",
+        "aba": "937698",
+        "linha": 20
+      },
+      "dados": {
+        "descricao": "** TA Contrapartida - Fone ouvido tipo:",
+        "linhaPad": 20,
+        "codigoNaturezaDespesa": "44905200",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 8.58,
+        "valorPrevistoInformado": 42.88
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937698",
+      "detalhe": "Quantidade (5) x valor unitário (170.42) = 852.1, diverge do valor total previsto informado (852.12).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_502640165341861864722.xls",
+        "aba": "937698",
+        "linha": 22
+      },
+      "dados": {
+        "descricao": "Fone ouvido tipo: fechado, dinâmico , im",
+        "linhaPad": 22,
+        "codigoNaturezaDespesa": "44905233",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 170.42,
+        "valorPrevistoInformado": 852.12
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937698",
+      "detalhe": "Quantidade (4) x valor unitário (545.26) = 2181.04, diverge do valor total previsto informado (2181.05).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_502640165341861864722.xls",
+        "aba": "937698",
+        "linha": 23
+      },
+      "dados": {
+        "descricao": "Webcan Full HD para chamadas e gravações",
+        "linhaPad": 23,
+        "codigoNaturezaDespesa": "44905233",
+        "natureza": "CAPITAL",
+        "quantidade": 4,
+        "valorUnitarioExibido": 545.26,
+        "valorPrevistoInformado": 2181.05
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937871",
+      "detalhe": "Quantidade (20) x valor unitário (2555.28) = 51105.6, diverge do valor total previsto informado (51105.53).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_511735282852825614198.xls",
+        "aba": "937871",
+        "linha": 16
+      },
+      "dados": {
+        "descricao": "* Curso de Pós Graduação Processo Admini",
+        "linhaPad": 16,
+        "codigoNaturezaDespesa": "33903999",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitarioExibido": 2555.28,
+        "valorPrevistoInformado": 51105.53
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937871",
+      "detalhe": "Quantidade (2) x valor unitário (4224.67) = 8449.34, diverge do valor total previsto informado (8449.33).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_511735282852825614198.xls",
+        "aba": "937871",
+        "linha": 17
+      },
+      "dados": {
+        "descricao": "Curso de Pós Graduação em Compliance e L",
+        "linhaPad": 17,
+        "codigoNaturezaDespesa": "33903999",
+        "natureza": "CUSTEIO",
+        "quantidade": 2,
+        "valorUnitarioExibido": 4224.67,
+        "valorPrevistoInformado": 8449.33
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937592",
+      "detalhe": "Quantidade (20) x valor unitário (5493.81) = 109876.2, diverge do valor total previsto informado (109876.1).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_518478600091117488606.xls",
+        "aba": "937592",
+        "linha": 20
+      },
+      "dados": {
+        "descricao": "MICROCOMPUTADOR, tipo: Estação de trabalho",
+        "linhaPad": 20,
+        "codigoNaturezaDespesa": "44905235",
+        "natureza": "CAPITAL",
+        "quantidade": 20,
+        "valorUnitarioExibido": 5493.81,
+        "valorPrevistoInformado": 109876.1
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (300) x valor unitário (7.94) = 2382, diverge do valor total previsto informado (2381).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 16
+      },
+      "dados": {
+        "descricao": "Alvo Silhueta padrão SAT/ANP cx com 1.000",
+        "linhaPad": 16,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 300,
+        "valorUnitarioExibido": 7.94,
+        "valorPrevistoInformado": 2381
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (300) x valor unitário (1.87) = 561, diverge do valor total previsto informado (560).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 17
+      },
+      "dados": {
+        "descricao": "Alvo percepção c/ 4 cores SAT c/100unid",
+        "linhaPad": 17,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 300,
+        "valorUnitarioExibido": 1.87,
+        "valorPrevistoInformado": 560
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (20) x valor unitário (188.89) = 3777.8, diverge do valor total previsto informado (3777.87).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 18
+      },
+      "dados": {
+        "descricao": "Alvos Metálicos plates",
+        "linhaPad": 18,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitarioExibido": 188.89,
+        "valorPrevistoInformado": 3777.87
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (30) x valor unitário (330.53) = 9915.9, diverge do valor total previsto informado (9915.8).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 22
+      },
+      "dados": {
+        "descricao": "Calça Tática",
+        "linhaPad": 22,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 30,
+        "valorUnitarioExibido": 330.53,
+        "valorPrevistoInformado": 9915.8
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (20) x valor unitário (330.53) = 6610.6, diverge do valor total previsto informado (6610.53).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 23
+      },
+      "dados": {
+        "descricao": "Calça Tática",
+        "linhaPad": 23,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitarioExibido": 330.53,
+        "valorPrevistoInformado": 6610.53
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (30) x valor unitário (198.38) = 5951.4, diverge do valor total previsto informado (5951.5).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 24
+      },
+      "dados": {
+        "descricao": "Camisa Tática",
+        "linhaPad": 24,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 30,
+        "valorUnitarioExibido": 198.38,
+        "valorPrevistoInformado": 5951.5
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (30) x valor unitário (209.13) = 6273.9, diverge do valor total previsto informado (6273.98).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 27
+      },
+      "dados": {
+        "descricao": "Cinto Tático",
+        "linhaPad": 27,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 30,
+        "valorUnitarioExibido": 209.13,
+        "valorPrevistoInformado": 6273.98
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (20) x valor unitário (209.13) = 4182.6, diverge do valor total previsto informado (4182.65).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 28
+      },
+      "dados": {
+        "descricao": "Cinto Tático",
+        "linhaPad": 28,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitarioExibido": 209.13,
+        "valorPrevistoInformado": 4182.65
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (20) x valor unitário (90.73) = 1814.6, diverge do valor total previsto informado (1814.67).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 31
+      },
+      "dados": {
+        "descricao": "Kit limpeza de armamento pistola SW.40",
+        "linhaPad": 31,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitarioExibido": 90.73,
+        "valorPrevistoInformado": 1814.67
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (100) x valor unitário (7.99) = 799, diverge do valor total previsto informado (798.69).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 34
+      },
+      "dados": {
+        "descricao": "PASTA L",
+        "linhaPad": 34,
+        "codigoNaturezaDespesa": "33903016",
+        "natureza": "CUSTEIO",
+        "quantidade": 100,
+        "valorUnitarioExibido": 7.99,
+        "valorPrevistoInformado": 798.69
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (40) x valor unitário (198.38) = 7935.2, diverge do valor total previsto informado (7935.33).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 43
+      },
+      "dados": {
+        "descricao": "Camisa Tática",
+        "linhaPad": 43,
+        "codigoNaturezaDespesa": "33903023",
+        "natureza": "CUSTEIO",
+        "quantidade": 40,
+        "valorUnitarioExibido": 198.38,
+        "valorPrevistoInformado": 7935.33
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (5) x valor unitário (163.77) = 818.85, diverge do valor total previsto informado (818.87).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 46
+      },
+      "dados": {
+        "descricao": "Descanso para pés ergonômico",
+        "linhaPad": 46,
+        "codigoNaturezaDespesa": "33903028",
+        "natureza": "CUSTEIO",
+        "quantidade": 5,
+        "valorUnitarioExibido": 163.77,
+        "valorPrevistoInformado": 818.87
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (39) x valor unitário (98.42) = 3838.38, diverge do valor total previsto informado (3838.52).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 48
+      },
+      "dados": {
+        "descricao": "Tonfa padrão 58cm",
+        "linhaPad": 48,
+        "codigoNaturezaDespesa": "33903028",
+        "natureza": "CUSTEIO",
+        "quantidade": 39,
+        "valorUnitarioExibido": 98.42,
+        "valorPrevistoInformado": 3838.52
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (57) x valor unitário (37.59) = 2142.63, diverge do valor total previsto informado (2142.35).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 51
+      },
+      "dados": {
+        "descricao": "Meia militar",
+        "linhaPad": 51,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 57,
+        "valorUnitarioExibido": 37.59,
+        "valorPrevistoInformado": 2142.35
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (3) x valor unitário (2595.3) = 7785.9, diverge do valor total previsto informado (7785.91).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 53
+      },
+      "dados": {
+        "descricao": "Ar condicionado inverter 12.000 BTUs",
+        "linhaPad": 53,
+        "codigoNaturezaDespesa": "44905287",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitarioExibido": 2595.3,
+        "valorPrevistoInformado": 7785.91
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (9) x valor unitário (655.09) = 5895.81, diverge do valor total previsto informado (5895.84).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 58
+      },
+      "dados": {
+        "descricao": "Cadeira Fixa",
+        "linhaPad": 58,
+        "codigoNaturezaDespesa": "44905287",
+        "natureza": "CAPITAL",
+        "quantidade": 9,
+        "valorUnitarioExibido": 655.09,
+        "valorPrevistoInformado": 5895.84
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (5) x valor unitário (2510.22) = 12551.1, diverge do valor total previsto informado (12551.12).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 61
+      },
+      "dados": {
+        "descricao": "Cadeira Giratória com braços",
+        "linhaPad": 61,
+        "codigoNaturezaDespesa": "44905287",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 2510.22,
+        "valorPrevistoInformado": 12551.12
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (9) x valor unitário (2510.22) = 22591.98, diverge do valor total previsto informado (22592.01).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 62
+      },
+      "dados": {
+        "descricao": "Cadeira Giratória com braços",
+        "linhaPad": 62,
+        "codigoNaturezaDespesa": "44905287",
+        "natureza": "CAPITAL",
+        "quantidade": 9,
+        "valorUnitarioExibido": 2510.22,
+        "valorPrevistoInformado": 22592.01
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937265",
+      "detalhe": "Quantidade (5) x valor unitário (2510.22) = 12551.1, diverge do valor total previsto informado (12551.12).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_527217087905151084183.xls",
+        "aba": "937265",
+        "linha": 63
+      },
+      "dados": {
+        "descricao": "Cadeira Giratória com braços",
+        "linhaPad": 63,
+        "codigoNaturezaDespesa": "44905287",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 2510.22,
+        "valorPrevistoInformado": 12551.12
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "938277",
+      "detalhe": "Quantidade (4) x valor unitário (4221.04) = 16884.16, diverge do valor total previsto informado (16884.14).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_531991440416570841452.xls",
+        "aba": "938277",
+        "linha": 35
+      },
+      "dados": {
+        "descricao": "Curso de capacitação em VCQB (MODULO I)",
+        "linhaPad": 35,
+        "codigoNaturezaDespesa": "33903999",
+        "natureza": "CUSTEIO",
+        "quantidade": 4,
+        "valorUnitarioExibido": 4221.04,
+        "valorPrevistoInformado": 16884.14
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "938128",
+      "detalhe": "Quantidade (10) x valor unitário (113.43) = 1134.3, diverge do valor total previsto informado (1134.27).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+        "aba": "938128",
+        "linha": 16
+      },
+      "dados": {
+        "descricao": "Agenda Planner",
+        "linhaPad": 16,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 10,
+        "valorUnitarioExibido": 113.43,
+        "valorPrevistoInformado": 1134.27
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "938128",
+      "detalhe": "Quantidade (250) x valor unitário (2181.34) = 545335, diverge do valor total previsto informado (545334.9).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+        "aba": "938128",
+        "linha": 21
+      },
+      "dados": {
+        "descricao": "Curso de Pós Graduação Direitos Humanos",
+        "linhaPad": 21,
+        "codigoNaturezaDespesa": "33903999",
+        "natureza": "CUSTEIO",
+        "quantidade": 250,
+        "valorUnitarioExibido": 2181.34,
+        "valorPrevistoInformado": 545334.9
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "938128",
+      "detalhe": "Quantidade (5) x valor unitário (688.43) = 3442.15, diverge do valor total previsto informado (3442.17).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+        "aba": "938128",
+        "linha": 32
+      },
+      "dados": {
+        "descricao": "Armário de Escritório com 02 portas Ouvi",
+        "linhaPad": 32,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 688.43,
+        "valorPrevistoInformado": 3442.17
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "938128",
+      "detalhe": "Quantidade (28) x valor unitário (720.31) = 20168.68, diverge do valor total previsto informado (20168.59).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+        "aba": "938128",
+        "linha": 34
+      },
+      "dados": {
+        "descricao": "Cadeira Giratória Modelo Presidente - Co",
+        "linhaPad": 34,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 28,
+        "valorUnitarioExibido": 720.31,
+        "valorPrevistoInformado": 20168.59
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "938128",
+      "detalhe": "Quantidade (28) x valor unitário (1732.33) = 48505.24, diverge do valor total previsto informado (48505.33).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_537573762997612491882.xls",
+        "aba": "938128",
+        "linha": 56
+      },
+      "dados": {
+        "descricao": "Monitor Vídeo 32 - para Corregedoria - CASP",
+        "linhaPad": 56,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 28,
+        "valorUnitarioExibido": 1732.33,
+        "valorPrevistoInformado": 48505.33
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937780",
+      "detalhe": "Quantidade (18) x valor unitário (189.38) = 3408.84, diverge do valor total previsto informado (3408.8).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_542358534746094419304.xls",
+        "aba": "937780",
+        "linha": 25
+      },
+      "dados": {
+        "descricao": "Urnas de Acrílico",
+        "linhaPad": 25,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 18,
+        "valorUnitarioExibido": 189.38,
+        "valorPrevistoInformado": 3408.8
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (25) x valor unitário (99.9) = 2497.5, diverge do valor total previsto informado (2497.42).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 16
+      },
+      "dados": {
+        "descricao": "Descanso Ergonômico Apoio de punho para",
+        "linhaPad": 16,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 25,
+        "valorUnitarioExibido": 99.9,
+        "valorPrevistoInformado": 2497.42
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (275) x valor unitário (21.17) = 5821.75, diverge do valor total previsto informado (5820.83).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 18
+      },
+      "dados": {
+        "descricao": "Banner 0,60 x 0,50",
+        "linhaPad": 18,
+        "codigoNaturezaDespesa": "33903963",
+        "natureza": "CUSTEIO",
+        "quantidade": 275,
+        "valorUnitarioExibido": 21.17,
+        "valorPrevistoInformado": 5820.83
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (100) x valor unitário (54.33) = 5433, diverge do valor total previsto informado (5433.33).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 19
+      },
+      "dados": {
+        "descricao": "Placa PVC 70 x 60",
+        "linhaPad": 19,
+        "codigoNaturezaDespesa": "33903963",
+        "natureza": "CUSTEIO",
+        "quantidade": 100,
+        "valorUnitarioExibido": 54.33,
+        "valorPrevistoInformado": 5433.33
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (2) x valor unitário (3566.85) = 7133.7, diverge do valor total previsto informado (7133.69).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 25
+      },
+      "dados": {
+        "descricao": "Microfone de Lapela sem fio",
+        "linhaPad": 25,
+        "codigoNaturezaDespesa": "44905233",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitarioExibido": 3566.85,
+        "valorPrevistoInformado": 7133.69
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (2) x valor unitário (6546.04) = 13092.08, diverge do valor total previsto informado (13092.07).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 30
+      },
+      "dados": {
+        "descricao": "Notebook core i7 8GB 512GB SSD Tela Full",
+        "linhaPad": 30,
+        "codigoNaturezaDespesa": "44905235",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitarioExibido": 6546.04,
+        "valorPrevistoInformado": 13092.07
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (25) x valor unitário (79.1) = 1977.5, diverge do valor total previsto informado (1977.42).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 32
+      },
+      "dados": {
+        "descricao": "Apoiador de pés ergonômico",
+        "linhaPad": 32,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 25,
+        "valorUnitarioExibido": 79.1,
+        "valorPrevistoInformado": 1977.42
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (5) x valor unitário (1823) = 9115, diverge do valor total previsto informado (9114.98).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 34
+      },
+      "dados": {
+        "descricao": "Ar Condicionado Split12.000 BTUS (instalado)",
+        "linhaPad": 34,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 1823,
+        "valorPrevistoInformado": 9114.98
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (3) x valor unitário (884.9) = 2654.7, diverge do valor total previsto informado (2654.71).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 35
+      },
+      "dados": {
+        "descricao": "Armário Alto Organizado",
+        "linhaPad": 35,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitarioExibido": 884.9,
+        "valorPrevistoInformado": 2654.71
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (2) x valor unitário (2429.77) = 4859.54, diverge do valor total previsto informado (4859.53).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 40
+      },
+      "dados": {
+        "descricao": "Computador 8gb Ddr4 Ssd 240 gb Monitor 1",
+        "linhaPad": 40,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitarioExibido": 2429.77,
+        "valorPrevistoInformado": 4859.53
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (12) x valor unitário (2928.39) = 35140.68, diverge do valor total previsto informado (35140.64).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 41
+      },
+      "dados": {
+        "descricao": "Computador de Mesa (desktop) PROCESSADOR",
+        "linhaPad": 41,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 12,
+        "valorUnitarioExibido": 2928.39,
+        "valorPrevistoInformado": 35140.64
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (5) x valor unitário (866.07) = 4330.35, diverge do valor total previsto informado (4330.33).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 46
+      },
+      "dados": {
+        "descricao": "Nobreak 1.200 VA",
+        "linhaPad": 46,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 866.07,
+        "valorPrevistoInformado": 4330.33
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (12) x valor unitário (827.85) = 9934.2, diverge do valor total previsto informado (9934.16).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 47
+      },
+      "dados": {
+        "descricao": "Nobreak 1200Va 120V",
+        "linhaPad": 47,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 12,
+        "valorUnitarioExibido": 827.85,
+        "valorPrevistoInformado": 9934.16
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (8) x valor unitário (438.9) = 3511.2, diverge do valor total previsto informado (3511.23).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 48
+      },
+      "dados": {
+        "descricao": "Nobreak XNB 720 VA - 120V",
+        "linhaPad": 48,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 8,
+        "valorUnitarioExibido": 438.9,
+        "valorPrevistoInformado": 3511.23
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937917",
+      "detalhe": "Quantidade (2) x valor unitário (2532.94) = 5065.88, diverge do valor total previsto informado (5065.87).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_543287213509088727749.xls",
+        "aba": "937917",
+        "linha": 51
+      },
+      "dados": {
+        "descricao": "Televisor 43 Smart TV 4K",
+        "linhaPad": 51,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 2,
+        "valorUnitarioExibido": 2532.94,
+        "valorPrevistoInformado": 5065.87
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937468",
+      "detalhe": "Quantidade (32) x valor unitário (61.82) = 1978.24, diverge do valor total previsto informado (1978.13).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_547703074414398649281.xls",
+        "aba": "937468",
+        "linha": 25
+      },
+      "dados": {
+        "descricao": "ETAPA 3 ESCOLA - BASTÃO POLICIAL PR-24",
+        "linhaPad": 25,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 32,
+        "valorUnitarioExibido": 61.82,
+        "valorPrevistoInformado": 1978.13
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937468",
+      "detalhe": "Quantidade (6) x valor unitário (344.91) = 2069.46, diverge do valor total previsto informado (2069.44).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_547703074414398649281.xls",
+        "aba": "937468",
+        "linha": 38
+      },
+      "dados": {
+        "descricao": "ETAPA 3 ESCOLA - PLACA DE MEMÓRIA RAM 1",
+        "linhaPad": 38,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 6,
+        "valorUnitarioExibido": 344.91,
+        "valorPrevistoInformado": 2069.44
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937468",
+      "detalhe": "Quantidade (8) x valor unitário (1278.83) = 10230.64, diverge do valor total previsto informado (10230.67).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_547703074414398649281.xls",
+        "aba": "937468",
+        "linha": 68
+      },
+      "dados": {
+        "descricao": "ETAPA 3 ESCOLA - PISTOLA AIRSOFT-ELÉTRI",
+        "linhaPad": 68,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 8,
+        "valorUnitarioExibido": 1278.83,
+        "valorPrevistoInformado": 10230.67
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (45) x valor unitário (386.8) = 17406, diverge do valor total previsto informado (17406.15).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 16
+      },
+      "dados": {
+        "descricao": "ABAFADOR ELETRONICO TIRO ESPORTIVO",
+        "linhaPad": 16,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 45,
+        "valorUnitarioExibido": 386.8,
+        "valorPrevistoInformado": 17406.15
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (10) x valor unitário (237.6) = 2376, diverge do valor total previsto informado (2375.97).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 18
+      },
+      "dados": {
+        "descricao": "APARADOR DE CHUTE",
+        "linhaPad": 18,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 10,
+        "valorUnitarioExibido": 237.6,
+        "valorPrevistoInformado": 2375.97
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (50) x valor unitário (27.08) = 1354, diverge do valor total previsto informado (1353.83).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 21
+      },
+      "dados": {
+        "descricao": "CAIXAS DE GRAMPO COM 4000 UNIDADES",
+        "linhaPad": 21,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 50,
+        "valorUnitarioExibido": 27.08,
+        "valorPrevistoInformado": 1353.83
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (20) x valor unitário (217) = 4340, diverge do valor total previsto informado (4340.07).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 22
+      },
+      "dados": {
+        "descricao": "CAPACETE PROTETOR",
+        "linhaPad": 22,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 20,
+        "valorUnitarioExibido": 217,
+        "valorPrevistoInformado": 4340.07
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (30) x valor unitário (169.53) = 5085.9, diverge do valor total previsto informado (5086).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 23
+      },
+      "dados": {
+        "descricao": "FACA DE TREINO",
+        "linhaPad": 23,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 30,
+        "valorUnitarioExibido": 169.53,
+        "valorPrevistoInformado": 5086
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (10) x valor unitário (94.67) = 946.7, diverge do valor total previsto informado (946.66).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 24
+      },
+      "dados": {
+        "descricao": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
+        "linhaPad": 24,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 10,
+        "valorUnitarioExibido": 94.67,
+        "valorPrevistoInformado": 946.66
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (27) x valor unitário (262.8) = 7095.6, diverge do valor total previsto informado (7095.51).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 25
+      },
+      "dados": {
+        "descricao": "LUVA DE BOXE",
+        "linhaPad": 25,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 27,
+        "valorUnitarioExibido": 262.8,
+        "valorPrevistoInformado": 7095.51
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (40) x valor unitário (584.43) = 23377.2, diverge do valor total previsto informado (23377.33).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 31
+      },
+      "dados": {
+        "descricao": "PLACAS DE TATAME DE 40MM",
+        "linhaPad": 31,
+        "codigoNaturezaDespesa": "33903099",
+        "natureza": "CUSTEIO",
+        "quantidade": 40,
+        "valorUnitarioExibido": 584.43,
+        "valorPrevistoInformado": 23377.33
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (5) x valor unitário (3137.95) = 15689.75, diverge do valor total previsto informado (15689.73).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 36
+      },
+      "dados": {
+        "descricao": "AR CONDICIONADO JANELA 18.000 BTUs",
+        "linhaPad": 36,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 3137.95,
+        "valorPrevistoInformado": 15689.73
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (10) x valor unitário (2782.3) = 27823, diverge do valor total previsto informado (27822.97).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 37
+      },
+      "dados": {
+        "descricao": "AR CONDICIONADO SPLIT 18.000 BTUs",
+        "linhaPad": 37,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 10,
+        "valorUnitarioExibido": 2782.3,
+        "valorPrevistoInformado": 27822.97
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (4) x valor unitário (5737.91) = 22951.64, diverge do valor total previsto informado (22951.65).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 55
+      },
+      "dados": {
+        "descricao": "MANEQUIM DE TREINAMENTO RCP",
+        "linhaPad": 55,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 4,
+        "valorUnitarioExibido": 5737.91,
+        "valorPrevistoInformado": 22951.65
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (3) x valor unitário (20765.67) = 62297.01, diverge do valor total previsto informado (62297).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 65
+      },
+      "dados": {
+        "descricao": "PROJETOR INTERATIVO",
+        "linhaPad": 65,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 3,
+        "valorUnitarioExibido": 20765.67,
+        "valorPrevistoInformado": 62297
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (12) x valor unitário (209.63) = 2515.56, diverge do valor total previsto informado (2515.52).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 70
+      },
+      "dados": {
+        "descricao": "TELEFONE SEM FIO",
+        "linhaPad": 70,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 12,
+        "valorUnitarioExibido": 209.63,
+        "valorPrevistoInformado": 2515.52
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (5) x valor unitário (253.07) = 1265.35, diverge do valor total previsto informado (1265.33).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 71
+      },
+      "dados": {
+        "descricao": "TENDAS BRANCAS DE PRAIA 3X3M",
+        "linhaPad": 71,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 5,
+        "valorUnitarioExibido": 253.07,
+        "valorPrevistoInformado": 1265.33
+      }
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "instrumento": "937817",
+      "detalhe": "Quantidade (10) x valor unitário (177.55) = 1775.5, diverge do valor total previsto informado (1775.47).",
+      "origem": {
+        "arquivo": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_554038775620439533832.xls",
+        "aba": "937817",
+        "linha": 74
+      },
+      "dados": {
+        "descricao": "VENTILADOR 50 CM PAREDE",
+        "linhaPad": 74,
+        "codigoNaturezaDespesa": "44905299",
+        "natureza": "CAPITAL",
+        "quantidade": 10,
+        "valorUnitarioExibido": 177.55,
+        "valorPrevistoInformado": 1775.47
+      }
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "937216",
+      "uf": "GO",
+      "descricao": "Saldo Remanescente - Conforme NOTA TÉCNI",
+      "chaveItem": "937216::SALDO REMANESCENTE - CONFORME NOTA TECNI",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "937871",
+      "uf": "PR",
+      "descricao": "Saldo Remanescente de Capital 44",
+      "chaveItem": "937871::SALDO REMANESCENTE DE CAPITAL 44",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "descricao": "SALDO REMANESCENTE",
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "938277",
+      "uf": "MA",
+      "descricao": "SALDO REMANESCENTE",
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricao": "Saldo Residual",
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_natureza_sem_rateio_memoria",
+      "nivel": "info",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricao": "Saldo Residual",
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha PAD de natureza 'CUSTEIO' sem rateio de mesma natureza na memoria (rateios: 'CAPITAL'); reconstruida a partir do PAD. Divergencia material por natureza e aferida pelo comparador."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricao": "Saldo Residual Serviços EAP",
+      "chaveItem": "938128::SALDO RESIDUAL SERVICOS EAP",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricao": "sobra de saldo residual",
+      "chaveItem": "938128::SOBRA DE SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "descricao": "Saldo Residual",
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "937780",
+      "uf": "PI",
+      "descricao": "Saldo Residual após o ajuste do PT",
+      "chaveItem": "937780::SALDO RESIDUAL APOS O AJUSTE DO PT",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "937817",
+      "uf": "RJ",
+      "descricao": "SALDO REMANESCENTE - AQUISIÇÃO",
+      "chaveItem": "937817::SALDO REMANESCENTE - AQUISICAO",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "937783",
+      "uf": "SC",
+      "descricao": "Item 021 - Saldo remanescente Consumo",
+      "chaveItem": "937783::ITEM 021 - SALDO REMANESCENTE CONSUMO",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "937783",
+      "uf": "SC",
+      "descricao": "Item 022 - Saldo remanescente Capital",
+      "chaveItem": "937783::ITEM 022 - SALDO REMANESCENTE CAPITAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "saldo_residual_nao_setorializado",
+      "nivel": "info",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Saldo Residual",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937871::VEICULO TIPO SUV",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::CALCA TATICA",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::CAMISA TATICA",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::CINTO TATICO",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::COTURNO",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::PERSIANA ROLO - TECIDO BLACKOUT - ALTURA",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::MEIA MILITAR",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::AR CONDICIONADO INVERTER 12.000 BTUS",
+      "detalhe": "Item com a mesma chave apareceu 3 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::AR CONDICIONADO INVERTER 24.000 BTUS",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::CADEIRA FIXA",
+      "detalhe": "Item com a mesma chave apareceu 3 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::CADEIRA GIRATORIA COM BRACOS",
+      "detalhe": "Item com a mesma chave apareceu 3 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::COMPUTADOR COMPLETO COM MONITOR",
+      "detalhe": "Item com a mesma chave apareceu 3 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::ESTANTE EM ACO COM 6 PRATELEIRAS",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::GELADEIRA MINIMO 410L FROST FREE 110V BRANCA",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::LONGARINA COM 3 LUGARES",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::LOUSA BRANCA, TAMANHO MINIMO 1,80X1,20 C",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::MESA EM L",
+      "detalhe": "Item com a mesma chave apareceu 3 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::MICROONDAS MINIMO 20L. BRANCO 110V",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937265::NOTEBOOK",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "938277::SALDO REMANESCENTE",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937818::NOTEBOOK TIPO II PROCESSADOR: AMD RYZEN",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937818::CONDICIONADOR DE AR TIPO SPLIT HI WALL,",
+      "detalhe": "Item com a mesma chave apareceu 3 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "938128::SALDO RESIDUAL",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937468::ETAPA 2 - CORREGEDORIA - CADEIRA GIRATOR",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "item_pad_duplicado_na_reconstrucao",
+      "nivel": "aviso",
+      "numeroConvenio": null,
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937468::ETAPA 3 ESCOLA - BEBEDOURO DE ALUMINIO",
+      "detalhe": "Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte."
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937698",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5700) x valor unitário (7.32) = 41724, diverge do valor total previsto informado (41743).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937698",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5713) x valor unitário (4.12) = 23537.56, diverge do valor total previsto informado (23556.6).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937698",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (4) x valor unitário (3462.23) = 13848.92, diverge do valor total previsto informado (13848.91).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937698",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (8.58) = 42.9, diverge do valor total previsto informado (42.88).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937698",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (170.42) = 852.1, diverge do valor total previsto informado (852.12).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937698",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (4) x valor unitário (545.26) = 2181.04, diverge do valor total previsto informado (2181.05).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937871",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (20) x valor unitário (2555.28) = 51105.6, diverge do valor total previsto informado (51105.53).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937871",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (2) x valor unitário (4224.67) = 8449.34, diverge do valor total previsto informado (8449.33).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937592",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (20) x valor unitário (5493.81) = 109876.2, diverge do valor total previsto informado (109876.1).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (300) x valor unitário (7.94) = 2382, diverge do valor total previsto informado (2381).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (300) x valor unitário (1.87) = 561, diverge do valor total previsto informado (560).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (20) x valor unitário (188.89) = 3777.8, diverge do valor total previsto informado (3777.87).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (30) x valor unitário (330.53) = 9915.9, diverge do valor total previsto informado (9915.8).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (20) x valor unitário (330.53) = 6610.6, diverge do valor total previsto informado (6610.53).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (30) x valor unitário (198.38) = 5951.4, diverge do valor total previsto informado (5951.5).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (30) x valor unitário (209.13) = 6273.9, diverge do valor total previsto informado (6273.98).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (20) x valor unitário (209.13) = 4182.6, diverge do valor total previsto informado (4182.65).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (20) x valor unitário (90.73) = 1814.6, diverge do valor total previsto informado (1814.67).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (100) x valor unitário (7.99) = 799, diverge do valor total previsto informado (798.69).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (40) x valor unitário (198.38) = 7935.2, diverge do valor total previsto informado (7935.33).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (163.77) = 818.85, diverge do valor total previsto informado (818.87).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (39) x valor unitário (98.42) = 3838.38, diverge do valor total previsto informado (3838.52).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (57) x valor unitário (37.59) = 2142.63, diverge do valor total previsto informado (2142.35).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (3) x valor unitário (2595.3) = 7785.9, diverge do valor total previsto informado (7785.91).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (9) x valor unitário (655.09) = 5895.81, diverge do valor total previsto informado (5895.84).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (2510.22) = 12551.1, diverge do valor total previsto informado (12551.12).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (9) x valor unitário (2510.22) = 22591.98, diverge do valor total previsto informado (22592.01).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937265",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (2510.22) = 12551.1, diverge do valor total previsto informado (12551.12).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "938277",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (4) x valor unitário (4221.04) = 16884.16, diverge do valor total previsto informado (16884.14).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "938128",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (10) x valor unitário (113.43) = 1134.3, diverge do valor total previsto informado (1134.27).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "938128",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (250) x valor unitário (2181.34) = 545335, diverge do valor total previsto informado (545334.9).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "938128",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (688.43) = 3442.15, diverge do valor total previsto informado (3442.17).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "938128",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (28) x valor unitário (720.31) = 20168.68, diverge do valor total previsto informado (20168.59).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "938128",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (28) x valor unitário (1732.33) = 48505.24, diverge do valor total previsto informado (48505.33).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937780",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (18) x valor unitário (189.38) = 3408.84, diverge do valor total previsto informado (3408.8).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (25) x valor unitário (99.9) = 2497.5, diverge do valor total previsto informado (2497.42).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (275) x valor unitário (21.17) = 5821.75, diverge do valor total previsto informado (5820.83).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (100) x valor unitário (54.33) = 5433, diverge do valor total previsto informado (5433.33).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (2) x valor unitário (3566.85) = 7133.7, diverge do valor total previsto informado (7133.69).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (2) x valor unitário (6546.04) = 13092.08, diverge do valor total previsto informado (13092.07).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (25) x valor unitário (79.1) = 1977.5, diverge do valor total previsto informado (1977.42).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (1823) = 9115, diverge do valor total previsto informado (9114.98).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (3) x valor unitário (884.9) = 2654.7, diverge do valor total previsto informado (2654.71).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (2) x valor unitário (2429.77) = 4859.54, diverge do valor total previsto informado (4859.53).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (12) x valor unitário (2928.39) = 35140.68, diverge do valor total previsto informado (35140.64).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (866.07) = 4330.35, diverge do valor total previsto informado (4330.33).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (12) x valor unitário (827.85) = 9934.2, diverge do valor total previsto informado (9934.16).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (8) x valor unitário (438.9) = 3511.2, diverge do valor total previsto informado (3511.23).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937917",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (2) x valor unitário (2532.94) = 5065.88, diverge do valor total previsto informado (5065.87).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937468",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (32) x valor unitário (61.82) = 1978.24, diverge do valor total previsto informado (1978.13).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937468",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (6) x valor unitário (344.91) = 2069.46, diverge do valor total previsto informado (2069.44).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937468",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (8) x valor unitário (1278.83) = 10230.64, diverge do valor total previsto informado (10230.67).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (45) x valor unitário (386.8) = 17406, diverge do valor total previsto informado (17406.15).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (10) x valor unitário (237.6) = 2376, diverge do valor total previsto informado (2375.97).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (50) x valor unitário (27.08) = 1354, diverge do valor total previsto informado (1353.83).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (20) x valor unitário (217) = 4340, diverge do valor total previsto informado (4340.07).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (30) x valor unitário (169.53) = 5085.9, diverge do valor total previsto informado (5086).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (10) x valor unitário (94.67) = 946.7, diverge do valor total previsto informado (946.66).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (27) x valor unitário (262.8) = 7095.6, diverge do valor total previsto informado (7095.51).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (40) x valor unitário (584.43) = 23377.2, diverge do valor total previsto informado (23377.33).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (3137.95) = 15689.75, diverge do valor total previsto informado (15689.73).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (10) x valor unitário (2782.3) = 27823, diverge do valor total previsto informado (27822.97).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (4) x valor unitário (5737.91) = 22951.64, diverge do valor total previsto informado (22951.65).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (3) x valor unitário (20765.67) = 62297.01, diverge do valor total previsto informado (62297).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (12) x valor unitário (209.63) = 2515.56, diverge do valor total previsto informado (2515.52).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (5) x valor unitário (253.07) = 1265.35, diverge do valor total previsto informado (1265.33).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "tipo": "quantidade_valor_unitario_inconsistente",
+      "nivel": "aviso",
+      "numeroConvenio": "937817",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": null,
+      "detalhe": "Quantidade (10) x valor unitário (177.55) = 1775.5, diverge do valor total previsto informado (1775.47).",
+      "saneadoPorDecisao": false,
+      "decisaoAplicada": null
+    },
+    {
+      "chave": "937221::Forno de Microondas - 32 litros - Branco::ESCOLA PENAL::CAPITAL",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricao": "Forno de Microondas - 32 litros - Branco",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 726,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 2.4ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 3599.99,
+      "valorExecutadoAntigo": 3114.93,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 2.4ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 3599.99,
+      "valorExecutadoAntigo": 3114.93,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    }
+  ],
+  "caminhosRelatorios": {
+    "recargaJson": "backend/data/relatorios/profor-2022-pad-recarga-operacional.json",
+    "recargaMd": "backend/data/relatorios/profor-2022-pad-recarga-operacional.md",
+    "reconstrucaoJson": "backend/data/relatorios/profor-2022-pad-plano-reconstrucido-dry-run.json",
+    "comparacaoJson": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
+    "comparacaoMd": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
+    "snapshotAtualJson": "backend/data/relatorios/profor-2022-pad-fotografia-canonica.json",
+    "snapshotAtualMd": "backend/data/relatorios/profor-2022-pad-fotografia-canonica.md",
+    "comparacaoSnapshotsJson": "backend/data/relatorios/profor-2022-pad-comparacao-snapshots-dry-run.json",
+    "comparacaoSnapshotsMd": "backend/data/relatorios/profor-2022-pad-comparacao-snapshots-dry-run.md"
+  }
+}

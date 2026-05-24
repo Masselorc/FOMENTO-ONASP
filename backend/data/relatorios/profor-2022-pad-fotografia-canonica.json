@@ -1,9 +1,9 @@
 {
   "versaoSnapshot": "0.2",
-  "geradoEm": "2026-05-23T22:19:12.037Z",
+  "geradoEm": "2026-05-24T12:33:35.013Z",
   "origem": "reconstrucao-pad",
   "parserVersao": "profor-pad-fotografia-service@0.2",
-  "checksum": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
+  "checksum": "2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50",
   "resumo": {
     "totalLinhas": 568,
     "totalValorPrevisto": 10664015.24,
@@ -2815,7 +2815,7 @@
       "area": "CORREGEDORIA",
       "natureza": "CUSTEIO",
       "descricao": "MEIA MILITAR",
-      "descricaoOriginal": "Meia militar",
+      "descricaoOriginal": "Meia Militar",
       "descricaoNormalizada": "MEIA MILITAR",
       "quantidade": 57,
       "valorUnitario": 37.59,
@@ -6362,9 +6362,9 @@
       "ano": "2022",
       "area": "CORREGEDORIA",
       "natureza": "CAPITAL",
-      "descricao": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
-      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
-      "descricaoNormalizada": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
+      "descricao": "SMARTPHONE MINIMO DE 128GB DE MEMÓRIA IN",
+      "descricaoOriginal": "Smartphone minimo de 128gb de memória in",
+      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMÓRIA IN",
       "quantidade": 1,
       "valorUnitario": 2341.24,
       "valorPrevisto": 2341.24,
@@ -6376,7 +6376,7 @@
       "chaveMaterial": "937782|AC|CAPITAL|CORREGEDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
       "chaveComparacao": "937782|AC|CAPITAL|CORREGEDORIA|128GB DE IN MEMORIA MINIMO SMARTPHONE",
       "chaveContexto": "937782|AC|CAPITAL|CORREGEDORIA",
-      "hashItem": "4e5bbd4c41975efd6b38c9401d160556cfdd9c307e5dd6a1537ef92a81c6a108"
+      "hashItem": "bd3facd5815a8f06e6111d834ecb8beef093675022252e107e322a95da7f5123"
     },
     {
       "uf": "AC",
@@ -6431,9 +6431,9 @@
       "ano": "2022",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "DESKTOP PARA EDIÇÃO DE VÍDEO",
-      "descricaoOriginal": "Desktop para edição de vídeo",
-      "descricaoNormalizada": "DESKTOP PARA EDIÇÃO DE VÍDEO",
+      "descricao": "DESKTOP PARA EDIÇÃO DE VIDEO",
+      "descricaoOriginal": "Desktop para edição de video",
+      "descricaoNormalizada": "DESKTOP PARA EDIÇÃO DE VIDEO",
       "quantidade": 1,
       "valorUnitario": 14849,
       "valorPrevisto": 14849,
@@ -6445,7 +6445,7 @@
       "chaveMaterial": "937782|AC|CAPITAL|ESCOLA PENAL|DESKTOP PARA EDICAO DE VIDEO",
       "chaveComparacao": "937782|AC|CAPITAL|ESCOLA PENAL|DE DESKTOP EDICAO PARA VIDEO",
       "chaveContexto": "937782|AC|CAPITAL|ESCOLA PENAL",
-      "hashItem": "9a597fc3e443d0fe62203ad9a0bbf2f65e38c0e8af92bedd52744da4ca2904cd"
+      "hashItem": "5638069543d150880ce699b4a3577576c0090345a45fd5efe7947dea1ce93dd6"
     },
     {
       "uf": "AC",
@@ -6753,9 +6753,9 @@
       "ano": "2022",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "SWITCHER DE VÍDEO",
-      "descricaoOriginal": "Switcher de vídeo",
-      "descricaoNormalizada": "SWITCHER DE VÍDEO",
+      "descricao": "SWITCHER DE VIDEO",
+      "descricaoOriginal": "Switcher de video",
+      "descricaoNormalizada": "SWITCHER DE VIDEO",
       "quantidade": 2,
       "valorUnitario": 3901,
       "valorPrevisto": 7802,
@@ -6767,7 +6767,7 @@
       "chaveMaterial": "937782|AC|CAPITAL|ESCOLA PENAL|SWITCHER DE VIDEO",
       "chaveComparacao": "937782|AC|CAPITAL|ESCOLA PENAL|DE SWITCHER VIDEO",
       "chaveContexto": "937782|AC|CAPITAL|ESCOLA PENAL",
-      "hashItem": "8b88c6c039e8cc7e500a87cb429f31731693f2b9e4b0298decd02a6903203659"
+      "hashItem": "03955bef351809ec2f104464e52cc26fada8244400bcf71be6b6bb84a4fda96c"
     },
     {
       "uf": "AC",
@@ -7075,9 +7075,9 @@
       "ano": "2022",
       "area": "OUVIDORIA",
       "natureza": "CAPITAL",
-      "descricao": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
-      "descricaoOriginal": "Smartphone mínimo de 128gb de memória in",
-      "descricaoNormalizada": "SMARTPHONE MÍNIMO DE 128GB DE MEMÓRIA IN",
+      "descricao": "SMARTPHONE MINIMO DE 128GB DE MEMÓRIA IN",
+      "descricaoOriginal": "Smartphone minimo de 128gb de memória in",
+      "descricaoNormalizada": "SMARTPHONE MINIMO DE 128GB DE MEMÓRIA IN",
       "quantidade": 1,
       "valorUnitario": 2341.24,
       "valorPrevisto": 2341.24,
@@ -7089,7 +7089,7 @@
       "chaveMaterial": "937782|AC|CAPITAL|OUVIDORIA|SMARTPHONE MINIMO DE 128GB DE MEMORIA IN",
       "chaveComparacao": "937782|AC|CAPITAL|OUVIDORIA|128GB DE IN MEMORIA MINIMO SMARTPHONE",
       "chaveContexto": "937782|AC|CAPITAL|OUVIDORIA",
-      "hashItem": "be86927f50e5a20a48ba9bc2514805d8ba46993e0fa2021a412c74a4d3f38208"
+      "hashItem": "7b4ac75574a2ca3f3320328bd66e370444601018de68ad1d1f5d9aa2f342efa8"
     },
     {
       "uf": "AC",
