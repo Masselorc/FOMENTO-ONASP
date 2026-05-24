@@ -45,6 +45,7 @@ const { compararBasesProfor2022 } = require("./services/profor-2022/profor-compa
 const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
 const {
   assertWorkbookFallbackPermitido,
+  assertEndpointDevPermitido,
 } = require("./services/profor-2022/profor-workbook-fallback-guard-service");
 const {
   atualizarProfor2022Consolidado,
@@ -344,10 +345,10 @@ function montarConsolidadoProfor2022PorOrigemAtiva() {
 
 // Fallback explícito de desenvolvimento: este endpoint COMPARA planilha antiga
 // vs banco-cache por desenho. A leitura de workbook aqui é intencional e
-// documentada — não está sujeita ao gate de assertWorkbookFallbackPermitido
-// porque a comparação só faz sentido lendo as duas fontes. Não use este
-// endpoint para operar; ele serve apenas a auditorias dev.
+// documentada, mas só pode ocorrer em endpoint dev/auditoria liberado pelo
+// guard centralizado. Em produção, a flag não libera.
 function montarComparacaoOrigensProfor2022Local() {
+  assertEndpointDevPermitido("api_profor_2022_comparar_origens");
   const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
   const workbook = carregarWorkbookProfor2022(catalogoAplicacao);
   const planoAplicacao = extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
@@ -653,9 +654,10 @@ async function rotearApi(req, res, pathname) {
         });
       } catch (erro) {
         console.error("Falha ao comparar origens PROFOR 2022:", erro);
-        enviarJson(res, 500, {
+        const statusCode = Number.isInteger(Number(erro?.statusCode)) ? Number(erro.statusCode) : 500;
+        enviarJson(res, statusCode, {
           success: false,
-          message: "Não foi possível comparar as origens PROFOR 2022 no momento."
+          message: erro?.message || "Não foi possível comparar as origens PROFOR 2022 no momento."
         });
       }
       return;

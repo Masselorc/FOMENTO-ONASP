@@ -1,7 +1,7 @@
 // Guards centralizados para uso legado de workbook (planilha antiga) e para o
 // orquestrador `atualizar:profor-2022`. Concentra a lógica de:
 //
-// 1. Detecção de ambiente de produção (NODE_ENV, APP_ENV, AMBIENTE).
+// 1. Detecção de ambiente de produção (FOMENTO_AMBIENTE, NODE_ENV, APP_ENV, AMBIENTE).
 // 2. Bloqueio do fallback de workbook quando a origem ativa é `reconstrucao-pad`
 //    e a flag `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK` não está explicitamente
 //    em `1`. Em produção, a flag não libera — falha sempre.
@@ -20,13 +20,19 @@ const VALORES_PRODUCAO_APP_ENV = new Set(["production", "prod", "producao"]);
 const VALORES_PRODUCAO_AMBIENTE = new Set(["producao", "production", "prod"]);
 
 function normalizarValorEnv(valor) {
-  return String(valor || "").trim().toLowerCase();
+  return String(valor || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
 }
 
 function isAmbienteProducao(env = process.env) {
+  const fomentoAmbiente = normalizarValorEnv(env.FOMENTO_AMBIENTE);
   const nodeEnv = normalizarValorEnv(env.NODE_ENV);
   const appEnv = normalizarValorEnv(env.APP_ENV);
   const ambiente = normalizarValorEnv(env.AMBIENTE);
+  if (fomentoAmbiente && VALORES_PRODUCAO_AMBIENTE.has(fomentoAmbiente)) return true;
   if (nodeEnv && VALORES_PRODUCAO_NODE_ENV.has(nodeEnv)) return true;
   if (appEnv && VALORES_PRODUCAO_APP_ENV.has(appEnv)) return true;
   if (ambiente && VALORES_PRODUCAO_AMBIENTE.has(ambiente)) return true;
@@ -86,8 +92,32 @@ function assertOrquestradorLegadoPermitido(contexto = "orquestrador_atualizacao"
   );
 }
 
+// Endpoints de desenvolvimento/auditoria não são fluxo operacional. Em
+// produção são sempre bloqueados; em desenvolvimento exigem liberação explícita.
+function assertEndpointDevPermitido(contexto = "endpoint_dev", opcoes = {}) {
+  const env = opcoes.env || process.env;
+  if (isAmbienteProducao(env)) {
+    const erro = new Error(
+      `[${contexto}] Endpoint dev/auditoria bloqueado em produção. ` +
+        `ALLOW_PROFOR_2022_ENDPOINTS_DEV não libera endpoints dev em produção.`
+    );
+    erro.statusCode = 403;
+    throw erro;
+  }
+
+  if (flagAtiva(env, "ALLOW_PROFOR_2022_ENDPOINTS_DEV")) return;
+
+  const erro = new Error(
+    `[${contexto}] Endpoint dev/auditoria bloqueado. Para auditoria local controlada, ` +
+      `defina ALLOW_PROFOR_2022_ENDPOINTS_DEV=1 em ambiente de desenvolvimento.`
+  );
+  erro.statusCode = 403;
+  throw erro;
+}
+
 module.exports = {
   isAmbienteProducao,
   assertWorkbookFallbackPermitido,
   assertOrquestradorLegadoPermitido,
+  assertEndpointDevPermitido,
 };
