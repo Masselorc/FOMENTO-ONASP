@@ -1,5 +1,15 @@
 # Diário de bordo
 
+## 23/05/2026 — PROFOR 2022: limpeza técnica pós-migração da planilha antiga por abas
+
+- **Objetivo da etapa:** limpeza pós-migração (não migração). A origem PAD/reconstrução já está funcional; esta frente tratou resíduos legados de planilha antiga por abas/UF.
+- **Achado principal de risco operacional:** script legado `backend/scripts/importar-convenios-monitorados-profor-2022.js` ainda permitia importar carteira da aba `Geral` com escrita em banco.
+- **Patch aplicado:** bloqueio explícito do script legado por padrão; agora exige `ALLOW_PROFOR_2022_IMPORT_PLANILHA_LEGADA=1` para uso manual controlado.
+- **Documentação viva ajustada:** `memoria/INDEX.md`, `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` (nota de obsolescência), `.env.example` (default PROFOR alinhado ao código: `banco-cache`).
+- **Preservações:** sem publicação; sem Transferegov; sem alterações em `frontend/data/publicados/`; sem alterações em `.env`; sem alterações em SQLite/WAL/SHM; sem alteração de snapshot atual/anterior oficial; sem alteração de `planoAplicacao` oficial; sem alteração de fila oficial real.
+- **Relatório da etapa:** `backend/data/relatorios/profor-2022-limpeza-pos-migracao-planilha-antiga.md`.
+- **Próximos passos:** frente dedicada para desativação gradual de rotas locais ainda dependentes de workbook no fluxo PROFOR, com plano de fallback explícito e janela de descontinuação.
+
 ## 23/05/2026 — PROFOR 2022: encerramento da frente de ajuste do comparador de snapshots v0.3
 
 - **Status da frente:** comparador de snapshots PAD/PROFOR 2022 **v0.3 aprovado** para uso operacional em modo dry-run.

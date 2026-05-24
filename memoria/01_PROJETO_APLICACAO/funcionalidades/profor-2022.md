@@ -1,5 +1,7 @@
 # PROFOR 2022 — Documentação técnica da funcionalidade
 
+> Nota de obsolescência parcial (23/05/2026): este documento contém trechos históricos da fase de migração. A migração funcional para a sistemática baseada em arquivos PAD/reconstrução já foi concluída. Nesta data, a planilha antiga por abas/UF e aba `Geral` deve ser tratada como legado, não como origem operacional ativa do `planoAplicacao`.
+
 ## Identificação da funcionalidade
 
 | Campo | Valor |
