@@ -1,5 +1,5 @@
 {
-  "publicadoEm": "2026-05-23T20:07:02.163Z",
+  "publicadoEm": "2026-05-24T12:01:48.358Z",
   "fonte": "Dados locais ONASP",
   "arquivos": [
     "aplicacao.json",
@@ -9,10 +9,10 @@
     "orcamento-2026.json"
   ],
   "totais": {
-    "aplicacaoDadosBase": 309,
+    "aplicacaoDadosBase": 180,
     "dashboard": {
-      "totalFomento": 6028180.9,
-      "totalConvenios": 1669823.9,
+      "totalFomento": 15022372.24,
+      "totalConvenios": 10664015.24,
       "totalFaf": 1757357,
       "totalDoacoes": 2601000,
       "ufsConvenios": [
@@ -34,7 +34,7 @@
       ],
       "quantidadeUfsConvenios": 15
     },
-    "itensConvenio": 144,
+    "itensConvenio": 15,
     "conveniosProfor2022": 15,
     "parametrosMinimos": 28,
     "formalizacaoProfor": 14,

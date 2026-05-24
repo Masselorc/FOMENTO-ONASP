@@ -1,5 +1,5 @@
 {
-  "publicadoEm": "2026-05-23T20:07:02.163Z",
+  "publicadoEm": "2026-05-24T12:01:48.358Z",
   "fonteDadosBase": "dados consolidados da Home local",
   "dadosBase": [
     {
@@ -1490,1305 +1490,159 @@
       "instrumento": "Doação"
     },
     {
-      "uf": "MT",
-      "objeto": "Cartilhas, Capa: 29,7x42,2cm, 4x4 cores,",
-      "quantidade": 5700,
-      "valorUnitario": 7.32,
-      "valorTotal": 41743,
-      "valorExecutado": 33573,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "Serviço de confecção de Banner, 90x120cm",
-      "quantidade": 316,
-      "valorUnitario": 75,
-      "valorTotal": 23700,
-      "valorExecutado": 7997.96,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "Serviço de confecção de Folders, 45x45cm",
-      "quantidade": 5713,
-      "valorUnitario": 4.12,
-      "valorTotal": 23556.6,
-      "valorExecutado": 1428.25,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "** TA Contrapartida - Computador Desktop",
-      "quantidade": 4,
-      "valorUnitario": 3462.23,
-      "valorTotal": 13848.91,
-      "valorExecutado": 13848.91,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "** TA Contrapartida - Fone ouvido tipo:",
-      "quantidade": 5,
-      "valorUnitario": 8.58,
-      "valorTotal": 42.88,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "Celulares smartphone, 128gb-5g - octa-co",
-      "quantidade": 1,
-      "valorUnitario": 2057.93,
-      "valorTotal": 2057.93,
-      "valorExecutado": 1743,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "Fone ouvido tipo: fechado, dinâmico , im",
-      "quantidade": 5,
-      "valorUnitario": 170.42,
-      "valorTotal": 852.12,
-      "valorExecutado": 895,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "Webcan Full HD para chamadas e gravações",
-      "quantidade": 4,
-      "valorUnitario": 545.26,
-      "valorTotal": 2181.05,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "** Contrapartida - Computador Desktop Bá",
-      "quantidade": 4,
-      "valorUnitario": 1996.92,
-      "valorTotal": 7987.69,
-      "valorExecutado": 7987.69,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MT",
-      "objeto": "Nobreak, alimentador automático de tensã",
-      "quantidade": 5,
-      "valorUnitario": 706.71,
-      "valorTotal": 3533.56,
-      "valorExecutado": 3163.4,
-      "instrumento": "Convênio"
-    },
-    {
+      "instrumento": "Convênio",
       "uf": "GO",
-      "objeto": "Automóvel de transporte de passageiros -",
-      "quantidade": 1,
-      "valorUnitario": 106486,
-      "valorTotal": 106486,
-      "valorExecutado": 106486,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PR",
-      "objeto": "Curso de Pós Graduação em Compliance e L",
-      "quantidade": 2,
-      "valorUnitario": 4224.67,
-      "valorTotal": 8449.33,
+      "numero": "937216",
+      "ano": "2022",
+      "valorTotal": 388852.48,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "PR",
-      "objeto": "Ar Condicionado",
-      "quantidade": 1,
-      "valorUnitario": 2195.72,
-      "valorTotal": 2195.72,
+      "instrumento": "Convênio",
+      "uf": "AL",
+      "numero": "937221",
+      "ano": "2022",
+      "valorTotal": 171603.5,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "PR",
-      "objeto": "Gravador de Voz",
-      "quantidade": 4,
-      "valorUnitario": 390.53,
-      "valorTotal": 1562.12,
-      "valorExecutado": 983.96,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PR",
-      "objeto": "Televisão",
-      "quantidade": 1,
-      "valorUnitario": 3351.47,
-      "valorTotal": 3351.47,
+      "instrumento": "Convênio",
+      "uf": "MS",
+      "numero": "937265",
+      "ano": "2022",
+      "valorTotal": 548000,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "PR",
-      "objeto": "Fone de Ouvido",
-      "quantidade": 4,
-      "valorUnitario": 70.8,
-      "valorTotal": 283.2,
-      "valorExecutado": 283.2,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PR",
-      "objeto": "Projetor de Vídeo",
-      "quantidade": 1,
-      "valorUnitario": 4682.86,
-      "valorTotal": 4682.86,
+      "instrumento": "Convênio",
+      "uf": "TO",
+      "numero": "937468",
+      "ano": "2022",
+      "valorTotal": 287128.78,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "PR",
-      "objeto": "Web Cam",
-      "quantidade": 4,
-      "valorUnitario": 266.3,
-      "valorTotal": 1065.2,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PR",
-      "objeto": "Notebook",
-      "quantidade": 4,
-      "valorUnitario": 3557,
-      "valorTotal": 14228,
-      "valorExecutado": 14228,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PR",
-      "objeto": "Veículo tipo SUV",
-      "quantidade": 1,
-      "valorUnitario": 51133.66,
-      "valorTotal": 51133.66,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PR",
-      "objeto": "Veículo tipo SUV",
-      "quantidade": 1,
-      "valorUnitario": 74366.42,
-      "valorTotal": 74366.42,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
+      "instrumento": "Convênio",
       "uf": "AM",
-      "objeto": "APARELHO AR-CONDICIONADO, 18.000 BTUs",
-      "quantidade": 1,
-      "valorUnitario": 3463.8,
-      "valorTotal": 3463.8,
-      "valorExecutado": 3299.99,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AM",
-      "objeto": "NOTEBOOK",
-      "quantidade": 6,
-      "valorUnitario": 5540.11,
-      "valorTotal": 33240.66,
-      "valorExecutado": 27900,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AM",
-      "objeto": "CADEIRA GIRATÓRIA, modelo: secretária",
-      "quantidade": 4,
-      "valorUnitario": 343.13,
-      "valorTotal": 1372.52,
-      "valorExecutado": 1200,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AM",
-      "objeto": "MESA PARA ESCRITÓRIO, formato: retangular",
-      "quantidade": 7,
-      "valorUnitario": 798.8,
-      "valorTotal": 5591.6,
-      "valorExecutado": 4060,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AM",
-      "objeto": "MESA PARA ESCRITÓRIO, tipo 'L'",
-      "quantidade": 8,
-      "valorUnitario": 1076.9,
-      "valorTotal": 8615.2,
-      "valorExecutado": 5280,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AM",
-      "objeto": "CADEIRA FIXA, Sem braço, 04 pés, tipo es",
-      "quantidade": 10,
-      "valorUnitario": 522.42,
-      "valorTotal": 5224.2,
-      "valorExecutado": 4000,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Aplicação de Palestras com diferentes te",
-      "quantidade": 1,
-      "valorUnitario": 11400,
-      "valorTotal": 11400,
-      "valorExecutado": 11400,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Cadeira de escritório para mesa de reunião",
-      "quantidade": 6,
-      "valorUnitario": 699.99,
-      "valorTotal": 4199.94,
-      "valorExecutado": 4199.94,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Coletes de Identificação",
-      "quantidade": 15,
-      "valorUnitario": 251.25,
-      "valorTotal": 3768.75,
-      "valorExecutado": 1169.61,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Computador Desktop completo",
-      "quantidade": 1,
-      "valorUnitario": 6552.67,
-      "valorTotal": 6552.67,
-      "valorExecutado": 6040.9,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Câmera de videoconferencia (webcam)",
-      "quantidade": 2,
-      "valorUnitario": 547.5,
-      "valorTotal": 1095,
+      "numero": "937592",
+      "ano": "2022",
+      "valorTotal": 300300,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "AC",
-      "objeto": "Filmadora Profissional",
-      "quantidade": 1,
-      "valorUnitario": 2250,
-      "valorTotal": 2250,
-      "valorExecutado": 2250,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Gravador e reprodutor de áudio",
-      "quantidade": 1,
-      "valorUnitario": 489.65,
-      "valorTotal": 489.65,
-      "valorExecutado": 489.65,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Mesa de Reunião Retangular 2m de comprimento",
-      "quantidade": 1,
-      "valorUnitario": 2699.95,
-      "valorTotal": 2699.95,
-      "valorExecutado": 2338.89,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Microfone direcional de mesa",
-      "quantidade": 2,
-      "valorUnitario": 349.75,
-      "valorTotal": 699.5,
-      "valorExecutado": 699.5,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Microfone sem fio tipo lapela",
-      "quantidade": 4,
-      "valorUnitario": 736.33,
-      "valorTotal": 2945.32,
-      "valorExecutado": 2945.32,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Monitor de led 18,5 &#039; resolução 192",
-      "quantidade": 12,
-      "valorUnitario": 700,
-      "valorTotal": 8400,
+      "instrumento": "Convênio",
+      "uf": "MT",
+      "numero": "937698",
+      "ano": "2022",
+      "valorTotal": 392509.71,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "AC",
-      "objeto": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
-      "quantidade": 1,
-      "valorUnitario": 3599.99,
-      "valorTotal": 3599.99,
-      "valorExecutado": 3114.93,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Smartphone minimo de 128gb de memória in",
-      "quantidade": 1,
-      "valorUnitario": 2341.24,
-      "valorTotal": 2341.24,
-      "valorExecutado": 950,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Contratação de Bolsa - Aluno Ouvidoria I",
-      "quantidade": 12,
-      "valorUnitario": 14400,
-      "valorTotal": 172800,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Contratação de Bolsa -Coordenador Ouvid",
-      "quantidade": 12,
-      "valorUnitario": 1200,
-      "valorTotal": 14400,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AC",
-      "objeto": "Contratação de Bolsa -Pesquisador Ouvid",
-      "quantidade": 3,
-      "valorUnitario": 1500,
-      "valorTotal": 4500,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Caixa organizadora mínimo 20 L",
-      "quantidade": 20,
-      "valorUnitario": 73.15,
-      "valorTotal": 1463,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Calça Tática",
-      "quantidade": 20,
-      "valorUnitario": 330.53,
-      "valorTotal": 6610.53,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Cinto Tático",
-      "quantidade": 20,
-      "valorUnitario": 209.13,
-      "valorTotal": 4182.65,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Coturno",
-      "quantidade": 20,
-      "valorUnitario": 356.2,
-      "valorTotal": 7124,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "PASTA L",
-      "quantidade": 100,
-      "valorUnitario": 7.99,
-      "valorTotal": 798.69,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Persiana Rolo - Tecido Blackout - Altura",
-      "quantidade": 3,
-      "valorUnitario": 1630.69,
-      "valorTotal": 4892.06,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "caixa organizadora mínimo 40 L",
-      "quantidade": 20,
-      "valorUnitario": 88.84,
-      "valorTotal": 1776.8,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "extrator de grampo",
-      "quantidade": 5,
-      "valorUnitario": 3.97,
-      "valorTotal": 19.85,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "furadores de papel",
-      "quantidade": 6,
-      "valorUnitario": 19.95,
-      "valorTotal": 119.7,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "grampeadores 240 fl",
-      "quantidade": 5,
-      "valorUnitario": 264.97,
-      "valorTotal": 1324.85,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "pasta arquivo",
-      "quantidade": 101,
-      "valorUnitario": 3.07,
-      "valorTotal": 310.07,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "pen drive 128gb",
-      "quantidade": 6,
-      "valorUnitario": 124.86,
-      "valorTotal": 749.16,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Camisa Tática",
-      "quantidade": 40,
-      "valorUnitario": 198.38,
-      "valorTotal": 7935.33,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Descanso para pés ergonômico",
-      "quantidade": 5,
-      "valorUnitario": 163.77,
-      "valorTotal": 818.87,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Meia Militar",
-      "quantidade": 80,
-      "valorUnitario": 37.15,
-      "valorTotal": 2972,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Ar condicionado inverter 12.000 BTUs",
-      "quantidade": 4,
-      "valorUnitario": 2595.3,
-      "valorTotal": 10381.21,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Ar condicionado inverter 24.000 BTUs",
-      "quantidade": 2,
-      "valorUnitario": 4344.89,
-      "valorTotal": 8689.78,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Cadeira Fixa",
-      "quantidade": 4,
-      "valorUnitario": 655.09,
-      "valorTotal": 2620.37,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Cadeira Giratória com braços",
-      "quantidade": 5,
-      "valorUnitario": 2510.22,
-      "valorTotal": 12551.12,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Computador completo com monitor",
-      "quantidade": 5,
-      "valorUnitario": 3818,
-      "valorTotal": 19090,
-      "valorExecutado": 80178,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Estante em aço com 6 prateleiras",
-      "quantidade": 3,
-      "valorUnitario": 360.18,
-      "valorTotal": 1080.53,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Freegobar mínimo 45 litros",
-      "quantidade": 2,
-      "valorUnitario": 1848.36,
-      "valorTotal": 3696.71,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Geladeira minimo 410L Frost Free 110v Branca",
-      "quantidade": 1,
-      "valorUnitario": 3890,
-      "valorTotal": 3890,
-      "valorExecutado": 2999.99,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Longarina com 3 lugares",
-      "quantidade": 2,
-      "valorUnitario": 1239.6,
-      "valorTotal": 2479.2,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Lousa branca, tamanho minimo 1,80x1,20 c",
-      "quantidade": 2,
-      "valorUnitario": 533.8,
-      "valorTotal": 1067.6,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Mesa em L",
-      "quantidade": 5,
-      "valorUnitario": 1527.06,
-      "valorTotal": 7635.3,
-      "valorExecutado": 7635.3,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Microondas mínimo 20L. branco 110v",
-      "quantidade": 1,
-      "valorUnitario": 1490.86,
-      "valorTotal": 1490.86,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Notebook",
-      "quantidade": 2,
-      "valorUnitario": 3557,
-      "valorTotal": 7114,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Gravador de telefone de voz de áudio digital",
-      "quantidade": 5,
-      "valorUnitario": 337.51,
-      "valorTotal": 1687.54,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "Headset com identificador de chamada",
-      "quantidade": 5,
-      "valorUnitario": 271.83,
-      "valorTotal": 1359.15,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MS",
-      "objeto": "porteiro eletrônico com fechadura eletrônica",
-      "quantidade": 1,
-      "valorUnitario": 1664.54,
-      "valorTotal": 1664.54,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "SP",
-      "objeto": "Armário de Escritório com 02 portas Ouvi",
-      "quantidade": 5,
-      "valorUnitario": 688.43,
-      "valorTotal": 3442.17,
-      "valorExecutado": 3435,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "SP",
-      "objeto": "Cadeira Giratória tipo poltrona - para O",
-      "quantidade": 13,
-      "valorUnitario": 829,
-      "valorTotal": 10777,
-      "valorExecutado": 6435,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "SP",
-      "objeto": "Circulador de Ar EBS Turbo 56 cm ECP60",
-      "quantidade": 4,
-      "valorUnitario": 580.07,
-      "valorTotal": 2320.28,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "SP",
-      "objeto": "Estante de aço para arquivo morto, para",
-      "quantidade": 8,
-      "valorUnitario": 429.42,
-      "valorTotal": 3435.36,
-      "valorExecutado": 3435.36,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "SP",
-      "objeto": "GSMARTPHONE 128GB MEMORIA INTERNA, 8GB R",
-      "quantidade": 1,
-      "valorUnitario": 2716.25,
-      "valorTotal": 2716.25,
-      "valorExecutado": 2450,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "SP",
-      "objeto": "SMART TV tela plana 50 polegadas, para O",
-      "quantidade": 1,
-      "valorUnitario": 2632.66,
-      "valorTotal": 2632.66,
-      "valorExecutado": 2138.67,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "SP",
-      "objeto": "Sofa de recepção 03 lugares, para Ouvidoria",
-      "quantidade": 1,
-      "valorUnitario": 2190.01,
-      "valorTotal": 2190.01,
-      "valorExecutado": 2190.01,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MA",
-      "objeto": "Curso de capacitação em VCQB (MODULO I)",
-      "quantidade": 4,
-      "valorUnitario": 4221.04,
-      "valorTotal": 16884.14,
-      "valorExecutado": 1999.98,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MA",
-      "objeto": "curso Gestão de Risco, Compliance e Audi",
-      "quantidade": 2,
-      "valorUnitario": 9924.3,
-      "valorTotal": 19848.6,
-      "valorExecutado": 9800,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MA",
-      "objeto": "curso Negociação e Administração de Conf",
-      "quantidade": 6,
-      "valorUnitario": 980,
-      "valorTotal": 5880,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MA",
-      "objeto": "Caixas de som",
-      "quantidade": 8,
-      "valorUnitario": 70.89,
-      "valorTotal": 567.12,
-      "valorExecutado": 567.12,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MA",
-      "objeto": "Camera para pc com microfone com tecnolo",
-      "quantidade": 10,
-      "valorUnitario": 218,
-      "valorTotal": 2180,
-      "valorExecutado": 2180,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MA",
-      "objeto": "computador tipo básico",
-      "quantidade": 10,
-      "valorUnitario": 5068,
-      "valorTotal": 50680,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "MA",
-      "objeto": "notebook básico",
-      "quantidade": 2,
-      "valorUnitario": 4500,
-      "valorTotal": 9000,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PB",
-      "objeto": "CAIXA de som amplificada com potência má",
-      "quantidade": 2,
-      "valorUnitario": 1399,
-      "valorTotal": 2798,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PB",
-      "objeto": "NOTEBOOK TIPO III Processador: AMD Ryze",
-      "quantidade": 2,
-      "valorUnitario": 8498,
-      "valorTotal": 16996,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PB",
-      "objeto": "PROJETOR Multimídia 3500 lumens 1024 x 7",
-      "quantidade": 2,
-      "valorUnitario": 2490.01,
-      "valorTotal": 4980.02,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PB",
-      "objeto": "Smart TV Led 55, Televisor 55 Polegadas,",
-      "quantidade": 1,
-      "valorUnitario": 2660,
-      "valorTotal": 2660,
-      "valorExecutado": 2660,
-      "instrumento": "Convênio"
-    },
-    {
+      "instrumento": "Convênio",
       "uf": "PI",
-      "objeto": "Camiseta",
-      "quantidade": 40,
-      "valorUnitario": 40.26,
-      "valorTotal": 1610.4,
+      "numero": "937780",
+      "ano": "2022",
+      "valorTotal": 408371.26,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "PI",
-      "objeto": "Banner",
-      "quantidade": 18,
-      "valorUnitario": 107.33,
-      "valorTotal": 1931.94,
+      "instrumento": "Convênio",
+      "uf": "AC",
+      "numero": "937782",
+      "ano": "2022",
+      "valorTotal": 396423.71,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     },
     {
-      "uf": "PI",
-      "objeto": "Cartilha",
-      "quantidade": 2000,
-      "valorUnitario": 2.35,
-      "valorTotal": 4700,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Folder",
-      "quantidade": 2000,
-      "valorUnitario": 0.52,
-      "valorTotal": 1040,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Urnas de Acrílico",
-      "quantidade": 18,
-      "valorUnitario": 189.38,
-      "valorTotal": 3408.8,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Smartphone",
-      "quantidade": 2,
-      "valorUnitario": 3607.33,
-      "valorTotal": 7214.66,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Armário baixo 800 x 500 x 740 mm",
-      "quantidade": 1,
-      "valorUnitario": 977.22,
-      "valorTotal": 977.22,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Cadeira fixa média com braços",
-      "quantidade": 6,
-      "valorUnitario": 895.51,
-      "valorTotal": 5373.06,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Cadeira operacional espaldar alto, com b",
-      "quantidade": 3,
-      "valorUnitario": 1358.33,
-      "valorTotal": 4074.99,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Cadeira operacional espaldar médio, com",
-      "quantidade": 5,
-      "valorUnitario": 1048.72,
-      "valorTotal": 5243.6,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Headset Fone",
-      "quantidade": 3,
-      "valorUnitario": 255.23,
-      "valorTotal": 765.69,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Longarina de 2 lugares com brçaos",
-      "quantidade": 3,
-      "valorUnitario": 1760.37,
-      "valorTotal": 5281.11,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Mesa em L, dimensões: 1400 x 600 x 1400",
-      "quantidade": 1,
-      "valorUnitario": 1603.77,
-      "valorTotal": 1603.77,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "PI",
-      "objeto": "Mesa reunião redonda, dimensões: 1200 x",
-      "quantidade": 1,
-      "valorUnitario": 1225.53,
-      "valorTotal": 1225.53,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "Adesivo 60 x 50",
-      "quantidade": 400,
-      "valorUnitario": 43,
-      "valorTotal": 17200,
-      "valorExecutado": 4000,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "Banner 0,60 x 0,50",
-      "quantidade": 275,
-      "valorUnitario": 21.17,
-      "valorTotal": 5820.83,
-      "valorExecutado": 4950,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "Placa PVC 70 x 60",
-      "quantidade": 100,
-      "valorUnitario": 54.33,
-      "valorTotal": 5433.33,
-      "valorExecutado": 4500,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "Computador de Mesa (desktop) PROCESSADOR",
-      "quantidade": 12,
-      "valorUnitario": 2928.39,
-      "valorTotal": 35140.64,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "MONITOR WIDESCREEN 24MK430H - 23.8' LED,",
-      "quantidade": 12,
-      "valorUnitario": 775.08,
-      "valorTotal": 9300.96,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "Nobreak 1200Va 120V",
-      "quantidade": 12,
-      "valorUnitario": 827.85,
-      "valorTotal": 9934.16,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "Teclado e mouse sem fio multi slim, abnt",
-      "quantidade": 12,
-      "valorUnitario": 78.73,
-      "valorTotal": 944.76,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RO",
-      "objeto": "Webcam Full Hd 4k Microfone Conexão",
-      "quantidade": 12,
-      "valorUnitario": 246.65,
-      "valorTotal": 2959.8,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Apoio ergonômico p",
-      "quantidade": 3,
-      "valorUnitario": 70,
-      "valorTotal": 210,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Caixa de som para",
-      "quantidade": 3,
-      "valorUnitario": 55.77,
-      "valorTotal": 167.31,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Headset Microfone",
-      "quantidade": 3,
-      "valorUnitario": 166.33,
-      "valorTotal": 499,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Webcam: Câmera Web",
-      "quantidade": 3,
-      "valorUnitario": 104,
-      "valorTotal": 312,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - CPU: Microcomputad",
-      "quantidade": 3,
-      "valorUnitario": 9163.33,
-      "valorTotal": 27490,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Cadeira Giratória",
-      "quantidade": 3,
-      "valorUnitario": 1200,
-      "valorTotal": 3600,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Mesa - estação de",
-      "quantidade": 3,
-      "valorUnitario": 506.15,
-      "valorTotal": 1518.45,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Monitor",
-      "quantidade": 3,
-      "valorUnitario": 1179.99,
-      "valorTotal": 3539.97,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Nobreak: Peça/Comp",
-      "quantidade": 3,
-      "valorUnitario": 448,
-      "valorTotal": 1344,
-      "valorExecutado": 1344,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "TO",
-      "objeto": "ETAPA 1 - OUVIDORIA - Notebook: Bateria:",
-      "quantidade": 3,
-      "valorUnitario": 7446,
-      "valorTotal": 22338,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "RJ",
-      "objeto": "MINIBUS PARA ATENDIMENTO DE CIDADÕES IN",
-      "quantidade": 1,
-      "valorUnitario": 323838.9,
-      "valorTotal": 323838.9,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
-      "quantidade": 1,
-      "valorUnitario": 1349.62,
-      "valorTotal": 1349.62,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Cadeira Longarina plástica 03 Lugares -",
-      "quantidade": 1,
-      "valorUnitario": 703.26,
-      "valorTotal": 703.26,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Cadeira Secretária Fixa, Preta, pé palit",
-      "quantidade": 4,
-      "valorUnitario": 145.59,
-      "valorTotal": 582.36,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Cafeteira Elétrica Tradicional Industria",
-      "quantidade": 1,
-      "valorUnitario": 844.06,
-      "valorTotal": 844.06,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Computador Desktop (OUVIDORIA)",
-      "quantidade": 1,
-      "valorUnitario": 1455.49,
-      "valorTotal": 1455.49,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Forno de Microondas - 20L Branco (OUVID",
-      "quantidade": 1,
-      "valorUnitario": 482.36,
-      "valorTotal": 482.36,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Fragmentadora de Papel 150 folhas (OUVI",
-      "quantidade": 1,
-      "valorUnitario": 4438.14,
-      "valorTotal": 4438.14,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Frigobar 71L (OUVIDORIA)",
-      "quantidade": 2,
-      "valorUnitario": 929.63,
-      "valorTotal": 1859.26,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Gravador de áudio digital 32GB (OUVIDORIA)",
-      "quantidade": 4,
-      "valorUnitario": 537.68,
-      "valorTotal": 2150.72,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "HD Externo 2TB (OUVIDORIA)",
-      "quantidade": 4,
-      "valorUnitario": 696.94,
-      "valorTotal": 2787.76,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Impressora multifuncional Tanque de Tin",
-      "quantidade": 2,
-      "valorUnitario": 1589.1,
-      "valorTotal": 3178.2,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
-      "quantidade": 1,
-      "valorUnitario": 492.51,
-      "valorTotal": 492.51,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Nobreak 1200VA (OUVIDORIA)",
-      "quantidade": 5,
-      "valorUnitario": 1220.91,
-      "valorTotal": 6104.55,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Notebook (OUVIDORIA)",
-      "quantidade": 1,
-      "valorUnitario": 2020.5,
-      "valorTotal": 2020.5,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Pen drive 64Gb (OUVIDORIA)",
-      "quantidade": 8,
-      "valorUnitario": 237.74,
-      "valorTotal": 1901.92,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
-      "quantidade": 1,
-      "valorUnitario": 7133.77,
-      "valorTotal": 7133.77,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Tela de projeção 2x2 retrátil com tripé",
-      "quantidade": 1,
-      "valorUnitario": 1047.97,
-      "valorTotal": 1047.97,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
-      "uf": "AL",
-      "objeto": "Webcam full HD (OUVIDORIA)",
-      "quantidade": 2,
-      "valorUnitario": 245.54,
-      "valorTotal": 491.08,
-      "valorExecutado": 0,
-      "instrumento": "Convênio"
-    },
-    {
+      "instrumento": "Convênio",
       "uf": "SC",
-      "objeto": "Item 001 - Veículo Completo Automático,",
-      "quantidade": 1,
-      "valorUnitario": 140216.7,
-      "valorTotal": 140216.7,
+      "numero": "937783",
+      "ano": "2022",
+      "valorTotal": 581020.22,
       "valorExecutado": 0,
-      "instrumento": "Convênio"
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
+    },
+    {
+      "instrumento": "Convênio",
+      "uf": "RJ",
+      "numero": "937817",
+      "ano": "2022",
+      "valorTotal": 1583018.92,
+      "valorExecutado": 0,
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
+    },
+    {
+      "instrumento": "Convênio",
+      "uf": "PB",
+      "numero": "937818",
+      "ano": "2022",
+      "valorTotal": 317757.09,
+      "valorExecutado": 0,
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
+    },
+    {
+      "instrumento": "Convênio",
+      "uf": "PR",
+      "numero": "937871",
+      "ano": "2022",
+      "valorTotal": 861700.16,
+      "valorExecutado": 0,
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
+    },
+    {
+      "instrumento": "Convênio",
+      "uf": "RO",
+      "numero": "937917",
+      "ano": "2022",
+      "valorTotal": 234072.01,
+      "valorExecutado": 0,
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
+    },
+    {
+      "instrumento": "Convênio",
+      "uf": "SP",
+      "numero": "938128",
+      "ano": "2022",
+      "valorTotal": 3846559.5,
+      "valorExecutado": 0,
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
+    },
+    {
+      "instrumento": "Convênio",
+      "uf": "MA",
+      "numero": "938277",
+      "ano": "2022",
+      "valorTotal": 346697.9,
+      "valorExecutado": 0,
+      "saldo": 0,
+      "programaOrigem": "PROFOR 2022"
     }
   ],
   "dadosProfor2022": {
     "origemDados": "reconstrucao-pad",
-    "geradoEm": "2026-05-23T20:07:02.285Z",
+    "geradoEm": "2026-05-24T12:01:48.377Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -12680,7 +11534,7 @@
       "totalAvisos": 0,
       "reconstrucaoPad": {
         "caminho": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\relatorios\\profor-2022-pad-plano-reconstruido-dry-run.json",
-        "geradoEm": "2026-05-23T20:06:01.411Z",
+        "geradoEm": "2026-05-24T10:21:17.203Z",
         "modo": "dry-run",
         "totalLinhas": 568,
         "totalConvenios": 15,
@@ -12699,8 +11553,8 @@
     }
   },
   "resumoEsperado": {
-    "totalFomento": 6028180.9,
-    "totalConvenios": 1669823.9,
+    "totalFomento": 15022372.24,
+    "totalConvenios": 10664015.24,
     "totalFaf": 1757357,
     "totalDoacoes": 2601000,
     "ufsConvenios": [
