@@ -301,7 +301,25 @@ function carregarWorkbookProfor2022(catalogoAplicacao) {
   return xlsx.readFile(path.join(rootDir, planilhaRelativa), { cellDates: true });
 }
 
+// Bloqueia leitura silenciosa de workbook quando a origem ativa configurada é
+// `reconstrucao-pad`. Sem este gate, o endpoint /api/profor-2022/consolidado
+// devolveria dados extraídos da planilha antiga mesmo após a migração para
+// reconstrução PAD. Fluxos de desenvolvimento legítimos podem manter o caminho
+// antigo ativando explicitamente `ALLOW_PROFOR_2022_WORKBOOK_FALLBACK=1`.
+function assertWorkbookFallbackPermitido(contexto = "consolidado_local") {
+  const origemAtiva = resolverOrigemDadosProfor2022();
+  if (origemAtiva !== "reconstrucao-pad") return;
+  if (process.env.ALLOW_PROFOR_2022_WORKBOOK_FALLBACK === "1") return;
+  throw new Error(
+    `[${contexto}] Leitura de workbook bloqueada: origem ativa PROFOR_2022_ORIGEM_DADOS=` +
+      `${origemAtiva}, mas o caminho local ainda lê a planilha antiga. ` +
+      `Para uso temporário em desenvolvimento, defina ALLOW_PROFOR_2022_WORKBOOK_FALLBACK=1 ` +
+      `na sessão do servidor; em produção, descontinuar o caminho de workbook.`
+  );
+}
+
 function montarConsolidadoProfor2022Local() {
+  assertWorkbookFallbackPermitido("consolidado_local");
   const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
   const workbook = carregarWorkbookProfor2022(catalogoAplicacao);
   const planoAplicacao = extrairPlanoAplicacaoProforDoWorkbook(workbook, catalogoAplicacao);
@@ -311,6 +329,11 @@ function montarConsolidadoProfor2022Local() {
   });
 }
 
+// Fallback explícito de desenvolvimento: este endpoint COMPARA planilha antiga
+// vs banco-cache por desenho. A leitura de workbook aqui é intencional e
+// documentada — não está sujeita ao gate de assertWorkbookFallbackPermitido
+// porque a comparação só faz sentido lendo as duas fontes. Não use este
+// endpoint para operar; ele serve apenas a auditorias dev.
 function montarComparacaoOrigensProfor2022Local() {
   const catalogoAplicacao = carregarCatalogoAplicacaoLocal();
   const workbook = carregarWorkbookProfor2022(catalogoAplicacao);
