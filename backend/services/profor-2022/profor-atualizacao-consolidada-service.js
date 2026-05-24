@@ -19,6 +19,9 @@ const {
 const { montarConsolidadoProfor2022 } = require("./profor-consolidado-service");
 const { resolverOrigemDadosProfor2022 } = require("./profor-origem-service");
 const {
+  assertOrquestradorLegadoPermitido,
+} = require("./profor-workbook-fallback-guard-service");
+const {
   extrairPlanoAplicacaoProforDoWorkbook,
 } = require("../dashboard-publication-service");
 const { registrarLogOperacional } = require("../logs-operacionais-service");
@@ -279,6 +282,10 @@ function validarDiagnosticoConsolidado(resultadoConsolidado) {
 }
 
 async function atualizarProfor2022Consolidado(opcoes = {}) {
+  // Defesa em profundidade: o orquestrador é legado/descontinuado. Bloqueia
+  // chamadas via API/agendador/script sem flag explícita. Em produção, a flag
+  // não libera.
+  assertOrquestradorLegadoPermitido("atualizarProfor2022Consolidado");
   const iniciadoEm = new Date().toISOString();
   const inicio = Date.now();
   const origemDados = resolverOrigemDadosProfor2022({ origemDados: opcoes.origemDados });
