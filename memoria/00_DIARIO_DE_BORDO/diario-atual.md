@@ -1,5 +1,50 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: reescrita do /consolidado por origem ativa + isolamento do orquestrador legado + endurecimento dos gates em produção
+
+- **Escopo da frente:** fechar as três próximas etapas listadas em `profor-2022-auditoria-final-fallback-workbook.md` (commit `6bf047a`).
+- **Patch 1 — Reescrita do `/api/profor-2022/consolidado` por origem ativa:**
+  - Nova função `montarConsolidadoProfor2022PorOrigemAtiva()` em `backend/server.js` que despacha por origem: `reconstrucao-pad` → `montarDadosProfor2022Publicacao` (sem workbook); `banco-cache`/`planilha` → `montarConsolidadoProfor2022Local` legado sob gate; origem inesperada → erro explícito.
+  - Endpoint `/consolidado` agora propaga `origemDados` e `origemDadosEfetiva` reais, sem hardcoded `"banco-cache"`.
+  - Segundo uso do legado (coleta de `diagnosticoConsolidado` no endpoint `/origem`) também passa pelo novo wrapper.
+  - `montarConsolidadoProfor2022Local` preservada como legado interno apenas para `banco-cache`/`planilha` e para o endpoint `comparar-origens`.
+- **Patch 2 — Isolamento do orquestrador legado `atualizar:profor-2022`:**
+  - Novo gate `assertOrquestradorLegadoPermitido(contexto)` em dois pontos (defesa em profundidade):
+    - Cedo no script `backend/scripts/atualizar-profor-2022-consolidado.js` (antes de tocar banco).
+    - Dentro do serviço `atualizarProfor2022Consolidado` (protege agendador e endpoint `POST /api/profor-2022/atualizar`).
+  - Em dev: exige `ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO=1`; em produção: bloqueia mesmo com a flag.
+  - Cabeçalho do script reescrito para "LEGADO/DESCONTINUAÇÃO".
+- **Patch 3 — Endurecimento dos gates em produção:**
+  - Novo módulo `backend/services/profor-2022/profor-workbook-fallback-guard-service.js` centraliza `isAmbienteProducao` + `assertWorkbookFallbackPermitido` + `assertOrquestradorLegadoPermitido`.
+  - `isAmbienteProducao` reconhece `NODE_ENV ∈ {production, prod}`, `APP_ENV ∈ {production, prod, producao}`, `AMBIENTE ∈ {producao, production, prod}`.
+  - Em produção, ambas as flags (`ALLOW_PROFOR_2022_WORKBOOK_FALLBACK`, `ALLOW_PROFOR_2022_ORQUESTRADOR_LEGADO`) **não liberam** — falha sempre.
+  - `.env.example` documenta ambas as flags + regra de produção.
+- **Testes:** `tests/services/profor-workbook-fallback-guard.test.js` (novo, 19 casos) cobre:
+  - detecção de produção via NODE_ENV/APP_ENV/AMBIENTE e rejeição de dev/staging/teste/vazio;
+  - workbook gate: não age para `planilha`/`banco-cache`; bloqueia `reconstrucao-pad` sem flag em dev; libera com flag em dev; bloqueia em produção mesmo com flag (via cada uma das 3 vars de ambiente); valor != `"1"` não libera;
+  - orquestrador gate: bloqueia sem flag em dev; libera com flag em dev; bloqueia em produção mesmo com flag;
+  - contexto na mensagem;
+  - garantia estrutural: módulo não importa SQLite/dotenv/publicar-*/Transferegov e não escreve arquivos.
+  - Suíte completa: **244/244** passando (de 225).
+- **Validações:** `validar:syntax` 101 OK; `validar:services` 244/244; reconstrução / comparador / comparação de snapshots **sem regressão**; `git diff --check` limpo.
+- **Comandos proibidos** (`publicar:profor-2022`, `atualizar:profor-2022`, `publicar:dados`) **não executados**.
+- **Preservações:** `frontend/data/publicados/` intacto; SQLite/WAL/SHM intactos; `.env` inalterado; snapshots PAD intactos; `planoAplicacao` oficial e fila oficial real inalterados; decisões/divergências/logs preservados; Transferegov não acionado; `comparar-origens` mantido como ferramenta dev (sem alteração funcional).
+- **Riscos residuais:**
+  - `carregarPlanoAplicacaoLocal` ainda existe (acessível só via orquestrador gateado); remoção exige aposentadoria total do orquestrador.
+  - Operador com acesso de produção poderia setar `NODE_ENV=development` para burlar — mitigação no nível do runtime/serviço de produção.
+  - Novos caminhos de leitura de workbook devem chamar `assertWorkbookFallbackPermitido` explicitamente.
+- **Arquivos criados/alterados:**
+  - `backend/services/profor-2022/profor-workbook-fallback-guard-service.js` (novo).
+  - `backend/server.js` (import + wrapper por origem ativa + uso no endpoint).
+  - `backend/scripts/atualizar-profor-2022-consolidado.js` (gate cedo + cabeçalho).
+  - `backend/services/profor-2022/profor-atualizacao-consolidada-service.js` (gate em defesa em profundidade).
+  - `.env.example` (regra de produção documentada).
+  - `scripts/validar-syntax.js` (novo módulo listado).
+  - `tests/services/profor-workbook-fallback-guard.test.js` (novo, 19 testes).
+  - `backend/data/relatorios/profor-2022-reescrita-consolidado-e-descontinuacao-workbook.md` (relatório técnico).
+- **Rollback:** `git revert` dos commits desta etapa; não apagar histórico, snapshots, decisões ou logs.
+- **Próximos passos (não nesta etapa):** aposentadoria definitiva do orquestrador + remoção do `carregarPlanoAplicacaoLocal` e `montarConsolidadoProfor2022Local`; variável dedicada de ambiente se `NODE_ENV` se mostrar insuficiente; gate similar para `comparar-origens` em produção.
+
 ## 24/05/2026 — PROFOR 2022: fechamento do ciclo de limpeza — bloqueio do último fallback workbook silencioso
 
 - **Escopo correto:** esta etapa fecha o ciclo previsto pelo plano original de limpeza (inventário, classificação, linha de base, bloqueio do que for perigoso). **Não é remoção ampla** dos fallbacks por workbook.
