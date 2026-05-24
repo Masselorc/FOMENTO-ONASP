@@ -23,6 +23,7 @@ function resolverCaminhoPlanilha() {
 
 const CAMINHO_PLANILHA = resolverCaminhoPlanilha();
 const ABA_GERAL = "Geral";
+const CHAVE_LIBERACAO_IMPORTACAO_LEGADA = "ALLOW_PROFOR_2022_IMPORT_PLANILHA_LEGADA";
 
 // Índices de coluna da aba Geral (espelho de COLUNAS_GERAL_PROFOR em data-service.js)
 const COL_UF = 0;
@@ -50,6 +51,13 @@ function ehUfValida(valor) {
 }
 
 function importarCarteira() {
+  if (process.env[CHAVE_LIBERACAO_IMPORTACAO_LEGADA] !== "1") {
+    throw new Error(
+      `Importacao legada bloqueada por padrao. Este script usa a aba "${ABA_GERAL}" da planilha antiga e nao deve ser usado como origem operacional atual.\n` +
+      `Se for necessario para desenvolvimento controlado, execute com ${CHAVE_LIBERACAO_IMPORTACAO_LEGADA}=1.`
+    );
+  }
+
   inicializarBanco();
 
   if (!fs.existsSync(CAMINHO_PLANILHA)) {
