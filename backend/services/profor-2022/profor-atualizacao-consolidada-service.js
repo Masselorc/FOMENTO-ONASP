@@ -20,6 +20,7 @@ const { montarConsolidadoProfor2022 } = require("./profor-consolidado-service");
 const { resolverOrigemDadosProfor2022 } = require("./profor-origem-service");
 const {
   assertOrquestradorLegadoPermitido,
+  assertChamadaExternaPermitida,
 } = require("./profor-workbook-fallback-guard-service");
 const {
   extrairPlanoAplicacaoProforDoWorkbook,
@@ -88,6 +89,7 @@ async function executarEtapaComProtecao(nome, fn) {
 
 async function executarEtapaDetru(opcoes = {}) {
   return executarEtapaComProtecao("detru", async () => {
+    assertChamadaExternaPermitida("executarEtapaDetru", { tipo: "DETRU" });
     const carteira = listarConveniosMonitorados({ incluirInativos: false });
     const totalCarteiraAtiva = carteira.length;
     const resultado = await atualizarCacheDetruProfor2022(opcoes.detru || {});
@@ -111,6 +113,7 @@ async function executarEtapaDetru(opcoes = {}) {
 
 async function executarEtapaRendimentos(opcoes = {}) {
   return executarEtapaComProtecao("rendimentos", async () => {
+    assertChamadaExternaPermitida("executarEtapaRendimentos", { tipo: "Transferegov" });
     const convenios = listarConveniosMonitorados({ incluirInativos: false });
     const intervaloMs = Number.isFinite(opcoes.intervaloEntreConsultasMs)
       ? Math.max(0, opcoes.intervaloEntreConsultasMs)

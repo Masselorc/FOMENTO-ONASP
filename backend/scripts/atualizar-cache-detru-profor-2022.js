@@ -7,22 +7,28 @@
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") });
 
-const { inicializarBanco } = require("../db/init-db");
 const {
-  atualizarCacheDetruProfor2022,
-} = require("../services/profor-2022/profor-detru-update-service");
+  assertChamadaExternaPermitida,
+} = require("../services/profor-2022/profor-workbook-fallback-guard-service");
 
 async function executar() {
-  inicializarBanco();
-
-  const arg = process.argv[2];
-  const opcoes = arg ? { caminhoZip: arg } : {};
-
-  if (arg) {
-    console.log(`Usando arquivo informado por argumento: ${arg}`);
-  }
-
   try {
+    assertChamadaExternaPermitida("script_atualizar_cache_detru_profor_2022", { tipo: "DETRU" });
+
+    const { inicializarBanco } = require("../db/init-db");
+    const {
+      atualizarCacheDetruProfor2022,
+    } = require("../services/profor-2022/profor-detru-update-service");
+
+    inicializarBanco();
+
+    const arg = process.argv[2];
+    const opcoes = arg ? { caminhoZip: arg } : {};
+
+    if (arg) {
+      console.log(`Usando arquivo informado por argumento: ${arg}`);
+    }
+
     const resultado = await atualizarCacheDetruProfor2022(opcoes);
     console.log(`Arquivo DETRU: ${resultado.caminhoZip}`);
     console.log(`Hash do arquivo: ${resultado.arquivoHash}`);

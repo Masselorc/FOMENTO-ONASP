@@ -1,17 +1,12 @@
 // Rotina local para atualizar o cache de saldo de rendimentos do PROFOR 2022.
 // Usa apenas acesso público ao Transferegov. Não usa credenciais, captcha ou área restrita.
 
-const { inicializarBanco } = require("../db/init-db");
-const { listarConveniosMonitorados } = require("../services/profor-2022/convenios-monitorados-service");
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") });
+
 const {
-  consultarSaldoRendimentosConvenio,
-} = require("../services/profor-2022/transferegov-rendimentos-client");
-const {
-  salvarSaldoRendimentoTransferegov,
-  registrarConsultaRendimentosInicio,
-  registrarConsultaRendimentosFim,
-  registrarConsultaRendimentosErro,
-} = require("../services/profor-2022/transferegov-rendimentos-cache-service");
+  assertChamadaExternaPermitida,
+} = require("../services/profor-2022/profor-workbook-fallback-guard-service");
 
 function aguardar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -37,21 +32,42 @@ function montarFalha(convenio, resultado) {
 }
 
 async function executar() {
-  inicializarBanco();
-
-  const convenios = listarConveniosMonitorados({ incluirInativos: false });
-  const inicioExecucao = Date.now();
-  const idConsulta = registrarConsultaRendimentosInicio({
-    totalCarteiraAtiva: convenios.length,
-  });
-  const falhas = [];
-  const fluxosPorConvenio = [];
-  let totalFetchPublico = 0;
-  let totalPlaywrightPublico = 0;
-  let totalSemFluxo = 0;
-  let totalSucesso = 0;
-
+  let idConsulta = null;
+  let registrarConsultaRendimentosErro = null;
   try {
+    assertChamadaExternaPermitida("script_atualizar_rendimentos_transferegov_profor_2022", {
+      tipo: "Transferegov",
+    });
+
+    const { inicializarBanco } = require("../db/init-db");
+    const {
+      listarConveniosMonitorados,
+    } = require("../services/profor-2022/convenios-monitorados-service");
+    const {
+      consultarSaldoRendimentosConvenio,
+    } = require("../services/profor-2022/transferegov-rendimentos-client");
+    const cacheService = require("../services/profor-2022/transferegov-rendimentos-cache-service");
+    const {
+      salvarSaldoRendimentoTransferegov,
+      registrarConsultaRendimentosInicio,
+      registrarConsultaRendimentosFim,
+    } = cacheService;
+    registrarConsultaRendimentosErro = cacheService.registrarConsultaRendimentosErro;
+
+    inicializarBanco();
+
+    const convenios = listarConveniosMonitorados({ incluirInativos: false });
+    const inicioExecucao = Date.now();
+    idConsulta = registrarConsultaRendimentosInicio({
+      totalCarteiraAtiva: convenios.length,
+    });
+    const falhas = [];
+    const fluxosPorConvenio = [];
+    let totalFetchPublico = 0;
+    let totalPlaywrightPublico = 0;
+    let totalSemFluxo = 0;
+    let totalSucesso = 0;
+
     for (const convenio of convenios) {
       const resultado = await consultarSaldoRendimentosConvenio(convenio.numeroConvenio);
       const resultadoComCarteira = {
@@ -130,7 +146,9 @@ async function executar() {
     }
     console.log("----------------------------------------------------------");
   } catch (error) {
-    registrarConsultaRendimentosErro(idConsulta, error);
+    if (idConsulta && typeof registrarConsultaRendimentosErro === "function") {
+      registrarConsultaRendimentosErro(idConsulta, error);
+    }
     console.error("Falha na atualização de rendimentos Transferegov:", error.message);
     process.exit(1);
   }

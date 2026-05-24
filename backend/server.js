@@ -46,6 +46,8 @@ const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor
 const {
   assertWorkbookFallbackPermitido,
   assertEndpointDevPermitido,
+  assertEndpointAdminPermitido,
+  assertChamadaExternaPermitida,
 } = require("./services/profor-2022/profor-workbook-fallback-guard-service");
 const {
   atualizarProfor2022Consolidado,
@@ -666,6 +668,8 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/detru/atualizar") {
       const body = await lerJsonBody(req);
       try {
+        assertEndpointAdminPermitido("api_profor_2022_detru_atualizar");
+        assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU" });
         const resultado = await atualizarCacheDetruProfor2022(body || {});
         const ultimaAtualizacao = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
         enviarJson(res, 200, {
@@ -701,6 +705,10 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/rendimentos/atualizar") {
       const body = await lerJsonBody(req);
       try {
+        assertEndpointAdminPermitido("api_profor_2022_rendimentos_atualizar");
+        assertChamadaExternaPermitida("api_profor_2022_rendimentos_atualizar", {
+          tipo: "Transferegov",
+        });
         const resultado = await executarEtapaRendimentos(body || {});
         enviarJson(res, 200, {
           success: resultado.sucesso,
@@ -710,8 +718,13 @@ async function rotearApi(req, res, pathname) {
           resultado
         });
       } catch (erro) {
-        console.error("Falha ao atualizar rendimentos Transferegov:", erro);
-        enviarJson(res, 500, {
+        const statusCode = Number.isInteger(Number(erro?.statusCode)) && Number(erro?.statusCode) >= 400 && Number(erro?.statusCode) < 600
+          ? Number(erro.statusCode)
+          : 500;
+        if (statusCode >= 500) {
+          console.error("Falha ao atualizar rendimentos Transferegov:", erro);
+        }
+        enviarJson(res, statusCode, {
           success: false,
           message: erro?.message || "Erro ao atualizar rendimentos Transferegov."
         });
@@ -722,6 +735,10 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/atualizar") {
       const body = await lerJsonBody(req);
       try {
+        assertEndpointAdminPermitido("api_profor_2022_atualizar");
+        assertChamadaExternaPermitida("api_profor_2022_atualizar", {
+          tipo: "DETRU/Transferegov",
+        });
         const resultado = await atualizarProfor2022Consolidado(body || {});
         enviarJson(res, 200, {
           success: true,
@@ -731,8 +748,13 @@ async function rotearApi(req, res, pathname) {
           resultado
         });
       } catch (erro) {
-        console.error("Falha ao executar atualizacao consolidada PROFOR 2022:", erro);
-        enviarJson(res, 500, {
+        const statusCode = Number.isInteger(Number(erro?.statusCode)) && Number(erro?.statusCode) >= 400 && Number(erro?.statusCode) < 600
+          ? Number(erro.statusCode)
+          : 500;
+        if (statusCode >= 500) {
+          console.error("Falha ao executar atualizacao consolidada PROFOR 2022:", erro);
+        }
+        enviarJson(res, statusCode, {
           success: false,
           message: erro?.message || "Erro ao atualizar PROFOR 2022."
         });
