@@ -1,5 +1,13 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: correção da Home (convênios) e restauração do item Sistema
+
+- Ajustado menu lateral em `index.html` para exibir item **Sistema** apontando para `toggleView('status-sistema')`.
+- Atualizado cache-buster do `app.js` em `index.html` e do import `data-service.js` em `frontend/js/app.js`.
+- Ajustada incorporação de convênios PAD na Home para não depender de metadado legado de origem e aceitar consolidado com `convenios` válidos.
+- `carregarConsolidadoProfor2022BancoCacheLocal` agora devolve `origemDados`/`origemDadosEfetiva` coerentes com `reconstrucao-pad`.
+- Testes focados adicionados para impedir regressão de convênios/UFs zerados na Home e ausência do item Sistema no menu lateral.
+
 ## 24/05/2026 — PROFOR 2022: atualização de cache da recarga PAD no frontend
 
 - Atualizado cache-buster de `index.html` para `app.js?v=20260524-02-recarga-pad-totais`.

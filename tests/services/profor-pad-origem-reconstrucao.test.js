@@ -305,3 +305,55 @@ test("consolidarCatalogoDashboard inclui convenios PROFOR/PAD no total geral do 
     "Total de fomento deve somar convenios + FAF + doacoes."
   );
 });
+
+test("Home: resumo de instrumentos nao pode zerar convenios quando consolidado PAD tem convenios e UFs", async () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const catalogoPath = path.join(repoRoot, "backend/data/aplicacao.json");
+  const catalogo = JSON.parse(fs.readFileSync(catalogoPath, "utf8"));
+  const analytics = await import("../../backend/services/analytics.js");
+
+  const dadosProfor = montarDadosProfor2022Publicacao(null, catalogo, { origemDados: "reconstrucao-pad" });
+  const itensProfor = (dadosProfor.convenios || []).map((convenio) => ({
+    uf: convenio.uf,
+    instrumento: "Convênio PROFOR 2022",
+    objeto: `PROFOR 2022 - Convênio ${convenio.numero || convenio.numeroConvenio || ""}/${convenio.ano || ""}`.trim(),
+    quantidade: Number(convenio.totalItensOuvidoria ?? convenio.totalItens) || 1,
+    valorTotal: Number(convenio.previstoOuvidoria ?? convenio.valorGlobal ?? convenio.valorTotal) || 0,
+    valorExecutado: Number(convenio.valorExecutadoOuvidoria ?? convenio.valorExecutadoGeral ?? convenio.valorExecutado) || 0,
+    valorUnitario: Number(convenio.previstoOuvidoria ?? convenio.valorGlobal ?? convenio.valorTotal) || 0,
+  }));
+
+  const dadosBaseSemConvenios = (catalogo.dadosBase || []).filter((item) => {
+    const instrumento = String(item?.instrumento || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+    return !instrumento.includes("CONV");
+  });
+  const dadosHome = [...dadosBaseSemConvenios, ...itensProfor];
+  const resumo = analytics.calcularResumoInstrumentos(dadosHome);
+
+  assert.ok(resumo.convenios.total > 0, "Resumo da Home nao pode manter total de convenios em zero.");
+  assert.ok(resumo.convenios.quantidadeUfs > 0, "Resumo da Home nao pode manter UFs de convenios em zero.");
+  assert.equal(
+    resumo.convenios.total + resumo.faf.total + resumo.doacao.total > 0,
+    true,
+    "Total de fomento (convenios + FAF + doacoes) deve permanecer positivo."
+  );
+});
+
+test("Menu lateral exibe item Sistema e aponta para status-sistema", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const indexPath = path.join(repoRoot, "index.html");
+  const html = fs.readFileSync(indexPath, "utf8");
+
+  assert.match(html, /<span>\s*Sistema\s*<\/span>/i);
+  assert.match(html, /data-view=\"status-sistema\"/i);
+  assert.match(html, /toggleView\('status-sistema'\)/i);
+});
+
+test("Tela de recarga PAD continua vinculada a status-sistema e recarrega a Home apos sucesso", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const appPath = path.join(repoRoot, "frontend/js/app.js");
+  const appCode = fs.readFileSync(appPath, "utf8");
+
+  assert.match(appCode, /id=\"secao-recarga-pad-operacional\"/i);
+  assert.match(appCode, /await garantirDadosBaseAplicacao\(\);/i);
+});

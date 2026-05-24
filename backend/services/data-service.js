@@ -3536,8 +3536,8 @@ export async function carregarConsolidadoProfor2022BancoCacheLocal() {
 
     const dados = {
         ...payload.data,
-        origemDados: payload.data.origemDados || payload.origemDados || 'banco-cache',
-        origemDadosEfetiva: 'banco-cache',
+        origemDados: payload.data.origemDados || payload.origemDados || 'reconstrucao-pad',
+        origemDadosEfetiva: payload.data.origemDadosEfetiva || payload.data.origemDados || payload.origemDados || 'reconstrucao-pad',
         fallbackUsado: false
     };
 

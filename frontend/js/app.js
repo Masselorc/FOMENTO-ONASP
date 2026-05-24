@@ -26,7 +26,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260524-02-recarga-pad-totais';
+} from '../../backend/services/data-service.js?v=20260524-03-home-menu-sistema';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -1482,12 +1482,7 @@ async function carregarLogoParaPDF() {
         }
 
         function montarItensDashboardProforBancoCache(dadosProfor) {
-            const origemDadosEfetiva = String(
-                dadosProfor?.origemDadosEfetiva || dadosProfor?.origemDados || ''
-            ).toLowerCase();
-            const origemReconstrucaoPad = origemDadosEfetiva === 'reconstrucao-pad' || origemDadosEfetiva === 'banco-cache';
-
-            if (!dadosProfor || !origemReconstrucaoPad) {
+            if (!dadosProfor || !Array.isArray(dadosProfor.convenios) || dadosProfor.convenios.length === 0) {
                 return null;
             }
 
