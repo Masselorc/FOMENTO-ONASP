@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: governança de endpoints externos/dev, agendadores e workbook legado
+
+- **Objetivo:** fechar a governança remanescente após a aposentadoria operacional dos fallbacks workbook: DETRU, Transferegov, endpoints administrativos/dev, agendadores e limpeza final por isolamento.
+- **Governança DETRU/Transferegov:** o guard central passou a incluir `assertEndpointAdminPermitido`, `assertChamadaExternaPermitida` e `assertAgendadorPermitido`. Endpoints/scripts que acionam DETRU ou Transferegov agora exigem flag explícita em desenvolvimento e são bloqueados em produção/teste.
+- **Política administrativa/dev:** endpoints operacionais continuam permitidos quando não acionam rede externa; endpoints dev/auditoria exigem `ALLOW_PROFOR_2022_ENDPOINTS_DEV=1`; endpoints administrativos exigem `ALLOW_PROFOR_2022_ADMIN_ENDPOINTS=1`; chamadas externas exigem `ALLOW_PROFOR_2022_EXTERNAL_CALLS=1`; agendadores exigem `ALLOW_PROFOR_2022_SCHEDULER=1`. Flags não liberam produção.
+- **Agendadores:** `npm run agendar:profor-2022` passou a apontar para wrapper bloqueador (`backend/scripts/bloquear-agendar-profor-2022-legado.js`), que falha cedo com exit code `2`. O agendador real ficou como `profor:legado:agendar-atualizacao:dev`, ainda guardado. `agendar:detru-profor` ganhou guard de agendador e chamada externa.
+- **Scripts externos:** `atualizar:detru-profor` e `atualizar:rendimentos-profor` foram protegidos antes de inicializar banco ou importar clientes externos. Nenhum desses scripts foi executado.
+- **Workbook legado:** não houve remoção física. `carregarWorkbookProfor2022`, `montarConsolidadoProfor2022Local` e `carregarPlanoAplicacaoLocal` permanecem isolados por consumidores controlados: auditoria dev `comparar-origens`, fallback legado sob guard e orquestrador descontinuado. Nenhum caminho workbook é operacional em produção.
+- **Preservações:** sem publicação; sem alteração em `frontend/data/publicados/`; `.env` não exibido/alterado; SQLite/WAL/SHM preservados; sem migration; sem decisão por SQL direto; fila oficial, snapshots, relatórios históricos e `planoAplicacao` oficial preservados; DETRU real e Transferegov não acionados.
+- **Validações:** `node --test tests/services/profor-admin-endpoint-guard.test.js tests/services/profor-workbook-fallback-guard.test.js`, `git diff --check`, `npm run validar:syntax`, `npm run validar:services`, dry-runs PAD permitidos e validação direta do wrapper de agendamento.
+- **Relatório:** `backend/data/relatorios/profor-2022-governanca-endpoints-externos-e-limpeza-workbook.md`.
+- **Risco residual:** endpoints de leitura de cache seguem disponíveis; scripts externos permanecem para uso local controlado; remoção física do workbook depende de aposentar `comparar-origens` e consumidores legados de publicação/dashboard.
+- **Próximos passos:** definir autorização administrativa forte para endpoints sensíveis e planejar remoção física dos helpers workbook quando não houver consumidores dev/auditoria.
+
 ## 24/05/2026 — PROFOR 2022: encerramento dos fallbacks workbook e endpoints dev/auditoria
 
 - **Objetivo:** executar as pendências finais de fechamento do fallback workbook: bloquear `comparar-origens` em produção, adicionar `FOMENTO_AMBIENTE`, aposentar `atualizar:profor-2022`, isolar funções workbook remanescentes e registrar política de endpoints dev/auditoria.
