@@ -1,5 +1,11 @@
 # Diário de bordo
 
+## 24/05/2026 — PROFOR 2022: atualização de cache da recarga PAD no frontend
+
+- Atualizado cache-buster de `index.html` para `app.js?v=20260524-02-recarga-pad-totais`.
+- Atualizado import de `data-service.js` em `frontend/js/app.js` para mesma versão de cache.
+- Após `POST /api/profor-2022/pad/recarregar`, a UI agora invalida `dadosFaf`, `dadosFinanceirosValidados` e `baseAplicacaoCarregamentoPromise`, e chama `garantirDadosBaseAplicacao()` para forçar nova execução de `sincronizarDadosProfor2022Local()`.
+
 ## 24/05/2026 — PROFOR 2022: correção da recarga PAD e dos totais do painel
 
 - **Escopo:** ajuste operacional pontual, sem publicação, sem DETRU/Transferegov, sem `.env`, sem `frontend/data/publicados/` e sem SQLite/WAL/SHM.

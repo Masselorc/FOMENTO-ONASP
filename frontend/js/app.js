@@ -26,7 +26,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260518-01';
+} from '../../backend/services/data-service.js?v=20260524-02-recarga-pad-totais';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -3963,6 +3963,12 @@ async function carregarLogoParaPDF() {
                 }
 
                 renderResultadoRecargaPad(recarga);
+                // Invalida caches em memória para forçar nova leitura do consolidado
+                // PAD/reconstrução e recomposição dos KPIs na Home.
+                dadosFaf = [];
+                configurarEstadoDadosValidados(false);
+                baseAplicacaoCarregamentoPromise = null;
+                await garantirDadosBaseAplicacao();
                 await carregarAuditoriaRevisao();
                 await carregarListaRevisao();
             } catch (error) {
