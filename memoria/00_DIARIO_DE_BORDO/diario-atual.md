@@ -7326,3 +7326,19 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem workbook antigo, sem alteracao em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU/Transferegov, autenticacao, xlsx.
 - Risco: baixo - remocao puramente de superficie; o pipeline de consolidacao continua disponivel por GET /api/profor-2022/consolidado.
 - Rollback: reverter o commit.
+
+---
+
+## 25/05/2026 - PROFOR 2022: restaura atualizacoes locais DETRU e Transferegov sem flags
+
+- Branch: `main`.
+- Regressao: durante limpezas anteriores, `assertEndpointAdminPermitido` e `assertChamadaExternaPermitida` passaram a exigir `ALLOW_PROFOR_2022_ADMIN_ENDPOINTS=1` e `ALLOW_PROFOR_2022_EXTERNAL_CALLS=1` mesmo em uso local normal, quebrando os botoes "Atualizar DETRU" e "Atualizar Transferegov" e os scripts `atualizar:detru-profor` / `atualizar:rendimentos-profor`.
+- Correcao no guard (`profor-workbook-fallback-guard-service.js`): novos sinais `requisicaoLocal` e `execucaoLocal` liberam os asserts em ambiente local (dev) sem exigir flags. As flags antigas continuam validas como fallback. Producao e teste seguem bloqueando.
+- `backend/server.js`: novo helper `ehRequisicaoLocal(req)` considera apenas loopback (`127.0.0.1`, `::1`, `::ffff:127.0.0.1`); cabecalhos como X-Forwarded-For sao ignorados. O sinal e propagado para os asserts dos endpoints DETRU/Transferegov e para `executarEtapaRendimentos`.
+- Scripts CLI (`atualizar-cache-detru-profor-2022.js`, `atualizar-rendimentos-transferegov-profor-2022.js`): passam `execucaoLocal: true` ao guard. Agendador DETRU NAO foi liberado (continua exigindo flag).
+- Frontend (`frontend/js/app.js`): `atualizarVisibilidadeBotaoStatusSistema` agora aplica `d-none` aos links Sistema e Revisoes PAD em modo estatico. `renderStatusSistemaView` curto-circuita em modo estatico exibindo `renderEmptyState` (mesma protecao ja existente em Revisoes). Botao "Atualizar PROFOR 2022" permanece removido.
+- Testes (`tests/services/profor-admin-endpoint-guard.test.js`, 19/19): reescritos os cenarios de dev para validar o novo contrato (local sem flag, nao-local bloqueado, producao/teste bloqueados mesmo com flag). Novos testes: scripts DETRU/Transferegov com `execucaoLocal:true`, agendador sem `execucaoLocal:true`, frontend oculta Sistema/Revisoes em modo estatico e nao reativa Atualizar PROFOR, recarga PAD nao chama DETRU/Transferegov e vice-versa.
+- Validacoes: `git diff --check`; `node --check` em server, app, guard, atualizacao consolidada e dois scripts; `node --test` no guard test (19/19); `npm run validar:syntax` (105 OK); probe real `POST /api/profor-2022/detru/atualizar` sem flag -> HTTP 200, 15 convenios salvos.
+- Preservacoes: sem publicacao, sem alteracao em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, autenticacao, planilha antiga, xlsx. Recarga PAD e fluxos DETRU/Transferegov continuam separados.
+- Risco: baixo - a liberacao se restringe a loopback (server) ou CLI local (scripts). Producao/teste e nao-local continuam bloqueados.
+- Rollback: reverter o commit; comportamento volta a exigir flags.

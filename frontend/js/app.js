@@ -1153,9 +1153,12 @@ async function exportarRelatorioEstadoSelecionado(uf) {
 // ========================================================================
 
 function atualizarVisibilidadeBotaoStatusSistema() {
+    // Em modo estatico/GitHub Pages, ocultar os links de Sistema e Revisoes PAD.
+    // Essas telas dependem da API local; sem ela nao deve haver acesso pela barra.
+    const ocultar = estaEmModoPublicacaoEstatica();
     document.querySelectorAll('.app-menu-link[data-view="status-sistema"], .app-menu-link[data-view="revisao-divergencias"]').forEach((botao) => {
-        botao.classList.remove('d-none');
-        botao.setAttribute('aria-hidden', 'false');
+        botao.classList.toggle('d-none', ocultar);
+        botao.setAttribute('aria-hidden', ocultar ? 'true' : 'false');
     });
 }
 
@@ -1685,6 +1688,18 @@ async function carregarLogoParaPDF() {
         async function renderStatusSistemaView() {
             const container = document.getElementById('view-status-sistema');
             if (!container) return;
+
+            // Em modo estatico/GitHub Pages, esta tela depende da API local e nao
+            // deve aparecer. Mostra um aviso sem botoes e nao tenta carregar nada.
+            if (estaEmModoPublicacaoEstatica()) {
+                container.style.display = 'block';
+                container.innerHTML = renderEmptyState({
+                    titulo: 'Sistema disponível apenas no servidor local.',
+                    descricao: 'A tela Status do Sistema depende de APIs e do banco SQLite local. Ela não é exibida na publicação estática.',
+                    icon: 'fa-lock'
+                });
+                return;
+            }
 
             container.style.display = 'block';
 

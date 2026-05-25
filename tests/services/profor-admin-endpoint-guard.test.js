@@ -47,27 +47,47 @@ test("FOMENTO_AMBIENTE reconhece valores de producao suportados", () => {
   }
 });
 
-test("endpoint administrativo exige flag em desenvolvimento e bloqueia producao", () => {
+test("endpoint administrativo em dev: permite local sem flag, bloqueia nao-local sem flag, bloqueia producao", () => {
+  // Requisicao nao-local em dev sem flag continua bloqueada.
   assert.throws(
     () => assertEndpointAdminPermitido("detru_atualizar", { env: envDev() }),
     /Endpoint administrativo PROFOR 2022 bloqueado/,
   );
+  // Requisicao local em dev: liberada sem flag (restauracao do comportamento anterior).
+  assert.doesNotThrow(() => assertEndpointAdminPermitido("detru_atualizar", {
+    env: envDev(),
+    requisicaoLocal: true,
+  }));
+  // Execucao local de script CLI: liberada sem flag.
+  assert.doesNotThrow(() => assertEndpointAdminPermitido("detru_atualizar", {
+    env: envDev(),
+    execucaoLocal: true,
+  }));
+  // Flag historica continua valida como fallback.
   assert.doesNotThrow(() => assertEndpointAdminPermitido("detru_atualizar", {
     env: envDev({ ALLOW_PROFOR_2022_ADMIN_ENDPOINTS: "1" }),
   }));
+  // Producao: bloqueia mesmo com flag e mesmo se local.
   assert.throws(
     () => assertEndpointAdminPermitido("detru_atualizar", {
       env: envProd({ ALLOW_PROFOR_2022_ADMIN_ENDPOINTS: "1" }),
+      requisicaoLocal: true,
     }),
     /bloqueado em produção/,
   );
 });
 
-test("chamada externa DETRU/Transferegov bloqueia sem flag", () => {
+test("chamada externa DETRU/Transferegov: permite local sem flag, bloqueia nao-local sem flag", () => {
   assert.throws(
     () => assertChamadaExternaPermitida("detru", { env: envDev(), tipo: "DETRU" }),
     /Chamada externa DETRU bloqueada/,
   );
+  assert.doesNotThrow(() => assertChamadaExternaPermitida("detru", {
+    env: envDev(), tipo: "DETRU", requisicaoLocal: true,
+  }));
+  assert.doesNotThrow(() => assertChamadaExternaPermitida("rendimentos", {
+    env: envDev(), tipo: "Transferegov", execucaoLocal: true,
+  }));
 });
 
 test("chamada externa bloqueia em producao mesmo com flag", () => {
@@ -109,12 +129,16 @@ test("agendador PROFOR bloqueia sem flag e bloqueia producao", () => {
   );
 });
 
-test("server aplica guard admin e externo antes dos endpoints DETRU/Transferegov", () => {
+test("server aplica guard admin e externo antes dos endpoints DETRU/Transferegov e propaga requisicaoLocal", () => {
   const server = ler("backend/server.js");
-  assert.match(server, /assertEndpointAdminPermitido\("api_profor_2022_detru_atualizar"\)/);
-  assert.match(server, /assertChamadaExternaPermitida\("api_profor_2022_detru_atualizar", \{ tipo: "DETRU" \}\)/);
-  assert.match(server, /assertEndpointAdminPermitido\("api_profor_2022_rendimentos_atualizar"\)/);
+  assert.match(server, /assertEndpointAdminPermitido\("api_profor_2022_detru_atualizar", \{ requisicaoLocal \}\)/);
+  assert.match(server, /assertChamadaExternaPermitida\("api_profor_2022_detru_atualizar", \{ tipo: "DETRU", requisicaoLocal \}\)/);
+  assert.match(server, /assertEndpointAdminPermitido\("api_profor_2022_rendimentos_atualizar", \{ requisicaoLocal \}\)/);
   assert.match(server, /tipo: "Transferegov"/);
+  // O helper local deve existir e considerar apenas loopback (sem X-Forwarded-For).
+  assert.match(server, /function ehRequisicaoLocal\(req\)/);
+  assert.match(server, /127\.0\.0\.1/);
+  assert.match(server, /::1/);
 });
 
 test("/api/profor-2022/consolidado continua operacional por PAD/reconstrucao", () => {
@@ -174,6 +198,45 @@ test("catalogo local nao aponta mais para a planilha antiga por abas", () => {
   const catalogo = ler("backend/data/aplicacao.json");
   assert.doesNotMatch(catalogo, /arquivoPlanilhaConvenios/);
   assert.doesNotMatch(catalogo, /gestao_financeira_ouvidoria\.xlsx/);
+});
+
+test("scripts npm DETRU e Transferegov passam execucaoLocal=true (uso local sem flag)", () => {
+  const det = ler("backend/scripts/atualizar-cache-detru-profor-2022.js");
+  assert.match(det, /assertChamadaExternaPermitida\([\s\S]*?execucaoLocal:\s*true/);
+  const rend = ler("backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js");
+  assert.match(rend, /assertChamadaExternaPermitida\([\s\S]*?execucaoLocal:\s*true/);
+});
+
+test("agendador DETRU continua exigindo flag (nao foi liberado para uso local)", () => {
+  const ag = ler("backend/scripts/agendar-atualizacao-detru-profor-2022.js");
+  // Nao deve ter sido marcado como execucao local; agendador continua governado por flag.
+  assert.doesNotMatch(ag, /execucaoLocal:\s*true/);
+});
+
+test("frontend oculta Sistema e Revisoes em modo estatico e nao reativa Atualizar PROFOR", () => {
+  const app = ler("frontend/js/app.js");
+  // Toggle d-none condicional ao modo estatico no menu.
+  assert.match(app, /classList\.toggle\('d-none', ocultar\)/);
+  // renderStatusSistemaView curto-circuita em modo estatico.
+  assert.match(app, /renderStatusSistemaView[\s\S]*?estaEmModoPublicacaoEstatica\(\)[\s\S]*?renderEmptyState/);
+  // Botao Atualizar PROFOR 2022 nao deve voltar.
+  assert.doesNotMatch(app, /btnAtualizarProfor2022/);
+  assert.doesNotMatch(app, /atualizarProfor2022ConsolidadoUI/);
+});
+
+test("server: recarga PAD nao chama DETRU/Transferegov e vice-versa", () => {
+  const server = ler("backend/server.js");
+  const blocoPad = server.slice(
+    server.indexOf("/api/profor-2022/pad/recarregar-operacional"),
+    server.indexOf("/api/profor-2022/pad/recarregar-operacional") + 1500
+  );
+  assert.doesNotMatch(blocoPad, /atualizarCacheDetruProfor2022/);
+  assert.doesNotMatch(blocoPad, /executarEtapaRendimentos/);
+  const blocoDetru = server.slice(
+    server.indexOf("/api/profor-2022/detru/atualizar"),
+    server.indexOf("/api/profor-2022/detru/atualizar") + 1500
+  );
+  assert.doesNotMatch(blocoDetru, /carregarPadsOperacional|recarregarPadsOperacional/);
 });
 
 test("scripts externos e agendador DETRU carregam guards antes das dependencias operacionais", () => {

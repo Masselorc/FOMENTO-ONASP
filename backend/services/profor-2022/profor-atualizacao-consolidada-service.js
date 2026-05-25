@@ -58,7 +58,11 @@ async function executarEtapaComProtecao(nome, fn) {
 
 async function executarEtapaRendimentos(opcoes = {}) {
   return executarEtapaComProtecao("rendimentos", async () => {
-    assertChamadaExternaPermitida("executarEtapaRendimentos", { tipo: "Transferegov" });
+    assertChamadaExternaPermitida("executarEtapaRendimentos", {
+      tipo: "Transferegov",
+      requisicaoLocal: opcoes.requisicaoLocal,
+      execucaoLocal: opcoes.execucaoLocal,
+    });
     const convenios = listarConveniosMonitorados({ incluirInativos: false });
     const intervaloMs = Number.isFinite(opcoes.intervaloEntreConsultasMs)
       ? Math.max(0, opcoes.intervaloEntreConsultasMs)

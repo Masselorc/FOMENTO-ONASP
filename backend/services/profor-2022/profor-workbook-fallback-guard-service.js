@@ -50,12 +50,18 @@ function erroGovernanca(mensagem, statusCode = 403) {
   return erro;
 }
 
+// Considera "execucao local" tanto chamadas vindas de localhost/127.0.0.1/::1
+// (sinalizadas pelo server via opcoes.requisicaoLocal) quanto execucoes via
+// CLI/scripts npm rodando na mesma maquina (sinalizadas via opcoes.execucaoLocal).
+function isExecucaoLocal(opcoes = {}) {
+  return Boolean(opcoes.execucaoLocal || opcoes.requisicaoLocal);
+}
+
 function assertEndpointAdminPermitido(contexto = "endpoint_admin", opcoes = {}) {
   const env = opcoes.env || process.env;
   if (isAmbienteProducao(env)) {
     throw erroGovernanca(
-      `[${contexto}] Endpoint administrativo PROFOR 2022 bloqueado em produção. ` +
-        `ALLOW_PROFOR_2022_ADMIN_ENDPOINTS não libera endpoints administrativos em produção.`
+      `[${contexto}] Endpoint administrativo PROFOR 2022 bloqueado em produção.`
     );
   }
 
@@ -65,11 +71,15 @@ function assertEndpointAdminPermitido(contexto = "endpoint_admin", opcoes = {}) 
     );
   }
 
+  // Em ambiente local (dev), o uso normal pelo proprio operador na maquina
+  // nao deve exigir flag. Liberamos sempre que a requisicao for local OU a
+  // flag historica ALLOW_PROFOR_2022_ADMIN_ENDPOINTS estiver setada.
+  if (isExecucaoLocal(opcoes)) return;
   if (flagAtiva(env, "ALLOW_PROFOR_2022_ADMIN_ENDPOINTS")) return;
 
   throw erroGovernanca(
-    `[${contexto}] Endpoint administrativo PROFOR 2022 bloqueado. ` +
-      `Para execução local controlada, defina ALLOW_PROFOR_2022_ADMIN_ENDPOINTS=1.`
+    `[${contexto}] Endpoint administrativo PROFOR 2022 bloqueado: requisição não local ` +
+      `e ALLOW_PROFOR_2022_ADMIN_ENDPOINTS=1 não definido.`
   );
 }
 
@@ -79,8 +89,7 @@ function assertChamadaExternaPermitida(contexto = "chamada_externa", opcoes = {}
 
   if (isAmbienteProducao(env)) {
     throw erroGovernanca(
-      `[${contexto}] Chamada externa ${tipo} bloqueada por política de governança em produção. ` +
-        `ALLOW_PROFOR_2022_EXTERNAL_CALLS não libera chamadas externas em produção.`
+      `[${contexto}] Chamada externa ${tipo} bloqueada por política de governança em produção.`
     );
   }
 
@@ -90,11 +99,14 @@ function assertChamadaExternaPermitida(contexto = "chamada_externa", opcoes = {}
     );
   }
 
+  // Uso local normal (operador na maquina/dev) nao deve exigir flag. A flag
+  // historica ALLOW_PROFOR_2022_EXTERNAL_CALLS continua valida como fallback.
+  if (isExecucaoLocal(opcoes)) return;
   if (flagAtiva(env, "ALLOW_PROFOR_2022_EXTERNAL_CALLS")) return;
 
   throw erroGovernanca(
-    `[${contexto}] Chamada externa ${tipo} bloqueada por política de governança. ` +
-      `Para execução local controlada, defina ALLOW_PROFOR_2022_EXTERNAL_CALLS=1.`
+    `[${contexto}] Chamada externa ${tipo} bloqueada por política de governança: ` +
+      `requisição não local e ALLOW_PROFOR_2022_EXTERNAL_CALLS=1 não definido.`
   );
 }
 
@@ -123,6 +135,7 @@ function assertAgendadorPermitido(contexto = "agendador", opcoes = {}) {
 module.exports = {
   isAmbienteProducao,
   isAmbienteTeste,
+  isExecucaoLocal,
   assertEndpointAdminPermitido,
   assertChamadaExternaPermitida,
   assertAgendadorPermitido,

@@ -37,6 +37,7 @@ async function executar() {
   try {
     assertChamadaExternaPermitida("script_atualizar_rendimentos_transferegov_profor_2022", {
       tipo: "Transferegov",
+      execucaoLocal: true,
     });
 
     const { inicializarBanco } = require("../db/init-db");

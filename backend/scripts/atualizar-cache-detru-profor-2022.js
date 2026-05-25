@@ -13,7 +13,7 @@ const {
 
 async function executar() {
   try {
-    assertChamadaExternaPermitida("script_atualizar_cache_detru_profor_2022", { tipo: "DETRU" });
+    assertChamadaExternaPermitida("script_atualizar_cache_detru_profor_2022", { tipo: "DETRU", execucaoLocal: true });
 
     const { inicializarBanco } = require("../db/init-db");
     const {

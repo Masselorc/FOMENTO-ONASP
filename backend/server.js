@@ -130,6 +130,21 @@ const EXTENSOES_ESTATICAS_BLOQUEADAS = [
   ".log"
 ];
 
+// Considera local apenas requisicoes vindas de loopback (localhost, 127.0.0.1, ::1).
+// Cabecalhos como X-Forwarded-For sao ignorados de proposito, para que o sinal
+// nao possa ser forjado por proxies.
+function ehRequisicaoLocal(req) {
+  try {
+    const ip = String(req?.socket?.remoteAddress || "").toLowerCase();
+    if (!ip) return false;
+    if (ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1") return true;
+    if (ip === "localhost") return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 function enviarJson(res, statusCode, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, {
@@ -608,8 +623,9 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/detru/atualizar") {
       const body = await lerJsonBody(req);
       try {
-        assertEndpointAdminPermitido("api_profor_2022_detru_atualizar");
-        assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU" });
+        const requisicaoLocal = ehRequisicaoLocal(req);
+        assertEndpointAdminPermitido("api_profor_2022_detru_atualizar", { requisicaoLocal });
+        assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU", requisicaoLocal });
         const resultado = await atualizarCacheDetruProfor2022(body || {});
         const ultimaAtualizacao = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
         enviarJson(res, 200, {
@@ -645,11 +661,13 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/rendimentos/atualizar") {
       const body = await lerJsonBody(req);
       try {
-        assertEndpointAdminPermitido("api_profor_2022_rendimentos_atualizar");
+        const requisicaoLocal = ehRequisicaoLocal(req);
+        assertEndpointAdminPermitido("api_profor_2022_rendimentos_atualizar", { requisicaoLocal });
         assertChamadaExternaPermitida("api_profor_2022_rendimentos_atualizar", {
           tipo: "Transferegov",
+          requisicaoLocal,
         });
-        const resultado = await executarEtapaRendimentos(body || {});
+        const resultado = await executarEtapaRendimentos({ ...(body || {}), requisicaoLocal });
         enviarJson(res, 200, {
           success: resultado.sucesso,
           message: resultado.sucesso
