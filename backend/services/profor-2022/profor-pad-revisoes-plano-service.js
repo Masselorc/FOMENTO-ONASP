@@ -151,8 +151,9 @@ function criarMaeDeGrupo(grupo, filhos) {
 function criarMaeOcorrencia(item, tipo, status) {
   const uf = normalizarUf(item.uf);
   const quantidadeOriginal = arredondar(item.quantidade ?? item.quantidadeOriginal ?? 0, 6);
-  const valorUnitario = obterValorUnitario(item, quantidadeOriginal, item.valorTotalOriginal ?? item.valorPrevisto);
-  const valorTotalOriginal = arredondar(item.valorTotalOriginal ?? item.valorPrevisto ?? quantidadeOriginal * valorUnitario);
+  const valorTotalReferencia = item.valorTotalOriginal ?? item.valorTotalPrevisto ?? item.valorPrevisto;
+  const valorUnitario = obterValorUnitario(item, quantidadeOriginal, valorTotalReferencia);
+  const valorTotalOriginal = arredondar(valorTotalReferencia ?? quantidadeOriginal * valorUnitario);
   const id = `mae-${tipo.toLowerCase()}-${hashCurto([
     item.numeroConvenio,
     uf,

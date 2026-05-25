@@ -10649,7 +10649,7 @@ table.dataTable thead th {
 }
 
 .revisao-pad-area-select {
-    min-width: 150px;
+    min-width: 110px;
 }
 
 .revisao-pad-rateio-editor {
@@ -10671,26 +10671,35 @@ table.dataTable thead th {
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table {
-    min-width: 1400px;
     width: 100%;
+    table-layout: auto;
+    font-size: 0.82rem;
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table th,
 #view-revisao-divergencias .revisao-pad-plano-table td {
     vertical-align: top;
+    padding: 0.4rem 0.5rem;
+    white-space: nowrap;
 }
 
+/* Apenas a coluna Descrição (3ª) pode quebrar linha. */
 #view-revisao-divergencias .revisao-pad-plano-table th:nth-child(3),
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(3) {
-    min-width: 260px;
+    min-width: 180px;
     white-space: normal;
     overflow-wrap: anywhere;
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table th:last-child,
 #view-revisao-divergencias .revisao-pad-plano-table td:last-child {
-    min-width: 200px;
+    width: 1%;
     white-space: nowrap;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select {
+    min-width: 0;
+    width: 100%;
 }
 
 /* Linha de detalhe expandida (acordeão) dentro da tabela de revisão. */

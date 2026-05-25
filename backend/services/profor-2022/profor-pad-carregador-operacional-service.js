@@ -38,8 +38,51 @@ function carregarMemoriaRateios() {
   return porItem;
 }
 
-function montarRegistro({ tipo, nivel = "impeditivo", numeroConvenio = null, uf = null, descricao = null, chaveItem = null, detalhe }) {
-  return { tipo, nivel, numeroConvenio, uf, descricao, chaveItem, detalhe };
+function montarRegistro({
+  tipo,
+  nivel = "impeditivo",
+  numeroConvenio = null,
+  uf = null,
+  descricao = null,
+  chaveItem = null,
+  detalhe,
+  natureza = null,
+  codigoNaturezaDespesa = null,
+  quantidade = null,
+  valorUnitario = null,
+  valorTotalPrevisto = null,
+  valorTotalExecutado = null,
+  itemConhecidoId = null,
+}) {
+  return {
+    tipo,
+    nivel,
+    numeroConvenio,
+    uf,
+    descricao,
+    chaveItem,
+    detalhe,
+    natureza,
+    codigoNaturezaDespesa,
+    quantidade,
+    valorUnitario,
+    valorTotalPrevisto,
+    valorTotalExecutado,
+    itemConhecidoId,
+  };
+}
+
+function dadosOriginaisDoItemPad(item) {
+  if (!item) return {};
+  return {
+    natureza: item.natureza ?? null,
+    codigoNaturezaDespesa: item.codigoNaturezaDespesa ?? item.codigoNatureza ?? null,
+    quantidade: item.quantidade ?? null,
+    valorUnitario: item.valorUnitario ?? null,
+    valorTotalPrevisto: item.valorTotalPrevisto ?? item.valorPrevisto ?? null,
+    valorTotalExecutado: item.valorTotalExecutado ?? null,
+    itemConhecidoId: item.itemConhecidoId ?? null,
+  };
 }
 
 function rateioTemPesoOperacional(rateios) {
@@ -205,6 +248,7 @@ function carregarPadsOperacional(opcoes = {}) {
         descricao: item.descricaoOriginal,
         chaveItem: item.chaveItem,
         detalhe: "Item PAD reconhecido, mas sem rateio ativo memorizado.",
+        ...dadosOriginaisDoItemPad(item),
       }));
       continue;
     }
@@ -252,6 +296,7 @@ function carregarPadsOperacional(opcoes = {}) {
       detalhe: item.motivo
         ? `Item PAD sem rateio memorizado (${item.motivo}).`
         : "Item PAD sem rateio memorizado.",
+      ...dadosOriginaisDoItemPad(item),
     }));
   }
 

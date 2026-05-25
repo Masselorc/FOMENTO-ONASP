@@ -30,6 +30,7 @@ function itemPad(overrides = {}) {
     valorTotalExecutado: overrides.valorTotalExecutado ?? 100,
     valorUnitario: overrides.valorUnitario ?? 100,
     natureza: overrides.natureza || "CUSTEIO",
+    codigoNaturezaDespesa: overrides.codigoNaturezaDespesa || "339030",
     aptoParaImportacaoFutura: true,
   };
 }
@@ -114,6 +115,63 @@ test("item novo sem rateio gera pendencia operacional", () => {
 
   assert.equal(resultado.itensNovosSemRateio, 1);
   assert.ok(resultado.impedimentos.some((item) => item.tipo === "item_novo_sem_rateio_memorizado"));
+});
+
+test("item_novo_sem_rateio_memorizado preserva quantidade, valor e natureza do PAD", () => {
+  const novo = itemPad({
+    itemConhecidoId: null,
+    descricaoOriginal: "Computador Desktop completo",
+    chaveItem: "900001::computador",
+    quantidade: 2,
+    valorUnitario: 6552.67,
+    valorTotalPrevisto: 13105.34,
+    natureza: "CAPITAL",
+    codigoNaturezaDespesa: "44905200",
+  });
+  const resultado = executar({
+    conferencia: conferencia({
+      itensPadReconhecidos: [],
+      itensPadSemRateio: [novo],
+      totalItensPadComRateio: 0,
+      totalItensPadSemRateio: 1,
+    }),
+  });
+
+  const impedimento = resultado.impedimentos.find((i) => i.tipo === "item_novo_sem_rateio_memorizado");
+  assert.ok(impedimento);
+  assert.equal(impedimento.quantidade, 2);
+  assert.equal(impedimento.valorUnitario, 6552.67);
+  assert.equal(impedimento.valorTotalPrevisto, 13105.34);
+  assert.equal(impedimento.natureza, "CAPITAL");
+  assert.equal(impedimento.codigoNaturezaDespesa, "44905200");
+  assert.equal(impedimento.descricao, "Computador Desktop completo");
+});
+
+test("item_pad_sem_rateio_memorizado preserva quantidade, valor e natureza do PAD", () => {
+  const item = itemPad({
+    itemConhecidoId: 7,
+    descricaoOriginal: "Curso de Edição de Vídeos",
+    chaveItem: "900001::curso-edicao",
+    quantidade: 1,
+    valorUnitario: 14700,
+    valorTotalPrevisto: 14700,
+    natureza: "CUSTEIO",
+    codigoNaturezaDespesa: "33903999",
+  });
+  const resultado = executar({
+    rateios: new Map(),
+    conferencia: conferencia({
+      itensPadReconhecidos: [item],
+      totalItensPadComRateio: 1,
+    }),
+  });
+
+  const impedimento = resultado.impedimentos.find((i) => i.tipo === "item_pad_sem_rateio_memorizado");
+  assert.ok(impedimento);
+  assert.equal(impedimento.quantidade, 1);
+  assert.equal(impedimento.valorUnitario, 14700);
+  assert.equal(impedimento.natureza, "CUSTEIO");
+  assert.equal(impedimento.codigoNaturezaDespesa, "33903999");
 });
 
 test("item suprimido historico nao gera erro indevido", () => {

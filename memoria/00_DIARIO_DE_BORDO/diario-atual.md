@@ -7281,3 +7281,18 @@ Logs operacionais gravados:
 - Preservações: sem Playwright/E2E, sem publicação, sem alteração em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM direto, DETRU/Transferegov, autenticação ou planilha antiga.
 - Risco: mudanças salvam memória operacional local; deve-se testar manualmente com item de baixa criticidade antes de uso massivo.
 - Rollback: reverter o commit da alteração; endpoints e autosave deixam de existir e a tela volta ao comportamento anterior.
+
+---
+
+## 25/05/2026 - PROFOR 2022: preservar valores do PAD em itens sem rateio
+
+- Branch: `main`.
+- Problema: na Tela de Revisões PAD, itens sem rateio apareciam com Natureza `NAO_INFORMADO`, Código `N/A`, Quantidade `0` e Valores `R$ 0,00`, mesmo vindo do PAD com dados completos.
+- Causa: `montarRegistro` no carregador descartava `quantidade`, `valorUnitario`, `valorTotalPrevisto`, `natureza` e `codigoNaturezaDespesa` dos itens conferidos. A linha-mãe/filha pendente em `revisoes-plano-service` então caía em zeros.
+- Arquivos: `backend/services/profor-2022/profor-pad-carregador-operacional-service.js`, `backend/services/profor-2022/profor-pad-revisoes-plano-service.js`, `frontend/css/app.css`, `tests/services/profor-pad-carregador-operacional.test.js`, `tests/services/profor-pad-revisoes-plano.test.js`.
+- Correção: `montarRegistro` passou a aceitar e propagar campos materiais do PAD; helper `dadosOriginaisDoItemPad` aplicado em `item_pad_sem_rateio_memorizado` e `item_novo_sem_rateio_memorizado`; `criarMaeOcorrencia` agora aceita também `valorTotalPrevisto` como referência. Nenhum rateio inventado — a filha continua com `area=NAO_CLASSIFICADO`/`AREA_NAO_CLASSIFICADA`.
+- UX: removido `min-width: 1400px` da `revisao-pad-plano-table` e ajustado wrapping para que só a coluna Descrição quebre linha; valores monetários ficam em `nowrap` para não serem cortados.
+- Validações: `node --check` em ambos services; `node --test` nos dois arquivos de teste (9+9 passando); `npm run validar:syntax` (105 arquivos OK); `git diff --check`.
+- Preservações: sem Playwright/E2E, sem publicação, sem alteração em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU/Transferegov, autenticação, planilha antiga, xlsx ou rateio inventado.
+- Risco: baixo — apenas propaga campos já lidos pelo matching service; a regra de pendência (`AREA_NAO_CLASSIFICADA`) permanece intacta.
+- Rollback: reverter o commit; a tela volta a exibir zeros nos itens sem rateio.

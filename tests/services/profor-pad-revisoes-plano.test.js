@@ -143,6 +143,51 @@ test("nenhuma origem antiga e chamada pelo servico", () => {
   assert.equal(source.includes("comparar-origens"), false);
 });
 
+test("mae e filha pendente preservam quantidade, valor e natureza do PAD", () => {
+  const resultado = montarRevisoesPlanoPad({ recarga: recargaBase() });
+  const mae = resultado.linhasMae.DF.find((linha) => linha.tipo === "ITEM_NOVO");
+  const filha = resultado.linhasFilhas.DF.find((linha) => linha.parentId === mae.id);
+
+  assert.equal(mae.quantidadeOriginal, 1);
+  assert.equal(mae.valorUnitario, 10000);
+  assert.equal(mae.valorTotalOriginal, 10000);
+  assert.equal(mae.natureza, "CAPITAL");
+  assert.equal(mae.codigoNatureza, "449052");
+  assert.equal(mae.descricao, "Drone novo");
+
+  assert.equal(filha.quantidade, 1);
+  assert.equal(filha.valorUnitario, 10000);
+  assert.equal(filha.valorTotal, 10000);
+  assert.equal(filha.natureza, "CAPITAL");
+  assert.equal(filha.codigoNatureza, "449052");
+  assert.equal(filha.area, "NAO_CLASSIFICADO");
+  assert.equal(filha.status, "AREA_NAO_CLASSIFICADA");
+});
+
+test("mae e filha pendente aceitam valorTotalPrevisto quando o impedimento usa esse nome", () => {
+  const recarga = recargaBase();
+  recarga.impedimentos = [{
+    tipo: "item_pad_sem_rateio_memorizado",
+    uf: "DF",
+    numeroConvenio: "900001",
+    descricao: "Computador Desktop completo",
+    natureza: "CAPITAL",
+    codigoNaturezaDespesa: "44905200",
+    quantidade: 2,
+    valorUnitario: 6552.67,
+    valorTotalPrevisto: 13105.34,
+    chaveItem: "900001::computador",
+    detalhe: "Item PAD reconhecido, mas sem rateio ativo memorizado.",
+  }];
+  const resultado = montarRevisoesPlanoPad({ recarga });
+  const mae = resultado.linhasMae.DF.find((linha) => linha.descricao === "Computador Desktop completo");
+  assert.ok(mae);
+  assert.equal(mae.quantidadeOriginal, 2);
+  assert.equal(mae.valorUnitario, 6552.67);
+  assert.equal(mae.valorTotalOriginal, 13105.34);
+  assert.equal(mae.codigoNatureza, "44905200");
+});
+
 test("nenhum rateio e inventado", () => {
   const resultado = montarRevisoesPlanoPad({ recarga: recargaBase() });
   const nova = resultado.linhasFilhas.DF.find((linha) => linha.origem === "PENDENCIA_OPERACIONAL");

@@ -1,5 +1,5 @@
 {
-  "dataHora": "2026-05-25T14:49:02.601Z",
+  "dataHora": "2026-05-25T15:32:56.452Z",
   "sucesso": false,
   "aptoParaUsoLocal": false,
   "aptoParaPublicacao": false,
@@ -30,7 +30,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Quantidade (5700) x valor unitário (7.32) = 41724, diverge do valor total previsto informado (41743)."
+      "detalhe": "Quantidade (5700) x valor unitário (7.32) = 41724, diverge do valor total previsto informado (41743).",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "quantidade_valor_unitario_inconsistente",
@@ -39,7 +46,14 @@
       "uf": null,
       "descricao": null,
       "chaveItem": null,
-      "detalhe": "Quantidade (5713) x valor unitário (4.12) = 23537.56, diverge do valor total previsto informado (23556.6)."
+      "detalhe": "Quantidade (5713) x valor unitário (4.12) = 23537.56, diverge do valor total previsto informado (23556.6).",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -48,7 +62,14 @@
       "uf": "AC",
       "descricao": "Contratação de 01 (um) Supervisor por 12",
       "chaveItem": "937782::CONTRATACAO DE 01 (UM) SUPERVISOR POR 12",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CUSTEIO",
+      "codigoNaturezaDespesa": "33903799",
+      "quantidade": 12,
+      "valorUnitario": 7461,
+      "valorTotalPrevisto": 89532,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -57,7 +78,14 @@
       "uf": "AC",
       "descricao": "Contratação de 02 (dois) Auxiliares Admi",
       "chaveItem": "937782::CONTRATACAO DE 02 (DOIS) AUXILIARES ADMI",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CUSTEIO",
+      "codigoNaturezaDespesa": "33903799",
+      "quantidade": 12,
+      "valorUnitario": 8514,
+      "valorTotalPrevisto": 102168,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -66,7 +94,14 @@
       "uf": "AC",
       "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
       "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905200",
+      "quantidade": 2,
+      "valorUnitario": 3599.99,
+      "valorTotalPrevisto": 7199.98,
+      "valorTotalExecutado": 6229.86,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -75,7 +110,14 @@
       "uf": "MS",
       "descricao": "Meia militar",
       "chaveItem": "937265::MEIA MILITAR",
-      "detalhe": "Item PAD sem rateio memorizado (descricao_original_divergente_da_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (descricao_original_divergente_da_memoria_rateio).",
+      "natureza": "CUSTEIO",
+      "codigoNaturezaDespesa": "33903099",
+      "quantidade": 57,
+      "valorUnitario": 37.59,
+      "valorTotalPrevisto": 2142.35,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -84,7 +126,14 @@
       "uf": "AL",
       "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 9501,
+      "valorTotalPrevisto": 9501,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -93,7 +142,14 @@
       "uf": "AL",
       "descricao": "Ar condicionado split, capacidade de 12.",
       "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 2,
+      "valorUnitario": 1870,
+      "valorTotalPrevisto": 3740,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -102,7 +158,14 @@
       "uf": "AL",
       "descricao": "Ar condicionado tipo split, capacidade 3",
       "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 4560,
+      "valorTotalPrevisto": 4560,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -111,7 +174,14 @@
       "uf": "AL",
       "descricao": "Ar-condicionado tipo Split, capacidade d",
       "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 2,
+      "valorUnitario": 1349.62,
+      "valorTotalPrevisto": 2699.24,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -120,7 +190,14 @@
       "uf": "AL",
       "descricao": "Cafeteira elétrica 1,0 litros bivolt",
       "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 2,
+      "valorUnitario": 300,
+      "valorTotalPrevisto": 600,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -129,7 +206,14 @@
       "uf": "AL",
       "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
       "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 3,
+      "valorUnitario": 8106.75,
+      "valorTotalPrevisto": 24320.25,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -138,7 +222,14 @@
       "uf": "AL",
       "descricao": "Equipamentos de rede (switches e roteado",
       "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 3,
+      "valorUnitario": 350,
+      "valorTotalPrevisto": 1050,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -147,7 +238,14 @@
       "uf": "AL",
       "descricao": "Forno de Micro-ondas a partir de- 32 lit",
       "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 726,
+      "valorTotalPrevisto": 726,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -156,7 +254,14 @@
       "uf": "AL",
       "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
       "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 500,
+      "valorTotalPrevisto": 500,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -165,7 +270,14 @@
       "uf": "AL",
       "descricao": "Fragmentadora e papel - Corregedoria",
       "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 2,
+      "valorUnitario": 1710,
+      "valorTotalPrevisto": 3420,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -174,7 +286,14 @@
       "uf": "AL",
       "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
       "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 800,
+      "valorTotalPrevisto": 800,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -183,7 +302,14 @@
       "uf": "AL",
       "descricao": "Impressora multifuncional (OUVIDORIA)",
       "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 2,
+      "valorUnitario": 3050,
+      "valorTotalPrevisto": 6100,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -192,7 +318,14 @@
       "uf": "AL",
       "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
       "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 6,
+      "valorUnitario": 700,
+      "valorTotalPrevisto": 4200,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -201,7 +334,14 @@
       "uf": "AL",
       "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
       "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 4,
+      "valorUnitario": 5500,
+      "valorTotalPrevisto": 22000,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -210,7 +350,14 @@
       "uf": "AL",
       "descricao": "Quadro Lousa branca",
       "chaveItem": "937221::QUADRO LOUSA BRANCA",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 3,
+      "valorUnitario": 1065.4,
+      "valorTotalPrevisto": 3196.2,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -219,7 +366,14 @@
       "uf": "AL",
       "descricao": "Refrigerador frigobar, com capacidade no",
       "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 2,
+      "valorUnitario": 1422,
+      "valorTotalPrevisto": 2844,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -228,7 +382,14 @@
       "uf": "AL",
       "descricao": "Saldo Residual",
       "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 9506.54,
+      "valorTotalPrevisto": 9506.54,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -237,7 +398,14 @@
       "uf": "AL",
       "descricao": "Televisão Smart LED, mínimo de 50 polega",
       "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 2000,
+      "valorTotalPrevisto": 2000,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -246,7 +414,14 @@
       "uf": "AL",
       "descricao": "Televisão smart LED, minimo de 50 polegadas",
       "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 3,
+      "valorUnitario": 2174.86,
+      "valorTotalPrevisto": 6524.58,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_novo_sem_rateio_memorizado",
@@ -255,7 +430,14 @@
       "uf": "AL",
       "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
       "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
-      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio)."
+      "detalhe": "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+      "natureza": "CAPITAL",
+      "codigoNaturezaDespesa": "44905299",
+      "quantidade": 1,
+      "valorUnitario": 1254.79,
+      "valorTotalPrevisto": 1254.79,
+      "valorTotalExecutado": 0,
+      "itemConhecidoId": null
     }
   ],
   "alertas": [
@@ -383,7 +565,14 @@
       "uf": "AL",
       "descricao": "Ar condicionado Split 24000 BTUs (CORREG",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -392,7 +581,14 @@
       "uf": "AL",
       "descricao": "Ar condicionado Split 36000 BTUs (ESCOLA)",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -401,7 +597,14 @@
       "uf": "AL",
       "descricao": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
       "chaveItem": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -410,7 +613,14 @@
       "uf": "AL",
       "descricao": "Cadeira Longarina plástica 03 Lugares -",
       "chaveItem": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -419,7 +629,14 @@
       "uf": "AL",
       "descricao": "Cadeira Secretária Fixa, Preta, pé palit",
       "chaveItem": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -428,7 +645,14 @@
       "uf": "AL",
       "descricao": "Cafeteira Elétrica Tradicional Industria",
       "chaveItem": "937221::CAFETEIRA ELETRICA TRADICIONAL INDUSTRIA",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -437,7 +661,14 @@
       "uf": "AL",
       "descricao": "Computador Desktop (OUVIDORIA)",
       "chaveItem": "937221::COMPUTADOR DESKTOP (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -446,7 +677,14 @@
       "uf": "AL",
       "descricao": "Forno de Microondas - 20L Branco (OUVID",
       "chaveItem": "937221::FORNO DE MICROONDAS - 20L BRANCO (OUVID",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -455,7 +693,14 @@
       "uf": "AL",
       "descricao": "Forno de Microondas - 32 litros - Branco",
       "chaveItem": "937221::FORNO DE MICROONDAS - 32 LITROS - BRANCO",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -464,7 +709,14 @@
       "uf": "AL",
       "descricao": "Frigobar 71L (OUVIDORIA)",
       "chaveItem": "937221::FRIGOBAR 71L (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -473,7 +725,14 @@
       "uf": "AL",
       "descricao": "Geladeira frost free duplex 400 litros (",
       "chaveItem": "937221::GELADEIRA FROST FREE DUPLEX 400 LITROS (",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -482,7 +741,14 @@
       "uf": "AL",
       "descricao": "Gravador de áudio digital 32GB (OUVIDORIA)",
       "chaveItem": "937221::GRAVADOR DE AUDIO DIGITAL 32GB (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -491,7 +757,14 @@
       "uf": "AL",
       "descricao": "HD Externo 2TB (OUVIDORIA)",
       "chaveItem": "937221::HD EXTERNO 2TB (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -500,7 +773,14 @@
       "uf": "AL",
       "descricao": "Impressora multifuncional Tanque de Tin",
       "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL TANQUE DE TIN",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -509,7 +789,14 @@
       "uf": "AL",
       "descricao": "Kit videoconferência (CORREGEDORIA - 03",
       "chaveItem": "937221::KIT VIDEOCONFERENCIA (CORREGEDORIA - 03",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -518,7 +805,14 @@
       "uf": "AL",
       "descricao": "Mesa Escritório REDONDA - 1,20m (OUVIDORIA)",
       "chaveItem": "937221::MESA ESCRITORIO REDONDA - 1,20M (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -527,7 +821,14 @@
       "uf": "AL",
       "descricao": "Nobreak 1200VA (OUVIDORIA)",
       "chaveItem": "937221::NOBREAK 1200VA (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -536,7 +837,14 @@
       "uf": "AL",
       "descricao": "Notebook (OUVIDORIA)",
       "chaveItem": "937221::NOTEBOOK (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -545,7 +853,14 @@
       "uf": "AL",
       "descricao": "Pen drive 64Gb (OUVIDORIA)",
       "chaveItem": "937221::PEN DRIVE 64GB (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -554,7 +869,14 @@
       "uf": "AL",
       "descricao": "Poltronas (CORREGEDORIA)",
       "chaveItem": "937221::POLTRONAS (CORREGEDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -563,7 +885,14 @@
       "uf": "AL",
       "descricao": "Projetor Multimídia 3.000 lumens (OUVIDORIA)",
       "chaveItem": "937221::PROJETOR MULTIMIDIA 3.000 LUMENS (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -572,7 +901,14 @@
       "uf": "AL",
       "descricao": "Quadro lousa branca 250x120cm (ESCOLA)",
       "chaveItem": "937221::QUADRO LOUSA BRANCA 250X120CM (ESCOLA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -581,7 +917,14 @@
       "uf": "AL",
       "descricao": "Tela de projeção 2x2 retrátil com tripé",
       "chaveItem": "937221::TELA DE PROJECAO 2X2 RETRATIL COM TRIPE",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -590,7 +933,14 @@
       "uf": "AL",
       "descricao": "Televisão 50 (CORREGEDORIA - 03 UN. E OU",
       "chaveItem": "937221::TELEVISAO 50 (CORREGEDORIA - 03 UN. E OU",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -599,7 +949,14 @@
       "uf": "AL",
       "descricao": "Webcam full HD (OUVIDORIA)",
       "chaveItem": "937221::WEBCAM FULL HD (OUVIDORIA)",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -608,7 +965,14 @@
       "uf": "AC",
       "descricao": "Contratação de Bolsa - Aluno Ouvidoria I",
       "chaveItem": "937782::CONTRATACAO DE BOLSA - ALUNO OUVIDORIA I",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -617,7 +981,14 @@
       "uf": "AC",
       "descricao": "Contratação de Bolsa -Coordenador Ouvid",
       "chaveItem": "937782::CONTRATACAO DE BOLSA -COORDENADOR OUVID",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -626,7 +997,14 @@
       "uf": "AC",
       "descricao": "Contratação de Bolsa -Pesquisador Ouvid",
       "chaveItem": "937782::CONTRATACAO DE BOLSA -PESQUISADOR OUVID",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     },
     {
       "tipo": "item_suprimido_historico",
@@ -635,7 +1013,14 @@
       "uf": "AC",
       "descricao": "Notebook 4 núcleos 2.4ghz ram ddr 4 8gb",
       "chaveItem": "937782::NOTEBOOK 4 NUCLEOS 2.4GHZ RAM DDR 4 8GB",
-      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+      "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+      "natureza": null,
+      "codigoNaturezaDespesa": null,
+      "quantidade": null,
+      "valorUnitario": null,
+      "valorTotalPrevisto": null,
+      "valorTotalExecutado": null,
+      "itemConhecidoId": null
     }
   ],
   "alertasAgrupados": [
@@ -837,7 +1222,14 @@
           "uf": "AL",
           "descricao": "Ar condicionado Split 24000 BTUs (CORREG",
           "chaveItem": "937221::AR CONDICIONADO SPLIT 24000 BTUS (CORREG",
-          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+          "natureza": null,
+          "codigoNaturezaDespesa": null,
+          "quantidade": null,
+          "valorUnitario": null,
+          "valorTotalPrevisto": null,
+          "valorTotalExecutado": null,
+          "itemConhecidoId": null
         },
         {
           "tipo": "item_suprimido_historico",
@@ -846,7 +1238,14 @@
           "uf": "AL",
           "descricao": "Ar condicionado Split 36000 BTUs (ESCOLA)",
           "chaveItem": "937221::AR CONDICIONADO SPLIT 36000 BTUS (ESCOLA)",
-          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+          "natureza": null,
+          "codigoNaturezaDespesa": null,
+          "quantidade": null,
+          "valorUnitario": null,
+          "valorTotalPrevisto": null,
+          "valorTotalExecutado": null,
+          "itemConhecidoId": null
         },
         {
           "tipo": "item_suprimido_historico",
@@ -855,7 +1254,14 @@
           "uf": "AL",
           "descricao": "Ar Condicionado Split 9000 BTUs (OUVIDORIA)",
           "chaveItem": "937221::AR CONDICIONADO SPLIT 9000 BTUS (OUVIDORIA)",
-          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+          "natureza": null,
+          "codigoNaturezaDespesa": null,
+          "quantidade": null,
+          "valorUnitario": null,
+          "valorTotalPrevisto": null,
+          "valorTotalExecutado": null,
+          "itemConhecidoId": null
         },
         {
           "tipo": "item_suprimido_historico",
@@ -864,7 +1270,14 @@
           "uf": "AL",
           "descricao": "Cadeira Longarina plástica 03 Lugares -",
           "chaveItem": "937221::CADEIRA LONGARINA PLASTICA 03 LUGARES -",
-          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+          "natureza": null,
+          "codigoNaturezaDespesa": null,
+          "quantidade": null,
+          "valorUnitario": null,
+          "valorTotalPrevisto": null,
+          "valorTotalExecutado": null,
+          "itemConhecidoId": null
         },
         {
           "tipo": "item_suprimido_historico",
@@ -873,7 +1286,14 @@
           "uf": "AL",
           "descricao": "Cadeira Secretária Fixa, Preta, pé palit",
           "chaveItem": "937221::CADEIRA SECRETARIA FIXA, PRETA, PE PALIT",
-          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico."
+          "detalhe": "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
+          "natureza": null,
+          "codigoNaturezaDespesa": null,
+          "quantidade": null,
+          "valorUnitario": null,
+          "valorTotalPrevisto": null,
+          "valorTotalExecutado": null,
+          "itemConhecidoId": null
         }
       ]
     },
