@@ -3942,8 +3942,15 @@ async function carregarLogoParaPDF() {
             if (filtros.natureza && linha.natureza !== filtros.natureza) return false;
             if (filtros.area && !filhas.some((filha) => filha.area === filtros.area)) return false;
             if (filtros.texto) {
-                const texto = normalizarTexto(`${linha.descricao} ${linha.numeroConvenio} ${linha.codigoNatureza}`);
-                if (!texto.includes(normalizarTexto(filtros.texto))) return false;
+                const partes = [
+                    linha.descricao,
+                    linha.numeroConvenio,
+                    linha.codigoNatureza,
+                    linha.natureza,
+                    linha.status,
+                    ...filhas.flatMap((filha) => [filha.descricao, filha.area, filha.codigoNatureza, filha.status])
+                ].filter(Boolean).join(' ');
+                if (!normalizarTexto(partes).includes(normalizarTexto(filtros.texto))) return false;
             }
             return true;
         }
@@ -4065,19 +4072,25 @@ async function carregarLogoParaPDF() {
             `;
         }
 
-        function renderTabelaRevisoesPad() {
-            const uf = revisoesPlanoPadEstado.ufSelecionada;
-            const linhas = (revisoesPlanoPadEstado.dados?.linhasMae?.[uf] || []).filter(linhaMaePassaFiltrosRevisaoPad);
-            if (!uf) return '<div class="revisao-detail-panel text-muted">Selecione uma UF.</div>';
-            const corpo = linhas.flatMap((linha) => {
-                const partes = [renderLinhaMaeRevisaoPad(linha)];
-                const filhas = obterFilhasRevisaoPad(linha.id);
-                const mesclada = filhas.length === 1 && linha.tipo !== 'ITEM_SUPRIMIDO';
-                if (!mesclada && revisoesPlanoPadEstado.expandidos.has(linha.id)) {
-                    partes.push(...filhas.map(renderLinhaFilhaRevisaoPad));
-                }
-                return partes;
-            }).join('');
+        function renderCorpoLinhasRevisaoPadParaUf(uf, linhas) {
+            const ufAnterior = revisoesPlanoPadEstado.ufSelecionada;
+            revisoesPlanoPadEstado.ufSelecionada = uf;
+            try {
+                return linhas.flatMap((linha) => {
+                    const partes = [renderLinhaMaeRevisaoPad(linha)];
+                    const filhas = obterFilhasRevisaoPad(linha.id);
+                    const mesclada = filhas.length === 1 && linha.tipo !== 'ITEM_SUPRIMIDO';
+                    if (!mesclada && revisoesPlanoPadEstado.expandidos.has(linha.id)) {
+                        partes.push(...filhas.map(renderLinhaFilhaRevisaoPad));
+                    }
+                    return partes;
+                }).join('');
+            } finally {
+                revisoesPlanoPadEstado.ufSelecionada = ufAnterior;
+            }
+        }
+
+        function renderTabelaRevisoesPadHtml(corpo) {
             return `
                 <section class="revisao-panel mb-4">
                     <div class="table-responsive">
@@ -4093,6 +4106,39 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
             `;
+        }
+
+        function renderTabelaRevisoesPad() {
+            const texto = String(revisoesPlanoPadEstado.filtros?.texto || '').trim();
+            // Busca textual age sobre todos os convenios/UFs.
+            if (texto) {
+                const ufs = revisoesPlanoPadEstado.dados?.ufs || [];
+                const blocos = ufs.map((uf) => {
+                    const ufAnterior = revisoesPlanoPadEstado.ufSelecionada;
+                    revisoesPlanoPadEstado.ufSelecionada = uf;
+                    try {
+                        const linhas = (revisoesPlanoPadEstado.dados?.linhasMae?.[uf] || []).filter(linhaMaePassaFiltrosRevisaoPad);
+                        if (!linhas.length) return '';
+                        const corpo = renderCorpoLinhasRevisaoPadParaUf(uf, linhas);
+                        return `
+                            <div class="revisao-pad-bloco-uf">
+                                <h5 class="revisao-pad-bloco-uf-titulo">${escapeHtml(uf)} <span class="badge text-bg-secondary">${linhas.length}</span></h5>
+                                ${renderTabelaRevisoesPadHtml(corpo)}
+                            </div>
+                        `;
+                    } finally {
+                        revisoesPlanoPadEstado.ufSelecionada = ufAnterior;
+                    }
+                }).filter(Boolean);
+                if (!blocos.length) return renderTabelaRevisoesPadHtml('');
+                return blocos.join('');
+            }
+
+            const uf = revisoesPlanoPadEstado.ufSelecionada;
+            if (!uf) return '<div class="revisao-detail-panel text-muted">Selecione uma UF.</div>';
+            const linhas = (revisoesPlanoPadEstado.dados?.linhasMae?.[uf] || []).filter(linhaMaePassaFiltrosRevisaoPad);
+            const corpo = renderCorpoLinhasRevisaoPadParaUf(uf, linhas);
+            return renderTabelaRevisoesPadHtml(corpo);
         }
 
         function atualizarRevisoesPlanoPadUI() {

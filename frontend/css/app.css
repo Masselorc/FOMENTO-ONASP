@@ -10735,6 +10735,18 @@ table.dataTable thead th {
     border-color: #fbbf24;
 }
 
+/* Cabecalho de bloco por UF na busca textual da grade de Revisoes PAD. */
+#view-revisao-divergencias .revisao-pad-bloco-uf-titulo {
+    margin: 0.75rem 0 0.25rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-muted, #94a3b8);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 /* As <option> herdam cor do select; forca contraste padrao no dropdown aberto. */
 #view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select option {
     background-color: #1f2937;
