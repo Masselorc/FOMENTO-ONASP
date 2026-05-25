@@ -71,6 +71,16 @@ function statusLinhaFilha(linha) {
   return "OK";
 }
 
+function linhaMaeDeveExpandirPorPadrao(linha, filhos = []) {
+  const status = String(linha?.status || "").toUpperCase();
+  if (linha?.tipo === "ITEM_NOVO") return true;
+  if (status.includes("PENDENTE") || status.includes("NAO_CLASSIFICADA") || status.includes("INCONSISTENTE")) return true;
+  return filhos.some((filho) => {
+    const statusFilho = String(filho?.status || "").toUpperCase();
+    return statusFilho === "AREA_NAO_CLASSIFICADA" || normalizarArea(filho?.area, filho) === "NAO_CLASSIFICADO";
+  });
+}
+
 function chaveMaePorLinha(linha) {
   return hashCurto([
     linha.numero,
@@ -89,6 +99,10 @@ function criarFilhaDeLinhaReconstruida(linha, parentId, indice) {
     id: `${parentId}-filha-${indice + 1}`,
     parentId,
     tipo: "ITEM_RATEADO",
+    uf: normalizarUf(linha.uf),
+    numeroConvenio: linha.numero || linha.numeroConvenio || null,
+    itemConhecidoId: linha.itemConhecidoId || null,
+    chaveItem: linha.chaveItem || null,
     area: normalizarArea(linha.area, linha),
     descricao: linha.descricao || "-",
     natureza: normalizarNatureza(linha.natureza),
@@ -112,11 +126,12 @@ function criarMaeDeGrupo(grupo, filhos) {
       ? "SALDO_RESIDUAL_NAO_SETORIALIZADO"
       : "RATEIO_MEMORIZADO_APLICADO";
 
-  return {
+  const mae = {
     id: grupo.id,
     tipo: primeira.saldoResidualTecnico ? "SALDO_RESIDUAL" : "ITEM_PAD",
     uf: normalizarUf(primeira.uf),
     numeroConvenio: primeira.numero || primeira.numeroConvenio || null,
+    itemConhecidoId: primeira.itemConhecidoId || null,
     itemId: primeira.itemConhecidoId || primeira.chaveItem || grupo.id,
     chaveItem: primeira.chaveItem || null,
     descricao: primeira.descricao || "-",
@@ -125,10 +140,12 @@ function criarMaeDeGrupo(grupo, filhos) {
     quantidadeOriginal,
     valorUnitario: obterValorUnitario(primeira, quantidadeOriginal, valorTotalOriginal),
     valorTotalOriginal,
-    expandidoPorPadrao: true,
+    expandidoPorPadrao: false,
     status,
     filhos: filhos.map((filho) => filho.id),
   };
+  mae.expandidoPorPadrao = linhaMaeDeveExpandirPorPadrao(mae, filhos);
+  return mae;
 }
 
 function criarMaeOcorrencia(item, tipo, status) {
@@ -149,6 +166,7 @@ function criarMaeOcorrencia(item, tipo, status) {
     tipo,
     uf,
     numeroConvenio: item.numeroConvenio || null,
+    itemConhecidoId: item.itemConhecidoId || null,
     itemId: item.itemConhecidoId || item.chaveItem || id,
     chaveItem: item.chaveItem || null,
     descricao: item.descricao || "-",
@@ -157,7 +175,7 @@ function criarMaeOcorrencia(item, tipo, status) {
     quantidadeOriginal,
     valorUnitario,
     valorTotalOriginal,
-    expandidoPorPadrao: true,
+    expandidoPorPadrao: tipo === "ITEM_NOVO",
     status,
     filhos: [],
     observacao: item.detalhe || null,
@@ -169,6 +187,10 @@ function criarFilhaPendente(mae) {
     id: `${mae.id}-filha-pendente`,
     parentId: mae.id,
     tipo: "ITEM_RATEADO",
+    uf: mae.uf,
+    numeroConvenio: mae.numeroConvenio,
+    itemConhecidoId: mae.itemConhecidoId || null,
+    chaveItem: mae.chaveItem || null,
     area: "NAO_CLASSIFICADO",
     descricao: mae.descricao,
     natureza: mae.natureza,

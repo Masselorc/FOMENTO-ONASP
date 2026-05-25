@@ -63,6 +63,11 @@ const {
   montarRevisoesPlanoPad,
 } = require("./services/profor-2022/profor-pad-revisoes-plano-service");
 const {
+  RevisoesPlanoDecisaoError,
+  salvarAreaRevisaoPlano,
+  salvarRateioRevisaoPlano,
+} = require("./services/profor-2022/profor-pad-revisoes-plano-decisoes-service");
+const {
   montarDadosProfor2022Publicacao
 } = require("./services/dashboard-publication-service");
 const {
@@ -774,6 +779,44 @@ async function rotearApi(req, res, pathname) {
         enviarJson(res, 500, {
           success: false,
           message: erro?.message || "Erro ao montar revisões do plano PAD."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/pad/revisoes-plano/area") {
+      try {
+        const body = await lerJsonBody(req);
+        const resultado = salvarAreaRevisaoPlano(body);
+        enviarJson(res, 200, {
+          success: true,
+          message: "Área salva.",
+          payload: resultado
+        });
+      } catch (erro) {
+        if (!(erro instanceof RevisoesPlanoDecisaoError)) console.error("Falha ao salvar area da revisão PAD:", erro);
+        enviarJson(res, erro.statusCode || 500, {
+          success: false,
+          message: erro?.message || "Erro ao salvar área da revisão PAD."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/pad/revisoes-plano/rateio") {
+      try {
+        const body = await lerJsonBody(req);
+        const resultado = salvarRateioRevisaoPlano(body);
+        enviarJson(res, 200, {
+          success: true,
+          message: "Rateio salvo.",
+          payload: resultado
+        });
+      } catch (erro) {
+        if (!(erro instanceof RevisoesPlanoDecisaoError)) console.error("Falha ao salvar rateio da revisão PAD:", erro);
+        enviarJson(res, erro.statusCode || 500, {
+          success: false,
+          message: erro?.message || "Erro ao salvar rateio da revisão PAD."
         });
       }
       return;

@@ -3896,7 +3896,14 @@ async function carregarLogoParaPDF() {
             return linha?.tipo === 'ITEM_NOVO'
                 || status.includes('PENDENTE')
                 || status.includes('NAO_CLASSIFICAD')
-                || status.includes('INCONSISTENTE');
+                || status.includes('INCONSISTENTE')
+                || linha?.area === 'NAO_CLASSIFICADO';
+        }
+
+        function linhaMaeDeveIniciarExpandidaRevisaoPad(linha) {
+            const filhas = obterFilhasRevisaoPad(linha.id);
+            return ehPendenteRevisaoPad(linha)
+                || filhas.some((filha) => filha.status === 'AREA_NAO_CLASSIFICADA' || filha.area === 'NAO_CLASSIFICADO');
         }
 
         function linhaMaePassaFiltrosRevisaoPad(linha) {
@@ -3917,7 +3924,9 @@ async function carregarLogoParaPDF() {
 
         function inicializarExpandidosRevisaoPad(uf) {
             const linhas = revisoesPlanoPadEstado.dados?.linhasMae?.[uf] || [];
-            revisoesPlanoPadEstado.expandidos = new Set(linhas.map((linha) => linha.id));
+            revisoesPlanoPadEstado.expandidos = new Set(
+                linhas.filter(linhaMaeDeveIniciarExpandidaRevisaoPad).map((linha) => linha.id)
+            );
         }
 
         function renderChipsUfRevisaoPad() {
@@ -3969,7 +3978,7 @@ async function carregarLogoParaPDF() {
 
         function renderSelectAreaLinhaFilhaRevisaoPad(filha) {
             return `
-                <select class="form-select form-select-sm revisao-pad-area-select" data-revisao-pad-area="${escapeHtml(filha.id)}">
+                <select class="form-select form-select-sm revisao-pad-area-select" data-revisao-pad-area="${escapeHtml(filha.id)}" data-parent-id="${escapeHtml(filha.parentId)}" data-area-original="${escapeHtml(filha.area || '')}">
                     ${AREAS_REVISAO_PAD.map(([valor, rotulo]) => `<option value="${escapeHtml(valor)}" ${filha.area === valor ? 'selected' : ''}>${escapeHtml(rotulo)}</option>`).join('')}
                 </select>
             `;
@@ -4006,7 +4015,7 @@ async function carregarLogoParaPDF() {
                     <td>${escapeHtml(formatarValorRevisao(filha.valorUnitario, 'Valor unitário'))}</td>
                     <td>${escapeHtml(formatarValorRevisao(filha.valorTotal, 'Valor total'))}</td>
                     <td><span class="badge text-bg-${classeSituacaoRevisaoPad(filha.status)} revisao-badge">${escapeHtml(filha.status || '-')}</span></td>
-                    <td><button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Persistência será implementada em etapa própria.">Salvar</button></td>
+                    <td><span class="text-muted small">Salva ao alterar</span></td>
                 </tr>
             `;
         }
@@ -4059,6 +4068,42 @@ async function carregarLogoParaPDF() {
             return (revisoesPlanoPadEstado.dados?.linhasMae?.[uf] || []).find((linha) => linha.id === parentId) || null;
         }
 
+        function obterFilhaRevisaoPad(linhaFilhaId) {
+            const uf = revisoesPlanoPadEstado.ufSelecionada;
+            return (revisoesPlanoPadEstado.dados?.linhasFilhas?.[uf] || []).find((linha) => linha.id === linhaFilhaId) || null;
+        }
+
+        function atualizarMaeRevisaoPad(parentId, atualizacoes = {}) {
+            const uf = revisoesPlanoPadEstado.ufSelecionada;
+            const linhas = revisoesPlanoPadEstado.dados?.linhasMae?.[uf] || [];
+            const indice = linhas.findIndex((linha) => linha.id === parentId);
+            if (indice >= 0) linhas[indice] = { ...linhas[indice], ...atualizacoes };
+        }
+
+        function substituirFilhaRevisaoPad(linhaFilha) {
+            const uf = revisoesPlanoPadEstado.ufSelecionada;
+            const linhas = revisoesPlanoPadEstado.dados?.linhasFilhas?.[uf] || [];
+            const indice = linhas.findIndex((linha) => linha.id === linhaFilha.id);
+            if (indice >= 0) linhas[indice] = { ...linhas[indice], ...linhaFilha };
+        }
+
+        function substituirFilhasGrupoRevisaoPad(parentId, linhasFilhas) {
+            const uf = revisoesPlanoPadEstado.ufSelecionada;
+            const linhasAtuais = revisoesPlanoPadEstado.dados?.linhasFilhas?.[uf] || [];
+            revisoesPlanoPadEstado.dados.linhasFilhas[uf] = [
+                ...linhasAtuais.filter((linha) => linha.parentId !== parentId),
+                ...linhasFilhas
+            ];
+            atualizarMaeRevisaoPad(parentId, { filhos: linhasFilhas.map((linha) => linha.id) });
+        }
+
+        function mostrarFeedbackRevisaoPad(tipo, mensagem) {
+            const feedback = document.getElementById('revisoes-pad-feedback');
+            if (!feedback) return;
+            const classe = tipo === 'erro' ? 'danger' : tipo === 'aviso' ? 'warning' : 'success';
+            feedback.innerHTML = `<div class="alert alert-${classe} small mb-0">${escapeHtml(mensagem)}</div>`;
+        }
+
         function renderLinhaEditorRateioRevisaoPad(linha = {}) {
             return `
                 <div class="revisao-rateio-row" data-revisao-pad-editor-row>
@@ -4074,7 +4119,7 @@ async function carregarLogoParaPDF() {
             if (!container) return;
             const mae = obterMaeRevisaoPad(revisoesPlanoPadEstado.editorParentId);
             if (!mae) {
-                container.innerHTML = '<div class="revisao-detail-panel text-muted">Clique em uma quantidade para abrir o editor de rateio. A persistência será implementada em etapa própria.</div>';
+                container.innerHTML = '<div class="revisao-detail-panel text-muted">Clique em uma quantidade para abrir o editor de rateio.</div>';
                 return;
             }
             const filhas = obterFilhasRevisaoPad(mae.id);
@@ -4086,10 +4131,9 @@ async function carregarLogoParaPDF() {
                     <div class="d-flex flex-wrap gap-2 mt-3">
                         <button type="button" class="btn btn-sm btn-outline-primary" data-revisao-pad-editor-adicionar>Adicionar linha</button>
                         <button type="button" class="btn btn-sm btn-outline-secondary" data-revisao-pad-editor-fechar>Fechar</button>
-                        <button type="button" class="btn btn-sm btn-primary" disabled title="Persistência será implementada em etapa própria.">Salvar rateio</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-revisao-pad-editor-salvar disabled>Salvar rateio</button>
                     </div>
                     <div id="revisao-pad-editor-validacao" class="small mt-2" aria-live="polite"></div>
-                    <div class="alert alert-warning small mt-3 mb-0">Persistência será implementada em etapa própria. Nenhuma alteração desta tela é salva ou publicada agora.</div>
                 </section>
             `;
             validarEditorRateioRevisaoPad();
@@ -4098,25 +4142,30 @@ async function carregarLogoParaPDF() {
         function validarEditorRateioRevisaoPad() {
             const mae = obterMaeRevisaoPad(revisoesPlanoPadEstado.editorParentId);
             const aviso = document.getElementById('revisao-pad-editor-validacao');
-            if (!mae || !aviso) return;
+            const botaoSalvar = document.querySelector('[data-revisao-pad-editor-salvar]');
+            if (!mae || !aviso) return { valido: false, linhas: [], erros: ['Editor indisponível.'] };
             const linhas = Array.from(document.querySelectorAll('[data-revisao-pad-editor-row]'));
             let soma = 0;
             const erros = [];
+            const linhasPayload = [];
             for (const linha of linhas) {
                 const area = linha.querySelector('[data-revisao-pad-editor-area]')?.value || '';
                 const quantidade = Number(linha.querySelector('[data-revisao-pad-editor-quantidade]')?.value || 0);
                 if (!AREAS_REVISAO_PAD.some(([valor]) => valor === area)) erros.push('Área inválida.');
                 if (!Number.isFinite(quantidade) || quantidade < 0) erros.push('Quantidade negativa ou inválida.');
                 soma += Number.isFinite(quantidade) ? quantidade : 0;
+                linhasPayload.push({ area, quantidade });
             }
             if (linhas.length < 2) erros.push('O rateio deve ter duas ou mais linhas.');
             if (Math.abs(soma - Number(mae.quantidadeOriginal || 0)) > 0.000001) {
                 erros.push(`Soma ${formatarValorRevisao(soma, 'Quantidade')} diferente da quantidade original ${formatarValorRevisao(mae.quantidadeOriginal, 'Quantidade')}.`);
             }
+            if (botaoSalvar) botaoSalvar.disabled = erros.length > 0;
             aviso.className = `small mt-2 ${erros.length ? 'text-warning' : 'text-success'}`;
             aviso.innerHTML = erros.length
                 ? `<strong>Validação:</strong><ul class="mb-0">${erros.map((erro) => `<li>${escapeHtml(erro)}</li>`).join('')}</ul>`
-                : 'Validação local OK. Salvamento desabilitado nesta etapa.';
+                : 'Validação local OK. O rateio pode ser salvo.';
+            return { valido: erros.length === 0, linhas: linhasPayload, erros };
         }
 
         async function renderRevisoesPadPlanoView() {
@@ -4141,7 +4190,7 @@ async function carregarLogoParaPDF() {
                 <section class="revisao-warning-stack mb-4">
                     <div>Origem: última recarga operacional dos 15 PADs Excel em <code>Planilhas/profor-2022/instrumentos</code>.</div>
                     <div>A planilha antiga por abas, DETRU, Transferegov e publicação automática não são usados nesta tela.</div>
-                    <div>Persistência de edição será implementada em etapa própria; ações de salvar permanecem desabilitadas.</div>
+                    <div>Alterações de área e rateio são salvas na memória operacional local e não publicam dados.</div>
                 </section>
                 <section class="revisao-panel mb-4"><div class="section-header compact"><div><p class="section-eyebrow mb-1">Seleção por UF</p><h2>Plano de aplicação reconstruído</h2></div></div><div class="revisao-pad-uf-list" id="revisoes-pad-ufs"></div></section>
                 <div id="revisoes-pad-resumo"></div>
@@ -4169,6 +4218,104 @@ async function carregarLogoParaPDF() {
                 container.insertAdjacentHTML('beforeend', `<div class="revisao-detail-panel text-danger">${escapeHtml(error.message || 'Falha ao carregar tela de revisões PAD.')}</div>`);
             }
             aplicarModoSomenteLeituraControlada();
+        }
+
+        async function salvarAreaLinhaFilhaRevisaoPad(select) {
+            const linhaFilhaId = select.dataset.revisaoPadArea;
+            const parentId = select.dataset.parentId;
+            const areaAnterior = select.dataset.areaOriginal || '';
+            const areaNova = select.value;
+            if (!linhaFilhaId || !parentId || areaNova === areaAnterior) return;
+
+            const mae = obterMaeRevisaoPad(parentId);
+            const filha = obterFilhaRevisaoPad(linhaFilhaId);
+            if (!mae || !filha) {
+                select.value = areaAnterior;
+                mostrarFeedbackRevisaoPad('erro', 'Linha da revisão PAD não encontrada para salvar a área.');
+                return;
+            }
+
+            select.disabled = true;
+            mostrarFeedbackRevisaoPad('aviso', 'Salvando área...');
+            try {
+                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/revisoes-plano/area', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uf: revisoesPlanoPadEstado.ufSelecionada,
+                        numeroConvenio: mae.numeroConvenio,
+                        parentId,
+                        linhaFilhaId,
+                        chaveItem: mae.chaveItem || filha.chaveItem,
+                        areaAnterior,
+                        areaNova,
+                        descricao: mae.descricao || filha.descricao,
+                        natureza: mae.natureza || filha.natureza,
+                        codigoNatureza: mae.codigoNatureza || filha.codigoNatureza,
+                        quantidade: filha.quantidade,
+                        quantidadeOriginal: mae.quantidadeOriginal,
+                        valorUnitario: mae.valorUnitario
+                    })
+                });
+                if (!resposta.ok || !responseBody?.success) {
+                    throw new Error(responseBody?.message || 'Falha ao salvar área.');
+                }
+                const linhaAtualizada = responseBody.payload?.linhaFilhaAtualizada;
+                if (linhaAtualizada) substituirFilhaRevisaoPad({ ...filha, ...linhaAtualizada });
+                atualizarMaeRevisaoPad(parentId, { status: responseBody.payload?.statusGrupo || mae.status });
+                atualizarRevisoesPlanoPadUI();
+                mostrarFeedbackRevisaoPad('sucesso', 'Área salva.');
+            } catch (error) {
+                select.value = areaAnterior;
+                mostrarFeedbackRevisaoPad('erro', error.message || 'Erro ao salvar área.');
+                console.warn('Falha ao salvar área da revisão PAD:', error);
+            } finally {
+                const novoSelect = Array.from(document.querySelectorAll('[data-revisao-pad-area]'))
+                    .find((item) => item.dataset.revisaoPadArea === linhaFilhaId);
+                if (novoSelect) novoSelect.disabled = false;
+            }
+        }
+
+        async function salvarRateioRevisaoPad() {
+            const mae = obterMaeRevisaoPad(revisoesPlanoPadEstado.editorParentId);
+            if (!mae) return;
+            const validacao = validarEditorRateioRevisaoPad();
+            if (!validacao.valido) return;
+            const botaoSalvar = document.querySelector('[data-revisao-pad-editor-salvar]');
+            if (botaoSalvar) botaoSalvar.disabled = true;
+            mostrarFeedbackRevisaoPad('aviso', 'Salvando rateio...');
+
+            try {
+                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/revisoes-plano/rateio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uf: revisoesPlanoPadEstado.ufSelecionada,
+                        numeroConvenio: mae.numeroConvenio,
+                        parentId: mae.id,
+                        chaveItem: mae.chaveItem,
+                        descricao: mae.descricao,
+                        natureza: mae.natureza,
+                        codigoNatureza: mae.codigoNatureza,
+                        quantidadeOriginal: mae.quantidadeOriginal,
+                        valorUnitario: mae.valorUnitario,
+                        linhas: validacao.linhas
+                    })
+                });
+                if (!resposta.ok || !responseBody?.success) {
+                    throw new Error(responseBody?.message || 'Falha ao salvar rateio.');
+                }
+                const linhasFilhas = responseBody.payload?.linhasFilhasAtualizadas || [];
+                substituirFilhasGrupoRevisaoPad(mae.id, linhasFilhas);
+                atualizarMaeRevisaoPad(mae.id, { status: responseBody.payload?.statusGrupo || mae.status });
+                revisoesPlanoPadEstado.expandidos.add(mae.id);
+                atualizarRevisoesPlanoPadUI();
+                mostrarFeedbackRevisaoPad('sucesso', 'Rateio salvo.');
+            } catch (error) {
+                mostrarFeedbackRevisaoPad('erro', error.message || 'Erro ao salvar rateio.');
+                console.warn('Falha ao salvar rateio da revisão PAD:', error);
+                if (botaoSalvar) botaoSalvar.disabled = false;
+            }
         }
 
         function registrarEventosRevisaoDivergencias() {
@@ -4215,8 +4362,7 @@ async function carregarLogoParaPDF() {
             document.getElementById('revisoes-pad-tabela')?.addEventListener('change', (event) => {
                 const select = event.target.closest('[data-revisao-pad-area]');
                 if (!select) return;
-                const feedback = document.getElementById('revisoes-pad-feedback');
-                if (feedback) feedback.innerHTML = `<div class="alert alert-warning small mb-0">Área alterada localmente para ${escapeHtml(rotuloAreaRevisaoPad(select.value))}. Persistência será implementada em etapa própria; nada foi salvo.</div>`;
+                salvarAreaLinhaFilhaRevisaoPad(select);
             });
             document.getElementById('revisoes-pad-editor')?.addEventListener('input', validarEditorRateioRevisaoPad);
             document.getElementById('revisoes-pad-editor')?.addEventListener('change', validarEditorRateioRevisaoPad);
@@ -4232,6 +4378,9 @@ async function carregarLogoParaPDF() {
                 if (event.target.closest('[data-revisao-pad-editor-fechar]')) {
                     revisoesPlanoPadEstado.editorParentId = null;
                     renderEditorRateioRevisaoPad();
+                }
+                if (event.target.closest('[data-revisao-pad-editor-salvar]')) {
+                    salvarRateioRevisaoPad();
                 }
             });
         }

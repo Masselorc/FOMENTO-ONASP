@@ -7267,3 +7267,17 @@ Logs operacionais gravados:
   - sem migration.
 - Rollback:
   - reverter o commit desta integração; a tela volta a ler apenas a fila SQLite persistida.
+
+---
+
+## 25/05/2026 - PROFOR 2022: autosave e expansão seletiva da revisão PAD
+
+- Branch: `main`.
+- Objetivo: salvar área/rateio da grade de Revisões PAD por serviço auditável e iniciar expandidas apenas linhas pendentes.
+- Arquivos alterados: `backend/server.js`, `backend/services/profor-2022/profor-pad-revisoes-plano-service.js`, `backend/services/profor-2022/profor-pad-revisoes-plano-decisoes-service.js`, `frontend/js/app.js`, `index.html`, `tests/services/profor-pad-revisoes-plano.test.js`, `tests/services/profor-pad-revisoes-plano-decisoes.test.js`.
+- Implementação: novos endpoints `POST /api/profor-2022/pad/revisoes-plano/area` e `/rateio`; persistência em `profor_2022_itens_conhecidos`, `profor_2022_item_rateios` e `profor_2022_revisao_logs`; UI com autosave de área e botão de salvar rateio habilitado só com validação OK.
+- Regra de expansão: linhas pendentes, item novo, não classificadas ou inconsistentes iniciam expandidas; OK, rateio memorizado e item suprimido iniciam recolhidos.
+- Validações: `git diff --check`; `node --check` em `backend/server.js`, `frontend/js/app.js`, `profor-pad-revisoes-plano-service.js`, `profor-pad-revisoes-plano-decisoes-service.js`, `profor-pad-carregador-operacional-service.js`; `node --test` dos testes de carregador, revisão e decisões; `npm run validar:syntax`.
+- Preservações: sem Playwright/E2E, sem publicação, sem alteração em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM direto, DETRU/Transferegov, autenticação ou planilha antiga.
+- Risco: mudanças salvam memória operacional local; deve-se testar manualmente com item de baixa criticidade antes de uso massivo.
+- Rollback: reverter o commit da alteração; endpoints e autosave deixam de existir e a tela volta ao comportamento anterior.

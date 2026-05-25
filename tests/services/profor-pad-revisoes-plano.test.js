@@ -95,11 +95,15 @@ test("estrutura revisoes PAD por UF", () => {
   assert.ok(Array.isArray(resultado.pendencias.DF));
 });
 
-test("linhas-mae ficam expandidas por padrao", () => {
+test("linhas OK iniciam recolhidas e pendentes iniciam expandidas", () => {
   const resultado = montarRevisoesPlanoPad({ recarga: recargaBase() });
+  const ok = resultado.linhasMae.DF.find((linha) => linha.descricao === "Notebook operacional");
+  const pendente = resultado.linhasMae.DF.find((linha) => linha.tipo === "ITEM_NOVO");
+  const suprimido = resultado.linhasMae.DF.find((linha) => linha.tipo === "ITEM_SUPRIMIDO");
 
-  assert.ok(resultado.linhasMae.DF.length > 0);
-  assert.equal(resultado.linhasMae.DF.every((linha) => linha.expandidoPorPadrao === true), true);
+  assert.equal(ok.expandidoPorPadrao, false);
+  assert.equal(pendente.expandidoPorPadrao, true);
+  assert.equal(suprimido.expandidoPorPadrao, false);
 });
 
 test("linhas-filhas ficam agrupadas sob a linha-mae", () => {
