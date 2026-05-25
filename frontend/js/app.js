@@ -4270,17 +4270,20 @@ async function carregarLogoParaPDF() {
         async function salvarAreaLinhaFilhaRevisaoPad(select) {
             const linhaFilhaId = select.dataset.revisaoPadArea;
             const parentId = select.dataset.parentId;
-            const areaAnterior = select.dataset.areaOriginal || '';
             const areaNova = select.value;
-            if (!linhaFilhaId || !parentId || areaNova === areaAnterior) return;
+            if (!linhaFilhaId || !parentId) return;
 
             const mae = obterMaeRevisaoPad(parentId);
             const filha = obterFilhaRevisaoPad(linhaFilhaId);
             if (!mae || !filha) {
-                select.value = areaAnterior;
                 mostrarFeedbackRevisaoPad('erro', 'Linha da revisão PAD não encontrada para salvar a área.');
                 return;
             }
+            // Fonte da verdade e o estado em memoria da filha, nao o dataset (que fica
+            // stale depois de re-renderizar a tabela). Sem isso, alterar a area uma
+            // segunda vez podia ser bloqueado por comparacao com valor desatualizado.
+            const areaAnterior = String(filha.area || '').toUpperCase();
+            if (areaNova === areaAnterior) return;
 
             select.disabled = true;
             mostrarFeedbackRevisaoPad('aviso', 'Salvando área...');
