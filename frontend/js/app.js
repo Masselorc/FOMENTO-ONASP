@@ -4013,7 +4013,8 @@ async function carregarLogoParaPDF() {
                 : (podeExpandir
                     ? '<td><span class="badge text-bg-info revisao-badge">RATEADO</span></td>'
                     : '<td class="text-muted">—</td>');
-            const colDesc = `<td><strong>${escapeHtml(linha.descricao || '-')}</strong>${linha.observacao ? `<div class="small text-muted">${escapeHtml(linha.observacao)}</div>` : ''}</td>`;
+            const observacaoRedundante = linha.tipo === 'ITEM_NOVO' || linha.tipo === 'ITEM_SUPRIMIDO';
+            const colDesc = `<td><strong>${escapeHtml(linha.descricao || '-')}</strong>${linha.observacao && !observacaoRedundante ? `<div class="small text-muted">${escapeHtml(linha.observacao)}</div>` : ''}</td>`;
             const colNat = `<td>${escapeHtml(linha.natureza || '-')}</td>`;
             const colCod = `<td>${escapeHtml(linha.codigoNatureza || 'N/A')}</td>`;
             const colQtd = `<td>${escapeHtml(formatarValorRevisao(linha.quantidadeOriginal, 'Quantidade'))}</td>`;

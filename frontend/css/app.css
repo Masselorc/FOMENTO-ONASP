@@ -10681,6 +10681,12 @@ table.dataTable thead th {
     vertical-align: middle;
     padding: 0.3rem 0.4rem;
     white-space: nowrap;
+    line-height: 1.25;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table td > strong,
+#view-revisao-divergencias .revisao-pad-plano-table td > div {
+    line-height: 1.25;
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table thead th {
