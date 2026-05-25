@@ -4451,12 +4451,14 @@ export async function carregarDadosAplicacao(catalogoAplicacao = null) {
     }
 
     if (dadosBase.length > 0) {
-        console.warn('Usando dadosBase estatico do catalogo da aplicacao.');
-        registrarModoDadosOnasp('aplicacao', 'estatico');
-        registrarModoDadosOnasp('profor2022', 'estatico');
+        console.warn('Usando dadosBase local do catalogo da aplicacao.');
+        registrarModoDadosOnasp('aplicacao', 'api');
+        if (obterModoDadosOnasp('profor2022') !== 'api') {
+            registrarModoDadosOnasp('profor2022', 'api');
+        }
         registrarPerfOnasp('carregarDadosAplicacao', {
-            modo: 'estatico',
-            origem: 'dadosBase',
+            modo: 'api',
+            origem: 'dadosBase-local',
             totalItens: dadosBase.length,
             tempoTotalMs: debugPerf && typeof performance !== 'undefined'
                 ? Number((performance.now() - inicioAplicacao).toFixed(2))
