@@ -4336,11 +4336,6 @@ async function carregarLogoParaPDF() {
                     ${renderActionButton({ type: 'back', label: 'Voltar ao Status do Sistema', onClick: "toggleView('status-sistema')", variant: 'outline-secondary', extraClass: 'pdf-hidden' })}
                     <div><p class="section-eyebrow mb-1">SISTEMA</p><h2>Revisões PAD — Plano de Aplicação Detalhado</h2><p class="text-muted mb-0">Grade hierárquica do plano reconstruído pela recarga operacional dos PADs. Esta tela não publica dados.</p></div>
                 </section>
-                <section class="revisao-warning-stack mb-4">
-                    <div>Origem: última recarga operacional dos 15 PADs Excel em <code>Planilhas/profor-2022/instrumentos</code>.</div>
-                    <div>A planilha antiga por abas, DETRU, Transferegov e publicação automática não são usados nesta tela.</div>
-                    <div>Alterações de área e rateio são salvas na memória operacional local e não publicam dados.</div>
-                </section>
                 <section class="revisao-panel mb-4"><div class="section-header compact"><div><p class="section-eyebrow mb-1">Seleção por UF</p><h2>Plano de aplicação reconstruído</h2></div></div><div class="revisao-pad-uf-list" id="revisoes-pad-ufs"></div></section>
                 <div id="revisoes-pad-resumo"></div>
                 <section class="revisao-panel mb-4" id="revisoes-pad-filtros"></section>
