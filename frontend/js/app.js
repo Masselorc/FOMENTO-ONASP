@@ -3985,20 +3985,33 @@ async function carregarLogoParaPDF() {
         }
 
         function renderLinhaMaeRevisaoPad(linha) {
+            const filhas = obterFilhasRevisaoPad(linha.id);
+            const filhaUnica = filhas.length === 1 ? filhas[0] : null;
+            const mesclada = !!filhaUnica && linha.tipo !== 'ITEM_SUPRIMIDO';
             const expandido = revisoesPlanoPadEstado.expandidos.has(linha.id);
-            const classe = linha.tipo === 'ITEM_SUPRIMIDO' ? 'is-suppressed' : ehPendenteRevisaoPad(linha) ? 'is-pending' : '';
+            const podeExpandir = filhas.length > 1;
+            const classeBase = linha.tipo === 'ITEM_SUPRIMIDO'
+                ? 'is-suppressed'
+                : (mesclada ? ehPendenteRevisaoPad(filhaUnica) : ehPendenteRevisaoPad(linha)) ? 'is-pending' : '';
+            const classeMesclada = mesclada ? 'revisao-pad-row-mesclada' : '';
+
+            const colTipo = `<td>${podeExpandir ? `<i class="fas ${expandido ? 'fa-chevron-down' : 'fa-chevron-right'} me-1"></i>` : ''}${escapeHtml(rotuloTipoRevisaoPad(linha.tipo))}</td>`;
+            const colArea = mesclada
+                ? `<td>${renderSelectAreaLinhaFilhaRevisaoPad(filhaUnica)}</td>`
+                : '<td class="text-muted">—</td>';
+            const colDesc = `<td><strong>${escapeHtml(linha.descricao || '-')}</strong>${linha.observacao ? `<div class="small text-muted">${escapeHtml(linha.observacao)}</div>` : ''}</td>`;
+            const colNat = `<td>${escapeHtml(linha.natureza || '-')}</td>`;
+            const colCod = `<td>${escapeHtml(linha.codigoNatureza || 'N/A')}</td>`;
+            const colQtd = `<td>${escapeHtml(formatarValorRevisao(linha.quantidadeOriginal, 'Quantidade'))}</td>`;
+            const colVu = `<td>${escapeHtml(formatarValorRevisao(linha.valorUnitario, 'Valor unitário'))}</td>`;
+            const colVt = `<td>${escapeHtml(formatarValorRevisao(linha.valorTotalOriginal, 'Valor total'))}</td>`;
+            const statusExibido = mesclada ? (filhaUnica.status || linha.status) : linha.status;
+            const colStatus = `<td><span class="badge text-bg-${classeSituacaoRevisaoPad(statusExibido)} revisao-badge">${escapeHtml(statusExibido || '-')}</span></td>`;
+            const colAcao = `<td><button type="button" class="btn btn-sm btn-outline-primary" data-revisao-pad-rateio="${escapeHtml(linha.id)}">Ratear quantidade</button></td>`;
+
             return `
-                <tr class="revisao-pad-row-mae ${classe}" data-revisao-pad-mae="${escapeHtml(linha.id)}" aria-expanded="${expandido ? 'true' : 'false'}">
-                    <td><i class="fas ${expandido ? 'fa-chevron-down' : 'fa-chevron-right'} me-1"></i>${escapeHtml(rotuloTipoRevisaoPad(linha.tipo))}</td>
-                    <td class="text-muted">—</td>
-                    <td><strong>${escapeHtml(linha.descricao || '-')}</strong>${linha.observacao ? `<div class="small text-muted">${escapeHtml(linha.observacao)}</div>` : ''}</td>
-                    <td>${escapeHtml(linha.natureza || '-')}</td>
-                    <td>${escapeHtml(linha.codigoNatureza || 'N/A')}</td>
-                    <td>${escapeHtml(formatarValorRevisao(linha.quantidadeOriginal, 'Quantidade'))}</td>
-                    <td>${escapeHtml(formatarValorRevisao(linha.valorUnitario, 'Valor unitário'))}</td>
-                    <td>${escapeHtml(formatarValorRevisao(linha.valorTotalOriginal, 'Valor total'))}</td>
-                    <td><span class="badge text-bg-${classeSituacaoRevisaoPad(linha.status)} revisao-badge">${escapeHtml(linha.status || '-')}</span></td>
-                    <td><button type="button" class="btn btn-sm btn-outline-primary" data-revisao-pad-rateio="${escapeHtml(linha.id)}">Ratear quantidade</button></td>
+                <tr class="revisao-pad-row-mae ${classeBase} ${classeMesclada}" data-revisao-pad-mae="${escapeHtml(linha.id)}" data-pode-expandir="${podeExpandir ? '1' : '0'}" aria-expanded="${expandido ? 'true' : 'false'}">
+                    ${colTipo}${colArea}${colDesc}${colNat}${colCod}${colQtd}${colVu}${colVt}${colStatus}${colAcao}
                 </tr>
             `;
         }
@@ -4026,8 +4039,10 @@ async function carregarLogoParaPDF() {
             if (!uf) return '<div class="revisao-detail-panel text-muted">Selecione uma UF.</div>';
             const corpo = linhas.flatMap((linha) => {
                 const partes = [renderLinhaMaeRevisaoPad(linha)];
-                if (revisoesPlanoPadEstado.expandidos.has(linha.id)) {
-                    partes.push(...obterFilhasRevisaoPad(linha.id).map(renderLinhaFilhaRevisaoPad));
+                const filhas = obterFilhasRevisaoPad(linha.id);
+                const mesclada = filhas.length === 1 && linha.tipo !== 'ITEM_SUPRIMIDO';
+                if (!mesclada && revisoesPlanoPadEstado.expandidos.has(linha.id)) {
+                    partes.push(...filhas.map(renderLinhaFilhaRevisaoPad));
                 }
                 return partes;
             }).join('');
@@ -4354,6 +4369,7 @@ async function carregarLogoParaPDF() {
                 }
                 const linhaMae = event.target.closest('[data-revisao-pad-mae]');
                 if (!linhaMae || event.target.closest('button, select, input, a')) return;
+                if (linhaMae.dataset.podeExpandir === '0') return;
                 const id = linhaMae.dataset.revisaoPadMae;
                 if (revisoesPlanoPadEstado.expandidos.has(id)) revisoesPlanoPadEstado.expandidos.delete(id);
                 else revisoesPlanoPadEstado.expandidos.add(id);
