@@ -1,5 +1,15 @@
 # Diário de bordo
 
+## 25/05/2026 — UI: largura da tabela de Revisões PAD
+
+- Objetivo: evitar corte da última coluna (`Ações/Observações`) na grade de `Revisões PAD — Plano de Aplicação Detalhado`.
+- Arquivos alterados: `frontend/css/app.css`, `index.html`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste aplicado: adicionada rolagem horizontal no wrapper da tabela da view de revisões, `min-width: 1400px` para a tabela, quebra de linha na coluna `Descrição` (3ª coluna), `min-width` da coluna final e `overflow: visible` no painel para não cortar conteúdo.
+- Validações executadas: `git diff --check`; `node --check frontend/js/app.js`; `npm run validar:syntax`.
+- Preservações: sem backend, sem dados de recarga PAD, sem publicação, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem DETRU/Transferegov, sem Playwright/E2E.
+- Risco: em telas muito estreitas haverá rolagem horizontal intencional na tabela.
+- Rollback: reverter o commit deste ajuste para retornar ao layout anterior.
+
 ## 25/05/2026 — PROFOR 2022: tela de revisões PAD em grade hierárquica
 
 - Objetivo: substituir a exposição visual antiga da revisão PAD por uma grade hierárquica do plano de aplicação detalhado reconstruído a partir da recarga operacional limpa.

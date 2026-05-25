@@ -10656,6 +10656,43 @@ table.dataTable thead th {
     border-left: 4px solid var(--color-primary) !important;
 }
 
+/* Revisoes PAD: garante grade completa sem cortar a ultima coluna. */
+#view-revisao-divergencias .revisao-panel .table-responsive,
+#view-revisao-divergencias .revisao-pad-table-wrapper,
+#view-revisao-divergencias .revisoes-pad-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+#view-revisao-divergencias .revisao-panel {
+    overflow: visible;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table {
+    min-width: 1400px;
+    width: 100%;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table th,
+#view-revisao-divergencias .revisao-pad-plano-table td {
+    vertical-align: top;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table th:nth-child(3),
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(3) {
+    min-width: 260px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table th:last-child,
+#view-revisao-divergencias .revisao-pad-plano-table td:last-child {
+    min-width: 200px;
+    white-space: nowrap;
+}
+
 /* Linha de detalhe expandida (acordeão) dentro da tabela de revisão. */
 .revisao-linha-detalhe > .revisao-linha-detalhe-cel {
     background: var(--color-surface-muted);
@@ -11534,4 +11571,3 @@ table.dataTable thead th {
     color: var(--color-primary-strong, #8ebdff) !important;
     cursor: pointer;
 }
-
