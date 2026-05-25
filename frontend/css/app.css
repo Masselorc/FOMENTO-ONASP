@@ -10765,15 +10765,69 @@ table.dataTable thead th {
 /* Colunas numéricas alinhadas à direita; código/natureza/situação centralizadas. */
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(4),
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(5),
-#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(9) {
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(10) {
     text-align: center;
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(6),
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(7),
-#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(8) {
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(8),
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(9) {
     text-align: right;
 }
+
+/* Cards de Valor previsto / executado / % execução acima da tabela. */
+#view-revisao-divergencias .revisao-pad-execucao-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 0.75rem;
+}
+
+#view-revisao-divergencias .revisao-pad-execucao-card {
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+#view-revisao-divergencias .revisao-pad-execucao-card span {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted, #94a3b8);
+}
+
+#view-revisao-divergencias .revisao-pad-execucao-card strong {
+    font-size: 1.1rem;
+    color: #f8fafc;
+}
+
+#view-revisao-divergencias .revisao-pad-execucao-percentual .revisao-pad-execucao-barra {
+    margin-top: 0.4rem;
+    height: 6px;
+    background: rgba(148, 163, 184, 0.18);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+#view-revisao-divergencias .revisao-pad-execucao-percentual .revisao-pad-execucao-barra-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-alto .revisao-pad-execucao-barra-fill { background: #34d399; }
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-medio .revisao-pad-execucao-barra-fill { background: #fbbf24; }
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-baixo .revisao-pad-execucao-barra-fill { background: #f97316; }
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-zero .revisao-pad-execucao-barra-fill { background: #ef4444; width: 100%; opacity: 0.25; }
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-alto strong { color: #6ee7b7; }
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-medio strong { color: #fde68a; }
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-baixo strong { color: #fdba74; }
+#view-revisao-divergencias .revisao-pad-execucao-percentual.is-zero strong { color: #fecaca; }
 
 #view-revisao-divergencias .revisao-pad-plano-table .revisao-badge {
     white-space: nowrap;

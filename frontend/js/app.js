@@ -3977,7 +3977,26 @@ async function carregarLogoParaPDF() {
             const resumo = revisoesPlanoPadEstado.dados?.resumoPorUf?.[uf];
             if (!resumo) return '<div class="revisao-detail-panel text-muted">Selecione uma UF para visualizar o plano detalhado.</div>';
             const totalArea = resumo.totalPorArea || {};
+            const totalPrevisto = Number(resumo.totalPrevisto || 0);
+            const totalExecutado = Number(resumo.totalExecutado || 0);
+            const percentual = Number(resumo.percentualExecucao || 0);
+            const classePerc = percentual >= 90 ? 'is-alto' : percentual >= 50 ? 'is-medio' : percentual > 0 ? 'is-baixo' : 'is-zero';
             return `
+                <section class="revisao-pad-execucao-cards">
+                    <div class="revisao-pad-execucao-card">
+                        <span>Valor previsto</span>
+                        <strong>${escapeHtml(formatarValorRevisao(totalPrevisto, 'Valor previsto'))}</strong>
+                    </div>
+                    <div class="revisao-pad-execucao-card">
+                        <span>Valor executado</span>
+                        <strong>${escapeHtml(formatarValorRevisao(totalExecutado, 'Valor executado'))}</strong>
+                    </div>
+                    <div class="revisao-pad-execucao-card revisao-pad-execucao-percentual ${classePerc}">
+                        <span>% Execução</span>
+                        <strong>${escapeHtml(percentual.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}%</strong>
+                        <div class="revisao-pad-execucao-barra"><div class="revisao-pad-execucao-barra-fill" style="width:${Math.min(100, Math.max(0, percentual)).toFixed(2)}%"></div></div>
+                    </div>
+                </section>
                 <section class="revisao-pad-summary">
                     <div><span>UF / Convênio</span><strong>${escapeHtml(uf)}${resumo.numeroConvenio ? ` — Convênio ${escapeHtml(resumo.numeroConvenio)}/2022` : ''}</strong></div>
                     <div><span>Itens PAD</span><strong>${escapeHtml(String(resumo.totalItensPad || 0))}</strong></div>
@@ -4044,13 +4063,14 @@ async function carregarLogoParaPDF() {
             const colQtd = `<td>${escapeHtml(formatarValorRevisao(linha.quantidadeOriginal, 'Quantidade'))}</td>`;
             const colVu = `<td>${escapeHtml(formatarValorRevisao(linha.valorUnitario, 'Valor unitário'))}</td>`;
             const colVt = `<td>${escapeHtml(formatarValorRevisao(linha.valorTotalOriginal, 'Valor total'))}</td>`;
+            const colVe = `<td>${escapeHtml(formatarValorRevisao(linha.valorExecutadoTotal || 0, 'Valor executado'))}</td>`;
             const statusExibido = mesclada ? (filhaUnica.status || linha.status) : linha.status;
             const colStatus = `<td><span class="badge text-bg-${classeSituacaoRevisaoPad(statusExibido)} revisao-badge" title="${escapeHtml(statusExibido || '')}">${escapeHtml(rotuloSituacaoRevisaoPad(statusExibido))}</span></td>`;
             const colAcao = `<td><button type="button" class="btn btn-sm btn-outline-primary" data-revisao-pad-rateio="${escapeHtml(linha.id)}">Ratear quantidade</button></td>`;
 
             return `
                 <tr class="revisao-pad-row-mae ${classeBase} ${classeMesclada} ${classeArea}" data-revisao-pad-mae="${escapeHtml(linha.id)}" data-pode-expandir="${podeExpandir ? '1' : '0'}" aria-expanded="${expandido ? 'true' : 'false'}">
-                    ${colTipo}${colArea}${colDesc}${colNat}${colCod}${colQtd}${colVu}${colVt}${colStatus}${colAcao}
+                    ${colTipo}${colArea}${colDesc}${colNat}${colCod}${colQtd}${colVu}${colVt}${colVe}${colStatus}${colAcao}
                 </tr>
             `;
         }
@@ -4066,6 +4086,7 @@ async function carregarLogoParaPDF() {
                     <td><button type="button" class="btn btn-sm btn-link p-0" data-revisao-pad-rateio="${escapeHtml(filha.parentId)}">${escapeHtml(formatarValorRevisao(filha.quantidade, 'Quantidade'))}</button></td>
                     <td>${escapeHtml(formatarValorRevisao(filha.valorUnitario, 'Valor unitário'))}</td>
                     <td>${escapeHtml(formatarValorRevisao(filha.valorTotal, 'Valor total'))}</td>
+                    <td>${escapeHtml(formatarValorRevisao(filha.valorExecutado || 0, 'Valor executado'))}</td>
                     <td><span class="badge text-bg-${classeSituacaoRevisaoPad(filha.status)} revisao-badge" title="${escapeHtml(filha.status || '')}">${escapeHtml(rotuloSituacaoRevisaoPad(filha.status))}</span></td>
                     <td><span class="text-muted small">Salva ao alterar</span></td>
                 </tr>
@@ -4098,10 +4119,10 @@ async function carregarLogoParaPDF() {
                             <thead>
                                 <tr>
                                     <th>Tipo</th><th>Área</th><th>Descrição</th><th>Natureza</th><th>Código Natureza</th>
-                                    <th>Quantidade</th><th>Valor Unitário</th><th>Valor Total</th><th>Situação</th><th>Ações/Observações</th>
+                                    <th>Quantidade</th><th>Valor Unitário</th><th>Valor Previsto</th><th>Valor Executado</th><th>Situação</th><th>Ações/Observações</th>
                                 </tr>
                             </thead>
-                            <tbody>${corpo || '<tr><td colspan="10" class="text-center text-muted py-3">Nenhum item encontrado para os filtros atuais.</td></tr>'}</tbody>
+                            <tbody>${corpo || '<tr><td colspan="11" class="text-center text-muted py-3">Nenhum item encontrado para os filtros atuais.</td></tr>'}</tbody>
                         </table>
                     </div>
                 </section>

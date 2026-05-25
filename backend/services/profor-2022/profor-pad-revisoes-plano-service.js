@@ -95,6 +95,8 @@ function chaveMaePorLinha(linha) {
 function criarFilhaDeLinhaReconstruida(linha, parentId, indice) {
   const quantidade = arredondar(linha.quantidade, 6);
   const valorUnitario = obterValorUnitario(linha, quantidade, linha.valorPrevisto);
+  const valorTotal = arredondar(quantidade * valorUnitario);
+  const valorExecutado = arredondar(Number(linha.valorExecutado ?? 0));
   return {
     id: `${parentId}-filha-${indice + 1}`,
     parentId,
@@ -109,7 +111,8 @@ function criarFilhaDeLinhaReconstruida(linha, parentId, indice) {
     codigoNatureza: obterCodigoNatureza(linha),
     quantidade,
     valorUnitario,
-    valorTotal: arredondar(quantidade * valorUnitario),
+    valorTotal,
+    valorExecutado,
     valorPrevistoOriginal: arredondar(linha.valorPrevisto),
     origem: linha.origemReconstrucao || "MEMORIA_RATEIO_OPERACIONAL",
     status: statusLinhaFilha(linha),
@@ -120,6 +123,7 @@ function criarMaeDeGrupo(grupo, filhos) {
   const primeira = grupo.linhas[0] || {};
   const quantidadeOriginal = arredondar(filhos.reduce((total, item) => total + Number(item.quantidade || 0), 0), 6);
   const valorTotalOriginal = arredondar(filhos.reduce((total, item) => total + Number(item.valorTotal || 0), 0));
+  const valorExecutadoTotal = arredondar(filhos.reduce((total, item) => total + Number(item.valorExecutado || 0), 0));
   const status = filhos.some((filho) => filho.status === "AREA_NAO_CLASSIFICADA")
     ? "PENDENTE_REVISAO"
     : filhos.some((filho) => filho.status === "SALDO_RESIDUAL_NAO_SETORIALIZADO")
@@ -140,6 +144,7 @@ function criarMaeDeGrupo(grupo, filhos) {
     quantidadeOriginal,
     valorUnitario: obterValorUnitario(primeira, quantidadeOriginal, valorTotalOriginal),
     valorTotalOriginal,
+    valorExecutadoTotal,
     expandidoPorPadrao: false,
     status,
     filhos: filhos.map((filho) => filho.id),
@@ -154,6 +159,7 @@ function criarMaeOcorrencia(item, tipo, status) {
   const valorTotalReferencia = item.valorTotalOriginal ?? item.valorTotalPrevisto ?? item.valorPrevisto;
   const valorUnitario = obterValorUnitario(item, quantidadeOriginal, valorTotalReferencia);
   const valorTotalOriginal = arredondar(valorTotalReferencia ?? quantidadeOriginal * valorUnitario);
+  const valorExecutadoTotal = arredondar(Number(item.valorTotalExecutado ?? item.valorExecutado ?? 0));
   const id = `mae-${tipo.toLowerCase()}-${hashCurto([
     item.numeroConvenio,
     uf,
@@ -176,6 +182,7 @@ function criarMaeOcorrencia(item, tipo, status) {
     quantidadeOriginal,
     valorUnitario,
     valorTotalOriginal,
+    valorExecutadoTotal,
     expandidoPorPadrao: tipo === "ITEM_NOVO",
     status,
     filhos: [],
@@ -199,6 +206,7 @@ function criarFilhaPendente(mae) {
     quantidade: mae.quantidadeOriginal,
     valorUnitario: mae.valorUnitario,
     valorTotal: arredondar(mae.quantidadeOriginal * mae.valorUnitario),
+    valorExecutado: arredondar(Number(mae.valorExecutadoTotal || 0)),
     origem: "PENDENCIA_OPERACIONAL",
     status: "AREA_NAO_CLASSIFICADA",
   };
@@ -213,10 +221,19 @@ function garantirUf(mapa, uf) {
 function montarResumoUf(uf, linhasMae, linhasFilhas, pendencias) {
   const totalPorArea = {};
   const totalPorNatureza = {};
+  let totalPrevisto = 0;
+  let totalExecutado = 0;
   for (const filha of linhasFilhas) {
     totalPorArea[filha.area] = arredondar((totalPorArea[filha.area] || 0) + filha.valorTotal);
     totalPorNatureza[filha.natureza] = arredondar((totalPorNatureza[filha.natureza] || 0) + filha.valorTotal);
+    totalPrevisto += Number(filha.valorTotal || 0);
+    totalExecutado += Number(filha.valorExecutado || 0);
   }
+  totalPrevisto = arredondar(totalPrevisto);
+  totalExecutado = arredondar(totalExecutado);
+  const percentualExecucao = totalPrevisto > 0
+    ? Math.round((totalExecutado / totalPrevisto) * 10000) / 100
+    : 0;
   const convenio = linhasMae.find((linha) => linha.numeroConvenio)?.numeroConvenio || null;
   return {
     uf,
@@ -225,6 +242,9 @@ function montarResumoUf(uf, linhasMae, linhasFilhas, pendencias) {
     totalLinhasRateadas: linhasFilhas.length,
     totalPorArea,
     totalPorNatureza,
+    totalPrevisto,
+    totalExecutado,
+    percentualExecucao,
     itensPendentes: linhasMae.filter((linha) => String(linha.status || "").includes("PENDENTE") || linha.status === "ITEM_NOVO_SEM_RATEIO").length,
     itensNovos: linhasMae.filter((linha) => linha.tipo === "ITEM_NOVO").length,
     itensSuprimidos: linhasMae.filter((linha) => linha.tipo === "ITEM_SUPRIMIDO").length,
