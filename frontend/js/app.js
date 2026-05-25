@@ -5233,7 +5233,7 @@ async function carregarLogoParaPDF() {
                 tabelaInstancia.destroy();
                 $('#tabelaItens').empty(); 
                 // Cabeçalho da tabela
-                $('#tabelaItens').html('<thead><tr><th class="text-center">Inst.</th><th>UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit. (R$)</th><th class="text-end">Valor Total (R$)</th><th class="text-end">Executado (R$)</th><th class="text-center">%</th></tr></thead><tbody></tbody>');
+                $('#tabelaItens').html('<thead><tr><th class="text-center">Inst.</th><th class="text-center">UF</th><th>Objeto</th><th class="text-center">Qtd.</th><th class="text-end">Valor Unit. (R$)</th><th class="text-end">Valor Total (R$)</th><th class="text-end">Executado (R$)</th><th class="text-center">%</th></tr></thead><tbody></tbody>');
             }
 
             const analise = processarDadosAgregados(data);
@@ -15615,7 +15615,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
                 if (execucaoAcimaPrevisto) tr.classList.add('table-warning');
                 tr.innerHTML = `
                     <td data-label="Instrumento" class="text-center align-middle"><span class="d-none">${safeInstrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
-                    <td data-label="UF" class="align-middle"><span class="uf-flag-inline">${renderizarBandeiraCardFormalizacao({uf: row.uf})}<span class="badge badge-uf">${safeUf}</span></span></td>
+                    <td data-label="UF" class="text-center align-middle"><span class="uf-flag-inline justify-content-center">${renderizarBandeiraCardFormalizacao({uf: row.uf})}<span class="badge badge-uf">${safeUf}</span></span></td>
                     <td data-label="Objeto" title="${safeObjeto}" class="align-middle"><span class="truncate-text">${safeObjeto}</span></td>
                     <td data-label="Qtd." class="text-center align-middle">${safeQuantidade}</td>
                     <td data-label="Valor Unit. (R$)" class="text-end font-monospace small align-middle">${formatMoney(row.valorUnitario)}</td>
