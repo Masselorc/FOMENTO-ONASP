@@ -7398,3 +7398,17 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD, sem tela de Revisoes, sem recarga operacional, sem DETRU, sem rendimentos Transferegov, sem Playwright/E2E, sem cookies/ViewState/HTML bruto salvo.
 - Risco: medio - fluxo publico JSF/SAML pode mudar no Transferegov; POC ainda nao substitui a origem operacional.
 - Rollback: reverter o commit; remover o JSON local gerado pela execucao da POC se existir.
+
+---
+
+## 25/05/2026 - PROFOR 2022: adaptador PAD Transferegov e fallback Playwright
+
+- Branch: `main`.
+- Objetivo: transformar o parser PAD Transferegov em adaptador da origem bruta e adicionar fallback Playwright controlado para obter HTML quando HTTP direto falhar.
+- Arquivos: `backend/services/profor-2022/profor-pad-normalizacao-service.js`; `backend/services/profor-2022/profor-pad-transferegov-parser.js`; `backend/services/profor-2022/profor-pad-transferegov-playwright-client.js`; `backend/services/profor-2022/profor-pad-transferegov-extracao-service.js`; `backend/scripts/poc-pad-transferegov-937782.js`; `tests/services/profor-pad-transferegov-parser.test.js`; `tests/services/profor-pad-transferegov-extracao.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: parser reutiliza normalizadores PAD existentes; `validarHtmlPadExtraido()` valida apenas integridade da fonte; orquestrador tenta HTTP e usa Playwright apenas com `fallbackPlaywright`; script POC aceita `--fallback-playwright`.
+- Resultado real HTTP: `34` itens; previsto `396423.71`; executado `97141.55`; saldo `299282.16`; `divergenciasCriticas=0`; equivalente `sim`.
+- Validacoes: `git diff --check`; `node --check` nos arquivos novos/alterados; `node --test tests/services/profor-pad-transferegov-parser.test.js` (10/10); `node --test tests/services/profor-pad-transferegov-extracao.test.js` (6/6); `npm run validar:syntax`; POC real HTTP sem fallback.
+- Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD, sem tela de Revisoes, sem recarga operacional, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
+- Risco: medio - fallback depende da UI publica e do runtime Playwright; segue isolado e desabilitado por padrao.
+- Rollback: reverter o commit; remover o JSON local da POC se existir.

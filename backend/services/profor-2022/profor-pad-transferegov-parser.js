@@ -1,6 +1,7 @@
 const crypto = require("node:crypto");
 
 const {
+  limparEntidadesHtml,
   limparTextoPad,
   normalizarRotuloPad,
   normalizarCodigoNaturezaPad,
@@ -24,6 +25,16 @@ const COLUNAS_PAD_PUBLICO = {
   saldo: ["SALDO"],
 };
 
+const COLUNAS_OBRIGATORIAS = [
+  "descricao",
+  "codigoNaturezaDespesa",
+  "quantidade",
+  "valorUnitario",
+  "valorTotalPrevisto",
+  "valorTotalExecutado",
+  "saldo",
+];
+
 function arredondarMoeda(valor) {
   return Math.round((Number(valor || 0) + Number.EPSILON) * 100) / 100;
 }
@@ -32,21 +43,9 @@ function arredondarQuantidade(valor) {
   return Math.round((Number(valor || 0) + Number.EPSILON) * 1_000_000) / 1_000_000;
 }
 
-function decodificarEntidadesHtml(valor) {
-  return String(valor ?? "")
-    .replace(/&#(\d+);/g, (_, codigo) => String.fromCodePoint(Number(codigo)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, codigo) => String.fromCodePoint(parseInt(codigo, 16)))
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, "\"")
-    .replace(/&#39;|&#039;/gi, "'");
-}
-
 function textoCelula(html) {
   return limparTextoPad(
-    decodificarEntidadesHtml(String(html || "")
+    limparEntidadesHtml(String(html || "")
       .replace(/<br\s*\/?>/gi, " ")
       .replace(/<[^>]+>/g, " "))
   );
@@ -54,7 +53,7 @@ function textoCelula(html) {
 
 function extrairAtributo(tag, nome) {
   const match = String(tag || "").match(new RegExp(`\\b${nome}=["']([^"']*)["']`, "i"));
-  return match ? decodificarEntidadesHtml(match[1]) : null;
+  return match ? limparEntidadesHtml(match[1]) : null;
 }
 
 function extrairTabelas(html) {
@@ -110,7 +109,8 @@ function localizarCabecalho(linhas) {
       const indice = normalizada.findIndex((valor) => alvos.some((alvo) => valor === alvo || valor.includes(alvo)));
       if (indice >= 0) colunas[campo] = indice;
     }
-    return { indiceLinha: i, colunas };
+    const ausentes = COLUNAS_OBRIGATORIAS.filter((campo) => colunas[campo] === undefined);
+    return { indiceLinha: i, colunas, ausentes };
   }
   return null;
 }
@@ -147,8 +147,8 @@ function criarHashItemPad({ instrumento, descricaoNormalizada, codigoNaturezaDes
 }
 
 function normalizarItemPadPublico(item, instrumento) {
-  const descricao = limparTextoPad(decodificarEntidadesHtml(item.descricao));
-  const codigoNaturezaDespesa = limparTextoPad(decodificarEntidadesHtml(item.codigoNaturezaDespesa));
+  const descricao = limparTextoPad(item.descricao);
+  const codigoNaturezaDespesa = limparTextoPad(item.codigoNaturezaDespesa);
   const descricaoNormalizada = normalizarDescricaoRateioProfor(descricao);
   const quantidade = arredondarQuantidade(item.quantidade);
   const valorUnitario = arredondarMoeda(item.valorUnitario);
@@ -158,19 +158,19 @@ function normalizarItemPadPublico(item, instrumento) {
 
   return {
     instrumento: String(instrumento || item.instrumento || "").trim(),
-    tipoDespesa: limparTextoPad(decodificarEntidadesHtml(item.tipoDespesa)),
+    tipoDespesa: limparTextoPad(item.tipoDespesa),
     descricao,
     descricaoNormalizada,
     codigoNaturezaDespesa,
     codigoNaturezaNormalizado: normalizarCodigoNaturezaPad(codigoNaturezaDespesa),
     natureza: derivarNaturezaPad(codigoNaturezaDespesa),
-    unidade: limparTextoPad(decodificarEntidadesHtml(item.unidade)),
+    unidade: limparTextoPad(item.unidade),
     quantidade,
     valorUnitario,
     valorTotalPrevisto,
     valorTotalExecutado,
     saldo,
-    textoOriginal: limparTextoPad(decodificarEntidadesHtml(item.textoOriginal || descricao)),
+    textoOriginal: limparTextoPad(item.textoOriginal || descricao),
     hashItem: criarHashItemPad({
       instrumento,
       descricaoNormalizada,
@@ -188,6 +188,9 @@ function parsearTabelaPad(tabelaHtml, instrumento) {
   const linhas = extrairLinhasTabela(tabelaHtml);
   const cabecalho = localizarCabecalho(linhas);
   if (!cabecalho) return null;
+  if (cabecalho.ausentes.length) {
+    return { itens: [], totaisTabela: null, erro: `Colunas obrigatórias ausentes: ${cabecalho.ausentes.join(", ")}.` };
+  }
 
   const itens = [];
   let totaisTabela = null;
@@ -227,32 +230,90 @@ function somarItens(itens, campo) {
   return arredondarMoeda((itens || []).reduce((total, item) => total + (Number(item[campo]) || 0), 0));
 }
 
-function parsearRelatorioPadTransferegov(html, opcoes = {}) {
-  const instrumento = String(opcoes.instrumento || "").trim();
+function compararMoeda(a, b) {
+  return Math.abs(arredondarMoeda(a) - arredondarMoeda(b)) <= 0.01;
+}
+
+function localizarResultadoPad(html, instrumento) {
   const tabelas = extrairTabelas(html);
+  let erroColunas = null;
+  let tabelaSemItens = false;
   for (const tabela of tabelas) {
     const resultado = parsearTabelaPad(tabela, instrumento);
     if (!resultado) continue;
-    if (resultado.itens.length === 0) continue;
-    const totais = resultado.totaisTabela || {
-      valorTotalPrevisto: somarItens(resultado.itens, "valorTotalPrevisto"),
-      valorTotalExecutado: somarItens(resultado.itens, "valorTotalExecutado"),
-      saldo: somarItens(resultado.itens, "saldo"),
-    };
-    return {
-      instrumento,
-      totalItens: resultado.itens.length,
-      totais,
-      itens: resultado.itens,
-    };
+    if (resultado.erro) {
+      erroColunas = resultado.erro;
+      continue;
+    }
+    if (resultado.itens.length === 0) {
+      tabelaSemItens = true;
+      continue;
+    }
+    return resultado;
   }
+  if (erroColunas) throw new Error(erroColunas);
+  if (tabelaSemItens) throw new Error("Tabela PAD localizada, mas sem itens.");
   throw new Error("Tabela obrigatória de itens PAD não localizada no HTML do Transferegov.");
+}
+
+function validarHtmlPadExtraido(html, opcoes = {}) {
+  const instrumento = String(opcoes.instrumento || "").trim();
+  if (!String(html || "").trim()) {
+    return { valido: false, erros: ["HTML PAD vazio."] };
+  }
+
+  try {
+    const resultado = localizarResultadoPad(html, instrumento);
+    const erros = [];
+    if (!resultado.itens.length) erros.push("Tabela PAD localizada, mas sem itens.");
+    for (const item of resultado.itens) {
+      for (const campo of ["quantidade", "valorUnitario", "valorTotalPrevisto", "valorTotalExecutado", "saldo"]) {
+        if (!Number.isFinite(Number(item[campo]))) {
+          erros.push(`Campo numérico inválido em ${campo}.`);
+          break;
+        }
+      }
+    }
+    if (resultado.totaisTabela) {
+      for (const campo of ["valorTotalPrevisto", "valorTotalExecutado", "saldo"]) {
+        const soma = somarItens(resultado.itens, campo);
+        if (!compararMoeda(resultado.totaisTabela[campo], soma)) {
+          erros.push(`Total geral ${campo} incompatível com a soma dos itens.`);
+        }
+      }
+    }
+    return {
+      valido: erros.length === 0,
+      erros,
+      totalItens: resultado.itens.length,
+      totaisTabela: resultado.totaisTabela,
+    };
+  } catch (erro) {
+    return { valido: false, erros: [erro.message || "HTML PAD inválido."] };
+  }
+}
+
+function parsearRelatorioPadTransferegov(html, opcoes = {}) {
+  const instrumento = String(opcoes.instrumento || "").trim();
+  const resultado = localizarResultadoPad(html, instrumento);
+  const totais = resultado.totaisTabela || {
+    valorTotalPrevisto: somarItens(resultado.itens, "valorTotalPrevisto"),
+    valorTotalExecutado: somarItens(resultado.itens, "valorTotalExecutado"),
+    saldo: somarItens(resultado.itens, "saldo"),
+  };
+  return {
+    instrumento,
+    totalItens: resultado.itens.length,
+    totais,
+    itens: resultado.itens,
+  };
 }
 
 module.exports = {
   COLUNAS_PAD_PUBLICO,
   criarHashItemPad,
-  decodificarEntidadesHtml,
+  decodificarEntidadesHtml: limparEntidadesHtml,
   normalizarItemPadPublico,
   parsearRelatorioPadTransferegov,
+  validarHtmlPadExtraido,
 };

@@ -1,10 +1,13 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const {
   criarHashItemPad,
   decodificarEntidadesHtml,
   parsearRelatorioPadTransferegov,
+  validarHtmlPadExtraido,
 } = require("../../backend/services/profor-2022/profor-pad-transferegov-parser");
 
 function htmlAmostra() {
@@ -58,6 +61,21 @@ function htmlAmostra() {
   `;
 }
 
+function htmlComCabecalhoVariado() {
+  return `
+    <table>
+      <tr>
+        <th>Tipo da Despesa</th><th>Descricao</th><th>Codigo Natureza Despesa</th><th>Unidade</th>
+        <th>Quantidade</th><th>Valor Unit</th><th>Valor Total Previsto</th><th>Valor Total Executado</th><th>Saldo</th>
+      </tr>
+      <tr>
+        <td>Outros</td><td>Item simples</td><td>33.90.30</td><td>UN</td>
+        <td>1.0</td><td>R$ 10,00</td><td>R$ 10,00</td><td>R$ 0,00</td><td>R$ 10,00</td>
+      </tr>
+    </table>
+  `;
+}
+
 test("localiza tabela PAD e extrai colunas normalizadas", () => {
   const resultado = parsearRelatorioPadTransferegov(htmlAmostra(), { instrumento: "937782" });
 
@@ -87,6 +105,15 @@ test("normaliza moeda brasileira, quantidade e totalizadores", () => {
   });
 });
 
+test("aceita variacoes simples de cabecalho para mapear colunas", () => {
+  const resultado = parsearRelatorioPadTransferegov(htmlComCabecalhoVariado(), { instrumento: "937782" });
+
+  assert.equal(resultado.totalItens, 1);
+  assert.equal(resultado.itens[0].tipoDespesa, "Outros");
+  assert.equal(resultado.itens[0].codigoNaturezaNormalizado, "339030");
+  assert.equal(resultado.itens[0].valorTotalPrevisto, 10);
+});
+
 test("decodifica HTML entities numericas e nomeadas", () => {
   assert.equal(decodificarEntidadesHtml("Jo&#227;o &#039;Teste&#039; &amp; Cia"), "João 'Teste' & Cia");
 });
@@ -96,6 +123,44 @@ test("falha claramente quando tabela obrigatoria nao existe", () => {
     () => parsearRelatorioPadTransferegov("<html><table><tr><td>Sem PAD</td></tr></table></html>", { instrumento: "937782" }),
     /Tabela obrigatória de itens PAD não localizada/
   );
+});
+
+test("detecta colunas obrigatorias ausentes", () => {
+  const html = `
+    <table>
+      <tr><th>Descricao</th><th>Quantidade</th><th>Valor Total Previsto</th></tr>
+      <tr><td>Item</td><td>1.0</td><td>R$ 10,00</td></tr>
+    </table>
+  `;
+
+  assert.throws(
+    () => parsearRelatorioPadTransferegov(html, { instrumento: "937782" }),
+    /Colunas obrigatórias ausentes/
+  );
+});
+
+test("detecta tabela PAD sem itens", () => {
+  const html = `
+    <table>
+      <tr>
+        <th>Tipo Despesa</th><th>Descrição</th><th>Cód Nat Despesa</th><th>Unid</th><th>Quantidade</th>
+        <th>Valor Unitário</th><th>Valor Total Previsto</th><th>Valor Total Executado</th><th>Saldo</th>
+      </tr>
+    </table>
+  `;
+
+  assert.throws(
+    () => parsearRelatorioPadTransferegov(html, { instrumento: "937782" }),
+    /Tabela PAD localizada, mas sem itens/
+  );
+});
+
+test("validacao de HTML detecta total geral incompatível", () => {
+  const html = htmlAmostra().replace("R$ 3.519,12", "R$ 3.500,00");
+  const validacao = validarHtmlPadExtraido(html, { instrumento: "937782" });
+
+  assert.equal(validacao.valido, false);
+  assert.ok(validacao.erros.some((erro) => erro.includes("Total geral valorTotalPrevisto")));
 });
 
 test("gera hash estavel do item", () => {
@@ -112,4 +177,19 @@ test("gera hash estavel do item", () => {
 
   assert.equal(criarHashItemPad(entrada), criarHashItemPad({ ...entrada }));
   assert.notEqual(criarHashItemPad(entrada), criarHashItemPad({ ...entrada, saldo: 1999.99 }));
+});
+
+test("parser reutiliza normalizadores PAD e nao aplica area ou rateio", () => {
+  const servicePath = path.resolve(__dirname, "../../backend/services/profor-2022/profor-pad-transferegov-parser.js");
+  const source = fs.readFileSync(servicePath, "utf8");
+  const resultado = parsearRelatorioPadTransferegov(htmlAmostra(), { instrumento: "937782" });
+
+  assert.equal(source.includes('require("./profor-pad-normalizacao-service")'), true);
+  assert.equal(source.includes("converterNumeroPad"), true);
+  assert.equal(source.includes("converterQuantidadePad"), true);
+  assert.equal(source.includes("codigo.startsWith(\"33\")"), false);
+  assert.equal(source.includes("moedaParaNumeroProfor"), false);
+  assert.equal(source.includes("percentual"), false);
+  assert.equal(Object.hasOwn(resultado.itens[0], "area"), false);
+  assert.equal(Object.hasOwn(resultado.itens[0], "rateio"), false);
 });

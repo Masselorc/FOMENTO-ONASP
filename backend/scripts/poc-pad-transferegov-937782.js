@@ -2,12 +2,11 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const {
-  obterHtmlRelatorioPadTransferegov,
-} = require("../services/profor-2022/profor-pad-transferegov-http-client");
-const {
   normalizarItemPadPublico,
-  parsearRelatorioPadTransferegov,
 } = require("../services/profor-2022/profor-pad-transferegov-parser");
+const {
+  extrairPadTransferegov,
+} = require("../services/profor-2022/profor-pad-transferegov-extracao-service");
 const {
   lerRelatorioPad,
 } = require("../services/profor-2022/profor-pad-report-reader");
@@ -22,6 +21,7 @@ const TOTAL_ESPERADO = {
 const CAMINHO_EXCEL_RELATIVO = "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_52677604170748071673.xls";
 const CAMINHO_SAIDA_RELATIVO = "backend/data/relatorios/profor-2022-pad-transferegov-poc-937782.json";
 const TOLERANCIA = 0.01;
+const USAR_FALLBACK_PLAYWRIGHT = process.argv.includes("--fallback-playwright");
 
 function arredondar(valor) {
   return Math.round((Number(valor || 0) + Number.EPSILON) * 100) / 100;
@@ -165,8 +165,14 @@ async function executar() {
   const caminhoExcel = path.join(repoRoot, CAMINHO_EXCEL_RELATIVO);
   const caminhoSaida = path.join(repoRoot, CAMINHO_SAIDA_RELATIVO);
 
-  const { html, diagnostico } = await obterHtmlRelatorioPadTransferegov(INSTRUMENTO);
-  const padTransferegov = parsearRelatorioPadTransferegov(html, { instrumento: INSTRUMENTO });
+  const extracao = await extrairPadTransferegov(INSTRUMENTO, {
+    fallbackPlaywright: USAR_FALLBACK_PLAYWRIGHT,
+  });
+  if (!extracao.sucesso) {
+    const detalhe = (extracao.erros || []).map((erro) => `${erro.origem}: ${erro.mensagem}`).join(" | ");
+    throw new Error(`Extração PAD Transferegov falhou. ${detalhe}`);
+  }
+  const padTransferegov = extracao.dados;
   const relatorioExcel = lerRelatorioPad(caminhoExcel, repoRoot);
   const itensExcel = normalizarItensExcel(relatorioExcel.itens, INSTRUMENTO);
 
@@ -191,7 +197,7 @@ async function executar() {
   const comparacao = {
     dataHora: new Date().toISOString(),
     instrumento: INSTRUMENTO,
-    origemTransferegov: "http-publico-jsf",
+    origemTransferegov: extracao.origem,
     origemExcel: CAMINHO_EXCEL_RELATIVO,
     totalItensTransferegov: totaisTransferegov.totalItens,
     totalItensExcel: totaisExcel.totalItens,
@@ -207,13 +213,7 @@ async function executar() {
 
   const saida = {
     comparacao,
-    diagnosticoHttp: {
-      instrumento: diagnostico.instrumento,
-      status: diagnostico.status,
-      urlFinal: diagnostico.urlFinal,
-      viewStateTamanho: diagnostico.viewStateTamanho,
-      historico: diagnostico.historico,
-    },
+    diagnosticoExtracao: extracao.diagnostico,
     totaisEsperadosManuais: TOTAL_ESPERADO,
     divergenciasCriticas,
     itensTransferegov: padTransferegov.itens,

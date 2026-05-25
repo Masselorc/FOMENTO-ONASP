@@ -14,7 +14,10 @@ const ENTIDADES_HTML = {
 };
 
 function limparEntidadesHtml(valor) {
-  return String(valor ?? "").replace(/&(?:nbsp|amp|lt|gt|quot);|&#39;/g, (entidade) => ENTIDADES_HTML[entidade] || entidade);
+  return String(valor ?? "")
+    .replace(/&#(\d+);/g, (_, codigo) => String.fromCodePoint(Number(codigo)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, codigo) => String.fromCodePoint(parseInt(codigo, 16)))
+    .replace(/&(?:nbsp|amp|lt|gt|quot);|&#39;/g, (entidade) => ENTIDADES_HTML[entidade] || entidade);
 }
 
 function limparTextoPad(valor) {
@@ -98,6 +101,7 @@ function converterDataPad(valor) {
 }
 
 module.exports = {
+  limparEntidadesHtml,
   limparTextoPad,
   normalizarRotuloPad,
   normalizarCodigoNaturezaPad,
