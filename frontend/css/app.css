@@ -10673,20 +10673,25 @@ table.dataTable thead th {
 #view-revisao-divergencias .revisao-pad-plano-table {
     width: 100%;
     table-layout: auto;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table th,
 #view-revisao-divergencias .revisao-pad-plano-table td {
-    vertical-align: top;
-    padding: 0.4rem 0.5rem;
+    vertical-align: middle;
+    padding: 0.3rem 0.4rem;
     white-space: nowrap;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table thead th {
+    text-align: center;
+    vertical-align: middle;
 }
 
 /* Apenas a coluna Descrição (3ª) pode quebrar linha. */
 #view-revisao-divergencias .revisao-pad-plano-table th:nth-child(3),
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(3) {
-    min-width: 180px;
+    min-width: 140px;
     white-space: normal;
     overflow-wrap: anywhere;
 }
@@ -10698,17 +10703,40 @@ table.dataTable thead th {
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select {
-    min-width: 160px;
+    min-width: 140px;
     width: auto;
-    padding-right: 1.75rem;
-    text-overflow: ellipsis;
+    padding: 0.15rem 1.5rem 0.15rem 0.4rem;
+    font-size: 0.78rem;
 }
 
-/* Coluna Área (2ª) precisa caber o rótulo completo do select. */
+/* Coluna Área (2ª): largura suficiente para o select sem desperdício. */
 #view-revisao-divergencias .revisao-pad-plano-table th:nth-child(2),
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(2) {
-    min-width: 170px;
+    width: 1%;
     white-space: nowrap;
+    text-align: center;
+}
+
+/* Colunas numéricas alinhadas à direita; código/natureza/situação centralizadas. */
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(4),
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(5),
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(9) {
+    text-align: center;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(6),
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(7),
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(8) {
+    text-align: right;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table .revisao-badge {
+    white-space: nowrap;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table .btn-sm {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
 }
 
 /* Linha de detalhe expandida (acordeão) dentro da tabela de revisão. */

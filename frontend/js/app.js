@@ -3998,7 +3998,9 @@ async function carregarLogoParaPDF() {
             const colTipo = `<td>${podeExpandir ? `<i class="fas ${expandido ? 'fa-chevron-down' : 'fa-chevron-right'} me-1"></i>` : ''}${escapeHtml(rotuloTipoRevisaoPad(linha.tipo))}</td>`;
             const colArea = mesclada
                 ? `<td>${renderSelectAreaLinhaFilhaRevisaoPad(filhaUnica)}</td>`
-                : '<td class="text-muted">—</td>';
+                : (podeExpandir
+                    ? '<td><span class="badge text-bg-info revisao-badge">RATEADO</span></td>'
+                    : '<td class="text-muted">—</td>');
             const colDesc = `<td><strong>${escapeHtml(linha.descricao || '-')}</strong>${linha.observacao ? `<div class="small text-muted">${escapeHtml(linha.observacao)}</div>` : ''}</td>`;
             const colNat = `<td>${escapeHtml(linha.natureza || '-')}</td>`;
             const colCod = `<td>${escapeHtml(linha.codigoNatureza || 'N/A')}</td>`;
