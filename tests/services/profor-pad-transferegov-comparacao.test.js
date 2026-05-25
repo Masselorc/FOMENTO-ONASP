@@ -39,8 +39,9 @@ test("comparacao retorna equivalente quando itens Transferegov e Excel sao iguai
 test("comparacao detecta divergencia de total de itens", () => {
   const resultado = comparar([item()], [item(), item({ descricao: "Mesa", valorTotalPrevisto: 10, valorTotalExecutado: 0, saldo: 10 })]);
 
-  assert.equal(resultado.equivalente, false);
-  assert.ok(resultado.divergenciasCriticas.some((divergencia) => divergencia.tipo === "total_itens_divergente"));
+  assert.equal(resultado.equivalente, true);
+  assert.equal(resultado.equivalenteHistorico, false);
+  assert.ok(resultado.divergenciasHistoricas.some((divergencia) => divergencia.tipo === "diferenca_historica_excel" && divergencia.campo === "totalItens"));
 });
 
 test("comparacao detecta divergencia de valor previsto", () => {
@@ -48,35 +49,36 @@ test("comparacao detecta divergencia de valor previsto", () => {
 
   assert.ok(resultado.itensComValorDivergente.some((divergencia) => divergencia.campo === "valorTotalPrevisto"));
   assert.equal(resultado.itensComDescricaoSemelhanteHashDiferente.length, 1);
-  assert.ok(resultado.divergenciasCriticas.some((divergencia) => divergencia.tipo === "total_valorTotalPrevisto_divergente"));
+  assert.ok(resultado.atualizacoesDetectadas.some((divergencia) => divergencia.tipo === "valor_atualizado_na_fonte_atual"));
+  assert.ok(resultado.divergenciasHistoricas.some((divergencia) => divergencia.tipo === "diferenca_historica_excel" && divergencia.campo === "valorTotalPrevisto"));
 });
 
 test("comparacao detecta divergencia de valor executado", () => {
   const resultado = comparar([item({ valorTotalExecutado: 40, saldo: 160 })], [item()]);
 
   assert.ok(resultado.itensComValorDivergente.some((divergencia) => divergencia.campo === "valorTotalExecutado"));
-  assert.ok(resultado.divergenciasCriticas.some((divergencia) => divergencia.tipo === "total_valorTotalExecutado_divergente"));
+  assert.ok(resultado.divergenciasHistoricas.some((divergencia) => divergencia.tipo === "diferenca_historica_excel" && divergencia.campo === "valorTotalExecutado"));
 });
 
 test("comparacao detecta divergencia de saldo", () => {
   const resultado = comparar([item({ saldo: 140 })], [item()]);
 
   assert.ok(resultado.itensComValorDivergente.some((divergencia) => divergencia.campo === "saldo"));
-  assert.ok(resultado.divergenciasCriticas.some((divergencia) => divergencia.tipo === "total_saldo_divergente"));
+  assert.ok(resultado.divergenciasHistoricas.some((divergencia) => divergencia.tipo === "diferenca_historica_excel" && divergencia.campo === "saldo"));
 });
 
 test("comparacao detecta item ausente no Transferegov", () => {
   const resultado = comparar([], [item()]);
 
   assert.equal(resultado.itensAusentesNoTransferegov.length, 1);
-  assert.ok(resultado.divergenciasCriticas.some((divergencia) => divergencia.tipo === "item_ausente_no_transferegov"));
+  assert.ok(resultado.atualizacoesDetectadas.some((divergencia) => divergencia.tipo === "item_suprimido_na_fonte_atual"));
 });
 
 test("comparacao detecta item ausente no Excel", () => {
   const resultado = comparar([item()], []);
 
   assert.equal(resultado.itensAusentesNoExcel.length, 1);
-  assert.ok(resultado.divergenciasCriticas.some((divergencia) => divergencia.tipo === "item_ausente_no_excel"));
+  assert.ok(resultado.atualizacoesDetectadas.some((divergencia) => divergencia.tipo === "item_novo_na_fonte_atual"));
 });
 
 test("comparacao ignora area rateio e decisao", () => {
@@ -87,5 +89,5 @@ test("comparacao ignora area rateio e decisao", () => {
   ]);
 
   assert.equal(resultado.equivalente, true);
-  assert.equal(resultado.divergenciasCriticas.length, 0);
+  assert.equal(resultado.divergenciasHistoricas.length, 0);
 });

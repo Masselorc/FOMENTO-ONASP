@@ -7450,3 +7450,16 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD persistente, sem recarga PAD, sem tela de Revisoes, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
 - Risco: medio - fontes publicas podem mudar entre execucoes; divergencias parecem refletir atualizacao da fonte e nao erro tecnico.
 - Rollback: reverter o commit; remover os relatorios locais de investigacao se desejar limpar o workspace.
+
+## 25/05/2026 - PROFOR 2022: Excel como auditoria historica PAD
+
+- Branch: `main`.
+- Objetivo: ajustar dry-run/importador Transferegov para usar o PAD atual como fonte bruta oficial e tratar Excel antigo apenas como auditoria historica de migracao.
+- Arquivos: `backend/scripts/extrair-pads-transferegov-profor-2022-dry-run.js`; `backend/services/profor-2022/profor-pad-transferegov-comparacao-service.js`; `backend/services/profor-2022/profor-pad-transferegov-dry-run-service.js`; `backend/services/profor-2022/profor-pad-transferegov-parser.js`; testes parser/comparacao/dry-run; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: diferenças contra Excel viraram `comparacaoHistoricaExcel`, `divergenciasHistoricas` e `atualizacoesDetectadas`; veredito principal agora usa `aptoParaImportacaoTecnica` e `bloqueiosTecnicos`.
+- Resultado real: `937782`, `938128`, `937817` e `937468` aptos tecnicamente; `938128`, `937817` e `937468` mantem diferencas historicas contra Excel, sem bloquear importacao tecnica.
+- Resultado 15 convenios: HTTP direto; `15` extraidos; `0` falhas tecnicas; `15` aptos para importacao tecnica; `3` com atualizacoes/diferenca historica Excel.
+- Validacoes: `git diff --check`; `node --check` nos arquivos solicitados; testes parser/comparacao/dry-run; `npm run validar:syntax`; dry-runs reais dos quatro convenios e dos 15, sem Playwright.
+- Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD persistente, sem recarga PAD, sem tela de Revisoes, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
+- Risco: medio - aptidao tecnica nao equivale a decisao de ativar cache; ainda falta etapa propria de cache/origem operacional.
+- Rollback: reverter o commit; remover relatorios locais untracked se desejar limpar o workspace.

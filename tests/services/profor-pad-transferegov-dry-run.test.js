@@ -49,8 +49,8 @@ test("dry-run compara convenio por HTTP e nao chama fallback Playwright por padr
   assert.equal(chamadas.length, 1);
   assert.equal(chamadas[0].instrumento, "937782");
   assert.equal(chamadas[0].opcoes.fallbackPlaywright, false);
-  assert.equal(resultado.resumo.totalConveniosEquivalentes, 1);
-  assert.equal(resultado.resumo.aptoParaCacheTransferegov, true);
+  assert.equal(resultado.resumo.totalAptosParaImportacaoTecnica, 1);
+  assert.equal(resultado.resumo.aptoParaImportacaoTecnica, true);
 });
 
 test("dry-run respeita filtro por convenio e limite", async () => {
@@ -87,7 +87,63 @@ test("dry-run registra falha tecnica estruturada", async () => {
 
   assert.equal(resultado.resumo.totalConveniosComFalha, 1);
   assert.equal(resultado.resultados[0].errosTecnicos[0].origem, "http");
-  assert.equal(resultado.resumo.aptoParaCacheTransferegov, false);
+  assert.equal(resultado.resumo.aptoParaImportacaoTecnica, false);
+});
+
+test("diferenca historica contra Excel nao bloqueia importacao tecnica", async () => {
+  const resultado = await executarDryRunPadsTransferegov({
+    referencia: referencia(),
+    extrairPad: async () => ({
+      sucesso: true,
+      origem: "http",
+      dados: { itens: [item({ valorTotalExecutado: 40, saldo: 160 })] },
+    }),
+  });
+
+  assert.equal(resultado.resultados[0].aptoParaImportacaoTecnica, true);
+  assert.equal(resultado.resultados[0].equivalenteHistorico, false);
+  assert.equal(resultado.resumo.totalAptosParaImportacaoTecnica, 1);
+  assert.equal(resultado.resumo.totalComDiferencaHistoricaExcel, 1);
+});
+
+test("item novo ou suprimido em relacao ao Excel nao bloqueia importacao tecnica", async () => {
+  const resultado = await executarDryRunPadsTransferegov({
+    referencia: referencia(),
+    extrairPad: async () => ({
+      sucesso: true,
+      origem: "http",
+      dados: { itens: [item({ descricao: "Item novo", valorTotalPrevisto: 10, valorTotalExecutado: 0, saldo: 10 })] },
+    }),
+  });
+
+  assert.equal(resultado.resultados[0].aptoParaImportacaoTecnica, true);
+  assert.equal(resultado.resultados[0].atualizacoesDetectadas > 0, true);
+});
+
+test("item atual sem descricao codigo quantidade ou valor previsto bloqueia importacao tecnica", async () => {
+  const resultado = await executarDryRunPadsTransferegov({
+    referencia: referencia(),
+    extrairPad: async () => ({
+      sucesso: true,
+      origem: "http",
+      dados: {
+        itens: [
+          item({
+            descricao: "",
+            codigoNaturezaDespesa: "",
+            quantidade: Number.NaN,
+            valorTotalPrevisto: Number.NaN,
+          }),
+        ],
+      },
+    }),
+  });
+
+  assert.equal(resultado.resultados[0].aptoParaImportacaoTecnica, false);
+  assert.deepEqual(
+    resultado.resultados[0].bloqueiosTecnicos.map((bloqueio) => bloqueio.tipo),
+    ["item_sem_descricao", "item_sem_codigo_natureza", "quantidade_nao_parseavel", "valor_total_previsto_nao_parseavel"]
+  );
 });
 
 test("dry-run nao persiste cache, nao altera banco, nao chama recarga PAD, DETRU ou rendimentos", () => {

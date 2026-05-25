@@ -102,9 +102,9 @@ function evidenciaPar(itemTransferegov, itemExcel) {
 }
 
 function compararTotais(totaisTransferegov, totaisExcel) {
-  const divergencias = [];
+  const diferencas = [];
   if (totaisTransferegov.totalItens !== totaisExcel.totalItens) {
-    divergencias.push({
+    diferencas.push({
       tipo: "total_itens_divergente",
       campo: "totalItens",
       transferegov: totaisTransferegov.totalItens,
@@ -113,7 +113,7 @@ function compararTotais(totaisTransferegov, totaisExcel) {
   }
   for (const campo of ["valorTotalPrevisto", "valorTotalExecutado", "saldo"]) {
     if (!numerosIguais(totaisTransferegov[campo], totaisExcel[campo])) {
-      divergencias.push({
+      diferencas.push({
         tipo: `total_${campo}_divergente`,
         campo,
         transferegov: totaisTransferegov[campo],
@@ -121,7 +121,7 @@ function compararTotais(totaisTransferegov, totaisExcel) {
       });
     }
   }
-  return divergencias;
+  return diferencas;
 }
 
 function compararPorItens(itensTransferegov, itensExcel) {
@@ -215,25 +215,33 @@ function compararPadTransferegovComExcel({ instrumento, itensTransferegov, itens
   const itensTransferegovNormalizados = (itensTransferegov || []).map((item) => normalizarItemPadPublico(item, instrumento));
   const totaisTransferegov = totaisDeItens(itensTransferegovNormalizados);
   const totaisExcel = totaisDeItens(itensExcelNormalizados);
-  const divergenciasTotais = compararTotais(totaisTransferegov, totaisExcel);
-  const divergenciasItens = compararPorItens(itensTransferegovNormalizados, itensExcelNormalizados);
-  const divergenciasCriticas = [
-    ...divergenciasTotais,
-    ...divergenciasItens.itensAusentesNoTransferegov.map((item) => ({ tipo: "item_ausente_no_transferegov", item })),
-    ...divergenciasItens.itensAusentesNoExcel.map((item) => ({ tipo: "item_ausente_no_excel", item })),
-    ...divergenciasItens.itensComValorDivergente.map((item) => ({ tipo: "valor_item_divergente", ...item })),
-    ...divergenciasItens.itensComQuantidadeDivergente.map((item) => ({ tipo: "quantidade_item_divergente", ...item })),
-    ...divergenciasItens.itensComCodigoNaturezaDivergente.map((item) => ({ tipo: "codigo_natureza_item_divergente", ...item })),
+  const diferencasTotais = compararTotais(totaisTransferegov, totaisExcel);
+  const diferencasItens = compararPorItens(itensTransferegovNormalizados, itensExcelNormalizados);
+  const diferencasHistoricas = [
+    ...diferencasTotais.map((item) => ({ ...item, tipo: "diferenca_historica_excel", subtipo: item.tipo, escopo: "total" })),
+    ...diferencasItens.itensAusentesNoTransferegov.map((item) => ({ tipo: "item_suprimido_na_fonte_atual", item })),
+    ...diferencasItens.itensAusentesNoExcel.map((item) => ({ tipo: "item_novo_na_fonte_atual", item })),
+    ...diferencasItens.itensComValorDivergente.map((item) => ({ tipo: "valor_atualizado_na_fonte_atual", ...item })),
+    ...diferencasItens.itensComQuantidadeDivergente.map((item) => ({ tipo: "atualizacao_detectada", subtipo: "quantidade_diferente", ...item })),
+    ...diferencasItens.itensComCodigoNaturezaDivergente.map((item) => ({ tipo: "atualizacao_detectada", subtipo: "codigo_natureza_diferente", ...item })),
   ];
+  const equivalenteHistorico = diferencasHistoricas.length === 0;
 
   return {
     instrumento: String(instrumento),
     totaisTransferegov,
     totaisExcel,
-    divergenciasCriticas,
+    divergenciasCriticas: [],
+    divergenciasHistoricas: diferencasHistoricas,
     divergenciasNaoCriticas: [],
-    ...divergenciasItens,
-    equivalente: divergenciasCriticas.length === 0,
+    atualizacoesDetectadas: diferencasHistoricas,
+    comparacaoHistoricaExcel: {
+      equivalenteHistorico,
+      diferencas: diferencasHistoricas,
+    },
+    ...diferencasItens,
+    equivalenteHistorico,
+    equivalente: true,
   };
 }
 

@@ -43,8 +43,9 @@ function linhaResumo(resultado) {
     `executadoExcel=${resultado.totalExecutadoExcel}`,
     `saldoTransferegov=${resultado.saldoTransferegov}`,
     `saldoExcel=${resultado.saldoExcel}`,
-    `divergenciasCriticas=${resultado.divergenciasCriticas}`,
-    `equivalente=${resultado.equivalente ? "sim" : "nao"}`,
+    `aptoParaImportacaoTecnica=${resultado.aptoParaImportacaoTecnica ? "sim" : "nao"}`,
+    `diferencasHistoricas=${resultado.diferencasHistoricas}`,
+    `equivalenteHistorico=${resultado.equivalenteHistorico ? "sim" : "nao"}`,
   ].join(" ");
 }
 
@@ -52,10 +53,11 @@ function imprimirResumo(resultado) {
   console.log(`dataHora=${resultado.dataHora}`);
   console.log(`totalConveniosEsperados=${resultado.resumo.totalConveniosEsperados}`);
   console.log(`totalConveniosExtraidos=${resultado.resumo.totalConveniosExtraidos}`);
-  console.log(`totalConveniosComFalha=${resultado.resumo.totalConveniosComFalha}`);
-  console.log(`totalConveniosEquivalentes=${resultado.resumo.totalConveniosEquivalentes}`);
-  console.log(`totalConveniosComDivergenciaCritica=${resultado.resumo.totalConveniosComDivergenciaCritica}`);
-  console.log(`aptoParaCacheTransferegov=${resultado.resumo.aptoParaCacheTransferegov ? "true" : "false"}`);
+  console.log(`totalFalhasTecnicas=${resultado.resumo.totalFalhasTecnicas}`);
+  console.log(`totalAptosParaImportacaoTecnica=${resultado.resumo.totalAptosParaImportacaoTecnica}`);
+  console.log(`totalComAtualizacoesDetectadas=${resultado.resumo.totalComAtualizacoesDetectadas}`);
+  console.log(`totalComDiferencaHistoricaExcel=${resultado.resumo.totalComDiferencaHistoricaExcel}`);
+  console.log(`aptoParaImportacaoTecnica=${resultado.resumo.aptoParaImportacaoTecnica ? "true" : "false"}`);
   for (const item of resultado.resultados) console.log(linhaResumo(item));
 }
 
@@ -65,28 +67,29 @@ function classificarDivergencia(resultado) {
       classificacao: "dado_insuficiente",
       provavelCausa: "Falha tecnica na extracao impediu comparacao material.",
       recomendacao: "Reexecutar HTTP direto e analisar erro tecnico antes de qualquer cache.",
-      bloqueiaCacheTransferegov: true,
+      bloqueiaImportacaoTecnica: true,
       exigeCorrecaoParserComparador: false,
       diferencaRealFonte: false,
     };
   }
 
-  const comparacao = resultado.comparacao || {};
-  const totaisDiferem = !resultado.equivalente
+  const comparacao = resultado.comparacaoHistoricaExcel || resultado.comparacao || {};
+  const diferencas = comparacao.diferencas || [];
+  const totaisDiferem = !resultado.equivalenteHistorico
     && (resultado.totalPrevistoTransferegov !== resultado.totalPrevistoExcel
       || resultado.totalExecutadoTransferegov !== resultado.totalExecutadoExcel
       || resultado.saldoTransferegov !== resultado.saldoExcel
       || resultado.totalItensTransferegov !== resultado.totalItensExcel);
-  const semAusencias = !comparacao.itensAusentesNoTransferegov?.length && !comparacao.itensAusentesNoExcel?.length;
-  const semCodigoQuantidade = !comparacao.itensComQuantidadeDivergente?.length && !comparacao.itensComCodigoNaturezaDivergente?.length;
-  const soValores = semAusencias && semCodigoQuantidade && comparacao.itensComValorDivergente?.length > 0;
+  const temAusencias = diferencas.some((item) => item.tipo === "item_suprimido_na_fonte_atual" || item.tipo === "item_novo_na_fonte_atual");
+  const temQuantidadeOuCodigo = diferencas.some((item) => item.subtipo === "quantidade_diferente" || item.subtipo === "codigo_natureza_diferente");
+  const soValores = !temAusencias && !temQuantidadeOuCodigo && diferencas.some((item) => item.tipo === "valor_atualizado_na_fonte_atual");
 
   if (soValores && totaisDiferem) {
     return {
-      classificacao: "diferenca_real_entre_excel_antigo_e_transferegov_atual",
+      classificacao: "diferenca_historica_excel",
       provavelCausa: "O Transferegov publico atual informa valores executados/saldos diferentes do Excel PAD processado; item, descricao, codigo e quantidade foram pareados.",
-      recomendacao: "Nao ajustar parser para forcar equivalencia; tratar como Excel possivelmente desatualizado e manter bloqueio de cache ate decisao expressa.",
-      bloqueiaCacheTransferegov: true,
+      recomendacao: "Tratar como atualizacao da fonte atual; nao bloquear importacao tecnica por divergencia contra Excel historico.",
+      bloqueiaImportacaoTecnica: false,
       exigeCorrecaoParserComparador: false,
       diferencaRealFonte: true,
     };
@@ -94,22 +97,22 @@ function classificarDivergencia(resultado) {
 
   if (soValores && !totaisDiferem) {
     return {
-      classificacao: "diferenca_real_item_a_item_com_total_geral_compensado",
+      classificacao: "valor_atualizado_na_fonte_atual",
       provavelCausa: "Os totais gerais batem, mas a distribuicao de valor executado/saldo entre itens pareados difere entre o Transferegov atual e o Excel PAD processado.",
-      recomendacao: "Nao mascarar divergencia no comparador; validar com decisao de negocio antes de habilitar cache Transferegov.",
-      bloqueiaCacheTransferegov: true,
+      recomendacao: "Registrar como auditoria historica; nao bloquear importacao tecnica do PAD atual.",
+      bloqueiaImportacaoTecnica: false,
       exigeCorrecaoParserComparador: false,
       diferencaRealFonte: true,
     };
   }
 
   return {
-    classificacao: "dado_insuficiente",
-    provavelCausa: "A divergencia envolve ausencia, quantidade, codigo ou outro padrao que exige analise item a item.",
-    recomendacao: "Abrir evidencias detalhadas e decidir se e erro tecnico ou diferenca real antes de cache.",
-    bloqueiaCacheTransferegov: true,
+    classificacao: resultado.equivalenteHistorico ? "sem_diferenca_historica" : "atualizacao_detectada",
+    provavelCausa: resultado.equivalenteHistorico ? "PAD atual equivalente ao Excel historico." : "O PAD atual difere da referencia historica do Excel.",
+    recomendacao: "Usar o PAD atual como fonte bruta; manter a diferenca apenas como auditoria.",
+    bloqueiaImportacaoTecnica: false,
     exigeCorrecaoParserComparador: false,
-    diferencaRealFonte: false,
+    diferencaRealFonte: !resultado.equivalenteHistorico,
   };
 }
 
@@ -129,10 +132,12 @@ function montarRelatorioDivergencias(resultado) {
         totalExecutadoExcel: item.totalExecutadoExcel,
         saldoTransferegov: item.saldoTransferegov,
         saldoExcel: item.saldoExcel,
-        divergenciasCriticas: item.divergenciasCriticas,
-        equivalente: item.equivalente,
+        aptoParaImportacaoTecnica: item.aptoParaImportacaoTecnica,
+        diferencasHistoricas: item.diferencasHistoricas,
+        equivalenteHistorico: item.equivalenteHistorico,
       },
       classificacao: classificarDivergencia(item),
+      comparacaoHistoricaExcel: item.comparacaoHistoricaExcel,
       divergencias: item.comparacao ? {
         itensAusentesNoTransferegov: item.comparacao.itensAusentesNoTransferegov,
         itensAusentesNoExcel: item.comparacao.itensAusentesNoExcel,
@@ -152,10 +157,10 @@ function montarRelatorioDivergencias(resultado) {
     conveniosInvestigados: CONVENIOS_INVESTIGACAO_DIVERGENCIAS,
     resumoGeral: {
       totalInvestigados: resultados.length,
-      totalComDivergenciaCritica: resultados.filter((item) => item.resumo.divergenciasCriticas > 0).length,
+      totalComDiferencaHistoricaExcel: resultados.filter((item) => !item.resumo.equivalenteHistorico).length,
       totalExigeCorrecaoParserComparador: resultados.filter((item) => item.classificacao.exigeCorrecaoParserComparador).length,
       totalDiferencaRealFonte: resultados.filter((item) => item.classificacao.diferencaRealFonte).length,
-      bloqueiaCacheTransferegov: resultados.some((item) => item.classificacao.bloqueiaCacheTransferegov),
+      bloqueiaImportacaoTecnica: resultados.some((item) => item.classificacao.bloqueiaImportacaoTecnica),
     },
     resultados,
   };
@@ -167,7 +172,7 @@ function gerarMarkdownDivergencias(relatorio) {
     "",
     `- Data/hora: ${relatorio.dataHora}`,
     `- Convenios investigados: ${relatorio.conveniosInvestigados.join(", ")}`,
-    `- Bloqueia cache Transferegov: ${relatorio.resumoGeral.bloqueiaCacheTransferegov ? "sim" : "nao"}`,
+    `- Bloqueia importacao tecnica: ${relatorio.resumoGeral.bloqueiaImportacaoTecnica ? "sim" : "nao"}`,
     "",
   ];
   for (const item of relatorio.resultados) {
@@ -178,6 +183,7 @@ function gerarMarkdownDivergencias(relatorio) {
     linhas.push(`- Recomendacao: ${item.classificacao.recomendacao}`);
     linhas.push(`- Exige correcao parser/comparador: ${item.classificacao.exigeCorrecaoParserComparador ? "sim" : "nao"}`);
     linhas.push(`- Diferenca real da fonte: ${item.classificacao.diferencaRealFonte ? "sim" : "nao"}`);
+    linhas.push(`- Apto para importacao tecnica: ${item.resumo.aptoParaImportacaoTecnica ? "sim" : "nao"}`);
     linhas.push(`- Itens Transferegov/Excel: ${item.resumo.totalItensTransferegov}/${item.resumo.totalItensExcel}`);
     linhas.push(`- Previsto Transferegov/Excel: ${item.resumo.totalPrevistoTransferegov}/${item.resumo.totalPrevistoExcel}`);
     linhas.push(`- Executado Transferegov/Excel: ${item.resumo.totalExecutadoTransferegov}/${item.resumo.totalExecutadoExcel}`);
@@ -209,19 +215,21 @@ function gerarMarkdown(resultado) {
     `- Data/hora: ${resultado.dataHora}`,
     `- Total convênios esperados: ${resultado.resumo.totalConveniosEsperados}`,
     `- Total convênios extraídos: ${resultado.resumo.totalConveniosExtraidos}`,
-    `- Total convênios com falha: ${resultado.resumo.totalConveniosComFalha}`,
-    `- Total convênios equivalentes: ${resultado.resumo.totalConveniosEquivalentes}`,
-    `- Total convênios com divergência crítica: ${resultado.resumo.totalConveniosComDivergenciaCritica}`,
-    `- Apto para cache Transferegov: ${resultado.resumo.aptoParaCacheTransferegov ? "sim" : "não"}`,
+    `- Total falhas técnicas: ${resultado.resumo.totalFalhasTecnicas}`,
+    `- Total aptos para importação técnica: ${resultado.resumo.totalAptosParaImportacaoTecnica}`,
+    `- Total com atualizações detectadas: ${resultado.resumo.totalComAtualizacoesDetectadas}`,
+    `- Total com diferença histórica Excel: ${resultado.resumo.totalComDiferencaHistoricaExcel}`,
+    `- Apto para importação técnica: ${resultado.resumo.aptoParaImportacaoTecnica ? "sim" : "não"}`,
     "",
-    "| Convênio | Origem | Sucesso | Itens Tgov | Itens Excel | Previsto Tgov | Previsto Excel | Executado Tgov | Executado Excel | Saldo Tgov | Saldo Excel | Divergências críticas | Equivalente |",
-    "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+    "| Convênio | Origem | Sucesso | Apto técnico | Itens Tgov | Itens Excel | Previsto Tgov | Previsto Excel | Executado Tgov | Executado Excel | Saldo Tgov | Saldo Excel | Diferenças históricas | Equivalente histórico |",
+    "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
   ];
   for (const item of resultado.resultados) {
     linhas.push([
       item.instrumento,
       item.origemUsada,
       item.sucesso ? "sim" : "não",
+      item.aptoParaImportacaoTecnica ? "sim" : "não",
       item.totalItensTransferegov ?? "-",
       item.totalItensExcel ?? "-",
       item.totalPrevistoTransferegov ?? "-",
@@ -230,8 +238,8 @@ function gerarMarkdown(resultado) {
       item.totalExecutadoExcel ?? "-",
       item.saldoTransferegov ?? "-",
       item.saldoExcel ?? "-",
-      item.divergenciasCriticas ?? "-",
-      item.equivalente ? "sim" : "não",
+      item.diferencasHistoricas ?? "-",
+      item.equivalenteHistorico ? "sim" : "não",
     ].join(" | ").replace(/^/, "| ").replace(/$/, " |"));
   }
   return `${linhas.join("\n")}\n`;

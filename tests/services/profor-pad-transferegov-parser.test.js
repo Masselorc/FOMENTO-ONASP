@@ -155,6 +155,40 @@ test("detecta tabela PAD sem itens", () => {
   );
 });
 
+test("detecta item sem descricao e sem codigo de natureza", () => {
+  const html = `
+    <table>
+      <tr>
+        <th>Tipo Despesa</th><th>Descrição</th><th>Cód Nat Despesa</th><th>Unid</th><th>Quantidade</th>
+        <th>Valor Unitário</th><th>Valor Total Previsto</th><th>Valor Total Executado</th><th>Saldo</th>
+      </tr>
+      <tr><td>Bem</td><td></td><td></td><td>UN</td><td>1.0</td><td>R$ 10,00</td><td>R$ 10,00</td><td>R$ 0,00</td><td>R$ 10,00</td></tr>
+    </table>
+  `;
+
+  assert.throws(
+    () => parsearRelatorioPadTransferegov(html, { instrumento: "937782" }),
+    /Item PAD sem descrição/
+  );
+});
+
+test("detecta quantidade e valor previsto nao parseaveis", () => {
+  const html = `
+    <table>
+      <tr>
+        <th>Tipo Despesa</th><th>Descrição</th><th>Cód Nat Despesa</th><th>Unid</th><th>Quantidade</th>
+        <th>Valor Unitário</th><th>Valor Total Previsto</th><th>Valor Total Executado</th><th>Saldo</th>
+      </tr>
+      <tr><td>Bem</td><td>Item inválido</td><td>44.90.52</td><td>UN</td><td>abc</td><td>R$ 10,00</td><td>abc</td><td>R$ 0,00</td><td>R$ 10,00</td></tr>
+    </table>
+  `;
+
+  assert.throws(
+    () => parsearRelatorioPadTransferegov(html, { instrumento: "937782" }),
+    /Quantidade não parseável.*Valor total previsto não parseável/
+  );
+});
+
 test("validacao de HTML detecta total geral incompatível", () => {
   const html = htmlAmostra().replace("R$ 3.519,12", "R$ 3.500,00");
   const validacao = validarHtmlPadExtraido(html, { instrumento: "937782" });

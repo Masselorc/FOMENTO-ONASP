@@ -194,6 +194,7 @@ function parsearTabelaPad(tabelaHtml, instrumento) {
 
   const itens = [];
   let totaisTabela = null;
+  const erros = [];
   for (let i = cabecalho.indiceLinha + 1; i < linhas.length; i += 1) {
     const linha = linhas[i];
     if (!linha.some((celula) => limparTextoPad(celula))) continue;
@@ -208,21 +209,45 @@ function parsearTabelaPad(tabelaHtml, instrumento) {
     }
 
     const descricao = textoDaColuna(linha, cabecalho.colunas.descricao);
-    if (!descricao) continue;
+    if (!descricao) {
+      erros.push(`Item PAD sem descrição na linha ${i + 1}.`);
+      continue;
+    }
+    const codigoNaturezaDespesa = textoDaColuna(linha, cabecalho.colunas.codigoNaturezaDespesa);
+    if (!codigoNaturezaDespesa) {
+      erros.push(`Item PAD sem código de natureza na linha ${i + 1}.`);
+      continue;
+    }
+    const quantidade = converterQuantidadePad(textoDaColuna(linha, cabecalho.colunas.quantidade));
+    const valorUnitario = converterNumeroPad(textoDaColuna(linha, cabecalho.colunas.valorUnitario));
+    const valorTotalPrevisto = converterNumeroPad(textoDaColuna(linha, cabecalho.colunas.valorTotalPrevisto));
+    const valorTotalExecutado = converterNumeroPad(textoDaColuna(linha, cabecalho.colunas.valorTotalExecutado));
+    const saldo = converterNumeroPad(textoDaColuna(linha, cabecalho.colunas.saldo));
+    if (!quantidade.valido) erros.push(`Quantidade não parseável na linha ${i + 1}.`);
+    if (!valorUnitario.valido) erros.push(`Valor unitário não parseável na linha ${i + 1}.`);
+    if (!valorTotalPrevisto.valido) erros.push(`Valor total previsto não parseável na linha ${i + 1}.`);
+    if (!valorTotalExecutado.valido) erros.push(`Valor total executado não parseável na linha ${i + 1}.`);
+    if (!saldo.valido) erros.push(`Saldo não parseável na linha ${i + 1}.`);
+    if (!quantidade.valido || !valorUnitario.valido || !valorTotalPrevisto.valido || !valorTotalExecutado.valido || !saldo.valido) {
+      continue;
+    }
     itens.push(normalizarItemPadPublico({
       tipoDespesa: textoDaColuna(linha, cabecalho.colunas.tipoDespesa),
       descricao,
-      codigoNaturezaDespesa: textoDaColuna(linha, cabecalho.colunas.codigoNaturezaDespesa),
+      codigoNaturezaDespesa,
       unidade: textoDaColuna(linha, cabecalho.colunas.unidade),
-      quantidade: quantidadeDaColuna(linha, cabecalho.colunas.quantidade),
-      valorUnitario: numeroDaColuna(linha, cabecalho.colunas.valorUnitario),
-      valorTotalPrevisto: numeroDaColuna(linha, cabecalho.colunas.valorTotalPrevisto),
-      valorTotalExecutado: numeroDaColuna(linha, cabecalho.colunas.valorTotalExecutado),
-      saldo: numeroDaColuna(linha, cabecalho.colunas.saldo),
+      quantidade: quantidade.valor,
+      valorUnitario: valorUnitario.valor,
+      valorTotalPrevisto: valorTotalPrevisto.valor,
+      valorTotalExecutado: valorTotalExecutado.valor,
+      saldo: saldo.valor,
       textoOriginal: linha.join(" | "),
     }, instrumento));
   }
 
+  if (erros.length) {
+    return { itens: [], totaisTabela, erro: erros.join(" ") };
+  }
   return { itens, totaisTabela };
 }
 
