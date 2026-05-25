@@ -4,6 +4,9 @@ const {
   montarRevisoesPlanoPad,
 } = require("./profor-pad-revisoes-plano-service");
 const {
+  carregarPadsOperacional,
+} = require("./profor-pad-carregador-operacional-service");
+const {
   criarChaveItemRateioProfor,
   normalizarDescricaoRateioProfor,
 } = require("./profor-rateio-extracao-service");
@@ -240,6 +243,16 @@ function persistirRateios(parametros, opcoes = {}) {
   return persistir(parametros, opcoes);
 }
 
+function regerarRecargaOperacional(opcoes = {}) {
+  if (opcoes.pularRegerarRecarga) return;
+  const regerar = opcoes.carregarPadsOperacional || carregarPadsOperacional;
+  try {
+    regerar({ repoRoot: opcoes.repoRoot });
+  } catch (erro) {
+    console.error("Falha ao regerar recarga operacional pos-decisao:", erro);
+  }
+}
+
 function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
   const dados = obterDadosRevisoes(opcoes);
   const { mae, filhas, filha } = encontrarGrupo(dados, payload.parentId, payload.linhaFilhaId);
@@ -266,6 +279,7 @@ function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
     ? "PENDENTE_REVISAO"
     : "AREA_ALTERADA";
 
+  regerarRecargaOperacional(opcoes);
   return { linhaFilhaAtualizada, statusGrupo };
 }
 
@@ -291,6 +305,7 @@ function salvarRateioRevisaoPlano(payload = {}, opcoes = {}) {
     ? "PENDENTE_REVISAO"
     : "RATEIO_ALTERADO";
 
+  regerarRecargaOperacional(opcoes);
   return { linhasFilhasAtualizadas, statusGrupo };
 }
 
