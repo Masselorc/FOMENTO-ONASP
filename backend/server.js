@@ -60,6 +60,9 @@ const {
   obterUltimaRecargaOperacionalV2,
 } = require("./services/profor-2022/profor-pad-carregador-operacional-service");
 const {
+  montarRevisoesPlanoPad,
+} = require("./services/profor-2022/profor-pad-revisoes-plano-service");
+const {
   montarDadosProfor2022Publicacao
 } = require("./services/dashboard-publication-service");
 const {
@@ -754,6 +757,23 @@ async function rotearApi(req, res, pathname) {
         enviarJson(res, 500, {
           success: false,
           message: erro?.message || "Erro ao obter última recarga operacional."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/pad/revisoes-plano") {
+      try {
+        const resultado = montarRevisoesPlanoPad();
+        enviarJson(res, 200, {
+          success: true,
+          payload: resultado
+        });
+      } catch (erro) {
+        console.error("Falha ao montar revisoes do plano PAD:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao montar revisões do plano PAD."
         });
       }
       return;

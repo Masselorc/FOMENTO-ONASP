@@ -10569,6 +10569,93 @@ table.dataTable thead th {
     gap: .65rem;
 }
 
+.revisao-pad-uf-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+}
+
+.revisao-pad-uf-chip {
+    background: rgba(74, 210, 255, .08);
+    border: 1px solid rgba(74, 210, 255, .28);
+    border-radius: 999px;
+    color: var(--color-text);
+    font-weight: 700;
+    min-width: 2.65rem;
+    padding: .38rem .7rem;
+}
+
+.revisao-pad-uf-chip:hover,
+.revisao-pad-uf-chip.is-active {
+    background: linear-gradient(135deg, rgba(74, 210, 255, .28), rgba(21, 197, 141, .18));
+    border-color: rgba(74, 210, 255, .7);
+    color: #fff;
+}
+
+.revisao-pad-summary {
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    margin-bottom: 1rem;
+}
+
+.revisao-pad-summary > div {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: .8rem .9rem;
+}
+
+.revisao-pad-summary span {
+    color: var(--color-muted);
+    display: block;
+    font-size: .72rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.revisao-pad-summary strong {
+    color: var(--color-text);
+    display: block;
+    margin-top: .2rem;
+}
+
+.revisao-pad-plano-table .revisao-pad-row-mae {
+    cursor: pointer;
+}
+
+.revisao-pad-plano-table .revisao-pad-row-mae > td {
+    background: rgba(74, 210, 255, .08);
+    border-top: 1px solid rgba(74, 210, 255, .22);
+    font-weight: 700;
+}
+
+.revisao-pad-plano-table .revisao-pad-row-mae.is-pending > td {
+    background: rgba(245, 158, 11, .12);
+}
+
+.revisao-pad-plano-table .revisao-pad-row-mae.is-suppressed > td {
+    background: rgba(148, 163, 184, .12);
+    color: var(--color-muted);
+}
+
+.revisao-pad-plano-table .revisao-pad-row-filha > td {
+    background: rgba(15, 23, 42, .35);
+    border-top-color: rgba(148, 163, 184, .12);
+}
+
+.revisao-pad-plano-table .revisao-pad-row-filha > td:first-child {
+    padding-left: 1.5rem;
+}
+
+.revisao-pad-area-select {
+    min-width: 150px;
+}
+
+.revisao-pad-rateio-editor {
+    border-left: 4px solid var(--color-primary) !important;
+}
+
 /* Linha de detalhe expandida (acordeão) dentro da tabela de revisão. */
 .revisao-linha-detalhe > .revisao-linha-detalhe-cel {
     background: var(--color-surface-muted);
@@ -11447,5 +11534,4 @@ table.dataTable thead th {
     color: var(--color-primary-strong, #8ebdff) !important;
     cursor: pointer;
 }
-
 

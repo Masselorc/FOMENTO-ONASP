@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: tela de revisões PAD em grade hierárquica
+
+- Objetivo: substituir a exposição visual antiga da revisão PAD por uma grade hierárquica do plano de aplicação detalhado reconstruído a partir da recarga operacional limpa.
+- Arquivos alterados: `backend/services/profor-2022/profor-pad-revisoes-plano-service.js`, `backend/server.js`, `frontend/js/app.js`, `frontend/css/app.css`, `index.html`, `tests/services/profor-pad-revisoes-plano.test.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste aplicado: criado endpoint `GET /api/profor-2022/pad/revisoes-plano`; a tela `Revisões PAD — Plano de Aplicação Detalhado` agora usa chips por UF, resumo da UF/convênio, linhas-mãe expandidas, linhas-filhas de rateio, dropdown de área e editor local de rateio com validação de soma.
+- Persistência: salvamento ficou desabilitado com aviso claro de etapa própria; não houve SQL direto nem simulação de salvamento.
+- Validações executadas: `git diff --check`; `node --check backend/server.js`; `node --check frontend/js/app.js`; `node --check backend/services/profor-2022/profor-pad-carregador-operacional-service.js`; `node --test tests/services/profor-pad-carregador-operacional.test.js`; `node --test tests/services/profor-pad-revisoes-plano.test.js`; `npm run validar:syntax`.
+- Preservações: sem Playwright/E2E, sem publicação, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem DETRU/Transferegov, sem planilha antiga por abas, sem remoção de `xlsx` e sem autenticação/login.
+- Risco: a persistência de área/rateio ainda não foi implementada; a tela permite edição local e validação, mas bloqueia salvar até serviço auditável próprio.
+- Rollback: reverter este commit para retornar à renderização anterior da tela de revisão e remover o endpoint `revisoes-plano`.
+
 ## 25/05/2026 — PROFOR 2022: recarga operacional no Status do Sistema
 
 - Objetivo: expor a recarga operacional limpa dos PADs no `Status do Sistema` e remover a recarga da tela antiga de revisão.
