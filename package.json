@@ -54,6 +54,8 @@
     "profor:pad:identidade-material:auditar": "node backend/scripts/auditar-identidade-material-pad-profor-2022.js",
     "profor:pad:regressao-saneamentos:auditar": "node backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js",
     "profor:pad:revalidacao-payloads:auditar": "node backend/scripts/auditar-revalidacao-payloads-alterados-pad-profor-2022.js",
+    "profor:pad:transferegov:dry-run": "node backend/scripts/extrair-pads-transferegov-profor-2022-dry-run.js",
+    "profor:pad:transferegov:dry-run:relatorio": "node backend/scripts/extrair-pads-transferegov-profor-2022-dry-run.js --salvar-relatorio",
     "setup:hooks": "node scripts/configurar-git-hooks.js",
     "validar:setup": "npx playwright install chromium",
     "validar:json": "node scripts/validar-json-publicados.js",

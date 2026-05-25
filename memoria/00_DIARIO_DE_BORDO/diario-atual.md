@@ -7423,3 +7423,16 @@ Logs operacionais gravados:
 - Preservacoes: sem mexer em backend, dados, recarga PAD, revisoes, publicacao, DETRU, Transferegov, SQLite/WAL/SHM, `.env`, `frontend/data/publicados` ou Playwright/E2E.
 - Risco: baixo - alteracao apenas de layout em elemento reutilizavel da home.
 - Rollback: reverter o ultimo commit ou desfazer os dois arquivos alterados.
+
+## 25/05/2026 - PROFOR 2022: dry-run PAD Transferegov dos 15 convenios
+
+- Branch: `main`.
+- Objetivo: criar extracao dry-run dos PADs publicos Transferegov para os 15 convenios PROFOR 2022 e comparar contra os Excel PAD ja processados.
+- Arquivos: `backend/scripts/extrair-pads-transferegov-profor-2022-dry-run.js`; `backend/services/profor-2022/profor-pad-transferegov-comparacao-service.js`; `backend/services/profor-2022/profor-pad-transferegov-dry-run-service.js`; `tests/services/profor-pad-transferegov-comparacao.test.js`; `tests/services/profor-pad-transferegov-dry-run.test.js`; `package.json`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Revisao 08ce93b: normalizacao PAD teve apenas ampliacao de entidades HTML/export; parser reutiliza normalizadores; fallback Playwright segue desabilitado por padrao; sem DETRU, rendimentos ou recarga PAD.
+- Resultado 937782: HTTP direto; `34` itens; previsto `396423.71`; executado `97141.55`; saldo `299282.16`; `divergenciasCriticas=0`; equivalente `sim`.
+- Resultado 15 convenios: HTTP direto; `15` extraidos; `0` falhas tecnicas; `13` equivalentes; `2` com divergencia critica (`938128`, `937817`); apto para cache Transferegov `false`.
+- Validacoes: `git diff --check`; `node --check` nos arquivos novos/alterados; testes parser/comparacao/dry-run; `npm run validar:syntax`; dry-run real `--convenio=937782`; dry-run real dos 15 sem Playwright.
+- Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD persistente, sem recarga PAD operacional, sem tela de Revisoes, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
+- Risco: medio - dois convenios ja apontam divergencias criticas entre PAD publico atual e Excel processado; etapa ainda e diagnostica.
+- Rollback: reverter o commit; remover relatórios locais Transferegov caso sejam gerados em execucoes futuras.
