@@ -15615,7 +15615,7 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
                 if (execucaoAcimaPrevisto) tr.classList.add('table-warning');
                 tr.innerHTML = `
                     <td data-label="Instrumento" class="text-center align-middle"><span class="d-none">${safeInstrumento}</span>${getInstrumentoBadge(row.instrumento)}</td>
-                    <td data-label="UF" class="align-middle"><span class="badge bg-secondary badge-uf">${safeUf}</span></td>
+                    <td data-label="UF" class="align-middle"><span class="uf-flag-inline">${renderizarBandeiraCardFormalizacao({uf: row.uf})}<span class="badge badge-uf">${safeUf}</span></span></td>
                     <td data-label="Objeto" title="${safeObjeto}" class="align-middle"><span class="truncate-text">${safeObjeto}</span></td>
                     <td data-label="Qtd." class="text-center align-middle">${safeQuantidade}</td>
                     <td data-label="Valor Unit. (R$)" class="text-end font-monospace small align-middle">${formatMoney(row.valorUnitario)}</td>
