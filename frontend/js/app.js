@@ -783,7 +783,49 @@ function renderKpiCard({
             `;
         }
 
+        function renderBlocoRecargaOperacionalPadStatusSistema() {
+            return `
+                <section class="system-status-panel mb-4" id="secao-recarga-pad-operacional">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">PROFOR 2022</p>
+                            <h2>Recarga Operacional dos PADs</h2>
+                            <p class="text-muted mb-0">Fluxo operacional limpo para reconstruir a base local a partir dos 15 PADs Excel atuais.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-start">
+                        <div class="col-lg-8">
+                            <ul class="mb-3 text-muted small ps-3">
+                                <li>Substitua os 15 arquivos Excel em <code>Planilhas/profor-2022/instrumentos</code>.</li>
+                                <li>Clique em <strong>Recarregar PADs</strong> para ler os arquivos e reconstruir a visão operacional.</li>
+                                <li>Esta ação não publica dados e não consulta DETRU/Transferegov.</li>
+                                <li>Aplica a memória de rateios e classificações por área já existente.</li>
+                                <li>Item novo sem rateio memorizado vira pendência operacional.</li>
+                                <li>Item suprimido no PAD atual é tratado como histórico, sem erro indevido.</li>
+                            </ul>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-recarregar-pads">
+                                <i class="fas fa-sync-alt me-1"></i> Recarregar PADs
+                            </button>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="alert alert-info small mb-0">
+                                A recarga atualiza apenas relatórios operacionais locais e pendências para saneamento. O plano oficial e os dados publicados permanecem inalterados.
+                            </div>
+                        </div>
+                    </div>
+                    <div id="recarga-pad-progresso" class="d-none mt-3 text-primary">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                        <span>Processando recarga dos PADs, por favor aguarde...</span>
+                    </div>
+                    <div id="recarga-pad-resultado" class="mt-3 mb-0"></div>
+                </section>
+            `;
+        }
+
         function registrarEventosStatusSistema() {
+            document.getElementById('btn-recarregar-pads')?.addEventListener('click', async () => {
+                await executarRecargaPadsOperacionalUI();
+            });
             document.getElementById('btnAtualizarDetruProfor')?.addEventListener('click', async () => {
                 await executarAtualizacaoAdministrativaProfor('detru', atualizarCacheDetruProfor2022UI);
             });
@@ -1857,6 +1899,8 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
+                ${renderBlocoRecargaOperacionalPadStatusSistema()}
+
                 ${renderBlocoAtualizacoesProforStatusSistema()}
 
                 <section class="system-status-panel mb-5">
@@ -1890,6 +1934,7 @@ async function carregarLogoParaPDF() {
             }
 
             registrarEventosStatusSistema();
+            await carregarUltimaRecargaPadUI();
             if (modoAplicacao === 'api') {
                 await carregarStatusAtualizacaoConsolidadaProfor2022();
                 await carregarStatusUltimaAtualizacaoDetruProfor2022();
@@ -3707,31 +3752,6 @@ async function carregarLogoParaPDF() {
                     <div>A reconstrução e a publicação continuam bloqueadas enquanto houver divergências pendentes ou em revisão que bloqueiem publicação.</div>
                     <div>Esta tela é de revisão e saneamento; não publica dados.</div>
                 </section>
-                <section class="revisao-panel mb-4" id="secao-recarga-pad-operacional">
-                    <div class="section-header compact">
-                        <div>
-                            <p class="section-eyebrow mb-1">Carga de dados</p>
-                            <h2>Recarga de PADs</h2>
-                        </div>
-                    </div>
-                    <div class="mb-3 d-flex flex-column gap-2">
-                        <div class="text-muted small">
-                            <span class="d-block">⚠️ Esta ação não publica dados.</span>
-                            <span class="d-block">⚠️ Esta ação não consulta DETRU/Transferegov.</span>
-                            <span class="d-block">⚠️ Esta ação usa os PADs atualmente salvos em <code>Planilhas/profor-2022/instrumentos</code>.</span>
-                        </div>
-                        <div>
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-recarregar-pads">
-                                <i class="fas fa-sync-alt me-1"></i> Recarregar PADs
-                            </button>
-                        </div>
-                    </div>
-                    <div id="recarga-pad-progresso" class="d-none mb-3 text-primary">
-                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                        <span>Processando recarga dos PADs, por favor aguarde...</span>
-                    </div>
-                    <div id="recarga-pad-resultado" class="mb-0"></div>
-                </section>
                 <section class="revisao-panel mb-4">
                     <div class="section-header compact">
                         <div>
@@ -3769,7 +3789,6 @@ async function carregarLogoParaPDF() {
             document.getElementById('revisao-filtros-container').innerHTML = renderFiltrosRevisao();
             registrarEventosRevisaoDivergencias();
             await carregarListaRevisao();
-            await carregarUltimaRecargaPadUI();
             aplicarModoSomenteLeituraControlada();
         }
 
@@ -3817,10 +3836,6 @@ async function carregarLogoParaPDF() {
                 }
             });
 
-            const btnRecarregar = document.getElementById('btn-recarregar-pads');
-            btnRecarregar?.addEventListener('click', async () => {
-                await executarRecargaPadsOperacionalUI();
-            });
         }
 
         function registrarEventoFormularioDecisaoRevisao(divergencia) {

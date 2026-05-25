@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: recarga operacional no Status do Sistema
+
+- Objetivo: expor a recarga operacional limpa dos PADs no `Status do Sistema` e remover a recarga da tela antiga de revisão.
+- Arquivos alterados: `frontend/js/app.js`, `index.html`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste aplicado: criado bloco `Recarga Operacional dos PADs` no Status do Sistema, com instruções operacionais, botão único `Recarregar PADs`, leitura da última recarga operacional e cache-buster `v=20260525-07-recarga-pad-status-sistema`.
+- Fluxo antigo: removido o bloco de recarga da tela `Revisão de divergências PAD x memória`; a tela permanece para consulta e saneamento de pendências.
+- Validações executadas: `git diff --check`; `node --check frontend/js/app.js`; `node --check backend/server.js`; `node --check backend/services/profor-2022/profor-pad-carregador-operacional-service.js`; `node --test tests/services/profor-pad-carregador-operacional.test.js`.
+- Preservações: sem Playwright/E2E, sem publicação, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem DETRU/Transferegov, sem autenticação/login e sem remoção de `xlsx`.
+- Risco: a rota legada permanece no backend por compatibilidade histórica/testes, mas não há consumidor ativo no frontend.
+- Rollback: reverter este commit para voltar o botão à tela de revisão e restaurar o cache-buster anterior do `app.js`.
+
 ## 25/05/2026 — PROFOR 2022: recarga operacional limpa dos PADs
 
 - Objetivo: criar fluxo simples de recarga operacional dos 15 PADs Excel, sem comparação com origem antiga, snapshots como bloqueio, DETRU, Transferegov, publicação ou atualização ampla da Home.
