@@ -3921,7 +3921,7 @@ async function carregarLogoParaPDF() {
             const container = document.getElementById('recarga-pad-resultado');
             if (!container) return;
             try {
-                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/ultima-recarga');
+                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/ultima-recarga-operacional');
                 const recarga = responseBody?.payload;
                 if (resposta.ok && recarga && recarga.sucesso !== false && recarga.dataHora) {
                     renderResultadoRecargaPad(recarga);
@@ -3947,7 +3947,7 @@ async function carregarLogoParaPDF() {
             if (resultadoContainer) resultadoContainer.innerHTML = '';
 
             try {
-                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/recarregar', {
+                const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/recarregar-operacional', {
                     method: 'POST'
                 });
 
@@ -3956,27 +3956,14 @@ async function carregarLogoParaPDF() {
                     || responseBody?.message
                     || recarga?.mensagem
                     || `Falha na API de recarga de PADs (status ${resposta.status}).`;
-                if (!resposta.ok || !responseBody || responseBody.success === false || !recarga || recarga.sucesso === false) {
+                if (!resposta.ok || !responseBody || !recarga) {
                     throw new Error(detalheErroRecarga);
                 }
 
                 renderResultadoRecargaPad(recarga);
 
-                let etapaAtualizacaoUi = 'invalidar_cache_home';
+                let etapaAtualizacaoUi = 'carregar_lista_revisao';
                 try {
-                    // Invalida caches em memória para forçar nova leitura do consolidado
-                    // PAD/reconstrução e recomposição dos KPIs na Home.
-                    dadosFaf = [];
-                    configurarEstadoDadosValidados(false);
-                    baseAplicacaoCarregamentoPromise = null;
-
-                    etapaAtualizacaoUi = 'garantir_dados_base';
-                    await garantirDadosBaseAplicacao();
-
-                    etapaAtualizacaoUi = 'carregar_auditoria_revisao';
-                    await carregarAuditoriaRevisao();
-
-                    etapaAtualizacaoUi = 'carregar_lista_revisao';
                     await carregarListaRevisao();
                 } catch (errorAtualizacaoUi) {
                     console.warn('Falha ao atualizar interface apos recarga PADs:', {
@@ -4007,6 +3994,58 @@ async function carregarLogoParaPDF() {
             }
         }
 
+        function agruparOcorrenciasRecargaPad(lista = []) {
+            const grupos = new Map();
+            for (const item of lista || []) {
+                const tipo = item?.tipo || 'ocorrencia';
+                if (!grupos.has(tipo)) {
+                    grupos.set(tipo, { tipo, total: 0, porConvenio: {}, exemplos: [] });
+                }
+                const grupo = grupos.get(tipo);
+                grupo.total += 1;
+                const convenio = item?.numeroConvenio || item?.instrumento || 'sem_convenio';
+                grupo.porConvenio[convenio] = (grupo.porConvenio[convenio] || 0) + 1;
+                if (grupo.exemplos.length < 10) grupo.exemplos.push(item);
+            }
+            return Array.from(grupos.values()).sort((a, b) => b.total - a.total || a.tipo.localeCompare(b.tipo));
+        }
+
+        function renderResumoOcorrenciasRecargaPad(lista, opcoes = {}) {
+            const grupos = opcoes.grupos || agruparOcorrenciasRecargaPad(lista);
+            if (!grupos.length) return '';
+            const detalheId = opcoes.id || `recarga-pad-detalhes-${Math.random().toString(36).slice(2)}`;
+            const classeTexto = opcoes.classeTexto || 'text-danger';
+            const resumoHtml = grupos.slice(0, 8).map((grupo) => {
+                const totalConvenios = Object.keys(grupo.porConvenio || {}).length;
+                return `
+                    <li>
+                        <strong>${escapeHtml(grupo.tipo)}</strong>: ${escapeHtml(String(grupo.total))}
+                        ${totalConvenios ? `<span class="text-muted">(${escapeHtml(String(totalConvenios))} convênio(s))</span>` : ''}
+                    </li>
+                `;
+            }).join('');
+            const detalhesHtml = grupos.map((grupo) => `
+                <div class="mb-2">
+                    <strong>${escapeHtml(grupo.tipo)}</strong>
+                    <ul class="mb-0 ps-3">
+                        ${grupo.exemplos.map((item) => `
+                            <li>
+                                ${item.numeroConvenio || item.instrumento ? `(Convênio ${escapeHtml(String(item.numeroConvenio || item.instrumento))}) ` : ''}
+                                ${escapeHtml(item.detalhe || '')}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+            return `
+                <ul class="mb-2 mt-2 ps-3 ${classeTexto} small">${resumoHtml}</ul>
+                <details class="small">
+                    <summary>Ver lista detalhada</summary>
+                    <div id="${escapeHtml(detalheId)}" class="mt-2">${detalhesHtml}</div>
+                </details>
+            `;
+        }
+
         function renderResultadoRecargaPad(resultado) {
             const container = document.getElementById('recarga-pad-resultado');
             if (!container) return;
@@ -4022,20 +4061,10 @@ async function carregarLogoParaPDF() {
 
             let alertaStatusHtml = '';
             if (resultado.totalImpedimentos > 0) {
-                let listaImpedimentos = '';
-                if (Array.isArray(resultado.impedimentos) && resultado.impedimentos.length > 0) {
-                    listaImpedimentos = `
-                        <ul class="mb-0 mt-2 ps-3 text-danger small">
-                            ${resultado.impedimentos.map(imp => `
-                                <li>
-                                    <strong>[${escapeHtml(imp.tipo || 'Impedimento')}]</strong> 
-                                    ${imp.numeroConvenio ? `(Convênio ${escapeHtml(String(imp.numeroConvenio))})` : ''} 
-                                    ${escapeHtml(imp.detalhe || '')}
-                                </li>
-                            `).join('')}
-                        </ul>
-                    `;
-                }
+                const listaImpedimentos = renderResumoOcorrenciasRecargaPad(resultado.impedimentos || [], {
+                    id: 'recarga-pad-impedimentos-detalhes',
+                    classeTexto: 'text-danger'
+                });
                 alertaStatusHtml = `
                     <div class="alert alert-danger mb-3">
                         <i class="fas fa-exclamation-triangle me-2"></i>
@@ -4067,33 +4096,31 @@ async function carregarLogoParaPDF() {
             }
 
             let alertaAvisosHtml = '';
-            if (Array.isArray(resultado.alertas) && resultado.alertas.length > 0) {
+            if ((Array.isArray(resultado.alertasAgrupados) && resultado.alertasAgrupados.length > 0)
+                || (Array.isArray(resultado.alertas) && resultado.alertas.length > 0)) {
+                const listaAlertas = renderResumoOcorrenciasRecargaPad(resultado.alertas || [], {
+                    id: 'recarga-pad-alertas-detalhes',
+                    classeTexto: 'text-warning-emphasis',
+                    grupos: Array.isArray(resultado.alertasAgrupados) ? resultado.alertasAgrupados : null
+                });
                 alertaAvisosHtml = `
                     <div class="alert alert-warning mb-3">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        <strong>Alertas de Processamento (${resultado.alertas.length}):</strong>
-                        <ul class="mb-0 mt-2 ps-3 small text-warning-emphasis">
-                            ${resultado.alertas.map(alt => `
-                                <li>
-                                    <strong>[${escapeHtml(alt.tipo || 'Aviso')}]</strong>
-                                    ${alt.numeroConvenio || alt.instrumento ? `(Convênio ${escapeHtml(String(alt.numeroConvenio || alt.instrumento))})` : ''}
-                                    ${escapeHtml(alt.detalhe || '')}
-                                </li>
-                            `).join('')}
-                        </ul>
+                        <strong>Alertas de Processamento (${resultado.totalAlertas ?? resultado.alertas?.length ?? 0}):</strong>
+                        ${listaAlertas}
                     </div>
                 `;
             }
 
             const stats = [
-                { rotulo: 'Arquivos lidos', valor: `${resultado.totalRelatoriosLidos ?? 0}/${resultado.totalArquivosPad ?? 0}` },
-                { rotulo: 'Itens processados', valor: resultado.totalItensPad ?? 0 },
-                { rotulo: 'Linhas reconstruídas', valor: resultado.totalLinhasReconstruidas ?? 0 },
-                { rotulo: 'Convênios reconstruídos', valor: resultado.totalConveniosReconstruidos ?? 0 },
-                { rotulo: 'Rateios aplicados', valor: resultado.totalItensComRateioAplicado ?? 0 },
-                { rotulo: 'Itens novos', valor: resultado.totalItensNovos ?? 0 },
-                { rotulo: 'Itens suprimidos', valor: resultado.totalItensSuprimidos ?? 0 },
-                { rotulo: 'Itens sem rateio', valor: resultado.totalItensSemRateio ?? 0 }
+                { rotulo: 'Arquivos lidos', valor: `${resultado.arquivosLidos ?? resultado.totalRelatoriosLidos ?? 0}/${resultado.arquivosEncontrados ?? resultado.totalArquivosPad ?? 0}` },
+                { rotulo: 'Itens processados', valor: resultado.itensProcessados ?? resultado.totalItensPad ?? 0 },
+                { rotulo: 'Linhas reconstruídas', valor: resultado.linhasReconstruidas ?? resultado.totalLinhasReconstruidas ?? 0 },
+                { rotulo: 'Convênios reconstruídos', valor: resultado.conveniosReconstruidos ?? resultado.totalConveniosReconstruidos ?? 0 },
+                { rotulo: 'Rateios aplicados', valor: resultado.rateiosAplicados ?? resultado.totalItensComRateioAplicado ?? 0 },
+                { rotulo: 'Itens novos', valor: resultado.itensNovosSemRateio ?? resultado.totalItensNovos ?? 0 },
+                { rotulo: 'Itens suprimidos', valor: resultado.itensSuprimidos ?? resultado.totalItensSuprimidos ?? 0 },
+                { rotulo: 'Itens sem rateio', valor: resultado.totalItensSemRateio ?? resultado.itensNovosSemRateio ?? 0 }
             ];
 
             const gridHtml = `

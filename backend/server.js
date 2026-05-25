@@ -56,6 +56,10 @@ const {
   obterUltimaRecargaOperacional,
 } = require("./services/profor-2022/profor-pad-recarga-operacional-service");
 const {
+  carregarPadsOperacional,
+  obterUltimaRecargaOperacionalV2,
+} = require("./services/profor-2022/profor-pad-carregador-operacional-service");
+const {
   montarDadosProfor2022Publicacao
 } = require("./services/dashboard-publication-service");
 const {
@@ -698,6 +702,29 @@ async function rotearApi(req, res, pathname) {
       return;
     }
 
+    if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar-operacional") {
+      try {
+        const resultado = carregarPadsOperacional();
+        const primeiroImpedimento = Array.isArray(resultado?.impedimentos)
+          ? resultado.impedimentos[0]
+          : null;
+        enviarJson(res, 200, {
+          success: resultado.sucesso,
+          message: resultado.sucesso
+            ? "Recarga operacional PAD concluida."
+            : primeiroImpedimento?.detalhe || "Recarga operacional PAD concluida com impedimentos.",
+          payload: resultado
+        });
+      } catch (erro) {
+        console.error("Falha ao recarregar PADs operacional:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao recarregar PADs operacional."
+        });
+      }
+      return;
+    }
+
     if (req.method === "GET" && pathname === "/api/profor-2022/pad/ultima-recarga") {
       try {
         const resultado = obterUltimaRecargaOperacional();
@@ -710,6 +737,23 @@ async function rotearApi(req, res, pathname) {
         enviarJson(res, 500, {
           success: false,
           message: erro?.message || "Erro ao obter última recarga."
+        });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/pad/ultima-recarga-operacional") {
+      try {
+        const resultado = obterUltimaRecargaOperacionalV2();
+        enviarJson(res, 200, {
+          success: resultado.sucesso !== false,
+          payload: resultado
+        });
+      } catch (erro) {
+        console.error("Falha ao obter ultima recarga operacional:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao obter última recarga operacional."
         });
       }
       return;

@@ -1,5 +1,26 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: recarga operacional limpa dos PADs
+
+- Objetivo: criar fluxo simples de recarga operacional dos 15 PADs Excel, sem comparação com origem antiga, snapshots como bloqueio, DETRU, Transferegov, publicação ou atualização ampla da Home.
+- Arquivos alterados: `backend/services/profor-2022/profor-pad-carregador-operacional-service.js`, `backend/server.js`, `frontend/js/app.js`, `index.html`, `tests/services/profor-pad-carregador-operacional.test.js`.
+- Ajuste aplicado:
+  - criado serviço `carregarPadsOperacional()` com leitura/conferência dos PADs, exigência de 15 arquivos, bloqueio de duplicidade, aplicação de rateio memorizado e pendência `item_novo_sem_rateio_memorizado`;
+  - criado endpoint `POST /api/profor-2022/pad/recarregar-operacional` e leitura da última recarga em `GET /api/profor-2022/pad/ultima-recarga-operacional`;
+  - frontend passou a chamar o endpoint operacional limpo, sem `garantirDadosBaseAplicacao()` e sem atualização ampla da Home;
+  - resumo da UI passou a agrupar impedimentos/alertas por tipo, com lista detalhada recolhível.
+- Validações executadas:
+  - `git diff --check`;
+  - `node --check backend/server.js`;
+  - `node --check frontend/js/app.js`;
+  - `node --check backend/services/profor-2022/profor-pad-carregador-operacional-service.js`;
+  - `node --test tests/services/profor-pad-carregador-operacional.test.js` (7/7 aprovados);
+  - `npm run validar:syntax` (105 arquivos aprovados);
+  - `npm run validar:services` executado, mas falhou em 2 testes antigos de `profor-pad-origem-reconstrucao.test.js` porque a suíte ampla lê o relatório dry-run real após ele ser sobrescrito para 567 linhas por outro teste; os testes do carregador operacional passaram.
+- Preservações: sem Playwright/E2E, sem publicação, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem DETRU/Transferegov, sem planilha antiga por abas e sem remoção de `xlsx`.
+- Risco: o novo serviço ainda usa o matching existente e os rateios ativos do banco; divergências reais de memória/rateio retornam impedimentos operacionais em vez de tentar correção automática.
+- Rollback: reverter o commit da recarga operacional limpa e voltar o botão ao endpoint anterior.
+
 ## 25/05/2026 — UI: cache-buster da recarga PAD pós-sucesso
 
 - Objetivo: forçar carregamento do `app.js` que separa erro real da recarga PAD de falha posterior de atualização da interface.
