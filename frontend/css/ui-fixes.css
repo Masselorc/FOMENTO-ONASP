@@ -19,6 +19,18 @@
 #header-actions {
     display: flex;
     flex-wrap: nowrap;
+    flex-shrink: 0;
     gap: 0.5rem;
     min-width: 0;
+}
+
+@media (max-width: 768px) {
+    #header-actions .btn-icon-text span {
+        display: none;
+    }
+
+    #header-actions .btn-icon-text,
+    #header-actions .btn-square {
+        flex: 0 0 auto;
+    }
 }
