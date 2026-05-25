@@ -7296,3 +7296,18 @@ Logs operacionais gravados:
 - Preservações: sem Playwright/E2E, sem publicação, sem alteração em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU/Transferegov, autenticação, planilha antiga, xlsx ou rateio inventado.
 - Risco: baixo — apenas propaga campos já lidos pelo matching service; a regra de pendência (`AREA_NAO_CLASSIFICADA`) permanece intacta.
 - Rollback: reverter o commit; a tela volta a exibir zeros nos itens sem rateio.
+
+---
+
+## 25/05/2026 - PROFOR 2022: restaura atualizacao geral sem workbook antigo
+
+- Branch: `main`.
+- Problema: o botao "Atualizar PROFOR 2022" estava bloqueado por um handler que retornava HTTP 410 com a mensagem "Atualizacao consolidada legada PROFOR 2022 removida. Use os fluxos PAD/reconstrucao...". A migracao para PAD removeu apenas a origem do plano de aplicacao detalhado, nao o fluxo de consolidacao geral dos convenios.
+- Causa: handler stub em `backend/server.js` (linha ~675) deixado durante a migracao bloqueava qualquer chamada a `POST /api/profor-2022/atualizar`.
+- Correcao: o handler agora chama `montarConsolidadoProfor2022PorOrigemAtiva()`, que ja existia, e devolve um resultado estruturado com `origemPlano: "reconstrucao-pad"` + blocos `consolidado`, `detru`, `transferegov`, `plano` (todos a partir de carteira local + cache DETRU + cache Transferegov + reconstrucao PAD vigente, sem workbook antigo). O botao confirmacao no frontend tambem foi reescrito para deixar claro que a rotina apenas consolida e nao dispara DETRU/Transferegov.
+- Botoes separados preservados: Recarregar PADs (`/api/profor-2022/pad/recarregar-operacional`), Atualizar DETRU (`/api/profor-2022/detru/atualizar`), Atualizar Transferegov (`/api/profor-2022/rendimentos/atualizar`).
+- Arquivos: `backend/server.js`, `frontend/js/app.js`, `tests/services/profor-atualizar-consolidado-endpoint.test.js` (novo), `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Validacoes: `git diff --check`; `node --check` em `backend/server.js` e `frontend/js/app.js`; `node --test` no novo arquivo (5/5) e nos suites PAD existentes (24/24); `npm run validar:syntax` (105 arquivos OK); probe real `POST /api/profor-2022/atualizar` -> HTTP 200, `success:true`, `origemPlano:"reconstrucao-pad"`, consolida 15 convenios.
+- Preservacoes: sem Playwright/E2E, sem publicacao, sem alteracao em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU/Transferegov, autenticacao, planilha antiga, xlsx.
+- Risco: baixo - o handler so consolida caches e pode ser revertido isolado; nenhum fluxo legado de leitura de workbook foi reintroduzido.
+- Rollback: reverter o commit; o endpoint volta a responder 410.

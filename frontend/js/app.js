@@ -944,12 +944,12 @@ function renderKpiCard({
             }
 
             const botao = document.getElementById('btnAtualizarProfor2022');
-            if (!confirm('Atualizar PROFOR 2022 agora? Esta rotina executa DETRU + rendimentos + consolidado e pode levar alguns minutos.')) {
+            if (!confirm('Atualizar PROFOR 2022 agora? Esta rotina consolida os dados gerais dos convênios a partir do banco local, do cache DETRU, do cache Transferegov e da reconstrução PAD vigente. Não dispara DETRU ou Transferegov — use os botões dedicados para atualizar essas fontes.')) {
                 return { sucesso: false, cancelado: true };
             }
 
             if (botao) botao.disabled = true;
-            mostrarMensagemConsolidadoProfor2022('warning', 'Atualizando PROFOR 2022 (DETRU + rendimentos + consolidado)...');
+            mostrarMensagemConsolidadoProfor2022('warning', 'Consolidando dados PROFOR 2022 (banco local + cache DETRU + cache Transferegov + reconstrução PAD)...');
 
             try {
                 const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizar', {

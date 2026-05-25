@@ -673,12 +673,50 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/atualizar") {
-      enviarJson(res, 410, {
-        success: false,
-        message:
-          "Atualizacao consolidada legada PROFOR 2022 removida. " +
-          "Use os fluxos PAD/reconstrucao; este endpoint nao aciona DETRU, Transferegov ou workbook."
-      });
+      try {
+        const consolidado = montarConsolidadoProfor2022PorOrigemAtiva();
+        const diagnostico = consolidado?.diagnostico || {};
+        const totalConvenios = Number(diagnostico.totalCarteira ?? consolidado?.convenios?.length ?? 0);
+        const totalComDetru = Number(diagnostico.totalComDetru ?? 0);
+        const totalComRendimentos = Number(diagnostico.totalComRendimentos ?? 0);
+        const totalComPlano = Number(diagnostico.totalComPlano ?? 0);
+        const avisos = Array.isArray(consolidado?.avisos) ? consolidado.avisos : [];
+        enviarJson(res, 200, {
+          success: true,
+          message: "Atualização PROFOR 2022 concluída.",
+          resultado: {
+            sucesso: true,
+            origemPlano: "reconstrucao-pad",
+            consolidado: {
+              totalConvenios,
+              totalComDetru,
+              totalComRendimentos,
+              totalComPlano,
+              totalAvisos: Number(diagnostico.totalAvisos ?? avisos.length),
+            },
+            detru: {
+              status: totalComDetru > 0 ? "cache-ok" : "cache-vazio",
+              totalConvenios: totalComDetru,
+            },
+            transferegov: {
+              status: totalComRendimentos > 0 ? "cache-ok" : "cache-vazio",
+              totalConvenios: totalComRendimentos,
+            },
+            plano: {
+              status: totalComPlano > 0 ? "reconstrucao-ok" : "reconstrucao-vazia",
+              totalConvenios: totalComPlano,
+            },
+            geradoEm: consolidado?.geradoEm || new Date().toISOString(),
+            avisos,
+          }
+        });
+      } catch (erro) {
+        console.error("Falha ao atualizar consolidado PROFOR 2022:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao atualizar PROFOR 2022."
+        });
+      }
       return;
     }
 
