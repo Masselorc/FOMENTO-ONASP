@@ -1730,9 +1730,11 @@ table.dataTable thead td,
     font-size: 0.78rem;
     font-weight: 800;
     justify-content: center;
+    line-height: 1;
     min-height: 28px;
     min-width: 44px;
-    padding: 0.25rem 0.55rem;
+    padding: 0 0.55rem;
+    vertical-align: middle;
 }
 
 .badge-inst-faf {
