@@ -3885,6 +3885,17 @@ async function carregarLogoParaPDF() {
             return 'info';
         }
 
+        function classeAreaRevisaoPad(area) {
+            switch (String(area || '').toUpperCase()) {
+                case 'OUVIDORIA': return 'area-ouvidoria';
+                case 'CORREGEDORIA': return 'area-corregedoria';
+                case 'ESCOLA_PENAL': return 'area-escola-penal';
+                case 'N/A': return 'area-na';
+                case 'NAO_CLASSIFICADO': return 'area-nao-classificado';
+                default: return '';
+            }
+        }
+
         function obterFilhasRevisaoPad(parentId) {
             const dados = revisoesPlanoPadEstado.dados;
             const uf = revisoesPlanoPadEstado.ufSelecionada;
@@ -3994,6 +4005,7 @@ async function carregarLogoParaPDF() {
                 ? 'is-suppressed'
                 : (mesclada ? ehPendenteRevisaoPad(filhaUnica) : ehPendenteRevisaoPad(linha)) ? 'is-pending' : '';
             const classeMesclada = mesclada ? 'revisao-pad-row-mesclada' : '';
+            const classeArea = mesclada ? classeAreaRevisaoPad(filhaUnica.area) : (podeExpandir ? 'area-rateado' : '');
 
             const colTipo = `<td>${podeExpandir ? `<i class="fas ${expandido ? 'fa-chevron-down' : 'fa-chevron-right'} me-1"></i>` : ''}${escapeHtml(rotuloTipoRevisaoPad(linha.tipo))}</td>`;
             const colArea = mesclada
@@ -4012,7 +4024,7 @@ async function carregarLogoParaPDF() {
             const colAcao = `<td><button type="button" class="btn btn-sm btn-outline-primary" data-revisao-pad-rateio="${escapeHtml(linha.id)}">Ratear quantidade</button></td>`;
 
             return `
-                <tr class="revisao-pad-row-mae ${classeBase} ${classeMesclada}" data-revisao-pad-mae="${escapeHtml(linha.id)}" data-pode-expandir="${podeExpandir ? '1' : '0'}" aria-expanded="${expandido ? 'true' : 'false'}">
+                <tr class="revisao-pad-row-mae ${classeBase} ${classeMesclada} ${classeArea}" data-revisao-pad-mae="${escapeHtml(linha.id)}" data-pode-expandir="${podeExpandir ? '1' : '0'}" aria-expanded="${expandido ? 'true' : 'false'}">
                     ${colTipo}${colArea}${colDesc}${colNat}${colCod}${colQtd}${colVu}${colVt}${colStatus}${colAcao}
                 </tr>
             `;
@@ -4020,7 +4032,7 @@ async function carregarLogoParaPDF() {
 
         function renderLinhaFilhaRevisaoPad(filha) {
             return `
-                <tr class="revisao-pad-row-filha" data-revisao-pad-filha="${escapeHtml(filha.id)}" data-parent-id="${escapeHtml(filha.parentId)}">
+                <tr class="revisao-pad-row-filha ${classeAreaRevisaoPad(filha.area)}" data-revisao-pad-filha="${escapeHtml(filha.id)}" data-parent-id="${escapeHtml(filha.parentId)}">
                     <td>${escapeHtml(rotuloTipoRevisaoPad(filha.tipo))}</td>
                     <td>${renderSelectAreaLinhaFilhaRevisaoPad(filha)}</td>
                     <td>${escapeHtml(filha.descricao || '-')}</td>

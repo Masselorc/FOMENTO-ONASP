@@ -10739,6 +10739,59 @@ table.dataTable thead th {
     font-size: 0.75rem;
 }
 
+/* Classificação por cor por Área — barra à esquerda + tinta sutil no fundo. */
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-ouvidoria > td:first-child {
+    box-shadow: inset 4px 0 0 #38bdf8;
+}
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-ouvidoria > td {
+    background: rgba(56, 189, 248, 0.10);
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-corregedoria > td:first-child {
+    box-shadow: inset 4px 0 0 #a78bfa;
+}
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-corregedoria > td {
+    background: rgba(167, 139, 250, 0.12);
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-escola-penal > td:first-child {
+    box-shadow: inset 4px 0 0 #34d399;
+}
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-escola-penal > td {
+    background: rgba(52, 211, 153, 0.12);
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-na > td:first-child {
+    box-shadow: inset 4px 0 0 #94a3b8;
+}
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-na > td {
+    background: rgba(148, 163, 184, 0.10);
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-rateado > td:first-child {
+    box-shadow: inset 4px 0 0 #fbbf24;
+}
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-rateado > td {
+    background: rgba(251, 191, 36, 0.10);
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-nao-classificado > td:first-child {
+    box-shadow: inset 4px 0 0 #ef4444;
+}
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-nao-classificado > td {
+    background: rgba(239, 68, 68, 0.16);
+    color: #fee2e2;
+}
+
+/* Cor da área tem prioridade sobre o realce de pendência genérico. */
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-ouvidoria.is-pending > td,
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-corregedoria.is-pending > td,
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-escola-penal.is-pending > td,
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-na.is-pending > td,
+#view-revisao-divergencias .revisao-pad-plano-table tr.area-rateado.is-pending > td {
+    background: inherit;
+}
+
 /* Linha de detalhe expandida (acordeão) dentro da tabela de revisão. */
 .revisao-linha-detalhe > .revisao-linha-detalhe-cel {
     background: var(--color-surface-muted);
