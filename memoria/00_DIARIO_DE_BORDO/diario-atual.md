@@ -1,5 +1,15 @@
 # Diário de bordo
 
+## 25/05/2026 — UI: cache-buster da recarga PAD pós-sucesso
+
+- Objetivo: forçar carregamento do `app.js` que separa erro real da recarga PAD de falha posterior de atualização da interface.
+- Arquivo alterado: `index.html`.
+- Ajuste aplicado: cache-buster do `app.js` alterado de `v=20260525-04-recarga-pad-erro-etapa` para `v=20260525-05-recarga-ui-pos-sucesso`.
+- Validações executadas: `git diff --check`; `node --check frontend/js/app.js`.
+- Preservações: sem Playwright/E2E, sem publicação, sem alteração em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU/Transferegov ou relatórios dry-run.
+- Risco: navegador ainda pode manter cache até hard refresh.
+- Rollback: restaurar o cache-buster anterior no `index.html`.
+
 ## 25/05/2026 — PROFOR 2022: separação entre recarga PAD e atualização da interface
 
 - Objetivo: impedir que falhas pós-recarga na atualização da Home/listas sobrescrevam uma recarga PAD bem-sucedida com erro vermelho de recarga.
