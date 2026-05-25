@@ -1,17 +1,17 @@
 # PROFOR 2022 - Comparação de Snapshots PAD (dry-run)
 
-Gerado em: 2026-05-24T12:33:35.069Z
+Gerado em: 2026-05-25T13:06:36.596Z
 Versão do comparador: 0.3
 Checksum anterior: `799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678`
-Checksum novo: `2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50`
+Checksum novo: `c140904ba3285041dbd6eef3aa1eab9f385662df88672a9ff4d22c2e4898cbcc`
 Checksums válidos: sim
 Bloqueios técnicos: 76
 
 ## 1. Resumo
 
-- Itens idênticos: 563
+- Itens idênticos: 562
 - Itens novos: 0
-- Itens removidos: 0
+- Itens removidos: 1
 - Itens alterados: 5
 - Bloqueios técnicos: 76
 
@@ -23,16 +23,17 @@ Bloqueios técnicos: 76
 | `colisao_chave` | 38 |
 | `descricao_apenas_diacritico` | 4 |
 | `descricao_apenas_textual` | 1 |
+| `item_removido` | 1 |
 
 ## 3. Totais agregados
 
 | Métrica | Diferença líquida |
 | --- | ---: |
-| Linhas | 0 |
-| Valor previsto | R$ 0,00 |
+| Linhas | -1 |
+| Valor previsto | R$ -9.506,54 |
 | Valor executado | R$ 0,00 |
-| Saldo | R$ 0,00 |
-| Quantidade | 0 |
+| Saldo | R$ -9.506,54 |
+| Quantidade | -1 |
 
 ## 4. Bloqueios técnicos
 
@@ -135,6 +136,7 @@ Bloqueios técnicos: 76
 | `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | ESCOLA PENAL | Desktop para edição de video |
 | `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | ESCOLA PENAL | Switcher de video |
 | `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | OUVIDORIA | Smartphone minimo de 128gb de memória in |
+| `item_removido` | 937221 | AL | CAPITAL | NAO INFORMADO | Saldo Residual |
 
 ## 6. Garantias
 

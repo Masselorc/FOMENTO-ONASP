@@ -1,21 +1,21 @@
 {
   "versaoSnapshot": "0.2",
-  "geradoEm": "2026-05-24T12:33:35.013Z",
+  "geradoEm": "2026-05-25T13:06:36.557Z",
   "origem": "reconstrucao-pad",
   "parserVersao": "profor-pad-fotografia-service@0.2",
-  "checksum": "2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50",
+  "checksum": "c140904ba3285041dbd6eef3aa1eab9f385662df88672a9ff4d22c2e4898cbcc",
   "resumo": {
-    "totalLinhas": 568,
-    "totalValorPrevisto": 10664015.24,
+    "totalLinhas": 567,
+    "totalValorPrevisto": 10654508.7,
     "totalValorExecutado": 3217739.5,
-    "totalSaldo": 7446275.74,
-    "totalQuantidade": 33943,
+    "totalSaldo": 7436769.2,
+    "totalQuantidade": 33942,
     "totalAvisos": 12,
     "totalErros": 0,
-    "valorPrevistoTotal": 10664015.24,
+    "valorPrevistoTotal": 10654508.7,
     "valorExecutadoTotal": 3217739.5,
-    "saldoTotal": 7446275.74,
-    "quantidadeTotal": 33943
+    "saldoTotal": 7436769.2,
+    "quantidadeTotal": 33942
   },
   "avisos": [
     {
@@ -1610,29 +1610,6 @@
       "chaveComparacao": "937221|AL|CAPITAL|ESCOLA PENAL|COLORIDA IMPRESSORA LASER MULTIFUNCIONAL",
       "chaveContexto": "937221|AL|CAPITAL|ESCOLA PENAL",
       "hashItem": "1bff3ea83960b5fd06a3ac631a854c898de85ffd63ecb8ae67d980bd0f18b6b2"
-    },
-    {
-      "uf": "AL",
-      "instrumento": "CONVÊNIO",
-      "numero": "937221",
-      "ano": "2022",
-      "area": "NAO INFORMADO",
-      "natureza": "CAPITAL",
-      "descricao": "SALDO RESIDUAL",
-      "descricaoOriginal": "Saldo Residual",
-      "descricaoNormalizada": "SALDO RESIDUAL",
-      "quantidade": 1,
-      "valorUnitario": 9506.54,
-      "valorPrevisto": 9506.54,
-      "valorExecutado": 0,
-      "saldo": 9506.54,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
-      "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
-      "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
-      "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
     },
     {
       "uf": "AL",

@@ -1,6 +1,6 @@
 # Relatório de Recarga Operacional - PROFOR 2022
 
-**Data e Hora**: 2026-05-24T12:33:34.521Z
+**Data e Hora**: 2026-05-25T13:06:36.289Z
 **Sucesso**: ✅ Sim
 **Apto para Uso Local**: ❌ Não
 **Apto para Publicação**: ❌ Não
@@ -10,14 +10,14 @@
 - **Arquivos PAD Encontrados**: 15
 - **Relatórios Lidos com Sucesso**: 15
 - **Itens Extraídos dos PADs**: 525
-- **Linhas Reconstruídas**: 568
+- **Linhas Reconstruídas**: 567
 - **Convênios Reconstruídos**: 15
 - **Itens com Rateio Aplicado**: 501
-- **Itens sem Rateio Remanescentes**: 0
-- **Itens Novos**: 25
+- **Itens sem Rateio Remanescentes**: 1
+- **Itens Novos**: 24
 - **Itens Suprimidos (Ausentes)**: 30
 
-## Impedimentos (96)
+## Impedimentos (97)
 
 | Tipo | Convênio | Detalhe |
 | --- | --- | --- |
@@ -45,9 +45,11 @@
 | `rateio_percentual_indefinido` | 937221 | Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória. |
 | `rateio_percentual_indefinido` | 937221 | Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória. |
 | `rateio_percentual_indefinido` | 937221 | Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória. |
+| `item_pad_sem_rateio` | 937221 | Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio). |
 | `rateio_percentual_indefinido` | 937221 | Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória. |
 | `rateio_percentual_indefinido` | 937221 | Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória. |
 | `rateio_percentual_indefinido` | 937221 | Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória. |
+| `decisao_nao_aplicavel:saldo_residual_rateio_invalido` | 937221 | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'. |
 | `decisao_nao_aplicavel:decisao_sem_efeito_definido` | 937221 | CORRIGIDO não tem efeito definido para item ausente no PAD. |
 | `decisao_nao_aplicavel:decisao_sem_efeito_definido` | 937782 | CORRIGIDO não tem efeito definido para item ausente no PAD. |
 | `decisao_nao_aplicavel:decisao_sem_efeito_definido` | 937782 | CORRIGIDO não tem efeito definido para item ausente no PAD. |
@@ -75,7 +77,6 @@
 | `diferenca_critica_plano` | 937221 | Diferença crítica no item "Notebook i7 16 gb, 1 TB SSD, Windows 11": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.. |
 | `diferenca_critica_plano` | 937221 | Diferença crítica no item "Quadro Lousa branca": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.. |
 | `diferenca_critica_plano` | 937221 | Diferença crítica no item "Refrigerador frigobar, com capacidade no": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.. |
-| `diferenca_critica_plano` | 937221 | Diferença crítica no item "Saldo Residual": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.. |
 | `diferenca_critica_plano` | 937221 | Diferença crítica no item "Televisão Smart LED, mínimo de 50 polega": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.. |
 | `diferenca_critica_plano` | 937221 | Diferença crítica no item "Televisão smart LED, minimo de 50 polegadas": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.. |
 | `diferenca_critica_plano` | 937221 | Diferença crítica no item "kit com 2 Poltronas (CORREGEDORIA).": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.. |
@@ -118,7 +119,7 @@
 | `chave_ambigua` | - | Aviso técnico em novo. |
 | `chave_ambigua` | - | Aviso técnico em novo. |
 
-## Alertas (174)
+## Alertas (173)
 
 | Tipo | Convênio | Detalhe |
 | --- | --- | --- |
@@ -200,7 +201,6 @@
 | `saldo_residual_nao_setorializado` | 937817 | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'. |
 | `saldo_residual_nao_setorializado` | 937783 | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'. |
 | `saldo_residual_nao_setorializado` | 937783 | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'. |
-| `saldo_residual_nao_setorializado` | 937221 | Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'. |
 | `item_pad_duplicado_na_reconstrucao` | - | Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte. |
 | `item_pad_duplicado_na_reconstrucao` | - | Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte. |
 | `item_pad_duplicado_na_reconstrucao` | - | Item com a mesma chave apareceu 2 vezes nos relatórios PAD; verifique duplicidade na fonte. |
@@ -301,7 +301,7 @@
 
 - **recargaJson**: `backend/data/relatorios/profor-2022-pad-recarga-operacional.json`
 - **recargaMd**: `backend/data/relatorios/profor-2022-pad-recarga-operacional.md`
-- **reconstrucaoJson**: `backend/data/relatorios/profor-2022-pad-plano-reconstrucido-dry-run.json`
+- **reconstrucaoJson**: `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`
 - **comparacaoJson**: `backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json`
 - **comparacaoMd**: `backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md`
 - **snapshotAtualJson**: `backend/data/relatorios/profor-2022-pad-fotografia-canonica.json`

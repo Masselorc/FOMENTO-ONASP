@@ -1,11 +1,11 @@
 {
-  "geradoEm": "2026-05-24T12:33:35.069Z",
+  "geradoEm": "2026-05-25T13:06:36.596Z",
   "modo": "dry-run",
   "versaoComparador": "0.3",
   "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
-  "checksumNovo": "2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50",
+  "checksumNovo": "c140904ba3285041dbd6eef3aa1eab9f385662df88672a9ff4d22c2e4898cbcc",
   "checksumCalculadoAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
-  "checksumCalculadoNovo": "2a0f63717e0092c98a352bc3e4d50187d35a3073a24169e290f2e5780fb4cf50",
+  "checksumCalculadoNovo": "c140904ba3285041dbd6eef3aa1eab9f385662df88672a9ff4d22c2e4898cbcc",
   "checksumsValidos": true,
   "bloqueiosTecnicos": [
     {
@@ -994,37 +994,39 @@
   "avisos": [],
   "resumo": {
     "totalLinhasAnterior": 568,
-    "totalLinhasNovo": 568,
-    "totalIguais": 563,
+    "totalLinhasNovo": 567,
+    "totalIguais": 562,
     "totalNovos": 0,
-    "totalRemovidos": 0,
-    "totalAusentes": 0,
+    "totalRemovidos": 1,
+    "totalAusentes": 1,
     "totalAlterados": 5,
     "totalBloqueiosTecnicos": 76,
     "porTipo": {
       "descricao_apenas_textual": 1,
       "descricao_apenas_diacritico": 4,
+      "item_removido": 1,
       "colisao_chave": 38,
       "chave_ambigua": 38
     },
     "porUf": {
       "MS": 1,
       "AC": 4,
+      "AL": 1,
       "NAO_INFORMADO": 76
     },
     "porNatureza": {
       "CUSTEIO": 1,
-      "CAPITAL": 4,
+      "CAPITAL": 5,
       "NAO_INFORMADO": 76
     },
     "totalRuidosTecnicosControlados": 6
   },
   "diferencasAgregadas": {
-    "valorPrevisto": 0,
+    "valorPrevisto": -9506.54,
     "valorExecutado": 0,
-    "saldo": 0,
-    "quantidade": 0,
-    "linhas": 0
+    "saldo": -9506.54,
+    "quantidade": -1,
+    "linhas": -1
   },
   "divergencias": [
     {
@@ -1126,11 +1128,94 @@
           "novo": "Smartphone minimo de 128gb de memória in"
         }
       }
+    },
+    {
+      "tipo": "item_removido",
+      "tipos": [
+        "item_removido"
+      ],
+      "chave": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
+      "uf": "AL",
+      "numero": "937221",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Saldo Residual",
+      "item": {
+        "uf": "AL",
+        "instrumento": "CONVÊNIO",
+        "numero": "937221",
+        "ano": "2022",
+        "area": "NAO INFORMADO",
+        "natureza": "CAPITAL",
+        "descricao": "SALDO RESIDUAL",
+        "descricaoOriginal": "Saldo Residual",
+        "descricaoNormalizada": "SALDO RESIDUAL",
+        "quantidade": 1,
+        "valorUnitario": 9506.54,
+        "valorPrevisto": 9506.54,
+        "valorExecutado": 0,
+        "saldo": 9506.54,
+        "saldoEconomicidade": 0,
+        "percentualExecucao": 0,
+        "avisos": [],
+        "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
+        "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
+        "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
+        "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
+      }
     }
   ],
   "itensNovos": [],
-  "itensAusentes": [],
-  "itensRemovidos": [],
+  "itensAusentes": [
+    {
+      "uf": "AL",
+      "instrumento": "CONVÊNIO",
+      "numero": "937221",
+      "ano": "2022",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "SALDO RESIDUAL",
+      "descricaoOriginal": "Saldo Residual",
+      "descricaoNormalizada": "SALDO RESIDUAL",
+      "quantidade": 1,
+      "valorUnitario": 9506.54,
+      "valorPrevisto": 9506.54,
+      "valorExecutado": 0,
+      "saldo": 9506.54,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [],
+      "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
+      "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
+      "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
+      "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
+    }
+  ],
+  "itensRemovidos": [
+    {
+      "uf": "AL",
+      "instrumento": "CONVÊNIO",
+      "numero": "937221",
+      "ano": "2022",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "SALDO RESIDUAL",
+      "descricaoOriginal": "Saldo Residual",
+      "descricaoNormalizada": "SALDO RESIDUAL",
+      "quantidade": 1,
+      "valorUnitario": 9506.54,
+      "valorPrevisto": 9506.54,
+      "valorExecutado": 0,
+      "saldo": 9506.54,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [],
+      "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
+      "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
+      "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
+      "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
+    }
+  ],
   "itensAlterados": [
     {
       "tipo": "descricao_apenas_textual",
@@ -2751,29 +2836,6 @@
       "chaveComparacao": "937221|AL|CAPITAL|ESCOLA PENAL|COLORIDA IMPRESSORA LASER MULTIFUNCIONAL",
       "chaveContexto": "937221|AL|CAPITAL|ESCOLA PENAL",
       "hashItem": "1bff3ea83960b5fd06a3ac631a854c898de85ffd63ecb8ae67d980bd0f18b6b2"
-    },
-    {
-      "uf": "AL",
-      "instrumento": "CONVÊNIO",
-      "numero": "937221",
-      "ano": "2022",
-      "area": "NAO INFORMADO",
-      "natureza": "CAPITAL",
-      "descricao": "SALDO RESIDUAL",
-      "descricaoOriginal": "Saldo Residual",
-      "descricaoNormalizada": "SALDO RESIDUAL",
-      "quantidade": 1,
-      "valorUnitario": 9506.54,
-      "valorPrevisto": 9506.54,
-      "valorExecutado": 0,
-      "saldo": 9506.54,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
-      "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
-      "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
-      "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
     },
     {
       "uf": "AL",

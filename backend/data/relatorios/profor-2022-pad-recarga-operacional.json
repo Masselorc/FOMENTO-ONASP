@@ -1,19 +1,19 @@
 {
-  "dataHora": "2026-05-24T12:33:34.521Z",
+  "dataHora": "2026-05-25T13:06:36.289Z",
   "sucesso": true,
   "aptoParaUsoLocal": false,
   "aptoParaPublicacao": false,
   "totalArquivosPad": 15,
   "totalRelatoriosLidos": 15,
   "totalItensPad": 525,
-  "totalLinhasReconstruidas": 568,
+  "totalLinhasReconstruidas": 567,
   "totalConveniosReconstruidos": 15,
   "totalItensComRateioAplicado": 501,
-  "totalItensSemRateio": 0,
-  "totalItensNovos": 25,
+  "totalItensSemRateio": 1,
+  "totalItensNovos": 24,
   "totalItensSuprimidos": 30,
-  "totalImpedimentos": 96,
-  "totalAlertas": 174,
+  "totalImpedimentos": 97,
+  "totalAlertas": 173,
   "impedimentos": [
     {
       "tipo": "quantidade_valor_unitario_inconsistente",
@@ -236,6 +236,15 @@
       "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
     },
     {
+      "tipo": "item_pad_sem_rateio",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "descricao": "Saldo Residual",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
+    },
+    {
       "tipo": "rateio_percentual_indefinido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
@@ -261,6 +270,15 @@
       "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
       "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
       "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
+    },
+    {
+      "tipo": "decisao_nao_aplicavel:saldo_residual_rateio_invalido",
+      "nivel": "impeditivo",
+      "numeroConvenio": "937221",
+      "uf": null,
+      "descricao": null,
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'."
     },
     {
       "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
@@ -441,12 +459,6 @@
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
       "detalhe": "Diferença crítica no item \"Refrigerador frigobar, com capacidade no\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
-    },
-    {
-      "tipo": "diferenca_critica_plano",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "detalhe": "Diferença crítica no item \"Saldo Residual\": Linha reconstruída sem correspondência na origem antiga; revisar rateio/área.."
     },
     {
       "tipo": "diferenca_critica_plano",
@@ -2076,15 +2088,6 @@
       "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
     },
     {
-      "tipo": "saldo_residual_nao_setorializado",
-      "nivel": "info",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Saldo Residual",
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Linha reconstruida com area tecnica 'NAO INFORMADO'."
-    },
-    {
       "tipo": "item_pad_duplicado_na_reconstrucao",
       "nivel": "aviso",
       "numeroConvenio": null,
@@ -3089,7 +3092,7 @@
   "caminhosRelatorios": {
     "recargaJson": "backend/data/relatorios/profor-2022-pad-recarga-operacional.json",
     "recargaMd": "backend/data/relatorios/profor-2022-pad-recarga-operacional.md",
-    "reconstrucaoJson": "backend/data/relatorios/profor-2022-pad-plano-reconstrucido-dry-run.json",
+    "reconstrucaoJson": "backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json",
     "comparacaoJson": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json",
     "comparacaoMd": "backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.md",
     "snapshotAtualJson": "backend/data/relatorios/profor-2022-pad-fotografia-canonica.json",
