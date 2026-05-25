@@ -47,6 +47,7 @@ test("comparacao detecta divergencia de valor previsto", () => {
   const resultado = comparar([item({ valorTotalPrevisto: 210, saldo: 160 })], [item()]);
 
   assert.ok(resultado.itensComValorDivergente.some((divergencia) => divergencia.campo === "valorTotalPrevisto"));
+  assert.equal(resultado.itensComDescricaoSemelhanteHashDiferente.length, 1);
   assert.ok(resultado.divergenciasCriticas.some((divergencia) => divergencia.tipo === "total_valorTotalPrevisto_divergente"));
 });
 

@@ -7436,3 +7436,17 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD persistente, sem recarga PAD operacional, sem tela de Revisoes, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
 - Risco: medio - dois convenios ja apontam divergencias criticas entre PAD publico atual e Excel processado; etapa ainda e diagnostica.
 - Rollback: reverter o commit; remover relatórios locais Transferegov caso sejam gerados em execucoes futuras.
+
+## 25/05/2026 - PROFOR 2022: investigacao divergencias PAD Transferegov
+
+- Branch: `main`.
+- Objetivo: investigar divergencias criticas Transferegov x Excel dos convenios `938128` e `937817`.
+- Arquivos: `backend/scripts/extrair-pads-transferegov-profor-2022-dry-run.js`; `backend/services/profor-2022/profor-pad-transferegov-comparacao-service.js`; `tests/services/profor-pad-transferegov-comparacao.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resultado `938128`: diferenca real entre Excel antigo e Transferegov atual; item pareado `Curso de Pos Graduacao Direitos Humanos` diverge em executado/saldo; totais gerais tambem divergem; sem indicio de erro de parser/comparador.
+- Resultado `937817`: diferenca real item a item com total geral compensado; itens pareados `ESTABILIZADOR`, `SALDO DE RENDIMENTO COMPLEMENTACAO DOS V` e `VENTILADOR 50 CM PAREDE` divergem em executado/saldo; sem ausencias, quantidade ou codigo divergente.
+- Resultado 15 convenios apos investigacao: HTTP direto; `15` extraidos; `0` falhas tecnicas; `12` equivalentes; `3` com divergencia critica (`938128`, `937817`, achado colateral `937468`); cache Transferegov segue bloqueado.
+- Relatorio local: gerados `backend/data/relatorios/profor-2022-pad-transferegov-divergencias-938128-937817.json` e `.md`, mantidos fora do versionamento.
+- Validacoes: `git diff --check`; `node --check` nos arquivos solicitados; testes parser/comparacao/dry-run; `npm run validar:syntax`; dry-run real `938128`, `937817` e 15 convenios, sem Playwright.
+- Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD persistente, sem recarga PAD, sem tela de Revisoes, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
+- Risco: medio - fontes publicas podem mudar entre execucoes; divergencias parecem refletir atualizacao da fonte e nao erro tecnico.
+- Rollback: reverter o commit; remover os relatorios locais de investigacao se desejar limpar o workspace.

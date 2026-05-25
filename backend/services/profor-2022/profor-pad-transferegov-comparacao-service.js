@@ -94,6 +94,13 @@ function itemResumo(item) {
   };
 }
 
+function evidenciaPar(itemTransferegov, itemExcel) {
+  return {
+    transferegov: itemResumo(itemTransferegov),
+    excel: itemResumo(itemExcel),
+  };
+}
+
 function compararTotais(totaisTransferegov, totaisExcel) {
   const divergencias = [];
   if (totaisTransferegov.totalItens !== totaisExcel.totalItens) {
@@ -123,6 +130,7 @@ function compararPorItens(itensTransferegov, itensExcel) {
   const itensComValorDivergente = [];
   const itensComQuantidadeDivergente = [];
   const itensComCodigoNaturezaDivergente = [];
+  const itensComDescricaoSemelhanteHashDiferente = [];
   const porMaterialTransferegov = agrupar(itensTransferegov, chaveMaterial);
   const porMaterialExcel = agrupar(itensExcel, chaveMaterial);
   const chaves = new Set([...porMaterialTransferegov.keys(), ...porMaterialExcel.keys()]);
@@ -146,17 +154,31 @@ function compararPorItens(itensTransferegov, itensExcel) {
           descricao: itemTransferegov.descricao,
           transferegov: itemTransferegov.quantidade,
           excel: itemExcel.quantidade,
+          evidencia: evidenciaPar(itemTransferegov, itemExcel),
         });
       }
+      const camposDiferentes = [];
       for (const campo of ["valorUnitario", "valorTotalPrevisto", "valorTotalExecutado", "saldo"]) {
         if (!numerosIguais(itemTransferegov[campo], itemExcel[campo])) {
+          camposDiferentes.push(campo);
           itensComValorDivergente.push({
             campo,
             descricao: itemTransferegov.descricao,
             transferegov: itemTransferegov[campo],
             excel: itemExcel[campo],
+            evidencia: evidenciaPar(itemTransferegov, itemExcel),
           });
         }
+      }
+      if (camposDiferentes.length || !numerosIguais(itemTransferegov.quantidade, itemExcel.quantidade, TOLERANCIA_QUANTIDADE)) {
+        itensComDescricaoSemelhanteHashDiferente.push({
+          descricao: itemTransferegov.descricao,
+          codigoNaturezaNormalizado: itemTransferegov.codigoNaturezaNormalizado,
+          camposDiferentes,
+          hashTransferegov: itemTransferegov.hashItem,
+          hashExcel: itemExcel.hashItem,
+          evidencia: evidenciaPar(itemTransferegov, itemExcel),
+        });
       }
     }
   }
@@ -184,6 +206,7 @@ function compararPorItens(itensTransferegov, itensExcel) {
     itensComValorDivergente,
     itensComQuantidadeDivergente,
     itensComCodigoNaturezaDivergente,
+    itensComDescricaoSemelhanteHashDiferente,
   };
 }
 
