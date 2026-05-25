@@ -1153,10 +1153,9 @@ async function exportarRelatorioEstadoSelecionado(uf) {
 // ========================================================================
 
 function atualizarVisibilidadeBotaoStatusSistema() {
-    const ocultarNoModoEstatico = estaEmModoPublicacaoEstatica();
     document.querySelectorAll('.app-menu-link[data-view="status-sistema"], .app-menu-link[data-view="revisao-divergencias"]').forEach((botao) => {
-        botao.classList.toggle('d-none', ocultarNoModoEstatico);
-        botao.setAttribute('aria-hidden', String(ocultarNoModoEstatico));
+        botao.classList.remove('d-none');
+        botao.setAttribute('aria-hidden', 'false');
     });
 }
 
