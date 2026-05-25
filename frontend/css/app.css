@@ -10698,8 +10698,17 @@ table.dataTable thead th {
 }
 
 #view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select {
-    min-width: 0;
-    width: 100%;
+    min-width: 160px;
+    width: auto;
+    padding-right: 1.75rem;
+    text-overflow: ellipsis;
+}
+
+/* Coluna Área (2ª) precisa caber o rótulo completo do select. */
+#view-revisao-divergencias .revisao-pad-plano-table th:nth-child(2),
+#view-revisao-divergencias .revisao-pad-plano-table td:nth-child(2) {
+    min-width: 170px;
+    white-space: nowrap;
 }
 
 /* Linha de detalhe expandida (acordeão) dentro da tabela de revisão. */
