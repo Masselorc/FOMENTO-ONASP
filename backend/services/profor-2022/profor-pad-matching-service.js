@@ -288,7 +288,7 @@ function registrarInstrumentoNaoEncontrado(registro, instrumentosNaoEncontrados,
 
 function conferirItensPadComRateiosProfor2022(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
-  const leituraPad = lerRelatoriosPadProfor2022({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
+  const leituraPad = lerRelatoriosPadProfor2022({ repoRoot, pastaRelativa: opcoes.pastaRelativa, usarExcelLegado: opcoes.usarExcelLegado });
   const carteiraPorNumero = carregarCarteiraMonitorada();
   const itensConhecidos = carregarItensConhecidos();
 

@@ -227,24 +227,24 @@ test("carregarPlanoAplicacaoReconstrucaoPad falha explicitamente quando JSON e i
   fs.rmSync(path.dirname(caminho), { recursive: true, force: true });
 });
 
-test("carregarPlanoAplicacaoReconstrucaoPad le o relatorio dry-run real e bate 568 linhas / 15 convenios", () => {
+test("carregarPlanoAplicacaoReconstrucaoPad le o relatorio dry-run real e bate 567 linhas / 15 convenios", () => {
   const r = carregarPlanoAplicacaoReconstrucaoPad();
-  assert.equal(r.metadados.totalLinhas, 568);
+  assert.equal(r.metadados.totalLinhas, 567);
   assert.equal(r.metadados.totalConvenios, 15);
   assert.equal(r.metadados.origemReconstrucao, "relatorios-pad-rateados");
-  assert.equal(r.planoAplicacao.length, 568);
+  assert.equal(r.planoAplicacao.length, 567);
   for (const campo of CAMPOS_OBRIGATORIOS_ITEM) {
     assert.ok(campo in r.planoAplicacao[0], `Campo canonico ausente: ${campo}`);
   }
 });
 
-test("carregarPlanoAplicacaoReconstrucaoPad respeita conveniosEsperados=15 e minimoLinhasExigido=568", () => {
+test("carregarPlanoAplicacaoReconstrucaoPad respeita conveniosEsperados=15 e minimoLinhasExigido=567", () => {
   const r = carregarPlanoAplicacaoReconstrucaoPad({
     conveniosEsperados: 15,
-    minimoLinhasExigido: 568,
+    minimoLinhasExigido: 567,
   });
   assert.equal(r.metadados.totalConvenios, 15);
-  assert.equal(r.metadados.totalLinhas, 568);
+  assert.equal(r.metadados.totalLinhas, 567);
 });
 
 test("modulo de origem reconstrucao-pad NAO importa publicacao, SQLite, init-db ou Transferegov", () => {

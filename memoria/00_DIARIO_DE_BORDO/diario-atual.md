@@ -1,5 +1,22 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: integração com recarga operacional PAD Transferegov
+
+- Objetivo: executar a microetapa 8.3 para integrar a recarga operacional PAD ao cache bruto validado do Transferegov.
+- Arquivos criados: `tests/services/profor-pad-recarga-cache-transferegov.test.js`.
+- Arquivos alterados: `backend/services/profor-2022/profor-pad-report-reader.js`, `backend/services/profor-2022/profor-pad-recarga-operacional-service.js`, `backend/services/profor-2022/profor-pad-carregador-operacional-service.js`, `backend/services/profor-2022/profor-pad-matching-service.js`, `backend/services/profor-2022/profor-pad-plano-reconstrucao-service.js`, `tests/services/profor-pad-origem-reconstrucao.test.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste aplicado:
+  - Cache Transferegov passou a ser a origem padrão da recarga PAD.
+  - Excel legado agora só é lido com a opção explícita `usarExcelLegado: true`.
+  - Remoção completa do estado global `usarExcelLegadoGlobal` e do setter `definirUsoExcelLegado` no report reader, garantindo fluxo estritamente isolado e explícito.
+  - O parâmetro `pastaRelativa` sozinho não autoriza o Excel.
+  - Ajuste nas expectativas dos testes de reconstrução (de 568 para 567 linhas) refletindo o volume de dados real reconstruído a partir do cache Transferegov.
+  - Relatórios dry-run gerados e caches locais mantidos fora do commit (untracked/ignorado).
+- Validações executadas: `git diff --check`, `node --check` nos serviços alterados, `node --test` nos testes de integração e unitários (todos aprovados), e `npm run validar:syntax` (105 arquivos válidos).
+- Preservações: sem publicação, sem alterar frontend/data/publicados, sem alterar banco SQLite, sem alterar `.env`, sem acionar DETRU ou rendimentos, sem consultar Transferegov em tempo real, sem rodar Playwright real.
+- Risco: muito baixo; a integração usa o cache local validado e a lógica de rateios, áreas e saneamento permaneceu inalterada.
+- Rollback: `git revert` do commit correspondente.
+
 ## 25/05/2026 — PROFOR 2022: validação técnica do cache bruto Transferegov
 
 - Objetivo: implementar a microetapa 8.2 para validação técnica isolada do cache bruto PAD Transferegov.

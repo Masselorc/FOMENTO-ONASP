@@ -80,7 +80,8 @@ async function recarregarPadsOperacional(opcoes = {}) {
   try {
     // 1. Ler relatórios PAD
     etapaAtual = "ler_relatorios_pad";
-    const resultadoReader = lerRelatoriosPadProfor2022({ repoRoot });
+    opcoes.repoRoot = repoRoot;
+    const resultadoReader = lerRelatoriosPadProfor2022(opcoes);
     const { relatorios, alertas: alertasReader, resumo: resumoReader } = resultadoReader;
 
     // Se a pasta de entrada tiver um total de arquivos lidos diferente de 15
@@ -138,7 +139,7 @@ async function recarregarPadsOperacional(opcoes = {}) {
 
     // 2. Executar reconstrução dry-run
     etapaAtual = "reconstruir_plano";
-    const reconstrucao = reconstruirPlanoAplicacaoPadDryRun({ repoRoot });
+    const reconstrucao = reconstruirPlanoAplicacaoPadDryRun(opcoes);
 
     etapaAtual = "salvar_relatorio_reconstrucao";
     salvarRelatorioReconstrucao(reconstrucao, CAMINHO_RECONSTRUCAO_JSON);
@@ -282,10 +283,11 @@ async function recarregarPadsOperacional(opcoes = {}) {
       totalAlertas: 0,
       impedimentos: [
         {
-          tipo: "erro_execucao_recarga",
+          tipo: erro.codigo || "erro_execucao_recarga",
           nivel: "impeditivo",
-          detalhe: `Erro na etapa ${etapaAtual}: ${erro.message}`,
-          etapa: etapaAtual,
+          detalhe: erro.codigo === "cache_pad_transferegov_ausente_ou_invalido" ? erro.message : `Erro na etapa ${erro.etapa || etapaAtual}: ${erro.message}`,
+          etapa: erro.etapa || etapaAtual,
+          providencia: erro.providencia || undefined,
           tecnico: {
             mensagem: erro?.message || String(erro),
             stack: erro?.stack || null,

@@ -205,135 +205,188 @@ function gerarMarkdown(resultado) {
 function carregarPadsOperacional(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
   const dataHora = agoraIso();
-  const lerPads = opcoes.lerRelatoriosPad || lerRelatoriosPadProfor2022;
-  const conferir = opcoes.conferirItensPadComRateios || conferirItensPadComRateiosProfor2022;
-  const carregarRateios = opcoes.carregarMemoriaRateios || carregarMemoriaRateios;
-  const gerarLinhas = opcoes.gerarLinhasItem || gerarLinhasItem;
 
-  const leitura = lerPads({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
-  const conferencia = conferir({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
-  const memoriaRateios = carregarRateios();
-  const resultado = montarResumoBase({ dataHora, leitura, conferencia });
-  const conveniosReconstruidos = new Set();
 
-  if (resultado.arquivosEncontrados !== TOTAL_PAD_ESPERADO) {
-    resultado.impedimentos.push(montarRegistro({
-      tipo: "quantidade_arquivos_pad_invalida",
-      detalhe: `Foram encontrados ${resultado.arquivosEncontrados} arquivos PAD; o esperado é ${TOTAL_PAD_ESPERADO}.`,
-    }));
-  }
-  if (resultado.arquivosLidos !== TOTAL_PAD_ESPERADO) {
-    resultado.impedimentos.push(montarRegistro({
-      tipo: "quantidade_relatorios_pad_lidos_invalida",
-      detalhe: `Foram lidos ${resultado.arquivosLidos} relatórios PAD; o esperado é ${TOTAL_PAD_ESPERADO}.`,
-    }));
-  }
 
-  const alertasLeituraImpeditivos = (leitura.alertas || []).filter((alerta) => alerta.nivel === "impeditivo");
-  for (const alerta of alertasLeituraImpeditivos) {
-    resultado.impedimentos.push(montarRegistro({
-      tipo: alerta.tipo || "erro_leitura_pad",
-      numeroConvenio: alerta.instrumento || null,
-      detalhe: alerta.detalhe || "Alerta impeditivo na leitura PAD.",
-    }));
-  }
+  try {
+    const lerPads = opcoes.lerRelatoriosPad || lerRelatoriosPadProfor2022;
+    const conferir = opcoes.conferirItensPadComRateios || conferirItensPadComRateiosProfor2022;
+    const carregarRateios = opcoes.carregarMemoriaRateios || carregarMemoriaRateios;
+    const gerarLinhas = opcoes.gerarLinhasItem || gerarLinhasItem;
 
-  for (const item of conferencia.itensPadReconhecidos || []) {
-    const rateios = memoriaRateios.get(item.itemConhecidoId) || [];
-    if (!rateios.length) {
+    const leitura = lerPads(opcoes);
+    const conferencia = conferir(opcoes);
+    const memoriaRateios = carregarRateios();
+    const resultado = montarResumoBase({ dataHora, leitura, conferencia });
+    const conveniosReconstruidos = new Set();
+
+    if (resultado.arquivosEncontrados !== TOTAL_PAD_ESPERADO) {
       resultado.impedimentos.push(montarRegistro({
-        tipo: "item_pad_sem_rateio_memorizado",
+        tipo: "quantidade_arquivos_pad_invalida",
+        detalhe: `Foram encontrados ${resultado.arquivosEncontrados} arquivos PAD; o esperado é ${TOTAL_PAD_ESPERADO}.`,
+      }));
+    }
+    if (resultado.arquivosLidos !== TOTAL_PAD_ESPERADO) {
+      resultado.impedimentos.push(montarRegistro({
+        tipo: "quantidade_relatorios_pad_lidos_invalida",
+        detalhe: `Foram lidos ${resultado.arquivosLidos} relatórios PAD; o esperado é ${TOTAL_PAD_ESPERADO}.`,
+      }));
+    }
+
+    const alertasLeituraImpeditivos = (leitura.alertas || []).filter((alerta) => alerta.nivel === "impeditivo");
+    for (const alerta of alertasLeituraImpeditivos) {
+      resultado.impedimentos.push(montarRegistro({
+        tipo: alerta.tipo || "erro_leitura_pad",
+        numeroConvenio: alerta.instrumento || null,
+        detalhe: alerta.detalhe || "Alerta impeditivo na leitura PAD.",
+      }));
+    }
+
+    for (const item of conferencia.itensPadReconhecidos || []) {
+      const rateios = memoriaRateios.get(item.itemConhecidoId) || [];
+      if (!rateios.length) {
+        resultado.impedimentos.push(montarRegistro({
+          tipo: "item_pad_sem_rateio_memorizado",
+          numeroConvenio: item.numeroConvenio,
+          uf: item.uf,
+          descricao: item.descricaoOriginal,
+          chaveItem: item.chaveItem,
+          detalhe: "Item PAD reconhecido, mas sem rateio ativo memorizado.",
+          ...dadosOriginaisDoItemPad(item),
+        }));
+        continue;
+      }
+      if (!rateioTemPesoOperacional(rateios)) {
+        resultado.impedimentos.push(montarRegistro({
+          tipo: "rateio_memorizado_sem_peso_operacional",
+          numeroConvenio: item.numeroConvenio,
+          uf: item.uf,
+          descricao: item.descricaoOriginal,
+          chaveItem: item.chaveItem,
+          detalhe: "Rateio memorizado sem percentual, quantidade ou valor de referência; distribuição igual provisória não é permitida.",
+        }));
+        continue;
+      }
+      const linhas = gerarLinhas(item, rateios, {
+        fonteRateio: "memoria_rateio_operacional",
+        itemConhecidoId: item.itemConhecidoId,
+        itemAptoParaUso: item.aptoParaImportacaoFutura !== false,
+      });
+      if ((linhas.linhas || []).some((linha) => linha.baseRateioValor === "distribuicao_igual" || linha.baseRateioQuantidade === "distribuicao_igual")) {
+        resultado.impedimentos.push(montarRegistro({
+          tipo: "distribuicao_igual_provisoria_bloqueada",
+          numeroConvenio: item.numeroConvenio,
+          uf: item.uf,
+          descricao: item.descricaoOriginal,
+          chaveItem: item.chaveItem,
+          detalhe: "Reconstrução tentou usar distribuição igual provisória; item bloqueado.",
+        }));
+        continue;
+      }
+      resultado.planoAplicacaoReconstruido.push(...(linhas.linhas || []));
+      resultado.alertas.push(...(linhas.alertasItem || []));
+      resultado.impedimentos.push(...(linhas.impedimentosItem || []));
+      resultado.rateiosAplicados += 1;
+      if (item.numeroConvenio) conveniosReconstruidos.add(item.numeroConvenio);
+    }
+
+    for (const item of conferencia.itensPadSemRateio || []) {
+      resultado.impedimentos.push(montarRegistro({
+        tipo: "item_novo_sem_rateio_memorizado",
         numeroConvenio: item.numeroConvenio,
         uf: item.uf,
         descricao: item.descricaoOriginal,
         chaveItem: item.chaveItem,
-        detalhe: "Item PAD reconhecido, mas sem rateio ativo memorizado.",
+        detalhe: item.motivo
+          ? `Item PAD sem rateio memorizado (${item.motivo}).`
+          : "Item PAD sem rateio memorizado.",
         ...dadosOriginaisDoItemPad(item),
       }));
-      continue;
     }
-    if (!rateioTemPesoOperacional(rateios)) {
-      resultado.impedimentos.push(montarRegistro({
-        tipo: "rateio_memorizado_sem_peso_operacional",
+
+    for (const item of conferencia.itensConhecidosAusentesNoPad || []) {
+      resultado.alertas.push(montarRegistro({
+        tipo: "item_suprimido_historico",
+        nivel: "aviso",
         numeroConvenio: item.numeroConvenio,
         uf: item.uf,
-        descricao: item.descricaoOriginal,
+        descricao: item.descricaoOriginalReferencia,
         chaveItem: item.chaveItem,
-        detalhe: "Rateio memorizado sem percentual, quantidade ou valor de referência; distribuição igual provisória não é permitida.",
+        detalhe: "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
       }));
-      continue;
     }
-    const linhas = gerarLinhas(item, rateios, {
-      fonteRateio: "memoria_rateio_operacional",
-      itemConhecidoId: item.itemConhecidoId,
-      itemAptoParaUso: item.aptoParaImportacaoFutura !== false,
-    });
-    if ((linhas.linhas || []).some((linha) => linha.baseRateioValor === "distribuicao_igual" || linha.baseRateioQuantidade === "distribuicao_igual")) {
+
+    for (const instrumento of conferencia.instrumentosNaoEncontradosNaCarteira || []) {
       resultado.impedimentos.push(montarRegistro({
-        tipo: "distribuicao_igual_provisoria_bloqueada",
-        numeroConvenio: item.numeroConvenio,
-        uf: item.uf,
-        descricao: item.descricaoOriginal,
-        chaveItem: item.chaveItem,
-        detalhe: "Reconstrução tentou usar distribuição igual provisória; item bloqueado.",
+        tipo: "instrumento_fora_da_carteira",
+        numeroConvenio: instrumento.numeroConvenio,
+        detalhe: instrumento.detalhe || "Instrumento do PAD não encontrado na carteira monitorada ativa.",
       }));
-      continue;
     }
-    resultado.planoAplicacaoReconstruido.push(...(linhas.linhas || []));
-    resultado.alertas.push(...(linhas.alertasItem || []));
-    resultado.impedimentos.push(...(linhas.impedimentosItem || []));
-    resultado.rateiosAplicados += 1;
-    if (item.numeroConvenio) conveniosReconstruidos.add(item.numeroConvenio);
+
+    resultado.linhasReconstruidas = resultado.planoAplicacaoReconstruido.length;
+    resultado.conveniosReconstruidos = conveniosReconstruidos.size;
+    resultado.totalLinhasReconstruidas = resultado.linhasReconstruidas;
+    resultado.totalConveniosReconstruidos = resultado.conveniosReconstruidos;
+    resultado.totalItensComRateioAplicado = resultado.rateiosAplicados;
+    resultado.totalImpedimentos = resultado.impedimentos.length;
+    resultado.totalAlertas = resultado.alertas.length;
+    resultado.alertasAgrupados = agruparAlertasPorTipo([...resultado.alertas, ...(conferencia.alertas || [])]);
+    resultado.sucesso = resultado.totalImpedimentos === 0;
+    resultado.aptoParaUsoLocal = resultado.sucesso;
+    resultado.aptoParaPublicacao = false;
+
+    if (opcoes.salvarRelatorio !== false) salvarRelatorio(resultado, repoRoot);
+    return resultado;
+  } catch (erro) {
+    const resultadoErro = {
+      dataHora,
+      sucesso: false,
+      aptoParaUsoLocal: false,
+      aptoParaPublicacao: false,
+      arquivosEncontrados: 0,
+      arquivosLidos: 0,
+      itensProcessados: 0,
+      linhasReconstruidas: 0,
+      conveniosReconstruidos: 0,
+      rateiosAplicados: 0,
+      itensNovosSemRateio: 0,
+      itensSuprimidos: 0,
+      totalArquivosPad: 0,
+      totalRelatoriosLidos: 0,
+      totalItensPad: 0,
+      totalLinhasReconstruidas: 0,
+      totalConveniosReconstruidos: 0,
+      totalItensComRateioAplicado: 0,
+      totalItensSemRateio: 0,
+      totalItensNovos: 0,
+      totalItensSuprimidos: 0,
+      totalImpedimentos: 1,
+      totalAlertas: 0,
+      impedimentos: [
+        {
+          tipo: erro.codigo || "erro_execucao_recarga",
+          nivel: "impeditivo",
+          detalhe: erro.codigo === "cache_pad_transferegov_ausente_ou_invalido" ? erro.message : `Erro na recarga operacional: ${erro.message}`,
+          etapa: erro.etapa || "leitura_cache_transferegov",
+          providencia: erro.providencia || undefined,
+          tecnico: {
+            mensagem: erro?.message || String(erro),
+            stack: erro?.stack || null,
+          },
+        },
+      ],
+      alertas: [],
+      alertasAgrupados: [],
+      planoAplicacaoReconstruido: [],
+      caminhosRelatorios: {
+        recargaJson: RELATORIO_JSON,
+        recargaMd: RELATORIO_MD,
+      },
+    };
+    if (opcoes.salvarRelatorio !== false) salvarRelatorio(resultadoErro, repoRoot);
+    return resultadoErro;
   }
-
-  for (const item of conferencia.itensPadSemRateio || []) {
-    resultado.impedimentos.push(montarRegistro({
-      tipo: "item_novo_sem_rateio_memorizado",
-      numeroConvenio: item.numeroConvenio,
-      uf: item.uf,
-      descricao: item.descricaoOriginal,
-      chaveItem: item.chaveItem,
-      detalhe: item.motivo
-        ? `Item PAD sem rateio memorizado (${item.motivo}).`
-        : "Item PAD sem rateio memorizado.",
-      ...dadosOriginaisDoItemPad(item),
-    }));
-  }
-
-  for (const item of conferencia.itensConhecidosAusentesNoPad || []) {
-    resultado.alertas.push(montarRegistro({
-      tipo: "item_suprimido_historico",
-      nivel: "aviso",
-      numeroConvenio: item.numeroConvenio,
-      uf: item.uf,
-      descricao: item.descricaoOriginalReferencia,
-      chaveItem: item.chaveItem,
-      detalhe: "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
-    }));
-  }
-
-  for (const instrumento of conferencia.instrumentosNaoEncontradosNaCarteira || []) {
-    resultado.impedimentos.push(montarRegistro({
-      tipo: "instrumento_fora_da_carteira",
-      numeroConvenio: instrumento.numeroConvenio,
-      detalhe: instrumento.detalhe || "Instrumento do PAD não encontrado na carteira monitorada ativa.",
-    }));
-  }
-
-  resultado.linhasReconstruidas = resultado.planoAplicacaoReconstruido.length;
-  resultado.conveniosReconstruidos = conveniosReconstruidos.size;
-  resultado.totalLinhasReconstruidas = resultado.linhasReconstruidas;
-  resultado.totalConveniosReconstruidos = resultado.conveniosReconstruidos;
-  resultado.totalItensComRateioAplicado = resultado.rateiosAplicados;
-  resultado.totalImpedimentos = resultado.impedimentos.length;
-  resultado.totalAlertas = resultado.alertas.length;
-  resultado.alertasAgrupados = agruparAlertasPorTipo([...resultado.alertas, ...(conferencia.alertas || [])]);
-  resultado.sucesso = resultado.totalImpedimentos === 0;
-  resultado.aptoParaUsoLocal = resultado.sucesso;
-  resultado.aptoParaPublicacao = false;
-
-  if (opcoes.salvarRelatorio !== false) salvarRelatorio(resultado, repoRoot);
-  return resultado;
 }
 
 function obterUltimaRecargaOperacionalV2(opcoes = {}) {

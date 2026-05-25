@@ -397,6 +397,7 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   const conferencia = conferirItensPadComRateiosProfor2022({
     repoRoot,
     pastaRelativa: opcoes.pastaRelativa,
+    usarExcelLegado: opcoes.usarExcelLegado,
   });
   const memoria = carregarMemoriaRateios();
   const auditoria = repoRevisao.obterEstatisticasAuditoria();

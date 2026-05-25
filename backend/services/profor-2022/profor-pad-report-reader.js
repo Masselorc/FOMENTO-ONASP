@@ -402,6 +402,114 @@ function lerRelatorioPad(caminhoArquivo, repoRoot) {
 
 function lerRelatoriosPadProfor2022(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
+  const usarExcelLegado = opcoes.usarExcelLegado === true;
+
+  if (!usarExcelLegado) {
+    const cacheService = require("./profor-pad-transferegov-cache-service");
+    const cacheValidation = require("./profor-pad-transferegov-cache-validacao-service");
+
+    const caminhoCache = cacheService.obterCaminhoCache(opcoes);
+    if (!fs.existsSync(caminhoCache)) {
+      const erro = new Error("Arquivo de cache do Transferegov não encontrado.");
+      erro.codigo = "cache_pad_transferegov_ausente_ou_invalido";
+      erro.etapa = "leitura_cache_transferegov";
+      erro.providencia = "executar script de atualização do cache e validar novamente.";
+      throw erro;
+    }
+
+    let cache = null;
+    try {
+      const conteudo = fs.readFileSync(caminhoCache, "utf8");
+      cache = JSON.parse(conteudo);
+    } catch (e) {
+      const erro = new Error(`Falha ao decodificar JSON do cache: ${e.message}`);
+      erro.codigo = "cache_pad_transferegov_ausente_ou_invalido";
+      erro.etapa = "leitura_cache_transferegov";
+      erro.providencia = "executar script de atualização do cache e validar novamente.";
+      throw erro;
+    }
+
+    const diag = cacheValidation.gerarDiagnosticoCachePadTransferegov(cache, { completo: true });
+    if (!diag.valido) {
+      const erroMsg = diag.erros.map((e) => `[${e.campo || "geral"}]: ${e.mensagem}`).join("; ");
+      const erro = new Error(`Cache inválido: ${erroMsg}`);
+      erro.codigo = "cache_pad_transferegov_ausente_ou_invalido";
+      erro.etapa = "leitura_cache_transferegov";
+      erro.providencia = "executar script de atualização do cache e validar novamente.";
+      throw erro;
+    }
+
+    const relatorios = [];
+    const itens = [];
+    const alertas = [];
+
+    cache.convenios.forEach((c) => {
+      const relatorio = {
+        codigoInstrumento: c.numeroConvenio,
+        concedente: c.totalizadores?.concedente || "",
+        convenente: c.totalizadores?.convenente || "",
+        situacao: c.totalizadores?.situacao || "",
+        valorTotalPrevisto: Number(c.totalizadores?.valorTotalPrevisto || 0),
+        valorTotalExecutado: Number(c.totalizadores?.valorTotalExecutado || 0),
+        saldoTotal: Number(c.totalizadores?.saldoTotal || 0),
+        geradoEm: c.extraidoEm,
+        arquivo: "transferegov_cache",
+        aba: "itens",
+        totalItens: c.itens.length,
+        somaItens: {
+          valorTotalPrevisto: c.itens.reduce((acc, item) => acc + item.valorTotalPrevisto, 0),
+          valorTotalExecutado: c.itens.reduce((acc, item) => acc + item.valorTotalExecutado, 0),
+          saldo: c.itens.reduce((acc, item) => acc + item.saldo, 0),
+        },
+      };
+      relatorios.push(relatorio);
+
+      c.itens.forEach((item, idxItem) => {
+        itens.push({
+          instrumento: c.numeroConvenio,
+          arquivo: "transferegov_cache",
+          aba: "itens",
+          linha: idxItem + 1,
+          tipoDespesa: item.tipoDespesa,
+          descricao: item.descricao,
+          codigoNaturezaDespesa: item.codigoNaturezaDespesa,
+          codigoNaturezaNormalizado: item.codigoNaturezaNormalizado,
+          natureza: item.natureza || derivarNaturezaPad(item.codigoNaturezaDespesa),
+          unidade: item.unidade,
+          quantidade: item.quantidade,
+          valorUnitario: item.valorUnitario,
+          valorTotalPrevisto: item.valorTotalPrevisto,
+          valorTotalExecutado: item.valorTotalExecutado,
+          saldo: item.saldo,
+        });
+      });
+
+      if (c.avisos && Array.isArray(c.avisos)) {
+        c.avisos.forEach((aviso) => {
+          alertas.push({
+            tipo: aviso.tipo || "alerta_cache",
+            nivel: "aviso",
+            instrumento: c.numeroConvenio,
+            detalhe: aviso.detalhe || aviso.mensagem || JSON.stringify(aviso),
+            origem: { arquivo: "transferegov_cache", aba: "itens", linha: null },
+          });
+        });
+      }
+    });
+
+    const resumo = {
+      pastaEntrada: "backend/data/cache",
+      totalArquivosEncontrados: 1,
+      totalRelatoriosLidos: relatorios.length,
+      totalItensExtraidos: itens.length,
+      totalAlertas: alertas.length,
+      totalAlertasImpeditivos: 0,
+    };
+
+    return { relatorios, itens, alertas, resumo };
+  }
+
+  // Fluxo legado Excel
   const pastaRelativa = opcoes.pastaRelativa || "Planilhas/profor-2022/instrumentos";
   const { arquivos } = listarArquivosPad(repoRoot, pastaRelativa);
   const relatorios = [];
