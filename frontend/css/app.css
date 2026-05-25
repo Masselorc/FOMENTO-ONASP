@@ -10337,6 +10337,17 @@ table.dataTable thead th {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.uf-flag-inline > * {
+    align-self: center;
+    vertical-align: middle;
+}
+
+.uf-flag-inline .badge-uf {
+    align-self: center;
 }
 
 .uf-flag-inline .formalizacao-card-flag-wrap {
