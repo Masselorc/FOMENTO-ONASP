@@ -1,4 +1,4 @@
-/* ==========================================================================
+/* ===========================================================================
    Correção pontual — Orçamento 2026 / andamento processual
    --------------------------------------------------------------------------
    Remove resíduo de fundo claro da linha expandida de rastreamento processual
@@ -79,4 +79,26 @@
     background: var(--color-surface-elevated) !important;
     border-color: rgba(148, 163, 184, 0.18) !important;
     color: var(--color-text) !important;
+}
+
+/* ==========================================================================
+   Correção pontual — acesso ao menu lateral
+   --------------------------------------------------------------------------
+   O item Sistema permanece no offcanvas. Esta regra apenas garante que o
+   acionador do menu lateral apareça antes dos atalhos Home/Detalhamento,
+   evitando que o botão fique para fora da área visível em telas menores.
+   ========================================================================== */
+
+#header-actions [data-bs-target="#app-sidebar"] {
+    order: -1;
+    flex: 0 0 auto;
+    border-color: var(--color-primary);
+    color: var(--color-primary-strong);
+}
+
+#header-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    min-width: 0;
 }
