@@ -3876,6 +3876,19 @@ async function carregarLogoParaPDF() {
             })[tipo] || tipo || '-';
         }
 
+        function rotuloSituacaoRevisaoPad(situacao) {
+            switch (String(situacao || '').toUpperCase()) {
+                case 'RATEIO_MEMORIZADO_APLICADO': return 'Rateio aplicado';
+                case 'ITEM_NOVO_SEM_RATEIO': return 'Sem rateio';
+                case 'ITEM_SUPRIMIDO_HISTORICO': return 'Suprimido';
+                case 'AREA_NAO_CLASSIFICADA': return 'Sem área';
+                case 'SALDO_RESIDUAL_NAO_SETORIALIZADO': return 'Saldo residual';
+                case 'PENDENTE_REVISAO': return 'Pendente';
+                case 'OK': return 'OK';
+                default: return situacao || '-';
+            }
+        }
+
         function classeSituacaoRevisaoPad(situacao) {
             const texto = String(situacao || '').toUpperCase();
             if (texto.includes('NOVO') || texto.includes('PENDENTE') || texto.includes('NAO_CLASSIFICADA')) return 'warning';
@@ -4021,7 +4034,7 @@ async function carregarLogoParaPDF() {
             const colVu = `<td>${escapeHtml(formatarValorRevisao(linha.valorUnitario, 'Valor unitário'))}</td>`;
             const colVt = `<td>${escapeHtml(formatarValorRevisao(linha.valorTotalOriginal, 'Valor total'))}</td>`;
             const statusExibido = mesclada ? (filhaUnica.status || linha.status) : linha.status;
-            const colStatus = `<td><span class="badge text-bg-${classeSituacaoRevisaoPad(statusExibido)} revisao-badge">${escapeHtml(statusExibido || '-')}</span></td>`;
+            const colStatus = `<td><span class="badge text-bg-${classeSituacaoRevisaoPad(statusExibido)} revisao-badge" title="${escapeHtml(statusExibido || '')}">${escapeHtml(rotuloSituacaoRevisaoPad(statusExibido))}</span></td>`;
             const colAcao = `<td><button type="button" class="btn btn-sm btn-outline-primary" data-revisao-pad-rateio="${escapeHtml(linha.id)}">Ratear quantidade</button></td>`;
 
             return `
@@ -4042,7 +4055,7 @@ async function carregarLogoParaPDF() {
                     <td><button type="button" class="btn btn-sm btn-link p-0" data-revisao-pad-rateio="${escapeHtml(filha.parentId)}">${escapeHtml(formatarValorRevisao(filha.quantidade, 'Quantidade'))}</button></td>
                     <td>${escapeHtml(formatarValorRevisao(filha.valorUnitario, 'Valor unitário'))}</td>
                     <td>${escapeHtml(formatarValorRevisao(filha.valorTotal, 'Valor total'))}</td>
-                    <td><span class="badge text-bg-${classeSituacaoRevisaoPad(filha.status)} revisao-badge">${escapeHtml(filha.status || '-')}</span></td>
+                    <td><span class="badge text-bg-${classeSituacaoRevisaoPad(filha.status)} revisao-badge" title="${escapeHtml(filha.status || '')}">${escapeHtml(rotuloSituacaoRevisaoPad(filha.status))}</span></td>
                     <td><span class="text-muted small">Salva ao alterar</span></td>
                 </tr>
             `;
