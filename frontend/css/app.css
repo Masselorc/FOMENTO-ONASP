@@ -1732,15 +1732,10 @@ table.dataTable thead td,
     font-weight: 800;
     height: 28px;
     justify-content: center;
-    line-height: 28px;
+    line-height: 1;
     min-width: 44px;
     padding: 0 0.55rem;
     text-align: center;
-    vertical-align: middle;
-}
-
-.badge-uf > * {
-    line-height: 28px;
     vertical-align: middle;
 }
 
@@ -10348,6 +10343,8 @@ table.dataTable thead th {
 
 .uf-flag-inline .badge-uf {
     align-self: center;
+    line-height: 26px;
+    transform: translateY(1px);
 }
 
 .uf-flag-inline .formalizacao-card-flag-wrap {

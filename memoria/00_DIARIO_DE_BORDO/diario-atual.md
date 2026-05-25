@@ -7412,3 +7412,14 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD, sem tela de Revisoes, sem recarga operacional, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
 - Risco: medio - fallback depende da UI publica e do runtime Playwright; segue isolado e desabilitado por padrao.
 - Rollback: reverter o commit; remover o JSON local da POC se existir.
+
+## 25/05/2026 - HOME: ajuste de alinhamento da sigla UF
+
+- Branch: `main`.
+- Objetivo: corrigir o desalinhamento visual das siglas de UF na home ao lado das bandeiras.
+- Arquivos: `frontend/css/app.css`; `index.html`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: ajuste localizado em `.uf-flag-inline .badge-uf` com `line-height` recalibrado e leve deslocamento vertical; cache-buster do CSS atualizado.
+- Validacoes: `git diff --check`.
+- Preservacoes: sem mexer em backend, dados, recarga PAD, revisoes, publicacao, DETRU, Transferegov, SQLite/WAL/SHM, `.env`, `frontend/data/publicados` ou Playwright/E2E.
+- Risco: baixo - alteracao apenas de layout em elemento reutilizavel da home.
+- Rollback: reverter o ultimo commit ou desfazer os dois arquivos alterados.
