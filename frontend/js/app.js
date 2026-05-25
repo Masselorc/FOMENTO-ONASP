@@ -760,6 +760,18 @@ function renderKpiCard({
                         })}
                     </div>
                     ${modoEstatico ? `<div class="mb-3">${renderPublicationNotice()}</div>` : ''}
+                    ${modoEstatico ? '' : `
+                    <div class="card bg-dark border-secondary mb-3" id="profor-diagnostico-atualizacoes-card">
+                        <div class="card-body py-2 px-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong class="small text-uppercase text-muted">Diagnóstico das Atualizações</strong>
+                                <button type="button" id="btnRecarregarDiagnosticoAtualizacoes" class="btn btn-sm btn-outline-secondary" title="Recarregar diagnóstico">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                            <div id="profor-diagnostico-atualizacoes-corpo" class="small text-muted">Carregando diagnóstico...</div>
+                        </div>
+                    </div>`}
                     <div class="d-none mb-3" id="profor-atualizacao-progresso-container">
                         <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
                             <span id="profor-atualizacao-progresso-texto">Atualização em andamento</span>
@@ -837,6 +849,51 @@ function renderKpiCard({
             document.getElementById('btnAtualizarRendimentosProfor')?.addEventListener('click', async () => {
                 await executarAtualizacaoAdministrativaProfor('rendimentos', atualizarRendimentosTransferegovProfor2022UI);
             });
+            document.getElementById('btnRecarregarDiagnosticoAtualizacoes')?.addEventListener('click', () => {
+                carregarDiagnosticoAtualizacoesProfor2022();
+            });
+            // Carrega o diagnostico no momento em que a tela monta.
+            carregarDiagnosticoAtualizacoesProfor2022();
+        }
+
+        function formatarTimestampDiagnostico(linha) {
+            if (!linha) return '(nunca executado)';
+            const ini = linha.iniciadoEm || linha.iniciado_em || null;
+            const fim = linha.concluidoEm || linha.concluido_em || null;
+            const partes = [];
+            if (ini) partes.push(`iniciado ${ini}`);
+            if (fim) partes.push(`concluído ${fim}`);
+            if (linha.sucesso === 0 || linha.sucesso === false) partes.push('sucesso=não');
+            else if (linha.sucesso === 1 || linha.sucesso === true) partes.push('sucesso=sim');
+            return partes.length ? partes.join(' · ') : JSON.stringify(linha);
+        }
+
+        async function carregarDiagnosticoAtualizacoesProfor2022() {
+            const corpo = document.getElementById('profor-diagnostico-atualizacoes-corpo');
+            if (!corpo) return;
+            if (estaEmModoPublicacaoEstatica()) {
+                corpo.innerHTML = '<em class="text-muted">Indisponível em modo estático.</em>';
+                return;
+            }
+            corpo.innerHTML = 'Carregando diagnóstico...';
+            try {
+                const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizacoes/status');
+                if (!payload?.success) throw new Error(payload?.message || 'Falha ao obter diagnóstico.');
+                const detru = payload.detru || {};
+                const transferegov = payload.transferegov || {};
+                const carteira = payload.carteira || {};
+                corpo.innerHTML = `
+                    <ul class="list-unstyled mb-0">
+                        <li><strong>Carteira ativa:</strong> ${escapeHtml(String(carteira.totalAtivos ?? 0))} convênio(s)</li>
+                        <li class="mt-2"><strong>DETRU:</strong> ${escapeHtml(String(detru.totalRegistrosCache ?? 0))} registro(s) em cache</li>
+                        <li class="ms-3 text-muted">Última atualização: ${escapeHtml(formatarTimestampDiagnostico(detru.ultimaAtualizacao))}</li>
+                        <li class="mt-2"><strong>Transferegov:</strong> ${escapeHtml(String(transferegov.totalRegistrosCache ?? 0))} registro(s) em cache</li>
+                        <li class="ms-3 text-muted">Última consulta: ${escapeHtml(formatarTimestampDiagnostico(transferegov.ultimaConsulta))}</li>
+                    </ul>
+                `;
+            } catch (err) {
+                corpo.innerHTML = `<span class="text-danger">${escapeHtml(err?.message || 'Erro ao carregar diagnóstico.')}</span>`;
+            }
         }
 
         async function carregarStatusAtualizacaoConsolidadaProfor2022() {

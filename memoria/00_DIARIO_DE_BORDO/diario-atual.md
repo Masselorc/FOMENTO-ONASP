@@ -7342,3 +7342,15 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem alteracao em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, autenticacao, planilha antiga, xlsx. Recarga PAD e fluxos DETRU/Transferegov continuam separados.
 - Risco: baixo - a liberacao se restringe a loopback (server) ou CLI local (scripts). Producao/teste e nao-local continuam bloqueados.
 - Rollback: reverter o commit; comportamento volta a exigir flags.
+
+---
+
+## 25/05/2026 - PROFOR 2022: verificacao objetiva das atualizacoes DETRU/Transferegov
+
+- Branch: `main`.
+- Objetivo: dar evidencia tecnica independente (alem da mensagem visual) de que os botoes "Atualizar DETRU" e "Atualizar Transferegov" realmente atualizaram o cache local.
+- Arquivos: `backend/server.js` (novo `GET /api/profor-2022/atualizacoes/status` somente leitura); `backend/scripts/verificar-atualizacoes-profor-2022.js` (novo CLI com flags `--detru`, `--transferegov`, `--ambos`, exit codes 0/1/2); `package.json` (4 scripts npm `verificar:profor-atualizacoes[:detru|:transferegov|:ambos]`); `frontend/js/app.js` + `index.html` (bloco "Diagnostico das Atualizacoes" na tela Sistema, consumindo o novo endpoint; cache-buster `?v=20260525-12-diagnostico-atualizacoes`); `tests/services/profor-verificar-atualizacoes.test.js` (10/10).
+- Validacoes: `git diff --check`; `node --check` em server, script e app.js; `node --test` no novo arquivo (10/10); `npm run validar:syntax` (105 OK); probe real `GET /api/profor-2022/atualizacoes/status` -> HTTP 200 com totais (DETRU 15, Transferegov 15, carteira 15) e timestamps; script sem flags -> RESULTADO: OK, evidencia `nao_solicitado`.
+- Preservacoes: nenhuma publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM direto, sem PAD/recarga, sem workbook antigo, sem reativar `Atualizar PROFOR 2022`, sem mexer em autenticacao/login. Endpoint criado e somente leitura.
+- Risco: baixo - leitura de cache local; script CLI tem flags explicitas e usa `execucaoLocal: true` no guard ja existente.
+- Rollback: reverter o commit; endpoint, script, bloco UI e scripts npm desaparecem.

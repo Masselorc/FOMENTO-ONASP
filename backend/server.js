@@ -37,8 +37,14 @@ const {
   inativarConvenioMonitorado
 } = require("./services/profor-2022/convenios-monitorados-service");
 const { atualizarCacheDetruProfor2022 } = require("./services/profor-2022/profor-detru-update-service");
-const { obterUltimaAtualizacaoDetru } = require("./services/profor-2022/profor-detru-cache-service");
-const { obterUltimaConsultaRendimentos } = require("./services/profor-2022/transferegov-rendimentos-cache-service");
+const {
+  obterUltimaAtualizacaoDetru,
+  listarCacheDetruProfor2022,
+} = require("./services/profor-2022/profor-detru-cache-service");
+const {
+  obterUltimaConsultaRendimentos,
+  listarSaldosRendimentosCache,
+} = require("./services/profor-2022/transferegov-rendimentos-cache-service");
 const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
 const {
   assertEndpointAdminPermitido,
@@ -892,6 +898,53 @@ async function rotearApi(req, res, pathname) {
         geradoEmConsolidado,
         avisos
       });
+      return;
+    }
+
+    if (req.method === "GET" && pathname === "/api/profor-2022/atualizacoes/status") {
+      // Endpoint somente leitura focado em diagnostico das atualizacoes DETRU/Transferegov.
+      // Usado pela tela "Diagnostico das Atualizacoes" e pelo script verificar-atualizacoes.
+      try {
+        const ultimaAtualizacaoDetru = (() => {
+          try { return obterUltimaAtualizacaoDetru(); } catch { return null; }
+        })();
+        const totalCacheDetru = (() => {
+          try { return listarCacheDetruProfor2022().length; } catch { return 0; }
+        })();
+        const ultimaConsultaRendimentos = (() => {
+          try { return obterUltimaConsultaRendimentos(); } catch { return null; }
+        })();
+        const totalCacheTransferegov = (() => {
+          try { return listarSaldosRendimentosCache().length; } catch { return 0; }
+        })();
+        const totalCarteiraAtiva = (() => {
+          try { return listarConveniosMonitorados({ incluirInativos: false }).length; } catch { return 0; }
+        })();
+
+        enviarJson(res, 200, {
+          success: true,
+          detru: {
+            ultimaAtualizacao: ultimaAtualizacaoDetru,
+            totalRegistrosCache: totalCacheDetru,
+          },
+          transferegov: {
+            ultimaConsulta: ultimaConsultaRendimentos,
+            totalRegistrosCache: totalCacheTransferegov,
+            ultimoResumoConsulta: ultimaConsultaRendimentos?.resumo
+              || ultimaConsultaRendimentos?.resumoJson
+              || null,
+          },
+          carteira: {
+            totalAtivos: totalCarteiraAtiva,
+          },
+        });
+      } catch (erro) {
+        console.error("Falha ao montar /atualizacoes/status:", erro);
+        enviarJson(res, 500, {
+          success: false,
+          message: erro?.message || "Erro ao montar diagnostico de atualizacoes."
+        });
+      }
       return;
     }
 
