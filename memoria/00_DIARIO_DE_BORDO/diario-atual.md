@@ -7385,3 +7385,16 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem `frontend/data/publicados`/`.env`/SQLite/WAL/SHM direto, sem PAD/recarga, sem workbook antigo, sem login/auth, sem reativar Atualizar PROFOR 2022.
 - Risco: baixo - somente UI; backend e script nao foram tocados.
 - Rollback: reverter o commit.
+
+---
+
+## 25/05/2026 - PROFOR 2022: POC HTTP PAD publico Transferegov 937782
+
+- Branch: `main`.
+- Objetivo: validar extracao HTTP publica do PAD do Transferegov para o convenio `937782` e comparar contra o Excel PAD local ja existente.
+- Arquivos: `backend/services/profor-2022/profor-pad-transferegov-http-client.js`; `backend/services/profor-2022/profor-pad-transferegov-parser.js`; `backend/scripts/poc-pad-transferegov-937782.js`; `tests/services/profor-pad-transferegov-parser.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Resultado real: sessao publica JSF/SAML obtida em tempo de execucao; `34` itens extraidos; total previsto `396423.71`; total executado `97141.55`; saldo `299282.16`; comparacao com Excel local sem divergencia critica.
+- Validacoes: `git diff --check`; `node --check` nos 3 novos arquivos; `node --test tests/services/profor-pad-transferegov-parser.test.js`; `npm run validar:syntax`; execucao real `node backend/scripts/poc-pad-transferegov-937782.js`.
+- Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD, sem tela de Revisoes, sem recarga operacional, sem DETRU, sem rendimentos Transferegov, sem Playwright/E2E, sem cookies/ViewState/HTML bruto salvo.
+- Risco: medio - fluxo publico JSF/SAML pode mudar no Transferegov; POC ainda nao substitui a origem operacional.
+- Rollback: reverter o commit; remover o JSON local gerado pela execucao da POC se existir.
