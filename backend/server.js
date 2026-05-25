@@ -673,8 +673,19 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar") {
       try {
         const resultado = await recarregarPadsOperacional();
+        const primeiroImpedimento = Array.isArray(resultado?.impedimentos)
+          ? resultado.impedimentos[0]
+          : null;
+        const mensagem = resultado.sucesso
+          ? "Recarga PAD concluida."
+          : primeiroImpedimento?.detalhe
+            || resultado?.mensagem
+            || "Recarga PAD concluida com impedimentos.";
+
         enviarJson(res, 200, {
           success: resultado.sucesso,
+          message: mensagem,
+          etapa: primeiroImpedimento?.etapa || null,
           payload: resultado
         });
       } catch (erro) {

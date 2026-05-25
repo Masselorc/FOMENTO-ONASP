@@ -1,5 +1,20 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: propagação da mensagem instrumentada de recarga PAD
+
+- Objetivo: garantir que a UI de recarga PAD exiba o detalhe instrumentado da etapa de erro (e não apenas mensagem genérica).
+- Backend ajustado em `backend/server.js`:
+  - endpoint `POST /api/profor-2022/pad/recarregar` agora retorna `message` e `etapa` no topo da resposta;
+  - `message` prioriza o primeiro impedimento (`resultado.impedimentos[0].detalhe`) quando `sucesso=false`.
+- Frontend ajustado em `frontend/js/app.js`:
+  - handler da recarga PAD passou a priorizar `payload.impedimentos[0].detalhe` na montagem do erro exibido;
+  - fallback preservado para `responseBody.message`, `recarga.mensagem` e mensagem por status HTTP.
+- Validações executadas:
+  - `node --check backend/server.js`;
+  - `node --check frontend/js/app.js`;
+  - `node --test tests/services/profor-pad-recarga-operacional.test.js` (6/6 aprovados).
+- Escopo preservado: sem alteração no fluxo de recarga, sem Playwright amplo, sem publicação de dados.
+
 ## 25/05/2026 — PROFOR 2022: instrumentação de etapa na recarga PAD
 
 - Objetivo: tornar rastreável o erro de recarga PAD (`Cannot read properties of null (reading 'save')`) sem alterar frontend, PADs, publicação estática, DETRU ou Transferegov.

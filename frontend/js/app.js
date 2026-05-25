@@ -3952,8 +3952,12 @@ async function carregarLogoParaPDF() {
                 });
 
                 const recarga = responseBody?.payload;
+                const detalheErroRecarga = recarga?.impedimentos?.[0]?.detalhe
+                    || responseBody?.message
+                    || recarga?.mensagem
+                    || `Falha na API de recarga de PADs (status ${resposta.status}).`;
                 if (!resposta.ok || !responseBody || responseBody.success === false || !recarga || recarga.sucesso === false) {
-                    throw new Error(responseBody?.message || recarga?.mensagem || `Falha na API de recarga de PADs (status ${resposta.status}).`);
+                    throw new Error(detalheErroRecarga);
                 }
 
                 renderResultadoRecargaPad(recarga);
