@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: cache bruto isolado do Transferegov
+
+- Objetivo: criar serviço de cache bruto e script de atualização isolada para os PADs do Transferegov (microetapa 8.1).
+- Arquivos criados: `backend/services/profor-2022/profor-pad-transferegov-cache-service.js`, `backend/scripts/atualizar-cache-pads-transferegov-profor-2022.js`, `tests/services/profor-pad-transferegov-cache-service.test.js`.
+- Arquivo alterado: `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste aplicado: implementada lógica de montagem, validação de segurança (sem HTML, ViewState ou cookies), salvamento atômico do cache de 15 convênios e script CLI de extração HTTP isolada.
+- Validações executadas: `git diff --check`, `node --check` nos novos scripts/serviços, `node --test` dos novos testes unitários (12/12 aprovados), e `npm run validar:syntax` (105 arquivos válidos).
+- Preservações: sem integrar a recarga PAD, sem alterar o reader, sem alterar o servidor, sem alterar o frontend, sem publicar, sem acionar DETRU ou rendimentos, sem rodar Playwright real.
+- Risco: o cache gerado fica untracked localmente e não deve ser versionado; o script CLI falhará se houver erros de rede ou convênios inaptos na fonte do Transferegov.
+- Rollback: remover manualmente os arquivos criados e reverter o diário de bordo.
+
 ## 25/05/2026 — UI: largura da tabela de Revisões PAD
 
 - Objetivo: evitar corte da última coluna (`Ações/Observações`) na grade de `Revisões PAD — Plano de Aplicação Detalhado`.
