@@ -6,12 +6,11 @@
    ========================================================================== */
 
 /* Acesso ao menu lateral
-   O item Sistema permanece no offcanvas. Esta regra garante que o acionador
-   do menu lateral apareça antes dos atalhos Home/Detalhamento, evitando que
-   o botão fique para fora da área visível em telas menores. */
+   Mantém o acionador como o último botão do grupo (extremo direito). */
 #header-actions [data-bs-target="#app-sidebar"] {
-    order: -1;
+    order: 99;
     flex: 0 0 auto;
+    margin-left: 0;
     border-color: var(--color-primary);
     color: var(--color-primary-strong);
 }
