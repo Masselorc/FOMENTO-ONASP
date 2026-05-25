@@ -673,50 +673,20 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/atualizar") {
-      try {
-        const consolidado = montarConsolidadoProfor2022PorOrigemAtiva();
-        const diagnostico = consolidado?.diagnostico || {};
-        const totalConvenios = Number(diagnostico.totalCarteira ?? consolidado?.convenios?.length ?? 0);
-        const totalComDetru = Number(diagnostico.totalComDetru ?? 0);
-        const totalComRendimentos = Number(diagnostico.totalComRendimentos ?? 0);
-        const totalComPlano = Number(diagnostico.totalComPlano ?? 0);
-        const avisos = Array.isArray(consolidado?.avisos) ? consolidado.avisos : [];
-        enviarJson(res, 200, {
-          success: true,
-          message: "Atualização PROFOR 2022 concluída.",
-          resultado: {
-            sucesso: true,
-            origemPlano: "reconstrucao-pad",
-            consolidado: {
-              totalConvenios,
-              totalComDetru,
-              totalComRendimentos,
-              totalComPlano,
-              totalAvisos: Number(diagnostico.totalAvisos ?? avisos.length),
-            },
-            detru: {
-              status: totalComDetru > 0 ? "cache-ok" : "cache-vazio",
-              totalConvenios: totalComDetru,
-            },
-            transferegov: {
-              status: totalComRendimentos > 0 ? "cache-ok" : "cache-vazio",
-              totalConvenios: totalComRendimentos,
-            },
-            plano: {
-              status: totalComPlano > 0 ? "reconstrucao-ok" : "reconstrucao-vazia",
-              totalConvenios: totalComPlano,
-            },
-            geradoEm: consolidado?.geradoEm || new Date().toISOString(),
-            avisos,
-          }
-        });
-      } catch (erro) {
-        console.error("Falha ao atualizar consolidado PROFOR 2022:", erro);
-        enviarJson(res, 500, {
-          success: false,
-          message: erro?.message || "Erro ao atualizar PROFOR 2022."
-        });
-      }
+      // Endpoint descontinuado: nenhum botao do frontend chama mais este caminho.
+      // Mantido apenas para resposta explicita a clientes externos legados.
+      // Para atualizar dados, use os fluxos dedicados:
+      //   - POST /api/profor-2022/detru/atualizar
+      //   - POST /api/profor-2022/rendimentos/atualizar
+      //   - POST /api/profor-2022/pad/recarregar-operacional
+      // Para ler o consolidado, use GET /api/profor-2022/consolidado.
+      enviarJson(res, 410, {
+        success: false,
+        message:
+          "POST /api/profor-2022/atualizar foi descontinuado. Use os fluxos dedicados " +
+          "(/detru/atualizar, /rendimentos/atualizar, /pad/recarregar-operacional) " +
+          "ou GET /api/profor-2022/consolidado para ler os dados."
+      });
       return;
     }
 

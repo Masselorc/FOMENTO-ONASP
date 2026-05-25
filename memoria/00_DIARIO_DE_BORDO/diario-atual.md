@@ -7311,3 +7311,18 @@ Logs operacionais gravados:
 - Preservacoes: sem Playwright/E2E, sem publicacao, sem alteracao em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU/Transferegov, autenticacao, planilha antiga, xlsx.
 - Risco: baixo - o handler so consolida caches e pode ser revertido isolado; nenhum fluxo legado de leitura de workbook foi reintroduzido.
 - Rollback: reverter o commit; o endpoint volta a responder 410.
+
+---
+
+## 25/05/2026 - PROFOR 2022: remove botao "Atualizar PROFOR 2022"
+
+- Branch: `main`.
+- Decisao: botao manual de atualizacao consolidada PROFOR 2022 foi descontinuado. Permanecem apenas: Atualizar DETRU, Atualizar Transferegov e bloco proprio de Recarga Operacional dos PADs.
+- Frontend: removidos botao `btnAtualizarProfor2022`, listener, funcao `atualizarProfor2022ConsolidadoUI` e referencia em `definirEstadoBotoesAtualizacaoSistema`. `mostrarMensagemConsolidadoProfor2022` foi mantida porque continua usada pelo fluxo de rendimentos.
+- Backend: `POST /api/profor-2022/atualizar` passa a responder HTTP 410 com mensagem orientando o uso dos fluxos dedicados (`/detru/atualizar`, `/rendimentos/atualizar`, `/pad/recarregar-operacional`) e do GET `/api/profor-2022/consolidado` para leitura. GET consolidado e a funcao `montarConsolidadoProfor2022PorOrigemAtiva` permanecem intactos (usados por outros endpoints).
+- Teste obsoleto removido: `tests/services/profor-atualizar-consolidado-endpoint.test.js`.
+- Cache-buster do app.js atualizado em `index.html` para `?v=20260525-11-remove-botao-atualizar-profor`.
+- Validacoes: `git diff --check`; `node --check frontend/js/app.js`; `node --check backend/server.js`; `npm run validar:syntax` (105 OK).
+- Preservacoes: sem publicacao, sem workbook antigo, sem alteracao em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU/Transferegov, autenticacao, xlsx.
+- Risco: baixo - remocao puramente de superficie; o pipeline de consolidacao continua disponivel por GET /api/profor-2022/consolidado.
+- Rollback: reverter o commit.

@@ -642,7 +642,6 @@ function renderKpiCard({
 
         function definirEstadoBotoesAtualizacaoSistema(disabled) {
             document.getElementById('btnAtualizarDetruProfor')?.toggleAttribute('disabled', disabled);
-            document.getElementById('btnAtualizarProfor2022')?.toggleAttribute('disabled', disabled);
             document.getElementById('btnAtualizarRendimentosProfor')?.toggleAttribute('disabled', disabled);
         }
 
@@ -742,15 +741,6 @@ function renderKpiCard({
                     </div>
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                         ${renderActionButton({
-                            id: 'btnAtualizarProfor2022',
-                            type: 'refresh',
-                            label: 'Atualizar PROFOR 2022',
-                            variant: 'outline-primary',
-                            backend: true,
-                            disabled: modoEstatico,
-                            title: modoEstatico ? MENSAGEM_MODO_PUBLICACAO : ''
-                        })}
-                        ${renderActionButton({
                             id: 'btnAtualizarDetruProfor',
                             type: 'refresh',
                             label: 'Atualizar DETRU',
@@ -844,9 +834,6 @@ function renderKpiCard({
             document.getElementById('btnAtualizarDetruProfor')?.addEventListener('click', async () => {
                 await executarAtualizacaoAdministrativaProfor('detru', atualizarCacheDetruProfor2022UI);
             });
-            document.getElementById('btnAtualizarProfor2022')?.addEventListener('click', async () => {
-                await executarAtualizacaoAdministrativaProfor('consolidado', atualizarProfor2022ConsolidadoUI);
-            });
             document.getElementById('btnAtualizarRendimentosProfor')?.addEventListener('click', async () => {
                 await executarAtualizacaoAdministrativaProfor('rendimentos', atualizarRendimentosTransferegovProfor2022UI);
             });
@@ -934,50 +921,6 @@ function renderKpiCard({
             } catch (err) {
                 console.warn('Falha ao carregar rotulo de ultima atualizacao operacional:', err?.message || err);
                 exibirRotuloUltimaAtualizacaoOperacional(obterUltimaAtualizacaoDadosProforCarregado());
-            }
-        }
-
-        async function atualizarProfor2022ConsolidadoUI() {
-            if (estaEmModoPublicacaoEstatica()) {
-                alert(MENSAGEM_MODO_PUBLICACAO);
-                return { sucesso: false, cancelado: true };
-            }
-
-            const botao = document.getElementById('btnAtualizarProfor2022');
-            if (!confirm('Atualizar PROFOR 2022 agora? Esta rotina consolida os dados gerais dos convênios a partir do banco local, do cache DETRU, do cache Transferegov e da reconstrução PAD vigente. Não dispara DETRU ou Transferegov — use os botões dedicados para atualizar essas fontes.')) {
-                return { sucesso: false, cancelado: true };
-            }
-
-            if (botao) botao.disabled = true;
-            mostrarMensagemConsolidadoProfor2022('warning', 'Consolidando dados PROFOR 2022 (banco local + cache DETRU + cache Transferegov + reconstrução PAD)...');
-
-            try {
-                const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizar', {
-                    method: 'POST'
-                });
-
-                if (!payload.success) {
-                    throw new Error(payload.message || 'Não foi possível atualizar o PROFOR 2022.');
-                }
-
-                const consolidado = payload.resultado?.consolidado || {};
-                const detalhe = `consolidado: ${Number(consolidado.totalConvenios ?? 0)} convênio(s) — DETRU ${Number(consolidado.totalComDetru ?? 0)} • plano ${Number(consolidado.totalComPlano ?? 0)} • rendimentos ${Number(consolidado.totalComRendimentos ?? 0)}`;
-                mostrarMensagemConsolidadoProfor2022(payload.resultado?.sucesso ? 'success' : 'warning', `${payload.message} ${detalhe}`);
-
-                await carregarStatusUltimaAtualizacaoDetruProfor2022();
-                await carregarStatusAtualizacaoConsolidadaProfor2022();
-                await carregarRotuloUltimaAtualizacaoOperacional();
-                const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
-                await carregarCarteiraMonitoradaProfor2022(incluirInativos);
-                return {
-                    sucesso: Boolean(payload.resultado?.sucesso),
-                    mensagem: payload.message || 'Atualização PROFOR 2022 concluída.'
-                };
-            } catch (err) {
-                mostrarMensagemConsolidadoProfor2022('danger', err.message || 'Erro ao atualizar PROFOR 2022.');
-                return { sucesso: false, mensagem: err.message || 'Erro ao atualizar PROFOR 2022.' };
-            } finally {
-                if (botao) botao.disabled = false;
             }
         }
 
