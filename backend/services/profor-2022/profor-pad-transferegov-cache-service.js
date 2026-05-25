@@ -24,32 +24,35 @@ function calcularHashGlobal(convenios) {
 
 function montarCachePadTransferegov(resultadosExtracao) {
   const convenios = (resultadosExtracao || []).map((c) => {
-    const hash = c.hashConteudo || calcularHashConteudo(c.itens);
+    const itensMapeados = (c.itens || []).map((item) => ({
+      instrumento: String(item.instrumento || "").trim(),
+      tipoDespesa: String(item.tipoDespesa || "").trim(),
+      descricao: String(item.descricao || "").trim(),
+      codigoNaturezaDespesa: String(item.codigoNaturezaDespesa || "").trim(),
+      codigoNaturezaNormalizado: String(item.codigoNaturezaNormalizado || "").trim(),
+      natureza: String(item.natureza || "").trim(),
+      unidade: String(item.unidade || "").trim(),
+      quantidade: Number(item.quantidade || 0),
+      valorUnitario: Number(item.valorUnitario || 0),
+      valorTotalPrevisto: Number(item.valorTotalPrevisto || 0),
+      valorTotalExecutado: Number(item.valorTotalExecutado || 0),
+      saldo: Number(item.saldo || 0),
+    }));
+
+    const hash = calcularHashConteudo(itensMapeados);
+
     return {
       numeroConvenio: String(c.numeroConvenio || "").trim(),
       uf: String(c.uf || "").trim(),
       origemUsada: String(c.origemUsada || "http").trim(),
       extraidoEm: String(c.extraidoEm || new Date().toISOString()),
-      totalItens: Number(c.totalItens ?? (c.itens ? c.itens.length : 0)),
+      totalItens: itensMapeados.length,
       totalizadores: c.totalizadores || {},
       hashConteudo: hash,
       aptoParaImportacaoTecnica: c.aptoParaImportacaoTecnica !== false && (!c.bloqueiosTecnicos || c.bloqueiosTecnicos.length === 0),
       bloqueiosTecnicos: c.bloqueiosTecnicos || [],
       avisos: c.avisos || [],
-      itens: (c.itens || []).map((item) => ({
-        instrumento: String(item.instrumento || "").trim(),
-        tipoDespesa: String(item.tipoDespesa || "").trim(),
-        descricao: String(item.descricao || "").trim(),
-        codigoNaturezaDespesa: String(item.codigoNaturezaDespesa || "").trim(),
-        codigoNaturezaNormalizado: String(item.codigoNaturezaNormalizado || "").trim(),
-        natureza: String(item.natureza || "").trim(),
-        unidade: String(item.unidade || "").trim(),
-        quantidade: Number(item.quantidade || 0),
-        valorUnitario: Number(item.valorUnitario || 0),
-        valorTotalPrevisto: Number(item.valorTotalPrevisto || 0),
-        valorTotalExecutado: Number(item.valorTotalExecutado || 0),
-        saldo: Number(item.saldo || 0),
-      })),
+      itens: itensMapeados,
     };
   });
 
@@ -65,6 +68,7 @@ function montarCachePadTransferegov(resultadosExtracao) {
     convenios: convenios,
   };
 }
+
 
 function validarCachePadTransferegov(cache) {
   if (!cache || typeof cache !== "object") {

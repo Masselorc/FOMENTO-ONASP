@@ -1,5 +1,16 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: validação técnica do cache bruto Transferegov
+
+- Objetivo: implementar a microetapa 8.2 para validação técnica isolada do cache bruto PAD Transferegov.
+- Arquivos criados: `backend/services/profor-2022/profor-pad-transferegov-cache-validacao-service.js`, `backend/scripts/validar-cache-pads-transferegov-profor-2022.js`, `tests/services/profor-pad-transferegov-cache-validacao.test.js`.
+- Arquivos alterados: `backend/services/profor-2022/profor-pad-transferegov-cache-service.js`, `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Ajuste aplicado: criado serviço de validação profunda cobrindo estrutura, consistência, completude e segurança (bloqueio de ViewState, cookies, HAR e HTML bruto) do cache. Corrigida a consistência do hash do conteúdo no cache service recalculando-o sobre os itens limpos e normalizados armazenados no JSON.
+- Validações executadas: `git diff --check`, `node --check` nos scripts/serviços, `node --test` nos testes unitários (24/24 de validação e 12/12 de cache aprovados) e `npm run validar:syntax` (105 arquivos válidos).
+- Preservações: sem integrar a recarga PAD, sem alterar reader, servidor, UI ou endpoints. O arquivo local de cache permanece untracked.
+- Risco: muito baixo; a validação técnica é estática/em memória e roda de forma isolada sem acionar rede externa ou banco.
+- Rollback: `git revert` do commit correspondente.
+
 ## 25/05/2026 — PROFOR 2022: cache bruto isolado do Transferegov
 
 - Objetivo: criar serviço de cache bruto e script de atualização isolada para os PADs do Transferegov (microetapa 8.1).
