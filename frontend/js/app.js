@@ -26,7 +26,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260524-03-home-menu-sistema';
+} from '../../backend/services/data-service.js?v=20260525-02-data-service-pad';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
