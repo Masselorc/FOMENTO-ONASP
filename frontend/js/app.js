@@ -3961,14 +3961,37 @@ async function carregarLogoParaPDF() {
                 }
 
                 renderResultadoRecargaPad(recarga);
-                // Invalida caches em memória para forçar nova leitura do consolidado
-                // PAD/reconstrução e recomposição dos KPIs na Home.
-                dadosFaf = [];
-                configurarEstadoDadosValidados(false);
-                baseAplicacaoCarregamentoPromise = null;
-                await garantirDadosBaseAplicacao();
-                await carregarAuditoriaRevisao();
-                await carregarListaRevisao();
+
+                let etapaAtualizacaoUi = 'invalidar_cache_home';
+                try {
+                    // Invalida caches em memória para forçar nova leitura do consolidado
+                    // PAD/reconstrução e recomposição dos KPIs na Home.
+                    dadosFaf = [];
+                    configurarEstadoDadosValidados(false);
+                    baseAplicacaoCarregamentoPromise = null;
+
+                    etapaAtualizacaoUi = 'garantir_dados_base';
+                    await garantirDadosBaseAplicacao();
+
+                    etapaAtualizacaoUi = 'carregar_auditoria_revisao';
+                    await carregarAuditoriaRevisao();
+
+                    etapaAtualizacaoUi = 'carregar_lista_revisao';
+                    await carregarListaRevisao();
+                } catch (errorAtualizacaoUi) {
+                    console.warn('Falha ao atualizar interface apos recarga PADs:', {
+                        etapa: etapaAtualizacaoUi,
+                        erro: errorAtualizacaoUi,
+                        stack: errorAtualizacaoUi?.stack || null
+                    });
+                    if (resultadoContainer) {
+                        resultadoContainer.insertAdjacentHTML('beforeend', `
+                            <div class="alert alert-warning mt-3 mb-0">
+                                Recarga PAD concluída, mas houve falha ao atualizar a interface na etapa ${escapeHtml(etapaAtualizacaoUi)}: ${escapeHtml(errorAtualizacaoUi?.message || 'Erro desconhecido')}
+                            </div>
+                        `);
+                    }
+                }
             } catch (error) {
                 console.error('Falha ao recarregar PADs:', error);
                 if (resultadoContainer) {

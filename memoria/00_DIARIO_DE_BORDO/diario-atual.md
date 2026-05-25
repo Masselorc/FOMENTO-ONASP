@@ -1,5 +1,15 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: separação entre recarga PAD e atualização da interface
+
+- Objetivo: impedir que falhas pós-recarga na atualização da Home/listas sobrescrevam uma recarga PAD bem-sucedida com erro vermelho de recarga.
+- Arquivo alterado: `frontend/js/app.js`.
+- Ajuste aplicado: `executarRecargaPadsOperacionalUI()` passou a manter erro vermelho apenas para falha real do `POST /api/profor-2022/pad/recarregar`; as etapas pós-recarga (`invalidar_cache_home`, `garantir_dados_base`, `carregar_auditoria_revisao`, `carregar_lista_revisao`) agora ficam em `try/catch` separado e exibem aviso amarelo quando falham.
+- Validações executadas: `node --check frontend/js/app.js`; `git diff --check`.
+- Preservações: sem Playwright/E2E, sem publicação, sem alteração em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU, Transferegov, autenticação ou planilha antiga por abas.
+- Risco: falhas posteriores à recarga ainda podem exigir correção própria, mas deixam de mascarar o resultado da recarga PAD.
+- Rollback: restaurar o bloco anterior de `executarRecargaPadsOperacionalUI()` em `frontend/js/app.js`.
+
 ## 25/05/2026 — PROFOR 2022: cache-buster e verificação direta da recarga PAD
 
 - Objetivo: forçar o navegador a carregar o `app.js` com a propagação instrumentada do erro de recarga PAD e verificar a API diretamente.
