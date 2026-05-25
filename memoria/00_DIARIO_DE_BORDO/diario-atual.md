@@ -7369,3 +7369,19 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem `frontend/data/publicados`/`.env`/SQLite/WAL/SHM direto, sem PAD/recarga, sem workbook antigo, sem autenticacao/login, sem reativar `Atualizar PROFOR 2022`. Endpoint continua somente leitura; guard agora protege o CLI.
 - Risco: baixo - reforco aditivo; comportamento local continua igual; producao/teste passam a falhar cedo no script (objetivo desejado).
 - Rollback: reverter o commit; script volta a nao validar guards; endpoint volta a mascarar erro como zero; frontend volta a tratar refresh de diagnostico como obrigatorio.
+
+---
+
+## 25/05/2026 - PROFOR 2022: bloco "Diagnostico das atualizacoes" visivel e compacto
+
+- Branch: `main`.
+- Problema: o bloco recem-introduzido aparecia como card escuro grande e aparentemente vazio (texto cinza-claro em fundo `bg-dark` perdia contraste; layout em `<ul>` ocupava muita altura).
+- Diagnostico: leitura de `fetchJsonApiOnasp` ja estava correta, mas a desestruturacao direta de `{ payload }` ficou fragil contra mudancas. Layout precisava ser compacto e ter contraste explicito em tema escuro.
+- Frontend: o card foi substituido por bloco compacto com grid `auto-fit minmax(200px, 1fr)`; 3 mini-cards (Carteira ativa / DETRU / Transferegov) com valores em branco-forte (`#f8fafc`) e labels em cinza. Leitura do payload virou `resposta?.payload ?? resposta` (tolerante). `erroLeitura` por bloco (Tarefa 2 anterior) e renderizado em vermelho-claro abaixo do valor. Refresh apos DETRU/Transferegov continua em try/catch (introduzido em f924df4).
+- CSS: novas regras `.profor-diagnostico-atualizacoes`, `.profor-diagnostico-grid`, `.profor-diagnostico-item`, `.profor-diagnostico-label`, `.profor-diagnostico-valor`, `.profor-diagnostico-sub`, `.profor-diagnostico-erro` em `frontend/css/app.css`. Sem `min-height` grande.
+- Cache-buster bumpado em `index.html` para `?v=20260525-13-diagnostico-atualizacoes-compacto`.
+- Testes (17/17): 2 novos cobrem layout compacto sem altura grande forcada e leitura tolerante de `payload` com `??`.
+- Validacoes: `git diff --check`; `node --check frontend/js/app.js`; `node --test tests/services/profor-verificar-atualizacoes.test.js` (17/17); `npm run validar:syntax` (105 OK).
+- Preservacoes: sem publicacao, sem `frontend/data/publicados`/`.env`/SQLite/WAL/SHM direto, sem PAD/recarga, sem workbook antigo, sem login/auth, sem reativar Atualizar PROFOR 2022.
+- Risco: baixo - somente UI; backend e script nao foram tocados.
+- Rollback: reverter o commit.

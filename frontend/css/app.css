@@ -11769,3 +11769,52 @@ table.dataTable thead th {
     color: var(--color-primary-strong, #8ebdff) !important;
     cursor: pointer;
 }
+
+/* Bloco compacto "Diagnostico das atualizacoes" na tela Sistema. */
+.profor-diagnostico-atualizacoes {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.profor-diagnostico-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+}
+
+.profor-diagnostico-item {
+    background: rgba(30, 41, 59, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.profor-diagnostico-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted, #94a3b8);
+}
+
+.profor-diagnostico-valor {
+    color: #f8fafc;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.profor-diagnostico-sub {
+    font-size: 0.72rem;
+    color: var(--color-muted, #94a3b8);
+    word-break: break-word;
+}
+
+.profor-diagnostico-erro {
+    font-size: 0.72rem;
+    color: #fecaca;
+}

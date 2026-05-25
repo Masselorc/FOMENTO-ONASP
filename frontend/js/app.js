@@ -764,16 +764,14 @@ function renderKpiCard({
                     </div>
                     ${modoEstatico ? `<div class="mb-3">${renderPublicationNotice()}</div>` : ''}
                     ${modoEstatico ? '' : `
-                    <div class="card bg-dark border-secondary mb-3" id="profor-diagnostico-atualizacoes-card">
-                        <div class="card-body py-2 px-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <strong class="small text-uppercase text-muted">Diagnóstico das Atualizações</strong>
-                                <button type="button" id="btnRecarregarDiagnosticoAtualizacoes" class="btn btn-sm btn-outline-secondary" title="Recarregar diagnóstico">
-                                    <i class="fas fa-sync"></i>
-                                </button>
-                            </div>
-                            <div id="profor-diagnostico-atualizacoes-corpo" class="small text-muted">Carregando diagnóstico...</div>
+                    <div class="profor-diagnostico-atualizacoes mb-3" id="profor-diagnostico-atualizacoes-card">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong class="small text-uppercase" style="letter-spacing:.04em; color: var(--color-muted, #94a3b8);">Diagnóstico das atualizações</strong>
+                            <button type="button" id="btnRecarregarDiagnosticoAtualizacoes" class="btn btn-sm btn-link p-0" title="Recarregar diagnóstico">
+                                <i class="fas fa-sync"></i>
+                            </button>
                         </div>
+                        <div id="profor-diagnostico-atualizacoes-corpo">Carregando diagnóstico...</div>
                     </div>`}
                     <div class="d-none mb-3" id="profor-atualizacao-progresso-container">
                         <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
@@ -875,27 +873,43 @@ function renderKpiCard({
             const corpo = document.getElementById('profor-diagnostico-atualizacoes-corpo');
             if (!corpo) return;
             if (estaEmModoPublicacaoEstatica()) {
-                corpo.innerHTML = '<em class="text-muted">Indisponível em modo estático.</em>';
+                corpo.innerHTML = '<span class="small text-muted">Indisponível em modo estático.</span>';
                 return;
             }
-            corpo.innerHTML = 'Carregando diagnóstico...';
+            corpo.innerHTML = '<span class="small text-muted">Carregando diagnóstico...</span>';
             try {
-                const { payload } = await fetchJsonApiOnasp('/api/profor-2022/atualizacoes/status');
+                const resposta = await fetchJsonApiOnasp('/api/profor-2022/atualizacoes/status');
+                // fetchJsonApiOnasp retorna { resposta, payload, base }; usamos payload.
+                const payload = resposta?.payload ?? resposta;
                 if (!payload?.success) throw new Error(payload?.message || 'Falha ao obter diagnóstico.');
                 const detru = payload.detru || {};
                 const transferegov = payload.transferegov || {};
                 const carteira = payload.carteira || {};
+                const erros = [carteira.erroLeitura, detru.erroLeitura, transferegov.erroLeitura].filter(Boolean);
                 corpo.innerHTML = `
-                    <ul class="list-unstyled mb-0">
-                        <li><strong>Carteira ativa:</strong> ${escapeHtml(String(carteira.totalAtivos ?? 0))} convênio(s)</li>
-                        <li class="mt-2"><strong>DETRU:</strong> ${escapeHtml(String(detru.totalRegistrosCache ?? 0))} registro(s) em cache</li>
-                        <li class="ms-3 text-muted">Última atualização: ${escapeHtml(formatarTimestampDiagnostico(detru.ultimaAtualizacao))}</li>
-                        <li class="mt-2"><strong>Transferegov:</strong> ${escapeHtml(String(transferegov.totalRegistrosCache ?? 0))} registro(s) em cache</li>
-                        <li class="ms-3 text-muted">Última consulta: ${escapeHtml(formatarTimestampDiagnostico(transferegov.ultimaConsulta))}</li>
-                    </ul>
+                    <div class="profor-diagnostico-grid">
+                        <div class="profor-diagnostico-item">
+                            <span class="profor-diagnostico-label">Carteira ativa</span>
+                            <strong class="profor-diagnostico-valor">${escapeHtml(String(carteira.totalAtivos ?? 0))} convênio(s)</strong>
+                            ${carteira.erroLeitura ? `<span class="profor-diagnostico-erro">${escapeHtml(carteira.erroLeitura)}</span>` : ''}
+                        </div>
+                        <div class="profor-diagnostico-item">
+                            <span class="profor-diagnostico-label">DETRU</span>
+                            <strong class="profor-diagnostico-valor">${escapeHtml(String(detru.totalRegistrosCache ?? 0))} registro(s) em cache</strong>
+                            <span class="profor-diagnostico-sub">Última atualização: ${escapeHtml(formatarTimestampDiagnostico(detru.ultimaAtualizacao))}</span>
+                            ${detru.erroLeitura ? `<span class="profor-diagnostico-erro">${escapeHtml(detru.erroLeitura)}</span>` : ''}
+                        </div>
+                        <div class="profor-diagnostico-item">
+                            <span class="profor-diagnostico-label">Transferegov</span>
+                            <strong class="profor-diagnostico-valor">${escapeHtml(String(transferegov.totalRegistrosCache ?? 0))} registro(s) em cache</strong>
+                            <span class="profor-diagnostico-sub">Última consulta: ${escapeHtml(formatarTimestampDiagnostico(transferegov.ultimaConsulta))}</span>
+                            ${transferegov.erroLeitura ? `<span class="profor-diagnostico-erro">${escapeHtml(transferegov.erroLeitura)}</span>` : ''}
+                        </div>
+                    </div>
+                    ${erros.length ? `<div class="small text-warning mt-1">Avisos de leitura: ${erros.length}</div>` : ''}
                 `;
             } catch (err) {
-                corpo.innerHTML = `<span class="text-danger">${escapeHtml(err?.message || 'Erro ao carregar diagnóstico.')}</span>`;
+                corpo.innerHTML = `<span class="small text-danger">${escapeHtml(err?.message || 'Erro ao carregar diagnóstico.')}</span>`;
             }
         }
 

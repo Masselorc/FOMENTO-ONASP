@@ -112,11 +112,38 @@ test("package.json registra 4 scripts npm de verificacao", () => {
 
 test("frontend renderiza bloco Diagnostico das Atualizacoes e consome /atualizacoes/status", () => {
   const app = ler("frontend/js/app.js");
-  assert.match(app, /Diagnóstico das Atualizações/);
+  assert.match(app, /Diagnóstico das atualiza[cç]ões/i);
   assert.match(app, /id="profor-diagnostico-atualizacoes-card"/);
   assert.match(app, /id="btnRecarregarDiagnosticoAtualizacoes"/);
   assert.match(app, /\/api\/profor-2022\/atualizacoes\/status/);
   assert.match(app, /carregarDiagnosticoAtualizacoesProfor2022/);
+});
+
+test("diagnostico renderiza Carteira ativa, DETRU e Transferegov em layout compacto", () => {
+  const app = ler("frontend/js/app.js");
+  // Os tres campos pedidos aparecem no template do diagnostico.
+  assert.match(app, /Carteira ativa/);
+  assert.match(app, />DETRU</);
+  assert.match(app, />Transferegov</);
+  // Usa grid compacto (sem altura grande forcada).
+  assert.match(app, /profor-diagnostico-grid/);
+  // CSS define grid compacto e nao impoe min-height grande.
+  const css = ler("frontend/css/app.css");
+  assert.match(css, /\.profor-diagnostico-grid \{[\s\S]*?grid-template-columns: repeat\(auto-fit, minmax\(200px, 1fr\)\);/);
+  assert.doesNotMatch(css, /\.profor-diagnostico[^{]*\{[^}]*min-height:\s*(?!0)\d{3,}px/);
+});
+
+test("carregarDiagnostico le payload via .payload com fallback para o proprio retorno", () => {
+  const app = ler("frontend/js/app.js");
+  const idx = app.indexOf("async function carregarDiagnosticoAtualizacoesProfor2022");
+  const fim = app.indexOf("async function ", idx + 50);
+  const bloco = app.slice(idx, fim);
+  // Padrao correto: aceita { payload } ou objeto direto, sem desestruturar errado.
+  assert.match(bloco, /const payload = resposta\?\.payload \?\? resposta/);
+  // Trata erros de leitura por bloco vindos do backend.
+  assert.match(bloco, /carteira\.erroLeitura/);
+  assert.match(bloco, /detru\.erroLeitura/);
+  assert.match(bloco, /transferegov\.erroLeitura/);
 });
 
 test("script com flags bloqueia em ambiente de teste (NODE_ENV=test)", () => {
