@@ -75,9 +75,11 @@ async function recarregarPadsOperacional(opcoes = {}) {
 
   const impedimentos = [];
   const alertas = [];
+  let etapaAtual = "inicio";
 
   try {
     // 1. Ler relatórios PAD
+    etapaAtual = "ler_relatorios_pad";
     const resultadoReader = lerRelatoriosPadProfor2022({ repoRoot });
     const { relatorios, alertas: alertasReader, resumo: resumoReader } = resultadoReader;
 
@@ -135,7 +137,10 @@ async function recarregarPadsOperacional(opcoes = {}) {
     }
 
     // 2. Executar reconstrução dry-run
+    etapaAtual = "reconstruir_plano";
     const reconstrucao = reconstruirPlanoAplicacaoPadDryRun({ repoRoot });
+
+    etapaAtual = "salvar_relatorio_reconstrucao";
     salvarRelatorioReconstrucao(reconstrucao, CAMINHO_RECONSTRUCAO_JSON);
 
     // Mesclar impedimentos e alertas da reconstrução
@@ -147,7 +152,10 @@ async function recarregarPadsOperacional(opcoes = {}) {
     }
 
     // 3. Executar comparação
+    etapaAtual = "comparar_plano";
     const comparacao = compararPlanosPadDryRun({ repoRoot, reconstrucao });
+
+    etapaAtual = "salvar_relatorio_comparacao";
     salvarRelatorioComparacao(comparacao, CAMINHO_COMPARACAO_JSON, CAMINHO_COMPARACAO_MD);
 
     // Adicionar as diferenças críticas como impedimentos, se houver
@@ -181,11 +189,19 @@ async function recarregarPadsOperacional(opcoes = {}) {
     const snapshotAnteriorExiste = fs.existsSync(CAMINHO_SNAPSHOT_ANTERIOR);
 
     if (snapshotAnteriorExiste) {
+      etapaAtual = "gerar_fotografia";
       snapshotAtual = gerarFotografiaCanonica(reconstrucao.planoAplicacaoReconstruido);
+
+      etapaAtual = "salvar_fotografia";
       salvarFotografia(CAMINHO_SNAPSHOT_ATUAL_JSON, snapshotAtual);
+
+      etapaAtual = "salvar_markdown_fotografia";
       salvarMarkdownFotografia(CAMINHO_SNAPSHOT_ATUAL_MD, snapshotAtual);
 
+      etapaAtual = "comparar_snapshots";
       compSnapshots = compararSnapshotsPad(CAMINHO_SNAPSHOT_ANTERIOR, snapshotAtual);
+
+      etapaAtual = "salvar_comparacao_snapshots";
       salvarRelatorioComparacaoSnapshots(
         compSnapshots,
         CAMINHO_COMP_SNAPSHOTS_JSON,
@@ -240,6 +256,7 @@ async function recarregarPadsOperacional(opcoes = {}) {
     const mdContent = gerarMarkdownRecarga(jsonRecarga);
 
     // Salvar relatórios de recarga
+    etapaAtual = "salvar_relatorio_recarga";
     fs.mkdirSync(path.dirname(CAMINHO_RECARGA_JSON), { recursive: true });
     fs.writeFileSync(CAMINHO_RECARGA_JSON, JSON.stringify(jsonRecarga, null, 2), "utf8");
     fs.writeFileSync(CAMINHO_RECARGA_MD, mdContent, "utf8");
@@ -267,7 +284,12 @@ async function recarregarPadsOperacional(opcoes = {}) {
         {
           tipo: "erro_execucao_recarga",
           nivel: "impeditivo",
-          detalhe: `Erro ao executar a recarga operacional: ${erro.message}`,
+          detalhe: `Erro na etapa ${etapaAtual}: ${erro.message}`,
+          etapa: etapaAtual,
+          tecnico: {
+            mensagem: erro?.message || String(erro),
+            stack: erro?.stack || null,
+          },
         },
       ],
       alertas: [],

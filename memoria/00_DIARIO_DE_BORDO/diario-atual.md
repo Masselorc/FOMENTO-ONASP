@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: instrumentação de etapa na recarga PAD
+
+- Objetivo: tornar rastreável o erro de recarga PAD (`Cannot read properties of null (reading 'save')`) sem alterar frontend, PADs, publicação estática, DETRU ou Transferegov.
+- Arquivo alterado: `backend/services/profor-2022/profor-pad-recarga-operacional-service.js`.
+- Ajuste aplicado:
+  - inclusão de `etapaAtual` com marcação antes das fases `ler_relatorios_pad`, `reconstruir_plano`, `salvar_relatorio_reconstrucao`, `comparar_plano`, `salvar_relatorio_comparacao`, `gerar_fotografia`, `salvar_fotografia`, `salvar_markdown_fotografia`, `comparar_snapshots`, `salvar_comparacao_snapshots` e `salvar_relatorio_recarga`;
+  - no `catch`, impedimento `erro_execucao_recarga` passou a incluir `detalhe` com etapa (`Erro na etapa ...`), campo `etapa` e objeto técnico com `mensagem` e `stack` para diagnóstico no JSON.
+- Validações executadas:
+  - `node --check backend/services/profor-2022/profor-pad-recarga-operacional-service.js`;
+  - `node --test tests/services/profor-pad-recarga-operacional.test.js` (6 testes, 6 aprovados).
+- Escopo preservado: sem alterações em frontend, sem Playwright, sem publicação de dados, sem mudanças em DETRU/Transferegov.
+
 ## 24/05/2026 — PROFOR 2022: correção da Home (convênios) e restauração do item Sistema
 
 - Ajustado menu lateral em `index.html` para exibir item **Sistema** apontando para `toggleView('status-sistema')`.
