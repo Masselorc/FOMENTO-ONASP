@@ -10713,6 +10713,11 @@ table.dataTable thead th {
     width: auto;
     padding: 0.15rem 1.5rem 0.15rem 0.4rem;
     font-size: 0.78rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    text-align: center;
+    text-align-last: center;
 }
 
 /* Coluna Área (2ª): largura suficiente para o select sem desperdício. */
