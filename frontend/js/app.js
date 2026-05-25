@@ -3879,12 +3879,14 @@ async function carregarLogoParaPDF() {
         function rotuloSituacaoRevisaoPad(situacao) {
             switch (String(situacao || '').toUpperCase()) {
                 case 'RATEIO_MEMORIZADO_APLICADO': return 'Rateio aplicado';
-                case 'ITEM_NOVO_SEM_RATEIO': return 'Sem rateio';
-                case 'ITEM_SUPRIMIDO_HISTORICO': return 'Suprimido';
-                case 'AREA_NAO_CLASSIFICADA': return 'Sem área';
+                case 'AREA_ALTERADA': return 'Área classificada';
+                case 'AREA_NAO_CLASSIFICADA': return 'Área não classificada';
+                case 'ITEM_NOVO_SEM_RATEIO': return 'Item novo';
+                case 'ITEM_SUPRIMIDO_HISTORICO': return 'Item suprimido';
                 case 'SALDO_RESIDUAL_NAO_SETORIALIZADO': return 'Saldo residual';
-                case 'PENDENTE_REVISAO': return 'Pendente';
-                case 'OK': return 'OK';
+                case 'PENDENTE_REVISAO': return 'Aguardando revisão';
+                case 'RATEIO_ATUALIZADO': return 'Rateio atualizado';
+                case 'OK': return 'Confirmado';
                 default: return situacao || '-';
             }
         }
