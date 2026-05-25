@@ -4003,8 +4003,10 @@ async function carregarLogoParaPDF() {
         }
 
         function renderSelectAreaLinhaFilhaRevisaoPad(filha) {
+            const ehNaoClassificado = String(filha.area || '').toUpperCase() === 'NAO_CLASSIFICADO';
+            const classeDestaque = ehNaoClassificado ? ' is-nao-classificado' : '';
             return `
-                <select class="form-select form-select-sm revisao-pad-area-select" data-revisao-pad-area="${escapeHtml(filha.id)}" data-parent-id="${escapeHtml(filha.parentId)}" data-area-original="${escapeHtml(filha.area || '')}">
+                <select class="form-select form-select-sm revisao-pad-area-select${classeDestaque}" data-revisao-pad-area="${escapeHtml(filha.id)}" data-parent-id="${escapeHtml(filha.parentId)}" data-area-original="${escapeHtml(filha.area || '')}">
                     ${AREAS_REVISAO_PAD.map(([valor, rotulo]) => `<option value="${escapeHtml(valor)}" ${filha.area === valor ? 'selected' : ''}>${escapeHtml(rotulo)}</option>`).join('')}
                 </select>
             `;

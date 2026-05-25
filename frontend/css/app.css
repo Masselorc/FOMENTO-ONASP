@@ -10720,6 +10720,21 @@ table.dataTable thead th {
     text-align-last: center;
 }
 
+/* Destaque ambar para selects ainda sem area classificada, para chamar atencao. */
+#view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select[data-area-original="NAO_CLASSIFICADO"],
+#view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select.is-nao-classificado {
+    background-color: rgba(251, 191, 36, 0.18);
+    border-color: #fbbf24;
+    color: #fde68a;
+    font-weight: 600;
+}
+
+#view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select[data-area-original="NAO_CLASSIFICADO"]:focus,
+#view-revisao-divergencias .revisao-pad-plano-table .revisao-pad-area-select.is-nao-classificado:focus {
+    box-shadow: 0 0 0 0.2rem rgba(251, 191, 36, 0.35);
+    border-color: #fbbf24;
+}
+
 /* Coluna Área (2ª): largura suficiente para o select sem desperdício. */
 #view-revisao-divergencias .revisao-pad-plano-table th:nth-child(2),
 #view-revisao-divergencias .revisao-pad-plano-table td:nth-child(2) {
