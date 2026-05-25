@@ -11,8 +11,39 @@
     order: 99;
     flex: 0 0 auto;
     margin-left: 0;
+    border-color: var(--color-border-strong);
+    color: var(--color-text-muted);
+}
+
+/* Home: neutro e discreto */
+#header-actions button[onclick="toggleView('dashboard')"] {
+    border-color: var(--color-border-strong);
+    color: var(--color-text-muted);
+    background: var(--color-surface-muted);
+}
+
+#header-actions button[onclick="toggleView('dashboard')"]:hover {
+    color: var(--color-text);
+    background: var(--color-surface-elevated);
+}
+
+/* Detalhamento: principal ação de navegação */
+#header-actions button[onclick="toggleView('detalhamento')"] {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    color: #f8fbff;
+}
+
+#header-actions button[onclick="toggleView('detalhamento')"]:hover {
+    border-color: #60a5fa;
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+}
+
+/* Menu lateral: ação utilitária */
+#header-actions [data-bs-target="#app-sidebar"]:hover {
     border-color: var(--color-primary);
     color: var(--color-primary-strong);
+    background: var(--color-primary-soft);
 }
 
 #header-actions {
