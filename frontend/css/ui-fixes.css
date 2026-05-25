@@ -1,1 +1,24 @@
-/* ==========================================================================\n   Ajustes globais de interface\n   --------------------------------------------------------------------------\n   Correções pequenas e transversais que não pertencem a módulos específicos\n   de página. Mantém o HTML, dados, JS, listeners e cálculos.\n   ========================================================================== */\n\n/* Acesso ao menu lateral\n   O item Sistema permanece no offcanvas. Esta regra garante que o acionador\n   do menu lateral apareça antes dos atalhos Home/Detalhamento, evitando que\n   o botão fique para fora da área visível em telas menores. */\n#header-actions [data-bs-target="#app-sidebar"] {\n    order: -1;\n    flex: 0 0 auto;\n    border-color: var(--color-primary);\n    color: var(--color-primary-strong);\n}\n\n#header-actions {\n    display: flex;\n    flex-wrap: nowrap;\n    gap: 0.5rem;\n    min-width: 0;\n}\n
+/* ==========================================================================
+   Ajustes globais de interface
+   --------------------------------------------------------------------------
+   Correções pequenas e transversais que não pertencem a módulos específicos
+   de página. Mantém o HTML, dados, JS, listeners e cálculos.
+   ========================================================================== */
+
+/* Acesso ao menu lateral
+   O item Sistema permanece no offcanvas. Esta regra garante que o acionador
+   do menu lateral apareça antes dos atalhos Home/Detalhamento, evitando que
+   o botão fique para fora da área visível em telas menores. */
+#header-actions [data-bs-target="#app-sidebar"] {
+    order: -1;
+    flex: 0 0 auto;
+    border-color: var(--color-primary);
+    color: var(--color-primary-strong);
+}
+
+#header-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    min-width: 0;
+}
