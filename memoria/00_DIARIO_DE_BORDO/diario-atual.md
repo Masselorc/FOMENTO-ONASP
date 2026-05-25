@@ -1,5 +1,26 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: cache-buster e verificação direta da recarga PAD
+
+- Objetivo: forçar o navegador a carregar o `app.js` com a propagação instrumentada do erro de recarga PAD e verificar a API diretamente.
+- Arquivo alterado: `index.html`.
+- Ajuste aplicado: cache-buster do `app.js` alterado de `v=20260524-03-home-menu-sistema` para `v=20260525-04-recarga-pad-erro-etapa`.
+- Verificação operacional:
+  - servidor local reiniciado em `127.0.0.1:8790`;
+  - `POST /api/profor-2022/pad/recarregar` retornou `success=true`, `message="Recarga PAD concluida."`, `etapa=null`;
+  - `GET /api/profor-2022/pad/ultima-recarga` retornou `success=true`, `etapa=null`;
+  - não houve stack de erro no backend atual, pois o erro `.save` não foi reproduzido pela API direta após o cache-buster.
+- Causa raiz nesta rodada: HTML ainda apontava para versão antiga do `app.js`, mantendo risco de UI carregar handler anterior e exibir mensagem genérica.
+- Validações executadas:
+  - `git diff --check`;
+  - `node --check backend/server.js`;
+  - `node --check frontend/js/app.js`;
+  - `node --check backend/services/profor-2022/profor-pad-recarga-operacional-service.js`;
+  - `node --test tests/services/profor-pad-recarga-operacional.test.js` (6/6 aprovados).
+- Preservações: sem Playwright/E2E, sem publicação, sem alteração em `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, DETRU, Transferegov, autenticação ou planilha antiga por abas.
+- Risco: se o navegador mantiver cache antigo, a UI pode exigir hard refresh; a API local atual não reproduziu o erro `.save`.
+- Rollback: restaurar em `index.html` o cache-buster anterior do `app.js`.
+
 ## 25/05/2026 — PROFOR 2022: propagação da mensagem instrumentada de recarga PAD
 
 - Objetivo: garantir que a UI de recarga PAD exiba o detalhe instrumentado da etapa de erro (e não apenas mensagem genérica).
