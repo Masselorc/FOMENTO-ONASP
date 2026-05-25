@@ -31,6 +31,16 @@ const {
 const {
   listarConveniosMonitorados,
 } = require("../services/profor-2022/convenios-monitorados-service");
+const {
+  assertEndpointAdminPermitido,
+  assertChamadaExternaPermitida,
+} = require("../services/profor-2022/profor-workbook-fallback-guard-service");
+
+function assertExecucaoLocalPermitida(contexto, opcoes = {}) {
+  // Bloqueia producao/teste; em ambiente local libera sem flag.
+  assertEndpointAdminPermitido(contexto, { execucaoLocal: true, ...opcoes });
+  assertChamadaExternaPermitida(contexto, { execucaoLocal: true, tipo: opcoes.tipo, ...opcoes });
+}
 
 function parseFlags(argv) {
   const flags = new Set(argv.slice(2).map((a) => String(a).toLowerCase()));
@@ -138,6 +148,8 @@ function imprimirResumo({ antes, depois, delta, resultadoDetru, resultadoTransfe
 
 async function rodarAtualizacaoDetru() {
   try {
+    // Guard antes de qualquer side-effect: bloqueia producao/teste; local libera sem flag.
+    assertExecucaoLocalPermitida("script_verificar_atualizacoes_detru", { tipo: "DETRU" });
     // Imports tardios para evitar inicializar banco em modo somente leitura.
     const { inicializarBanco } = require("../db/init-db");
     const {
@@ -153,6 +165,7 @@ async function rodarAtualizacaoDetru() {
 
 async function rodarAtualizacaoTransferegov() {
   try {
+    assertExecucaoLocalPermitida("script_verificar_atualizacoes_transferegov", { tipo: "Transferegov" });
     const { inicializarBanco } = require("../db/init-db");
     const {
       executarEtapaRendimentos,

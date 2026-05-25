@@ -118,3 +118,64 @@ test("frontend renderiza bloco Diagnostico das Atualizacoes e consome /atualizac
   assert.match(app, /\/api\/profor-2022\/atualizacoes\/status/);
   assert.match(app, /carregarDiagnosticoAtualizacoesProfor2022/);
 });
+
+test("script com flags bloqueia em ambiente de teste (NODE_ENV=test)", () => {
+  // --detru deve falhar cedo via guard quando NODE_ENV=test, sem rodar atualizacao real.
+  const r = spawnSync(process.execPath, [path.join(ROOT, SCRIPT), "--detru"], {
+    encoding: "utf8",
+    env: { PATH: process.env.PATH, NODE_ENV: "test" },
+  });
+  // Saida espera: status 1 (FALHA) com evidencia falhou, OU script pode reportar e seguir;
+  // o importante e que NAO tenha rodado o atualizador real (totalSalvos vazio).
+  const out = `${r.stdout}\n${r.stderr}`;
+  assert.match(out, /bloquead/i);
+  assert.match(out, /RESULTADO: FALHA|falhou/);
+  assert.equal(r.status, 1);
+});
+
+test("script com flags bloqueia em producao (FOMENTO_AMBIENTE=producao)", () => {
+  const r = spawnSync(process.execPath, [path.join(ROOT, SCRIPT), "--transferegov"], {
+    encoding: "utf8",
+    env: { PATH: process.env.PATH, FOMENTO_AMBIENTE: "producao" },
+  });
+  const out = `${r.stdout}\n${r.stderr}`;
+  assert.match(out, /bloquead/i);
+  assert.equal(r.status, 1);
+});
+
+test("script importa guards (assertEndpointAdminPermitido + assertChamadaExternaPermitida)", () => {
+  const src = ler(SCRIPT);
+  assert.match(src, /assertEndpointAdminPermitido/);
+  assert.match(src, /assertChamadaExternaPermitida/);
+  // Ambas asserts devem ser chamadas dentro das rotinas de atualizacao.
+  const fnDetru = src.slice(src.indexOf("async function rodarAtualizacaoDetru"), src.indexOf("async function rodarAtualizacaoTransferegov"));
+  assert.match(fnDetru, /assertExecucaoLocalPermitida\(/);
+  const fnTransf = src.slice(src.indexOf("async function rodarAtualizacaoTransferegov"), src.indexOf("async function executar()"));
+  assert.match(fnTransf, /assertExecucaoLocalPermitida\(/);
+});
+
+test("endpoint /atualizacoes/status reporta erroLeitura por bloco quando servico falha", () => {
+  const src = ler(SERVER);
+  const idx = src.indexOf('"/api/profor-2022/atualizacoes/status"');
+  const bloco = src.slice(idx, idx + 2500);
+  // Os tres blocos devem expor erroLeitura.
+  assert.match(bloco, /detru:\s*\{[\s\S]*?erroLeitura:/);
+  assert.match(bloco, /transferegov:\s*\{[\s\S]*?erroLeitura:/);
+  assert.match(bloco, /carteira:\s*\{[\s\S]*?erroLeitura:/);
+  // Deve usar helper lerComErro (sem fallback silencioso para zero).
+  assert.match(bloco, /const lerComErro = \(fn\) => \{/);
+});
+
+test("frontend chama carregarDiagnosticoAtualizacoesProfor2022 em try/catch apos DETRU e Transferegov", () => {
+  const app = ler("frontend/js/app.js");
+  // Localiza o bloco try das duas funcoes e verifica que a chamada esta dentro de try/catch.
+  const detruIdx = app.indexOf("async function atualizarCacheDetruProfor2022UI");
+  const detruFim = app.indexOf("async function ", detruIdx + 50);
+  const detruBloco = app.slice(detruIdx, detruFim);
+  assert.match(detruBloco, /try \{ await carregarDiagnosticoAtualizacoesProfor2022\(\); \}[\s\S]*?catch/);
+
+  const transfIdx = app.indexOf("async function atualizarRendimentosTransferegovProfor2022UI");
+  const transfFim = app.indexOf("async function ", transfIdx + 50);
+  const transfBloco = app.slice(transfIdx, transfFim);
+  assert.match(transfBloco, /try \{ await carregarDiagnosticoAtualizacoesProfor2022\(\); \}[\s\S]*?catch/);
+});

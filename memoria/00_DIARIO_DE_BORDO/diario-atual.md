@@ -7354,3 +7354,18 @@ Logs operacionais gravados:
 - Preservacoes: nenhuma publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM direto, sem PAD/recarga, sem workbook antigo, sem reativar `Atualizar PROFOR 2022`, sem mexer em autenticacao/login. Endpoint criado e somente leitura.
 - Risco: baixo - leitura de cache local; script CLI tem flags explicitas e usa `execucaoLocal: true` no guard ja existente.
 - Rollback: reverter o commit; endpoint, script, bloco UI e scripts npm desaparecem.
+
+---
+
+## 25/05/2026 - PROFOR 2022: reforco do diagnostico das atualizacoes (seguranca + confiabilidade)
+
+- Branch: `main`.
+- Tarefa 1: script `verificar-atualizacoes-profor-2022.js` agora chama `assertEndpointAdminPermitido` + `assertChamadaExternaPermitida` (via helper `assertExecucaoLocalPermitida`) antes de executar `--detru`/`--transferegov`/`--ambos`, com `execucaoLocal: true`. Local libera sem flag; producao/teste bloqueiam.
+- Tarefa 2: endpoint `GET /api/profor-2022/atualizacoes/status` deixa de mascarar falha como zero. Cada bloco (`detru`, `transferegov`, `carteira`) passa a expor `erroLeitura` quando a leitura falha; o endpoint continua respondendo 200 para nao quebrar a tela.
+- Tarefa 3: frontend, em `atualizarCacheDetruProfor2022UI` e `atualizarRendimentosTransferegovProfor2022UI`, chama `carregarDiagnosticoAtualizacoesProfor2022()` dentro de try/catch apos sucesso da atualizacao; falha do refresh nao transforma a atualizacao em erro.
+- Testes (15/15): adicionados cenarios de script bloqueado em `NODE_ENV=test` e `FOMENTO_AMBIENTE=producao`; presenca dos imports de guards; endpoint expoe `erroLeitura` por bloco; frontend faz refresh em try/catch apos DETRU e Transferegov.
+- Cache-buster do app.js bumpado para `?v=20260525-13-diagnostico-reforco`.
+- Validacoes: `git diff --check`; `node --check` em `backend/server.js`, `frontend/js/app.js` e o script; `node --test tests/services/profor-verificar-atualizacoes.test.js` (15/15); `npm run validar:syntax` (105 OK).
+- Preservacoes: sem publicacao, sem `frontend/data/publicados`/`.env`/SQLite/WAL/SHM direto, sem PAD/recarga, sem workbook antigo, sem autenticacao/login, sem reativar `Atualizar PROFOR 2022`. Endpoint continua somente leitura; guard agora protege o CLI.
+- Risco: baixo - reforco aditivo; comportamento local continua igual; producao/teste passam a falhar cedo no script (objetivo desejado).
+- Rollback: reverter o commit; script volta a nao validar guards; endpoint volta a mascarar erro como zero; frontend volta a tratar refresh de diagnostico como obrigatorio.

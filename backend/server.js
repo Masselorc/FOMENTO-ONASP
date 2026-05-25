@@ -904,38 +904,38 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "GET" && pathname === "/api/profor-2022/atualizacoes/status") {
       // Endpoint somente leitura focado em diagnostico das atualizacoes DETRU/Transferegov.
       // Usado pela tela "Diagnostico das Atualizacoes" e pelo script verificar-atualizacoes.
+      //
+      // Erros parciais (uma das fontes falhar) sao reportados em <bloco>.erroLeitura
+      // em vez de virarem zero silencioso, para nao mascarar problema operacional.
       try {
-        const ultimaAtualizacaoDetru = (() => {
-          try { return obterUltimaAtualizacaoDetru(); } catch { return null; }
-        })();
-        const totalCacheDetru = (() => {
-          try { return listarCacheDetruProfor2022().length; } catch { return 0; }
-        })();
-        const ultimaConsultaRendimentos = (() => {
-          try { return obterUltimaConsultaRendimentos(); } catch { return null; }
-        })();
-        const totalCacheTransferegov = (() => {
-          try { return listarSaldosRendimentosCache().length; } catch { return 0; }
-        })();
-        const totalCarteiraAtiva = (() => {
-          try { return listarConveniosMonitorados({ incluirInativos: false }).length; } catch { return 0; }
-        })();
+        const lerComErro = (fn) => {
+          try { return { valor: fn(), erro: null }; }
+          catch (e) { return { valor: null, erro: e?.message || String(e) }; }
+        };
+        const ultimaDetru = lerComErro(() => obterUltimaAtualizacaoDetru());
+        const cacheDetru = lerComErro(() => listarCacheDetruProfor2022().length);
+        const ultimaTransf = lerComErro(() => obterUltimaConsultaRendimentos());
+        const cacheTransf = lerComErro(() => listarSaldosRendimentosCache().length);
+        const carteiraAtiva = lerComErro(() => listarConveniosMonitorados({ incluirInativos: false }).length);
 
         enviarJson(res, 200, {
           success: true,
           detru: {
-            ultimaAtualizacao: ultimaAtualizacaoDetru,
-            totalRegistrosCache: totalCacheDetru,
+            ultimaAtualizacao: ultimaDetru.valor,
+            totalRegistrosCache: cacheDetru.valor ?? 0,
+            erroLeitura: ultimaDetru.erro || cacheDetru.erro || null,
           },
           transferegov: {
-            ultimaConsulta: ultimaConsultaRendimentos,
-            totalRegistrosCache: totalCacheTransferegov,
-            ultimoResumoConsulta: ultimaConsultaRendimentos?.resumo
-              || ultimaConsultaRendimentos?.resumoJson
+            ultimaConsulta: ultimaTransf.valor,
+            totalRegistrosCache: cacheTransf.valor ?? 0,
+            ultimoResumoConsulta: ultimaTransf.valor?.resumo
+              || ultimaTransf.valor?.resumoJson
               || null,
+            erroLeitura: ultimaTransf.erro || cacheTransf.erro || null,
           },
           carteira: {
-            totalAtivos: totalCarteiraAtiva,
+            totalAtivos: carteiraAtiva.valor ?? 0,
+            erroLeitura: carteiraAtiva.erro || null,
           },
         });
       } catch (erro) {

@@ -543,6 +543,9 @@ function renderKpiCard({
                 await carregarStatusUltimaAtualizacaoDetruProfor2022();
                 const incluirInativos = document.getElementById('carteiraIncluirInativos')?.checked ?? false;
                 await carregarCarteiraMonitoradaProfor2022(incluirInativos);
+                // Falha em recarregar diagnostico NAO deve marcar a atualizacao como erro.
+                try { await carregarDiagnosticoAtualizacoesProfor2022(); }
+                catch (e) { console.warn('Falha ao recarregar diagnostico apos DETRU:', e); }
                 return { sucesso: true, mensagem: payload.message || 'Cache DETRU atualizado com sucesso.' };
             } catch (err) {
                 mostrarMensagemDetruProfor2022('danger', err.message || 'Erro ao atualizar o DETRU.');
@@ -1011,6 +1014,9 @@ function renderKpiCard({
                 if (typeof carregarRotuloUltimaAtualizacaoOperacional === 'function') {
                     await carregarRotuloUltimaAtualizacaoOperacional();
                 }
+                // Falha em recarregar diagnostico NAO deve marcar a atualizacao como erro.
+                try { await carregarDiagnosticoAtualizacoesProfor2022(); }
+                catch (e) { console.warn('Falha ao recarregar diagnostico apos Transferegov:', e); }
 
                 return {
                     sucesso: Boolean(payload.resultado?.sucesso ?? payload.success),
