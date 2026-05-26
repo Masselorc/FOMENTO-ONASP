@@ -497,9 +497,17 @@ function lerRelatoriosPadProfor2022(opcoes = {}) {
       }
     });
 
+    // Origem cache Transferegov: 1 arquivo JSON físico contém N convênios/PADs.
+    // Para que validações e métricas históricas baseadas em "15 arquivos PAD"
+    // continuem fazendo sentido, expomos o total de convênios/PADs como
+    // `totalArquivosEncontrados` (e mantemos `totalArquivosFisicos` para
+    // auditoria do arquivo JSON real).
     const resumo = {
       pastaEntrada: "backend/data/cache",
-      totalArquivosEncontrados: 1,
+      origem: "cache_transferegov",
+      totalArquivosFisicos: 1,
+      totalArquivosEncontrados: relatorios.length,
+      totalConvenios: relatorios.length,
       totalRelatoriosLidos: relatorios.length,
       totalItensExtraidos: itens.length,
       totalAlertas: alertas.length,

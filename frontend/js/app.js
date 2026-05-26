@@ -4835,7 +4835,7 @@ async function carregarLogoParaPDF() {
             }
 
             const stats = [
-                { rotulo: 'Arquivos lidos', valor: `${resultado.arquivosLidos ?? resultado.totalRelatoriosLidos ?? 0}/${resultado.arquivosEncontrados ?? resultado.totalArquivosPad ?? 0}` },
+                { rotulo: 'PADs lidos', valor: `${resultado.arquivosLidos ?? resultado.totalRelatoriosLidos ?? 0}/${resultado.arquivosEncontrados ?? resultado.totalArquivosPad ?? 0}` },
                 { rotulo: 'Itens processados', valor: resultado.itensProcessados ?? resultado.totalItensPad ?? 0 },
                 { rotulo: 'Linhas reconstruídas', valor: resultado.linhasReconstruidas ?? resultado.totalLinhasReconstruidas ?? 0 },
                 { rotulo: 'Convênios reconstruídos', valor: resultado.conveniosReconstruidos ?? resultado.totalConveniosReconstruidos ?? 0 },

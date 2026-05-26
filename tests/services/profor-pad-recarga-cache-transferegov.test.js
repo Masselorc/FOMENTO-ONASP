@@ -265,3 +265,62 @@ test("19. não existe usarExcelLegadoGlobal ou definirUsoExcelLegado", () => {
   assert.equal(reader.definirUsoExcelLegado, undefined);
   assert.equal(reader.usarExcelLegadoGlobal, undefined);
 });
+
+test("20. leitura via cache reporta 15 PADs e marca origem cache_transferegov (não 15/1)", () => {
+  const cache = criarCacheMockValido();
+  const tmpDir = prepararPastaTemporaria(cache);
+
+  try {
+    const { lerRelatoriosPadProfor2022 } = require("../../backend/services/profor-2022/profor-pad-report-reader");
+    const leitura = lerRelatoriosPadProfor2022({ repoRoot: tmpDir });
+
+    assert.equal(leitura.resumo.origem, "cache_transferegov");
+    assert.equal(leitura.resumo.totalArquivosFisicos, 1);
+    assert.equal(leitura.resumo.totalConvenios, 15);
+    assert.equal(leitura.resumo.totalArquivosEncontrados, 15);
+    assert.equal(leitura.resumo.totalRelatoriosLidos, 15);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("21. carregador v2 sobre cache válido não gera quantidade_arquivos_pad_invalida (sem comparar 1 JSON contra 15 Excel)", () => {
+  const cache = criarCacheMockValido();
+  const tmpDir = prepararPastaTemporaria(cache);
+
+  try {
+    const resultado = carregarPadsOperacional({
+      repoRoot: tmpDir,
+      salvarRelatorio: false,
+      conferirItensPadComRateios: () => ({
+        itensPadReconhecidos: [],
+        itensPadSemRateio: [],
+        itensConhecidosAusentesNoPad: [],
+        instrumentosNaoEncontradosNaCarteira: [],
+        alertas: [],
+        resumo: {
+          totalItensPadConferidos: 15,
+          totalItensPadComRateio: 0,
+          totalItensPadSemRateio: 0,
+          totalItensConhecidosAusentesNoPad: 0,
+        },
+      }),
+      carregarMemoriaRateios: () => new Map(),
+    });
+
+    assert.equal(resultado.origem, "cache_transferegov");
+    assert.equal(resultado.arquivosEncontrados, 15);
+    assert.equal(resultado.arquivosLidos, 15);
+    assert.equal(
+      resultado.impedimentos.some((i) => i.tipo === "quantidade_arquivos_pad_invalida"),
+      false,
+      "cache válido não pode gerar quantidade_arquivos_pad_invalida"
+    );
+    assert.equal(
+      resultado.impedimentos.some((i) => i.tipo === "quantidade_relatorios_pad_lidos_invalida"),
+      false
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});

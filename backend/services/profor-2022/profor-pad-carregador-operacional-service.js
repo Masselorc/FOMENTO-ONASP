@@ -145,8 +145,10 @@ function montarResumoBase({ dataHora, leitura, conferencia }) {
     sucesso: false,
     aptoParaUsoLocal: false,
     aptoParaPublicacao: false,
+    origem: leitura?.resumo?.origem || "excel_legado",
     arquivosEncontrados: Number(leitura?.resumo?.totalArquivosEncontrados || 0),
     arquivosLidos: Number(leitura?.resumo?.totalRelatoriosLidos || 0),
+    totalConvenios: Number(leitura?.resumo?.totalConvenios || leitura?.resumo?.totalRelatoriosLidos || 0),
     itensProcessados: Number(leitura?.resumo?.totalItensExtraidos || conferencia?.resumo?.totalItensPadConferidos || 0),
     linhasReconstruidas: 0,
     conveniosReconstruidos: 0,
@@ -192,7 +194,7 @@ function gerarMarkdown(resultado) {
   linhas.push("");
   linhas.push(`- Data: ${resultado.dataHora}`);
   linhas.push(`- Sucesso: ${resultado.sucesso ? "sim" : "não"}`);
-  linhas.push(`- Arquivos: ${resultado.arquivosLidos}/${resultado.arquivosEncontrados}`);
+  linhas.push(`- PADs lidos: ${resultado.arquivosLidos}/${resultado.arquivosEncontrados} (origem: ${resultado.origem || "-"})`);
   linhas.push(`- Itens processados: ${resultado.itensProcessados}`);
   linhas.push(`- Linhas reconstruídas: ${resultado.linhasReconstruidas}`);
   linhas.push(`- Convênios reconstruídos: ${resultado.conveniosReconstruidos}`);

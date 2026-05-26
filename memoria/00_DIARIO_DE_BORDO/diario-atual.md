@@ -7520,3 +7520,16 @@ Logs operacionais gravados:
 - Preservacoes: sem publicacao, sem `frontend/data/publicados`, sem `.env`, sem SQLite/WAL/SHM, sem banco, sem cache PAD persistente, sem recarga PAD, sem tela de Revisoes, sem DETRU, sem rendimentos, sem Playwright real, sem HTML/cookies/ViewState/HAR versionados.
 - Risco: medio - aptidao tecnica nao equivale a decisao de ativar cache; ainda falta etapa propria de cache/origem operacional.
 - Rollback: reverter o commit; remover relatorios locais untracked se desejar limpar o workspace.
+
+## 26/05/2026 - PROFOR 2022: corrige contagem 15/1 e falso impedimento quantidade_arquivos_pad_invalida
+
+- Branch: `main`.
+- Objetivo: corrigir falso impedimento tecnico `quantidade_arquivos_pad_invalida` apos migracao da recarga PAD para cache Transferegov (metrica mostrava `15/1`).
+- Causa: em `profor-pad-report-reader.js` o ramo de cache fixava `totalArquivosEncontrados: 1` (apenas o arquivo JSON fisico do cache), e o carregador comparava esse 1 com a expectativa de 15 PADs.
+- Arquivos: `backend/services/profor-2022/profor-pad-report-reader.js`; `backend/services/profor-2022/profor-pad-carregador-operacional-service.js`; `frontend/js/app.js`; `tests/services/profor-pad-recarga-cache-transferegov.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: no ramo cache o resumo agora expoe `origem: "cache_transferegov"`, `totalArquivosFisicos: 1` e `totalArquivosEncontrados/totalConvenios = relatorios.length` (15). O carregador propaga `origem` e `totalConvenios`; o rotulo da UI passou de "Arquivos lidos" para "PADs lidos"; o cabecalho do relatorio MD passou a exibir `PADs lidos: 15/15 (origem: cache_transferegov)`. Fluxo Excel legado (`usarExcelLegado: true`) permanece intacto e ainda valida 15 arquivos fisicos.
+- Testes adicionados: `20.` leitura via cache reporta 15 PADs com `origem=cache_transferegov` e `totalArquivosFisicos=1`; `21.` carregador v2 sobre cache valido nao gera `quantidade_arquivos_pad_invalida` nem `quantidade_relatorios_pad_lidos_invalida` e expoe `15/15`.
+- Validacoes: `git diff --check` (apenas warnings CRLF em arquivos nao versionados); `node --check` nos tres arquivos solicitados; `npm run validar:syntax` OK (105 arquivos). `node --test` nao executado porque o ambiente atual quebra em `better-sqlite3` por NODE_MODULE_VERSION 137 vs 141 (Node v25.9.0 - infra, nao relacionado a esta correcao).
+- Preservacoes: sem reverter integracao com cache, sem reclassificar pendencias revisaveis como impedimentos, sem alterar `frontend/data/publicados`, sem publicar, sem acessar Transferegov, sem atualizar cache, sem DETRU/rendimentos, sem Playwright, sem `.env`, sem SQLite/WAL/SHM, sem versionar `backend/data/cache/*` ou `backend/data/relatorios/*`.
+- Risco: baixo - a mudanca apenas reinterpreta o contador no ramo cache para representar PADs/convenios, mantendo todas as travas tecnicas (cache ausente, cache invalido, contagem != 15 no Excel legado).
+- Rollback: reverter o commit.
