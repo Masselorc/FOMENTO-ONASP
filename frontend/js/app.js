@@ -4756,9 +4756,81 @@ async function carregarLogoParaPDF() {
             `;
         }
 
+        // Tipos de alerta de auditoria/historico/valores que NUNCA podem ser
+        // renderizados na tela de recarga PAD, mesmo se o payload (incluindo
+        // relatorios JSON antigos em cache) ainda os trouxer. A recarga so
+        // exibe pendencias reais de classificacao/rateio (tela Revisoes PAD).
+        const TIPOS_ALERTA_RECARGA_PAD_SUPRIMIDOS = new Set([
+            'item_conhecido_ausente_no_pad',
+            'item_suprimido_historico',
+            'item_conhecido_nao_apto',
+            'item_conhecido_nao_apto_usado',
+            'quantidade_valor_unitario_inconsistente',
+            'saldo_inconsistente',
+            'saldo_residual_nao_setorializado',
+            'saldo_residual_natureza_sem_rateio_memoria',
+            'equivalencia_por_diacritico_saneada_automaticamente',
+            'item_pad_coincide_apenas_por_descricao_normalizada',
+            'item_pad_sem_rateio',
+            'descricao_original_divergente_da_memoria_rateio',
+            'natureza_divergente',
+            'total_geral_divergente',
+            'valor_previsto_invalido',
+            'valor_executado_invalido'
+        ]);
+
+        function ehAlertaRecargaPadSuprimido(tipo) {
+            return TIPOS_ALERTA_RECARGA_PAD_SUPRIMIDOS.has(String(tipo || ''));
+        }
+
+        function agruparPendenciasRecargaPadPorConvenioUf(pendencias) {
+            const grupos = new Map();
+            for (const item of pendencias || []) {
+                const numeroConvenio = item?.numeroConvenio || item?.instrumento || null;
+                const uf = item?.uf ? String(item.uf).trim().toUpperCase() : '';
+                const chave = `${numeroConvenio || 'sem_convenio'}::${uf || 'sem_uf'}`;
+                if (!grupos.has(chave)) {
+                    grupos.set(chave, { numeroConvenio, uf: uf || null, totalItens: 0 });
+                }
+                grupos.get(chave).totalItens += 1;
+            }
+            return Array.from(grupos.values()).sort((a, b) => {
+                const ca = String(a.numeroConvenio || '');
+                const cb = String(b.numeroConvenio || '');
+                if (ca !== cb) return ca.localeCompare(cb);
+                return String(a.uf || '').localeCompare(String(b.uf || ''));
+            });
+        }
+
         function renderResultadoRecargaPad(resultado) {
             const container = document.getElementById('recarga-pad-resultado');
             if (!container) return;
+
+            // Camada defensiva: payloads antigos (relatorio JSON salvo antes do
+            // filtro de backend) ainda trazem alertas de auditoria. Filtra
+            // alertas e pendencias removendo tipos suprimidos antes de
+            // renderizar; recomputa totais e resumo a partir do que sobrou.
+            const alertasFiltrados = (Array.isArray(resultado.alertas) ? resultado.alertas : [])
+                .filter((a) => !ehAlertaRecargaPadSuprimido(a?.tipo));
+            const alertasAgrupadosFiltrados = (Array.isArray(resultado.alertasAgrupados) ? resultado.alertasAgrupados : [])
+                .filter((g) => !ehAlertaRecargaPadSuprimido(g?.tipo));
+            const pendenciasFiltradas = (Array.isArray(resultado.pendenciasRevisao) ? resultado.pendenciasRevisao : [])
+                .filter((p) => !ehAlertaRecargaPadSuprimido(p?.tipo));
+            resultado = {
+                ...resultado,
+                alertas: alertasFiltrados,
+                alertasAgrupados: alertasAgrupadosFiltrados,
+                totalAlertas: alertasFiltrados.length,
+                pendenciasRevisao: pendenciasFiltradas,
+                totalPendenciasRevisao: pendenciasFiltradas.length,
+                pendenciasRevisaoResumo: Array.isArray(resultado.pendenciasRevisaoResumo) && resultado.pendenciasRevisaoResumo.length
+                    ? resultado.pendenciasRevisaoResumo.filter((g) => g && (g.numeroConvenio || g.uf))
+                    : agruparPendenciasRecargaPadPorConvenioUf(pendenciasFiltradas),
+                pendenciasRevisaoMensagem: resultado.pendenciasRevisaoMensagem
+                    || (pendenciasFiltradas.length
+                        ? `${pendenciasFiltradas.length} ${pendenciasFiltradas.length === 1 ? 'item pendente' : 'itens pendentes'} de classificação/rateio`
+                        : '')
+            };
 
             let dataHoraFmt = '';
             if (resultado.dataHora) {

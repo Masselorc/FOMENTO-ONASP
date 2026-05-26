@@ -386,3 +386,32 @@ test("UI da recarga PAD menciona cache Transferegov validado e tela Revisoes PAD
   assert.ok(/Revis(õ|o)es PAD/i.test(trechoBloco),
     "UI deve orientar revisao pela tela Revisoes PAD");
 });
+
+test("UI da recarga PAD filtra alertas de auditoria mesmo de payload antigo", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const appPath = path.join(repoRoot, "frontend/js/app.js");
+  const appCode = fs.readFileSync(appPath, "utf8");
+
+  assert.ok(appCode.includes("TIPOS_ALERTA_RECARGA_PAD_SUPRIMIDOS"),
+    "UI deve declarar lista de tipos suprimidos para defesa contra payload antigo");
+  assert.ok(appCode.includes("ehAlertaRecargaPadSuprimido"),
+    "UI deve filtrar alertas antes de renderizar");
+
+  const tiposSuprimidos = [
+    "item_conhecido_ausente_no_pad",
+    "item_suprimido_historico",
+    "item_conhecido_nao_apto",
+    "quantidade_valor_unitario_inconsistente",
+    "saldo_residual_nao_setorializado",
+    "saldo_residual_natureza_sem_rateio_memoria",
+    "equivalencia_por_diacritico_saneada_automaticamente",
+    "item_pad_coincide_apenas_por_descricao_normalizada",
+    "item_pad_sem_rateio"
+  ];
+  const blocoInicio = appCode.indexOf("TIPOS_ALERTA_RECARGA_PAD_SUPRIMIDOS");
+  const bloco = appCode.slice(blocoInicio, blocoInicio + 1500);
+  for (const tipo of tiposSuprimidos) {
+    assert.ok(bloco.includes(`'${tipo}'`) || bloco.includes(`"${tipo}"`),
+      `Lista de tipos suprimidos da UI deve incluir ${tipo}`);
+  }
+});

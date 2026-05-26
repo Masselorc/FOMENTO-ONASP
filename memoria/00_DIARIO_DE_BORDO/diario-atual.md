@@ -7547,3 +7547,17 @@ Logs operacionais gravados:
 - Preservacoes: sem reverter integracao com cache, sem alterar `frontend/data/publicados`, sem alterar `backend/data/cache`, sem alterar `backend/data/relatorios`, sem publicar, sem Transferegov, sem cache atualizado, sem DETRU, sem rendimentos, sem Playwright, sem `.env`, sem SQLite/WAL/SHM, sem `package.json`/lock, sem `backend/server.js`.
 - Risco: baixo - filtro e aditivo; pendencias revisaveis seguem fluindo para `pendenciasRevisao`. Os tipos suprimidos ainda existem no banco/serviços de revisao; a recarga so deixa de exibi-los.
 - Rollback: `git revert <SHA>` && `git push origin main`.
+
+## 26/05/2026 - PROFOR 2022: filtro defensivo de alertas historicos na UI da recarga PAD
+
+- Branch: `main`.
+- Objetivo: garantir que a tela de recarga PAD nao exiba alertas de auditoria/historico/valores mesmo quando o payload veio de relatorio JSON antigo (gerado antes do filtro de backend introduzido em ae60a79).
+- Causa: a UI carrega a ultima recarga via `GET /api/profor-2022/pad/ultima-recarga-operacional`, que le `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json`. Esse arquivo foi gravado antes do filtro e ainda continha 44 alertas (item_conhecido_ausente_no_pad, item_suprimido_historico, item_conhecido_nao_apto, saldo_residual_nao_setorializado, equivalencia_por_diacritico_saneada_automaticamente, item_pad_coincide_apenas_por_descricao_normalizada, item_pad_sem_rateio, saldo_residual_natureza_sem_rateio_memoria). Como o relatorio nao e versionado, o backend so reescreve quando o usuario executa a recarga novamente — ate la a UI exibe o estado antigo.
+- Arquivos: `frontend/js/app.js`; `tests/services/profor-pad-origem-reconstrucao.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Regra final: a recarga nao exibe alertas tecnicos/historicos/auditoria. Pendencia real = item atual sem classificacao/rateio ativo. A regra agora e aplicada em duas camadas: backend (carregador filtra antes de salvar/responder) e frontend (re-filtra payload antes de renderizar, recomputa `totalAlertas`, `pendenciasRevisao`, `pendenciasRevisaoResumo` e `pendenciasRevisaoMensagem`).
+- Implementacao: adicionado `TIPOS_ALERTA_RECARGA_PAD_SUPRIMIDOS` (15 tipos) + helpers `ehAlertaRecargaPadSuprimido` e `agruparPendenciasRecargaPadPorConvenioUf` no inicio de `renderResultadoRecargaPad`. O `resultado` e clonado com `alertas`/`alertasAgrupados`/`pendenciasRevisao` filtrados e totais/resumo/mensagem recomputados a partir do que sobrou. `pendenciasRevisaoResumo` ausente em payload antigo passa a ser calculado na UI.
+- Testes: novo teste estatico `UI da recarga PAD filtra alertas de auditoria mesmo de payload antigo` em `profor-pad-origem-reconstrucao.test.js` valida presenca da lista de tipos suprimidos no `frontend/js/app.js`. Suites: origem-reconstrucao 31/31, carregador 15/15, recarga-cache-transferegov 12/12.
+- Validacoes: `git diff --check` limpo; `node --check` OK em backend (carregador) e `frontend/js/app.js`; `npm run validar:syntax` OK (105 arquivos); `node --test` OK nas 3 suites.
+- Preservacoes: sem reverter cache, sem refazer extracao, sem alterar `backend/data/cache`, `backend/data/relatorios`, `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, `package.json`/lock; sem Transferegov, sem DETRU/rendimentos, sem Playwright.
+- Risco: baixo - filtro e aditivo e nao toca dados nem regras de pendencia. A camada de UI cobre payloads legados sem precisar regerar o relatorio JSON.
+- Rollback: `git revert <SHA>` && `git push origin main`.
