@@ -383,8 +383,6 @@ test("UI da recarga PAD menciona cache Transferegov validado e tela Revisoes PAD
 
   assert.ok(/cache.*Transferegov.*validado/i.test(trechoBloco) || /cache Transferegov validado/i.test(trechoBloco),
     "UI deve mencionar cache Transferegov validado");
-  assert.ok(/profor-2022-pad-transferegov-cache\.json/.test(trechoBloco),
-    "UI deve apontar o arquivo do cache local");
   assert.ok(/Revis(õ|o)es PAD/i.test(trechoBloco),
     "UI deve orientar revisao pela tela Revisoes PAD");
 });

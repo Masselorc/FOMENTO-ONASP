@@ -808,34 +808,21 @@ function renderKpiCard({
                         <div>
                             <p class="section-eyebrow mb-1">PROFOR 2022</p>
                             <h2>Recarga Operacional dos PADs</h2>
-                            <p class="text-muted mb-0">Recarrega a visão operacional local a partir do cache PAD Transferegov validado.</p>
                         </div>
                     </div>
-                    <div class="row g-3 align-items-start">
-                        <div class="col-lg-8">
-                            <ul class="mb-3 text-muted small ps-3">
-                                <li>Usa o cache local validado em <code>backend/data/cache/profor-2022-pad-transferegov-cache.json</code>.</li>
-                                <li>Não consulta o Transferegov em tempo real e não atualiza o cache.</li>
-                                <li>Não lê automaticamente os arquivos Excel antigos.</li>
-                                <li>Não publica dados e não altera <code>frontend/data/publicados</code>.</li>
-                                <li>Pendências de área, classificação e rateio devem ser tratadas na tela <strong>Revisões PAD</strong>.</li>
-                                <li>Itens novos e itens suprimidos são esperados quando o PAD atual muda — não bloqueiam a recarga.</li>
-                            </ul>
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-recarregar-pads">
-                                <i class="fas fa-sync-alt me-1"></i> Recarregar PADs do cache
-                            </button>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="alert alert-info small mb-0">
-                                A recarga atualiza a visão operacional local com base no cache Transferegov validado. Ela não publica dados. Pendências de classificação e rateio — incluindo novos itens após atualizações — devem ser tratadas na tela <strong>Revisões PAD</strong>, construída exatamente para validar essas situações.
-                            </div>
-                        </div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="btn-recarregar-pads">
+                            <i class="fas fa-sync-alt me-1"></i> Atualizar PADs
+                        </button>
+                        <span class="text-muted small">
+                            Reconstrói a visão operacional a partir do cache Transferegov validado. Não publica dados. Pendências vão para a tela <strong>Revisões PAD</strong>.
+                        </span>
                     </div>
-                    <div id="recarga-pad-progresso" class="d-none mt-3 text-primary">
+                    <div id="recarga-pad-progresso" class="d-none mt-2 text-primary small">
                         <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
                         <span>Processando recarga dos PADs, por favor aguarde...</span>
                     </div>
-                    <div id="recarga-pad-resultado" class="mt-3 mb-0"></div>
+                    <div id="recarga-pad-resultado" class="mt-2 mb-0"></div>
                 </section>
             `;
         }
@@ -852,6 +839,14 @@ function renderKpiCard({
             });
             document.getElementById('btnRecarregarDiagnosticoAtualizacoes')?.addEventListener('click', () => {
                 carregarDiagnosticoAtualizacoesProfor2022();
+            });
+            document.getElementById('recarga-pad-resultado')?.addEventListener('click', (event) => {
+                const link = event.target?.closest?.('.recarga-pad-link-revisao');
+                if (!link) return;
+                event.preventDefault();
+                const uf = link.dataset.revisaoUf || '';
+                const convenio = link.dataset.revisaoConvenio || '';
+                window.abrirRevisaoPadParaConvenio?.(uf, convenio);
             });
             // Carrega o diagnostico no momento em que a tela monta.
             carregarDiagnosticoAtualizacoesProfor2022();
@@ -4738,12 +4733,17 @@ async function carregarLogoParaPDF() {
                 <div class="mb-2">
                     <strong>${escapeHtml(grupo.tipo)}</strong>
                     <ul class="mb-0 ps-3">
-                        ${grupo.exemplos.map((item) => `
-                            <li>
-                                ${item.numeroConvenio || item.instrumento ? `(Convênio ${escapeHtml(String(item.numeroConvenio || item.instrumento))}) ` : ''}
-                                ${escapeHtml(item.detalhe || '')}
-                            </li>
-                        `).join('')}
+                        ${grupo.exemplos.map((item) => {
+                            const conv = item.numeroConvenio || item.instrumento;
+                            const uf = item.uf || '';
+                            const rotulo = conv
+                                ? `(Convênio ${escapeHtml(String(conv))}${uf ? ` / ${escapeHtml(String(uf))}` : ''})`
+                                : '';
+                            const link = conv
+                                ? `<a href="#" class="recarga-pad-link-revisao" data-revisao-uf="${escapeHtml(String(uf))}" data-revisao-convenio="${escapeHtml(String(conv))}" title="Abrir na tela Revisões PAD${uf ? ` (${escapeHtml(String(uf))})` : ''}">${rotulo}</a> `
+                                : '';
+                            return `<li>${link}${escapeHtml(item.detalhe || '')}</li>`;
+                        }).join('')}
                     </ul>
                 </div>
             `).join('');
@@ -4795,40 +4795,56 @@ async function carregarLogoParaPDF() {
                 `;
             }
 
-            // Pendências revisáveis: itens novos, suprimidos, divergências de
-            // rateio/classificação. Exibidas como alerta informativo, não como erro.
+            // Pendências revisáveis: apenas itens atuais do PAD pendentes de
+            // classificação/rateio. Auditoria/valores/histórico ficam fora da
+            // recarga (tratados em Revisões PAD).
             let alertaPendenciasHtml = '';
             const totalPendenciasRevisao = resultado.totalPendenciasRevisao
                 ?? resultado.pendenciasRevisao?.length
                 ?? 0;
             if (totalPendenciasRevisao > 0) {
-                const listaPendencias = renderResumoOcorrenciasRecargaPad(resultado.pendenciasRevisao || [], {
-                    id: 'recarga-pad-pendencias-detalhes',
-                    classeTexto: 'text-primary',
-                    grupos: Array.isArray(resultado.pendenciasRevisaoAgrupadas) ? resultado.pendenciasRevisaoAgrupadas : null
-                });
+                const resumo = Array.isArray(resultado.pendenciasRevisaoResumo)
+                    ? resultado.pendenciasRevisaoResumo
+                    : [];
+                const linhasResumo = resumo.map((grupo) => {
+                    const conv = grupo.numeroConvenio || '—';
+                    const uf = grupo.uf ? String(grupo.uf) : 'UF não identificada';
+                    const itens = Number(grupo.totalItens || 0);
+                    const rotuloItem = itens === 1 ? 'item' : 'itens';
+                    const conveniosLinkavel = grupo.numeroConvenio && grupo.uf
+                        ? `<a href="#" class="recarga-pad-link-revisao" data-revisao-uf="${escapeHtml(String(grupo.uf))}" data-revisao-convenio="${escapeHtml(String(grupo.numeroConvenio))}" title="Abrir na tela Revisões PAD (${escapeHtml(String(grupo.uf))})">Convênio ${escapeHtml(String(conv))} — ${escapeHtml(uf)}</a>`
+                        : `Convênio ${escapeHtml(String(conv))} — ${escapeHtml(uf)}`;
+                    return `<li>${conveniosLinkavel}: ${escapeHtml(String(itens))} ${rotuloItem}</li>`;
+                }).join('');
+                const mensagem = resultado.pendenciasRevisaoMensagem
+                    || `${totalPendenciasRevisao} ${totalPendenciasRevisao === 1 ? 'item pendente' : 'itens pendentes'} de classificação/rateio`;
                 alertaPendenciasHtml = `
                     <div class="alert alert-info mb-3">
                         <i class="fas fa-clipboard-check me-2"></i>
-                        <strong>Pendências para revisão (${totalPendenciasRevisao}):</strong>
-                        <span>Trate essas pendências na tela <strong>Revisões PAD — Plano de Aplicação Detalhado</strong>, que foi construída exatamente para validar itens novos, suprimidos e divergências após atualizações.</span>
-                        ${listaPendencias}
+                        <strong>Pendências para revisão:</strong>
+                        <span>${escapeHtml(mensagem)}. Trate essas pendências na tela <strong>Revisões PAD — Plano de Aplicação Detalhado</strong>.</span>
+                        ${linhasResumo ? `<ul class="mb-0 mt-2 ps-3 small">${linhasResumo}</ul>` : ''}
                     </div>
                 `;
             }
 
+            // A recarga não exibe alertas de auditoria/valores/histórico. O
+            // backend já filtra esses tipos; só renderizamos o card se restar
+            // algum alerta operacional legítimo (caso de borda).
             let alertaAvisosHtml = '';
-            if ((Array.isArray(resultado.alertasAgrupados) && resultado.alertasAgrupados.length > 0)
-                || (Array.isArray(resultado.alertas) && resultado.alertas.length > 0)) {
+            const totalAlertasOperacionais = Number(resultado.totalAlertas ?? resultado.alertas?.length ?? 0);
+            if (totalAlertasOperacionais > 0
+                && Array.isArray(resultado.alertasAgrupados)
+                && resultado.alertasAgrupados.length > 0) {
                 const listaAlertas = renderResumoOcorrenciasRecargaPad(resultado.alertas || [], {
                     id: 'recarga-pad-alertas-detalhes',
                     classeTexto: 'text-warning-emphasis',
-                    grupos: Array.isArray(resultado.alertasAgrupados) ? resultado.alertasAgrupados : null
+                    grupos: resultado.alertasAgrupados
                 });
                 alertaAvisosHtml = `
                     <div class="alert alert-warning mb-3">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        <strong>Alertas de Processamento (${resultado.totalAlertas ?? resultado.alertas?.length ?? 0}):</strong>
+                        <strong>Alertas de Processamento (${totalAlertasOperacionais}):</strong>
                         ${listaAlertas}
                     </div>
                 `;
@@ -16028,6 +16044,27 @@ window.abrirFormalizacaoProfor = () => toggleView('formalizacao');
 window.abrirDiagnosticoOuvidorias = () => toggleView('diagnostico-ouvidorias');
 window.abrirStatusSistema = () => toggleView('status-sistema');
 window.abrirRevisaoDivergencias = () => toggleView('revisao-divergencias');
+window.abrirRevisaoPadParaConvenio = async (uf, convenio) => {
+    await toggleView('revisao-divergencias');
+    try {
+        const ufNormalizada = String(uf || '').trim().toUpperCase();
+        const convenioTexto = String(convenio || '').trim();
+        const ufsDisponiveis = revisoesPlanoPadEstado.dados?.ufs || [];
+        if (ufNormalizada && ufsDisponiveis.includes(ufNormalizada)) {
+            revisoesPlanoPadEstado.ufSelecionada = ufNormalizada;
+            inicializarExpandidosRevisaoPad(ufNormalizada);
+        }
+        if (convenioTexto) {
+            revisoesPlanoPadEstado.filtros.texto = convenioTexto;
+        }
+        revisoesPlanoPadEstado.editorParentId = null;
+        atualizarRevisoesPlanoPadUI();
+        const input = document.getElementById('revisao-pad-filtro-texto');
+        if (input && convenioTexto) input.value = convenioTexto;
+    } catch (erro) {
+        console.warn('Falha ao pré-filtrar Revisões PAD por convênio:', erro);
+    }
+};
 window.abrirEditorExecucaoFaf2021 = abrirEditorExecucaoFaf2021;
 window.fecharEditorExecucaoFaf2021 = fecharEditorExecucaoFaf2021;
 window.salvarExecucaoFaf2021 = salvarExecucaoFaf2021;

@@ -115,6 +115,34 @@ function agruparAlertasPorTipo(alertas) {
   return Array.from(grupos.values()).sort((a, b) => b.total - a.total || a.tipo.localeCompare(b.tipo));
 }
 
+// Alertas de auditoria/comparação/valores não pertencem à recarga operacional.
+// A recarga apenas reconstroi o estado atual a partir do cache; mudanças de
+// valor, saldo, quantidade, descrição ou supressão de item são esperadas no
+// fluxo Transferegov e são investigadas exclusivamente na tela
+// "Revisões PAD — Plano de Aplicação Detalhado".
+const TIPOS_ALERTA_AUDITORIA_SUPRIMIDOS = new Set([
+  "item_conhecido_ausente_no_pad",
+  "item_suprimido_historico",
+  "item_conhecido_nao_apto",
+  "item_conhecido_nao_apto_usado",
+  "quantidade_valor_unitario_inconsistente",
+  "saldo_inconsistente",
+  "saldo_residual_nao_setorializado",
+  "saldo_residual_natureza_sem_rateio_memoria",
+  "equivalencia_por_diacritico_saneada_automaticamente",
+  "item_pad_coincide_apenas_por_descricao_normalizada",
+  "item_pad_sem_rateio",
+  "descricao_original_divergente_da_memoria_rateio",
+  "natureza_divergente",
+  "total_geral_divergente",
+  "valor_previsto_invalido",
+  "valor_executado_invalido",
+]);
+
+function ehAlertaAuditoriaSuprimido(tipo) {
+  return TIPOS_ALERTA_AUDITORIA_SUPRIMIDOS.has(tipo);
+}
+
 // Pendências revisáveis não devem bloquear a recarga operacional.
 // São redirecionadas para `pendenciasRevisao` e tratadas na tela
 // "Revisões PAD — Plano de Aplicação Detalhado".
@@ -137,6 +165,32 @@ const TIPOS_PENDENCIA_REVISAO = new Set([
 
 function ehPendenciaRevisao(tipo) {
   return TIPOS_PENDENCIA_REVISAO.has(tipo);
+}
+
+// Agrupa pendências por convênio + UF para exibir na tela de recarga apenas
+// "Convênio NNN — UF: X item(ns)". Não inclui auditoria, valores nem histórico.
+function agruparPendenciasPorConvenioUf(pendencias) {
+  const grupos = new Map();
+  for (const item of pendencias || []) {
+    const numeroConvenio = item.numeroConvenio || item.instrumento || null;
+    const uf = item.uf ? String(item.uf).trim().toUpperCase() : "";
+    const chave = `${numeroConvenio || "sem_convenio"}::${uf || "sem_uf"}`;
+    if (!grupos.has(chave)) {
+      grupos.set(chave, {
+        numeroConvenio,
+        uf: uf || null,
+        totalItens: 0,
+      });
+    }
+    grupos.get(chave).totalItens += 1;
+  }
+  return Array.from(grupos.values())
+    .sort((a, b) => {
+      const ca = String(a.numeroConvenio || "");
+      const cb = String(b.numeroConvenio || "");
+      if (ca !== cb) return ca.localeCompare(cb);
+      return String(a.uf || "").localeCompare(String(b.uf || ""));
+    });
 }
 
 function montarResumoBase({ dataHora, leitura, conferencia }) {
@@ -172,6 +226,8 @@ function montarResumoBase({ dataHora, leitura, conferencia }) {
     pendenciasRevisao: [],
     alertasAgrupados: [],
     pendenciasRevisaoAgrupadas: [],
+    pendenciasRevisaoResumo: [],
+    pendenciasRevisaoMensagem: "",
     planoAplicacaoReconstruido: [],
     caminhosRelatorios: {
       recargaJson: RELATORIO_JSON,
@@ -358,17 +414,9 @@ function carregarPadsOperacional(opcoes = {}) {
       }));
     }
 
-    for (const item of conferencia.itensConhecidosAusentesNoPad || []) {
-      resultado.alertas.push(montarRegistro({
-        tipo: "item_suprimido_historico",
-        nivel: "aviso",
-        numeroConvenio: item.numeroConvenio,
-        uf: item.uf,
-        descricao: item.descricaoOriginalReferencia,
-        chaveItem: item.chaveItem,
-        detalhe: "Item da memória não veio no PAD atual; tratado como suprimido histórico.",
-      }));
-    }
+    // Itens suprimidos historicamente são esperados quando o PAD atual muda no
+    // Transferegov. Não geram alerta na recarga operacional — apenas contabilizam
+    // a métrica `itensSuprimidos` para fins informativos.
 
     for (const instrumento of conferencia.instrumentosNaoEncontradosNaCarteira || []) {
       registrarOcorrencia(montarRegistro({
@@ -378,16 +426,26 @@ function carregarPadsOperacional(opcoes = {}) {
       }));
     }
 
+    // Remove alertas de auditoria/comparação/valores antes de expor o payload.
+    // A recarga não audita variação de valores nem rastreia histórico — isso
+    // pertence à tela Revisões PAD.
+    resultado.alertas = (resultado.alertas || []).filter((a) => !ehAlertaAuditoriaSuprimido(a?.tipo));
+    const alertasConferenciaFiltrados = (conferencia.alertas || []).filter((a) => !ehAlertaAuditoriaSuprimido(a?.tipo));
+
     resultado.linhasReconstruidas = resultado.planoAplicacaoReconstruido.length;
     resultado.conveniosReconstruidos = conveniosReconstruidos.size;
     resultado.totalLinhasReconstruidas = resultado.linhasReconstruidas;
     resultado.totalConveniosReconstruidos = resultado.conveniosReconstruidos;
     resultado.totalItensComRateioAplicado = resultado.rateiosAplicados;
     resultado.totalImpedimentos = resultado.impedimentos.length;
-    resultado.totalAlertas = resultado.alertas.length;
+    resultado.totalAlertas = resultado.alertas.length + alertasConferenciaFiltrados.length;
     resultado.totalPendenciasRevisao = resultado.pendenciasRevisao.length;
-    resultado.alertasAgrupados = agruparAlertasPorTipo([...resultado.alertas, ...(conferencia.alertas || [])]);
+    resultado.alertasAgrupados = agruparAlertasPorTipo([...resultado.alertas, ...alertasConferenciaFiltrados]);
     resultado.pendenciasRevisaoAgrupadas = agruparAlertasPorTipo(resultado.pendenciasRevisao);
+    resultado.pendenciasRevisaoResumo = agruparPendenciasPorConvenioUf(resultado.pendenciasRevisao);
+    resultado.pendenciasRevisaoMensagem = resultado.totalPendenciasRevisao
+      ? `${resultado.totalPendenciasRevisao} ${resultado.totalPendenciasRevisao === 1 ? "item pendente" : "itens pendentes"} de classificação/rateio`
+      : "";
     // Sucesso técnico: cache válido, leitura completa e reconstrução finalizada.
     // Pendências revisáveis (item novo sem rateio, divergências, suprimidos) não
     // bloqueiam a recarga — são tratadas na tela Revisões PAD. Publicação segue
@@ -441,6 +499,8 @@ function carregarPadsOperacional(opcoes = {}) {
       pendenciasRevisao: [],
       alertasAgrupados: [],
       pendenciasRevisaoAgrupadas: [],
+      pendenciasRevisaoResumo: [],
+      pendenciasRevisaoMensagem: "",
       planoAplicacaoReconstruido: [],
       caminhosRelatorios: {
         recargaJson: RELATORIO_JSON,

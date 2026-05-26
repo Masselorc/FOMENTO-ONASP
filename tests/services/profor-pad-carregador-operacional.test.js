@@ -22,7 +22,7 @@ function itemPad(overrides = {}) {
   return {
     itemConhecidoId: overrides.itemConhecidoId ?? 1,
     numeroConvenio: overrides.numeroConvenio || "900001",
-    uf: overrides.uf || "DF",
+    uf: overrides.uf === null ? null : (overrides.uf || "DF"),
     descricaoOriginal: overrides.descricaoOriginal || "Item PAD conhecido",
     chaveItem: overrides.chaveItem || "900001::item-pad-conhecido",
     quantidade: overrides.quantidade ?? 2,
@@ -194,7 +194,9 @@ test("item suprimido historico nao gera erro indevido e nao bloqueia recarga", (
 
   assert.equal(resultado.itensSuprimidos, 1);
   assert.equal(resultado.impedimentos.some((item) => item.tipo === "item_suprimido_historico"), false);
-  assert.ok(resultado.alertas.some((item) => item.tipo === "item_suprimido_historico"));
+  // Regra nova: a recarga não exibe item_suprimido_historico como alerta —
+  // mudanças no PAD atual do Transferegov são esperadas e tratadas em Revisões PAD.
+  assert.equal(resultado.alertas.some((item) => item.tipo === "item_suprimido_historico"), false);
   assert.equal(resultado.sucesso, true);
 });
 
@@ -233,6 +235,108 @@ test("sucesso tecnico nao implica em aptoParaPublicacao", () => {
   const resultado = executar();
   assert.equal(resultado.sucesso, true);
   assert.equal(resultado.aptoParaPublicacao, false);
+});
+
+test("recarga nao exibe alertas de auditoria/comparacao/valores", () => {
+  const tiposSuprimidos = [
+    "item_conhecido_ausente_no_pad",
+    "item_suprimido_historico",
+    "item_conhecido_nao_apto",
+    "item_conhecido_nao_apto_usado",
+    "quantidade_valor_unitario_inconsistente",
+    "saldo_inconsistente",
+    "saldo_residual_nao_setorializado",
+    "saldo_residual_natureza_sem_rateio_memoria",
+    "equivalencia_por_diacritico_saneada_automaticamente",
+    "item_pad_coincide_apenas_por_descricao_normalizada",
+    "item_pad_sem_rateio",
+  ];
+  const alertasFake = tiposSuprimidos.map((tipo) => ({
+    tipo,
+    nivel: "aviso",
+    numeroConvenio: "900001",
+    uf: "DF",
+    detalhe: `Alerta de auditoria ${tipo}`,
+  }));
+
+  const resultado = executar({
+    conferencia: conferencia({
+      alertas: alertasFake,
+    }),
+  });
+
+  for (const tipo of tiposSuprimidos) {
+    assert.equal(
+      resultado.alertas.some((a) => a.tipo === tipo),
+      false,
+      `alerta ${tipo} não pode aparecer em alertas`,
+    );
+    assert.equal(
+      resultado.alertasAgrupados.some((g) => g.tipo === tipo),
+      false,
+      `alerta ${tipo} não pode aparecer em alertasAgrupados`,
+    );
+  }
+  assert.equal(resultado.totalAlertas, 0);
+  assert.equal(resultado.sucesso, true);
+});
+
+test("pendenciasRevisaoResumo agrupa pendencias por convenio e UF", () => {
+  const novoA = itemPad({ itemConhecidoId: null, numeroConvenio: "937817", uf: "PI", chaveItem: "937817::a" });
+  const novoB = itemPad({ itemConhecidoId: null, numeroConvenio: "938128", uf: "SE", chaveItem: "938128::a" });
+  const resultado = executar({
+    conferencia: conferencia({
+      itensPadReconhecidos: [],
+      itensPadSemRateio: [novoA, novoB],
+      totalItensPadComRateio: 0,
+      totalItensPadSemRateio: 2,
+    }),
+  });
+
+  assert.equal(resultado.totalPendenciasRevisao, 2);
+  assert.match(resultado.pendenciasRevisaoMensagem, /2 itens pendentes/);
+  assert.equal(resultado.pendenciasRevisaoResumo.length, 2);
+  const pi = resultado.pendenciasRevisaoResumo.find((g) => g.numeroConvenio === "937817");
+  const se = resultado.pendenciasRevisaoResumo.find((g) => g.numeroConvenio === "938128");
+  assert.equal(pi.uf, "PI");
+  assert.equal(pi.totalItens, 1);
+  assert.equal(se.uf, "SE");
+  assert.equal(se.totalItens, 1);
+});
+
+test("pendencias do mesmo convenio/UF colapsam em uma linha com totalItens 2", () => {
+  const a = itemPad({ itemConhecidoId: null, numeroConvenio: "937817", uf: "PI", chaveItem: "937817::a", descricaoOriginal: "Item A" });
+  const b = itemPad({ itemConhecidoId: null, numeroConvenio: "937817", uf: "PI", chaveItem: "937817::b", descricaoOriginal: "Item B" });
+  const resultado = executar({
+    conferencia: conferencia({
+      itensPadReconhecidos: [],
+      itensPadSemRateio: [a, b],
+      totalItensPadComRateio: 0,
+      totalItensPadSemRateio: 2,
+    }),
+  });
+
+  assert.equal(resultado.pendenciasRevisaoResumo.length, 1);
+  assert.equal(resultado.pendenciasRevisaoResumo[0].numeroConvenio, "937817");
+  assert.equal(resultado.pendenciasRevisaoResumo[0].uf, "PI");
+  assert.equal(resultado.pendenciasRevisaoResumo[0].totalItens, 2);
+});
+
+test("pendencia sem UF aparece sem quebrar (uf=null) no resumo", () => {
+  const semUf = itemPad({ itemConhecidoId: null, numeroConvenio: "999999", uf: null, chaveItem: "999999::sem-uf" });
+  const resultado = executar({
+    conferencia: conferencia({
+      itensPadReconhecidos: [],
+      itensPadSemRateio: [semUf],
+      totalItensPadComRateio: 0,
+      totalItensPadSemRateio: 1,
+    }),
+  });
+
+  assert.equal(resultado.pendenciasRevisaoResumo.length, 1);
+  assert.equal(resultado.pendenciasRevisaoResumo[0].numeroConvenio, "999999");
+  assert.equal(resultado.pendenciasRevisaoResumo[0].uf, null);
+  assert.equal(resultado.pendenciasRevisaoResumo[0].totalItens, 1);
 });
 
 test("origem antiga, comparacao antiga e snapshot nao sao chamados pelo servico", () => {
