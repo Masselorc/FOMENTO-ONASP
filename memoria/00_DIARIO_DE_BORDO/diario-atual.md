@@ -7561,3 +7561,17 @@ Logs operacionais gravados:
 - Preservacoes: sem reverter cache, sem refazer extracao, sem alterar `backend/data/cache`, `backend/data/relatorios`, `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, `package.json`/lock; sem Transferegov, sem DETRU/rendimentos, sem Playwright.
 - Risco: baixo - filtro e aditivo e nao toca dados nem regras de pendencia. A camada de UI cobre payloads legados sem precisar regerar o relatorio JSON.
 - Rollback: `git revert <SHA>` && `git push origin main`.
+
+## 26/05/2026 - PROFOR 2022: normaliza matching pad com memoria de rateio (HTML entities + caixa/acentuacao)
+
+- Branch: `main`.
+- Objetivo: eliminar falsas pendencias 937782/AC e 937265/MS na recarga PAD causadas por diferencas cosmeticas entre o cache atual e a memoria de rateio historica.
+- Causa: 1) item conhecido 107 ("Monitor de led 18,5 ' resolucao 192") foi persistido com entidade HTML `&#039;` na descricao_original_referencia e chave_item — o PAD atual traz a apostrofe literal, entao a chave (literal e normalizada) nao batia; 2) item conhecido 154 ("Meia Militar") tem descricao com M maiusculo no banco e PAD veio com m minusculo. A regra anterior de saneamento por diacritico ainda exigia `dadosMateriaisCompativeis`, que reprovava porque `valor_unitario_referencia` no item conhecido (legado) divergia do PAD vigente.
+- Arquivos: `backend/services/profor-2022/profor-pad-matching-service.js`; `tests/services/profor-pad-matching-normalizacao.test.js` (novo); `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Regra de normalizacao: nova helper `decodificarEntidadesHtmlBasicas` (decodifica `&#039;`, `&apos;`, `&quot;`, `&amp;`, `&nbsp;`, `&lt;`, `&gt;`); aplicada na construcao da chave de descricao original do PAD e na re-indexacao das chaves normalizadas dos itens conhecidos do banco; nova helper `diferencaApenasCosmetica` (decode HTML + strip diacritico + caixa + espacos) substitui o criterio `diferencaApenasAcentuacaoOuDiacritico + dadosMateriaisCompativeis` no fallback "chave normalizada bate, descricao original diverge". Quando a chave normalizada coincide e a divergencia da descricao original e cosmetica, o item PAD e pareado com o item conhecido sem exigir compatibilidade material (que dependia de `valor_unitario_referencia` defasado).
+- Itens nao alterados: o criterio de pareamento real (chave normalizada) continua estrito; diferenca real de descricao (ex.: "Monitor 18,5'" vs "Monitor 24'") continua gerando pendencia.
+- Testes: 9 novos em `profor-pad-matching-normalizacao.test.js`. Suites existentes mantidas: carregador 15/15, recarga-cache-transferegov 12/12, origem-reconstrucao 31/31. Total 67/67 OK.
+- Validacoes: `node --check` OK nos 3 servicos PAD; `node --check` OK no novo teste; `npm run validar:syntax` OK (105 arquivos da lista). `git diff --check` limpo (apenas warnings CRLF em arquivos nao versionados).
+- Preservacoes: sem alterar banco por SQL direto, sem alterar `backend/data/cache`, `backend/data/relatorios`, `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, `package.json`/lock, `backend/server.js`. Sem Transferegov, sem DETRU/rendimentos, sem Playwright. Validacao funcional manual: reiniciar servidor, Ctrl+F5, Sistema, "Atualizar PADs" — 937782/AC e 937265/MS devem deixar de aparecer como pendencia.
+- Risco: baixo — decodificacao HTML e aditiva (so adiciona pareamentos perdidos), saneamento cosmetico exige coincidencia da chave normalizada (segue exigindo conv+descricao normalizada igual).
+- Rollback: `git revert <SHA>` && `git push origin main`.

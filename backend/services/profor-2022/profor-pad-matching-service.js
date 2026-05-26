@@ -31,9 +31,24 @@ function limparDescricaoOriginalConferencia(valor) {
   return String(valor ?? "").replace(/\s+/g, " ").trim();
 }
 
+// Entidades HTML basicas persistidas em descricoes historicas
+// (ex.: "&#039;" gravado no banco em vez da apostrofe literal "'").
+// Decodificar antes do matching evita falsa pendencia por mero residuo
+// de import historico.
+function decodificarEntidadesHtmlBasicas(valor) {
+  return String(valor ?? "")
+    .replace(/&#0?39;/g, "'")
+    .replace(/&apos;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&amp;/gi, "&");
+}
+
 function criarChaveDescricaoOriginal(numeroConvenio, descricaoOriginal) {
   const numero = normalizarNumeroConvenio(numeroConvenio);
-  const descricao = limparDescricaoOriginalConferencia(descricaoOriginal);
+  const descricao = limparDescricaoOriginalConferencia(decodificarEntidadesHtmlBasicas(descricaoOriginal));
   return numero && descricao ? `${numero}::${descricao}` : null;
 }
 
@@ -105,9 +120,21 @@ function carregarItensConhecidos() {
 
   for (const linha of linhas) {
     const valorUnitario = Number(linha.valor_unitario_referencia);
+    // Recomputa a chave normalizada do banco aplicando decodificacao de
+    // entidades HTML basicas, para tolerar residuos de import historico
+    // (ex.: "&#039;" em vez da apostrofe "'").
+    const descricaoOriginalReferenciaDecodificada = decodificarEntidadesHtmlBasicas(linha.descricao_original_referencia);
+    const numeroConvenioMemoria = normalizarNumeroConvenio(linha.numero_convenio);
+    const chaveNormalizadaRecomputada = numeroConvenioMemoria
+      ? criarChaveItemRateioProfor(
+          numeroConvenioMemoria,
+          normalizarDescricaoRateioProfor(descricaoOriginalReferenciaDecodificada)
+        )
+      : linha.chave_item;
     const item = {
       id: linha.id,
-      chaveItem: inlineChaveItem(linha.chave_item),
+      chaveItem: inlineChaveItem(chaveNormalizadaRecomputada || linha.chave_item),
+      chaveItemOriginal: linha.chave_item,
       chaveDescricaoOriginal: criarChaveDescricaoOriginal(linha.numero_convenio, linha.descricao_original_referencia),
       numeroConvenio: linha.numero_convenio,
       descricaoNormalizada: linha.descricao_normalizada,
@@ -204,6 +231,26 @@ function diferencaApenasAcentuacaoOuDiacritico(a, b) {
       .replace(/[\u0300-\u036f]/g, "");
   };
   return stripDiacritics(cleanA).toLowerCase() === stripDiacritics(cleanB).toLowerCase();
+}
+
+// Considera dois textos equivalentes se diferem apenas por entidade HTML
+// basica, caixa, acentuacao/diacriticos ou espacos multiplos. Usado para
+// evitar falsa pendencia quando a descricao original do banco e do PAD
+// coincidem semanticamente.
+function normalizarDescricaoParaComparacaoCosmetica(valor) {
+  return decodificarEntidadesHtmlBasicas(valor)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function diferencaApenasCosmetica(a, b) {
+  const cleanA = String(a ?? "").replace(/\s+/g, " ").trim();
+  const cleanB = String(b ?? "").replace(/\s+/g, " ").trim();
+  if (cleanA === cleanB) return false;
+  return normalizarDescricaoParaComparacaoCosmetica(cleanA) === normalizarDescricaoParaComparacaoCosmetica(cleanB);
 }
 
 function mapearNatureza(nat) {
@@ -304,7 +351,11 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
 
   for (const item of leituraPad.itens) {
     const numeroConvenio = normalizarNumeroConvenio(item.instrumento);
-    const descricaoNormalizada = normalizarDescricaoRateioProfor(item.descricao);
+    // Decodifica entidades HTML antes de normalizar para garantir que itens
+    // do PAD que vieram com apostrofe literal ("'") batem com memoria
+    // gravada historicamente com "&#039;" e vice-versa.
+    const descricaoPadDecodificada = decodificarEntidadesHtmlBasicas(item.descricao);
+    const descricaoNormalizada = normalizarDescricaoRateioProfor(descricaoPadDecodificada);
     const chaveItem = numeroConvenio && descricaoNormalizada
       ? criarChaveItemRateioProfor(numeroConvenio, descricaoNormalizada)
       : null;
@@ -325,10 +376,13 @@ function conferirItensPadComRateiosProfor2022(opcoes = {}) {
 
     let saneadoPorDiacritico = false;
     if (!itemConhecido && itemComMesmaChaveNormalizada) {
-      if (
-        diferencaApenasAcentuacaoOuDiacritico(itemPad.descricaoOriginal, itemComMesmaChaveNormalizada.descricaoOriginalReferencia) &&
-        dadosMateriaisCompativeis(itemPad, itemComMesmaChaveNormalizada)
-      ) {
+      // Quando a chave normalizada (convenio + descricao normalizada) coincide,
+      // diferenca residual na descricao original por entidade HTML, caixa,
+      // acentuacao ou espacos e considerada apenas cosmetica e nao deve gerar
+      // pendencia. Nao exigimos `dadosMateriaisCompativeis` aqui porque
+      // `valor_unitario_referencia` no item conhecido pode estar defasado em
+      // relacao ao rateio ativo mais recente.
+      if (diferencaApenasCosmetica(itemPad.descricaoOriginal, itemComMesmaChaveNormalizada.descricaoOriginalReferencia)) {
         itemConhecido = itemComMesmaChaveNormalizada;
         saneadoPorDiacritico = true;
 
@@ -514,6 +568,9 @@ module.exports = {
   conferirItensPadComRateiosProfor2022,
   salvarConferenciaPadRateios,
   diferencaApenasAcentuacaoOuDiacritico,
+  diferencaApenasCosmetica,
+  decodificarEntidadesHtmlBasicas,
+  normalizarDescricaoParaComparacaoCosmetica,
   dadosMateriaisCompativeis,
   naturezasCompativeis,
 };
