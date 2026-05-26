@@ -102,7 +102,7 @@ test("instrumento duplicado gera impedimento", () => {
   assert.ok(resultado.impedimentos.some((item) => item.tipo === "arquivo_duplicado_para_mesmo_instrumento"));
 });
 
-test("item novo sem rateio gera pendencia operacional", () => {
+test("item novo sem rateio vira pendencia de revisao e nao impede a recarga", () => {
   const novo = itemPad({ itemConhecidoId: null, descricaoOriginal: "Item novo", chaveItem: "900001::item-novo" });
   const resultado = executar({
     conferencia: conferencia({
@@ -114,7 +114,10 @@ test("item novo sem rateio gera pendencia operacional", () => {
   });
 
   assert.equal(resultado.itensNovosSemRateio, 1);
-  assert.ok(resultado.impedimentos.some((item) => item.tipo === "item_novo_sem_rateio_memorizado"));
+  assert.equal(resultado.impedimentos.some((item) => item.tipo === "item_novo_sem_rateio_memorizado"), false);
+  assert.ok(resultado.pendenciasRevisao.some((item) => item.tipo === "item_novo_sem_rateio_memorizado"));
+  assert.equal(resultado.sucesso, true);
+  assert.equal(resultado.aptoParaPublicacao, false);
 });
 
 test("item_novo_sem_rateio_memorizado preserva quantidade, valor e natureza do PAD", () => {
@@ -137,17 +140,17 @@ test("item_novo_sem_rateio_memorizado preserva quantidade, valor e natureza do P
     }),
   });
 
-  const impedimento = resultado.impedimentos.find((i) => i.tipo === "item_novo_sem_rateio_memorizado");
-  assert.ok(impedimento);
-  assert.equal(impedimento.quantidade, 2);
-  assert.equal(impedimento.valorUnitario, 6552.67);
-  assert.equal(impedimento.valorTotalPrevisto, 13105.34);
-  assert.equal(impedimento.natureza, "CAPITAL");
-  assert.equal(impedimento.codigoNaturezaDespesa, "44905200");
-  assert.equal(impedimento.descricao, "Computador Desktop completo");
+  const pendencia = resultado.pendenciasRevisao.find((i) => i.tipo === "item_novo_sem_rateio_memorizado");
+  assert.ok(pendencia);
+  assert.equal(pendencia.quantidade, 2);
+  assert.equal(pendencia.valorUnitario, 6552.67);
+  assert.equal(pendencia.valorTotalPrevisto, 13105.34);
+  assert.equal(pendencia.natureza, "CAPITAL");
+  assert.equal(pendencia.codigoNaturezaDespesa, "44905200");
+  assert.equal(pendencia.descricao, "Computador Desktop completo");
 });
 
-test("item_pad_sem_rateio_memorizado preserva quantidade, valor e natureza do PAD", () => {
+test("item_pad_sem_rateio_memorizado vira pendencia de revisao preservando dados do PAD", () => {
   const item = itemPad({
     itemConhecidoId: 7,
     descricaoOriginal: "Curso de Edição de Vídeos",
@@ -166,15 +169,17 @@ test("item_pad_sem_rateio_memorizado preserva quantidade, valor e natureza do PA
     }),
   });
 
-  const impedimento = resultado.impedimentos.find((i) => i.tipo === "item_pad_sem_rateio_memorizado");
-  assert.ok(impedimento);
-  assert.equal(impedimento.quantidade, 1);
-  assert.equal(impedimento.valorUnitario, 14700);
-  assert.equal(impedimento.natureza, "CUSTEIO");
-  assert.equal(impedimento.codigoNaturezaDespesa, "33903999");
+  assert.equal(resultado.impedimentos.some((i) => i.tipo === "item_pad_sem_rateio_memorizado"), false);
+  const pendencia = resultado.pendenciasRevisao.find((i) => i.tipo === "item_pad_sem_rateio_memorizado");
+  assert.ok(pendencia);
+  assert.equal(pendencia.quantidade, 1);
+  assert.equal(pendencia.valorUnitario, 14700);
+  assert.equal(pendencia.natureza, "CUSTEIO");
+  assert.equal(pendencia.codigoNaturezaDespesa, "33903999");
+  assert.equal(resultado.sucesso, true);
 });
 
-test("item suprimido historico nao gera erro indevido", () => {
+test("item suprimido historico nao gera erro indevido e nao bloqueia recarga", () => {
   const resultado = executar({
     conferencia: conferencia({
       itensConhecidosAusentesNoPad: [{
@@ -190,6 +195,7 @@ test("item suprimido historico nao gera erro indevido", () => {
   assert.equal(resultado.itensSuprimidos, 1);
   assert.equal(resultado.impedimentos.some((item) => item.tipo === "item_suprimido_historico"), false);
   assert.ok(resultado.alertas.some((item) => item.tipo === "item_suprimido_historico"));
+  assert.equal(resultado.sucesso, true);
 });
 
 test("rateio memorizado e aplicado", () => {
@@ -200,7 +206,7 @@ test("rateio memorizado e aplicado", () => {
   assert.equal(resultado.planoAplicacaoReconstruido[0].area, "OUVIDORIA");
 });
 
-test("distribuicao igual provisoria nao e usada", () => {
+test("distribuicao igual provisoria vira pendencia de revisao (nao impedimento tecnico)", () => {
   let geradorChamado = false;
   const resultado = executar({
     rateios: rateiosMemoria([{ area: "OUVIDORIA", natureza: "CUSTEIO" }]),
@@ -211,7 +217,22 @@ test("distribuicao igual provisoria nao e usada", () => {
   });
 
   assert.equal(geradorChamado, false);
-  assert.ok(resultado.impedimentos.some((item) => item.tipo === "rateio_memorizado_sem_peso_operacional"));
+  assert.equal(resultado.impedimentos.some((item) => item.tipo === "rateio_memorizado_sem_peso_operacional"), false);
+  assert.ok(resultado.pendenciasRevisao.some((item) => item.tipo === "rateio_memorizado_sem_peso_operacional"));
+  assert.equal(resultado.sucesso, true);
+});
+
+test("cache invalido / contagem de arquivos divergente continua como impedimento tecnico", () => {
+  const resultado = executar({ leitura: leitura({ totalArquivosEncontrados: 13, totalRelatoriosLidos: 13 }) });
+  assert.ok(resultado.impedimentos.some((i) => i.tipo === "quantidade_arquivos_pad_invalida"));
+  assert.equal(resultado.sucesso, false);
+  assert.equal(resultado.aptoParaPublicacao, false);
+});
+
+test("sucesso tecnico nao implica em aptoParaPublicacao", () => {
+  const resultado = executar();
+  assert.equal(resultado.sucesso, true);
+  assert.equal(resultado.aptoParaPublicacao, false);
 });
 
 test("origem antiga, comparacao antiga e snapshot nao sao chamados pelo servico", () => {

@@ -1,5 +1,23 @@
 # Diário de bordo
 
+## 25/05/2026 — PROFOR 2022: separa pendências de revisão da recarga operacional PAD e atualiza interface
+
+- Objetivo: corrigir a recarga operacional dos PADs após a integração com o cache Transferegov para que pendências revisáveis (item novo sem rateio, item suprimido, divergências de quantidade/valor, rateio sem peso etc.) não bloqueiem a recarga como impedimento técnico, e atualizar a interface da tela Sistema para refletir o fluxo atual (cache Transferegov validado), removendo textos antigos sobre substituição dos 15 arquivos Excel.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-carregador-operacional-service.js`: nova lista `TIPOS_PENDENCIA_REVISAO`, helper `registrarOcorrencia` que redireciona pendências revisáveis para `pendenciasRevisao` (estrutura nova) preservando todos os dados do item (convênio, UF, descrição, chave, quantidade, valor unitário, valor previsto/executado, natureza, origem). Sucesso técnico passa a depender só de impedimentos técnicos reais. `aptoParaPublicacao` permanece sempre `false`. Markdown e estrutura do JSON expostos agora incluem seção/listagem de pendências de revisão.
+  - `frontend/js/app.js`: bloco `renderBlocoRecargaOperacionalPadStatusSistema` reescrito (título, subtítulo, bullets, card lateral, texto do botão); confirmação do botão atualizada; `renderResultadoRecargaPad` reorganizado para: sucesso técnico → verde, pendências revisáveis → azul/informativo (orientando a tratar na tela Revisões PAD), alertas de processamento → amarelo, impedimentos técnicos → vermelho. Nova métrica "Pendências p/ revisão" na grid.
+  - `tests/services/profor-pad-carregador-operacional.test.js`: testes ajustados para a nova regra (item novo, item PAD sem rateio, distribuição igual e rateio sem peso viram pendência de revisão; sucesso técnico não implica `aptoParaPublicacao=true`; cache inválido / contagem de arquivos divergente continua impedimento técnico).
+  - `tests/services/profor-pad-origem-reconstrucao.test.js`: dois testes novos garantindo que a UI não mais menciona substituir os 15 Excel/`Planilhas/profor-2022/instrumentos` e que cita explicitamente o cache Transferegov validado e a tela Revisões PAD.
+  - `tests/services/profor-pad-recarga-cache-transferegov.test.js`: comentário do teste 8-11 ajustado para refletir o serviço legado.
+  - `memoria/00_DIARIO_DE_BORDO/diario-atual.md`: este registro.
+- Correção de severidade: pendências revisáveis no carregador v2 (serviço acionado pelo botão "Recarregar PADs do cache") agora vão para `pendenciasRevisao` e o resultado é `sucesso=true` mesmo com pendências, mantendo `aptoParaPublicacao=false`. Cache ausente/inválido, contagem de arquivos != 15 e erros técnicos continuam impedindo a recarga.
+- Atualização da interface: subtítulo e bullets descrevem o fluxo via cache local validado, sem referência ao Excel antigo; card lateral reforça o encaminhamento de classificação/rateio/itens novos para a tela "Revisões PAD"; mensagens de status do resultado redesenhadas para refletir o novo modelo (sucesso técnico vs pendências revisáveis vs impedimento técnico real).
+- Validações executadas: `git diff --check` (apenas warnings CRLF do Windows), `node --check` nos cinco serviços PAD listados e em `frontend/js/app.js`, `node --test tests/services/profor-pad-carregador-operacional.test.js` (11/11), `node --test tests/services/profor-pad-recarga-cache-transferegov.test.js` (10/10), `node --test tests/services/profor-pad-origem-reconstrucao.test.js` (30/30), `npm run validar:syntax` (105 arquivos OK).
+- Preservações: sem publicação, sem alterar `frontend/data/publicados`, sem alterar `.env`, sem alterar banco SQLite/WAL/SHM, sem criar migration, sem acessar Transferegov, sem atualizar cache, sem acionar DETRU/rendimentos, sem rodar Playwright/E2E. Comparador `compararPlanosPadDryRun` não foi tocado — o carregador v2 já não o chamava.
+- Arquivos locais fora do commit: `backend/data/relatorios/*` (relatórios dry-run) e `backend/data/cache/*` (cache Transferegov local).
+- Risco: baixo. A mudança é de classificação/exibição; nenhum dado é descartado, todos os campos do item são preservados nas pendências, e a regra de bloqueio de publicação permanece intacta.
+- Rollback: `git revert <SHA_DO_COMMIT>` seguido de `git push origin main`.
+
 ## 25/05/2026 — PROFOR 2022: integração com recarga operacional PAD Transferegov
 
 - Objetivo: executar a microetapa 8.3 para integrar a recarga operacional PAD ao cache bruto validado do Transferegov.

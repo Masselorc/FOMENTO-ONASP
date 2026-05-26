@@ -204,12 +204,12 @@ test("8-11. item novo, suprimido, valor alterado e divergência histórica não 
   // Alterar valor e descrição de itens para simular novos itens e valores divergentes
   cache.convenios[0].itens[0].descricao = "Item Totalmente Novo Que Nao Existe No BD";
   cache.convenios[0].itens[0].valorTotalPrevisto = 9999.0;
-  
+
   // Recalcular hashes para integridade
   const hash = crypto.createHash("sha256");
   hash.update(JSON.stringify(cache.convenios[0].itens));
   cache.convenios[0].hashConteudo = hash.digest("hex");
-  
+
   const hashes = cache.convenios.map((c) => c.hashConteudo).sort();
   const hashObj = crypto.createHash("sha256");
   hashObj.update(hashes.join("|"));
@@ -219,9 +219,10 @@ test("8-11. item novo, suprimido, valor alterado e divergência histórica não 
 
   try {
     const resultado = await recarregarPadsOperacional({ repoRoot: tmpDir, usarExcelLegado: false });
-    // Recarga deve rodar e retornar os itens
+    // Recarga deve rodar e retornar os itens — o fluxo (recarregarPadsOperacional)
+    // continua reportando essas divergências como impedimentos do plano antigo
+    // (não é o serviço do botão "Recarregar PADs do cache", que é o carregador v2).
     assert.equal(resultado.totalRelatoriosLidos, 15);
-    // Deve registrar impedimentos operacionais, mas o fluxo de recarga em si terminou com sucesso de execução
     assert.ok(resultado.impedimentos.length > 0);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });

@@ -357,3 +357,34 @@ test("Tela de recarga PAD continua vinculada a status-sistema e recarrega a Home
   assert.match(appCode, /id=\"secao-recarga-pad-operacional\"/i);
   assert.match(appCode, /await garantirDadosBaseAplicacao\(\);/i);
 });
+
+test("UI da recarga PAD nao fala mais em substituir os 15 Excel nem em fluxo Excel antigo", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const appPath = path.join(repoRoot, "frontend/js/app.js");
+  const appCode = fs.readFileSync(appPath, "utf8");
+
+  const blocoInicio = appCode.indexOf("renderBlocoRecargaOperacionalPadStatusSistema");
+  assert.notEqual(blocoInicio, -1, "Bloco da UI da recarga PAD deve existir");
+  const trechoBloco = appCode.slice(blocoInicio, blocoInicio + 4000);
+
+  assert.equal(trechoBloco.includes("Substitua os 15"), false, "UI nao deve instruir a substituir os 15 Excel");
+  assert.equal(trechoBloco.includes("PADs Excel atuais"), false, "UI nao deve falar em PADs Excel atuais");
+  assert.equal(trechoBloco.includes("Planilhas/profor-2022/instrumentos"), false, "UI nao deve referenciar pasta Excel antiga");
+  assert.equal(trechoBloco.includes("Fluxo operacional limpo para reconstruir"), false, "UI nao deve manter texto antigo");
+});
+
+test("UI da recarga PAD menciona cache Transferegov validado e tela Revisoes PAD", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const appPath = path.join(repoRoot, "frontend/js/app.js");
+  const appCode = fs.readFileSync(appPath, "utf8");
+
+  const blocoInicio = appCode.indexOf("renderBlocoRecargaOperacionalPadStatusSistema");
+  const trechoBloco = appCode.slice(blocoInicio, blocoInicio + 4000);
+
+  assert.ok(/cache.*Transferegov.*validado/i.test(trechoBloco) || /cache Transferegov validado/i.test(trechoBloco),
+    "UI deve mencionar cache Transferegov validado");
+  assert.ok(/profor-2022-pad-transferegov-cache\.json/.test(trechoBloco),
+    "UI deve apontar o arquivo do cache local");
+  assert.ok(/Revis(õ|o)es PAD/i.test(trechoBloco),
+    "UI deve orientar revisao pela tela Revisoes PAD");
+});

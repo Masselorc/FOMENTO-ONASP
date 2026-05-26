@@ -115,6 +115,30 @@ function agruparAlertasPorTipo(alertas) {
   return Array.from(grupos.values()).sort((a, b) => b.total - a.total || a.tipo.localeCompare(b.tipo));
 }
 
+// Pendências revisáveis não devem bloquear a recarga operacional.
+// São redirecionadas para `pendenciasRevisao` e tratadas na tela
+// "Revisões PAD — Plano de Aplicação Detalhado".
+const TIPOS_PENDENCIA_REVISAO = new Set([
+  "item_novo_sem_rateio_memorizado",
+  "item_pad_sem_rateio_memorizado",
+  "rateio_memorizado_sem_peso_operacional",
+  "distribuicao_igual_provisoria_bloqueada",
+  "instrumento_fora_da_carteira",
+  "item_conhecido_nao_apto",
+  "item_conhecido_nao_apto_usado",
+  "item_conhecido_sem_rateio_ativo",
+  "item_conhecido_ausente_no_pad",
+  "item_suprimido_historico",
+  "quantidade_valor_unitario_inconsistente",
+  "saldo_inconsistente",
+  "natureza_divergente",
+  "descricao_original_divergente_da_memoria_rateio",
+]);
+
+function ehPendenciaRevisao(tipo) {
+  return TIPOS_PENDENCIA_REVISAO.has(tipo);
+}
+
 function montarResumoBase({ dataHora, leitura, conferencia }) {
   return {
     dataHora,
@@ -140,9 +164,12 @@ function montarResumoBase({ dataHora, leitura, conferencia }) {
     totalItensSuprimidos: Number(conferencia?.resumo?.totalItensConhecidosAusentesNoPad || 0),
     totalImpedimentos: 0,
     totalAlertas: 0,
+    totalPendenciasRevisao: 0,
     impedimentos: [],
     alertas: [],
+    pendenciasRevisao: [],
     alertasAgrupados: [],
+    pendenciasRevisaoAgrupadas: [],
     planoAplicacaoReconstruido: [],
     caminhosRelatorios: {
       recargaJson: RELATORIO_JSON,
@@ -173,16 +200,28 @@ function gerarMarkdown(resultado) {
   linhas.push(`- Itens novos sem rateio: ${resultado.itensNovosSemRateio}`);
   linhas.push(`- Itens suprimidos: ${resultado.itensSuprimidos}`);
   linhas.push("");
-  linhas.push("## Impedimentos");
+  linhas.push("## Impedimentos técnicos");
   if (!resultado.impedimentos.length) {
     linhas.push("");
-    linhas.push("Nenhum impedimento.");
+    linhas.push("Nenhum impedimento técnico.");
   } else {
     linhas.push("");
     linhas.push("| Tipo | Convênio | Detalhe |");
     linhas.push("| --- | --- | --- |");
     for (const item of resultado.impedimentos) {
       linhas.push(`| ${item.tipo || "-"} | ${item.numeroConvenio || "-"} | ${item.detalhe || "-"} |`);
+    }
+  }
+  linhas.push("");
+  linhas.push(`## Pendências para revisão (${resultado.totalPendenciasRevisao || 0})`);
+  linhas.push("");
+  linhas.push("Tratadas na tela Revisões PAD — Plano de Aplicação Detalhado.");
+  if (resultado.pendenciasRevisaoAgrupadas && resultado.pendenciasRevisaoAgrupadas.length) {
+    linhas.push("");
+    linhas.push("| Tipo | Total |");
+    linhas.push("| --- | ---: |");
+    for (const grupo of resultado.pendenciasRevisaoAgrupadas) {
+      linhas.push(`| ${grupo.tipo} | ${grupo.total} |`);
     }
   }
   linhas.push("");
@@ -220,6 +259,17 @@ function carregarPadsOperacional(opcoes = {}) {
     const resultado = montarResumoBase({ dataHora, leitura, conferencia });
     const conveniosReconstruidos = new Set();
 
+    // Classifica como impedimento técnico (bloqueia recarga) ou pendência de
+    // revisão (não bloqueia; vai para a tela Revisões PAD).
+    const registrarOcorrencia = (registro) => {
+      if (ehPendenciaRevisao(registro.tipo)) {
+        const ajustado = { ...registro, nivel: registro.nivel === "impeditivo" ? "pendencia_revisao" : registro.nivel };
+        resultado.pendenciasRevisao.push(ajustado);
+      } else {
+        resultado.impedimentos.push(registro);
+      }
+    };
+
     if (resultado.arquivosEncontrados !== TOTAL_PAD_ESPERADO) {
       resultado.impedimentos.push(montarRegistro({
         tipo: "quantidade_arquivos_pad_invalida",
@@ -235,7 +285,7 @@ function carregarPadsOperacional(opcoes = {}) {
 
     const alertasLeituraImpeditivos = (leitura.alertas || []).filter((alerta) => alerta.nivel === "impeditivo");
     for (const alerta of alertasLeituraImpeditivos) {
-      resultado.impedimentos.push(montarRegistro({
+      registrarOcorrencia(montarRegistro({
         tipo: alerta.tipo || "erro_leitura_pad",
         numeroConvenio: alerta.instrumento || null,
         detalhe: alerta.detalhe || "Alerta impeditivo na leitura PAD.",
@@ -245,7 +295,7 @@ function carregarPadsOperacional(opcoes = {}) {
     for (const item of conferencia.itensPadReconhecidos || []) {
       const rateios = memoriaRateios.get(item.itemConhecidoId) || [];
       if (!rateios.length) {
-        resultado.impedimentos.push(montarRegistro({
+        registrarOcorrencia(montarRegistro({
           tipo: "item_pad_sem_rateio_memorizado",
           numeroConvenio: item.numeroConvenio,
           uf: item.uf,
@@ -257,7 +307,7 @@ function carregarPadsOperacional(opcoes = {}) {
         continue;
       }
       if (!rateioTemPesoOperacional(rateios)) {
-        resultado.impedimentos.push(montarRegistro({
+        registrarOcorrencia(montarRegistro({
           tipo: "rateio_memorizado_sem_peso_operacional",
           numeroConvenio: item.numeroConvenio,
           uf: item.uf,
@@ -273,7 +323,7 @@ function carregarPadsOperacional(opcoes = {}) {
         itemAptoParaUso: item.aptoParaImportacaoFutura !== false,
       });
       if ((linhas.linhas || []).some((linha) => linha.baseRateioValor === "distribuicao_igual" || linha.baseRateioQuantidade === "distribuicao_igual")) {
-        resultado.impedimentos.push(montarRegistro({
+        registrarOcorrencia(montarRegistro({
           tipo: "distribuicao_igual_provisoria_bloqueada",
           numeroConvenio: item.numeroConvenio,
           uf: item.uf,
@@ -285,13 +335,15 @@ function carregarPadsOperacional(opcoes = {}) {
       }
       resultado.planoAplicacaoReconstruido.push(...(linhas.linhas || []));
       resultado.alertas.push(...(linhas.alertasItem || []));
-      resultado.impedimentos.push(...(linhas.impedimentosItem || []));
+      for (const imped of linhas.impedimentosItem || []) {
+        registrarOcorrencia(imped);
+      }
       resultado.rateiosAplicados += 1;
       if (item.numeroConvenio) conveniosReconstruidos.add(item.numeroConvenio);
     }
 
     for (const item of conferencia.itensPadSemRateio || []) {
-      resultado.impedimentos.push(montarRegistro({
+      registrarOcorrencia(montarRegistro({
         tipo: "item_novo_sem_rateio_memorizado",
         numeroConvenio: item.numeroConvenio,
         uf: item.uf,
@@ -317,7 +369,7 @@ function carregarPadsOperacional(opcoes = {}) {
     }
 
     for (const instrumento of conferencia.instrumentosNaoEncontradosNaCarteira || []) {
-      resultado.impedimentos.push(montarRegistro({
+      registrarOcorrencia(montarRegistro({
         tipo: "instrumento_fora_da_carteira",
         numeroConvenio: instrumento.numeroConvenio,
         detalhe: instrumento.detalhe || "Instrumento do PAD não encontrado na carteira monitorada ativa.",
@@ -331,9 +383,15 @@ function carregarPadsOperacional(opcoes = {}) {
     resultado.totalItensComRateioAplicado = resultado.rateiosAplicados;
     resultado.totalImpedimentos = resultado.impedimentos.length;
     resultado.totalAlertas = resultado.alertas.length;
+    resultado.totalPendenciasRevisao = resultado.pendenciasRevisao.length;
     resultado.alertasAgrupados = agruparAlertasPorTipo([...resultado.alertas, ...(conferencia.alertas || [])]);
+    resultado.pendenciasRevisaoAgrupadas = agruparAlertasPorTipo(resultado.pendenciasRevisao);
+    // Sucesso técnico: cache válido, leitura completa e reconstrução finalizada.
+    // Pendências revisáveis (item novo sem rateio, divergências, suprimidos) não
+    // bloqueiam a recarga — são tratadas na tela Revisões PAD. Publicação segue
+    // bloqueada independentemente.
     resultado.sucesso = resultado.totalImpedimentos === 0;
-    resultado.aptoParaUsoLocal = resultado.sucesso;
+    resultado.aptoParaUsoLocal = resultado.sucesso && resultado.totalPendenciasRevisao === 0;
     resultado.aptoParaPublicacao = false;
 
     if (opcoes.salvarRelatorio !== false) salvarRelatorio(resultado, repoRoot);
@@ -363,6 +421,7 @@ function carregarPadsOperacional(opcoes = {}) {
       totalItensSuprimidos: 0,
       totalImpedimentos: 1,
       totalAlertas: 0,
+      totalPendenciasRevisao: 0,
       impedimentos: [
         {
           tipo: erro.codigo || "erro_execucao_recarga",
@@ -377,7 +436,9 @@ function carregarPadsOperacional(opcoes = {}) {
         },
       ],
       alertas: [],
+      pendenciasRevisao: [],
       alertasAgrupados: [],
+      pendenciasRevisaoAgrupadas: [],
       planoAplicacaoReconstruido: [],
       caminhosRelatorios: {
         recargaJson: RELATORIO_JSON,

@@ -808,26 +808,26 @@ function renderKpiCard({
                         <div>
                             <p class="section-eyebrow mb-1">PROFOR 2022</p>
                             <h2>Recarga Operacional dos PADs</h2>
-                            <p class="text-muted mb-0">Fluxo operacional limpo para reconstruir a base local a partir dos 15 PADs Excel atuais.</p>
+                            <p class="text-muted mb-0">Recarrega a visão operacional local a partir do cache PAD Transferegov validado.</p>
                         </div>
                     </div>
                     <div class="row g-3 align-items-start">
                         <div class="col-lg-8">
                             <ul class="mb-3 text-muted small ps-3">
-                                <li>Substitua os 15 arquivos Excel em <code>Planilhas/profor-2022/instrumentos</code>.</li>
-                                <li>Clique em <strong>Recarregar PADs</strong> para ler os arquivos e reconstruir a visão operacional.</li>
-                                <li>Esta ação não publica dados e não consulta DETRU/Transferegov.</li>
-                                <li>Aplica a memória de rateios e classificações por área já existente.</li>
-                                <li>Item novo sem rateio memorizado vira pendência operacional.</li>
-                                <li>Item suprimido no PAD atual é tratado como histórico, sem erro indevido.</li>
+                                <li>Usa o cache local validado em <code>backend/data/cache/profor-2022-pad-transferegov-cache.json</code>.</li>
+                                <li>Não consulta o Transferegov em tempo real e não atualiza o cache.</li>
+                                <li>Não lê automaticamente os arquivos Excel antigos.</li>
+                                <li>Não publica dados e não altera <code>frontend/data/publicados</code>.</li>
+                                <li>Pendências de área, classificação e rateio devem ser tratadas na tela <strong>Revisões PAD</strong>.</li>
+                                <li>Itens novos e itens suprimidos são esperados quando o PAD atual muda — não bloqueiam a recarga.</li>
                             </ul>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="btn-recarregar-pads">
-                                <i class="fas fa-sync-alt me-1"></i> Recarregar PADs
+                                <i class="fas fa-sync-alt me-1"></i> Recarregar PADs do cache
                             </button>
                         </div>
                         <div class="col-lg-4">
                             <div class="alert alert-info small mb-0">
-                                A recarga atualiza apenas relatórios operacionais locais e pendências para saneamento. O plano oficial e os dados publicados permanecem inalterados.
+                                A recarga atualiza a visão operacional local com base no cache Transferegov validado. Ela não publica dados. Pendências de classificação e rateio — incluindo novos itens após atualizações — devem ser tratadas na tela <strong>Revisões PAD</strong>, construída exatamente para validar essas situações.
                             </div>
                         </div>
                     </div>
@@ -4645,7 +4645,7 @@ async function carregarLogoParaPDF() {
         }
 
         async function executarRecargaPadsOperacionalUI() {
-            const confirmado = confirm('Deseja realmente recarregar os 15 PADs de Planilhas/profor-2022/instrumentos? Esta ação reanalisará os dados e atualizará a reconstrução local.');
+            const confirmado = confirm('Deseja recarregar a visão operacional dos PADs a partir do cache Transferegov validado? Esta ação não acessa o Transferegov em tempo real, não lê os Excel antigos e não publica dados.');
             if (!confirmado) return;
 
             const btnRecarregar = document.getElementById('btn-recarregar-pads');
@@ -4771,6 +4771,8 @@ async function carregarLogoParaPDF() {
 
             let alertaStatusHtml = '';
             if (resultado.totalImpedimentos > 0) {
+                // Erro vermelho apenas para falha técnica real (cache ausente/inválido,
+                // erro de leitura, contagem de arquivos divergente, etc.).
                 const listaImpedimentos = renderResumoOcorrenciasRecargaPad(resultado.impedimentos || [], {
                     id: 'recarga-pad-impedimentos-detalhes',
                     classeTexto: 'text-danger'
@@ -4778,29 +4780,39 @@ async function carregarLogoParaPDF() {
                 alertaStatusHtml = `
                     <div class="alert alert-danger mb-3">
                         <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>Recarga concluída com ${resultado.totalImpedimentos} impedimento(s).</strong>
-                        <span>O plano local não está pronto para publicação.</span>
+                        <strong>Falha técnica na recarga (${resultado.totalImpedimentos} impedimento(s)).</strong>
+                        <span>A reconstrução local não foi concluída. Resolva os impedimentos técnicos abaixo antes de tentar novamente.</span>
                         ${listaImpedimentos}
-                    </div>
-                `;
-            } else if (resultado.aptoParaUsoLocal) {
-                let msgPublicacao = '';
-                if (resultado.aptoParaPublicacao) {
-                    msgPublicacao = ' O plano também está <strong>apto para publicação</strong>.';
-                } else {
-                    msgPublicacao = ' A publicação para produção continua <strong>bloqueada por divergências</strong> pendentes ou em revisão.';
-                }
-                alertaStatusHtml = `
-                    <div class="alert alert-success mb-3">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <strong>Sucesso!</strong> A reconstrução local foi atualizada e está pronta para uso.${msgPublicacao}
                     </div>
                 `;
             } else {
                 alertaStatusHtml = `
-                    <div class="alert alert-warning mb-3">
-                        <i class="fas fa-exclamation-circle me-2"></i>
-                        <strong>Aviso:</strong> A recarga foi concluída, mas o plano local não está marcado como apto para uso local.
+                    <div class="alert alert-success mb-3">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Recarga PAD concluída com sucesso técnico.</strong>
+                        <span>A visão operacional local foi reconstruída a partir do cache Transferegov validado. A publicação para produção continua <strong>bloqueada</strong> — pendências para revisão devem ser tratadas na tela <strong>Revisões PAD</strong>.</span>
+                    </div>
+                `;
+            }
+
+            // Pendências revisáveis: itens novos, suprimidos, divergências de
+            // rateio/classificação. Exibidas como alerta informativo, não como erro.
+            let alertaPendenciasHtml = '';
+            const totalPendenciasRevisao = resultado.totalPendenciasRevisao
+                ?? resultado.pendenciasRevisao?.length
+                ?? 0;
+            if (totalPendenciasRevisao > 0) {
+                const listaPendencias = renderResumoOcorrenciasRecargaPad(resultado.pendenciasRevisao || [], {
+                    id: 'recarga-pad-pendencias-detalhes',
+                    classeTexto: 'text-primary',
+                    grupos: Array.isArray(resultado.pendenciasRevisaoAgrupadas) ? resultado.pendenciasRevisaoAgrupadas : null
+                });
+                alertaPendenciasHtml = `
+                    <div class="alert alert-info mb-3">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        <strong>Pendências para revisão (${totalPendenciasRevisao}):</strong>
+                        <span>Trate essas pendências na tela <strong>Revisões PAD — Plano de Aplicação Detalhado</strong>, que foi construída exatamente para validar itens novos, suprimidos e divergências após atualizações.</span>
+                        ${listaPendencias}
                     </div>
                 `;
             }
@@ -4830,7 +4842,8 @@ async function carregarLogoParaPDF() {
                 { rotulo: 'Rateios aplicados', valor: resultado.rateiosAplicados ?? resultado.totalItensComRateioAplicado ?? 0 },
                 { rotulo: 'Itens novos', valor: resultado.itensNovosSemRateio ?? resultado.totalItensNovos ?? 0 },
                 { rotulo: 'Itens suprimidos', valor: resultado.itensSuprimidos ?? resultado.totalItensSuprimidos ?? 0 },
-                { rotulo: 'Itens sem rateio', valor: resultado.totalItensSemRateio ?? resultado.itensNovosSemRateio ?? 0 }
+                { rotulo: 'Itens sem rateio', valor: resultado.totalItensSemRateio ?? resultado.itensNovosSemRateio ?? 0 },
+                { rotulo: 'Pendências p/ revisão', valor: resultado.totalPendenciasRevisao ?? resultado.pendenciasRevisao?.length ?? 0 }
             ];
 
             const gridHtml = `
@@ -4850,6 +4863,7 @@ async function carregarLogoParaPDF() {
                 <div class="mt-3">
                     <p class="text-muted small mb-2">Última execução: <strong>${escapeHtml(dataHoraFmt)}</strong></p>
                     ${alertaStatusHtml}
+                    ${alertaPendenciasHtml}
                     ${alertaAvisosHtml}
                     ${gridHtml}
                 </div>
