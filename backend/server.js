@@ -74,6 +74,9 @@ const {
   salvarRateioRevisaoPlano,
 } = require("./services/profor-2022/profor-pad-revisoes-plano-decisoes-service");
 const {
+  gerenciadorPadrao: gerenciadorAtualizacaoTransferegov,
+} = require("./services/profor-2022/profor-pad-atualizacao-transferegov-job-service");
+const {
   montarDadosProfor2022Publicacao
 } = require("./services/dashboard-publication-service");
 const {
@@ -761,6 +764,44 @@ async function rotearApi(req, res, pathname) {
           success: false,
           message: erro?.message || "Erro ao recarregar PADs operacional."
         });
+      }
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/profor-2022/pad/atualizar-transferegov") {
+      try {
+        const { jobId, jaEstavaEmAndamento, job } = gerenciadorAtualizacaoTransferegov.iniciar();
+        enviarJson(res, jaEstavaEmAndamento ? 409 : 202, {
+          success: true,
+          jaEstavaEmAndamento,
+          message: jaEstavaEmAndamento
+            ? "Já existe uma atualização do Transferegov em andamento."
+            : "Atualização do Transferegov iniciada.",
+          jobId,
+          payload: job,
+        });
+      } catch (erro) {
+        console.error("Falha ao iniciar atualização Transferegov:", erro);
+        enviarJson(res, 500, { success: false, message: erro?.message || "Erro ao iniciar atualização." });
+      }
+      return;
+    }
+
+    if (req.method === "GET" && pathname.startsWith("/api/profor-2022/pad/atualizar-transferegov/status/")) {
+      try {
+        const jobId = decodeURIComponent(pathname.split("/").pop() || "");
+        const job = gerenciadorAtualizacaoTransferegov.obter(jobId);
+        if (!job) {
+          enviarJson(res, 404, { success: false, message: "Job não encontrado." });
+          return;
+        }
+        enviarJson(res, 200, {
+          success: true,
+          payload: gerenciadorAtualizacaoTransferegov.publico(job),
+        });
+      } catch (erro) {
+        console.error("Falha ao consultar status da atualização Transferegov:", erro);
+        enviarJson(res, 500, { success: false, message: erro?.message || "Erro ao consultar status." });
       }
       return;
     }

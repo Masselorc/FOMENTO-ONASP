@@ -39,6 +39,8 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js",
   "backend/services/profor-2022/profor-pad-saneamento-decisoes-antigas-service.js",
+  "backend/services/profor-2022/profor-pad-atualizacao-transferegov-orquestrador-service.js",
+  "backend/services/profor-2022/profor-pad-atualizacao-transferegov-job-service.js",
   "backend/services/profor-2022/profor-saldo-residual-service.js",
   "backend/services/data-service.js",
   "backend/services/analytics.js",
@@ -108,7 +110,8 @@ const ARQUIVOS = [
   "tests/services/profor-pad-integracao-fila-oficial-dry-run.test.js",
   "tests/services/profor-pad-rateio-fixo-reconstrucao-dry-run.test.js",
   "tests/services/profor-pad-recarga-operacional.test.js",
-  "tests/services/profor-pad-saneamento-decisoes-antigas.test.js"
+  "tests/services/profor-pad-saneamento-decisoes-antigas.test.js",
+  "tests/services/profor-pad-atualizacao-transferegov-orquestrador.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {

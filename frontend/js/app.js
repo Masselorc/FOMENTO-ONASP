@@ -807,16 +807,40 @@ function renderKpiCard({
                     <div class="section-header compact">
                         <div>
                             <p class="section-eyebrow mb-1">PROFOR 2022</p>
-                            <h2>Recarga Operacional dos PADs</h2>
+                            <h2>Atualização dos PADs</h2>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-                        <button type="button" class="btn btn-outline-primary btn-sm" id="btn-recarregar-pads">
-                            <i class="fas fa-sync-alt me-1"></i> Atualizar PADs
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-atualizar-pads-transferegov">
+                            <i class="fas fa-cloud-download-alt me-1"></i> Atualizar PADs no Transferegov
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-recarregar-pads" title="Diagnóstico: reconstroi a visão local apenas a partir do cache já existente, sem consultar o Transferegov.">
+                            <i class="fas fa-sync-alt me-1"></i> Recarregar somente do cache
                         </button>
                         <span class="text-muted small">
-                            Reconstrói a visão operacional a partir do cache Transferegov validado. Não publica dados. Pendências vão para a tela <strong>Revisões PAD</strong>.
+                            <strong>Fase 1:</strong> consulta o Transferegov convênio a convênio e atualiza o cache Transferegov validado.
+                            <strong>Fase 2:</strong> reconstrói a visão operacional local. Não publica dados. Pendências vão para a tela <strong>Revisões PAD</strong>.
                         </span>
+                    </div>
+                    <div id="atualizar-pads-transferegov-progresso" class="d-none mt-3 mb-2">
+                        <div class="d-flex justify-content-between align-items-center small mb-1">
+                            <span><strong>Fase:</strong> <span id="atualizar-pads-transferegov-fase">iniciando</span></span>
+                            <span id="atualizar-pads-transferegov-contador" class="text-muted">0/0</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div id="atualizar-pads-transferegov-barra"
+                                class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                                role="progressbar"
+                                style="width: 0%;"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="0"></div>
+                        </div>
+                        <div class="small text-muted mt-1" id="atualizar-pads-transferegov-mensagem">Iniciando atualização...</div>
+                        <details class="small mt-1">
+                            <summary>Eventos recentes</summary>
+                            <ul id="atualizar-pads-transferegov-eventos" class="list-unstyled mt-1 mb-0 small font-monospace" style="max-height: 180px; overflow-y: auto;"></ul>
+                        </details>
                     </div>
                     <div id="recarga-pad-progresso" class="d-none mt-2 text-primary small">
                         <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
@@ -828,6 +852,9 @@ function renderKpiCard({
         }
 
         function registrarEventosStatusSistema() {
+            document.getElementById('btn-atualizar-pads-transferegov')?.addEventListener('click', async () => {
+                await executarAtualizacaoPadsTransferegovUI();
+            });
             document.getElementById('btn-recarregar-pads')?.addEventListener('click', async () => {
                 await executarRecargaPadsOperacionalUI();
             });
@@ -4636,6 +4663,161 @@ async function carregarLogoParaPDF() {
             } catch (error) {
                 console.error('Erro ao buscar última recarga de PADs:', error);
                 container.innerHTML = `<div class="text-muted small">Nenhuma recarga de PADs realizada recentemente.</div>`;
+            }
+        }
+
+        function rotuloFaseAtualizacaoTransferegov(fase) {
+            switch (fase) {
+                case 'iniciando': return 'Iniciando';
+                case 'atualizando_transferegov': return 'Atualizando PADs no Transferegov';
+                case 'salvando_cache': return 'Salvando cache local validado';
+                case 'validando_cache': return 'Validando cache local';
+                case 'recarregando_visao_local': return 'Reconstruindo visão operacional local';
+                case 'concluido': return 'Concluído';
+                case 'erro': return 'Erro';
+                default: return fase || '-';
+            }
+        }
+
+        function atualizarUIProgressoAtualizacaoTransferegov(payload) {
+            const cont = document.getElementById('atualizar-pads-transferegov-progresso');
+            const fase = document.getElementById('atualizar-pads-transferegov-fase');
+            const contador = document.getElementById('atualizar-pads-transferegov-contador');
+            const mensagem = document.getElementById('atualizar-pads-transferegov-mensagem');
+            const barra = document.getElementById('atualizar-pads-transferegov-barra');
+            const eventosUl = document.getElementById('atualizar-pads-transferegov-eventos');
+            if (!cont || !payload) return;
+            cont.classList.remove('d-none');
+
+            if (fase) fase.textContent = rotuloFaseAtualizacaoTransferegov(payload.fase);
+            const total = Number(payload.totalConvenios) || 0;
+            const indice = Number(payload.indiceAtual) || 0;
+            if (contador) {
+                if (total > 0) {
+                    contador.textContent = `${indice}/${total}` + (payload.convenioAtual ? ` — ${payload.convenioAtual}${payload.ufAtual ? '/' + payload.ufAtual : ''}` : '');
+                } else {
+                    contador.textContent = '';
+                }
+            }
+            if (mensagem) mensagem.textContent = payload.mensagemAtual || '';
+            if (barra) {
+                let pct = 0;
+                if (payload.status === 'concluido') pct = 100;
+                else if (payload.fase === 'salvando_cache' || payload.fase === 'validando_cache') pct = total > 0 ? 92 : 90;
+                else if (payload.fase === 'recarregando_visao_local') pct = 97;
+                else if (total > 0) pct = Math.min(90, Math.round((indice / total) * 90));
+                barra.style.width = `${pct}%`;
+                barra.setAttribute('aria-valuenow', String(pct));
+                if (payload.status === 'erro') {
+                    barra.classList.remove('bg-primary', 'progress-bar-animated');
+                    barra.classList.add('bg-danger');
+                } else if (payload.status === 'concluido') {
+                    barra.classList.remove('progress-bar-animated', 'bg-primary');
+                    barra.classList.add('bg-success');
+                } else {
+                    barra.classList.add('bg-primary', 'progress-bar-animated');
+                    barra.classList.remove('bg-danger', 'bg-success');
+                }
+            }
+            if (eventosUl && Array.isArray(payload.eventos)) {
+                const ultimos = payload.eventos.slice(-30);
+                eventosUl.innerHTML = ultimos.map((ev) => {
+                    const ts = ev.em ? new Date(ev.em).toLocaleTimeString() : '';
+                    const ic = ev.status === 'falha' ? '✗' : (ev.status === 'alerta' ? '!' : '·');
+                    const label = ev.numeroConvenio
+                        ? `${ev.numeroConvenio}${ev.uf ? '/' + ev.uf : ''}`
+                        : (ev.fase || ev.etapa || '');
+                    return `<li><span class="text-muted">${escapeHtml(ts)}</span> ${escapeHtml(ic)} <strong>${escapeHtml(label)}</strong> — ${escapeHtml(ev.mensagem || '')}</li>`;
+                }).join('');
+                eventosUl.scrollTop = eventosUl.scrollHeight;
+            }
+        }
+
+        async function executarAtualizacaoPadsTransferegovUI() {
+            const confirmado = confirm(
+                'A aplicação irá consultar o Transferegov, atualizar o cache local e reconstruir a visão operacional. ' +
+                'Essa operação pode demorar alguns minutos. Deseja continuar?'
+            );
+            if (!confirmado) return;
+
+            const btnPrincipal = document.getElementById('btn-atualizar-pads-transferegov');
+            const btnRecarregar = document.getElementById('btn-recarregar-pads');
+            const resultadoContainer = document.getElementById('recarga-pad-resultado');
+
+            if (btnPrincipal) btnPrincipal.disabled = true;
+            if (btnRecarregar) btnRecarregar.disabled = true;
+
+            try {
+                const { resposta, payload: respostaInicial } = await fetchJsonApiOnasp(
+                    '/api/profor-2022/pad/atualizar-transferegov',
+                    { method: 'POST' }
+                );
+                if (!resposta.ok && resposta.status !== 409) {
+                    throw new Error(respostaInicial?.message || `Falha ao iniciar atualização (status ${resposta.status}).`);
+                }
+                const jobId = respostaInicial?.jobId;
+                if (!jobId) throw new Error('Resposta da API sem jobId.');
+
+                if (respostaInicial?.payload) atualizarUIProgressoAtualizacaoTransferegov(respostaInicial.payload);
+
+                // Polling de status até concluir/erro.
+                const intervaloMs = 1500;
+                let statusFinal = null;
+                while (true) {
+                    await new Promise((r) => setTimeout(r, intervaloMs));
+                    const { resposta: rStatus, payload: bodyStatus } = await fetchJsonApiOnasp(
+                        `/api/profor-2022/pad/atualizar-transferegov/status/${encodeURIComponent(jobId)}`
+                    );
+                    if (!rStatus.ok || !bodyStatus?.payload) {
+                        throw new Error(bodyStatus?.message || `Falha ao consultar status (HTTP ${rStatus.status}).`);
+                    }
+                    atualizarUIProgressoAtualizacaoTransferegov(bodyStatus.payload);
+                    if (bodyStatus.payload.status === 'concluido' || bodyStatus.payload.status === 'erro') {
+                        statusFinal = bodyStatus.payload;
+                        break;
+                    }
+                }
+
+                if (statusFinal.status === 'erro') {
+                    if (resultadoContainer) {
+                        resultadoContainer.innerHTML = `
+                            <div class="alert alert-danger mb-0">
+                                <strong>Erro ao atualizar PADs no Transferegov:</strong>
+                                ${escapeHtml(statusFinal.erro?.mensagem || statusFinal.mensagemAtual || 'Erro desconhecido')}
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+
+                const recarga = statusFinal.resultadoRecarga;
+                if (recarga) {
+                    renderResultadoRecargaPad(recarga);
+                } else if (resultadoContainer) {
+                    resultadoContainer.innerHTML = `
+                        <div class="alert alert-warning mb-0">
+                            Atualização concluída sem resultado de recarga. Tente recarregar a página.
+                        </div>
+                    `;
+                }
+
+                try {
+                    await carregarListaRevisao();
+                } catch (errorAtualizacaoUi) {
+                    console.warn('Falha ao atualizar interface após atualização PADs:', errorAtualizacaoUi);
+                }
+            } catch (error) {
+                console.error('Falha ao atualizar PADs no Transferegov:', error);
+                if (resultadoContainer) {
+                    resultadoContainer.innerHTML = `
+                        <div class="alert alert-danger mb-0">
+                            <strong>Erro ao atualizar PADs:</strong> ${escapeHtml(error.message || 'Erro desconhecido')}
+                        </div>
+                    `;
+                }
+            } finally {
+                if (btnPrincipal) btnPrincipal.disabled = false;
+                if (btnRecarregar) btnRecarregar.disabled = false;
             }
         }
 
