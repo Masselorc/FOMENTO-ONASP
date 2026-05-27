@@ -52,3 +52,6 @@ backend/data/onasp.sqlite-wal
 # Outros .sqlite fora de backend/data permanecem ignorados
 *.sqlite-shm
 *.sqlite-wal
+
+# Backups locais de banco de dados
+backend/backups/
