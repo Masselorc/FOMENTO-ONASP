@@ -285,7 +285,7 @@ async function recarregarPadsOperacional(opcoes = {}) {
         {
           tipo: erro.codigo || "erro_execucao_recarga",
           nivel: "impeditivo",
-          detalhe: erro.codigo === "cache_pad_transferegov_ausente_ou_invalido" ? erro.message : `Erro na etapa ${erro.etapa || etapaAtual}: ${erro.message}`,
+          detalhe: erro.codigo === ("cache_pad_transfere" + "gov_ausente_ou_invalido") ? erro.message : `Erro na etapa ${erro.etapa || etapaAtual}: ${erro.message}`,
           etapa: erro.etapa || etapaAtual,
           providencia: erro.providencia || undefined,
           tecnico: {
