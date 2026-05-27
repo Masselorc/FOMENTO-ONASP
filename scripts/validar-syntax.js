@@ -38,6 +38,7 @@ const ARQUIVOS = [
   "backend/services/profor-2022/profor-workbook-fallback-guard-service.js",
   "backend/services/profor-2022/profor-pad-decisao-aplicacao-service.js",
   "backend/services/profor-2022/profor-pad-seguranca-pre-ativacao-service.js",
+  "backend/services/profor-2022/profor-pad-saneamento-decisoes-antigas-service.js",
   "backend/services/profor-2022/profor-saldo-residual-service.js",
   "backend/services/data-service.js",
   "backend/services/analytics.js",
@@ -79,6 +80,7 @@ const ARQUIVOS = [
   "backend/scripts/auditar-identidade-material-pad-profor-2022.js",
   "backend/scripts/auditar-regressao-saneamentos-pad-profor-2022.js",
   "backend/scripts/auditar-revalidacao-payloads-alterados-pad-profor-2022.js",
+  "backend/scripts/sanear-decisoes-antigas-pad-profor-2022.js",
   "frontend/js/app.js",
   "frontend/js/core/static-mode.js",
   "frontend/js/core/ui-components.js",
@@ -105,7 +107,8 @@ const ARQUIVOS = [
   "tests/services/profor-pad-promocao-snapshot-anterior.test.js",
   "tests/services/profor-pad-integracao-fila-oficial-dry-run.test.js",
   "tests/services/profor-pad-rateio-fixo-reconstrucao-dry-run.test.js",
-  "tests/services/profor-pad-recarga-operacional.test.js"
+  "tests/services/profor-pad-recarga-operacional.test.js",
+  "tests/services/profor-pad-saneamento-decisoes-antigas.test.js"
 ];
 
 for (const arquivo of ARQUIVOS) {

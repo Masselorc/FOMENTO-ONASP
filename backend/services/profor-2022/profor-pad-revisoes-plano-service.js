@@ -288,8 +288,20 @@ function montarRevisoesPlanoPad(opcoes = {}) {
     resultado.linhasFilhas[grupo.uf].push(...filhos);
   }
 
-  for (const item of recarga?.impedimentos || []) {
+  // Consome tanto recarga.pendenciasRevisao (fluxo atual pos-febb8a4) quanto
+  // recarga.impedimentos (compatibilidade com payloads antigos). Deduplica por
+  // chaveItem para nao gerar linha-mae em duplicidade quando o mesmo item
+  // estiver presente em ambas as listas.
+  const ocorrenciasItemNovo = [
+    ...(recarga?.pendenciasRevisao || []),
+    ...(recarga?.impedimentos || []),
+  ];
+  const chavesItemNovoJaCriadas = new Set();
+  for (const item of ocorrenciasItemNovo) {
     if (!["item_novo_sem_rateio_memorizado", "item_pad_sem_rateio_memorizado"].includes(item.tipo)) continue;
+    const chaveDedup = `${normalizarUf(item.uf)}::${item.chaveItem || item.descricao || ""}`;
+    if (chavesItemNovoJaCriadas.has(chaveDedup)) continue;
+    chavesItemNovoJaCriadas.add(chaveDedup);
     const mae = criarMaeOcorrencia(item, "ITEM_NOVO", "ITEM_NOVO_SEM_RATEIO");
     const filha = criarFilhaPendente(mae);
     garantirUf(resultado, mae.uf);

@@ -197,3 +197,143 @@ test("nenhum rateio e inventado", () => {
   assert.notEqual(nova.area, "CORREGEDORIA");
   assert.notEqual(nova.area, "ESCOLA_PENAL");
 });
+
+test("pendenciasRevisao geram ITEM_NOVO na tela Revisoes PAD (ponte pos-febb8a4)", () => {
+  const recarga = {
+    dataHora: "2026-05-27T17:00:00.000Z",
+    sucesso: true,
+    planoAplicacaoReconstruido: [],
+    impedimentos: [],
+    alertas: [],
+    pendenciasRevisao: [
+      {
+        tipo: "item_novo_sem_rateio_memorizado",
+        nivel: "pendencia_revisao",
+        numeroConvenio: "937221",
+        uf: "AL",
+        descricao: "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+        chaveItem: "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+        detalhe: "Item PAD sem rateio memorizado (item_pad_nao_existe_na_memoria_rateio).",
+        natureza: "CAPITAL",
+        codigoNaturezaDespesa: "44905299",
+        quantidade: 1,
+        valorUnitario: 9501,
+        valorTotalPrevisto: 9501,
+      },
+      {
+        tipo: "item_novo_sem_rateio_memorizado",
+        nivel: "pendencia_revisao",
+        numeroConvenio: "937782",
+        uf: "AC",
+        descricao: "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+        chaveItem: "937782::NOTEBOOK 4 NUCLEOS 4.2GHZ RAM DDR 4 8GB",
+        detalhe: "Item PAD sem rateio memorizado.",
+        natureza: "CAPITAL",
+        codigoNaturezaDespesa: "44905200",
+        quantidade: 2,
+        valorUnitario: 3599.99,
+        valorTotalPrevisto: 7199.98,
+      },
+    ],
+  };
+
+  const resultado = montarRevisoesPlanoPad({ recarga });
+
+  const maeAl = (resultado.linhasMae.AL || []).find((l) => l.tipo === "ITEM_NOVO" && l.numeroConvenio === "937221");
+  const maeAc = (resultado.linhasMae.AC || []).find((l) => l.tipo === "ITEM_NOVO" && l.numeroConvenio === "937782");
+
+  assert.ok(maeAl, "esperava linha-mae ITEM_NOVO para 937221/AL");
+  assert.ok(maeAc, "esperava linha-mae ITEM_NOVO para 937782/AC");
+  assert.equal(maeAl.status, "ITEM_NOVO_SEM_RATEIO");
+  assert.equal(maeAc.status, "ITEM_NOVO_SEM_RATEIO");
+  assert.equal(maeAl.expandidoPorPadrao, true);
+  assert.equal(maeAl.codigoNatureza, "44905299");
+  assert.equal(maeAc.valorUnitario, 3599.99);
+
+  assert.equal((resultado.pendencias.AL || []).length, 1);
+  assert.equal((resultado.pendencias.AC || []).length, 1);
+});
+
+test("nao duplica ITEM_NOVO quando a mesma chave aparece em pendenciasRevisao e impedimentos", () => {
+  const ocorrencia = {
+    tipo: "item_novo_sem_rateio_memorizado",
+    numeroConvenio: "900001",
+    uf: "DF",
+    descricao: "Drone novo",
+    chaveItem: "900001::drone",
+    natureza: "CAPITAL",
+    codigoNaturezaDespesa: "449052",
+    quantidade: 1,
+    valorUnitario: 10000,
+  };
+  const recarga = {
+    dataHora: "2026-05-27T17:00:00.000Z",
+    sucesso: true,
+    planoAplicacaoReconstruido: [],
+    pendenciasRevisao: [ocorrencia],
+    impedimentos: [ocorrencia],
+    alertas: [],
+  };
+
+  const resultado = montarRevisoesPlanoPad({ recarga });
+  const novos = (resultado.linhasMae.DF || []).filter((l) => l.tipo === "ITEM_NOVO");
+  assert.equal(novos.length, 1, "esperava uma unica linha-mae ITEM_NOVO");
+  assert.equal((resultado.pendencias.DF || []).length, 1);
+});
+
+test("compatibilidade preservada: impedimentos sozinhos ainda geram ITEM_NOVO", () => {
+  const recarga = {
+    dataHora: "2026-05-27T17:00:00.000Z",
+    sucesso: true,
+    planoAplicacaoReconstruido: [],
+    impedimentos: [{
+      tipo: "item_novo_sem_rateio_memorizado",
+      uf: "DF",
+      numeroConvenio: "900001",
+      descricao: "Drone novo",
+      chaveItem: "900001::drone",
+      natureza: "CAPITAL",
+      codigoNaturezaDespesa: "449052",
+      quantidade: 1,
+      valorUnitario: 10000,
+    }],
+    alertas: [],
+  };
+  const resultado = montarRevisoesPlanoPad({ recarga });
+  const novos = (resultado.linhasMae.DF || []).filter((l) => l.tipo === "ITEM_NOVO");
+  assert.equal(novos.length, 1);
+});
+
+test("itens ja materializados em planoAplicacaoReconstruido nao sao re-listados como ITEM_NOVO", () => {
+  // Quando uma decisao foi promovida e o item passou a ter rateio ativo,
+  // ele entra em planoAplicacaoReconstruido (linha-mae normal) e nao
+  // aparece mais em pendenciasRevisao.
+  const recarga = {
+    dataHora: "2026-05-27T17:00:00.000Z",
+    sucesso: true,
+    planoAplicacaoReconstruido: [
+      {
+        uf: "AL",
+        numero: "937221",
+        area: "ESCOLA_PENAL",
+        natureza: "CAPITAL",
+        descricao: "Ar condicionado Split 60.000 BTUs (ESCOLA)",
+        quantidade: 1,
+        valorUnitario: 9501,
+        valorPrevisto: 9501,
+        origemReconstrucao: "memoria_rateio_operacional",
+        chaveItem: "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
+        itemConhecidoId: 9999,
+        codigoNaturezaDespesa: "44905299",
+      },
+    ],
+    pendenciasRevisao: [],
+    impedimentos: [],
+    alertas: [],
+  };
+  const resultado = montarRevisoesPlanoPad({ recarga });
+  const novos = (resultado.linhasMae.AL || []).filter((l) => l.tipo === "ITEM_NOVO");
+  assert.equal(novos.length, 0);
+  const linhasPad = (resultado.linhasMae.AL || []).filter((l) => l.tipo === "ITEM_PAD");
+  assert.equal(linhasPad.length, 1);
+});

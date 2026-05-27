@@ -1,5 +1,27 @@
 # Diário de bordo
 
+## 27/05/2026 — PROFOR 2022: integra pendências PAD à tela Revisões e prepara saneamento controlado de decisões antigas
+
+- Objetivo: corrigir a ponte entre as pendências da recarga PAD e a tela `Revisões PAD`, e preparar saneamento controlado das 23 decisões antigas (937221/AL: 20; 937782/AC: 3) registradas pelo usuário em 21–23/05/2026 que nunca foram materializadas em `profor_2022_itens_conhecidos` / `profor_2022_item_rateios`.
+- Causa raiz dupla (já diagnosticada):
+  1. Após `febb8a4` (separa pendências), itens novos passaram a entrar em `recarga.pendenciasRevisao`, mas `profor-pad-revisoes-plano-service.js` continuava lendo só `recarga.impedimentos` para criar linha-mãe `ITEM_NOVO`. Resultado: pendências não apareciam na tela `Revisões PAD`.
+  2. Decisões `ACEITO`/`CORRIGIDO` com `tipoSaneamento=rateio_manual` em `profor_2022_revisao_decisoes` (tela legada `revisao-divergencias`) nunca foram propagadas a `itens_conhecidos`/`item_rateios`, então o matching operacional segue não as enxergando.
+- Arquivos alterados:
+  - `backend/services/profor-2022/profor-pad-revisoes-plano-service.js`: passa a consumir `[...pendenciasRevisao, ...impedimentos]` com dedupe por `uf::chaveItem`. Compatibilidade com payloads antigos preservada.
+  - `backend/services/profor-2022/profor-pad-revisoes-plano-decisoes-service.js`: exporta `persistirRateiosOperacionais`, `obterOuCriarItemConhecido` e `AREAS_PERMITIDAS` para reaproveitamento por scripts de saneamento — sem mudar comportamento da UI.
+  - `scripts/validar-syntax.js`: incluí os 3 arquivos novos na lista.
+  - `tests/services/profor-pad-revisoes-plano.test.js`: 4 testes novos cobrindo a ponte, dedupe, compatibilidade com `impedimentos` e item já reconstruído não duplicado.
+- Arquivos criados:
+  - `backend/services/profor-2022/profor-pad-saneamento-decisoes-antigas-service.js`: service puro/testável que carrega últimas decisões resolutivas de `profor_2022_revisao_decisoes`, interpreta payloads (incluindo o formato antigo só-percentual de 937782/AC, derivando quantidade), valida soma vs `quantidadeTotalItem`, verifica materialização atual e planeja/aplica via `persistirRateiosOperacionais` reaproveitado.
+  - `backend/scripts/sanear-decisoes-antigas-pad-profor-2022.js`: CLI wrapper. Padrão dry-run; só escreve com `--aplicar`; filtro `--convenio=NNNN` repetível; resumo + detalhe de candidatas/já materializadas/ignoradas/aplicadas/erros.
+  - `tests/services/profor-pad-saneamento-decisoes-antigas.test.js`: 13 testes com SQLite `:memory:` cobrindo dry-run inerte, idempotência, filtro por convênio, áreas históricas ("ESCOLA PENAL"/"NAO INFORMADO"), payload inválido, decisão não resolutiva, tipoSaneamento divergente, soma incoerente e derivação de quantidade a partir de `percentualQuantidade`.
+- Reaproveitamento: o script usa exclusivamente `persistirRateiosOperacionais` exportado do `revisoes-plano-decisoes-service` (mesma rotina da tela `Revisões PAD`/`POST /revisoes-plano/rateio`). Zero SQL direto para registrar decisão; nenhuma lógica duplicada de criação de item conhecido/rateio.
+- Dry-run executado: `node backend/scripts/sanear-decisoes-antigas-pad-profor-2022.js --dry-run --convenio=937221 --convenio=937782` → `Total lidas: 23 | Já materializadas: 0 | Aplicáveis: 23 | Ignoradas: 0`. Casamento exato com as 23 pendências atuais. **`--aplicar` NÃO foi executado nesta rodada — requer autorização expressa.**
+- Validações executadas: `git diff --check` (apenas warnings CRLF), `node --check` nos 4 arquivos JS alterados/novos, `node --test` nas 6 suites relevantes (90/90 pass), `node scripts/validar-syntax.js` (108 arquivos OK).
+- Preservações: sem alterar `frontend/data/publicados`, `backend/data/cache`, `backend/data/relatorios` (relatórios v2 já estavam modificados de sessões anteriores e não entram neste commit), `.env`, `package.json`/`package-lock.json`, SQLite/WAL/SHM; sem publicação; sem acessar Transferegov; sem rodar Playwright; sem SQL direto para decisões.
+- Risco: baixo. Mudança no `revisoes-plano-service` é aditiva (também aceita a fonte nova) e dedup evita regressão visual em payloads antigos. O script de saneamento é dry-run por padrão e só persiste com `--aplicar`; a aplicação real continua aguardando comando explícito do usuário.
+- Rollback: `git revert <SHA>` deste commit (remove ponte e script). Decisões antigas em `revisao_decisoes` permanecem intactas em qualquer caso.
+
 ## 25/05/2026 — PROFOR 2022: separa pendências de revisão da recarga operacional PAD e atualiza interface
 
 - Objetivo: corrigir a recarga operacional dos PADs após a integração com o cache Transferegov para que pendências revisáveis (item novo sem rateio, item suprimido, divergências de quantidade/valor, rateio sem peso etc.) não bloqueiem a recarga como impedimento técnico, e atualizar a interface da tela Sistema para refletir o fluxo atual (cache Transferegov validado), removendo textos antigos sobre substituição dos 15 arquivos Excel.

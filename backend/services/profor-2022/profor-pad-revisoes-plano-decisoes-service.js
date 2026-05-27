@@ -314,4 +314,9 @@ module.exports = {
   salvarAreaRevisaoPlano,
   salvarRateioRevisaoPlano,
   validarLinhasRateio,
+  // Exportados para reaproveitamento por scripts de saneamento que precisem
+  // materializar rateios sem passar pelo fluxo da UI Revisoes PAD.
+  persistirRateiosOperacionais,
+  obterOuCriarItemConhecido,
+  AREAS_PERMITIDAS,
 };
