@@ -1,4 +1,4 @@
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 
 const CAMPOS_EDITAVEIS = new Set([
   "numero_convenio",
@@ -70,32 +70,39 @@ function linhaParaCamelCase(linha) {
   };
 }
 
-function listarConveniosMonitorados(opcoes = {}) {
+async function listarConveniosMonitorados(opcoes = {}) {
   const { incluirInativos = false } = opcoes;
   const sql = incluirInativos
     ? "SELECT * FROM profor_convenios_monitorados ORDER BY numero_convenio, ano"
-    : "SELECT * FROM profor_convenios_monitorados WHERE ativo = 1 ORDER BY numero_convenio, ano";
-  return db.prepare(sql).all().map(linhaParaCamelCase);
+    : "SELECT * FROM profor_convenios_monitorados WHERE ativo = true ORDER BY numero_convenio, ano";
+  const result = await query(sql);
+  return result.rows.map(linhaParaCamelCase);
 }
 
-function obterConvenioMonitoradoPorId(id) {
-  const linha = db.prepare("SELECT * FROM profor_convenios_monitorados WHERE id = ?").get(id);
-  return linhaParaCamelCase(linha);
+async function obterConvenioMonitoradoPorId(id) {
+  const result = await query("SELECT * FROM profor_convenios_monitorados WHERE id = $1", [id]);
+  return linhaParaCamelCase(result.rows[0]);
 }
 
-function obterConvenioMonitoradoPorNumero(numeroConvenio, ano) {
+async function obterConvenioMonitoradoPorNumero(numeroConvenio, ano) {
   const numero = String(numeroConvenio ?? "").trim();
   const anoVal = ano !== undefined && ano !== null && ano !== "" ? String(ano).trim() : null;
-  const sql = anoVal !== null
-    ? "SELECT * FROM profor_convenios_monitorados WHERE numero_convenio = ? AND ano = ?"
-    : "SELECT * FROM profor_convenios_monitorados WHERE numero_convenio = ? AND ano IS NULL";
-  const linha = anoVal !== null
-    ? db.prepare(sql).get(numero, anoVal)
-    : db.prepare(sql).get(numero);
-  return linhaParaCamelCase(linha);
+  let result;
+  if (anoVal !== null) {
+    result = await query(
+      "SELECT * FROM profor_convenios_monitorados WHERE numero_convenio = $1 AND ano = $2",
+      [numero, anoVal]
+    );
+  } else {
+    result = await query(
+      "SELECT * FROM profor_convenios_monitorados WHERE numero_convenio = $1 AND ano IS NULL",
+      [numero]
+    );
+  }
+  return linhaParaCamelCase(result.rows[0]);
 }
 
-function criarConvenioMonitorado(payload) {
+async function criarConvenioMonitorado(payload) {
   validarNumeroConvenio(payload.numero_convenio);
   validarAno(payload.ano);
   validarUf(payload.uf);
@@ -103,14 +110,15 @@ function criarConvenioMonitorado(payload) {
   const dados = normalizarPayload(payload);
   const agora = new Date().toISOString();
 
-  let info;
+  let inserido;
   try {
-    info = db.prepare(`
+    const result = await query(`
       INSERT INTO profor_convenios_monitorados
         (numero_convenio, ano, uf, instrumento, programa_origem, ativo,
          id_convenio_transferegov, observacao, criado_em, atualizado_em)
-      VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?, ?)
-    `).run(
+      VALUES ($1, $2, $3, $4, $5, true, $6, $7, $8, $9)
+      RETURNING id
+    `, [
       dados.numero_convenio,
       dados.ano,
       dados.uf,
@@ -120,9 +128,10 @@ function criarConvenioMonitorado(payload) {
       dados.observacao,
       agora,
       agora
-    );
+    ]);
+    inserido = result.rows[0];
   } catch (erro) {
-    if (erro.message && erro.message.includes("UNIQUE constraint failed")) {
+    if (erro.code === "23505" || (erro.message && erro.message.toLowerCase().includes("unique"))) {
       throw new Error(
         `Convênio ${dados.numero_convenio}/${dados.ano ?? "s/ano"} já está na carteira.`
       );
@@ -130,39 +139,40 @@ function criarConvenioMonitorado(payload) {
     throw erro;
   }
 
-  return obterConvenioMonitoradoPorId(info.lastInsertRowid);
+  return obterConvenioMonitoradoPorId(inserido.id);
 }
 
-function atualizarConvenioMonitorado(id, payload) {
+async function atualizarConvenioMonitorado(id, payload) {
   if (payload.ano !== undefined) validarAno(payload.ano);
   if (payload.uf !== undefined) validarUf(payload.uf);
 
-  const atual = db.prepare("SELECT * FROM profor_convenios_monitorados WHERE id = ?").get(id);
-  if (!atual) throw new Error(`Convênio com id ${id} não encontrado.`);
+  const atualResult = await query("SELECT * FROM profor_convenios_monitorados WHERE id = $1", [id]);
+  if (!atualResult.rows[0]) throw new Error(`Convênio com id ${id} não encontrado.`);
 
   const campos = [];
   const valores = [];
+  let idx = 1;
 
   Object.entries(payload).forEach(([chave, valor]) => {
     if (!CAMPOS_EDITAVEIS.has(chave)) return;
     if (chave === "numero_convenio") {
       validarNumeroConvenio(valor);
-      campos.push("numero_convenio = ?");
+      campos.push(`numero_convenio = $${idx++}`);
       valores.push(String(valor).trim());
     } else if (chave === "uf") {
       const uf = valor !== null && valor !== undefined && valor !== ""
         ? String(valor).trim().toUpperCase()
         : null;
-      campos.push("uf = ?");
+      campos.push(`uf = $${idx++}`);
       valores.push(uf);
     } else if (chave === "instrumento") {
-      campos.push("instrumento = ?");
+      campos.push(`instrumento = $${idx++}`);
       valores.push(String(valor ?? "Convênio").trim() || "Convênio");
     } else if (chave === "programa_origem") {
-      campos.push("programa_origem = ?");
+      campos.push(`programa_origem = $${idx++}`);
       valores.push(String(valor ?? "PROFOR 2022").trim() || "PROFOR 2022");
     } else {
-      campos.push(`${chave} = ?`);
+      campos.push(`${chave} = $${idx++}`);
       valores.push(valor !== undefined && valor !== null && valor !== "" ? String(valor).trim() : null);
     }
   });
@@ -170,14 +180,14 @@ function atualizarConvenioMonitorado(id, payload) {
   if (!campos.length) throw new Error("Nenhum campo editável informado para atualização.");
 
   const agora = new Date().toISOString();
-  campos.push("atualizado_em = ?");
+  campos.push(`atualizado_em = $${idx++}`);
   valores.push(agora);
   valores.push(id);
 
   try {
-    db.prepare(`UPDATE profor_convenios_monitorados SET ${campos.join(", ")} WHERE id = ?`).run(...valores);
+    await query(`UPDATE profor_convenios_monitorados SET ${campos.join(", ")} WHERE id = $${idx}`, valores);
   } catch (erro) {
-    if (erro.message && erro.message.includes("UNIQUE constraint failed")) {
+    if (erro.code === "23505" || (erro.message && erro.message.toLowerCase().includes("unique"))) {
       throw new Error("Já existe outro convênio com esse número e ano na carteira.");
     }
     throw erro;
@@ -186,15 +196,17 @@ function atualizarConvenioMonitorado(id, payload) {
   return obterConvenioMonitoradoPorId(id);
 }
 
-function inativarConvenioMonitorado(id) {
-  const atual = db.prepare("SELECT * FROM profor_convenios_monitorados WHERE id = ?").get(id);
+async function inativarConvenioMonitorado(id) {
+  const atualResult = await query("SELECT * FROM profor_convenios_monitorados WHERE id = $1", [id]);
+  const atual = atualResult.rows[0];
   if (!atual) throw new Error(`Convênio com id ${id} não encontrado.`);
-  if (atual.ativo === 0) throw new Error(`Convênio com id ${id} já está inativo.`);
+  if (atual.ativo === false || atual.ativo === 0) throw new Error(`Convênio com id ${id} já está inativo.`);
 
   const agora = new Date().toISOString();
-  db.prepare(
-    "UPDATE profor_convenios_monitorados SET ativo = 0, atualizado_em = ? WHERE id = ?"
-  ).run(agora, id);
+  await query(
+    "UPDATE profor_convenios_monitorados SET ativo = false, atualizado_em = $1 WHERE id = $2",
+    [agora, id]
+  );
 
   return obterConvenioMonitoradoPorId(id);
 }

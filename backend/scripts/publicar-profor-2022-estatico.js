@@ -6,7 +6,6 @@ const ROOT_DIR = path.join(__dirname, "..", "..");
 const PUBLIC_DIR = path.join(ROOT_DIR, "frontend", "data", "publicados");
 const FLAG_PERMITIR_ALTERACOES = "--permitir-alteracoes-locais";
 
-const { inicializarBanco } = require("../db/init-db");
 const { registrarLogOperacional } = require("../services/logs-operacionais-service");
 
 const PADROES_PROIBIDOS = [
@@ -311,7 +310,7 @@ function obterDiagnosticoConsolidadoPublicado() {
   }
 }
 
-function registrarLogPublicacaoEstatica(estado) {
+async function registrarLogPublicacaoEstatica(estado) {
   const resumoLog =
     `atualizacao=${estado.atualizacaoOk ? "OK" : "FALHA"} | ` +
     `publicacao=${estado.publicacaoExecutada ? (estado.publicacaoOk ? "OK" : "FALHA") : "nao executada"} | ` +
@@ -321,8 +320,7 @@ function registrarLogPublicacaoEstatica(estado) {
     (estado.motivoBloqueio ? ` | bloqueio=${estado.motivoBloqueio}` : "");
 
   try {
-    inicializarBanco();
-    registrarLogOperacional({
+    await registrarLogOperacional({
       modulo: "profor-2022",
       tipoEvento: "profor_publicacao_estatica",
       status: estado.status,
@@ -352,7 +350,11 @@ function registrarLogPublicacaoEstatica(estado) {
   }
 }
 
-function main() {
+async function main() {
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL não definida. Este script agora depende do Postgres/Supabase.");
+    process.exit(1);
+  }
   const inicio = Date.now();
   const inicioIso = agoraIso();
   const permitirAlteracoesLocais = process.argv.slice(2).includes(FLAG_PERMITIR_ALTERACOES);
@@ -377,7 +379,7 @@ function main() {
     exitCode: 1,
   };
 
-  const finalizar = (codigo) => {
+  const finalizar = async (codigo) => {
     estado.concluidoEm = agoraIso();
     estado.duracaoMs = Date.now() - inicio;
     estado.exitCode = codigo;
@@ -388,7 +390,7 @@ function main() {
     } else {
       estado.status = "falha";
     }
-    registrarLogPublicacaoEstatica(estado);
+    await registrarLogPublicacaoEstatica(estado);
     return codigo;
   };
 
@@ -400,7 +402,7 @@ function main() {
   if (branch && branch !== "main") {
     console.error(`[PROFOR 2022] Branch inesperada: ${branch}. Esperado: main.`);
     estado.motivoBloqueio = `branch inesperada: ${branch}`;
-    return finalizar(1);
+    return await finalizar(1);
   }
 
   const statusInicial = executarGit(["status", "--short"]).stdout.trim();
@@ -411,7 +413,7 @@ function main() {
         `Use ${FLAG_PERMITIR_ALTERACOES} para permitir este teste controlado.`
     );
     estado.motivoBloqueio = "working tree com alteracoes locais";
-    return finalizar(1);
+    return await finalizar(1);
   }
 
   imprimirSecao("Atualização consolidada");
@@ -431,7 +433,7 @@ function main() {
     estado.motivoBloqueio = "atualizacao consolidada nao atingiu 15/15/15";
     const fimFalha = Date.now();
     console.log(`[PROFOR 2022] Fim: ${agoraIso()} | duração total: ${formatarDuracao(fimFalha - inicio)}`);
-    return finalizar(1);
+    return await finalizar(1);
   }
 
   imprimirSecao("Publicação estática");
@@ -449,7 +451,7 @@ function main() {
     estado.motivoBloqueio = "publicar:dados falhou";
     const fimFalha = Date.now();
     console.log(`[PROFOR 2022] Fim: ${agoraIso()} | duração total: ${formatarDuracao(fimFalha - inicio)}`);
-    return finalizar(1);
+    return await finalizar(1);
   }
 
   imprimirSecao("Validações");
@@ -515,7 +517,7 @@ function main() {
 
   if (!sucessoFinal) {
     estado.motivoBloqueio = estado.motivoBloqueio || "validacao ou auditoria falhou";
-    return finalizar(1);
+    return await finalizar(1);
   }
 
   if (statusFinal) {
@@ -525,8 +527,14 @@ function main() {
     console.log("[PROFOR 2022] git status --short final: (limpo)");
   }
 
-  return finalizar(0);
+  return await finalizar(0);
 }
 
-const exitCode = main();
-process.exit(exitCode);
+main()
+  .then((exitCode) => {
+    process.exit(exitCode);
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

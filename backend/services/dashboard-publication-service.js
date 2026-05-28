@@ -32,22 +32,22 @@ function anexarMetadadosOrigemProfor2022(dados, metadados = {}) {
   };
 }
 
-function obterUltimaAtualizacaoDadosSeguro() {
+async function obterUltimaAtualizacaoDadosSeguro() {
   try {
-    return obterUltimaAtualizacaoDadosProfor2022();
+    return await obterUltimaAtualizacaoDadosProfor2022();
   } catch (_err) {
     return { dataHora: null, fonte: null, fontesConsideradas: { detru: null, rendimentos: null } };
   }
 }
 
-function anexarUltimaAtualizacaoDados(dados) {
+async function anexarUltimaAtualizacaoDados(dados) {
   return {
     ...dados,
-    ultimaAtualizacaoDados: obterUltimaAtualizacaoDadosSeguro()
+    ultimaAtualizacaoDados: await obterUltimaAtualizacaoDadosSeguro()
   };
 }
 
-function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {}) {
+async function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {}) {
   const origemResolvida = resolverOrigemDadosProfor2022({
     origemDados: opcoes.origemDados,
     detalhado: true
@@ -67,7 +67,7 @@ function montarDadosProfor2022Publicacao(workbook, catalogoAplicacao, opcoes = {
     minimoLinhasExigido: opcoes.minimoLinhasExigidoReconstrucaoPad,
   });
   const montarConsolidado = opcoes.montarConsolidado || montarConsolidadoProfor2022;
-  const consolidado = montarConsolidado({
+  const consolidado = await montarConsolidado({
     origemDados: "reconstrucao-pad",
     planoAplicacao: planoReconstruido,
   });
@@ -140,9 +140,9 @@ function calcularResumoDashboard(dadosBase) {
   };
 }
 
-function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
+async function consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm) {
   const dadosBaseConsolidado = removerConveniosDoDadosBase(catalogoAplicacao?.dadosBase);
-  const dadosProfor2022 = montarDadosProfor2022Publicacao(null, catalogoAplicacao, {
+  const dadosProfor2022 = await montarDadosProfor2022Publicacao(null, catalogoAplicacao, {
     origemDados: "reconstrucao-pad",
   });
   const conveniosProfor = Array.isArray(dadosProfor2022?.convenios)

@@ -71,17 +71,17 @@ function calcularUltimaAtualizacaoDadosProfor2022(ultimaDetru, ultimaRendimentos
   };
 }
 
-function obterUltimaAtualizacaoDadosProfor2022() {
+async function obterUltimaAtualizacaoDadosProfor2022() {
   let detru = null;
   try {
-    detru = obterUltimaAtualizacaoDetru();
+    detru = await obterUltimaAtualizacaoDetru();
   } catch (_err) {
     detru = null;
   }
 
   let rendimentos = null;
   try {
-    rendimentos = obterUltimaConsultaRendimentos();
+    rendimentos = await obterUltimaConsultaRendimentos();
   } catch (_err) {
     rendimentos = null;
   }

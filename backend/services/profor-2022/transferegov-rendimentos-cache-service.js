@@ -1,7 +1,15 @@
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 
 function normalizarAno(ano) {
   return ano !== undefined && ano !== null && ano !== "" ? String(ano).trim() : null;
+}
+
+function parsePayload(raw) {
+  if (raw === null || raw === undefined) return null;
+  if (typeof raw === "string") {
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+  return raw;
 }
 
 function linhaCacheParaCamelCase(row) {
@@ -19,9 +27,9 @@ function linhaCacheParaCamelCase(row) {
     urlFinal: row.url_final,
     consultadoEm: row.consultado_em,
     atualizadoEm: row.atualizado_em,
-    sucesso: row.sucesso === 1,
+    sucesso: row.sucesso === true || row.sucesso === 1,
     erro: row.erro,
-    payload: row.payload_json ? JSON.parse(row.payload_json) : null,
+    payload: parsePayload(row.payload_json),
   };
 }
 
@@ -32,17 +40,17 @@ function linhaConsultaParaCamelCase(row) {
     id: row.id,
     iniciadoEm: row.iniciado_em,
     concluidoEm: row.concluido_em,
-    sucesso: row.sucesso === 1,
+    sucesso: row.sucesso === true || row.sucesso === 1,
     totalCarteiraAtiva: row.total_carteira_ativa,
     totalConsultados: row.total_consultados,
     totalSucesso: row.total_sucesso,
     totalFalha: row.total_falha,
     erro: row.erro,
-    resumo: row.resumo_json ? JSON.parse(row.resumo_json) : null,
+    resumo: parsePayload(row.resumo_json),
   };
 }
 
-function salvarSaldoRendimentoTransferegov(resultado, metadados = {}) {
+async function salvarSaldoRendimentoTransferegov(resultado, metadados = {}) {
   if (!resultado?.sucesso) {
     throw new Error(resultado?.erro || "Consulta Transferegov sem sucesso não deve sobrescrever o cache.");
   }
@@ -68,12 +76,12 @@ function salvarSaldoRendimentoTransferegov(resultado, metadados = {}) {
     payload: resultado.payload ?? null,
   });
 
-  db.prepare(`
+  await query(`
     INSERT INTO profor_transferegov_rendimentos_cache
       (numero_convenio, ano, saldo_rendimentos_atual, valor_original, subtitulo, aviso,
        convenio_texto, url_final, consultado_em, atualizado_em, sucesso, erro, payload_json)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NULL, ?)
-    ON CONFLICT(numero_convenio, ano) DO UPDATE SET
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, true, NULL, $11)
+    ON CONFLICT (numero_convenio, ano) DO UPDATE SET
       saldo_rendimentos_atual = excluded.saldo_rendimentos_atual,
       valor_original          = excluded.valor_original,
       subtitulo               = excluded.subtitulo,
@@ -82,10 +90,10 @@ function salvarSaldoRendimentoTransferegov(resultado, metadados = {}) {
       url_final               = excluded.url_final,
       consultado_em           = excluded.consultado_em,
       atualizado_em           = excluded.atualizado_em,
-      sucesso                 = 1,
+      sucesso                 = true,
       erro                    = NULL,
       payload_json            = excluded.payload_json
-  `).run(
+  `, [
     numeroConvenio,
     ano,
     resultado.saldoRendimentosAtual ?? null,
@@ -97,56 +105,62 @@ function salvarSaldoRendimentoTransferegov(resultado, metadados = {}) {
     consultadoEm,
     atualizadoEm,
     payloadJson
-  );
+  ]);
 
   return obterSaldoRendimentoPorConvenio(numeroConvenio, ano);
 }
 
-function obterSaldoRendimentoPorConvenio(numeroConvenio, ano) {
+async function obterSaldoRendimentoPorConvenio(numeroConvenio, ano) {
   const numero = String(numeroConvenio ?? "").trim();
   const anoVal = normalizarAno(ano);
-  const sql = anoVal !== null
-    ? "SELECT * FROM profor_transferegov_rendimentos_cache WHERE numero_convenio = ? AND ano = ?"
-    : "SELECT * FROM profor_transferegov_rendimentos_cache WHERE numero_convenio = ? AND ano IS NULL ORDER BY id DESC LIMIT 1";
-  const row = anoVal !== null
-    ? db.prepare(sql).get(numero, anoVal)
-    : db.prepare(sql).get(numero);
-  return linhaCacheParaCamelCase(row);
+  let result;
+  if (anoVal !== null) {
+    result = await query(
+      "SELECT * FROM profor_transferegov_rendimentos_cache WHERE numero_convenio = $1 AND ano = $2",
+      [numero, anoVal]
+    );
+  } else {
+    result = await query(
+      "SELECT * FROM profor_transferegov_rendimentos_cache WHERE numero_convenio = $1 AND ano IS NULL ORDER BY id DESC LIMIT 1",
+      [numero]
+    );
+  }
+  return linhaCacheParaCamelCase(result.rows[0]);
 }
 
-function listarSaldosRendimentosCache() {
-  return db
-    .prepare("SELECT * FROM profor_transferegov_rendimentos_cache ORDER BY numero_convenio, ano")
-    .all()
-    .map(linhaCacheParaCamelCase);
+async function listarSaldosRendimentosCache() {
+  const result = await query(
+    "SELECT * FROM profor_transferegov_rendimentos_cache ORDER BY numero_convenio, ano"
+  );
+  return result.rows.map(linhaCacheParaCamelCase);
 }
 
-function registrarConsultaRendimentosInicio(metadados = {}) {
+async function registrarConsultaRendimentosInicio(metadados = {}) {
   const iniciadoEm = metadados.iniciadoEm || new Date().toISOString();
-  const result = db
-    .prepare(`
-      INSERT INTO profor_transferegov_rendimentos_consultas
-        (iniciado_em, total_carteira_ativa)
-      VALUES (?, ?)
-    `)
-    .run(iniciadoEm, metadados.totalCarteiraAtiva ?? 0);
+  const result = await query(
+    `INSERT INTO profor_transferegov_rendimentos_consultas
+       (iniciado_em, total_carteira_ativa)
+     VALUES ($1, $2)
+     RETURNING id`,
+    [iniciadoEm, metadados.totalCarteiraAtiva ?? 0]
+  );
 
-  return result.lastInsertRowid;
+  return result.rows[0].id;
 }
 
-function registrarConsultaRendimentosFim(idConsulta, resumo) {
-  db.prepare(`
+async function registrarConsultaRendimentosFim(idConsulta, resumo) {
+  await query(`
     UPDATE profor_transferegov_rendimentos_consultas SET
-      concluido_em          = ?,
-      sucesso               = 1,
-      total_carteira_ativa  = ?,
-      total_consultados     = ?,
-      total_sucesso         = ?,
-      total_falha           = ?,
+      concluido_em          = $1,
+      sucesso               = true,
+      total_carteira_ativa  = $2,
+      total_consultados     = $3,
+      total_sucesso         = $4,
+      total_falha           = $5,
       erro                  = NULL,
-      resumo_json           = ?
-    WHERE id = ?
-  `).run(
+      resumo_json           = $6
+    WHERE id = $7
+  `, [
     new Date().toISOString(),
     resumo.totalCarteiraAtiva ?? 0,
     resumo.totalConsultados ?? 0,
@@ -154,25 +168,25 @@ function registrarConsultaRendimentosFim(idConsulta, resumo) {
     resumo.totalFalha ?? 0,
     JSON.stringify(resumo),
     idConsulta
-  );
+  ]);
 }
 
-function registrarConsultaRendimentosErro(idConsulta, erro) {
+async function registrarConsultaRendimentosErro(idConsulta, erro) {
   const mensagem = typeof erro === "string" ? erro : (erro?.message || String(erro));
-  db.prepare(`
+  await query(`
     UPDATE profor_transferegov_rendimentos_consultas SET
-      concluido_em = ?,
-      sucesso      = 0,
-      erro         = ?
-    WHERE id = ?
-  `).run(new Date().toISOString(), mensagem, idConsulta);
+      concluido_em = $1,
+      sucesso      = false,
+      erro         = $2
+    WHERE id = $3
+  `, [new Date().toISOString(), mensagem, idConsulta]);
 }
 
-function obterUltimaConsultaRendimentos() {
-  const row = db
-    .prepare("SELECT * FROM profor_transferegov_rendimentos_consultas ORDER BY id DESC LIMIT 1")
-    .get();
-  return linhaConsultaParaCamelCase(row);
+async function obterUltimaConsultaRendimentos() {
+  const result = await query(
+    "SELECT * FROM profor_transferegov_rendimentos_consultas ORDER BY id DESC LIMIT 1"
+  );
+  return linhaConsultaParaCamelCase(result.rows[0]);
 }
 
 module.exports = {

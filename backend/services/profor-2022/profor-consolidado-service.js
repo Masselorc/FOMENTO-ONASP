@@ -285,15 +285,15 @@ function obterPendenciasConhecidasProfor2022() {
   return [];
 }
 
-function montarConsolidadoProfor2022(opcoes = {}) {
+async function montarConsolidadoProfor2022(opcoes = {}) {
   const origemDetalhada = resolverOrigemDadosProfor2022({
     origemDados: opcoes.origemDados,
     detalhado: true,
   });
   const origemDados = origemDetalhada.origemDados;
-  const carteira = opcoes.carteira ?? listarConveniosMonitorados({ incluirInativos: false });
-  const detruCache = opcoes.detruCache ?? listarCacheDetruProfor2022();
-  const rendimentosCache = opcoes.rendimentosCache ?? listarSaldosRendimentosCache();
+  const carteira = opcoes.carteira ?? await listarConveniosMonitorados({ incluirInativos: false });
+  const detruCache = opcoes.detruCache ?? await listarCacheDetruProfor2022();
+  const rendimentosCache = opcoes.rendimentosCache ?? await listarSaldosRendimentosCache();
   const detruIndice = indexarRegistrosPorNumeroAno(detruCache, { nomeFonte: "detruCache" });
   const rendimentosIndice = indexarRegistrosPorNumeroAno(rendimentosCache, { nomeFonte: "rendimentosCache" });
   const avisos = [...origemDetalhada.avisos, ...detruIndice.avisos, ...rendimentosIndice.avisos];

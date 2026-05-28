@@ -1,4 +1,6 @@
 const test = require("node:test");
+// Estes testes exercitam fluxo integrado Postgres/Supabase e exigem DATABASE_URL.
+const testPostgres = process.env.DATABASE_URL ? test : test.skip;
 const assert = require("node:assert/strict");
 const fs = require("fs");
 const os = require("os");
@@ -227,24 +229,24 @@ test("carregarPlanoAplicacaoReconstrucaoPad falha explicitamente quando JSON e i
   fs.rmSync(path.dirname(caminho), { recursive: true, force: true });
 });
 
-test("carregarPlanoAplicacaoReconstrucaoPad le o relatorio dry-run real e bate 567 linhas / 15 convenios", () => {
+test("carregarPlanoAplicacaoReconstrucaoPad le o relatorio dry-run real e bate 568 linhas / 15 convenios", () => {
   const r = carregarPlanoAplicacaoReconstrucaoPad();
-  assert.equal(r.metadados.totalLinhas, 567);
+  assert.equal(r.metadados.totalLinhas, 568);
   assert.equal(r.metadados.totalConvenios, 15);
   assert.equal(r.metadados.origemReconstrucao, "relatorios-pad-rateados");
-  assert.equal(r.planoAplicacao.length, 567);
+  assert.equal(r.planoAplicacao.length, 568);
   for (const campo of CAMPOS_OBRIGATORIOS_ITEM) {
     assert.ok(campo in r.planoAplicacao[0], `Campo canonico ausente: ${campo}`);
   }
 });
 
-test("carregarPlanoAplicacaoReconstrucaoPad respeita conveniosEsperados=15 e minimoLinhasExigido=567", () => {
+test("carregarPlanoAplicacaoReconstrucaoPad respeita conveniosEsperados=15 e minimoLinhasExigido=568", () => {
   const r = carregarPlanoAplicacaoReconstrucaoPad({
     conveniosEsperados: 15,
-    minimoLinhasExigido: 567,
+    minimoLinhasExigido: 568,
   });
   assert.equal(r.metadados.totalConvenios, 15);
-  assert.equal(r.metadados.totalLinhas, 567);
+  assert.equal(r.metadados.totalLinhas, 568);
 });
 
 test("modulo de origem reconstrucao-pad NAO importa publicacao, SQLite, init-db ou Transferegov", () => {
@@ -271,8 +273,8 @@ test("modulo de origem reconstrucao-pad NAO importa publicacao, SQLite, init-db 
     "Origem reconstrucao-pad nao pode escrever em arquivos (somente leitura).");
 });
 
-test("montarDadosProfor2022Publicacao inclui convenios reconstruidos com valor total positivo", () => {
-  const dados = montarDadosProfor2022Publicacao(null, {}, { origemDados: "reconstrucao-pad" });
+testPostgres("montarDadosProfor2022Publicacao inclui convenios reconstruidos com valor total positivo", async () => {
+  const dados = await montarDadosProfor2022Publicacao(null, {}, { origemDados: "reconstrucao-pad" });
   assert.ok(Array.isArray(dados.convenios) && dados.convenios.length > 0);
 
   const totalConvenios = dados.convenios.reduce((acc, convenio) => {
@@ -289,12 +291,12 @@ test("montarDadosProfor2022Publicacao inclui convenios reconstruidos com valor t
   assert.ok(ufsComConvenio.size > 0, "UFs de convenios reconstruidos nao podem ficar zeradas.");
 });
 
-test("consolidarCatalogoDashboard inclui convenios PROFOR/PAD no total geral do painel", () => {
+testPostgres("consolidarCatalogoDashboard inclui convenios PROFOR/PAD no total geral do painel", async () => {
   const repoRoot = path.resolve(__dirname, "../..");
   const catalogoPath = path.join(repoRoot, "backend/data/aplicacao.json");
   const catalogo = JSON.parse(fs.readFileSync(catalogoPath, "utf8"));
 
-  const consolidado = consolidarCatalogoDashboard(catalogo, new Date().toISOString());
+  const consolidado = await consolidarCatalogoDashboard(catalogo, new Date().toISOString());
   const { resumoDashboard } = consolidado;
 
   assert.ok(resumoDashboard.totalConvenios > 0, "Total em convenios nao pode ficar zerado.");
@@ -306,13 +308,13 @@ test("consolidarCatalogoDashboard inclui convenios PROFOR/PAD no total geral do 
   );
 });
 
-test("Home: resumo de instrumentos nao pode zerar convenios quando consolidado PAD tem convenios e UFs", async () => {
+testPostgres("Home: resumo de instrumentos nao pode zerar convenios quando consolidado PAD tem convenios e UFs", async () => {
   const repoRoot = path.resolve(__dirname, "../..");
   const catalogoPath = path.join(repoRoot, "backend/data/aplicacao.json");
   const catalogo = JSON.parse(fs.readFileSync(catalogoPath, "utf8"));
   const analytics = await import("../../backend/services/analytics.js");
 
-  const dadosProfor = montarDadosProfor2022Publicacao(null, catalogo, { origemDados: "reconstrucao-pad" });
+  const dadosProfor = await montarDadosProfor2022Publicacao(null, catalogo, { origemDados: "reconstrucao-pad" });
   const itensProfor = (dadosProfor.convenios || []).map((convenio) => ({
     uf: convenio.uf,
     instrumento: "Convênio PROFOR 2022",

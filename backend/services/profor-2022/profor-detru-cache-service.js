@@ -5,34 +5,42 @@
 
 const crypto = require("crypto");
 const fs = require("fs");
-const db = require("../../db/database");
+const { query, withTransaction } = require("../../db/postgres-client");
 
 function calcularHashArquivo(caminhoArquivo) {
   const conteudo = fs.readFileSync(caminhoArquivo);
   return crypto.createHash("sha256").update(conteudo).digest("hex");
 }
 
-function salvarSnapshotDetru(resultadoCruzamento, metadados = {}) {
+function parsePayload(raw) {
+  if (raw === null || raw === undefined) return null;
+  if (typeof raw === "string") {
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+  return raw;
+}
+
+async function salvarSnapshotDetru(resultadoCruzamento, metadados = {}) {
   const { conveniosEncontrados, consultadoEm } = resultadoCruzamento;
   const { arquivoOrigem = null, arquivoHash = null } = metadados;
   const agora = consultadoEm || new Date().toISOString();
 
-  const stmt = db.prepare(`
+  const sql = `
     INSERT INTO profor_detru_cache
       (numero_convenio, ano, payload_json, fonte, arquivo_origem, arquivo_hash, consultado_em, atualizado_em)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(numero_convenio, ano) DO UPDATE SET
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    ON CONFLICT (numero_convenio, ano) DO UPDATE SET
       payload_json    = excluded.payload_json,
       fonte           = excluded.fonte,
       arquivo_origem  = excluded.arquivo_origem,
       arquivo_hash    = excluded.arquivo_hash,
       consultado_em   = excluded.consultado_em,
       atualizado_em   = excluded.atualizado_em
-  `);
+  `;
 
-  const inserirTodos = db.transaction((convenios) => {
-    for (const c of convenios) {
-      stmt.run(
+  await withTransaction(async (client) => {
+    for (const c of conveniosEncontrados) {
+      await client.query(sql, [
         c.numeroConvenio,
         c.ano ?? null,
         JSON.stringify(c),
@@ -41,45 +49,52 @@ function salvarSnapshotDetru(resultadoCruzamento, metadados = {}) {
         arquivoHash,
         agora,
         agora
-      );
+      ]);
     }
   });
 
-  inserirTodos(conveniosEncontrados);
   return conveniosEncontrados.length;
 }
 
-function listarCacheDetruProfor2022() {
-  return db
-    .prepare("SELECT * FROM profor_detru_cache ORDER BY numero_convenio, ano")
-    .all()
-    .map((row) => ({
-      id: row.id,
-      numeroConvenio: row.numero_convenio,
-      ano: row.ano,
-      dados: JSON.parse(row.payload_json),
-      fonte: row.fonte,
-      arquivoOrigem: row.arquivo_origem,
-      arquivoHash: row.arquivo_hash,
-      consultadoEm: row.consultado_em,
-      atualizadoEm: row.atualizado_em,
-    }));
+async function listarCacheDetruProfor2022() {
+  const result = await query(
+    "SELECT * FROM profor_detru_cache ORDER BY numero_convenio, ano"
+  );
+  return result.rows.map((row) => ({
+    id: row.id,
+    numeroConvenio: row.numero_convenio,
+    ano: row.ano,
+    dados: parsePayload(row.payload_json),
+    fonte: row.fonte,
+    arquivoOrigem: row.arquivo_origem,
+    arquivoHash: row.arquivo_hash,
+    consultadoEm: row.consultado_em,
+    atualizadoEm: row.atualizado_em,
+  }));
 }
 
-function obterCacheDetruPorConvenio(numeroConvenio, ano) {
+async function obterCacheDetruPorConvenio(numeroConvenio, ano) {
   const numero = String(numeroConvenio ?? "").trim();
   const anoVal = ano !== undefined && ano !== null && ano !== "" ? String(ano).trim() : null;
-  const sql =
-    anoVal !== null
-      ? "SELECT * FROM profor_detru_cache WHERE numero_convenio = ? AND ano = ?"
-      : "SELECT * FROM profor_detru_cache WHERE numero_convenio = ? AND ano IS NULL";
-  const row = anoVal !== null ? db.prepare(sql).get(numero, anoVal) : db.prepare(sql).get(numero);
+  let result;
+  if (anoVal !== null) {
+    result = await query(
+      "SELECT * FROM profor_detru_cache WHERE numero_convenio = $1 AND ano = $2",
+      [numero, anoVal]
+    );
+  } else {
+    result = await query(
+      "SELECT * FROM profor_detru_cache WHERE numero_convenio = $1 AND ano IS NULL",
+      [numero]
+    );
+  }
+  const row = result.rows[0];
   if (!row) return null;
   return {
     id: row.id,
     numeroConvenio: row.numero_convenio,
     ano: row.ano,
-    dados: JSON.parse(row.payload_json),
+    dados: parsePayload(row.payload_json),
     fonte: row.fonte,
     arquivoOrigem: row.arquivo_origem,
     arquivoHash: row.arquivo_hash,
@@ -88,28 +103,27 @@ function obterCacheDetruPorConvenio(numeroConvenio, ano) {
   };
 }
 
-function registrarAtualizacaoDetruInicio(metadados = {}) {
+async function registrarAtualizacaoDetruInicio(metadados = {}) {
   const { caminhoArquivo = null, arquivoHash = null } = metadados;
-  const result = db
-    .prepare(
-      "INSERT INTO profor_detru_atualizacoes (iniciado_em, caminho_arquivo, arquivo_hash) VALUES (?, ?, ?)"
-    )
-    .run(new Date().toISOString(), caminhoArquivo, arquivoHash);
-  return result.lastInsertRowid;
+  const result = await query(
+    "INSERT INTO profor_detru_atualizacoes (iniciado_em, caminho_arquivo, arquivo_hash) VALUES ($1, $2, $3) RETURNING id",
+    [new Date().toISOString(), caminhoArquivo, arquivoHash]
+  );
+  return result.rows[0].id;
 }
 
-function registrarAtualizacaoDetruFim(idAtualizacao, resultado) {
-  db.prepare(`
+async function registrarAtualizacaoDetruFim(idAtualizacao, resultado) {
+  await query(`
     UPDATE profor_detru_atualizacoes SET
-      concluido_em             = ?,
-      sucesso                  = 1,
-      total_carteira_ativa     = ?,
-      total_linhas_detru_lidas = ?,
-      total_encontrados        = ?,
-      total_nao_encontrados    = ?,
-      resumo_json              = ?
-    WHERE id = ?
-  `).run(
+      concluido_em             = $1,
+      sucesso                  = true,
+      total_carteira_ativa     = $2,
+      total_linhas_detru_lidas = $3,
+      total_encontrados        = $4,
+      total_nao_encontrados    = $5,
+      resumo_json              = $6
+    WHERE id = $7
+  `, [
     new Date().toISOString(),
     resultado.totalCarteiraAtiva ?? 0,
     resultado.totalLinhasDetruLidas ?? 0,
@@ -117,24 +131,25 @@ function registrarAtualizacaoDetruFim(idAtualizacao, resultado) {
     resultado.totalNaoEncontrados ?? 0,
     JSON.stringify(resultado),
     idAtualizacao
-  );
+  ]);
 }
 
-function registrarAtualizacaoDetruErro(idAtualizacao, erro) {
+async function registrarAtualizacaoDetruErro(idAtualizacao, erro) {
   const mensagem = typeof erro === "string" ? erro : (erro?.message || String(erro));
-  db.prepare(`
+  await query(`
     UPDATE profor_detru_atualizacoes SET
-      concluido_em = ?,
-      sucesso      = 0,
-      erro         = ?
-    WHERE id = ?
-  `).run(new Date().toISOString(), mensagem, idAtualizacao);
+      concluido_em = $1,
+      sucesso      = false,
+      erro         = $2
+    WHERE id = $3
+  `, [new Date().toISOString(), mensagem, idAtualizacao]);
 }
 
-function obterUltimaAtualizacaoDetru() {
-  return db
-    .prepare("SELECT * FROM profor_detru_atualizacoes ORDER BY id DESC LIMIT 1")
-    .get() ?? null;
+async function obterUltimaAtualizacaoDetru() {
+  const result = await query(
+    "SELECT * FROM profor_detru_atualizacoes ORDER BY id DESC LIMIT 1"
+  );
+  return result.rows[0] ?? null;
 }
 
 module.exports = {
