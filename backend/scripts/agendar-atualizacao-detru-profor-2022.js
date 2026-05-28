@@ -103,22 +103,26 @@ async function executarAtualizacao() {
   }
 
   const arquivoHash = calcularHashArquivo(caminhoZip);
-  const idAtualizacao = registrarAtualizacaoDetruInicio({
+  const idAtualizacao = await registrarAtualizacaoDetruInicio({
     caminhoArquivo: caminhoZip,
     arquivoHash,
   });
 
   try {
-    const resultado = cruzarCarteiraComDetru(caminhoZip);
+    const resultado = await cruzarCarteiraComDetru(caminhoZip);
     console.log(resumirCruzamentoDetru(resultado));
-    const totalSalvos = salvarSnapshotDetru(resultado, {
+    const totalSalvos = await salvarSnapshotDetru(resultado, {
       arquivoOrigem: caminhoZip,
       arquivoHash,
     });
-    registrarAtualizacaoDetruFim(idAtualizacao, resultado);
+    await registrarAtualizacaoDetruFim(idAtualizacao, resultado);
     console.log(`[DETRU] Cache atualizado: ${totalSalvos} convênio(s) gravado(s).`);
   } catch (err) {
-    registrarAtualizacaoDetruErro(idAtualizacao, err);
+    try {
+      await registrarAtualizacaoDetruErro(idAtualizacao, err);
+    } catch (_) {
+      // ignore secondary error
+    }
     console.error(`[DETRU] Falha na atualização: ${err.message}`);
   }
 }
@@ -154,4 +158,15 @@ function iniciar() {
   agendarProximaExecucao(hora, minuto);
 }
 
-iniciar();
+async function main() {
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL não definida. Este script agora depende do Postgres/Supabase.");
+    process.exit(1);
+  }
+  iniciar();
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

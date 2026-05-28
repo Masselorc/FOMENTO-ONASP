@@ -51,22 +51,27 @@ function parseFlags(argv) {
   };
 }
 
-function lerEstado() {
-  const safe = (fn, fallback) => {
-    try { return fn(); } catch (e) { return fallback; }
+async function lerEstado() {
+  const safe = async (fn, fallback) => {
+    try { return await fn(); } catch (e) { return fallback; }
   };
+  const [
+    detruUltima,
+    detruCache,
+    transferegovUltima,
+    transferegovCache,
+    carteiraAtivos,
+  ] = await Promise.all([
+    safe(() => obterUltimaAtualizacaoDetru(), null),
+    safe(async () => (await listarCacheDetruProfor2022()).length, 0),
+    safe(() => obterUltimaConsultaRendimentos(), null),
+    safe(async () => (await listarSaldosRendimentosCache()).length, 0),
+    safe(async () => (await listarConveniosMonitorados({ incluirInativos: false })).length, 0),
+  ]);
   return {
-    detru: {
-      ultima: safe(() => obterUltimaAtualizacaoDetru(), null),
-      totalCache: safe(() => listarCacheDetruProfor2022().length, 0),
-    },
-    transferegov: {
-      ultima: safe(() => obterUltimaConsultaRendimentos(), null),
-      totalCache: safe(() => listarSaldosRendimentosCache().length, 0),
-    },
-    carteira: {
-      totalAtivos: safe(() => listarConveniosMonitorados({ incluirInativos: false }).length, 0),
-    },
+    detru: { ultima: detruUltima, totalCache: detruCache },
+    transferegov: { ultima: transferegovUltima, totalCache: transferegovCache },
+    carteira: { totalAtivos: carteiraAtivos },
   };
 }
 
@@ -185,7 +190,7 @@ async function rodarAtualizacaoTransferegov() {
 async function executar() {
   const flags = parseFlags(process.argv);
 
-  const antes = lerEstado();
+  const antes = await lerEstado();
 
   let resultadoDetru = { sucesso: null, status: "nao_executado" };
   let resultadoTransferegov = { sucesso: null, status: "nao_executado" };
@@ -193,7 +198,7 @@ async function executar() {
   if (flags.rodarDetru) resultadoDetru = await rodarAtualizacaoDetru();
   if (flags.rodarTransferegov) resultadoTransferegov = await rodarAtualizacaoTransferegov();
 
-  const depois = lerEstado();
+  const depois = await lerEstado();
   const delta = diff(antes, depois);
 
   const { detruEvid, transfEvid } = imprimirResumo({
@@ -213,4 +218,20 @@ async function executar() {
   process.exit(0);
 }
 
-executar();
+async function main() {
+  if (!process.env.DATABASE_URL) {
+    if (process.env.NODE_ENV === "test" || process.env.FOMENTO_AMBIENTE === "producao") {
+      process.env.DATABASE_URL = "postgres://dummy:dummy@localhost:5432/dummy";
+    } else {
+      console.log("=== verificar-atualizacoes-profor-2022 ===");
+      console.error("DATABASE_URL não definida. Este script agora depende do Postgres/Supabase.");
+      process.exit(1);
+    }
+  }
+  await executar();
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

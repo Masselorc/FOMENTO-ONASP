@@ -57,9 +57,9 @@ async function executar() {
 
     inicializarBanco();
 
-    const convenios = listarConveniosMonitorados({ incluirInativos: false });
+    const convenios = await listarConveniosMonitorados({ incluirInativos: false });
     const inicioExecucao = Date.now();
-    idConsulta = registrarConsultaRendimentosInicio({
+    idConsulta = await registrarConsultaRendimentosInicio({
       totalCarteiraAtiva: convenios.length,
     });
     const falhas = [];
@@ -96,7 +96,7 @@ async function executar() {
       }
 
       if (resultadoComCarteira.sucesso) {
-        salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
+        await salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
           numeroConvenio: convenio.numeroConvenio,
           ano: convenio.ano ?? null,
         });
@@ -124,7 +124,7 @@ async function executar() {
       falhas,
     };
 
-    registrarConsultaRendimentosFim(idConsulta, resumo);
+    await registrarConsultaRendimentosFim(idConsulta, resumo);
 
     console.log("--- Atualização de rendimentos Transferegov PROFOR 2022 ---");
     console.log(`Carteira ativa:     ${resumo.totalCarteiraAtiva}`);
@@ -148,11 +148,26 @@ async function executar() {
     console.log("----------------------------------------------------------");
   } catch (error) {
     if (idConsulta && typeof registrarConsultaRendimentosErro === "function") {
-      registrarConsultaRendimentosErro(idConsulta, error);
+      try {
+        await registrarConsultaRendimentosErro(idConsulta, error);
+      } catch (_) {
+        // ignore secondary error
+      }
     }
     console.error("Falha na atualização de rendimentos Transferegov:", error.message);
     process.exit(1);
   }
 }
 
-executar();
+async function main() {
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL não definida. Este script agora depende do Postgres/Supabase.");
+    process.exit(1);
+  }
+  await executar();
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
