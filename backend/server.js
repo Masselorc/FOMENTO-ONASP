@@ -440,13 +440,13 @@ function exibirMensagemServidor() {
 async function rotearApi(req, res, pathname) {
   try {
     if (req.method === "GET" && pathname === "/api/parametros-minimos") {
-      enviarJson(res, 200, listarParametrosMinimos());
+      enviarJson(res, 200, await listarParametrosMinimos());
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/parametros-minimos/salvar") {
       const payload = await lerJsonBody(req);
-      const resultado = salvarParametrosMinimos(payload);
+      const resultado = await salvarParametrosMinimos(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
@@ -455,21 +455,21 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "GET" && pathname === "/api/parametros-minimos/historico") {
       enviarJson(res, 200, {
         success: true,
-        historico: listarHistoricoParametrosMinimos()
+        historico: await listarHistoricoParametrosMinimos()
       });
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/parametros-minimos/historico/reverter") {
       const payload = await lerJsonBody(req);
-      const resultado = reverterHistoricoParametrosMinimos(payload);
+      const resultado = await reverterHistoricoParametrosMinimos(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
     }
 
     if (req.method === "GET" && pathname === "/api/parametros-minimos/exportar") {
-      const buffer = exportarParametrosMinimosExcel();
+      const buffer = await exportarParametrosMinimosExcel();
       res.writeHead(200, {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition": "attachment; filename=\"parametros-minimos.xlsx\"",
@@ -483,13 +483,13 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "GET" && pathname === "/api/formalizacao-profor") {
-      enviarJson(res, 200, listarFormalizacaoProfor());
+      enviarJson(res, 200, await listarFormalizacaoProfor());
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/formalizacao-profor/salvar") {
       const payload = await lerJsonBody(req);
-      const resultado = salvarFormalizacaoProfor(payload);
+      const resultado = await salvarFormalizacaoProfor(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
@@ -498,13 +498,13 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "GET" && pathname === "/api/formalizacao-profor/historico") {
       enviarJson(res, 200, {
         success: true,
-        historico: listarHistoricoFormalizacaoProfor()
+        historico: await listarHistoricoFormalizacaoProfor()
       });
       return;
     }
 
     if (req.method === "GET" && pathname === "/api/formalizacao-profor/exportar") {
-      const buffer = exportarFormalizacaoProforExcel();
+      const buffer = await exportarFormalizacaoProforExcel();
       res.writeHead(200, {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition": "attachment; filename=\"formalizacao-profor.xlsx\"",

@@ -38,16 +38,16 @@ test("alocarSaldoOrcamento2026 rejeita senha inválida", () => {
   assertFalhaSenhaInvalida(resultado);
 });
 
-test("salvarParametrosMinimos rejeita senha inválida", () => {
-  const resultado = salvarParametrosMinimos({
+test("salvarParametrosMinimos rejeita senha inválida", async () => {
+  const resultado = await salvarParametrosMinimos({
     password: "senha-invalida",
     changes: {}
   });
   assertFalhaSenhaInvalida(resultado);
 });
 
-test("reverterHistoricoParametrosMinimos rejeita senha inválida", () => {
-  const resultado = reverterHistoricoParametrosMinimos({
+test("reverterHistoricoParametrosMinimos rejeita senha inválida", async () => {
+  const resultado = await reverterHistoricoParametrosMinimos({
     password: "senha-invalida",
     historicoId: 1
   });

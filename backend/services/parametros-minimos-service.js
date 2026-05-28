@@ -1,5 +1,4 @@
-const db = require("../db/database");
-const { criarBackupBanco } = require("./backup-service");
+const { query, withTransaction } = require("../db/postgres-client");
 const { registrarHistorico } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
 const {
@@ -228,12 +227,12 @@ function montarResumoGeral(respostas) {
   };
 }
 
-function listarParametrosMinimos() {
-  const linhas = db.prepare(`
+async function listarParametrosMinimos() {
+  const { rows: linhas } = await query(`
     SELECT uf, parametro, status, quantidade_atual, quantidade_ideal, resposta_original, atualizado_em
     FROM parametros_minimos
     ORDER BY uf, parametro
-  `).all();
+  `);
   const porUf = new Map();
 
   linhas.forEach((linha) => {
@@ -261,7 +260,7 @@ function listarParametrosMinimos() {
   };
 }
 
-function salvarParametrosMinimos({ password, changes }) {
+async function salvarParametrosMinimos({ password, changes }) {
   if (!validarSenhaEdicao(password)) {
     return { success: false, message: "Senha inválida. Alterações não foram salvas." };
   }
@@ -328,51 +327,48 @@ function salvarParametrosMinimos({ password, changes }) {
     return { success: false, message: "Não há alterações para salvar." };
   }
 
-  const backupPath = criarBackupBanco(PAGINA);
   const updatedAt = new Date().toISOString();
-  const selectAtual = db.prepare("SELECT status, quantidade_atual, quantidade_ideal FROM parametros_minimos WHERE uf = ? AND parametro = ?");
-  const upsert = db.prepare(`
+  const selectAtualSql = "SELECT status, quantidade_atual, quantidade_ideal FROM parametros_minimos WHERE uf = $1 AND parametro = $2";
+  const upsertSql = `
     INSERT INTO parametros_minimos (uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em)
-    VALUES (?, ?, ?, ?, ?, ?)
-    ON CONFLICT(uf, parametro) DO UPDATE SET
+    VALUES ($1, $2, $3, $4, $5, $6)
+    ON CONFLICT (uf, parametro) DO UPDATE SET
       status = excluded.status,
       quantidade_atual = COALESCE(excluded.quantidade_atual, parametros_minimos.quantidade_atual),
       quantidade_ideal = COALESCE(excluded.quantidade_ideal, parametros_minimos.quantidade_ideal),
       atualizado_em = excluded.atualizado_em
-  `);
-  const transaction = db.transaction((items) => {
-    items.forEach((item) => {
-      const anterior = selectAtual.get(item.uf, item.parametro);
+  `;
+
+  await withTransaction(async (client) => {
+    for (const item of atualizacao) {
+      const { rows: [anterior] } = await client.query(selectAtualSql, [item.uf, item.parametro]);
       const valorAnterior = anterior
         ? `${anterior.status}${anterior.quantidade_atual !== null && anterior.quantidade_atual !== undefined ? ` | atual ${anterior.quantidade_atual}` : ""}${anterior.quantidade_ideal !== null && anterior.quantidade_ideal !== undefined ? ` | ideal ${anterior.quantidade_ideal}` : ""}`
         : "";
       const valorNovo = `${item.status}${item.quantidadeAtual !== undefined ? ` | atual ${item.quantidadeAtual}` : ""}${item.quantidadeIdeal !== undefined ? ` | ideal ${item.quantidadeIdeal}` : ""}`;
 
-      upsert.run(
+      await client.query(upsertSql, [
         item.uf,
         item.parametro,
         item.status,
         item.quantidadeAtual === undefined ? null : item.quantidadeAtual,
         item.quantidadeIdeal === undefined ? null : item.quantidadeIdeal,
         updatedAt
-      );
-      registrarHistorico(db, {
+      ]);
+      await registrarHistorico(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: item.parametro,
         valorAnterior,
         valorNovo
       });
-    });
+    }
   });
-
-  transaction(atualizacao);
 
   return {
     success: true,
     message: "Alterações salvas com sucesso.",
-    updatedAt,
-    backupPath
+    updatedAt
   };
 }
 
@@ -396,7 +392,7 @@ function extrairValorHistorico(valor) {
   return resultado;
 }
 
-function reverterHistoricoParametrosMinimos({ password, historicoId }) {
+async function reverterHistoricoParametrosMinimos({ password, historicoId }) {
   if (!validarSenhaEdicao(password)) {
     return { success: false, message: "Senha inválida. Alteração não foi revertida." };
   }
@@ -406,11 +402,11 @@ function reverterHistoricoParametrosMinimos({ password, historicoId }) {
     return { success: false, message: "Histórico inválido. Nenhuma alteração foi revertida." };
   }
 
-  const historico = db.prepare(`
-    SELECT id, registro, campo, valor_anterior AS valorAnterior, valor_novo AS valorNovo
+  const { rows: [historico] } = await query(`
+    SELECT id, registro, campo, valor_anterior AS "valorAnterior", valor_novo AS "valorNovo"
     FROM historico_alteracoes
-    WHERE id = ? AND pagina = ?
-  `).get(id, PAGINA);
+    WHERE id = $1 AND pagina = $2
+  `, [id, PAGINA]);
 
   if (!historico) {
     return { success: false, message: "Registro de histórico não localizado." };
@@ -429,34 +425,34 @@ function reverterHistoricoParametrosMinimos({ password, historicoId }) {
     return { success: false, message: "Valor anterior inválido. Alteração não foi revertida." };
   }
 
-  const backupPath = criarBackupBanco(PAGINA);
   const updatedAt = new Date().toISOString();
-  const selectAtual = db.prepare("SELECT status, quantidade_atual, quantidade_ideal FROM parametros_minimos WHERE uf = ? AND parametro = ?");
-  const upsert = db.prepare(`
+  const selectAtualSql = "SELECT status, quantidade_atual, quantidade_ideal FROM parametros_minimos WHERE uf = $1 AND parametro = $2";
+  const upsertSql = `
     INSERT INTO parametros_minimos (uf, parametro, status, quantidade_atual, quantidade_ideal, atualizado_em)
-    VALUES (?, ?, ?, ?, ?, ?)
-    ON CONFLICT(uf, parametro) DO UPDATE SET
+    VALUES ($1, $2, $3, $4, $5, $6)
+    ON CONFLICT (uf, parametro) DO UPDATE SET
       status = excluded.status,
       quantidade_atual = excluded.quantidade_atual,
       quantidade_ideal = excluded.quantidade_ideal,
       atualizado_em = excluded.atualizado_em
-  `);
-  const transaction = db.transaction(() => {
-    const atual = selectAtual.get(historico.registro, historico.campo);
+  `;
+
+  await withTransaction(async (client) => {
+    const { rows: [atual] } = await client.query(selectAtualSql, [historico.registro, historico.campo]);
     const valorAtual = atual
       ? `${atual.status}${atual.quantidade_atual !== null && atual.quantidade_atual !== undefined ? ` | atual ${atual.quantidade_atual}` : ""}${atual.quantidade_ideal !== null && atual.quantidade_ideal !== undefined ? ` | ideal ${atual.quantidade_ideal}` : ""}`
       : "";
     const valorNovo = `${valorReversao.status}${valorReversao.quantidadeAtual !== undefined ? ` | atual ${valorReversao.quantidadeAtual}` : ""}${valorReversao.quantidadeIdeal !== undefined ? ` | ideal ${valorReversao.quantidadeIdeal}` : ""}`;
 
-    upsert.run(
+    await client.query(upsertSql, [
       historico.registro,
       historico.campo,
       valorReversao.status,
       valorReversao.quantidadeAtual === undefined ? null : valorReversao.quantidadeAtual,
       valorReversao.quantidadeIdeal === undefined ? null : valorReversao.quantidadeIdeal,
       updatedAt
-    );
-    registrarHistorico(db, {
+    ]);
+    await registrarHistorico(client, {
       pagina: PAGINA,
       registro: historico.registro,
       campo: historico.campo,
@@ -465,25 +461,23 @@ function reverterHistoricoParametrosMinimos({ password, historicoId }) {
     });
   });
 
-  transaction();
-
   return {
     success: true,
     message: "Alteração revertida com sucesso.",
-    updatedAt,
-    backupPath
+    updatedAt
   };
 }
 
-function listarHistoricoParametrosMinimos() {
-  return db.prepare(`
-    SELECT id, pagina, registro, campo, valor_anterior AS valorAnterior,
-           valor_novo AS valorNovo, alterado_em AS alteradoEm
+async function listarHistoricoParametrosMinimos() {
+  const { rows } = await query(`
+    SELECT id, pagina, registro, campo, valor_anterior AS "valorAnterior",
+           valor_novo AS "valorNovo", alterado_em AS "alteradoEm"
     FROM historico_alteracoes
-    WHERE pagina = ?
+    WHERE pagina = $1
     ORDER BY id DESC
     LIMIT 200
-  `).all(PAGINA);
+  `, [PAGINA]);
+  return rows;
 }
 
 module.exports = {
