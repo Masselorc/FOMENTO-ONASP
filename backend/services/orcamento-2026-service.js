@@ -1,9 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const XLSX = require("xlsx");
-const db = require("../db/database");
-const { criarBackupBanco } = require("./backup-service");
-const { registrarHistorico } = require("./historico-service");
+const { query, withTransaction } = require("../db/postgres-client");
+const { registrarHistoricoPostgres } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
 
 const PAGINA = "orcamento-2026";
@@ -302,7 +301,7 @@ const MAPA_CAMEL = {
   data_profor_autuacao: "dataProforAutuacao",
   profor_parecer_tecnico: "proforParecerTecnico",
   link_profor_parecer_tecnico: "linkProforParecerTecnico",
-  data_profor_parecer_tecnico: "dataProforParecerTecnico",
+  data_profor_parecer_tecnico: "dataProforTecnico",
   profor_minuta_edital: "proforMinutaEdital",
   link_profor_minuta_edital: "linkProforMinutaEdital",
   data_profor_minuta_edital: "dataProforMinutaEdital",
@@ -807,92 +806,96 @@ function devePreencherBackfill(atual, novo, campo) {
   return valorAtualVazio(atual);
 }
 
-function executarBackfillOrcamento() {
+async function executarBackfillOrcamento() {
   const registros = obterRegistrosIniciaisDaPlanilha();
   if (!registros.length) return;
 
-  const selectAtual = db.prepare("SELECT * FROM orcamento_2026 WHERE id = ?");
-  const insert = db.prepare(`
-    INSERT OR IGNORE INTO orcamento_2026 (${COLUNAS_ORCAMENTO.join(", ")}, atualizado_em)
-    VALUES (${COLUNAS_ORCAMENTO.map(() => "?").join(", ")}, ?)
-  `);
+  const selectAtualSql = "SELECT * FROM orcamento_2026 WHERE id = $1";
+  const insertSql = `
+    INSERT INTO orcamento_2026 (${COLUNAS_ORCAMENTO.join(", ")}, atualizado_em)
+    VALUES (${COLUNAS_ORCAMENTO.map((_, i) => `$${i + 1}`).join(", ")}, $${COLUNAS_ORCAMENTO.length + 1})
+    ON CONFLICT (id) DO NOTHING
+  `;
   const updatedAt = new Date().toISOString();
 
-  db.transaction((items) => {
-    items.forEach((item) => {
-      const atual = selectAtual.get(item.id);
+  await withTransaction(async (client) => {
+    for (const item of registros) {
+      const { rows } = await client.query(selectAtualSql, [item.id]);
+      const atual = rows[0];
       if (!atual) {
-        insert.run(...COLUNAS_ORCAMENTO.map((coluna) => item[coluna]), updatedAt);
-        return;
+        const params = [...COLUNAS_ORCAMENTO.map((coluna) => item[coluna]), updatedAt];
+        await client.query(insertSql, params);
+        continue;
       }
 
       const updates = CAMPOS_BACKFILL_SE_NAO_PREENCHIDOS.filter((campo) => (
         devePreencherBackfill(atual[campo], item[campo], campo)
       ));
-      if (!updates.length) return;
+      if (!updates.length) continue;
 
       const sql = `
         UPDATE orcamento_2026
-        SET ${updates.map((campo) => `${campo} = ?`).join(", ")}, atualizado_em = ?
-        WHERE id = ?
+        SET ${updates.map((campo, idx) => `${campo} = $${idx + 1}`).join(", ")}, atualizado_em = $${updates.length + 1}
+        WHERE id = $${updates.length + 2}
       `;
-      db.prepare(sql).run(...updates.map((campo) => item[campo]), updatedAt, item.id);
-    });
-  })(registros);
+      const params = [...updates.map((campo) => item[campo]), updatedAt, item.id];
+      await client.query(sql, params);
+    }
+  });
 }
 
-function executarBackfillAutuacaoPorStatus() {
-  const linhas = db.prepare(`
+async function executarBackfillAutuacaoPorStatus() {
+  const { rows: linhas } = await query(`
     SELECT id, status, processo_autuado
     FROM orcamento_2026
     WHERE ativo = 1
-  `).all();
+  `);
   if (!linhas.length) return;
 
-  const update = db.prepare(`
+  const updateSql = `
     UPDATE orcamento_2026
-    SET processo_autuado = 1, atualizado_em = ?
-    WHERE id = ?
-  `);
+    SET processo_autuado = 1, atualizado_em = $1
+    WHERE id = $2
+  `;
   const updatedAt = new Date().toISOString();
 
-  db.transaction((items) => {
-    items.forEach((linha) => {
+  await withTransaction(async (client) => {
+    for (const linha of linhas) {
       if (statusIndicaProcessoAutuado(linha.status) && Number(linha.processo_autuado) !== 1) {
-        update.run(updatedAt, linha.id);
+        await client.query(updateSql, [updatedAt, linha.id]);
       }
-    });
-  })(linhas);
+    }
+  });
 }
 
-function executarBackfillClassificacaoGerencial() {
-  const linhas = db.prepare("SELECT id, classificacao_gerencial FROM orcamento_2026").all();
+async function executarBackfillClassificacaoGerencial() {
+  const { rows: linhas } = await query("SELECT id, classificacao_gerencial FROM orcamento_2026");
   if (!linhas.length) return;
 
-  const update = db.prepare(`
+  const updateSql = `
     UPDATE orcamento_2026
-    SET classificacao_gerencial = ?, atualizado_em = ?
-    WHERE id = ?
-  `);
+    SET classificacao_gerencial = $1, atualizado_em = $2
+    WHERE id = $3
+  `;
   const updatedAt = new Date().toISOString();
 
-  db.transaction((items) => {
-    items.forEach((linha) => {
+  await withTransaction(async (client) => {
+    for (const linha of linhas) {
       const classificacaoAtual = normalizarClassificacaoGerencial(linha.classificacao_gerencial);
       const classificacaoAutomatica = classificarGerencialmenteItemOrcamento({ id: linha.id });
       const deveAtualizar = !linha.classificacao_gerencial || classificacaoAtual === "NAO_APARELHAMENTO";
 
       if (deveAtualizar && classificacaoAutomatica === "APARELHAMENTO") {
-        update.run(classificacaoAutomatica, updatedAt, linha.id);
+        await client.query(updateSql, [classificacaoAutomatica, updatedAt, linha.id]);
       }
-    });
-  })(linhas);
+    }
+  });
 }
 
-function inicializarOrcamento2026() {
-  executarBackfillOrcamento();
-  executarBackfillAutuacaoPorStatus();
-  executarBackfillClassificacaoGerencial();
+async function inicializarOrcamento2026() {
+  await executarBackfillOrcamento();
+  await executarBackfillAutuacaoPorStatus();
+  await executarBackfillClassificacaoGerencial();
 }
 
 function linhaParaItem(linha) {
@@ -900,8 +903,6 @@ function linhaParaItem(linha) {
   const valorEstimadoPesquisaPreco = Number(linha.valor_estimado_pesquisa_preco) || 0;
   const compoeOrcamento = Number(linha.compoe_orcamento) === 1;
   const statusNormalizado = normalizarStatusOrcamento(linha.status);
-  // O badge e os totais seguem o estágio salvo quando o campo bruto ainda não
-  // foi sincronizado com a coluna `processo_autuado`.
   const processoAutuado = Number(linha.processo_autuado) === 1 || statusIndicaProcessoAutuado(statusNormalizado);
   const classificacaoGerencial = normalizarClassificacaoGerencial(
     linha.classificacao_gerencial || classificarGerencialmenteItemOrcamento(linha)
@@ -956,7 +957,6 @@ function linhaParaItem(linha) {
     if (item[propriedade] === undefined) item[propriedade] = linha[coluna] ?? "";
   });
 
-  // Campos de vínculo expostos na API; as regras de criação e saldo serão implementadas em etapas posteriores.
   item.processoPaiId = linha.processo_pai_id || "";
   item.tipoProcesso = linha.tipo_processo || "PRINCIPAL";
   item.origemRecursoId = linha.origem_recurso_id || "";
@@ -1048,14 +1048,14 @@ function valoresUnicos(itens, chave) {
   return Array.from(new Set(itens.map((item) => item[chave]).filter(Boolean))).sort((a, b) => a.localeCompare(b, "pt-BR"));
 }
 
-function listarOrcamento2026() {
-  inicializarOrcamento2026();
-  const linhas = db.prepare(`
+async function listarOrcamento2026() {
+  await inicializarOrcamento2026();
+  const { rows: linhas } = await query(`
     SELECT *
     FROM orcamento_2026
     WHERE ativo = 1
     ORDER BY compoe_orcamento DESC, categoria, descricao
-  `).all();
+  `);
   const itens = linhas.map(linhaParaItem);
   const itensOficiais = itens.filter((item) => item.compoeOrcamento);
   const outrosProcessos = itens.filter((item) => !item.compoeOrcamento);
@@ -1079,7 +1079,7 @@ function listarOrcamento2026() {
   };
 }
 
-function criarProcessoVinculadoOrcamento2026(payload = {}) {
+async function criarProcessoVinculadoOrcamento2026(payload = {}) {
   const senha = payload.password ?? payload.senha;
   if (!validarSenhaEdicao(senha)) {
     return { success: false, message: "Senha inválida. Alterações não foram salvas." };
@@ -1111,8 +1111,8 @@ function criarProcessoVinculadoOrcamento2026(payload = {}) {
     return { success: false, message: "tipoRastreio inválido." };
   }
 
-  inicializarOrcamento2026();
-  const registros = db.prepare("SELECT * FROM orcamento_2026").all();
+  await inicializarOrcamento2026();
+  const { rows: registros } = await query("SELECT * FROM orcamento_2026");
   const processoPaiIdComparavel = processoPaiId.toUpperCase();
   const processoPai = registros.find((registro) => String(registro.id || "").trim().toUpperCase() === processoPaiIdComparavel);
 
@@ -1198,29 +1198,28 @@ function criarProcessoVinculadoOrcamento2026(payload = {}) {
     data_processo_sei: dataProcessoSei
   });
 
-  const backupPath = criarBackupBanco(PAGINA);
-  const insertNovo = db.prepare(`
+  const insertNovoSql = `
     INSERT INTO orcamento_2026 (${COLUNAS_ORCAMENTO.join(", ")}, atualizado_em)
-    VALUES (${COLUNAS_ORCAMENTO.map(() => "?").join(", ")}, ?)
-  `);
+    VALUES (${COLUNAS_ORCAMENTO.map((_, i) => `$${i + 1}`).join(", ")}, $${COLUNAS_ORCAMENTO.length + 1})
+  `;
 
-  db.transaction(() => {
-    insertNovo.run(...COLUNAS_ORCAMENTO.map((coluna) => item[coluna]), agora);
-    // Filhos não compõem o total global; apenas detalham a execução do envelope do processo pai.
-    registrarHistorico(db, {
+  await withTransaction(async (client) => {
+    const params = [...COLUNAS_ORCAMENTO.map((coluna) => item[coluna]), agora];
+    await client.query(insertNovoSql, params);
+    await registrarHistoricoPostgres(client, {
       pagina: PAGINA,
       registro: item.id,
       campo: "processo_vinculado",
       valorAnterior: "",
       valorNovo: `pai=${processoPai.id}; valor=${valorAlocado.toFixed(2)}`
     });
-  })();
+  });
 
   return {
     success: true,
     message: "Processo vinculado criado com sucesso.",
     updatedAt: agora,
-    backupPath,
+    backupPath: null,
     item
   };
 }
@@ -1269,11 +1268,11 @@ function normalizarProcessoSeiParaComparacao(valor) {
   return String(valor ?? "").replace(/\D/g, "");
 }
 
-function replicarAcompanhamentoGerencialPorProcesso(alteracoesPorItem, idsInativos = []) {
+async function replicarAcompanhamentoGerencialPorProcesso(client, alteracoesPorItem, idsInativos = []) {
   if (!(alteracoesPorItem instanceof Map) || !alteracoesPorItem.size) return;
 
   const idsInativosSet = new Set((idsInativos || []).map((id) => String(id)));
-  const itensAtivos = db.prepare("SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = 1").all();
+  const { rows: itensAtivos } = await client.query("SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = 1");
   const itensPorId = new Map(itensAtivos.map((item) => [String(item.id), item]));
   const idsPorProcesso = new Map();
 
@@ -1371,7 +1370,7 @@ function validarNovos(novos) {
   });
 }
 
-function salvarOrcamento2026({ password, changes, novos, inativos }) {
+async function salvarOrcamento2026({ password, changes, novos, inativos }) {
   if (!validarSenhaEdicao(password)) {
     return { success: false, message: "Senha inválida. Alterações não foram salvas." };
   }
@@ -1391,15 +1390,14 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
     return { success: false, message: "Não há alterações para salvar." };
   }
 
-  inicializarOrcamento2026();
-  const backupPath = criarBackupBanco(PAGINA);
+  await inicializarOrcamento2026();
   const updatedAt = new Date().toISOString();
-  const selectAtual = db.prepare("SELECT * FROM orcamento_2026 WHERE id = ?");
-  const insertNovo = db.prepare(`
+  const selectAtualSql = "SELECT * FROM orcamento_2026 WHERE id = $1";
+  const insertNovoSql = `
     INSERT INTO orcamento_2026 (${COLUNAS_ORCAMENTO.join(", ")}, atualizado_em)
-    VALUES (${COLUNAS_ORCAMENTO.map(() => "?").join(", ")}, ?)
-  `);
-  const inativar = db.prepare("UPDATE orcamento_2026 SET ativo = 0, atualizado_em = ? WHERE id = ?");
+    VALUES (${COLUNAS_ORCAMENTO.map((_, i) => `$${i + 1}`).join(", ")}, $${COLUNAS_ORCAMENTO.length + 1})
+  `;
+  const inativarSql = "UPDATE orcamento_2026 SET ativo = 0, atualizado_em = $1 WHERE id = $2";
   const alteracoesPorItem = new Map();
 
   alteracoes.forEach((item) => {
@@ -1408,22 +1406,25 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
     }
     alteracoesPorItem.get(item.id)[item.campo] = item.valor;
   });
-  replicarAcompanhamentoGerencialPorProcesso(alteracoesPorItem, idsInativos);
 
-  db.transaction(() => {
-    novosItens.forEach((item) => {
-      insertNovo.run(...COLUNAS_ORCAMENTO.map((coluna) => item[coluna]), updatedAt);
-      registrarHistorico(db, {
+  await withTransaction(async (client) => {
+    await replicarAcompanhamentoGerencialPorProcesso(client, alteracoesPorItem, idsInativos);
+
+    for (const item of novosItens) {
+      const params = [...COLUNAS_ORCAMENTO.map((coluna) => item[coluna]), updatedAt];
+      await client.query(insertNovoSql, params);
+      await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.id,
         campo: "registro",
         valorAnterior: "",
         valorNovo: "criado"
       });
-    });
+    }
 
-    alteracoesPorItem.forEach((camposAlterados, id) => {
-      const atual = selectAtual.get(id);
+    for (const [id, camposAlterados] of alteracoesPorItem.entries()) {
+      const { rows } = await client.query(selectAtualSql, [id]);
+      const atual = rows[0];
       if (!atual) throw new Error(`Item não localizado: ${id}`);
 
       const sincronizado = sincronizarStatusEProcessoAutuado(
@@ -1441,41 +1442,47 @@ function salvarOrcamento2026({ password, changes, novos, inativos }) {
         String(obterValorAtual(atual, campo)) !== String(valor)
       ));
 
-      if (!camposEfetivos.length) return;
+      if (!camposEfetivos.length) continue;
 
-      db.prepare(`UPDATE orcamento_2026 SET ${camposEfetivos.map(([campo]) => `${campo} = ?`).join(", ")}, atualizado_em = ? WHERE id = ?`)
-        .run(...camposEfetivos.map(([, valor]) => valor), updatedAt, id);
+      const sqlUpdate = `
+        UPDATE orcamento_2026
+        SET ${camposEfetivos.map(([campo], idx) => `${campo} = $${idx + 1}`).join(", ")}, atualizado_em = $${camposEfetivos.length + 1}
+        WHERE id = $${camposEfetivos.length + 2}
+      `;
+      const paramsUpdate = [...camposEfetivos.map(([, valor]) => valor), updatedAt, id];
+      await client.query(sqlUpdate, paramsUpdate);
 
-      camposEfetivos.forEach(([campo, valorNovo]) => {
-        registrarHistorico(db, {
+      for (const [campo, valorNovo] of camposEfetivos) {
+        await registrarHistoricoPostgres(client, {
           pagina: PAGINA,
           registro: id,
           campo,
           valorAnterior: obterValorAtual(atual, campo),
           valorNovo
         });
-      });
-    });
+      }
+    }
 
-    idsInativos.forEach((id) => {
-      const atual = selectAtual.get(id);
-      if (!atual) return;
-      inativar.run(updatedAt, id);
-      registrarHistorico(db, {
+    for (const id of idsInativos) {
+      const { rows } = await client.query(selectAtualSql, [id]);
+      const atual = rows[0];
+      if (!atual) continue;
+      await client.query(inativarSql, [updatedAt, id]);
+      await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: id,
         campo: "ativo",
         valorAnterior: atual.ativo,
         valorNovo: 0
       });
-    });
-  })();
+    }
+  });
 
   return {
     success: true,
     message: "Alterações salvas com sucesso.",
     updatedAt,
-    backupPath
+    backupPath: null
   };
 }
 
@@ -1493,24 +1500,25 @@ function validarInativos(inativos) {
   });
 }
 
-function listarHistoricoOrcamento2026() {
-  return db.prepare(`
-    SELECT id, pagina, registro, campo, valor_anterior AS valorAnterior,
-           valor_novo AS valorNovo, alterado_em AS alteradoEm
+async function listarHistoricoOrcamento2026() {
+  const { rows } = await query(`
+    SELECT id, pagina, registro, campo, valor_anterior AS "valorAnterior",
+           valor_novo AS "valorNovo", alterado_em AS "alteradoEm"
     FROM historico_alteracoes
-    WHERE pagina = ?
+    WHERE pagina = $1
     ORDER BY id DESC
     LIMIT 200
-  `).all(PAGINA);
+  `, [PAGINA]);
+  return rows;
 }
 
-function obterMovimentacoesAtivasOrcamento2026() {
-  return db.prepare(`
+async function obterMovimentacoesAtivasOrcamento2026() {
+  const { rows } = await query(`
     SELECT * FROM orcamento_2026_movimentacoes WHERE ativo = 1
-  `).all();
+  `);
+  return rows;
 }
 
-// Saldo transferível considera alocações recebidas, alocações cedidas, execução, empenho e filhos vinculados.
 function calcularSaldoTransferivelOrcamento2026(item, registros, movimentacoes) {
   const id = String(item.id || "").trim();
   const alocacoes = Array.isArray(movimentacoes) ? movimentacoes : [];
@@ -1539,8 +1547,7 @@ function calcularSaldoTransferivelOrcamento2026(item, registros, movimentacoes) 
   );
 }
 
-// Alocações não alteram o valor original dos processos; a movimentação preserva rastreabilidade.
-function alocarSaldoOrcamento2026(payload = {}) {
+async function alocarSaldoOrcamento2026(payload = {}) {
   const senha = payload.password ?? payload.senha;
   if (!validarSenhaEdicao(senha)) {
     return { success: false, message: "Senha inválida. Alterações não foram salvas." };
@@ -1571,8 +1578,8 @@ function alocarSaldoOrcamento2026(payload = {}) {
     return { success: false, message: "Justificativa é obrigatória para rastreabilidade." };
   }
 
-  inicializarOrcamento2026();
-  const registros = db.prepare("SELECT * FROM orcamento_2026").all();
+  await inicializarOrcamento2026();
+  const { rows: registros } = await query("SELECT * FROM orcamento_2026");
 
   const origem = registros.find((r) => String(r.id || "").trim().toUpperCase() === origemId.toUpperCase());
   if (!origem) {
@@ -1596,7 +1603,7 @@ function alocarSaldoOrcamento2026(payload = {}) {
     return { success: false, message: "Origem e destino pertencem a categorias diferentes. Alocação não permitida." };
   }
 
-  const movimentacoes = obterMovimentacoesAtivasOrcamento2026();
+  const movimentacoes = await obterMovimentacoesAtivasOrcamento2026();
   const saldoTransferivel = calcularSaldoTransferivelOrcamento2026(origem, registros, movimentacoes);
   if (valor > saldoTransferivel) {
     return {
@@ -1607,31 +1614,31 @@ function alocarSaldoOrcamento2026(payload = {}) {
 
   const agora = new Date().toISOString();
   const criadoPor = limparTexto(payload.criadoPor ?? payload.criado_por) || "";
-  const backupPath = criarBackupBanco(PAGINA);
 
-  const inserir = db.prepare(`
+  const inserirSql = `
     INSERT INTO orcamento_2026_movimentacoes
       (tipo, origem_id, destino_id, valor, justificativa, criado_em, criado_por, ativo)
-    VALUES (?, ?, ?, ?, ?, ?, ?, 1)
-  `);
+    VALUES ($1, $2, $3, $4, $5, $6, $7, 1)
+    RETURNING id
+  `;
 
   let movimentacaoId;
-  db.transaction(() => {
-    const result = inserir.run("ALOCACAO_SALDO", origem.id, destino.id, valor, justificativa, agora, criadoPor);
-    movimentacaoId = result.lastInsertRowid;
-    registrarHistorico(db, {
+  await withTransaction(async (client) => {
+    const { rows } = await client.query(inserirSql, ["ALOCACAO_SALDO", origem.id, destino.id, valor, justificativa, agora, criadoPor]);
+    movimentacaoId = rows[0].id;
+    await registrarHistoricoPostgres(client, {
       pagina: PAGINA,
       registro: origem.id,
       campo: "alocacao_saldo",
       valorAnterior: "",
       valorNovo: `origem=${origem.id}; destino=${destino.id}; valor=${valor.toFixed(2)}`
     });
-  })();
+  });
 
   return {
     success: true,
     message: "Saldo alocado com sucesso.",
-    backupPath,
+    backupPath: null,
     movimentacao: {
       id: movimentacaoId,
       tipo: "ALOCACAO_SALDO",
@@ -1644,16 +1651,17 @@ function alocarSaldoOrcamento2026(payload = {}) {
   };
 }
 
-function listarMovimentacoesOrcamento2026() {
-  return db.prepare(`
+async function listarMovimentacoesOrcamento2026() {
+  const { rows } = await query(`
     SELECT id, tipo,
-           origem_id AS origemId, destino_id AS destinoId,
+           origem_id AS "origemId", destino_id AS "destinoId",
            valor, justificativa,
-           criado_em AS criadoEm, criado_por AS criadoPor, ativo
+           criado_em AS "criadoEm", criado_por AS "criadoPor", ativo
     FROM orcamento_2026_movimentacoes
     ORDER BY id DESC
     LIMIT 500
-  `).all();
+  `);
+  return rows;
 }
 
 module.exports = {

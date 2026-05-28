@@ -65,8 +65,8 @@ async function exportarFormalizacaoProforExcel() {
   return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
 }
 
-function exportarOrcamento2026Excel() {
-  const dados = listarOrcamento2026();
+async function exportarOrcamento2026Excel() {
+  const dados = await listarOrcamento2026();
   const workbook = XLSX.utils.book_new();
   const linhasOrcamento = dados.itensOficiais.map((item) => ({
     ID: item.id,

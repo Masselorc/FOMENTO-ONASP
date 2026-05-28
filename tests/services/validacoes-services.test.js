@@ -16,23 +16,23 @@ function assertFalhaSenhaInvalida(resultado) {
   assert.match(String(resultado?.message || ""), /senha inválida/i);
 }
 
-test("salvarOrcamento2026 rejeita senha inválida", () => {
-  const resultado = salvarOrcamento2026({
+test("salvarOrcamento2026 rejeita senha inválida", async () => {
+  const resultado = await salvarOrcamento2026({
     password: "senha-invalida",
     changes: {}
   });
   assertFalhaSenhaInvalida(resultado);
 });
 
-test("criarProcessoVinculadoOrcamento2026 rejeita senha inválida", () => {
-  const resultado = criarProcessoVinculadoOrcamento2026({
+test("criarProcessoVinculadoOrcamento2026 rejeita senha inválida", async () => {
+  const resultado = await criarProcessoVinculadoOrcamento2026({
     password: "senha-invalida"
   });
   assertFalhaSenhaInvalida(resultado);
 });
 
-test("alocarSaldoOrcamento2026 rejeita senha inválida", () => {
-  const resultado = alocarSaldoOrcamento2026({
+test("alocarSaldoOrcamento2026 rejeita senha inválida", async () => {
+  const resultado = await alocarSaldoOrcamento2026({
     password: "senha-invalida"
   });
   assertFalhaSenhaInvalida(resultado);

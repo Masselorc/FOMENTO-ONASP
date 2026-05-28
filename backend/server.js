@@ -518,13 +518,13 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "GET" && pathname === "/api/orcamento-2026") {
-      enviarJson(res, 200, listarOrcamento2026());
+      enviarJson(res, 200, await listarOrcamento2026());
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/orcamento-2026/salvar") {
       const payload = await lerJsonBody(req);
-      const resultado = salvarOrcamento2026(payload);
+      const resultado = await salvarOrcamento2026(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
@@ -532,7 +532,7 @@ async function rotearApi(req, res, pathname) {
 
     if (req.method === "POST" && pathname === "/api/orcamento-2026/processos-vinculados/criar") {
       const payload = await lerJsonBody(req);
-      const resultado = criarProcessoVinculadoOrcamento2026(payload);
+      const resultado = await criarProcessoVinculadoOrcamento2026(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
@@ -540,7 +540,7 @@ async function rotearApi(req, res, pathname) {
 
     if (req.method === "POST" && pathname === "/api/orcamento-2026/saldos/alocar") {
       const payload = await lerJsonBody(req);
-      const resultado = alocarSaldoOrcamento2026(payload);
+      const resultado = await alocarSaldoOrcamento2026(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
@@ -549,7 +549,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "GET" && pathname === "/api/orcamento-2026/movimentacoes") {
       enviarJson(res, 200, {
         success: true,
-        movimentacoes: listarMovimentacoesOrcamento2026()
+        movimentacoes: await listarMovimentacoesOrcamento2026()
       });
       return;
     }
@@ -557,13 +557,13 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "GET" && pathname === "/api/orcamento-2026/historico") {
       enviarJson(res, 200, {
         success: true,
-        historico: listarHistoricoOrcamento2026()
+        historico: await listarHistoricoOrcamento2026()
       });
       return;
     }
 
     if (req.method === "GET" && pathname === "/api/orcamento-2026/exportar") {
-      const buffer = exportarOrcamento2026Excel();
+      const buffer = await exportarOrcamento2026Excel();
       res.writeHead(200, {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition": "attachment; filename=\"orcamento-2026.xlsx\"",
