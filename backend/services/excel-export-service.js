@@ -20,8 +20,8 @@ function statusParaExcel(statusTela) {
   return mapa[status] || "NÃO INFORMADO";
 }
 
-function exportarParametrosMinimosExcel() {
-  const dados = listarParametrosMinimos();
+async function exportarParametrosMinimosExcel() {
+  const dados = await listarParametrosMinimos();
   const linhas = dados.respostas.map((resposta) => {
     const linha = { UF: resposta.uf };
 
@@ -42,8 +42,8 @@ function exportarParametrosMinimosExcel() {
   return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
 }
 
-function exportarFormalizacaoProforExcel() {
-  const dados = listarFormalizacaoProfor();
+async function exportarFormalizacaoProforExcel() {
+  const dados = await listarFormalizacaoProfor();
   const linhas = dados.propostas.map((proposta) => {
     const linha = { UF: proposta.uf };
 

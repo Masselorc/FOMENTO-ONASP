@@ -1,9 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const XLSX = require("xlsx");
-const db = require("../db/database");
-const { criarBackupBanco } = require("./backup-service");
-const { registrarHistorico } = require("./historico-service");
+const { query, withTransaction } = require("../db/postgres-client");
+const { registrarHistoricoPostgres } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
 
 const PAGINA = "formalizacao-profor";
@@ -151,8 +150,8 @@ function obterRegistrosIniciaisDaPlanilha() {
   return registros;
 }
 
-function inicializarFormalizacaoProfor() {
-  const total = db.prepare("SELECT COUNT(*) AS total FROM formalizacao_profor").get().total;
+async function inicializarFormalizacaoProfor() {
+  const { rows: [{ total }] } = await query("SELECT COUNT(*)::int AS total FROM formalizacao_profor");
   if (total > 0) return;
 
   const registros = obterRegistrosIniciaisDaPlanilha();
@@ -167,16 +166,23 @@ function inicializarFormalizacaoProfor() {
       }))
     ));
 
-  const insert = db.prepare(`
-    INSERT OR IGNORE INTO formalizacao_profor (uf, etapa, status, observacao, atualizado_em)
-    VALUES (?, ?, ?, ?, ?)
-  `);
+  const insertSql = `
+    INSERT INTO formalizacao_profor (uf, etapa, status, observacao, atualizado_em)
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (uf, etapa) DO NOTHING
+  `;
   const updatedAt = new Date().toISOString();
-  db.transaction((items) => {
-    items.forEach((item) => {
-      insert.run(item.uf, item.etapa, normalizarStatusFormalizacao(item.status), item.observacao || "", updatedAt);
-    });
-  })(base);
+  await withTransaction(async (client) => {
+    for (const item of base) {
+      await client.query(insertSql, [
+        item.uf,
+        item.etapa,
+        normalizarStatusFormalizacao(item.status),
+        item.observacao || "",
+        updatedAt
+      ]);
+    }
+  });
 }
 
 function calcularSituacaoGeral(etapas) {
@@ -286,13 +292,14 @@ function montarResumo(propostas) {
   };
 }
 
-function listarFormalizacaoProfor() {
-  inicializarFormalizacaoProfor();
-  const linhas = db.prepare(`
+async function listarFormalizacaoProfor() {
+  await inicializarFormalizacaoProfor();
+  const { rows } = await query(`
     SELECT uf, etapa, status, observacao, atualizado_em
     FROM formalizacao_profor
     ORDER BY uf, etapa
-  `).all().map((linha) => ({
+  `);
+  const linhas = rows.map((linha) => ({
     ...linha,
     observacao: limparObservacaoFormalizacao(linha.observacao)
   }));
@@ -362,7 +369,7 @@ function validarPayloadAlteracoes(changes) {
   return atualizacoes;
 }
 
-function salvarFormalizacaoProfor({ password, changes }) {
+async function salvarFormalizacaoProfor({ password, changes }) {
   if (!validarSenhaEdicao(password)) {
     return { success: false, message: "Senha inválida. Alterações não foram salvas." };
   }
@@ -378,57 +385,56 @@ function salvarFormalizacaoProfor({ password, changes }) {
     return { success: false, message: "Não há alterações para salvar." };
   }
 
-  inicializarFormalizacaoProfor();
-  const backupPath = criarBackupBanco(PAGINA);
+  await inicializarFormalizacaoProfor();
   const updatedAt = new Date().toISOString();
-  const selectAtual = db.prepare("SELECT status, observacao FROM formalizacao_profor WHERE uf = ? AND etapa = ?");
-  const upsert = db.prepare(`
+  const selectAtualSql = "SELECT status, observacao FROM formalizacao_profor WHERE uf = $1 AND etapa = $2";
+  const upsertSql = `
     INSERT INTO formalizacao_profor (uf, etapa, status, observacao, atualizado_em)
-    VALUES (?, ?, ?, ?, ?)
-    ON CONFLICT(uf, etapa) DO UPDATE SET
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (uf, etapa) DO UPDATE SET
       status = excluded.status,
       observacao = excluded.observacao,
       atualizado_em = excluded.atualizado_em
-  `);
+  `;
 
-  db.transaction((items) => {
-    items.forEach((item) => {
-      const anterior = selectAtual.get(item.uf, item.etapa);
-      upsert.run(item.uf, item.etapa, item.status, item.observacao, updatedAt);
-      registrarHistorico(db, {
+  await withTransaction(async (client) => {
+    for (const item of atualizacoes) {
+      const { rows: [anterior] } = await client.query(selectAtualSql, [item.uf, item.etapa]);
+      await client.query(upsertSql, [item.uf, item.etapa, item.status, item.observacao, updatedAt]);
+      await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: item.etapa,
         valorAnterior: anterior ? anterior.status : "",
         valorNovo: item.status
       });
-      registrarHistorico(db, {
+      await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: `${item.etapa}.observacao`,
         valorAnterior: anterior ? anterior.observacao || "" : "",
         valorNovo: item.observacao
       });
-    });
-  })(atualizacoes);
+    }
+  });
 
   return {
     success: true,
     message: "Alterações salvas com sucesso.",
-    updatedAt,
-    backupPath
+    updatedAt
   };
 }
 
-function listarHistoricoFormalizacaoProfor() {
-  return db.prepare(`
-    SELECT id, pagina, registro, campo, valor_anterior AS valorAnterior,
-           valor_novo AS valorNovo, alterado_em AS alteradoEm
+async function listarHistoricoFormalizacaoProfor() {
+  const { rows } = await query(`
+    SELECT id, pagina, registro, campo, valor_anterior AS "valorAnterior",
+           valor_novo AS "valorNovo", alterado_em AS "alteradoEm"
     FROM historico_alteracoes
-    WHERE pagina = ?
+    WHERE pagina = $1
     ORDER BY id DESC
     LIMIT 200
-  `).all(PAGINA);
+  `, [PAGINA]);
+  return rows;
 }
 
 module.exports = {
