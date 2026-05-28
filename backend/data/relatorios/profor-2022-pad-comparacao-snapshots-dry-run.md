@@ -1,39 +1,42 @@
 # PROFOR 2022 - Comparação de Snapshots PAD (dry-run)
 
-Gerado em: 2026-05-25T13:39:12.117Z
+Gerado em: 2026-05-28T22:11:41.666Z
 Versão do comparador: 0.3
 Checksum anterior: `799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678`
-Checksum novo: `c140904ba3285041dbd6eef3aa1eab9f385662df88672a9ff4d22c2e4898cbcc`
+Checksum novo: `bdf807db7f0881bbff74d75d9b6a8d6b6929741c4cf14c2ed6801d7513d4deac`
 Checksums válidos: sim
 Bloqueios técnicos: 76
 
 ## 1. Resumo
 
-- Itens idênticos: 562
+- Itens idênticos: 550
 - Itens novos: 0
-- Itens removidos: 1
-- Itens alterados: 5
+- Itens removidos: 0
+- Itens alterados: 18
 - Bloqueios técnicos: 76
 
 ## 2. Tipos de divergência
 
 | Tipo | Qtd |
 | --- | ---: |
+| `area_alterada` | 3 |
 | `chave_ambigua` | 38 |
 | `colisao_chave` | 38 |
+| `descricao_alterada` | 1 |
 | `descricao_apenas_diacritico` | 4 |
 | `descricao_apenas_textual` | 1 |
-| `item_removido` | 1 |
+| `saldo_alterado` | 9 |
+| `valor_executado_alterado` | 9 |
 
 ## 3. Totais agregados
 
 | Métrica | Diferença líquida |
 | --- | ---: |
-| Linhas | -1 |
-| Valor previsto | R$ -9.506,54 |
-| Valor executado | R$ 0,00 |
-| Saldo | R$ -9.506,54 |
-| Quantidade | -1 |
+| Linhas | 0 |
+| Valor previsto | R$ 0,00 |
+| Valor executado | R$ 10.391,86 |
+| Saldo | R$ -10.391,86 |
+| Quantidade | 0 |
 
 ## 4. Bloqueios técnicos
 
@@ -132,11 +135,23 @@ Bloqueios técnicos: 76
 | Tipo | Convênio | UF | Natureza | Área | Descrição |
 | --- | --- | --- | --- | --- | --- |
 | `descricao_apenas_textual` | 937265 | MS | CUSTEIO | CORREGEDORIA | Meia Militar |
+| `valor_executado_alterado` | 937468 | TO | CAPITAL | CORREGEDORIA | ETAPA 2 - CORREGEDORIA - Monitor |
+| `valor_executado_alterado` | 937468 | TO | CAPITAL | OUVIDORIA | ETAPA 1 - OUVIDORIA - Monitor |
 | `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | CORREGEDORIA | Smartphone minimo de 128gb de memória in |
 | `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | ESCOLA PENAL | Desktop para edição de video |
 | `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | ESCOLA PENAL | Switcher de video |
 | `descricao_apenas_diacritico` | 937782 | AC | CAPITAL | OUVIDORIA | Smartphone minimo de 128gb de memória in |
-| `item_removido` | 937221 | AL | CAPITAL | NAO INFORMADO | Saldo Residual |
+| `valor_executado_alterado` | 937817 | RJ | CAPITAL | ESCOLA PENAL | ESTABILIZADOR |
+| `valor_executado_alterado` | 937817 | RJ | CAPITAL | ESCOLA PENAL | MANEQUIM DE TREINAMENTO RCP |
+| `valor_executado_alterado` | 937817 | RJ | CAPITAL | ESCOLA PENAL | SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V |
+| `valor_executado_alterado` | 937817 | RJ | CAPITAL | ESCOLA PENAL | VENTILADOR 50 CM PAREDE |
+| `valor_executado_alterado` | 937817 | RJ | CUSTEIO | ESCOLA PENAL | GRAMPEADOR PROFISSIONAL PARA MADEIRA |
+| `valor_executado_alterado` | 938128 | SP | CAPITAL | NAO INFORMADO | Agenda Planner |
+| `valor_executado_alterado` | 938128 | SP | CUSTEIO | ESCOLA PENAL | Curso de Pós Graduação Direitos Humanos |
+| `descricao_alterada` | 937782 | AC | CAPITAL | OUVIDORIA | Monitor de led 18,5 ' resolução 192 |
+| `area_alterada` | 937221 | AL | CAPITAL | ESCOLA_PENAL | Forno de Micro-ondas a partir de- 32 lit |
+| `area_alterada` | 937221 | AL | CAPITAL | ESCOLA_PENAL | Quadro Lousa branca |
+| `area_alterada` | 937221 | AL | CAPITAL | ESCOLA_PENAL | Refrigerador frigobar, com capacidade no |
 
 ## 6. Garantias
 

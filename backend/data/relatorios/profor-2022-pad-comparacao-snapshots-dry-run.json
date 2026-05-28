@@ -1,11 +1,11 @@
 {
-  "geradoEm": "2026-05-25T13:39:12.117Z",
+  "geradoEm": "2026-05-28T22:11:41.666Z",
   "modo": "dry-run",
   "versaoComparador": "0.3",
   "checksumAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
-  "checksumNovo": "c140904ba3285041dbd6eef3aa1eab9f385662df88672a9ff4d22c2e4898cbcc",
+  "checksumNovo": "bdf807db7f0881bbff74d75d9b6a8d6b6929741c4cf14c2ed6801d7513d4deac",
   "checksumCalculadoAnterior": "799dae331c4709ec26434e8c01de0218446255783527149c6cb32bb8d9abe678",
-  "checksumCalculadoNovo": "c140904ba3285041dbd6eef3aa1eab9f385662df88672a9ff4d22c2e4898cbcc",
+  "checksumCalculadoNovo": "bdf807db7f0881bbff74d75d9b6a8d6b6929741c4cf14c2ed6801d7513d4deac",
   "checksumsValidos": true,
   "bloqueiosTecnicos": [
     {
@@ -994,39 +994,45 @@
   "avisos": [],
   "resumo": {
     "totalLinhasAnterior": 568,
-    "totalLinhasNovo": 567,
-    "totalIguais": 562,
+    "totalLinhasNovo": 568,
+    "totalIguais": 550,
     "totalNovos": 0,
-    "totalRemovidos": 1,
-    "totalAusentes": 1,
-    "totalAlterados": 5,
+    "totalRemovidos": 0,
+    "totalAusentes": 0,
+    "totalAlterados": 18,
     "totalBloqueiosTecnicos": 76,
     "porTipo": {
       "descricao_apenas_textual": 1,
+      "valor_executado_alterado": 9,
+      "saldo_alterado": 9,
       "descricao_apenas_diacritico": 4,
-      "item_removido": 1,
+      "descricao_alterada": 1,
+      "area_alterada": 3,
       "colisao_chave": 38,
       "chave_ambigua": 38
     },
     "porUf": {
       "MS": 1,
-      "AC": 4,
-      "AL": 1,
+      "TO": 2,
+      "AC": 5,
+      "RJ": 5,
+      "SP": 2,
+      "AL": 3,
       "NAO_INFORMADO": 76
     },
     "porNatureza": {
-      "CUSTEIO": 1,
-      "CAPITAL": 5,
+      "CUSTEIO": 3,
+      "CAPITAL": 15,
       "NAO_INFORMADO": 76
     },
     "totalRuidosTecnicosControlados": 6
   },
   "diferencasAgregadas": {
-    "valorPrevisto": -9506.54,
-    "valorExecutado": 0,
-    "saldo": -9506.54,
-    "quantidade": -1,
-    "linhas": -1
+    "valorPrevisto": 0,
+    "valorExecutado": 10391.86,
+    "saldo": -10391.86,
+    "quantidade": 0,
+    "linhas": 0
   },
   "divergencias": [
     {
@@ -1050,6 +1056,60 @@
       }
     },
     {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - MONITOR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 2 - CORREGEDORIA - Monitor",
+      "descricaoNova": "ETAPA 2 - CORREGEDORIA - Monitor",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 10619.91,
+          "delta": 10619.91
+        },
+        "saldo": {
+          "anterior": 7079.94,
+          "novo": -3539.97,
+          "delta": -10619.91
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937468|TO|CAPITAL|OUVIDORIA|ETAPA 1 - OUVIDORIA - MONITOR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 1 - OUVIDORIA - Monitor",
+      "descricaoNova": "ETAPA 1 - OUVIDORIA - Monitor",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 10619.91,
+          "novo": 0,
+          "delta": -10619.91
+        },
+        "saldo": {
+          "anterior": -7079.94,
+          "novo": 3539.97,
+          "delta": 10619.91
+        }
+      }
+    },
+    {
       "tipo": "descricao_apenas_diacritico",
       "tipos": [
         "descricao_apenas_diacritico"
@@ -1130,92 +1190,278 @@
       }
     },
     {
-      "tipo": "item_removido",
+      "tipo": "valor_executado_alterado",
       "tipos": [
-        "item_removido"
+        "valor_executado_alterado",
+        "saldo_alterado"
       ],
-      "chave": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
-      "uf": "AL",
-      "numero": "937221",
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|ESTABILIZADOR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ESTABILIZADOR",
+      "descricaoNova": "ESTABILIZADOR",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 5238.2,
+          "novo": 0,
+          "delta": -5238.2
+        },
+        "saldo": {
+          "anterior": -2781.8,
+          "novo": 2456.4,
+          "delta": 5238.2
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|MANEQUIM DE TREINAMENTO RCP",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "MANEQUIM DE TREINAMENTO RCP",
+      "descricaoNova": "MANEQUIM DE TREINAMENTO RCP",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 23130,
+          "delta": 23130
+        },
+        "saldo": {
+          "anterior": 22951.65,
+          "novo": -178.35,
+          "delta": -23130
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|SALDO DE RENDIMENTO COMPLEMENTACAO DOS V",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V",
+      "descricaoNova": "SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 40298.1,
+          "novo": 23468.3,
+          "delta": -16829.8
+        },
+        "saldo": {
+          "anterior": 61043.33,
+          "novo": 77873.13,
+          "delta": 16829.8
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|VENTILADOR 50 CM PAREDE",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "VENTILADOR 50 CM PAREDE",
+      "descricaoNova": "VENTILADOR 50 CM PAREDE",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 2388,
+          "delta": 2388
+        },
+        "saldo": {
+          "anterior": 1775.47,
+          "novo": -612.53,
+          "delta": -2388
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CUSTEIO|ESCOLA PENAL|GRAMPEADOR PROFISSIONAL PARA MADEIRA",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricaoAnterior": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
+      "descricaoNova": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 3450,
+          "novo": 0,
+          "delta": -3450
+        },
+        "saldo": {
+          "anterior": -2503.34,
+          "novo": 946.66,
+          "delta": 3450
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "938128|SP|CAPITAL|NAO INFORMADO|AGENDA PLANNER",
+      "origemPareamento": "chaveMaterial",
+      "uf": "SP",
+      "numero": "938128",
       "area": "NAO INFORMADO",
       "natureza": "CAPITAL",
-      "descricaoAnterior": "Saldo Residual",
-      "item": {
-        "uf": "AL",
-        "instrumento": "CONVÊNIO",
-        "numero": "937221",
-        "ano": "2022",
-        "area": "NAO INFORMADO",
-        "natureza": "CAPITAL",
-        "descricao": "SALDO RESIDUAL",
-        "descricaoOriginal": "Saldo Residual",
-        "descricaoNormalizada": "SALDO RESIDUAL",
-        "quantidade": 1,
-        "valorUnitario": 9506.54,
-        "valorPrevisto": 9506.54,
-        "valorExecutado": 0,
-        "saldo": 9506.54,
-        "saldoEconomicidade": 0,
-        "percentualExecucao": 0,
-        "avisos": [],
-        "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
-        "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
-        "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
-        "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
+      "descricaoAnterior": "Agenda Planner",
+      "descricaoNova": "Agenda Planner",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 850,
+          "delta": 850
+        },
+        "saldo": {
+          "anterior": 1134.27,
+          "novo": 284.27,
+          "delta": -850
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "938128|SP|CUSTEIO|ESCOLA PENAL|CURSO DE POS GRADUACAO DIREITOS HUMANOS",
+      "origemPareamento": "chaveMaterial",
+      "uf": "SP",
+      "numero": "938128",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricaoAnterior": "Curso de Pós Graduação Direitos Humanos",
+      "descricaoNova": "Curso de Pós Graduação Direitos Humanos",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 190837.22,
+          "novo": 200379.08,
+          "delta": 9541.86
+        },
+        "saldo": {
+          "anterior": 354497.68,
+          "novo": 344955.82,
+          "delta": -9541.86
+        }
+      }
+    },
+    {
+      "tipo": "descricao_alterada",
+      "tipos": [
+        "descricao_alterada"
+      ],
+      "chave": "937782|AC|CAPITAL|OUVIDORIA",
+      "origemPareamento": "chaveContexto",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Monitor de led 18,5 &#039; resolução 192",
+      "descricaoNova": "Monitor de led 18,5 ' resolução 192",
+      "valores": {
+        "descricao": {
+          "anterior": "Monitor de led 18,5 &#039; resolução 192",
+          "novo": "Monitor de led 18,5 ' resolução 192"
+        }
+      }
+    },
+    {
+      "tipo": "area_alterada",
+      "tipos": [
+        "area_alterada"
+      ],
+      "chave": "937221|AL|CAPITAL|FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "origemPareamento": "chaveSemArea",
+      "uf": "AL",
+      "numero": "937221",
+      "area": "ESCOLA_PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Forno de Micro-ondas a partir de- 32 lit",
+      "descricaoNova": "Forno de Micro-ondas a partir de- 32 lit",
+      "valores": {
+        "area": {
+          "anterior": "ESCOLA",
+          "novo": "ESCOLA_PENAL"
+        }
+      }
+    },
+    {
+      "tipo": "area_alterada",
+      "tipos": [
+        "area_alterada"
+      ],
+      "chave": "937221|AL|CAPITAL|QUADRO LOUSA BRANCA",
+      "origemPareamento": "chaveSemArea",
+      "uf": "AL",
+      "numero": "937221",
+      "area": "ESCOLA_PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Quadro Lousa branca",
+      "descricaoNova": "Quadro Lousa branca",
+      "valores": {
+        "area": {
+          "anterior": "ESCOLA",
+          "novo": "ESCOLA_PENAL"
+        }
+      }
+    },
+    {
+      "tipo": "area_alterada",
+      "tipos": [
+        "area_alterada"
+      ],
+      "chave": "937221|AL|CAPITAL|REFRIGERADOR FRIGOBAR COM CAPACIDADE NO",
+      "origemPareamento": "chaveSemArea",
+      "uf": "AL",
+      "numero": "937221",
+      "area": "ESCOLA_PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Refrigerador frigobar, com capacidade no",
+      "descricaoNova": "Refrigerador frigobar, com capacidade no",
+      "valores": {
+        "area": {
+          "anterior": "ESCOLA",
+          "novo": "ESCOLA_PENAL"
+        }
       }
     }
   ],
   "itensNovos": [],
-  "itensAusentes": [
-    {
-      "uf": "AL",
-      "instrumento": "CONVÊNIO",
-      "numero": "937221",
-      "ano": "2022",
-      "area": "NAO INFORMADO",
-      "natureza": "CAPITAL",
-      "descricao": "SALDO RESIDUAL",
-      "descricaoOriginal": "Saldo Residual",
-      "descricaoNormalizada": "SALDO RESIDUAL",
-      "quantidade": 1,
-      "valorUnitario": 9506.54,
-      "valorPrevisto": 9506.54,
-      "valorExecutado": 0,
-      "saldo": 9506.54,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
-      "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
-      "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
-      "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
-    }
-  ],
-  "itensRemovidos": [
-    {
-      "uf": "AL",
-      "instrumento": "CONVÊNIO",
-      "numero": "937221",
-      "ano": "2022",
-      "area": "NAO INFORMADO",
-      "natureza": "CAPITAL",
-      "descricao": "SALDO RESIDUAL",
-      "descricaoOriginal": "Saldo Residual",
-      "descricaoNormalizada": "SALDO RESIDUAL",
-      "quantidade": 1,
-      "valorUnitario": 9506.54,
-      "valorPrevisto": 9506.54,
-      "valorExecutado": 0,
-      "saldo": 9506.54,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
-      "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
-      "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
-      "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
-    }
-  ],
+  "itensAusentes": [],
+  "itensRemovidos": [],
   "itensAlterados": [
     {
       "tipo": "descricao_apenas_textual",
@@ -1238,6 +1484,60 @@
       }
     },
     {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - MONITOR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 2 - CORREGEDORIA - Monitor",
+      "descricaoNova": "ETAPA 2 - CORREGEDORIA - Monitor",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 10619.91,
+          "delta": 10619.91
+        },
+        "saldo": {
+          "anterior": 7079.94,
+          "novo": -3539.97,
+          "delta": -10619.91
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937468|TO|CAPITAL|OUVIDORIA|ETAPA 1 - OUVIDORIA - MONITOR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "TO",
+      "numero": "937468",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ETAPA 1 - OUVIDORIA - Monitor",
+      "descricaoNova": "ETAPA 1 - OUVIDORIA - Monitor",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 10619.91,
+          "novo": 0,
+          "delta": -10619.91
+        },
+        "saldo": {
+          "anterior": -7079.94,
+          "novo": 3539.97,
+          "delta": 10619.91
+        }
+      }
+    },
+    {
       "tipo": "descricao_apenas_diacritico",
       "tipos": [
         "descricao_apenas_diacritico"
@@ -1314,6 +1614,275 @@
         "descricao": {
           "anterior": "Smartphone mínimo de 128gb de memória in",
           "novo": "Smartphone minimo de 128gb de memória in"
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|ESTABILIZADOR",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "ESTABILIZADOR",
+      "descricaoNova": "ESTABILIZADOR",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 5238.2,
+          "novo": 0,
+          "delta": -5238.2
+        },
+        "saldo": {
+          "anterior": -2781.8,
+          "novo": 2456.4,
+          "delta": 5238.2
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|MANEQUIM DE TREINAMENTO RCP",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "MANEQUIM DE TREINAMENTO RCP",
+      "descricaoNova": "MANEQUIM DE TREINAMENTO RCP",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 23130,
+          "delta": 23130
+        },
+        "saldo": {
+          "anterior": 22951.65,
+          "novo": -178.35,
+          "delta": -23130
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|SALDO DE RENDIMENTO COMPLEMENTACAO DOS V",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V",
+      "descricaoNova": "SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 40298.1,
+          "novo": 23468.3,
+          "delta": -16829.8
+        },
+        "saldo": {
+          "anterior": 61043.33,
+          "novo": 77873.13,
+          "delta": 16829.8
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CAPITAL|ESCOLA PENAL|VENTILADOR 50 CM PAREDE",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "VENTILADOR 50 CM PAREDE",
+      "descricaoNova": "VENTILADOR 50 CM PAREDE",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 2388,
+          "delta": 2388
+        },
+        "saldo": {
+          "anterior": 1775.47,
+          "novo": -612.53,
+          "delta": -2388
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "937817|RJ|CUSTEIO|ESCOLA PENAL|GRAMPEADOR PROFISSIONAL PARA MADEIRA",
+      "origemPareamento": "chaveMaterial",
+      "uf": "RJ",
+      "numero": "937817",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricaoAnterior": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
+      "descricaoNova": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 3450,
+          "novo": 0,
+          "delta": -3450
+        },
+        "saldo": {
+          "anterior": -2503.34,
+          "novo": 946.66,
+          "delta": 3450
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "938128|SP|CAPITAL|NAO INFORMADO|AGENDA PLANNER",
+      "origemPareamento": "chaveMaterial",
+      "uf": "SP",
+      "numero": "938128",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Agenda Planner",
+      "descricaoNova": "Agenda Planner",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 0,
+          "novo": 850,
+          "delta": 850
+        },
+        "saldo": {
+          "anterior": 1134.27,
+          "novo": 284.27,
+          "delta": -850
+        }
+      }
+    },
+    {
+      "tipo": "valor_executado_alterado",
+      "tipos": [
+        "valor_executado_alterado",
+        "saldo_alterado"
+      ],
+      "chave": "938128|SP|CUSTEIO|ESCOLA PENAL|CURSO DE POS GRADUACAO DIREITOS HUMANOS",
+      "origemPareamento": "chaveMaterial",
+      "uf": "SP",
+      "numero": "938128",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricaoAnterior": "Curso de Pós Graduação Direitos Humanos",
+      "descricaoNova": "Curso de Pós Graduação Direitos Humanos",
+      "valores": {
+        "valorExecutado": {
+          "anterior": 190837.22,
+          "novo": 200379.08,
+          "delta": 9541.86
+        },
+        "saldo": {
+          "anterior": 354497.68,
+          "novo": 344955.82,
+          "delta": -9541.86
+        }
+      }
+    },
+    {
+      "tipo": "descricao_alterada",
+      "tipos": [
+        "descricao_alterada"
+      ],
+      "chave": "937782|AC|CAPITAL|OUVIDORIA",
+      "origemPareamento": "chaveContexto",
+      "uf": "AC",
+      "numero": "937782",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Monitor de led 18,5 &#039; resolução 192",
+      "descricaoNova": "Monitor de led 18,5 ' resolução 192",
+      "valores": {
+        "descricao": {
+          "anterior": "Monitor de led 18,5 &#039; resolução 192",
+          "novo": "Monitor de led 18,5 ' resolução 192"
+        }
+      }
+    },
+    {
+      "tipo": "area_alterada",
+      "tipos": [
+        "area_alterada"
+      ],
+      "chave": "937221|AL|CAPITAL|FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
+      "origemPareamento": "chaveSemArea",
+      "uf": "AL",
+      "numero": "937221",
+      "area": "ESCOLA_PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Forno de Micro-ondas a partir de- 32 lit",
+      "descricaoNova": "Forno de Micro-ondas a partir de- 32 lit",
+      "valores": {
+        "area": {
+          "anterior": "ESCOLA",
+          "novo": "ESCOLA_PENAL"
+        }
+      }
+    },
+    {
+      "tipo": "area_alterada",
+      "tipos": [
+        "area_alterada"
+      ],
+      "chave": "937221|AL|CAPITAL|QUADRO LOUSA BRANCA",
+      "origemPareamento": "chaveSemArea",
+      "uf": "AL",
+      "numero": "937221",
+      "area": "ESCOLA_PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Quadro Lousa branca",
+      "descricaoNova": "Quadro Lousa branca",
+      "valores": {
+        "area": {
+          "anterior": "ESCOLA",
+          "novo": "ESCOLA_PENAL"
+        }
+      }
+    },
+    {
+      "tipo": "area_alterada",
+      "tipos": [
+        "area_alterada"
+      ],
+      "chave": "937221|AL|CAPITAL|REFRIGERADOR FRIGOBAR COM CAPACIDADE NO",
+      "origemPareamento": "chaveSemArea",
+      "uf": "AL",
+      "numero": "937221",
+      "area": "ESCOLA_PENAL",
+      "natureza": "CAPITAL",
+      "descricaoAnterior": "Refrigerador frigobar, com capacidade no",
+      "descricaoNova": "Refrigerador frigobar, com capacidade no",
+      "valores": {
+        "area": {
+          "anterior": "ESCOLA",
+          "novo": "ESCOLA_PENAL"
         }
       }
     }
@@ -2704,75 +3273,6 @@
       "instrumento": "CONVÊNIO",
       "numero": "937221",
       "ano": "2022",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
-      "descricaoOriginal": "Forno de Micro-ondas a partir de- 32 lit",
-      "descricaoNormalizada": "FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
-      "quantidade": 1,
-      "valorUnitario": 726,
-      "valorPrevisto": 726,
-      "valorExecutado": 0,
-      "saldo": 726,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937221|AL|CAPITAL|ESCOLA|FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
-      "chaveComparacao": "937221|AL|CAPITAL|ESCOLA|32 A DE DE- FORNO LIT MICRO-ONDAS PARTIR",
-      "chaveContexto": "937221|AL|CAPITAL|ESCOLA",
-      "hashItem": "5a9d02c80b6bc724e27f4cb914db1f97da405f2fcf74a4edf2bb2778d2da6cf7"
-    },
-    {
-      "uf": "AL",
-      "instrumento": "CONVÊNIO",
-      "numero": "937221",
-      "ano": "2022",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "QUADRO LOUSA BRANCA",
-      "descricaoOriginal": "Quadro Lousa branca",
-      "descricaoNormalizada": "QUADRO LOUSA BRANCA",
-      "quantidade": 3,
-      "valorUnitario": 1065.4,
-      "valorPrevisto": 3196.2,
-      "valorExecutado": 0,
-      "saldo": 3196.2,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937221|AL|CAPITAL|ESCOLA|QUADRO LOUSA BRANCA",
-      "chaveComparacao": "937221|AL|CAPITAL|ESCOLA|BRANCA LOUSA QUADRO",
-      "chaveContexto": "937221|AL|CAPITAL|ESCOLA",
-      "hashItem": "82eb7c03591d8177c635d92e4c2b0497923eb2e7c09fe81d9f56b5b3a1bdabf0"
-    },
-    {
-      "uf": "AL",
-      "instrumento": "CONVÊNIO",
-      "numero": "937221",
-      "ano": "2022",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
-      "descricaoOriginal": "Refrigerador frigobar, com capacidade no",
-      "descricaoNormalizada": "REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
-      "quantidade": 2,
-      "valorUnitario": 1422,
-      "valorPrevisto": 2844,
-      "valorExecutado": 0,
-      "saldo": 2844,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937221|AL|CAPITAL|ESCOLA|REFRIGERADOR FRIGOBAR COM CAPACIDADE NO",
-      "chaveComparacao": "937221|AL|CAPITAL|ESCOLA|CAPACIDADE COM FRIGOBAR NO REFRIGERADOR",
-      "chaveContexto": "937221|AL|CAPITAL|ESCOLA",
-      "hashItem": "1d8e7d6ac25c295f04851b47aee857e836505ae3e1288a80afe4d5d7d894f035"
-    },
-    {
-      "uf": "AL",
-      "instrumento": "CONVÊNIO",
-      "numero": "937221",
-      "ano": "2022",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
       "descricao": "AR CONDICIONADO SPLIT 18000 BTUS (ESCOLA)",
@@ -2796,7 +3296,7 @@
       "instrumento": "CONVÊNIO",
       "numero": "937221",
       "ano": "2022",
-      "area": "ESCOLA PENAL",
+      "area": "ESCOLA_PENAL",
       "natureza": "CAPITAL",
       "descricao": "AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
       "descricaoOriginal": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
@@ -2836,6 +3336,29 @@
       "chaveComparacao": "937221|AL|CAPITAL|ESCOLA PENAL|COLORIDA IMPRESSORA LASER MULTIFUNCIONAL",
       "chaveContexto": "937221|AL|CAPITAL|ESCOLA PENAL",
       "hashItem": "1bff3ea83960b5fd06a3ac631a854c898de85ffd63ecb8ae67d980bd0f18b6b2"
+    },
+    {
+      "uf": "AL",
+      "instrumento": "CONVÊNIO",
+      "numero": "937221",
+      "ano": "2022",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "SALDO RESIDUAL",
+      "descricaoOriginal": "Saldo Residual",
+      "descricaoNormalizada": "SALDO RESIDUAL",
+      "quantidade": 1,
+      "valorUnitario": 9506.54,
+      "valorPrevisto": 9506.54,
+      "valorExecutado": 0,
+      "saldo": 9506.54,
+      "saldoEconomicidade": 0,
+      "percentualExecucao": 0,
+      "avisos": [],
+      "chaveMaterial": "937221|AL|CAPITAL|NAO INFORMADO|SALDO RESIDUAL",
+      "chaveComparacao": "937221|AL|CAPITAL|NAO INFORMADO|RESIDUAL SALDO",
+      "chaveContexto": "937221|AL|CAPITAL|NAO INFORMADO",
+      "hashItem": "d29dd8aec52b4506b34923c29048b95d0382c41ef79ef6ef84d6a11d41af5f02"
     },
     {
       "uf": "AL",
@@ -4868,29 +5391,6 @@
       "ano": "2022",
       "area": "CORREGEDORIA",
       "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - MONITOR",
-      "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Monitor",
-      "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - MONITOR",
-      "quantidade": 6,
-      "valorUnitario": 1179.99,
-      "valorPrevisto": 7079.94,
-      "valorExecutado": 0,
-      "saldo": 7079.94,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937468|TO|CAPITAL|CORREGEDORIA|ETAPA 2 - CORREGEDORIA - MONITOR",
-      "chaveComparacao": "937468|TO|CAPITAL|CORREGEDORIA|- 2 CORREGEDORIA ETAPA MONITOR",
-      "chaveContexto": "937468|TO|CAPITAL|CORREGEDORIA",
-      "hashItem": "7dabbf94c6a3129c07db1d8d391e998af6f41fb9cd064ddf9cfa93354237dd89"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
       "descricao": "ETAPA 2 - CORREGEDORIA - NOBREAK: PEÇA/",
       "descricaoOriginal": "ETAPA 2 - CORREGEDORIA - Nobreak: Peça/",
       "descricaoNormalizada": "ETAPA 2 - CORREGEDORIA - NOBREAK: PEÇA/",
@@ -5205,29 +5705,6 @@
       "chaveComparacao": "937468|TO|CAPITAL|OUVIDORIA|- 1 DE ESTACAO ETAPA MESA OUVIDORIA",
       "chaveContexto": "937468|TO|CAPITAL|OUVIDORIA",
       "hashItem": "fa106e2fbdda7510d42cf4744c56d1d507ab05ea226eacb27197228666df613c"
-    },
-    {
-      "uf": "TO",
-      "instrumento": "CONVÊNIO",
-      "numero": "937468",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 1 - OUVIDORIA - MONITOR",
-      "descricaoOriginal": "ETAPA 1 - OUVIDORIA - Monitor",
-      "descricaoNormalizada": "ETAPA 1 - OUVIDORIA - MONITOR",
-      "quantidade": 3,
-      "valorUnitario": 1179.99,
-      "valorPrevisto": 3539.97,
-      "valorExecutado": 10619.91,
-      "saldo": -7079.94,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 300,
-      "avisos": [],
-      "chaveMaterial": "937468|TO|CAPITAL|OUVIDORIA|ETAPA 1 - OUVIDORIA - MONITOR",
-      "chaveComparacao": "937468|TO|CAPITAL|OUVIDORIA|- 1 ETAPA MONITOR OUVIDORIA",
-      "chaveContexto": "937468|TO|CAPITAL|OUVIDORIA",
-      "hashItem": "07f80466fbf6e862847fee3ce0bb5f424252734154ef8ffa2f3d61865862f44d"
     },
     {
       "uf": "TO",
@@ -7996,29 +8473,6 @@
       "ano": "2022",
       "area": "OUVIDORIA",
       "natureza": "CAPITAL",
-      "descricao": "MONITOR DE LED 18,5 &#039; RESOLUÇÃO 192",
-      "descricaoOriginal": "Monitor de led 18,5 &#039; resolução 192",
-      "descricaoNormalizada": "MONITOR DE LED 18,5 &#039; RESOLUÇÃO 192",
-      "quantidade": 12,
-      "valorUnitario": 700,
-      "valorPrevisto": 8400,
-      "valorExecutado": 0,
-      "saldo": 8400,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937782|AC|CAPITAL|OUVIDORIA|MONITOR DE LED 18 5 039 RESOLUCAO 192",
-      "chaveComparacao": "937782|AC|CAPITAL|OUVIDORIA|039 18 192 5 DE LED MONITOR RESOLUCAO",
-      "chaveContexto": "937782|AC|CAPITAL|OUVIDORIA",
-      "hashItem": "3f2b147985522a483472cca1903e2fc838a922fea87b16751b600a3a181120b1"
-    },
-    {
-      "uf": "AC",
-      "instrumento": "CONVÊNIO",
-      "numero": "937782",
-      "ano": "2022",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
       "descricao": "NOTEBOOK 4 NÚCLEOS 4.2GHZ RAM DDR 4 8GB",
       "descricaoOriginal": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
       "descricaoNormalizada": "NOTEBOOK 4 NÚCLEOS 4.2GHZ RAM DDR 4 8GB",
@@ -9031,29 +9485,6 @@
       "ano": "2022",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "ESTABILIZADOR",
-      "descricaoOriginal": "ESTABILIZADOR",
-      "descricaoNormalizada": "ESTABILIZADOR",
-      "quantidade": 30,
-      "valorUnitario": 81.88,
-      "valorPrevisto": 2456.4,
-      "valorExecutado": 5238.2,
-      "saldo": -2781.8,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 213.25,
-      "avisos": [],
-      "chaveMaterial": "937817|RJ|CAPITAL|ESCOLA PENAL|ESTABILIZADOR",
-      "chaveComparacao": "937817|RJ|CAPITAL|ESCOLA PENAL|ESTABILIZADOR",
-      "chaveContexto": "937817|RJ|CAPITAL|ESCOLA PENAL",
-      "hashItem": "addfbef679ca4793aaeb8ba5fcadca5d4d3a5fc0561327127168599c7fb5aced"
-    },
-    {
-      "uf": "RJ",
-      "instrumento": "CONVÊNIO",
-      "numero": "937817",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
       "descricao": "FRIGOBAR",
       "descricaoOriginal": "FRIGOBAR",
       "descricaoNormalizada": "FRIGOBAR",
@@ -9138,29 +9569,6 @@
       "chaveComparacao": "937817|RJ|CAPITAL|ESCOLA PENAL|4 LONGARINA LUGARES",
       "chaveContexto": "937817|RJ|CAPITAL|ESCOLA PENAL",
       "hashItem": "72a3e35215157acf638f8f18c0d1689c3c3b1cd0baa7b52760bed6dbf2e8820d"
-    },
-    {
-      "uf": "RJ",
-      "instrumento": "CONVÊNIO",
-      "numero": "937817",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "MANEQUIM DE TREINAMENTO RCP",
-      "descricaoOriginal": "MANEQUIM DE TREINAMENTO RCP",
-      "descricaoNormalizada": "MANEQUIM DE TREINAMENTO RCP",
-      "quantidade": 4,
-      "valorUnitario": 5737.91,
-      "valorPrevisto": 22951.65,
-      "valorExecutado": 0,
-      "saldo": 22951.65,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937817|RJ|CAPITAL|ESCOLA PENAL|MANEQUIM DE TREINAMENTO RCP",
-      "chaveComparacao": "937817|RJ|CAPITAL|ESCOLA PENAL|DE MANEQUIM RCP TREINAMENTO",
-      "chaveContexto": "937817|RJ|CAPITAL|ESCOLA PENAL",
-      "hashItem": "48366fb56edd739b65d68f24bc0391c39bf3653a7c890b29041f10dd6b8b2ed3"
     },
     {
       "uf": "RJ",
@@ -9376,29 +9784,6 @@
       "ano": "2022",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V",
-      "descricaoOriginal": "SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V",
-      "descricaoNormalizada": "SALDO DE RENDIMENTO COMPLEMENTAÇÃO DOS V",
-      "quantidade": 1,
-      "valorUnitario": 101341.43,
-      "valorPrevisto": 101341.43,
-      "valorExecutado": 40298.1,
-      "saldo": 61043.33,
-      "saldoEconomicidade": 61043.33,
-      "percentualExecucao": 39.76,
-      "avisos": [],
-      "chaveMaterial": "937817|RJ|CAPITAL|ESCOLA PENAL|SALDO DE RENDIMENTO COMPLEMENTACAO DOS V",
-      "chaveComparacao": "937817|RJ|CAPITAL|ESCOLA PENAL|COMPLEMENTACAO DE DOS RENDIMENTO SALDO V",
-      "chaveContexto": "937817|RJ|CAPITAL|ESCOLA PENAL",
-      "hashItem": "0680394ffd72452eefb2a286799febc87603ea050fc806423c47a42cef9022f7"
-    },
-    {
-      "uf": "RJ",
-      "instrumento": "CONVÊNIO",
-      "numero": "937817",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
       "descricao": "SIMULADORDEA",
       "descricaoOriginal": "SIMULADORDEA",
       "descricaoNormalizada": "SIMULADORDEA",
@@ -9506,29 +9891,6 @@
       "chaveComparacao": "937817|RJ|CAPITAL|ESCOLA PENAL|4K 55 SMART TV",
       "chaveContexto": "937817|RJ|CAPITAL|ESCOLA PENAL",
       "hashItem": "00430ed6ef200d4be25eac63415c728cafe65c2962974df4f215a7357c161393"
-    },
-    {
-      "uf": "RJ",
-      "instrumento": "CONVÊNIO",
-      "numero": "937817",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "VENTILADOR 50 CM PAREDE",
-      "descricaoOriginal": "VENTILADOR 50 CM PAREDE",
-      "descricaoNormalizada": "VENTILADOR 50 CM PAREDE",
-      "quantidade": 10,
-      "valorUnitario": 177.55,
-      "valorPrevisto": 1775.47,
-      "valorExecutado": 0,
-      "saldo": 1775.47,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "937817|RJ|CAPITAL|ESCOLA PENAL|VENTILADOR 50 CM PAREDE",
-      "chaveComparacao": "937817|RJ|CAPITAL|ESCOLA PENAL|50 CM PAREDE VENTILADOR",
-      "chaveContexto": "937817|RJ|CAPITAL|ESCOLA PENAL",
-      "hashItem": "0faa3d059372503cc81d97dccdce11eb7915bd0a587022ec9cefb28be4be7cc0"
     },
     {
       "uf": "RJ",
@@ -9759,29 +10121,6 @@
       "chaveComparacao": "937817|RJ|CUSTEIO|ESCOLA PENAL|DE FACA TREINO",
       "chaveContexto": "937817|RJ|CUSTEIO|ESCOLA PENAL",
       "hashItem": "e55590bcabf391a6b41a15606bf284c571f870e4222607b9f32c30ad888ac02c"
-    },
-    {
-      "uf": "RJ",
-      "instrumento": "CONVÊNIO",
-      "numero": "937817",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "descricaoOriginal": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "descricaoNormalizada": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "quantidade": 10,
-      "valorUnitario": 94.67,
-      "valorPrevisto": 946.66,
-      "valorExecutado": 3450,
-      "saldo": -2503.34,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 364.44,
-      "avisos": [],
-      "chaveMaterial": "937817|RJ|CUSTEIO|ESCOLA PENAL|GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "chaveComparacao": "937817|RJ|CUSTEIO|ESCOLA PENAL|GRAMPEADOR MADEIRA PARA PROFISSIONAL",
-      "chaveContexto": "937817|RJ|CUSTEIO|ESCOLA PENAL",
-      "hashItem": "98f1eedec32fc026398c3806b968b349f50cb6592ce73196d55486b4dfe6cab9"
     },
     {
       "uf": "RJ",
@@ -12251,29 +12590,6 @@
       "ano": "2022",
       "area": "NAO INFORMADO",
       "natureza": "CAPITAL",
-      "descricao": "AGENDA PLANNER",
-      "descricaoOriginal": "Agenda Planner",
-      "descricaoNormalizada": "AGENDA PLANNER",
-      "quantidade": 10,
-      "valorUnitario": 113.43,
-      "valorPrevisto": 1134.27,
-      "valorExecutado": 0,
-      "saldo": 1134.27,
-      "saldoEconomicidade": 0,
-      "percentualExecucao": 0,
-      "avisos": [],
-      "chaveMaterial": "938128|SP|CAPITAL|NAO INFORMADO|AGENDA PLANNER",
-      "chaveComparacao": "938128|SP|CAPITAL|NAO INFORMADO|AGENDA PLANNER",
-      "chaveContexto": "938128|SP|CAPITAL|NAO INFORMADO",
-      "hashItem": "38111f2cb63f6be2a7f997e0b9a6a1055cfcb9cccd993a7a1d4765dd9f048919"
-    },
-    {
-      "uf": "SP",
-      "instrumento": "CONVÊNIO",
-      "numero": "938128",
-      "ano": "2022",
-      "area": "NAO INFORMADO",
-      "natureza": "CAPITAL",
       "descricao": "SALDO RESIDUAL",
       "descricaoOriginal": "Saldo Residual",
       "descricaoNormalizada": "SALDO RESIDUAL",
@@ -12611,29 +12927,6 @@
       "chaveComparacao": "938128|SP|CUSTEIO|CORREGEDORIA|ADMIN CURSO DE DIREITO EM GRADUACAO POS",
       "chaveContexto": "938128|SP|CUSTEIO|CORREGEDORIA",
       "hashItem": "163d3b7073b922f8328ecf2ad4774b692b3b427db55da50a082716679ccb0e19"
-    },
-    {
-      "uf": "SP",
-      "instrumento": "CONVÊNIO",
-      "numero": "938128",
-      "ano": "2022",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "CURSO DE PÓS GRADUAÇÃO DIREITOS HUMANOS",
-      "descricaoOriginal": "Curso de Pós Graduação Direitos Humanos",
-      "descricaoNormalizada": "CURSO DE PÓS GRADUAÇÃO DIREITOS HUMANOS",
-      "quantidade": 250,
-      "valorUnitario": 2181.34,
-      "valorPrevisto": 545334.9,
-      "valorExecutado": 190837.22,
-      "saldo": 354497.68,
-      "saldoEconomicidade": 354497.68,
-      "percentualExecucao": 34.99,
-      "avisos": [],
-      "chaveMaterial": "938128|SP|CUSTEIO|ESCOLA PENAL|CURSO DE POS GRADUACAO DIREITOS HUMANOS",
-      "chaveComparacao": "938128|SP|CUSTEIO|ESCOLA PENAL|CURSO DE DIREITOS GRADUACAO HUMANOS POS",
-      "chaveContexto": "938128|SP|CUSTEIO|ESCOLA PENAL",
-      "hashItem": "44432eea0a5671c67873027468aa310b2d6f25a8472c0671691ff2783453d933"
     },
     {
       "uf": "SP",
