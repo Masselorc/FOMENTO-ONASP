@@ -48,10 +48,68 @@ const JSON_COLUMNS = new Set([
   "estado_novo_json"
 ]);
 
-function transformRow(row) {
+const JSON_ARRAY_COLUMNS = new Set([
+  "naturezas_encontradas_json",
+  "unidades_encontradas_json"
+]);
+
+const JSON_OBJECT_COLUMNS = new Set([
+  "payload_json",
+  "resumo_json",
+  "payload_decisao_json",
+  "estado_anterior_json",
+  "estado_novo_json"
+]);
+
+function getRowIdentifier(row) {
+  return row.id ?? row.chave_item ?? row.chave_divergencia ?? row.numero_convenio ?? "sem_identificador";
+}
+
+function transformJsonValue(table, row, col, val) {
+  const fallback = JSON_ARRAY_COLUMNS.has(col) ? [] : {};
+
+  if (val === null || val === undefined) {
+    return JSON.stringify(fallback);
+  }
+
+  if (typeof val === "string" && val.trim() === "") {
+    return JSON.stringify(fallback);
+  }
+
+  let parsed = val;
+  if (typeof val === "string") {
+    try {
+      parsed = JSON.parse(val);
+    } catch (err) {
+      throw new Error(
+        `JSON invalido em ${table}.${col} (registro ${getRowIdentifier(row)}): ${err.message}`
+      );
+    }
+  }
+
+  if (JSON_ARRAY_COLUMNS.has(col) && !Array.isArray(parsed)) {
+    throw new Error(
+      `JSON invalido em ${table}.${col} (registro ${getRowIdentifier(row)}): esperado array JSON.`
+    );
+  }
+
+  return JSON.stringify(parsed);
+}
+
+function transformRow(table, row) {
   const transformed = {};
   for (const [col, val] of Object.entries(row)) {
+    if (JSON_COLUMNS.has(col)) {
+      transformed[col] = transformJsonValue(table, row, col, val);
+      continue;
+    }
+
     if (val === null || val === undefined) {
+      transformed[col] = null;
+      continue;
+    }
+
+    if (typeof val === "string" && val.trim() === "") {
       transformed[col] = null;
       continue;
     }
@@ -70,18 +128,7 @@ function transformRow(row) {
         transformed[col] = null;
       }
     }
-    // 3. Converter strings JSON para objetos para inserção no jsonb
-    else if (JSON_COLUMNS.has(col)) {
-      if (typeof val === "string" && val.trim() !== "") {
-        try {
-          transformed[col] = JSON.parse(val);
-        } catch {
-          transformed[col] = val;
-        }
-      } else {
-        transformed[col] = val;
-      }
-    } else {
+    else {
       transformed[col] = val;
     }
   }
@@ -104,7 +151,8 @@ async function runImport() {
 
   const dryRun = process.argv.includes("--dry-run");
   if (dryRun) {
-    console.log("=== MODO DRY-RUN: Simulação sem persistência ===");
+    console.log("=== DRY-RUN REAL: inserts executados dentro de transação ===");
+    console.log("ROLLBACK obrigatório ao final do dry-run.");
   }
 
   // 2. Carrega biblioteca pg dinamicamente para não exigir instalação nesta etapa
@@ -142,7 +190,7 @@ async function runImport() {
       console.log(`Processando tabela ${table} (${rows.length} registros)...`);
 
       for (const rawRow of rows) {
-        const transformedRow = transformRow(rawRow);
+        const transformedRow = transformRow(table, rawRow);
         const cols = Object.keys(transformedRow);
         const vals = Object.values(transformedRow);
 
@@ -152,9 +200,7 @@ async function runImport() {
         const placeholders = cols.map((_, i) => `$${i + 1}`).join(", ");
         const queryText = `INSERT INTO "${table}" (${colNames}) VALUES (${placeholders})`;
 
-        if (!dryRun) {
-          await client.query(queryText, vals);
-        }
+        await client.query(queryText, vals);
       }
 
       // Se houver coluna "id" serial/identity, atualiza sequência se não for dry-run
@@ -184,7 +230,8 @@ async function runImport() {
     }
 
     if (dryRun) {
-      console.log("DRY-RUN concluído: Fazendo Rollback da transação.");
+      console.log("DRY-RUN REAL concluído: inserts executados dentro da transação.");
+      console.log("ROLLBACK obrigatório ao final do dry-run: desfazendo a transação.");
       await client.query("ROLLBACK");
       console.log("Simulação bem-sucedida.");
     } else {
