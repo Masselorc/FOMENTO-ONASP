@@ -16,7 +16,6 @@ let dependencias;
 
 function carregarDependenciasOperacionais() {
   if (dependencias) return dependencias;
-  const { inicializarBanco } = require("../db/init-db");
   const {
     cruzarCarteiraComDetru,
     resumirCruzamentoDetru,
@@ -34,7 +33,6 @@ function carregarDependenciasOperacionais() {
   } = require("../services/profor-2022/detru-download-service");
 
   dependencias = {
-    inicializarBanco,
     cruzarCarteiraComDetru,
     resumirCruzamentoDetru,
     calcularHashArquivo,
@@ -140,8 +138,7 @@ function agendarProximaExecucao(hora, minuto) {
 
 function iniciar() {
   bloquearSeNaoAutorizado();
-  const { inicializarBanco, obterConfiguracaoDetru } = carregarDependenciasOperacionais();
-  inicializarBanco();
+  const { obterConfiguracaoDetru } = carregarDependenciasOperacionais();
 
   const config = obterConfiguracaoDetru();
   const { hora, minuto } = parsearHora(config.horaAtualizacaoDiaria);

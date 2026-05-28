@@ -6,7 +6,6 @@ const ROOT_DIR = path.join(__dirname, "..", "..");
 const PUBLIC_DIR = path.join(ROOT_DIR, "frontend", "data", "publicados");
 const FLAG_PERMITIR_ALTERACOES = "--permitir-alteracoes-locais";
 
-const { inicializarBanco } = require("../db/init-db");
 const { registrarLogOperacional } = require("../services/logs-operacionais-service");
 
 const PADROES_PROIBIDOS = [
@@ -321,7 +320,6 @@ async function registrarLogPublicacaoEstatica(estado) {
     (estado.motivoBloqueio ? ` | bloqueio=${estado.motivoBloqueio}` : "");
 
   try {
-    inicializarBanco();
     await registrarLogOperacional({
       modulo: "profor-2022",
       tipoEvento: "profor_publicacao_estatica",
@@ -353,6 +351,10 @@ async function registrarLogPublicacaoEstatica(estado) {
 }
 
 async function main() {
+  if (!process.env.DATABASE_URL) {
+    console.error("DATABASE_URL não definida. Este script agora depende do Postgres/Supabase.");
+    process.exit(1);
+  }
   const inicio = Date.now();
   const inicioIso = agoraIso();
   const permitirAlteracoesLocais = process.argv.slice(2).includes(FLAG_PERMITIR_ALTERACOES);

@@ -40,7 +40,6 @@ async function executar() {
       execucaoLocal: true,
     });
 
-    const { inicializarBanco } = require("../db/init-db");
     const {
       listarConveniosMonitorados,
     } = require("../services/profor-2022/convenios-monitorados-service");
@@ -54,8 +53,6 @@ async function executar() {
       registrarConsultaRendimentosFim,
     } = cacheService;
     registrarConsultaRendimentosErro = cacheService.registrarConsultaRendimentosErro;
-
-    inicializarBanco();
 
     const convenios = await listarConveniosMonitorados({ incluirInativos: false });
     const inicioExecucao = Date.now();
