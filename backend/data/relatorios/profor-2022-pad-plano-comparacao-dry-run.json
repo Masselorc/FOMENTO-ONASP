@@ -1,55 +1,55 @@
 {
-  "geradoEm": "2026-05-25T13:39:12.048Z",
+  "geradoEm": "2026-05-28T22:11:41.569Z",
   "modo": "dry-run",
   "origemAntiga": "memoria-rateio-persistida (abas-uf capturadas)",
   "origemNova": "relatorios-pad-rateados",
   "resumo": {
-    "totalLinhasAntigo": 566,
-    "totalLinhasNovo": 567,
-    "totalItensIguais": 497,
-    "totalItensNovos": 24,
-    "totalItensAusentes": 30,
+    "totalLinhasAntigo": 590,
+    "totalLinhasNovo": 568,
+    "totalItensIguais": 521,
+    "totalItensNovos": 2,
+    "totalItensAusentes": 31,
     "totalItensQuantidadeDivergente": 2,
     "totalItensValorPrevistoDivergente": 12,
     "totalItensValorExecutadoDivergente": 21,
-    "totalItensSaldoDivergente": 33,
+    "totalItensSaldoDivergente": 32,
     "totalItensAreaDivergente": 0,
     "totalItensNaturezaDivergente": 0,
     "totalItensAmbiguos": 6,
-    "totalDiferencas": 87,
-    "totalDiferencasCriticas": 24,
-    "totalAvisos": 3,
-    "totalDiferencasEsperadasPorAtualizacaoPad": 12,
-    "totalDiferencasPorPendenciaDeDecisao": 21,
+    "totalDiferencas": 65,
+    "totalDiferencasCriticas": 2,
+    "totalAvisos": 4,
+    "totalDiferencasEsperadasPorAtualizacaoPad": 13,
+    "totalDiferencasPorPendenciaDeDecisao": 19,
     "totalDiferencasSaneadasPorDecisao": 0,
     "totalAusenciasConfirmadasPorDecisao": 27,
     "totalDecisoesResolutivasEncontradas": 72,
-    "totalDecisoesInterpretadasDryRun": 66,
-    "totalDecisoesAplicadasDryRun": 66,
-    "totalDecisoesNaoAplicaveis": 6,
-    "totalDecisoesComEfeitoNaReconstrucao": 39,
+    "totalDecisoesInterpretadasDryRun": 67,
+    "totalDecisoesAplicadasDryRun": 67,
+    "totalDecisoesNaoAplicaveis": 5,
+    "totalDecisoesComEfeitoNaReconstrucao": 40,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalBloqueiosSegurancaPreAtivacao": 34
+    "totalBloqueiosSegurancaPreAtivacao": 7
   },
   "totaisAntigoNovo": {
     "antigo": {
-      "linhas": 566,
-      "valorPrevisto": 10664015.48,
+      "linhas": 590,
+      "valorPrevisto": 10972458.06,
       "valorExecutado": 3202695.9,
-      "saldo": 7461319.58
+      "saldo": 7769762.16
     },
     "novo": {
-      "linhas": 567,
-      "valorPrevisto": 10654508.7,
-      "valorExecutado": 3217739.5,
-      "saldo": 7436769.2
+      "linhas": 568,
+      "valorPrevisto": 10664015.24,
+      "valorExecutado": 3228131.36,
+      "saldo": 7435883.88
     }
   },
   "diferencaTotal": {
-    "linhas": 1,
-    "valorPrevisto": -9506.78,
-    "valorExecutado": 15043.6,
-    "saldo": -24550.38
+    "linhas": -22,
+    "valorPrevisto": -308442.82,
+    "valorExecutado": 25435.46,
+    "saldo": -333878.28
   },
   "diferencasPorConvenio": [
     {
@@ -76,22 +76,22 @@
     {
       "chave": "937221",
       "antigo": {
-        "linhas": 33,
+        "linhas": 53,
+        "valorPrevisto": 281146.1,
+        "valorExecutado": 0,
+        "saldo": 281146.1
+      },
+      "novo": {
+        "linhas": 28,
         "valorPrevisto": 171603.5,
         "valorExecutado": 0,
         "saldo": 171603.5
       },
-      "novo": {
-        "linhas": 27,
-        "valorPrevisto": 162096.96,
-        "valorExecutado": 0,
-        "saldo": 162096.96
-      },
       "diferenca": {
-        "valorPrevisto": -9506.54,
+        "valorPrevisto": -109542.6,
         "valorExecutado": 0,
-        "saldo": -9506.54,
-        "linhas": -6
+        "saldo": -109542.6,
+        "linhas": -25
       }
     },
     {
@@ -202,10 +202,10 @@
     {
       "chave": "937782",
       "antigo": {
-        "linhas": 50,
-        "valorPrevisto": 396423.71,
+        "linhas": 54,
+        "valorPrevisto": 595323.69,
         "valorExecutado": 97141.55,
-        "saldo": 299282.16
+        "saldo": 498182.14
       },
       "novo": {
         "linhas": 49,
@@ -214,10 +214,10 @@
         "saldo": 299282.16
       },
       "diferenca": {
-        "valorPrevisto": 0,
+        "valorPrevisto": -198899.98,
         "valorExecutado": 0,
-        "saldo": 0,
-        "linhas": -1
+        "saldo": -198899.98,
+        "linhas": -5
       }
     },
     {
@@ -336,13 +336,13 @@
       "novo": {
         "linhas": 47,
         "valorPrevisto": 3846559.5,
-        "valorExecutado": 1068101.92,
-        "saldo": 2778457.58
+        "valorExecutado": 1078493.78,
+        "saldo": 2768065.72
       },
       "diferenca": {
         "valorPrevisto": -0.06,
-        "valorExecutado": 0,
-        "saldo": -0.06,
+        "valorExecutado": 10391.86,
+        "saldo": -10391.92,
         "linhas": 1
       }
     },
@@ -372,10 +372,10 @@
     {
       "chave": "AC",
       "antigo": {
-        "linhas": 50,
-        "valorPrevisto": 396423.71,
+        "linhas": 54,
+        "valorPrevisto": 595323.69,
         "valorExecutado": 97141.55,
-        "saldo": 299282.16
+        "saldo": 498182.14
       },
       "novo": {
         "linhas": 49,
@@ -384,31 +384,31 @@
         "saldo": 299282.16
       },
       "diferenca": {
-        "valorPrevisto": 0,
+        "valorPrevisto": -198899.98,
         "valorExecutado": 0,
-        "saldo": 0,
-        "linhas": -1
+        "saldo": -198899.98,
+        "linhas": -5
       }
     },
     {
       "chave": "AL",
       "antigo": {
-        "linhas": 33,
+        "linhas": 53,
+        "valorPrevisto": 281146.1,
+        "valorExecutado": 0,
+        "saldo": 281146.1
+      },
+      "novo": {
+        "linhas": 28,
         "valorPrevisto": 171603.5,
         "valorExecutado": 0,
         "saldo": 171603.5
       },
-      "novo": {
-        "linhas": 27,
-        "valorPrevisto": 162096.96,
-        "valorExecutado": 0,
-        "saldo": 162096.96
-      },
       "diferenca": {
-        "valorPrevisto": -9506.54,
+        "valorPrevisto": -109542.6,
         "valorExecutado": 0,
-        "saldo": -9506.54,
-        "linhas": -6
+        "saldo": -109542.6,
+        "linhas": -25
       }
     },
     {
@@ -653,13 +653,13 @@
       "novo": {
         "linhas": 47,
         "valorPrevisto": 3846559.5,
-        "valorExecutado": 1068101.92,
-        "saldo": 2778457.58
+        "valorExecutado": 1078493.78,
+        "saldo": 2768065.72
       },
       "diferenca": {
         "valorPrevisto": -0.06,
-        "valorExecutado": 0,
-        "saldo": -0.06,
+        "valorExecutado": 10391.86,
+        "saldo": -10391.92,
         "linhas": 1
       }
     },
@@ -689,43 +689,22 @@
     {
       "chave": "CORREGEDORIA",
       "antigo": {
-        "linhas": 115,
-        "valorPrevisto": 2594077.63,
+        "linhas": 122,
+        "valorPrevisto": 2641497.24,
         "valorExecutado": 545357.36,
-        "saldo": 2048720.27
+        "saldo": 2096139.88
       },
       "novo": {
         "linhas": 119,
         "valorPrevisto": 2580604.57,
-        "valorExecutado": 538641.45,
-        "saldo": 2041963.12
+        "valorExecutado": 549261.36,
+        "saldo": 2031343.21
       },
       "diferenca": {
-        "valorPrevisto": -13473.06,
-        "valorExecutado": -6715.91,
-        "saldo": -6757.15,
-        "linhas": 4
-      }
-    },
-    {
-      "chave": "ESCOLA",
-      "antigo": {
-        "linhas": 0,
-        "valorPrevisto": 0,
-        "valorExecutado": 0,
-        "saldo": 0
-      },
-      "novo": {
-        "linhas": 3,
-        "valorPrevisto": 6766.2,
-        "valorExecutado": 0,
-        "saldo": 6766.2
-      },
-      "diferenca": {
-        "valorPrevisto": 6766.2,
-        "valorExecutado": 0,
-        "saldo": 6766.2,
-        "linhas": 3
+        "valorPrevisto": -60892.67,
+        "valorExecutado": 3904,
+        "saldo": -64796.67,
+        "linhas": -3
       }
     },
     {
@@ -737,16 +716,37 @@
         "saldo": 2860899.75
       },
       "novo": {
-        "linhas": 288,
-        "valorPrevisto": 5095812.22,
-        "valorExecutado": 2203964.61,
-        "saldo": 2891847.61
+        "linhas": 287,
+        "valorPrevisto": 5086311.22,
+        "valorExecutado": 2213506.47,
+        "saldo": 2872804.75
       },
       "diferenca": {
-        "valorPrevisto": -5570.54,
-        "valorExecutado": -36518.4,
-        "saldo": 30947.86,
-        "linhas": 1
+        "valorPrevisto": -15071.54,
+        "valorExecutado": -26976.54,
+        "saldo": 11905,
+        "linhas": 0
+      }
+    },
+    {
+      "chave": "ESCOLA_PENAL",
+      "antigo": {
+        "linhas": 4,
+        "valorPrevisto": 16267.2,
+        "valorExecutado": 0,
+        "saldo": 16267.2
+      },
+      "novo": {
+        "linhas": 4,
+        "valorPrevisto": 16267.2,
+        "valorExecutado": 0,
+        "saldo": 16267.2
+      },
+      "diferenca": {
+        "valorPrevisto": 0,
+        "valorExecutado": 0,
+        "saldo": 0,
+        "linhas": 0
       }
     },
     {
@@ -773,43 +773,43 @@
     {
       "chave": "NAO INFORMADO",
       "antigo": {
-        "linhas": 14,
-        "valorPrevisto": 1235824.77,
+        "linhas": 15,
+        "valorPrevisto": 1245331.31,
         "valorExecutado": 0,
-        "saldo": 1235824.77
+        "saldo": 1245331.31
       },
       "novo": {
-        "linhas": 15,
-        "valorPrevisto": 1234249.74,
-        "valorExecutado": 0,
-        "saldo": 1234249.74
+        "linhas": 16,
+        "valorPrevisto": 1243756.28,
+        "valorExecutado": 850,
+        "saldo": 1242906.28
       },
       "diferenca": {
         "valorPrevisto": -1575.03,
-        "valorExecutado": 0,
-        "saldo": -1575.03,
+        "valorExecutado": 850,
+        "saldo": -2425.03,
         "linhas": 1
       }
     },
     {
       "chave": "OUVIDORIA",
       "antigo": {
-        "linhas": 146,
-        "valorPrevisto": 1716701.4,
+        "linhas": 158,
+        "valorPrevisto": 1951950.63,
         "valorExecutado": 416855.53,
-        "saldo": 1299845.87
+        "saldo": 1535095.1
       },
       "novo": {
         "linhas": 138,
         "valorPrevisto": 1721047.05,
-        "valorExecutado": 475133.44,
-        "saldo": 1245913.61
+        "valorExecutado": 464513.53,
+        "saldo": 1256533.52
       },
       "diferenca": {
-        "valorPrevisto": 4345.65,
-        "valorExecutado": 58277.91,
-        "saldo": -53932.26,
-        "linhas": -8
+        "valorPrevisto": -230903.58,
+        "valorExecutado": 47658,
+        "saldo": -278561.58,
+        "linhas": -20
       }
     }
   ],
@@ -817,47 +817,60 @@
     {
       "chave": "CAPITAL",
       "antigo": {
-        "linhas": 413,
-        "valorPrevisto": 7421798.44,
+        "linhas": 435,
+        "valorPrevisto": 7538541.02,
         "valorExecutado": 2706810.45,
-        "saldo": 4714987.99
+        "saldo": 4831730.57
       },
       "novo": {
-        "linhas": 414,
-        "valorPrevisto": 7412220.3,
-        "valorExecutado": 2715952.65,
-        "saldo": 4696267.65
+        "linhas": 415,
+        "valorPrevisto": 7421726.84,
+        "valorExecutado": 2720252.65,
+        "saldo": 4701474.19
       },
       "diferenca": {
-        "valorPrevisto": -9578.14,
-        "valorExecutado": 9142.2,
-        "saldo": -18720.34,
-        "linhas": 1
+        "valorPrevisto": -116814.18,
+        "valorExecutado": 13442.2,
+        "saldo": -130256.38,
+        "linhas": -20
       }
     },
     {
       "chave": "CUSTEIO",
       "antigo": {
-        "linhas": 153,
-        "valorPrevisto": 3242217.04,
+        "linhas": 155,
+        "valorPrevisto": 3433917.04,
         "valorExecutado": 495885.45,
-        "saldo": 2746331.59
+        "saldo": 2938031.59
       },
       "novo": {
         "linhas": 153,
         "valorPrevisto": 3242288.4,
-        "valorExecutado": 501786.85,
-        "saldo": 2740501.55
+        "valorExecutado": 507878.71,
+        "saldo": 2734409.69
       },
       "diferenca": {
-        "valorPrevisto": 71.36,
-        "valorExecutado": 5901.4,
-        "saldo": -5830.04,
-        "linhas": 0
+        "valorPrevisto": -191628.64,
+        "valorExecutado": 11993.26,
+        "saldo": -203621.9,
+        "linhas": -2
       }
     }
   ],
   "itensNovos": [
+    {
+      "chave": "937782::Monitor de led 18,5 ' resolução 192::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Monitor de led 18,5 ' resolução 192",
+      "situacao": "novo",
+      "valorPrevistoNovo": 8400,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
     {
       "chave": "938128::Saldo Residual::NAO INFORMADO::CUSTEIO",
       "numeroConvenio": "938128",
@@ -867,305 +880,6 @@
       "descricao": "Saldo Residual",
       "situacao": "novo",
       "valorPrevistoNovo": 71.36,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Contratação de 01 (um) Supervisor por 12::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Contratação de 01 (um) Supervisor por 12",
-      "situacao": "novo",
-      "valorPrevistoNovo": 89532,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Contratação de 02 (dois) Auxiliares Admi::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
-      "situacao": "novo",
-      "valorPrevistoNovo": 102168,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3599.99,
-      "valorExecutadoNovo": 3114.93,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3599.99,
-      "valorExecutadoNovo": 3114.93,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar condicionado Split 60.000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 9501,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar condicionado split, capacidade de 12.::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Ar condicionado split, capacidade de 12.",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3740,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar condicionado tipo split, capacidade 3::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Ar condicionado tipo split, capacidade 3",
-      "situacao": "novo",
-      "valorPrevistoNovo": 4560,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar-condicionado tipo Split, capacidade d::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Ar-condicionado tipo Split, capacidade d",
-      "situacao": "novo",
-      "valorPrevistoNovo": 2699.24,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Cafeteira elétrica 1,0 litros bivolt::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
-      "situacao": "novo",
-      "valorPrevistoNovo": 600,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
-      "situacao": "novo",
-      "valorPrevistoNovo": 24320.25,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Equipamentos de rede (switches e roteado::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Equipamentos de rede (switches e roteado",
-      "situacao": "novo",
-      "valorPrevistoNovo": 1050,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Forno de Micro-ondas a partir de- 32 lit::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
-      "situacao": "novo",
-      "valorPrevistoNovo": 726,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Forno de Microondas - 20L - (OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 500,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Fragmentadora e papel - Corregedoria::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Fragmentadora e papel - Corregedoria",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3420,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Frigobar 45L INVERTER BIVOLT (OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 800,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Impressora multifuncional (OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Impressora multifuncional (OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 6100,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Nobreak 1200 BIVOLT(OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 4200,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Notebook i7 16 gb, 1 TB SSD, Windows 11::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
-      "situacao": "novo",
-      "valorPrevistoNovo": 22000,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Quadro Lousa branca::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Quadro Lousa branca",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3196.2,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Refrigerador frigobar, com capacidade no::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Refrigerador frigobar, com capacidade no",
-      "situacao": "novo",
-      "valorPrevistoNovo": 2844,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Televisão Smart LED, mínimo de 50 polega::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Televisão Smart LED, mínimo de 50 polega",
-      "situacao": "novo",
-      "valorPrevistoNovo": 2000,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Televisão smart LED, minimo de 50 polegadas::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Televisão smart LED, minimo de 50 polegadas",
-      "situacao": "novo",
-      "valorPrevistoNovo": 6524.58,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::kit com 2 Poltronas (CORREGEDORIA).::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
-      "situacao": "novo",
-      "valorPrevistoNovo": 1254.79,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -1537,6 +1251,19 @@
       "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
+      "chave": "937782::Monitor de led 18,5 &#039; resolução 192::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Monitor de led 18,5 &#039; resolução 192",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 8400,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
       "chave": "937782::Notebook 4 núcleos 2.4ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
       "numeroConvenio": "937782",
       "uf": "AC",
@@ -1813,10 +1540,16 @@
           "diferenca": -0.03
         },
         {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 850,
+          "diferenca": 850
+        },
+        {
           "campo": "saldo",
           "valorAntigo": 1134.3,
-          "valorNovo": 1134.27,
-          "diferenca": -0.03
+          "valorNovo": 284.27,
+          "diferenca": -850.03
         }
       ],
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
@@ -2117,49 +1850,49 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937468::ETAPA 1 - OUVIDORIA - Monitor::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "area": "OUVIDORIA",
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
       "natureza": "CAPITAL",
-      "descricao": "ETAPA 1 - OUVIDORIA - Monitor",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
       "situacao": "divergente",
       "campos": [
         {
           "campo": "valorExecutado",
           "valorAntigo": 0,
-          "valorNovo": 10619.91,
-          "diferenca": 10619.91
+          "valorNovo": 3114.93,
+          "diferenca": 3114.93
         },
         {
           "campo": "saldo",
-          "valorAntigo": 3539.97,
-          "valorNovo": -7079.94,
-          "diferenca": -10619.91
+          "valorAntigo": 3599.99,
+          "valorNovo": 485.06,
+          "diferenca": -3114.93
         }
       ],
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
-      "chave": "937468::ETAPA 2 - CORREGEDORIA - Monitor::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "area": "CORREGEDORIA",
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
       "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - Monitor",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
       "situacao": "divergente",
       "campos": [
         {
           "campo": "valorExecutado",
-          "valorAntigo": 10619.91,
-          "valorNovo": 0,
-          "diferenca": -10619.91
+          "valorAntigo": 0,
+          "valorNovo": 3114.93,
+          "diferenca": 3114.93
         },
         {
           "campo": "saldo",
-          "valorAntigo": -3539.97,
-          "valorNovo": 7079.94,
-          "diferenca": 10619.91
+          "valorAntigo": 3599.99,
+          "valorNovo": 485.06,
+          "diferenca": -3114.93
         }
       ],
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
@@ -2189,49 +1922,25 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937817::ESTABILIZADOR::ESCOLA PENAL::CAPITAL",
+      "chave": "937817::MANEQUIM DE TREINAMENTO RCP::ESCOLA PENAL::CAPITAL",
       "numeroConvenio": "937817",
       "uf": "RJ",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "ESTABILIZADOR",
+      "descricao": "MANEQUIM DE TREINAMENTO RCP",
       "situacao": "divergente",
       "campos": [
         {
           "campo": "valorExecutado",
           "valorAntigo": 0,
-          "valorNovo": 5238.2,
-          "diferenca": 5238.2
+          "valorNovo": 23130,
+          "diferenca": 23130
         },
         {
           "campo": "saldo",
-          "valorAntigo": 2456.4,
-          "valorNovo": -2781.8,
-          "diferenca": -5238.2
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::GRAMPEADOR PROFISSIONAL PARA MADEIRA::ESCOLA PENAL::CUSTEIO",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 3450,
-          "diferenca": 3450
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 946.66,
-          "valorNovo": -2503.34,
-          "diferenca": -3450
+          "valorAntigo": 22951.65,
+          "valorNovo": -178.35,
+          "diferenca": -23130
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -2320,38 +2029,14 @@
         {
           "campo": "valorExecutado",
           "valorAntigo": 14780.1,
-          "valorNovo": 40298.1,
-          "diferenca": 25518
+          "valorNovo": 23468.3,
+          "diferenca": 8688.2
         },
         {
           "campo": "saldo",
           "valorAntigo": 86561.33,
-          "valorNovo": 61043.33,
-          "diferenca": -25518
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::VENTILADOR 50 CM PAREDE::ESCOLA PENAL::CAPITAL",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "VENTILADOR 50 CM PAREDE",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 2388,
-          "valorNovo": 0,
-          "diferenca": -2388
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": -612.53,
-          "valorNovo": 1775.47,
-          "diferenca": 2388
+          "valorNovo": 77873.13,
+          "diferenca": -8688.2
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -2376,6 +2061,60 @@
           "valorAntigo": 4451.12,
           "valorNovo": 547.12,
           "diferenca": -3904
+        }
+      ],
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+    },
+    {
+      "chave": "938128::Agenda Planner::NAO INFORMADO::CAPITAL",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "NAO INFORMADO",
+      "natureza": "CAPITAL",
+      "descricao": "Agenda Planner",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorPrevisto",
+          "valorAntigo": 1134.3,
+          "valorNovo": 1134.27,
+          "diferenca": -0.03
+        },
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 850,
+          "diferenca": 850
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 1134.3,
+          "valorNovo": 284.27,
+          "diferenca": -850.03
+        }
+      ],
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+    },
+    {
+      "chave": "938128::Curso de Pós Graduação Direitos Humanos::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Curso de Pós Graduação Direitos Humanos",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 190837.22,
+          "valorNovo": 200379.08,
+          "diferenca": 9541.86
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 354497.68,
+          "valorNovo": 344955.82,
+          "diferenca": -9541.86
         }
       ],
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
@@ -2652,54 +2391,6 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937468::ETAPA 1 - OUVIDORIA - Monitor::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 1 - OUVIDORIA - Monitor",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 10619.91,
-          "diferenca": 10619.91
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 3539.97,
-          "valorNovo": -7079.94,
-          "diferenca": -10619.91
-        }
-      ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
-    },
-    {
-      "chave": "937468::ETAPA 2 - CORREGEDORIA - Monitor::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - Monitor",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 10619.91,
-          "valorNovo": 0,
-          "diferenca": -10619.91
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": -3539.97,
-          "valorNovo": 7079.94,
-          "diferenca": 10619.91
-        }
-      ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
-    },
-    {
       "chave": "937698::Veículo transporte pessoal, câmbio: manu::CORREGEDORIA::CAPITAL",
       "numeroConvenio": "937698",
       "uf": "MT",
@@ -2722,6 +2413,54 @@
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 3114.93,
+          "diferenca": 3114.93
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 3599.99,
+          "valorNovo": 485.06,
+          "diferenca": -3114.93
+        }
+      ],
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 3114.93,
+          "diferenca": 3114.93
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 3599.99,
+          "valorNovo": 485.06,
+          "diferenca": -3114.93
+        }
+      ],
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937783::Item 001 - Veículo Completo Automático,::CORREGEDORIA::CAPITAL",
@@ -2796,49 +2535,25 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937817::ESTABILIZADOR::ESCOLA PENAL::CAPITAL",
+      "chave": "937817::MANEQUIM DE TREINAMENTO RCP::ESCOLA PENAL::CAPITAL",
       "numeroConvenio": "937817",
       "uf": "RJ",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "ESTABILIZADOR",
+      "descricao": "MANEQUIM DE TREINAMENTO RCP",
       "situacao": "divergente",
       "campos": [
         {
           "campo": "valorExecutado",
           "valorAntigo": 0,
-          "valorNovo": 5238.2,
-          "diferenca": 5238.2
+          "valorNovo": 23130,
+          "diferenca": 23130
         },
         {
           "campo": "saldo",
-          "valorAntigo": 2456.4,
-          "valorNovo": -2781.8,
-          "diferenca": -5238.2
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::GRAMPEADOR PROFISSIONAL PARA MADEIRA::ESCOLA PENAL::CUSTEIO",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 3450,
-          "diferenca": 3450
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 946.66,
-          "valorNovo": -2503.34,
-          "diferenca": -3450
+          "valorAntigo": 22951.65,
+          "valorNovo": -178.35,
+          "diferenca": -23130
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -2975,38 +2690,14 @@
         {
           "campo": "valorExecutado",
           "valorAntigo": 14780.1,
-          "valorNovo": 40298.1,
-          "diferenca": 25518
+          "valorNovo": 23468.3,
+          "diferenca": 8688.2
         },
         {
           "campo": "saldo",
           "valorAntigo": 86561.33,
-          "valorNovo": 61043.33,
-          "diferenca": -25518
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::VENTILADOR 50 CM PAREDE::ESCOLA PENAL::CAPITAL",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "VENTILADOR 50 CM PAREDE",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 2388,
-          "valorNovo": 0,
-          "diferenca": -2388
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": -612.53,
-          "valorNovo": 1775.47,
-          "diferenca": 2388
+          "valorNovo": 77873.13,
+          "diferenca": -8688.2
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -3075,10 +2766,16 @@
           "diferenca": -0.03
         },
         {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 850,
+          "diferenca": 850
+        },
+        {
           "campo": "saldo",
           "valorAntigo": 1134.3,
-          "valorNovo": 1134.27,
-          "diferenca": -0.03
+          "valorNovo": 284.27,
+          "diferenca": -850.03
         }
       ],
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
@@ -3103,6 +2800,30 @@
           "valorAntigo": 18099.2,
           "valorNovo": 18099.18,
           "diferenca": -0.02
+        }
+      ],
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+    },
+    {
+      "chave": "938128::Curso de Pós Graduação Direitos Humanos::ESCOLA PENAL::CUSTEIO",
+      "numeroConvenio": "938128",
+      "uf": "SP",
+      "area": "ESCOLA PENAL",
+      "natureza": "CUSTEIO",
+      "descricao": "Curso de Pós Graduação Direitos Humanos",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 190837.22,
+          "valorNovo": 200379.08,
+          "diferenca": 9541.86
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 354497.68,
+          "valorNovo": 344955.82,
+          "diferenca": -9541.86
         }
       ],
       "classificacao": "diferenca_esperada_por_atualizacao_pad"
@@ -3275,6 +2996,19 @@
   ],
   "diferencasCriticas": [
     {
+      "chave": "937782::Monitor de led 18,5 ' resolução 192::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Monitor de led 18,5 ' resolução 192",
+      "situacao": "novo",
+      "valorPrevistoNovo": 8400,
+      "valorExecutadoNovo": 0,
+      "classificacao": "critica",
+      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
+    },
+    {
       "chave": "938128::Saldo Residual::NAO INFORMADO::CUSTEIO",
       "numeroConvenio": "938128",
       "uf": "SP",
@@ -3283,305 +3017,6 @@
       "descricao": "Saldo Residual",
       "situacao": "novo",
       "valorPrevistoNovo": 71.36,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Contratação de 01 (um) Supervisor por 12::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Contratação de 01 (um) Supervisor por 12",
-      "situacao": "novo",
-      "valorPrevistoNovo": 89532,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Contratação de 02 (dois) Auxiliares Admi::OUVIDORIA::CUSTEIO",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CUSTEIO",
-      "descricao": "Contratação de 02 (dois) Auxiliares Admi",
-      "situacao": "novo",
-      "valorPrevistoNovo": 102168,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3599.99,
-      "valorExecutadoNovo": 3114.93,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937782",
-      "uf": "AC",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3599.99,
-      "valorExecutadoNovo": 3114.93,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar condicionado Split 60.000 BTUs (ESCOLA)::ESCOLA PENAL::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA PENAL",
-      "natureza": "CAPITAL",
-      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 9501,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar condicionado split, capacidade de 12.::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Ar condicionado split, capacidade de 12.",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3740,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar condicionado tipo split, capacidade 3::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Ar condicionado tipo split, capacidade 3",
-      "situacao": "novo",
-      "valorPrevistoNovo": 4560,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Ar-condicionado tipo Split, capacidade d::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Ar-condicionado tipo Split, capacidade d",
-      "situacao": "novo",
-      "valorPrevistoNovo": 2699.24,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Cafeteira elétrica 1,0 litros bivolt::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
-      "situacao": "novo",
-      "valorPrevistoNovo": 600,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
-      "situacao": "novo",
-      "valorPrevistoNovo": 24320.25,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Equipamentos de rede (switches e roteado::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Equipamentos de rede (switches e roteado",
-      "situacao": "novo",
-      "valorPrevistoNovo": 1050,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Forno de Micro-ondas a partir de- 32 lit::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
-      "situacao": "novo",
-      "valorPrevistoNovo": 726,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Forno de Microondas - 20L - (OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 500,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Fragmentadora e papel - Corregedoria::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Fragmentadora e papel - Corregedoria",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3420,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Frigobar 45L INVERTER BIVOLT (OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 800,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Impressora multifuncional (OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Impressora multifuncional (OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 6100,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Nobreak 1200 BIVOLT(OUVIDORIA)::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
-      "situacao": "novo",
-      "valorPrevistoNovo": 4200,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Notebook i7 16 gb, 1 TB SSD, Windows 11::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
-      "situacao": "novo",
-      "valorPrevistoNovo": 22000,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Quadro Lousa branca::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Quadro Lousa branca",
-      "situacao": "novo",
-      "valorPrevistoNovo": 3196.2,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Refrigerador frigobar, com capacidade no::ESCOLA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "ESCOLA",
-      "natureza": "CAPITAL",
-      "descricao": "Refrigerador frigobar, com capacidade no",
-      "situacao": "novo",
-      "valorPrevistoNovo": 2844,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Televisão Smart LED, mínimo de 50 polega::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Televisão Smart LED, mínimo de 50 polega",
-      "situacao": "novo",
-      "valorPrevistoNovo": 2000,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::Televisão smart LED, minimo de 50 polegadas::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "Televisão smart LED, minimo de 50 polegadas",
-      "situacao": "novo",
-      "valorPrevistoNovo": 6524.58,
-      "valorExecutadoNovo": 0,
-      "classificacao": "critica",
-      "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
-    },
-    {
-      "chave": "937221::kit com 2 Poltronas (CORREGEDORIA).::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
-      "situacao": "novo",
-      "valorPrevistoNovo": 1254.79,
       "valorExecutadoNovo": 0,
       "classificacao": "critica",
       "observacao": "Linha reconstruída sem correspondência na origem antiga; revisar rateio/área."
@@ -3597,6 +3032,19 @@
       "descricao": "Forno de Microondas - 32 litros - Branco",
       "situacao": "ausente",
       "valorPrevistoAntigo": 726,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Monitor de led 18,5 &#039; resolução 192::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Monitor de led 18,5 &#039; resolução 192",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 8400,
       "valorExecutadoAntigo": 0,
       "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
@@ -4530,54 +3978,6 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937468::ETAPA 1 - OUVIDORIA - Monitor::OUVIDORIA::CAPITAL",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "area": "OUVIDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 1 - OUVIDORIA - Monitor",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 10619.91,
-          "diferenca": 10619.91
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 3539.97,
-          "valorNovo": -7079.94,
-          "diferenca": -10619.91
-        }
-      ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
-    },
-    {
-      "chave": "937468::ETAPA 2 - CORREGEDORIA - Monitor::CORREGEDORIA::CAPITAL",
-      "numeroConvenio": "937468",
-      "uf": "TO",
-      "area": "CORREGEDORIA",
-      "natureza": "CAPITAL",
-      "descricao": "ETAPA 2 - CORREGEDORIA - Monitor",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 10619.91,
-          "valorNovo": 0,
-          "diferenca": -10619.91
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": -3539.97,
-          "valorNovo": 7079.94,
-          "diferenca": 10619.91
-        }
-      ],
-      "classificacao": "diferenca_esperada_por_atualizacao_pad"
-    },
-    {
       "chave": "937698::Veículo transporte pessoal, câmbio: manu::CORREGEDORIA::CAPITAL",
       "numeroConvenio": "937698",
       "uf": "MT",
@@ -4641,6 +4041,19 @@
       "observacao": "Ausência confirmada por decisão resolutiva registrada na revisão assistida (dry-run)."
     },
     {
+      "chave": "937782::Monitor de led 18,5 &#039; resolução 192::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Monitor de led 18,5 &#039; resolução 192",
+      "situacao": "ausente",
+      "valorPrevistoAntigo": 8400,
+      "valorExecutadoAntigo": 0,
+      "classificacao": "aviso",
+      "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
       "chave": "937782::Notebook 4 núcleos 2.4ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
       "numeroConvenio": "937782",
       "uf": "AC",
@@ -4665,6 +4078,54 @@
       "valorExecutadoAntigo": 3114.93,
       "classificacao": "aviso",
       "observacao": "Linha da origem antiga sem correspondência na reconstrução PAD; validar ciclo de vida do item."
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::CORREGEDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "CORREGEDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 3114.93,
+          "diferenca": 3114.93
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 3599.99,
+          "valorNovo": 485.06,
+          "diferenca": -3114.93
+        }
+      ],
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
+    },
+    {
+      "chave": "937782::Notebook 4 núcleos 4.2ghz ram ddr 4 8gb::OUVIDORIA::CAPITAL",
+      "numeroConvenio": "937782",
+      "uf": "AC",
+      "area": "OUVIDORIA",
+      "natureza": "CAPITAL",
+      "descricao": "Notebook 4 núcleos 4.2ghz ram ddr 4 8gb",
+      "situacao": "divergente",
+      "campos": [
+        {
+          "campo": "valorExecutado",
+          "valorAntigo": 0,
+          "valorNovo": 3114.93,
+          "diferenca": 3114.93
+        },
+        {
+          "campo": "saldo",
+          "valorAntigo": 3599.99,
+          "valorNovo": 485.06,
+          "diferenca": -3114.93
+        }
+      ],
+      "classificacao": "diferenca_esperada_por_atualizacao_pad"
     },
     {
       "chave": "937783::Item 001 - Veículo Completo Automático,::CORREGEDORIA::CAPITAL",
@@ -4739,49 +4200,25 @@
       "classificacao": "diferenca_por_pendencia_de_decisao"
     },
     {
-      "chave": "937817::ESTABILIZADOR::ESCOLA PENAL::CAPITAL",
+      "chave": "937817::MANEQUIM DE TREINAMENTO RCP::ESCOLA PENAL::CAPITAL",
       "numeroConvenio": "937817",
       "uf": "RJ",
       "area": "ESCOLA PENAL",
       "natureza": "CAPITAL",
-      "descricao": "ESTABILIZADOR",
+      "descricao": "MANEQUIM DE TREINAMENTO RCP",
       "situacao": "divergente",
       "campos": [
         {
           "campo": "valorExecutado",
           "valorAntigo": 0,
-          "valorNovo": 5238.2,
-          "diferenca": 5238.2
+          "valorNovo": 23130,
+          "diferenca": 23130
         },
         {
           "campo": "saldo",
-          "valorAntigo": 2456.4,
-          "valorNovo": -2781.8,
-          "diferenca": -5238.2
-        }
-      ],
-      "classificacao": "diferenca_por_pendencia_de_decisao"
-    },
-    {
-      "chave": "937817::GRAMPEADOR PROFISSIONAL PARA MADEIRA::ESCOLA PENAL::CUSTEIO",
-      "numeroConvenio": "937817",
-      "uf": "RJ",
-      "area": "ESCOLA PENAL",
-      "natureza": "CUSTEIO",
-      "descricao": "GRAMPEADOR PROFISSIONAL PARA MADEIRA",
-      "situacao": "divergente",
-      "campos": [
-        {
-          "campo": "valorExecutado",
-          "valorAntigo": 0,
-          "valorNovo": 3450,
-          "diferenca": 3450
-        },
-        {
-          "campo": "saldo",
-          "valorAntigo": 946.66,
-          "valorNovo": -2503.34,
-          "diferenca": -3450
+          "valorAntigo": 22951.65,
+          "valorNovo": -178.35,
+          "diferenca": -23130
         }
       ],
       "classificacao": "diferenca_por_pendencia_de_decisao"
@@ -4983,8 +4420,8 @@
       "divergenciaId": 18,
       "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
       "tipoAlerta": "item_novo_sem_rateio",
-      "decisao": "ACEITO",
-      "decisaoId": 150
+      "decisao": "CORRIGIDO",
+      "decisaoId": 185
     },
     {
       "divergenciaId": 19,
@@ -5096,7 +4533,7 @@
       "chaveDivergencia": "item_nao_apto:089d8dcf893ad245",
       "tipoAlerta": "item_nao_apto",
       "decisao": "ACEITO",
-      "decisaoId": 185
+      "decisaoId": 186
     },
     {
       "divergenciaId": 40,
@@ -5145,56 +4582,56 @@
       "chaveDivergencia": "item_ausente_no_pad:e4caa4f2de2619b3",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 153
+      "decisaoId": 188
     },
     {
       "divergenciaId": 48,
       "chaveDivergencia": "item_ausente_no_pad:8c26f66ea1caca0d",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 154
+      "decisaoId": 189
     },
     {
       "divergenciaId": 49,
       "chaveDivergencia": "item_ausente_no_pad:85aa4ec3ed492a6c",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 155
+      "decisaoId": 190
     },
     {
       "divergenciaId": 50,
       "chaveDivergencia": "item_ausente_no_pad:6695decd0ced4c5b",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 156
+      "decisaoId": 191
     },
     {
       "divergenciaId": 51,
       "chaveDivergencia": "item_ausente_no_pad:ca5226c5cd9dcaf7",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 157
+      "decisaoId": 192
     },
     {
       "divergenciaId": 52,
       "chaveDivergencia": "item_ausente_no_pad:57810d766febc453",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 158
+      "decisaoId": 193
     },
     {
       "divergenciaId": 53,
       "chaveDivergencia": "item_ausente_no_pad:5d314260fd60be80",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 159
+      "decisaoId": 194
     },
     {
       "divergenciaId": 54,
       "chaveDivergencia": "item_ausente_no_pad:da1129758bd0e411",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 160
+      "decisaoId": 195
     },
     {
       "divergenciaId": 55,
@@ -5208,133 +4645,133 @@
       "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 161
+      "decisaoId": 196
     },
     {
       "divergenciaId": 57,
       "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 162
+      "decisaoId": 197
     },
     {
       "divergenciaId": 58,
       "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 163
+      "decisaoId": 198
     },
     {
       "divergenciaId": 59,
       "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 164
+      "decisaoId": 199
     },
     {
       "divergenciaId": 60,
       "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 165
+      "decisaoId": 200
     },
     {
       "divergenciaId": 61,
       "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 166
+      "decisaoId": 201
     },
     {
       "divergenciaId": 62,
       "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 167
+      "decisaoId": 202
     },
     {
       "divergenciaId": 63,
       "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 168
+      "decisaoId": 203
     },
     {
       "divergenciaId": 64,
       "chaveDivergencia": "item_ausente_no_pad:584b9c4c0a6d70d4",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 169
+      "decisaoId": 204
     },
     {
       "divergenciaId": 65,
       "chaveDivergencia": "item_ausente_no_pad:0aa793b7aad7dea9",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 170
+      "decisaoId": 205
     },
     {
       "divergenciaId": 66,
       "chaveDivergencia": "item_ausente_no_pad:9ef6ef8500d7dd16",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 182
+      "decisaoId": 206
     },
     {
       "divergenciaId": 67,
       "chaveDivergencia": "item_ausente_no_pad:263c61398f88427a",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 171
+      "decisaoId": 207
     },
     {
       "divergenciaId": 68,
       "chaveDivergencia": "item_ausente_no_pad:12da4f953a810aba",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 172
+      "decisaoId": 208
     },
     {
       "divergenciaId": 69,
       "chaveDivergencia": "item_ausente_no_pad:8fa2597b2ebf3282",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 173
+      "decisaoId": 209
     },
     {
       "divergenciaId": 70,
       "chaveDivergencia": "item_ausente_no_pad:e726b662149c7057",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 174
+      "decisaoId": 210
     },
     {
       "divergenciaId": 71,
       "chaveDivergencia": "item_ausente_no_pad:53e1018ea3c16260",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 175
+      "decisaoId": 211
     },
     {
       "divergenciaId": 72,
       "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 108
+      "decisaoId": 212
     },
     {
       "divergenciaId": 73,
       "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 109
+      "decisaoId": 213
     },
     {
       "divergenciaId": 74,
       "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
       "tipoAlerta": "item_ausente_no_pad",
       "decisao": "ACEITO",
-      "decisaoId": 110
+      "decisaoId": 214
     },
     {
       "divergenciaId": 75,
@@ -6553,6 +5990,79 @@
           "campoAfetado": "rateio",
           "payloadHashNoMomentoDaDecisao": "a9eb13b88848c4f3dc172cecee32345896070a985602a152ff7cbcb56646172c",
           "registradoEm": "2026-05-21T21:41:09.553Z"
+        }
+      }
+    },
+    {
+      "divergenciaId": 18,
+      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
+      "numeroConvenio": "937221",
+      "uf": "AL",
+      "chaveItem": "937221::SALDO RESIDUAL",
+      "tipoAlerta": "item_novo_sem_rateio",
+      "campoAfetado": "rateio",
+      "bloqueiaPublicacao": true,
+      "decisao": "CORRIGIDO",
+      "decisaoId": 185,
+      "usuario": "sistema-retificadora-saldo-residual-18",
+      "decididoEm": "2026-05-23T11:46:42.055Z",
+      "efeito": {
+        "tipo": "rateio_manual",
+        "afetaReconstrucao": true,
+        "rateios": [
+          {
+            "area": "NAO INFORMADO",
+            "natureza": "CAPITAL",
+            "percentual_valor": 100,
+            "percentual_quantidade": 100,
+            "valor_previsto_referencia": 0,
+            "valor_executado_referencia": 0,
+            "quantidade_referencia": 0
+          }
+        ]
+      },
+      "aplicavel": true,
+      "motivoNaoAplicavel": null,
+      "payload": {
+        "campoAfetado": "rateio",
+        "numeroConvenio": "937221",
+        "uf": "AL",
+        "chaveItem": "937221::SALDO RESIDUAL",
+        "descricaoPad": "Saldo Residual",
+        "naturezaPad": "CAPITAL",
+        "quantidadePad": 1,
+        "valorUnitarioPad": 9506.54,
+        "valorPrevistoPad": 9506.54,
+        "valorExecutadoPad": 0,
+        "saldoPad": 9506.54,
+        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_552380858078419559992.xls",
+        "linhaOrigem": 37,
+        "acaoSugerida": "definir_rateio",
+        "bloqueiaPublicacao": true
+      },
+      "payloadDecisao": {
+        "origem": "retificadora-tecnica-saldo-residual",
+        "tipoSaneamento": "rateio_manual",
+        "fonteClassificacao": "profor-saldo-residual-service.js",
+        "retificaDecisaoId": 150,
+        "motivoRetificacao": "saldo_residual_decisao_anterior_incompativel",
+        "rateio": [
+          {
+            "area": "NAO INFORMADO",
+            "natureza": "CAPITAL",
+            "quantidade": 1,
+            "percentualQuantidade": 100,
+            "percentualValor": 100
+          }
+        ],
+        "_segurancaPreAtivacao": {
+          "versao": 1,
+          "divergenciaId": 18,
+          "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
+          "tipoAlerta": "item_novo_sem_rateio",
+          "campoAfetado": "rateio",
+          "payloadHashNoMomentoDaDecisao": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
+          "registradoEm": "2026-05-23T11:46:42.054Z"
         }
       }
     },
@@ -7925,9 +7435,9 @@
       "campoAfetado": "aptidao",
       "bloqueiaPublicacao": true,
       "decisao": "ACEITO",
-      "decisaoId": 185,
-      "usuario": "usuario-local",
-      "decididoEm": "2026-05-22T14:34:27.140Z",
+      "decisaoId": 186,
+      "usuario": "sistema-prevalencia-pad-938128-39",
+      "decididoEm": "2026-05-23T12:19:42.331Z",
       "efeito": {
         "tipo": "nao_apto_liberado",
         "afetaReconstrucao": true
@@ -8037,10 +7547,10 @@
         "bloqueiaPublicacao": true
       },
       "payloadDecisao": {
-        "origem": "interface-revisao-divergencias",
-        "tipoSaneamento": "liberacao_item_nao_apto",
-        "liberarUsoDryRun": true,
-        "motivo": "liberação validada por decisão humana",
+        "origem": "reconstituicao-decisao-prevalencia-pad-938128-39",
+        "tipoSaneamento": "nao_apto_liberado",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivoReconstituicao": "decisao_original_perdida_em_wal_nao_checkpointed_antes_de_c43f327",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 39,
@@ -8048,7 +7558,7 @@
           "tipoAlerta": "item_nao_apto",
           "campoAfetado": "aptidao",
           "payloadHashNoMomentoDaDecisao": "84dc2c702c85bc5310b843a3d937eaea3be8b5884bb9e3852803804c14656b60",
-          "registradoEm": "2026-05-22T14:34:27.140Z"
+          "registradoEm": "2026-05-23T12:19:42.330Z"
         }
       }
     },
@@ -8578,8 +8088,8 @@
       "bloqueiaPublicacao": true,
       "decisao": "CORRIGIDO",
       "decisaoId": 187,
-      "usuario": "sistema-prevalencia-pad",
-      "decididoEm": "2026-05-22T22:29:43.978Z",
+      "usuario": "sistema-prevalencia-pad-938128-44",
+      "decididoEm": "2026-05-23T12:22:53.878Z",
       "efeito": {
         "tipo": "nao_apto_liberado",
         "afetaReconstrucao": true
@@ -8709,52 +8219,11 @@
         "bloqueiaPublicacao": true
       },
       "payloadDecisao": {
-        "origem": "prevalencia-pad-novo-divergencia-44",
-        "tipoSaneamento": "prevalencia_pad_novo_saldo_residual",
-        "regraNegocio": "PAD_NOVO_PREVALECE_INTEGRALMENTE",
-        "aplicadaAoPlano": false,
-        "divergenciaId": 44,
-        "numeroConvenio": "938128",
-        "uf": "SP",
-        "chaveItem": "938128::SALDO RESIDUAL",
-        "memoriaAntiga": {
-          "natureza": "CAPITAL",
-          "valorPrevisto": 22351.09,
-          "valorExecutado": 0,
-          "saldo": 22351.09
-        },
-        "padNovo": {
-          "linhas": [
-            {
-              "linha": 61,
-              "descricao": "Saldo Residual",
-              "natureza": "CAPITAL",
-              "codigoNaturezaDespesa": "44905299",
-              "valorPrevisto": 20704.73,
-              "valorExecutado": 0,
-              "saldo": 20704.73
-            },
-            {
-              "linha": 19,
-              "descricao": "Saldo Residual",
-              "natureza": "CUSTEIO",
-              "codigoNaturezaDespesa": "33903099",
-              "valorPrevisto": 71.36,
-              "valorExecutado": 0,
-              "saldo": 71.36
-            }
-          ]
-        },
-        "diferencasRastreadas": {
-          "diferencaBrutaCapital": -1646.36,
-          "diferencaLiquidaConsiderandoCusteio": -1575
-        },
-        "garantias": {
-          "capitalECusteioSegregados": true,
-          "areaTecnicaNaoSetorializada": true,
-          "semPublicacao": true,
-          "semAlteracaoPlanoOficial": true
-        },
+        "origem": "reconstituicao-decisao-prevalencia-pad-938128-44",
+        "tipoSaneamento": "nao_apto_liberado",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivoReconstituicao": "decisao_original_perdida_em_wal_nao_checkpointed_antes_de_c43f327",
+        "observacaoSaldoResidual": "Saldo residual e item tecnico nao setorializado por area; segregado por natureza (CAPITAL/CUSTEIO). PAD novo prevalece sobre memoria antiga.",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 44,
@@ -8762,7 +8231,7 @@
           "tipoAlerta": "item_nao_apto",
           "campoAfetado": "aptidao",
           "payloadHashNoMomentoDaDecisao": "1c2ba2d2a7b70c0bfc36366addb04d35924b149d8195735a5974a00c1f960f0e",
-          "registradoEm": "2026-05-22T22:29:43.976Z"
+          "registradoEm": "2026-05-23T12:22:53.877Z"
         }
       }
     },
@@ -8913,9 +8382,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 153,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.555Z",
+      "decisaoId": 188,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.310Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -8964,19 +8433,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 47,
           "chaveDivergencia": "item_ausente_no_pad:e4caa4f2de2619b3",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "2a89dd0ebf9c257a6fcfe0aa55a0afec8f2169c7f11b4cb53bd242c1faeae2d2",
-          "registradoEm": "2026-05-21T21:41:09.555Z"
+          "payloadHashNoMomentoDaDecisao": "c3a528b79ef1e0dff529e4a36725bdebc730ec287c7fac6a78942fd7af423608",
+          "registradoEm": "2026-05-23T14:20:47.309Z"
         }
       }
     },
@@ -8990,9 +8461,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 154,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.555Z",
+      "decisaoId": 189,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.316Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9041,19 +8512,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 48,
           "chaveDivergencia": "item_ausente_no_pad:8c26f66ea1caca0d",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "e0acd53fbef00f22a001e8f4c944d82366140694e8b8f6fd26160484af1ebbb6",
-          "registradoEm": "2026-05-21T21:41:09.555Z"
+          "payloadHashNoMomentoDaDecisao": "d745378a431c241194f4167debab87d74a074b2d419339d5d5748628a03399b3",
+          "registradoEm": "2026-05-23T14:20:47.316Z"
         }
       }
     },
@@ -9067,9 +8540,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 155,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.568Z",
+      "decisaoId": 190,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.318Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9118,19 +8591,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 49,
           "chaveDivergencia": "item_ausente_no_pad:85aa4ec3ed492a6c",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "9b01fa18641fe0b53fc5f3e478665728a1c63db2a1a02919924b288583acc833",
-          "registradoEm": "2026-05-21T21:41:09.568Z"
+          "payloadHashNoMomentoDaDecisao": "0a2d9b70e0231ef085f96357900e73938d35742fe9845c2d073a19af8ad732df",
+          "registradoEm": "2026-05-23T14:20:47.317Z"
         }
       }
     },
@@ -9144,9 +8619,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 156,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.569Z",
+      "decisaoId": 191,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.319Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9195,19 +8670,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 50,
           "chaveDivergencia": "item_ausente_no_pad:6695decd0ced4c5b",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "e0a032c525c8a3064e03ab07d0f3d12ea0bf63bd930d1f0ca5b1da0b66eda529",
-          "registradoEm": "2026-05-21T21:41:09.569Z"
+          "payloadHashNoMomentoDaDecisao": "7dd9eaa19ed1dfe60290d58c581479ef3ec36a9ace90702d4008e06ffd786271",
+          "registradoEm": "2026-05-23T14:20:47.319Z"
         }
       }
     },
@@ -9221,9 +8698,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 157,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.570Z",
+      "decisaoId": 192,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.320Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9272,19 +8749,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 51,
           "chaveDivergencia": "item_ausente_no_pad:ca5226c5cd9dcaf7",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "187bcf20d017d393d63b33b9b8c5e2c1fd0c80f7b6db8f46e19cbf83de979917",
-          "registradoEm": "2026-05-21T21:41:09.570Z"
+          "payloadHashNoMomentoDaDecisao": "f9bfeacbd95ab7d19cec5c96149e72d3245791dbf10e910cd4f0a32aa504385d",
+          "registradoEm": "2026-05-23T14:20:47.320Z"
         }
       }
     },
@@ -9298,9 +8777,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 158,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.570Z",
+      "decisaoId": 193,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.320Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9349,19 +8828,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 52,
           "chaveDivergencia": "item_ausente_no_pad:57810d766febc453",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "1b3c5c57cd18ae46aff5d3edb4e5559d43a29749e0432e1b8ec29ec887871f9c",
-          "registradoEm": "2026-05-21T21:41:09.570Z"
+          "payloadHashNoMomentoDaDecisao": "e49ccc6db85cbb3855051b99b686198b09b0556a6b68e9868885b28896de7864",
+          "registradoEm": "2026-05-23T14:20:47.320Z"
         }
       }
     },
@@ -9375,9 +8856,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 159,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.570Z",
+      "decisaoId": 194,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.321Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9426,19 +8907,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 53,
           "chaveDivergencia": "item_ausente_no_pad:5d314260fd60be80",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "46a457a42be531b77bd7f18c6a123f7e6d084ca6f814539054517f59b9c97ce6",
-          "registradoEm": "2026-05-21T21:41:09.570Z"
+          "payloadHashNoMomentoDaDecisao": "05c88ff98b6931f3167d2f00d81eb704d5557186555bf24bebd6b73a4fc55679",
+          "registradoEm": "2026-05-23T14:20:47.321Z"
         }
       }
     },
@@ -9452,9 +8935,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 160,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.571Z",
+      "decisaoId": 195,
+      "usuario": "sistema-revalidacao-pad-937221-lote1",
+      "decididoEm": "2026-05-23T14:20:47.321Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9503,19 +8986,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote1",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 54,
           "chaveDivergencia": "item_ausente_no_pad:da1129758bd0e411",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "149d084fae8ef1d0d950e88d20c430040bd4065ab416daff0b1c69e78fc51368",
-          "registradoEm": "2026-05-21T21:41:09.571Z"
+          "payloadHashNoMomentoDaDecisao": "8d4f187d65fa78dece9893d84774087d3c51b1b03664e09c0d4ad5be33b15a1e",
+          "registradoEm": "2026-05-23T14:20:47.321Z"
         }
       }
     },
@@ -9529,9 +9014,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 161,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.571Z",
+      "decisaoId": 196,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.429Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9580,19 +9065,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 56,
           "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "4d0d505ff3e46815f7c5097f73ba46a2b2162f92812ca6a8c8e6c7dab575f4cc",
-          "registradoEm": "2026-05-21T21:41:09.571Z"
+          "payloadHashNoMomentoDaDecisao": "90e87cecd7ffc00ca6d3647f1fd246b6e5174a06cbf421ed2ff6dde9d93d6bef",
+          "registradoEm": "2026-05-23T14:24:58.427Z"
         }
       }
     },
@@ -9606,9 +9093,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 162,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "decisaoId": 197,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.431Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9657,19 +9144,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 57,
           "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "dc27073406a970eeecf721a77c6e0a4235050b16df845e67c09c85bbc18ded5c",
-          "registradoEm": "2026-05-21T21:41:09.572Z"
+          "payloadHashNoMomentoDaDecisao": "d99a415063fd8b4ad000be67052c6b18d24361204fe4516dc4091ecf221a250f",
+          "registradoEm": "2026-05-23T14:24:58.431Z"
         }
       }
     },
@@ -9683,9 +9172,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 163,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "decisaoId": 198,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.432Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9734,19 +9223,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 58,
           "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "0e0c8969439088bfbb57042db735e2c9fd64a23e48aeb8129d7fe4c2b9d2a8db",
-          "registradoEm": "2026-05-21T21:41:09.572Z"
+          "payloadHashNoMomentoDaDecisao": "85d1799eddbd185e17d1681d654a0af6574b5a09dc78baa636e158415ea28122",
+          "registradoEm": "2026-05-23T14:24:58.432Z"
         }
       }
     },
@@ -9760,9 +9251,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 164,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.572Z",
+      "decisaoId": 199,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.432Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9811,19 +9302,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 59,
           "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "5497ee0c84e7fe2353d0e8477efabc3790a698c53632f1dfe1fc023dffacb90d",
-          "registradoEm": "2026-05-21T21:41:09.572Z"
+          "payloadHashNoMomentoDaDecisao": "7f40d81d76de073175367b5d2686695440d17e1ce0d9d6be1a376599fbd6fcee",
+          "registradoEm": "2026-05-23T14:24:58.432Z"
         }
       }
     },
@@ -9837,9 +9330,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 165,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.573Z",
+      "decisaoId": 200,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.433Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9888,19 +9381,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 60,
           "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "adfbd0e28217874ed231d0dd3cbede1c3fef44550bf2eaad372d8c2f1120d465",
-          "registradoEm": "2026-05-21T21:41:09.573Z"
+          "payloadHashNoMomentoDaDecisao": "d78b977a7a8b1b48e97f20d45b35ddb88e17b5c78763493e88c0e52c7508e972",
+          "registradoEm": "2026-05-23T14:24:58.433Z"
         }
       }
     },
@@ -9914,9 +9409,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 166,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.574Z",
+      "decisaoId": 201,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.433Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -9965,19 +9460,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 61,
           "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "220e00ced39df47d0963ed5823ec15a5c26577a60aac205040a58a16db5a3f6b",
-          "registradoEm": "2026-05-21T21:41:09.574Z"
+          "payloadHashNoMomentoDaDecisao": "9059e304e5224c18da1071fe96ab771293570f632b79056b33b7be2a4c477c2d",
+          "registradoEm": "2026-05-23T14:24:58.433Z"
         }
       }
     },
@@ -9991,9 +9488,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 167,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.574Z",
+      "decisaoId": 202,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.433Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10042,19 +9539,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 62,
           "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "eaa5c3cdaa21c18b8c0776fb958bd4640ed3564531e1f667fb3ec2526b4fa642",
-          "registradoEm": "2026-05-21T21:41:09.574Z"
+          "payloadHashNoMomentoDaDecisao": "b902ce23ab90cd368fc75114dab31f7f381542003eee6bb6d0d5a60a40cb75ed",
+          "registradoEm": "2026-05-23T14:24:58.433Z"
         }
       }
     },
@@ -10068,9 +9567,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 168,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "decisaoId": 203,
+      "usuario": "sistema-revalidacao-pad-937221-lote2",
+      "decididoEm": "2026-05-23T14:24:58.434Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10119,19 +9618,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote2",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 63,
           "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "5e68b4c138f9cc47e5dae617a556509456a9da630dafdf58ba48290999d74182",
-          "registradoEm": "2026-05-21T21:41:09.575Z"
+          "payloadHashNoMomentoDaDecisao": "2584d36f00835b1623dd121a782fd9c29609e6a95d08ad6d4826d187c225e567",
+          "registradoEm": "2026-05-23T14:24:58.434Z"
         }
       }
     },
@@ -10145,9 +9646,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 169,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "decisaoId": 204,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.584Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10196,19 +9697,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 64,
           "chaveDivergencia": "item_ausente_no_pad:584b9c4c0a6d70d4",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "d1fdc284fe7860870ace8999f569106f34dacbaeef0a961c0a3ceb2f0c75be25",
-          "registradoEm": "2026-05-21T21:41:09.575Z"
+          "payloadHashNoMomentoDaDecisao": "65a046125d9ef432bea789b70e6a84834339702d5b8d0c079a3bd9d191191512",
+          "registradoEm": "2026-05-23T14:26:33.583Z"
         }
       }
     },
@@ -10222,9 +9725,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 170,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "decisaoId": 205,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.604Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10273,19 +9776,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 65,
           "chaveDivergencia": "item_ausente_no_pad:0aa793b7aad7dea9",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "6a88c6927ef9a724f9b9ade6c3869afeb3b452b422c65e555d945ae1e8ca7a9e",
-          "registradoEm": "2026-05-21T21:41:09.575Z"
+          "payloadHashNoMomentoDaDecisao": "72ac04abce342120a78ffb9547bd04c3cbc37bfb02cdbed6459e3fb5ceca9723",
+          "registradoEm": "2026-05-23T14:26:33.604Z"
         }
       }
     },
@@ -10299,9 +9804,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 182,
-      "usuario": "usuario-local",
-      "decididoEm": "2026-05-21T21:45:25.004Z",
+      "decisaoId": 206,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.605Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10350,18 +9855,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "interface-revisao-divergencias",
-        "tipoSaneamento": "ausencia_confirmada",
-        "ausenciaConfirmada": true,
-        "motivo": "item não reapresentado no PAD atual e ausência confirmada pelo usuário",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 66,
           "chaveDivergencia": "item_ausente_no_pad:9ef6ef8500d7dd16",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "605901ad6dcd699539e9bb68b1e3fa80a7c273eaa2ed602df6c7c42a69dca747",
-          "registradoEm": "2026-05-21T21:45:25.004Z"
+          "payloadHashNoMomentoDaDecisao": "973c8d48bef3a6270e6c9e72ead66715f6cb8da62ef6433006130c3bbde3272d",
+          "registradoEm": "2026-05-23T14:26:33.605Z"
         }
       }
     },
@@ -10375,9 +9883,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 171,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "decisaoId": 207,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.607Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10426,19 +9934,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 67,
           "chaveDivergencia": "item_ausente_no_pad:263c61398f88427a",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "7e8d63906db228fe62694f8637fe4b4dcb91236e3ef24489806e52e1008d6501",
-          "registradoEm": "2026-05-21T21:41:09.575Z"
+          "payloadHashNoMomentoDaDecisao": "238e6085501eb2fb64feb67f450bfd9e95fafc2d1ce8d8c76a5f115e5da48343",
+          "registradoEm": "2026-05-23T14:26:33.607Z"
         }
       }
     },
@@ -10452,9 +9962,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 172,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "decisaoId": 208,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.608Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10503,19 +10013,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 68,
           "chaveDivergencia": "item_ausente_no_pad:12da4f953a810aba",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "0dcc8b037ed48b123483a9ed989622d90e529ec248c6982a0082dc692a4d4ee0",
-          "registradoEm": "2026-05-21T21:41:09.575Z"
+          "payloadHashNoMomentoDaDecisao": "6ee9b8211495e71efdf028db40ce8d54ebcf25fd350f13a73d747a011ad03c8a",
+          "registradoEm": "2026-05-23T14:26:33.608Z"
         }
       }
     },
@@ -10529,9 +10041,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 173,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.575Z",
+      "decisaoId": 209,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.609Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10580,19 +10092,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 69,
           "chaveDivergencia": "item_ausente_no_pad:8fa2597b2ebf3282",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "9efd230b2eaac32125cd3c17285470a3d2b2b1179f551bc321a6a4789b2be5f2",
-          "registradoEm": "2026-05-21T21:41:09.575Z"
+          "payloadHashNoMomentoDaDecisao": "2b064b99e3d220c1a8981ea47730afdc6e9edb99dc96049fe25dcf600f80ad57",
+          "registradoEm": "2026-05-23T14:26:33.609Z"
         }
       }
     },
@@ -10606,9 +10120,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 174,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.576Z",
+      "decisaoId": 210,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.609Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10657,19 +10171,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 70,
           "chaveDivergencia": "item_ausente_no_pad:e726b662149c7057",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "51d2c1da70656329d34320d927e33ca9a0c365f6bca6cc937f174619c4340c50",
-          "registradoEm": "2026-05-21T21:41:09.576Z"
+          "payloadHashNoMomentoDaDecisao": "e8ba491e0e5e5f07cd1cc03b0449a27112e67140c42fafe7bbb12863d4d9bbb6",
+          "registradoEm": "2026-05-23T14:26:33.609Z"
         }
       }
     },
@@ -10683,9 +10199,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 175,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.576Z",
+      "decisaoId": 211,
+      "usuario": "sistema-revalidacao-pad-937221-lote3",
+      "decididoEm": "2026-05-23T14:26:33.611Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10734,19 +10250,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "ausencia_confirmada",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "ausenciaConfirmada": true,
-        "motivo": "item da memória antiga não reapresentado no PAD; substituído por outros itens.",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote3",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 71,
           "chaveDivergencia": "item_ausente_no_pad:53e1018ea3c16260",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "0fe8856b30f1c8330bfd39f9b042cbbc31321086f6329c529b448c4556bddfb1",
-          "registradoEm": "2026-05-21T21:41:09.576Z"
+          "payloadHashNoMomentoDaDecisao": "1550a236a9ede5ccfd3dbeadd7ee0bd5c1abac3b0befc591bfc5b8ca1548d7db",
+          "registradoEm": "2026-05-23T14:26:33.611Z"
         }
       }
     },
@@ -10760,9 +10278,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 108,
-      "usuario": "usuario-local",
-      "decididoEm": "2026-05-21T19:55:11.354Z",
+      "decisaoId": 212,
+      "usuario": "sistema-revalidacao-pad-937782-lote4",
+      "decididoEm": "2026-05-23T14:28:05.635Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10811,18 +10329,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "interface-revisao-divergencias",
-        "tipoSaneamento": "ausencia_confirmada",
-        "ausenciaConfirmada": true,
-        "motivo": "item não reapresentado no PAD atual e ausência confirmada pelo usuário",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote4",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 72,
           "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "4cf7908b8a7ecb29004a858d58344abdab28566b102c45b6bbfef25a5c6f2ee4",
-          "registradoEm": "2026-05-21T19:55:11.354Z"
+          "payloadHashNoMomentoDaDecisao": "f099e5ba0aeecd4e8709bd6d605063f4e96a933f3565845446b9013d8f16bc16",
+          "registradoEm": "2026-05-23T14:28:05.634Z"
         }
       }
     },
@@ -10836,9 +10357,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 109,
-      "usuario": "usuario-local",
-      "decididoEm": "2026-05-21T19:55:23.586Z",
+      "decisaoId": 213,
+      "usuario": "sistema-revalidacao-pad-937782-lote4",
+      "decididoEm": "2026-05-23T14:28:05.654Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10887,18 +10408,21 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "interface-revisao-divergencias",
-        "tipoSaneamento": "ausencia_confirmada",
-        "ausenciaConfirmada": true,
-        "motivo": "item não reapresentado no PAD atual e ausência confirmada pelo usuário",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote4",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 73,
           "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "a24b35e71814d8fb61228db0517358ba91119ed89b98966a6fe393e92e8cc4fa",
-          "registradoEm": "2026-05-21T19:55:23.586Z"
+          "payloadHashNoMomentoDaDecisao": "ced153b36b9b1bee7ce8d6d1cd5f4867605d7421c655220dd843b9f30fef2940",
+          "registradoEm": "2026-05-23T14:28:05.654Z"
         }
       }
     },
@@ -10912,9 +10436,9 @@
       "campoAfetado": "existencia",
       "bloqueiaPublicacao": false,
       "decisao": "ACEITO",
-      "decisaoId": 110,
-      "usuario": "usuario-local",
-      "decididoEm": "2026-05-21T19:55:35.322Z",
+      "decisaoId": 214,
+      "usuario": "sistema-revalidacao-pad-937782-lote4",
+      "decididoEm": "2026-05-23T14:28:05.655Z",
       "efeito": {
         "tipo": "ausencia_confirmada",
         "afetaReconstrucao": false,
@@ -10963,94 +10487,26 @@
         "saneadoPorDiacritico": false
       },
       "payloadDecisao": {
-        "origem": "interface-revisao-divergencias",
-        "tipoSaneamento": "ausencia_confirmada",
-        "ausenciaConfirmada": true,
-        "motivo": "item não reapresentado no PAD atual e ausência confirmada pelo usuário",
+        "origem": "revalidacao-payload-alterado-pos-decisao",
+        "tipoSaneamento": "ausencia_confirmada_revalidada",
+        "regraAplicada": "prevalencia_pad_novo",
+        "motivo": "decisão ACEITO anterior continua materialmente aderente ao PAD novo; item da memória não reaparece no PAD; chaveDivergencia preservada; comparador aplica ausenciaConfirmadaPorDecisao; sem impedimento de reconstrução e sem diferença crítica na chaveItem",
+        "referenciaAuditoria": "profor-2022-revalidacao-payloads-alterados-dry-run",
+        "lote": "lote4",
+        "observacao": "revalidação formal para atualizar snapshot _segurancaPreAtivacao com hash atual; não altera plano oficial nem publica",
         "_segurancaPreAtivacao": {
           "versao": 1,
           "divergenciaId": 74,
           "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
           "tipoAlerta": "item_ausente_no_pad",
           "campoAfetado": "existencia",
-          "payloadHashNoMomentoDaDecisao": "71d8302097781195f4b4ed1e18e277d51548380b737dbbb53abb1631a2c78846",
-          "registradoEm": "2026-05-21T19:55:35.322Z"
+          "payloadHashNoMomentoDaDecisao": "b18ba34219040730126ab783edc3f588faac5213f3d39af6073984e18c4d32e8",
+          "registradoEm": "2026-05-23T14:28:05.655Z"
         }
       }
     }
   ],
   "decisoesNaoAplicaveis": [
-    {
-      "divergenciaId": 18,
-      "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "tipoAlerta": "item_novo_sem_rateio",
-      "campoAfetado": "rateio",
-      "bloqueiaPublicacao": true,
-      "decisao": "ACEITO",
-      "decisaoId": 150,
-      "usuario": "sistema-saneamento-pad-al-937221",
-      "decididoEm": "2026-05-21T21:41:09.553Z",
-      "efeito": {
-        "tipo": "saldo_residual_rateio_invalido",
-        "afetaReconstrucao": false
-      },
-      "aplicavel": false,
-      "motivoNaoAplicavel": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'.",
-      "payload": {
-        "campoAfetado": "rateio",
-        "numeroConvenio": "937221",
-        "uf": "AL",
-        "chaveItem": "937221::SALDO RESIDUAL",
-        "descricaoPad": "Saldo Residual",
-        "naturezaPad": "CAPITAL",
-        "quantidadePad": 1,
-        "valorUnitarioPad": 9506.54,
-        "valorPrevistoPad": 9506.54,
-        "valorExecutadoPad": 0,
-        "saldoPad": 9506.54,
-        "origemRelatorio": "Planilhas/profor-2022/instrumentos/RelatorioItensDespesasPAD_2026_05_20-13_552380858078419559992.xls",
-        "linhaOrigem": 37,
-        "acaoSugerida": "definir_rateio",
-        "bloqueiaPublicacao": true
-      },
-      "payloadDecisao": {
-        "origem": "saneamento-pad-al-937221",
-        "tipoSaneamento": "rateio_manual",
-        "fonteClassificacao": "ExtratoProposta.pdf",
-        "rateio": [
-          {
-            "area": "OUVIDORIA",
-            "natureza": "CAPITAL",
-            "quantidade": 0.333333,
-            "percentualQuantidade": 33.33
-          },
-          {
-            "area": "CORREGEDORIA",
-            "natureza": "CAPITAL",
-            "quantidade": 0.333333,
-            "percentualQuantidade": 33.33
-          },
-          {
-            "area": "ESCOLA",
-            "natureza": "CAPITAL",
-            "quantidade": 0.333333,
-            "percentualQuantidade": 33.33
-          }
-        ],
-        "_segurancaPreAtivacao": {
-          "versao": 1,
-          "divergenciaId": 18,
-          "chaveDivergencia": "item_novo_sem_rateio:f31c7f36f3c06bc1",
-          "tipoAlerta": "item_novo_sem_rateio",
-          "campoAfetado": "rateio",
-          "payloadHashNoMomentoDaDecisao": "26c10f0a453a1cc39ba90d7216b1bd269932fbb3e3fcae284f2e195d2c53bcf3",
-          "registradoEm": "2026-05-21T21:41:09.553Z"
-        }
-      }
-    },
     {
       "divergenciaId": 55,
       "chaveDivergencia": "item_ausente_no_pad:27e43486e8eb1131",
@@ -11400,10 +10856,10 @@
     "publicacaoLiberada": false
   },
   "segurancaPreAtivacao": {
-    "geradoEm": "2026-05-25T13:39:12.027Z",
+    "geradoEm": "2026-05-28T22:11:41.510Z",
     "resumo": {
-      "totalDecisoesResolutivasAuditadas": 74,
-      "totalPayloadPreservado": 46,
+      "totalDecisoesResolutivasAuditadas": 101,
+      "totalPayloadPreservado": 73,
       "totalPayloadAlteradoAposDecisao": 28,
       "totalDecisoesSemSnapshotPayload": 0,
       "totalDecisoesComDivergenciaNaoEncontrada": 0,
@@ -11411,255 +10867,12 @@
       "totalDivergenciasReapresentadas": 138,
       "totalDivergenciasNaoReapresentadas": 7,
       "totalDivergenciasReapresentacaoIndeterminada": 0,
-      "totalBloqueiosAtivacao": 34,
+      "totalBloqueiosAtivacao": 7,
       "totalAvisos": 0,
       "geracaoAtualDisponivel": true,
       "aptoParaProsseguirAtivacao": false
     },
     "bloqueiosAtivacao": [
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 108,
-        "divergenciaId": 72,
-        "chaveDivergencia": "item_ausente_no_pad:bdf5314acea3f24d",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 109,
-        "divergenciaId": 73,
-        "chaveDivergencia": "item_ausente_no_pad:ecb3d1cdb44b3bab",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 110,
-        "divergenciaId": 74,
-        "chaveDivergencia": "item_ausente_no_pad:66458163e66df12a",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 153,
-        "divergenciaId": 47,
-        "chaveDivergencia": "item_ausente_no_pad:e4caa4f2de2619b3",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 154,
-        "divergenciaId": 48,
-        "chaveDivergencia": "item_ausente_no_pad:8c26f66ea1caca0d",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 155,
-        "divergenciaId": 49,
-        "chaveDivergencia": "item_ausente_no_pad:85aa4ec3ed492a6c",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 156,
-        "divergenciaId": 50,
-        "chaveDivergencia": "item_ausente_no_pad:6695decd0ced4c5b",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 157,
-        "divergenciaId": 51,
-        "chaveDivergencia": "item_ausente_no_pad:ca5226c5cd9dcaf7",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 158,
-        "divergenciaId": 52,
-        "chaveDivergencia": "item_ausente_no_pad:57810d766febc453",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 159,
-        "divergenciaId": 53,
-        "chaveDivergencia": "item_ausente_no_pad:5d314260fd60be80",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 160,
-        "divergenciaId": 54,
-        "chaveDivergencia": "item_ausente_no_pad:da1129758bd0e411",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 161,
-        "divergenciaId": 56,
-        "chaveDivergencia": "item_ausente_no_pad:a45d54a4c08e6e6e",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 162,
-        "divergenciaId": 57,
-        "chaveDivergencia": "item_ausente_no_pad:265c3e0813ef4d3f",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 163,
-        "divergenciaId": 58,
-        "chaveDivergencia": "item_ausente_no_pad:29ef34a47d53cf99",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 164,
-        "divergenciaId": 59,
-        "chaveDivergencia": "item_ausente_no_pad:dc08c4d776511b56",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 165,
-        "divergenciaId": 60,
-        "chaveDivergencia": "item_ausente_no_pad:3a9e6dff786533dc",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 166,
-        "divergenciaId": 61,
-        "chaveDivergencia": "item_ausente_no_pad:f2245090928de9e0",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 167,
-        "divergenciaId": 62,
-        "chaveDivergencia": "item_ausente_no_pad:40d1e2d7ecea13e6",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 168,
-        "divergenciaId": 63,
-        "chaveDivergencia": "item_ausente_no_pad:436f04b2f0311fda",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 169,
-        "divergenciaId": 64,
-        "chaveDivergencia": "item_ausente_no_pad:584b9c4c0a6d70d4",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 170,
-        "divergenciaId": 65,
-        "chaveDivergencia": "item_ausente_no_pad:0aa793b7aad7dea9",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 171,
-        "divergenciaId": 67,
-        "chaveDivergencia": "item_ausente_no_pad:263c61398f88427a",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 172,
-        "divergenciaId": 68,
-        "chaveDivergencia": "item_ausente_no_pad:12da4f953a810aba",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 173,
-        "divergenciaId": 69,
-        "chaveDivergencia": "item_ausente_no_pad:8fa2597b2ebf3282",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 174,
-        "divergenciaId": 70,
-        "chaveDivergencia": "item_ausente_no_pad:e726b662149c7057",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 175,
-        "divergenciaId": 71,
-        "chaveDivergencia": "item_ausente_no_pad:53e1018ea3c16260",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
-      {
-        "origem": "payload_decisao",
-        "classificacao": "payload_alterado_apos_decisao",
-        "decisaoId": 182,
-        "divergenciaId": 66,
-        "chaveDivergencia": "item_ausente_no_pad:9ef6ef8500d7dd16",
-        "decisao": "ACEITO",
-        "motivo": "Payload da divergência mudou após a decisão; a decisão precisa ser revalidada."
-      },
       {
         "origem": "divergencia_nao_reapresentada",
         "classificacao": "nao_reapresentada_com_decisao_resolutiva",
@@ -11714,29 +10927,29 @@
   "reconstrucaoResumo": {
     "totalRelatoriosPad": 15,
     "totalItensPadProcessados": 525,
-    "totalItensPadComRateioAplicado": 501,
-    "totalItensPadSemRateio": 24,
-    "totalItensPadSemRateioRemanescentes": 1,
-    "totalItensPadSemRateioReconstruidoPorDecisao": 23,
-    "totalLinhasReconstruidas": 567,
+    "totalItensPadComRateioAplicado": 525,
+    "totalItensPadSemRateio": 0,
+    "totalItensPadSemRateioRemanescentes": 0,
+    "totalItensPadSemRateioReconstruidoPorDecisao": 0,
+    "totalLinhasReconstruidas": 568,
     "totalConveniosReconstruidos": 15,
     "totalItensConhecidosNaoAptosUsados": 6,
     "totalInstrumentosForaCarteira": 0,
     "totalErrosCriticosLeitura": 0,
-    "totalImpedimentos": 33,
-    "totalAlertas": 105,
+    "totalImpedimentos": 12,
+    "totalAlertas": 39,
     "totalDecisoesResolutivasEncontradas": 72,
-    "totalDecisoesInterpretadasDryRun": 66,
-    "totalDecisoesAplicadasDryRun": 66,
-    "totalDecisoesNaoAplicaveis": 6,
-    "totalDecisoesComEfeitoNaReconstrucao": 39,
+    "totalDecisoesInterpretadasDryRun": 67,
+    "totalDecisoesAplicadasDryRun": 67,
+    "totalDecisoesNaoAplicaveis": 5,
+    "totalDecisoesComEfeitoNaReconstrucao": 40,
     "totalDecisoesSemEfeitoNaReconstrucao": 27,
-    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 35,
+    "totalDecisoesEfetivamenteAplicadasNaReconstrucao": 12,
     "totalConsistenciaSaneadaPorDecisao": 0,
-    "totalBloqueiosSegurancaPreAtivacao": 34,
-    "valorPrevistoReconstruidoTotal": 10654508.7,
-    "valorExecutadoReconstruidoTotal": 3217739.5,
-    "saldoReconstruidoTotal": 7436769.2
+    "totalBloqueiosSegurancaPreAtivacao": 7,
+    "valorPrevistoReconstruidoTotal": 10664015.24,
+    "valorExecutadoReconstruidoTotal": 3228131.36,
+    "saldoReconstruidoTotal": 7435883.88
   },
   "impedimentosReconstrucao": [
     {
@@ -11794,195 +11007,6 @@
       "detalhe": "Item conhecido marcado como não apto foi usado na reconstrução; exige liberação na revisão."
     },
     {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
-      "chaveItem": "937221::AR CONDICIONADO SPLIT 60.000 BTUS (ESCOLA)",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Ar condicionado split, capacidade de 12.",
-      "chaveItem": "937221::AR CONDICIONADO SPLIT, CAPACIDADE DE 12.",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Ar condicionado tipo split, capacidade 3",
-      "chaveItem": "937221::AR CONDICIONADO TIPO SPLIT, CAPACIDADE 3",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Ar-condicionado tipo Split, capacidade d",
-      "chaveItem": "937221::AR-CONDICIONADO TIPO SPLIT, CAPACIDADE D",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Cafeteira elétrica 1,0 litros bivolt",
-      "chaveItem": "937221::CAFETEIRA ELETRICA 1,0 LITROS BIVOLT",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "EQUIPAMENTO DE VÍDEO CONFERÊNCIA (KIT)V",
-      "chaveItem": "937221::EQUIPAMENTO DE VIDEO CONFERENCIA (KIT)V",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Equipamentos de rede (switches e roteado",
-      "chaveItem": "937221::EQUIPAMENTOS DE REDE (SWITCHES E ROTEADO",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Forno de Micro-ondas a partir de- 32 lit",
-      "chaveItem": "937221::FORNO DE MICRO-ONDAS A PARTIR DE- 32 LIT",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
-      "chaveItem": "937221::FORNO DE MICROONDAS - 20L - (OUVIDORIA)",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Fragmentadora e papel - Corregedoria",
-      "chaveItem": "937221::FRAGMENTADORA E PAPEL - CORREGEDORIA",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
-      "chaveItem": "937221::FRIGOBAR 45L INVERTER BIVOLT (OUVIDORIA)",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Impressora multifuncional (OUVIDORIA)",
-      "chaveItem": "937221::IMPRESSORA MULTIFUNCIONAL (OUVIDORIA)",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
-      "chaveItem": "937221::NOBREAK 1200 BIVOLT(OUVIDORIA)",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
-      "chaveItem": "937221::NOTEBOOK I7 16 GB, 1 TB SSD, WINDOWS 11",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Quadro Lousa branca",
-      "chaveItem": "937221::QUADRO LOUSA BRANCA",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Refrigerador frigobar, com capacidade no",
-      "chaveItem": "937221::REFRIGERADOR FRIGOBAR, COM CAPACIDADE NO",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "item_pad_sem_rateio",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Saldo Residual",
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Item PAD sem rateio aplicável (item_pad_nao_existe_na_memoria_rateio)."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Televisão Smart LED, mínimo de 50 polega",
-      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGA",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "Televisão smart LED, minimo de 50 polegadas",
-      "chaveItem": "937221::TELEVISAO SMART LED, MINIMO DE 50 POLEGADAS",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "rateio_percentual_indefinido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": "AL",
-      "descricao": "kit com 2 Poltronas (CORREGEDORIA).",
-      "chaveItem": "937221::KIT COM 2 POLTRONAS (CORREGEDORIA).",
-      "detalhe": "Rateio sem percentual nem valores de referência; reconstrução usou distribuição igual provisória."
-    },
-    {
-      "tipo": "decisao_nao_aplicavel:saldo_residual_rateio_invalido",
-      "nivel": "impeditivo",
-      "numeroConvenio": "937221",
-      "uf": null,
-      "descricao": null,
-      "chaveItem": "937221::SALDO RESIDUAL",
-      "detalhe": "Saldo residual/remanescente e item tecnico nao setorializado por area, mas segregado por natureza. CAPITAL e CUSTEIO nao devem ser pareados nem consolidados como equivalentes. Rateio informou area operacional 'OUVIDORIA'."
-    },
-    {
       "tipo": "decisao_nao_aplicavel:decisao_sem_efeito_definido",
       "nivel": "impeditivo",
       "numeroConvenio": "937221",
@@ -12038,10 +11062,10 @@
     }
   ],
   "conclusaoOperacional": [
-    "Reconstrução NÃO apta para ativação: 33 impedimento(s) registrado(s).",
+    "Reconstrução NÃO apta para ativação: 12 impedimento(s) registrado(s).",
     "Comparação NÃO apta para publicação: depende de aptidão para ativação, publicação liberada e ausência de diferença crítica.",
-    "Diferença total origem antiga × reconstrução PAD: previsto -9506.78, executado 15043.6, saldo -24550.38.",
-    "Diferenças críticas: 24. Itens ambíguos: 6.",
+    "Diferença total origem antiga × reconstrução PAD: previsto -308442.82, executado 25435.46, saldo -333878.28.",
+    "Diferenças críticas: 2. Itens ambíguos: 6.",
     "Etapa dry-run: não altera a origem ativa, não publica e não aplica decisões ao planoAplicacao."
   ],
   "aptoParaAtivacao": false,
