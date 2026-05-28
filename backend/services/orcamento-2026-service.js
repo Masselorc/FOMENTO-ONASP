@@ -301,7 +301,7 @@ const MAPA_CAMEL = {
   data_profor_autuacao: "dataProforAutuacao",
   profor_parecer_tecnico: "proforParecerTecnico",
   link_profor_parecer_tecnico: "linkProforParecerTecnico",
-  data_profor_parecer_tecnico: "dataProforTecnico",
+  data_profor_parecer_tecnico: "dataProforParecerTecnico",
   profor_minuta_edital: "proforMinutaEdital",
   link_profor_minuta_edital: "linkProforMinutaEdital",
   data_profor_minuta_edital: "dataProforMinutaEdital",
@@ -318,6 +318,49 @@ const MAPA_CAMEL = {
   link_profor_publicacao_gabsec: "linkProforPublicacaoGabsec",
   data_profor_publicacao_gabsec: "dataProforPublicacaoGabsec"
 };
+
+function valorBooleano(valor) {
+  if (valor === true || valor === 1 || String(valor).trim() === "1" || String(valor).trim().toLowerCase() === "true") {
+    return true;
+  }
+  return false;
+}
+
+function normalizarDataPostgres(valor) {
+  if (valor === null || valor === undefined) return null;
+  const texto = String(valor).trim();
+  if (texto === "") return null;
+
+  // DD/MM/YYYY
+  const matchBr = texto.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (matchBr) {
+    const dia = matchBr[1].padStart(2, "0");
+    const mes = matchBr[2].padStart(2, "0");
+    const ano = matchBr[3];
+    return `${ano}-${mes}-${dia}`;
+  }
+
+  // YYYY-MM-DD
+  const matchIsoDate = texto.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (matchIsoDate) {
+    return texto;
+  }
+
+  // ISO Datetime (YYYY-MM-DDTHH:MM:SS...)
+  if (texto.includes("T")) {
+    const parteData = texto.split("T")[0];
+    const matchPart = parteData.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (matchPart) return parteData;
+  }
+
+  // Outros formatos que comecem com YYYY-MM-DD
+  const matchPrefix = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (matchPrefix) {
+    return matchPrefix[0];
+  }
+
+  return texto;
+}
 
 function normalizarTexto(valor) {
   return String(valor ?? "")
@@ -362,22 +405,22 @@ function statusIndicaProcessoAutuado(status) {
 
 function sincronizarStatusEProcessoAutuado(status, processoAutuado) {
   const statusNormalizado = normalizarStatusOrcamento(status);
-  const processoAutuadoNormalizado = Number(processoAutuado) === 1 ? 1 : 0;
+  const processoAutuadoNormalizado = valorBooleano(processoAutuado);
 
   if (statusIndicaProcessoAutuado(statusNormalizado)) {
     return {
       status: statusNormalizado,
-      processo_autuado: 1
+      processo_autuado: true
     };
   }
 
   if (
-    processoAutuadoNormalizado === 1
+    processoAutuadoNormalizado
     && (statusNormalizado === "PLANEJADO" || statusNormalizado === "VALIDAR")
   ) {
     return {
       status: "PROCESSO AUTUADO",
-      processo_autuado: 1
+      processo_autuado: true
     };
   }
 
@@ -539,7 +582,7 @@ function gerarIdProcessoVinculado(processoPaiId, registros) {
 function calcularSaldoBasicoParaVinculo(processoPai, registros) {
   const filhosAtivos = (Array.isArray(registros) ? registros : []).filter((registro) => (
     String(registro?.processo_pai_id || "").trim() === String(processoPai?.id || "").trim()
-    && Number(registro?.ativo) === 1
+    && valorBooleano(registro?.ativo)
   ));
 
   const totalFilhos = filhosAtivos.reduce((total, registro) => total + (Number(registro?.valor_previsto) || 0), 0);
@@ -547,7 +590,6 @@ function calcularSaldoBasicoParaVinculo(processoPai, registros) {
   const empenhadoPai = Number(processoPai?.valor_empenhado) || 0;
   const executadoPai = Number(processoPai?.valor_executado) || 0;
 
-  // Saldo básico considera filhos já criados; movimentações entre processos serão tratadas em etapa própria.
   return arredondarMoeda(totalPai - empenhadoPai - executadoPai - totalFilhos);
 }
 
@@ -753,9 +795,9 @@ function obterRegistrosIniciaisDaPlanilha() {
       valor_estimado_pesquisa_preco: 0,
       processo_sei: processoSei,
       observacao: "",
-      compoe_orcamento: 1,
+      compoe_orcamento: true,
       classificacao_gerencial: classificarGerencialmenteItemOrcamento({ id, descricao }),
-      ativo: 1,
+      ativo: true,
       tipo_rastreio: tipoRastreio,
       abrangencia: textoCelula(linha, colAbrangencia),
       quantidade: textoCelula(linha, colQuantidade),
@@ -785,7 +827,15 @@ function preencherColunas(item) {
       acc[coluna] = item[coluna] ?? null;
       return acc;
     }
-    acc[coluna] = item[coluna] ?? (coluna.startsWith("valor_") || ["processo_autuado", "compoe_orcamento", "ativo"].includes(coluna) ? 0 : "");
+    if (["processo_autuado", "compoe_orcamento", "ativo"].includes(coluna)) {
+      acc[coluna] = item[coluna] !== undefined && item[coluna] !== null ? valorBooleano(item[coluna]) : false;
+      return acc;
+    }
+    if (coluna.startsWith("data_")) {
+      acc[coluna] = normalizarDataPostgres(item[coluna]);
+      return acc;
+    }
+    acc[coluna] = item[coluna] ?? (coluna.startsWith("valor_") ? 0 : "");
     return acc;
   }, {});
 }
@@ -800,8 +850,8 @@ function devePreencherBackfill(atual, novo, campo) {
   if (["valor_previsto", "valor_disponibilizado", "valor_empenhado", "valor_executado", "valor_unitario"].includes(campo)) {
     return (Number(atual) || 0) === 0 && Number(novo) > 0;
   }
-  if (campo === "processo_autuado") {
-    return Number(atual) !== 1 && Number(novo) === 1;
+  if (campo === "processo_autuado" || campo === "ativo" || campo === "compoe_orcamento") {
+    return !valorBooleano(atual) && valorBooleano(novo);
   }
   return valorAtualVazio(atual);
 }
@@ -848,20 +898,20 @@ async function executarBackfillAutuacaoPorStatus() {
   const { rows: linhas } = await query(`
     SELECT id, status, processo_autuado
     FROM orcamento_2026
-    WHERE ativo = 1
+    WHERE ativo = true
   `);
   if (!linhas.length) return;
 
   const updateSql = `
     UPDATE orcamento_2026
-    SET processo_autuado = 1, atualizado_em = $1
+    SET processo_autuado = true, atualizado_em = $1
     WHERE id = $2
   `;
   const updatedAt = new Date().toISOString();
 
   await withTransaction(async (client) => {
     for (const linha of linhas) {
-      if (statusIndicaProcessoAutuado(linha.status) && Number(linha.processo_autuado) !== 1) {
+      if (statusIndicaProcessoAutuado(linha.status) && !valorBooleano(linha.processo_autuado)) {
         await client.query(updateSql, [updatedAt, linha.id]);
       }
     }
@@ -901,9 +951,9 @@ async function inicializarOrcamento2026() {
 function linhaParaItem(linha) {
   const valorPrevisto = Number(linha.valor_previsto) || 0;
   const valorEstimadoPesquisaPreco = Number(linha.valor_estimado_pesquisa_preco) || 0;
-  const compoeOrcamento = Number(linha.compoe_orcamento) === 1;
+  const compoeOrcamento = valorBooleano(linha.compoe_orcamento);
   const statusNormalizado = normalizarStatusOrcamento(linha.status);
-  const processoAutuado = Number(linha.processo_autuado) === 1 || statusIndicaProcessoAutuado(statusNormalizado);
+  const processoAutuado = valorBooleano(linha.processo_autuado) || statusIndicaProcessoAutuado(statusNormalizado);
   const classificacaoGerencial = normalizarClassificacaoGerencial(
     linha.classificacao_gerencial || classificarGerencialmenteItemOrcamento(linha)
   );
@@ -947,7 +997,7 @@ function linhaParaItem(linha) {
     compoeOrcamentoNumero: compoeOrcamento ? 1 : 0,
     classificacaoGerencial,
     ehAparelhamento: classificacaoGerencial === "APARELHAMENTO",
-    ativo: Number(linha.ativo) === 1,
+    ativo: valorBooleano(linha.ativo),
     valorEmExecucaoConsiderado,
     saldoAparelhamento,
     atualizadoEm: linha.atualizado_em || ""
@@ -1053,7 +1103,7 @@ async function listarOrcamento2026() {
   const { rows: linhas } = await query(`
     SELECT *
     FROM orcamento_2026
-    WHERE ativo = 1
+    WHERE ativo = true
     ORDER BY compoe_orcamento DESC, categoria, descricao
   `);
   const itens = linhas.map(linhaParaItem);
@@ -1120,7 +1170,7 @@ async function criarProcessoVinculadoOrcamento2026(payload = {}) {
     return { success: false, message: "Processo pai não localizado." };
   }
 
-  if (Number(processoPai.ativo) !== 1) {
+  if (!valorBooleano(processoPai.ativo)) {
     return { success: false, message: "Processo pai está inativo." };
   }
 
@@ -1155,7 +1205,7 @@ async function criarProcessoVinculadoOrcamento2026(payload = {}) {
 
   const filhosAtivos = registros.filter((registro) => (
     String(registro?.processo_pai_id || "").trim().toUpperCase() === String(processoPai.id || "").trim().toUpperCase()
-    && Number(registro?.ativo) === 1
+    && valorBooleano(registro?.ativo)
   ));
   const ordemExibicao = filhosAtivos.reduce((maximo, registro) => {
     const ordem = Number(registro?.ordem_exibicao);
@@ -1185,9 +1235,9 @@ async function criarProcessoVinculadoOrcamento2026(payload = {}) {
     data_entrada_setor: dataEntradaSetor,
     pendencia_atual: pendenciaAtual,
     observacao,
-    compoe_orcamento: 0,
+    compoe_orcamento: false,
     classificacao_gerencial: normalizarClassificacaoGerencial(processoPai.classificacao_gerencial),
-    ativo: 1,
+    ativo: true,
     tipo_rastreio: validacaoTipoRastreio.tipoRastreio,
     processo_pai_id: processoPai.id,
     tipo_processo: "VINCULADO",
@@ -1228,7 +1278,9 @@ function valorParaBanco(campo, valor) {
   if (ehCampoMonetarioOrcamento(campo)) {
     return normalizarNumeroNaoNegativoOrcamento(valor, campo);
   }
-  if (campo === "processo_autuado") return valor ? 1 : 0;
+  if (campo === "processo_autuado" || campo === "ativo" || campo === "compoe_orcamento") {
+    return valorBooleano(valor);
+  }
   if (campo === "status") {
     const validacao = normalizarStatusParaCriacao(valor);
     if (validacao.informado && !validacao.valido) {
@@ -1237,6 +1289,7 @@ function valorParaBanco(campo, valor) {
     return validacao.status;
   }
   if (campo === "classificacao_gerencial") return normalizarClassificacaoGerencial(valor);
+  if (campo.startsWith("data_")) return normalizarDataPostgres(valor);
   return String(valor ?? "").trim();
 }
 
@@ -1272,7 +1325,7 @@ async function replicarAcompanhamentoGerencialPorProcesso(client, alteracoesPorI
   if (!(alteracoesPorItem instanceof Map) || !alteracoesPorItem.size) return;
 
   const idsInativosSet = new Set((idsInativos || []).map((id) => String(id)));
-  const { rows: itensAtivos } = await client.query("SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = 1");
+  const { rows: itensAtivos } = await client.query("SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = true");
   const itensPorId = new Map(itensAtivos.map((item) => [String(item.id), item]));
   const idsPorProcesso = new Map();
 
@@ -1364,8 +1417,8 @@ function validarNovos(novos) {
       pendencia_atual: limparTexto(item.pendencia_atual ?? item.pendenciaAtual),
       observacao: limparTexto(item.observacao),
       classificacao_gerencial: "NAO_APARELHAMENTO",
-      compoe_orcamento: 0,
-      ativo: 1
+      compoe_orcamento: false,
+      ativo: true
     });
   });
 }
@@ -1397,7 +1450,7 @@ async function salvarOrcamento2026({ password, changes, novos, inativos }) {
     INSERT INTO orcamento_2026 (${COLUNAS_ORCAMENTO.join(", ")}, atualizado_em)
     VALUES (${COLUNAS_ORCAMENTO.map((_, i) => `$${i + 1}`).join(", ")}, $${COLUNAS_ORCAMENTO.length + 1})
   `;
-  const inativarSql = "UPDATE orcamento_2026 SET ativo = 0, atualizado_em = $1 WHERE id = $2";
+  const inativarSql = "UPDATE orcamento_2026 SET ativo = false, atualizado_em = $1 WHERE id = $2";
   const alteracoesPorItem = new Map();
 
   alteracoes.forEach((item) => {
@@ -1472,8 +1525,8 @@ async function salvarOrcamento2026({ password, changes, novos, inativos }) {
         pagina: PAGINA,
         registro: id,
         campo: "ativo",
-        valorAnterior: atual.ativo,
-        valorNovo: 0
+        valorAnterior: valorBooleano(atual.ativo),
+        valorNovo: false
       });
     }
   });
@@ -1514,7 +1567,7 @@ async function listarHistoricoOrcamento2026() {
 
 async function obterMovimentacoesAtivasOrcamento2026() {
   const { rows } = await query(`
-    SELECT * FROM orcamento_2026_movimentacoes WHERE ativo = 1
+    SELECT * FROM orcamento_2026_movimentacoes WHERE ativo = true
   `);
   return rows;
 }
@@ -1533,7 +1586,7 @@ function calcularSaldoTransferivelOrcamento2026(item, registros, movimentacoes) 
 
   const filhosAtivos = (Array.isArray(registros) ? registros : []).filter((r) => (
     String(r?.processo_pai_id || "").trim() === id
-    && Number(r?.ativo) === 1
+    && valorBooleano(r?.ativo)
   ));
   const valorDistribuidoParaFilhos = filhosAtivos.reduce((t, r) => t + (Number(r?.valor_previsto) || 0), 0);
 
@@ -1585,7 +1638,7 @@ async function alocarSaldoOrcamento2026(payload = {}) {
   if (!origem) {
     return { success: false, message: "Processo de origem não localizado." };
   }
-  if (Number(origem.ativo) !== 1) {
+  if (!valorBooleano(origem.ativo)) {
     return { success: false, message: "Processo de origem está inativo." };
   }
 
@@ -1593,7 +1646,7 @@ async function alocarSaldoOrcamento2026(payload = {}) {
   if (!destino) {
     return { success: false, message: "Processo de destino não localizado." };
   }
-  if (Number(destino.ativo) !== 1) {
+  if (!valorBooleano(destino.ativo)) {
     return { success: false, message: "Processo de destino está inativo." };
   }
 
@@ -1618,7 +1671,7 @@ async function alocarSaldoOrcamento2026(payload = {}) {
   const inserirSql = `
     INSERT INTO orcamento_2026_movimentacoes
       (tipo, origem_id, destino_id, valor, justificativa, criado_em, criado_por, ativo)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, 1)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, true)
     RETURNING id
   `;
 
@@ -1672,5 +1725,7 @@ module.exports = {
   alocarSaldoOrcamento2026,
   listarMovimentacoesOrcamento2026,
   salvarOrcamento2026,
-  listarHistoricoOrcamento2026
+  listarHistoricoOrcamento2026,
+  valorBooleano,
+  normalizarDataPostgres
 };
