@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const XLSX = require("xlsx");
 const { query, withTransaction } = require("../db/postgres-client");
-const { registrarHistorico } = require("./historico-service");
+const { registrarHistoricoPostgres } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
 
 const PAGINA = "formalizacao-profor";
@@ -401,14 +401,14 @@ async function salvarFormalizacaoProfor({ password, changes }) {
     for (const item of atualizacoes) {
       const { rows: [anterior] } = await client.query(selectAtualSql, [item.uf, item.etapa]);
       await client.query(upsertSql, [item.uf, item.etapa, item.status, item.observacao, updatedAt]);
-      await registrarHistorico(client, {
+      await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: item.etapa,
         valorAnterior: anterior ? anterior.status : "",
         valorNovo: item.status
       });
-      await registrarHistorico(client, {
+      await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: `${item.etapa}.observacao`,

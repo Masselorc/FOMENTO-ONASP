@@ -1,17 +1,24 @@
 const { query } = require("../db/postgres-client");
 
-async function registrarHistorico(executor, { pagina, registro, campo, valorAnterior, valorNovo } = {}) {
-  // Mantém compatibilidade com a assinatura legada (db, payload). Quando chamado
-  // com (payload) — sem o primeiro argumento de transação — o segundo é undefined.
-  let payload;
-  if (executor && typeof executor === "object" && "pagina" in executor) {
-    payload = executor;
-    executor = null;
-  } else {
-    payload = { pagina, registro, campo, valorAnterior, valorNovo };
-  }
+function registrarHistorico(db, { pagina, registro, campo, valorAnterior, valorNovo }) {
+  if (String(valorAnterior) === String(valorNovo)) return;
 
-  if (String(payload.valorAnterior) === String(payload.valorNovo)) return;
+  db.prepare(`
+    INSERT INTO historico_alteracoes
+    (pagina, registro, campo, valor_anterior, valor_novo, alterado_em)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(
+    pagina,
+    registro,
+    campo,
+    valorAnterior === undefined ? "" : String(valorAnterior),
+    valorNovo === undefined ? "" : String(valorNovo),
+    new Date().toISOString()
+  );
+}
+
+async function registrarHistoricoPostgres(executor, { pagina, registro, campo, valorAnterior, valorNovo } = {}) {
+  if (String(valorAnterior) === String(valorNovo)) return;
 
   const sql = `
     INSERT INTO historico_alteracoes
@@ -19,11 +26,11 @@ async function registrarHistorico(executor, { pagina, registro, campo, valorAnte
     VALUES ($1, $2, $3, $4, $5, $6)
   `;
   const params = [
-    payload.pagina,
-    payload.registro,
-    payload.campo,
-    payload.valorAnterior === undefined ? "" : String(payload.valorAnterior),
-    payload.valorNovo === undefined ? "" : String(payload.valorNovo),
+    pagina,
+    registro,
+    campo,
+    valorAnterior === undefined ? "" : String(valorAnterior),
+    valorNovo === undefined ? "" : String(valorNovo),
     new Date().toISOString()
   ];
 
@@ -36,5 +43,6 @@ async function registrarHistorico(executor, { pagina, registro, campo, valorAnte
 }
 
 module.exports = {
-  registrarHistorico
+  registrarHistorico,
+  registrarHistoricoPostgres
 };

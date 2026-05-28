@@ -1,5 +1,5 @@
 const { query, withTransaction } = require("../db/postgres-client");
-const { registrarHistorico } = require("./historico-service");
+const { registrarHistoricoPostgres } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
 const {
   PARAMETROS_MINIMOS,
@@ -355,7 +355,7 @@ async function salvarParametrosMinimos({ password, changes }) {
         item.quantidadeIdeal === undefined ? null : item.quantidadeIdeal,
         updatedAt
       ]);
-      await registrarHistorico(client, {
+      await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: item.parametro,
@@ -452,7 +452,7 @@ async function reverterHistoricoParametrosMinimos({ password, historicoId }) {
       valorReversao.quantidadeIdeal === undefined ? null : valorReversao.quantidadeIdeal,
       updatedAt
     ]);
-    await registrarHistorico(client, {
+    await registrarHistoricoPostgres(client, {
       pagina: PAGINA,
       registro: historico.registro,
       campo: historico.campo,
