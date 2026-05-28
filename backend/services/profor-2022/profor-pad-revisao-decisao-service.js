@@ -296,7 +296,7 @@ function formatarLog(linha) {
 
 /* ------------------------------- consultas ------------------------------- */
 
-function listarDivergencias(filtros = {}) {
+async function listarDivergencias(filtros = {}) {
   const revisaoService = require("./profor-pad-revisao-service");
   const usaFiltroOperacional = filtros.categoriaOperacional
     || filtros.operacionalEfetiva !== undefined
@@ -306,7 +306,7 @@ function listarDivergencias(filtros = {}) {
   const filtrosRepo = usaFiltroOperacional
     ? { ...filtros, limite: 500, offset: 0 }
     : filtros;
-  const resultado = repo.listarDivergencias(filtrosRepo);
+  const resultado = await repo.listarDivergencias(filtrosRepo);
   const indicesAuditoria = carregarIndicesAuditoriaOperacional();
   
   let chavesGeradas = null;
@@ -342,8 +342,10 @@ function listarDivergencias(filtros = {}) {
 }
 
 /** Retorna a divergência com payload parseado, decisões e logs. */
-function obterDivergencia(id) {
+async function obterDivergencia(id) {
   const revisaoService = require("./profor-pad-revisao-service");
+  // buscarDivergenciaPorId ainda é leitura SQLite (pendente Lote B — compartilha
+  // fluxo com a escrita registrarDecisao). decisoes/logs já vêm do Postgres.
   const linha = repo.buscarDivergenciaPorId(id);
   if (!linha) {
     throw Object.assign(new Error("Divergência não encontrada."), { statusCode: 404 });
@@ -361,19 +363,26 @@ function obterDivergencia(id) {
 
   divergencia = enriquecerDivergenciaComAuditoria(divergencia);
 
+  const [decisoes, logs] = await Promise.all([
+    repo.listarDecisoesDaDivergencia(divergencia.id),
+    repo.listarLogsDaDivergencia(divergencia.id),
+  ]);
+
   return {
     ...divergencia,
-    decisoes: repo.listarDecisoesDaDivergencia(divergencia.id).map(formatarDecisao),
-    logs: repo.listarLogsDaDivergencia(divergencia.id).map(formatarLog),
+    decisoes: decisoes.map(formatarDecisao),
+    logs: logs.map(formatarLog),
   };
 }
 
-function listarLogsDaDivergencia(id) {
+async function listarLogsDaDivergencia(id) {
+  // buscarDivergenciaPorId ainda é leitura SQLite (pendente Lote B).
   const linha = repo.buscarDivergenciaPorId(id);
   if (!linha) {
     throw Object.assign(new Error("Divergência não encontrada."), { statusCode: 404 });
   }
-  return repo.listarLogsDaDivergencia(Number(id)).map(formatarLog);
+  const logs = await repo.listarLogsDaDivergencia(Number(id));
+  return logs.map(formatarLog);
 }
 
 /** Auditoria de pendências, com destaque para impeditivas. */

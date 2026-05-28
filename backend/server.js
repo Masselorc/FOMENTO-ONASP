@@ -1155,7 +1155,8 @@ async function rotearApi(req, res, pathname) {
         });
         return;
       }
-      enviarJson(res, 200, { success: true, ...revisaoDecisaoService.listarDivergencias(filtros) });
+      const listagem = await revisaoDecisaoService.listarDivergencias(filtros);
+      enviarJson(res, 200, { success: true, ...listagem });
       return;
     }
 
@@ -1169,9 +1170,10 @@ async function rotearApi(req, res, pathname) {
 
       if (req.method === "GET" && /^\d+\/logs$/.test(resto)) {
         const id = Number(resto.split("/")[0]);
+        const logs = await revisaoDecisaoService.listarLogsDaDivergencia(id);
         enviarJson(res, 200, {
           success: true,
-          logs: revisaoDecisaoService.listarLogsDaDivergencia(id),
+          logs,
         });
         return;
       }
@@ -1185,9 +1187,10 @@ async function rotearApi(req, res, pathname) {
       }
 
       if (req.method === "GET" && /^\d+$/.test(resto)) {
+        const divergencia = await revisaoDecisaoService.obterDivergencia(Number(resto));
         enviarJson(res, 200, {
           success: true,
-          divergencia: revisaoDecisaoService.obterDivergencia(Number(resto)),
+          divergencia,
         });
         return;
       }
