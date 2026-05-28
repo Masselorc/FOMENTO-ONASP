@@ -57,7 +57,7 @@ async function publicarDadosEstaticos() {
   const formalizacaoProfor = await listarFormalizacaoProfor();
   const orcamento2026 = await listarOrcamento2026();
   const publicadoEm = new Date().toISOString();
-  const dashboard = consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm);
+  const dashboard = await consolidarCatalogoDashboard(catalogoAplicacao, publicadoEm);
 
   const catalogoAplicacaoPublico = sanitizarCatalogoAplicacaoPublico(dashboard.catalogoPublicado);
   const parametrosMinimosPublicos = sanitizarParametrosMinimos(parametrosMinimos);

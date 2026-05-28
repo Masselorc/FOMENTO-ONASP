@@ -63,12 +63,12 @@ async function executarEtapaRendimentos(opcoes = {}) {
       requisicaoLocal: opcoes.requisicaoLocal,
       execucaoLocal: opcoes.execucaoLocal,
     });
-    const convenios = listarConveniosMonitorados({ incluirInativos: false });
+    const convenios = await listarConveniosMonitorados({ incluirInativos: false });
     const intervaloMs = Number.isFinite(opcoes.intervaloEntreConsultasMs)
       ? Math.max(0, opcoes.intervaloEntreConsultasMs)
       : INTERVALO_RENDIMENTOS_PADRAO_MS;
     const inicioEtapa = Date.now();
-    const idConsulta = registrarConsultaRendimentosInicio({
+    const idConsulta = await registrarConsultaRendimentosInicio({
       totalCarteiraAtiva: convenios.length,
     });
     const falhas = [];
@@ -107,7 +107,7 @@ async function executarEtapaRendimentos(opcoes = {}) {
           }
 
           if (resultadoComCarteira.sucesso) {
-            salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
+            await salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
               numeroConvenio: convenio.numeroConvenio,
               ano: convenio.ano ?? null,
             });
@@ -151,7 +151,7 @@ async function executarEtapaRendimentos(opcoes = {}) {
           : 0,
         falhas,
       };
-      registrarConsultaRendimentosFim(idConsulta, resumo);
+      await registrarConsultaRendimentosFim(idConsulta, resumo);
 
       const avisos = [];
       if (falhas.length > 0) {
@@ -174,7 +174,7 @@ async function executarEtapaRendimentos(opcoes = {}) {
         falhas,
       };
     } catch (error) {
-      registrarConsultaRendimentosErro(idConsulta, error);
+      await registrarConsultaRendimentosErro(idConsulta, error);
       throw error;
     }
   });

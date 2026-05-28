@@ -309,17 +309,17 @@ function normalizarUltimaAtualizacaoDetru(registro) {
   };
 }
 
-function obterUltimaAtualizacaoDadosProfor2022Seguro() {
+async function obterUltimaAtualizacaoDadosProfor2022Seguro() {
   let ultimaDetru = null;
   try {
-    ultimaDetru = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
+    ultimaDetru = normalizarUltimaAtualizacaoDetru(await obterUltimaAtualizacaoDetru());
   } catch {
     ultimaDetru = null;
   }
 
   let ultimaRendimentos = null;
   try {
-    ultimaRendimentos = obterUltimaConsultaRendimentos();
+    ultimaRendimentos = await obterUltimaConsultaRendimentos();
   } catch {
     ultimaRendimentos = null;
   }
@@ -333,7 +333,7 @@ function carregarCatalogoAplicacaoLocal() {
 
 // Wrapper centralizado para o endpoint `/api/profor-2022/consolidado`. Resolve
 // a origem ativa e monta o consolidado somente por PAD/reconstrucao.
-function montarConsolidadoProfor2022PorOrigemAtiva() {
+async function montarConsolidadoProfor2022PorOrigemAtiva() {
   const origemAtiva = resolverOrigemDadosProfor2022();
   if (origemAtiva !== "reconstrucao-pad") {
     throw new Error(
@@ -603,7 +603,7 @@ async function rotearApi(req, res, pathname) {
 
     if (req.method === "GET" && pathname === "/api/profor-2022/consolidado") {
       try {
-        const data = montarConsolidadoProfor2022PorOrigemAtiva();
+        const data = await montarConsolidadoProfor2022PorOrigemAtiva();
         enviarJson(res, 200, {
           success: true,
           origemDados: data.origemDados,
@@ -616,7 +616,7 @@ async function rotearApi(req, res, pathname) {
             origemDados: data.origemDados,
             origemDadosEfetiva: data.origemDadosEfetiva,
             geradoEm: data.geradoEm,
-            ultimaAtualizacaoDados: data.ultimaAtualizacaoDados || obterUltimaAtualizacaoDadosProfor2022Seguro()
+            ultimaAtualizacaoDados: data.ultimaAtualizacaoDados || await obterUltimaAtualizacaoDadosProfor2022Seguro()
           }
         });
       } catch (erro) {
@@ -636,7 +636,7 @@ async function rotearApi(req, res, pathname) {
         assertEndpointAdminPermitido("api_profor_2022_detru_atualizar", { requisicaoLocal });
         assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU", requisicaoLocal });
         const resultado = await atualizarCacheDetruProfor2022(body || {});
-        const ultimaAtualizacao = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
+        const ultimaAtualizacao = normalizarUltimaAtualizacaoDetru(await obterUltimaAtualizacaoDetru());
         enviarJson(res, 200, {
           success: true,
           message: "Atualização DETRU concluída com sucesso.",
@@ -662,7 +662,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "GET" && pathname === "/api/profor-2022/detru/ultima-atualizacao") {
       enviarJson(res, 200, {
         success: true,
-        ultimaAtualizacao: normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru())
+        ultimaAtualizacao: normalizarUltimaAtualizacaoDetru(await obterUltimaAtualizacaoDetru())
       });
       return;
     }
@@ -901,14 +901,14 @@ async function rotearApi(req, res, pathname) {
 
       let ultimaAtualizacaoDetru = null;
       try {
-        ultimaAtualizacaoDetru = normalizarUltimaAtualizacaoDetru(obterUltimaAtualizacaoDetru());
+        ultimaAtualizacaoDetru = normalizarUltimaAtualizacaoDetru(await obterUltimaAtualizacaoDetru());
       } catch (err) {
         avisos.push(`Ultima atualizacao DETRU indisponivel: ${err?.message || err}`);
       }
 
       let ultimaConsultaRendimentos = null;
       try {
-        ultimaConsultaRendimentos = obterUltimaConsultaRendimentos();
+        ultimaConsultaRendimentos = await obterUltimaConsultaRendimentos();
       } catch (err) {
         avisos.push(`Ultima consulta de rendimentos indisponivel: ${err?.message || err}`);
       }
@@ -916,7 +916,7 @@ async function rotearApi(req, res, pathname) {
       let diagnosticoConsolidado = null;
       let geradoEmConsolidado = null;
       try {
-        const consolidado = montarConsolidadoProfor2022PorOrigemAtiva();
+        const consolidado = await montarConsolidadoProfor2022PorOrigemAtiva();
         diagnosticoConsolidado = consolidado?.diagnostico || null;
         geradoEmConsolidado = consolidado?.geradoEm || null;
       } catch (err) {
@@ -949,15 +949,15 @@ async function rotearApi(req, res, pathname) {
       // Erros parciais (uma das fontes falhar) sao reportados em <bloco>.erroLeitura
       // em vez de virarem zero silencioso, para nao mascarar problema operacional.
       try {
-        const lerComErro = (fn) => {
-          try { return { valor: fn(), erro: null }; }
+        const lerComErro = async (fn) => {
+          try { return { valor: await fn(), erro: null }; }
           catch (e) { return { valor: null, erro: e?.message || String(e) }; }
         };
-        const ultimaDetru = lerComErro(() => obterUltimaAtualizacaoDetru());
-        const cacheDetru = lerComErro(() => listarCacheDetruProfor2022().length);
-        const ultimaTransf = lerComErro(() => obterUltimaConsultaRendimentos());
-        const cacheTransf = lerComErro(() => listarSaldosRendimentosCache().length);
-        const carteiraAtiva = lerComErro(() => listarConveniosMonitorados({ incluirInativos: false }).length);
+        const ultimaDetru = await lerComErro(() => obterUltimaAtualizacaoDetru());
+        const cacheDetru = await lerComErro(async () => (await listarCacheDetruProfor2022()).length);
+        const ultimaTransf = await lerComErro(() => obterUltimaConsultaRendimentos());
+        const cacheTransf = await lerComErro(async () => (await listarSaldosRendimentosCache()).length);
+        const carteiraAtiva = await lerComErro(async () => (await listarConveniosMonitorados({ incluirInativos: false })).length);
 
         enviarJson(res, 200, {
           success: true,
@@ -992,7 +992,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "GET" && pathname === "/api/profor-2022/convenios-monitorados") {
       const url = new URL(req.url, "http://localhost");
       const incluirInativos = url.searchParams.get("incluirInativos") === "true";
-      const convenios = listarConveniosMonitorados({ incluirInativos });
+      const convenios = await listarConveniosMonitorados({ incluirInativos });
       enviarJson(res, 200, { success: true, convenios });
       return;
     }
@@ -1000,7 +1000,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/convenios-monitorados") {
       const body = await lerJsonBody(req);
       try {
-        const convenio = criarConvenioMonitorado(camelParaSnakeConvenio(body));
+        const convenio = await criarConvenioMonitorado(camelParaSnakeConvenio(body));
         enviarJson(res, 200, { success: true, convenio });
       } catch (erro) {
         enviarJson(res, 400, { success: false, message: erro.message });
@@ -1012,7 +1012,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && idSalvar !== null) {
       const body = await lerJsonBody(req);
       try {
-        const convenio = atualizarConvenioMonitorado(idSalvar, camelParaSnakeConvenio(body));
+        const convenio = await atualizarConvenioMonitorado(idSalvar, camelParaSnakeConvenio(body));
         enviarJson(res, 200, { success: true, convenio });
       } catch (erro) {
         enviarJson(res, 400, { success: false, message: erro.message });
@@ -1023,7 +1023,7 @@ async function rotearApi(req, res, pathname) {
     const idInativar = extrairIdConvenioMonitorado(pathname, "/inativar");
     if (req.method === "POST" && idInativar !== null) {
       try {
-        const convenio = inativarConvenioMonitorado(idInativar);
+        const convenio = await inativarConvenioMonitorado(idInativar);
         enviarJson(res, 200, { success: true, convenio });
       } catch (erro) {
         enviarJson(res, 400, { success: false, message: erro.message });
@@ -1040,7 +1040,7 @@ async function rotearApi(req, res, pathname) {
         limite: url.searchParams.get("limite") || undefined,
       };
       try {
-        const logs = listarLogsOperacionais(filtros);
+        const logs = await listarLogsOperacionais(filtros);
         enviarJson(res, 200, { success: true, total: logs.length, logs });
       } catch (erro) {
         enviarJson(res, 400, { success: false, message: erro?.message || "Falha ao listar logs." });
@@ -1059,7 +1059,7 @@ async function rotearApi(req, res, pathname) {
       };
 
       if (formato === "csv") {
-        const csv = exportarLogsOperacionaisCsv(filtros);
+        const csv = await exportarLogsOperacionaisCsv(filtros);
         const buffer = Buffer.from(csv, "utf8");
         res.writeHead(200, {
           "Content-Type": "text/csv; charset=utf-8",
@@ -1078,7 +1078,7 @@ async function rotearApi(req, res, pathname) {
         return;
       }
 
-      const exportado = exportarLogsOperacionaisJson(filtros);
+      const exportado = await exportarLogsOperacionaisJson(filtros);
       const body = Buffer.from(JSON.stringify(exportado, null, 2), "utf8");
       res.writeHead(200, {
         "Content-Type": "application/json; charset=utf-8",
@@ -1099,7 +1099,7 @@ async function rotearApi(req, res, pathname) {
         enviarJson(res, 400, { success: false, message: "ID de log inválido." });
         return;
       }
-      const log = obterLogOperacionalPorId(id);
+      const log = await obterLogOperacionalPorId(id);
       if (!log) {
         enviarJson(res, 404, { success: false, message: "Log operacional não encontrado." });
         return;

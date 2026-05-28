@@ -22,9 +22,10 @@ function rodar(argv = []) {
 test("endpoint /atualizacoes/status retorna total de cache DETRU e Transferegov + carteira", () => {
   const src = ler(SERVER);
   assert.match(src, /pathname === "\/api\/profor-2022\/atualizacoes\/status"/);
-  assert.match(src, /listarCacheDetruProfor2022\(\)\.length/);
-  assert.match(src, /listarSaldosRendimentosCache\(\)\.length/);
-  assert.match(src, /listarConveniosMonitorados\(\{ incluirInativos: false \}\)\.length/);
+  // Postgres async: as listagens viraram await, e o length é tirado do array resultante.
+  assert.match(src, /\(await listarCacheDetruProfor2022\(\)\)\.length/);
+  assert.match(src, /\(await listarSaldosRendimentosCache\(\)\)\.length/);
+  assert.match(src, /\(await listarConveniosMonitorados\(\{ incluirInativos: false \}\)\)\.length/);
   // Resposta deve ter os blocos pedidos.
   assert.match(src, /detru:\s*\{[\s\S]{0,200}?ultimaAtualizacao:[\s\S]{0,200}?totalRegistrosCache:/);
   assert.match(src, /transferegov:\s*\{[\s\S]{0,400}?ultimaConsulta:[\s\S]{0,400}?totalRegistrosCache:[\s\S]{0,400}?ultimoResumoConsulta:/);
@@ -190,7 +191,8 @@ test("endpoint /atualizacoes/status reporta erroLeitura por bloco quando servico
   assert.match(bloco, /transferegov:\s*\{[\s\S]*?erroLeitura:/);
   assert.match(bloco, /carteira:\s*\{[\s\S]*?erroLeitura:/);
   // Deve usar helper lerComErro (sem fallback silencioso para zero).
-  assert.match(bloco, /const lerComErro = \(fn\) => \{/);
+  // Postgres async: helper virou async (lerComErro = async (fn) => { ... await fn() ... }).
+  assert.match(bloco, /const lerComErro = async \(fn\) => \{/);
 });
 
 test("frontend chama carregarDiagnosticoAtualizacoesProfor2022 em try/catch apos DETRU e Transferegov", () => {

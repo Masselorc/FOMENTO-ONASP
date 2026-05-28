@@ -32,19 +32,19 @@ async function atualizarCacheDetruProfor2022(opcoes = {}) {
 
   const caminhoZip = arquivoDetru.caminho;
   const arquivoHash = calcularHashArquivo(caminhoZip);
-  const idAtualizacao = registrarAtualizacaoDetruInicio({
+  const idAtualizacao = await registrarAtualizacaoDetruInicio({
     caminhoArquivo: caminhoZip,
     arquivoHash,
   });
 
   try {
-    const resultado = cruzarCarteiraComDetru(caminhoZip);
-    const totalSalvos = salvarSnapshotDetru(resultado, {
+    const resultado = await cruzarCarteiraComDetru(caminhoZip);
+    const totalSalvos = await salvarSnapshotDetru(resultado, {
       arquivoOrigem: caminhoZip,
       arquivoHash,
     });
 
-    registrarAtualizacaoDetruFim(idAtualizacao, resultado);
+    await registrarAtualizacaoDetruFim(idAtualizacao, resultado);
 
     return {
       sucesso: true,
@@ -57,7 +57,7 @@ async function atualizarCacheDetruProfor2022(opcoes = {}) {
     };
   } catch (error) {
     if (idAtualizacao) {
-      registrarAtualizacaoDetruErro(idAtualizacao, error);
+      await registrarAtualizacaoDetruErro(idAtualizacao, error);
     }
 
     const erro = new Error(error?.message || "Falha ao atualizar o cache DETRU.");

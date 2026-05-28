@@ -13,7 +13,7 @@ const {
   mapearConveniosDetruParaProfor,
 } = require("./detru-convenio-mapper");
 
-function obterNumerosConveniosAtivos() {
+async function obterNumerosConveniosAtivos() {
   return listarConveniosMonitorados({ incluirInativos: false });
 }
 
@@ -52,14 +52,14 @@ function filtrarLinhasDetruPorCarteira(rowsDetru, conveniosMonitorados) {
   return { encontradas, naoEncontrados };
 }
 
-function cruzarCarteiraComDetru(caminhoZip) {
+async function cruzarCarteiraComDetru(caminhoZip) {
   const consultadoEm = new Date().toISOString();
 
   const rowsDetru = lerCsvDetruConvenio(caminhoZip);
   const colunas = rowsDetru.length ? Object.keys(rowsDetru[0]) : [];
   const validacaoColunas = validarColunasObrigatoriasDetru(colunas);
 
-  const carteira = obterNumerosConveniosAtivos();
+  const carteira = await obterNumerosConveniosAtivos();
   const { encontradas, naoEncontrados } = filtrarLinhasDetruPorCarteira(rowsDetru, carteira);
   const conveniosEncontrados = mapearConveniosDetruParaProfor(encontradas);
 

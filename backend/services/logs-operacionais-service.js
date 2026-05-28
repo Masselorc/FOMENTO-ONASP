@@ -4,7 +4,7 @@
 // O payload é sempre sanitizado para nunca registrar/exportar dados sensíveis (cookies, SAML,
 // tokens, caminhos locais, HTML bruto, segredos de ambiente).
 
-const db = require("../db/database");
+const { query } = require("../db/postgres-client");
 
 const MODULOS_PERMITIDOS = new Set([
   "profor-2022",
@@ -140,26 +140,28 @@ function normalizarLimite(valor, padrao, maximo) {
   return Math.min(Math.floor(numero), maximo);
 }
 
-function montarFiltrosSql(filtros = {}) {
+function montarFiltrosSql(filtros = {}, indiceInicial = 1) {
   const clausulas = [];
   const parametros = [];
+  let idx = indiceInicial;
 
   if (filtros.modulo) {
-    clausulas.push("modulo = ?");
+    clausulas.push(`modulo = $${idx++}`);
     parametros.push(String(filtros.modulo).trim());
   }
   if (filtros.tipo_evento) {
-    clausulas.push("tipo_evento = ?");
+    clausulas.push(`tipo_evento = $${idx++}`);
     parametros.push(String(filtros.tipo_evento).trim());
   }
   if (filtros.status) {
-    clausulas.push("status = ?");
+    clausulas.push(`status = $${idx++}`);
     parametros.push(String(filtros.status).trim());
   }
 
   return {
     where: clausulas.length ? `WHERE ${clausulas.join(" AND ")}` : "",
     parametros,
+    proximoIndice: idx,
   };
 }
 
@@ -178,11 +180,15 @@ function mapearLinha(row, { incluirPayload = false } = {}) {
   };
   if (incluirPayload) {
     let payload = null;
-    if (row.payload_json) {
-      try {
-        payload = JSON.parse(row.payload_json);
-      } catch {
-        payload = null;
+    if (row.payload_json !== null && row.payload_json !== undefined) {
+      if (typeof row.payload_json === "string") {
+        try {
+          payload = JSON.parse(row.payload_json);
+        } catch {
+          payload = null;
+        }
+      } else {
+        payload = row.payload_json;
       }
     }
     base.payload = payload;
@@ -190,7 +196,7 @@ function mapearLinha(row, { incluirPayload = false } = {}) {
   return base;
 }
 
-function registrarLogOperacional(log = {}) {
+async function registrarLogOperacional(log = {}) {
   const modulo = validarString(log.modulo, "modulo", MODULOS_PERMITIDOS);
   const tipoEvento = validarString(log.tipoEvento ?? log.tipo_evento, "tipoEvento", TIPOS_EVENTO_PERMITIDOS);
   const status = validarString(log.status, "status", STATUS_PERMITIDOS);
@@ -203,11 +209,12 @@ function registrarLogOperacional(log = {}) {
     : null;
   const payloadJson = serializarPayloadSanitizado(log.payload);
 
-  const result = db.prepare(`
+  const result = await query(`
     INSERT INTO logs_operacionais
       (modulo, tipo_evento, status, iniciado_em, concluido_em, duracao_ms, resumo, payload_json, criado_em)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    RETURNING id
+  `, [
     modulo,
     tipoEvento,
     status,
@@ -217,13 +224,13 @@ function registrarLogOperacional(log = {}) {
     resumo,
     payloadJson,
     agoraIso()
-  );
+  ]);
 
-  return { id: result.lastInsertRowid };
+  return { id: result.rows[0].id };
 }
 
-function listarLogsOperacionais(filtros = {}) {
-  const { where, parametros } = montarFiltrosSql(filtros);
+async function listarLogsOperacionais(filtros = {}) {
+  const { where, parametros, proximoIndice } = montarFiltrosSql(filtros);
   const limite = normalizarLimite(filtros.limite, LIMITE_PADRAO, LIMITE_MAXIMO_CONSULTA);
 
   const sql = `
@@ -231,27 +238,28 @@ function listarLogsOperacionais(filtros = {}) {
     FROM logs_operacionais
     ${where}
     ORDER BY id DESC
-    LIMIT ?
+    LIMIT $${proximoIndice}
   `;
 
-  return db.prepare(sql).all(...parametros, limite).map((row) => mapearLinha(row));
+  const result = await query(sql, [...parametros, limite]);
+  return result.rows.map((row) => mapearLinha(row));
 }
 
-function obterLogOperacionalPorId(id) {
+async function obterLogOperacionalPorId(id) {
   const idNumero = Number(id);
   if (!Number.isInteger(idNumero) || idNumero <= 0) {
     return null;
   }
-  const row = db.prepare(`
+  const result = await query(`
     SELECT id, modulo, tipo_evento, status, iniciado_em, concluido_em, duracao_ms, resumo, payload_json, criado_em
     FROM logs_operacionais
-    WHERE id = ?
-  `).get(idNumero);
-  return mapearLinha(row, { incluirPayload: true });
+    WHERE id = $1
+  `, [idNumero]);
+  return mapearLinha(result.rows[0], { incluirPayload: true });
 }
 
-function listarParaExportacao(filtros = {}) {
-  const { where, parametros } = montarFiltrosSql(filtros);
+async function listarParaExportacao(filtros = {}) {
+  const { where, parametros, proximoIndice } = montarFiltrosSql(filtros);
   const limite = normalizarLimite(filtros.limite, LIMITE_EXPORTACAO_PADRAO, LIMITE_EXPORTACAO_MAXIMO);
 
   const sql = `
@@ -259,14 +267,15 @@ function listarParaExportacao(filtros = {}) {
     FROM logs_operacionais
     ${where}
     ORDER BY id DESC
-    LIMIT ?
+    LIMIT $${proximoIndice}
   `;
 
-  return db.prepare(sql).all(...parametros, limite).map((row) => mapearLinha(row, { incluirPayload: true }));
+  const result = await query(sql, [...parametros, limite]);
+  return result.rows.map((row) => mapearLinha(row, { incluirPayload: true }));
 }
 
-function exportarLogsOperacionaisJson(filtros = {}) {
-  const registros = listarParaExportacao(filtros);
+async function exportarLogsOperacionaisJson(filtros = {}) {
+  const registros = await listarParaExportacao(filtros);
   return {
     geradoEm: agoraIso(),
     filtros: {
@@ -289,8 +298,8 @@ function escaparCsv(valor) {
   return texto;
 }
 
-function exportarLogsOperacionaisCsv(filtros = {}) {
-  const registros = listarParaExportacao(filtros);
+async function exportarLogsOperacionaisCsv(filtros = {}) {
+  const registros = await listarParaExportacao(filtros);
   const colunas = [
     "id",
     "modulo",

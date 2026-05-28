@@ -271,8 +271,8 @@ test("modulo de origem reconstrucao-pad NAO importa publicacao, SQLite, init-db 
     "Origem reconstrucao-pad nao pode escrever em arquivos (somente leitura).");
 });
 
-test("montarDadosProfor2022Publicacao inclui convenios reconstruidos com valor total positivo", () => {
-  const dados = montarDadosProfor2022Publicacao(null, {}, { origemDados: "reconstrucao-pad" });
+test("montarDadosProfor2022Publicacao inclui convenios reconstruidos com valor total positivo", async () => {
+  const dados = await montarDadosProfor2022Publicacao(null, {}, { origemDados: "reconstrucao-pad" });
   assert.ok(Array.isArray(dados.convenios) && dados.convenios.length > 0);
 
   const totalConvenios = dados.convenios.reduce((acc, convenio) => {
@@ -289,12 +289,12 @@ test("montarDadosProfor2022Publicacao inclui convenios reconstruidos com valor t
   assert.ok(ufsComConvenio.size > 0, "UFs de convenios reconstruidos nao podem ficar zeradas.");
 });
 
-test("consolidarCatalogoDashboard inclui convenios PROFOR/PAD no total geral do painel", () => {
+test("consolidarCatalogoDashboard inclui convenios PROFOR/PAD no total geral do painel", async () => {
   const repoRoot = path.resolve(__dirname, "../..");
   const catalogoPath = path.join(repoRoot, "backend/data/aplicacao.json");
   const catalogo = JSON.parse(fs.readFileSync(catalogoPath, "utf8"));
 
-  const consolidado = consolidarCatalogoDashboard(catalogo, new Date().toISOString());
+  const consolidado = await consolidarCatalogoDashboard(catalogo, new Date().toISOString());
   const { resumoDashboard } = consolidado;
 
   assert.ok(resumoDashboard.totalConvenios > 0, "Total em convenios nao pode ficar zerado.");
@@ -312,7 +312,7 @@ test("Home: resumo de instrumentos nao pode zerar convenios quando consolidado P
   const catalogo = JSON.parse(fs.readFileSync(catalogoPath, "utf8"));
   const analytics = await import("../../backend/services/analytics.js");
 
-  const dadosProfor = montarDadosProfor2022Publicacao(null, catalogo, { origemDados: "reconstrucao-pad" });
+  const dadosProfor = await montarDadosProfor2022Publicacao(null, catalogo, { origemDados: "reconstrucao-pad" });
   const itensProfor = (dadosProfor.convenios || []).map((convenio) => ({
     uf: convenio.uf,
     instrumento: "Convênio PROFOR 2022",
