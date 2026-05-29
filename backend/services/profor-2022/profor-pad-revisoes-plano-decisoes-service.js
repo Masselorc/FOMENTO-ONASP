@@ -248,11 +248,11 @@ function persistirRateios(parametros, opcoes = {}) {
   return persistir(parametros, opcoes);
 }
 
-function regerarRecargaOperacional(opcoes = {}) {
+async function regerarRecargaOperacional(opcoes = {}) {
   if (opcoes.pularRegerarRecarga) return;
   const regerar = opcoes.carregarPadsOperacional || carregarPadsOperacional;
   try {
-    regerar({ repoRoot: opcoes.repoRoot });
+    await regerar({ repoRoot: opcoes.repoRoot });
   } catch (erro) {
     console.error("Falha ao regerar recarga operacional pos-decisao:", erro);
   }
@@ -284,7 +284,7 @@ async function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
     ? "PENDENTE_REVISAO"
     : "AREA_ALTERADA";
 
-  regerarRecargaOperacional(opcoes);
+  await regerarRecargaOperacional(opcoes);
   return { linhaFilhaAtualizada, statusGrupo };
 }
 
@@ -310,7 +310,7 @@ async function salvarRateioRevisaoPlano(payload = {}, opcoes = {}) {
     ? "PENDENTE_REVISAO"
     : "RATEIO_ALTERADO";
 
-  regerarRecargaOperacional(opcoes);
+  await regerarRecargaOperacional(opcoes);
   return { linhasFilhasAtualizadas, statusGrupo };
 }
 
