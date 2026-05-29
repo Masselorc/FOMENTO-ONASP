@@ -14,7 +14,7 @@ const {
   salvarCachePadTransferegov,
   obterCaminhoCache,
 } = require("../services/profor-2022/profor-pad-transferegov-cache-service");
-const db = require("../db/database");
+const { query } = require("../db/postgres-client");
 
 function obterArgumento(nome) {
   const prefixo = `--${nome}=`;
@@ -81,8 +81,8 @@ async function executar() {
   }
 
   // Carregar UFs dos convênios ativos no banco
-  const linhasUf = db.prepare("SELECT numero_convenio, uf FROM profor_convenios_monitorados WHERE ativo = 1").all();
-  const mapaUfs = new Map(linhasUf.map((l) => [String(l.numero_convenio), l.uf]));
+  const linhasUf = await query("SELECT numero_convenio, uf FROM profor_convenios_monitorados WHERE ativo = true");
+  const mapaUfs = new Map(linhasUf.rows.map((l) => [String(l.numero_convenio), l.uf]));
 
   const resultadosExtracao = [];
   let totalBloqueiosTecnicos = 0;

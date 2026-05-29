@@ -290,12 +290,12 @@ test("20. leitura via cache reporta 15 PADs e marca origem cache_transferegov (n
   }
 });
 
-test("21. carregador v2 sobre cache válido não gera quantidade_arquivos_pad_invalida (sem comparar 1 JSON contra 15 Excel)", () => {
+test("21. carregador v2 sobre cache válido não gera quantidade_arquivos_pad_invalida (sem comparar 1 JSON contra 15 Excel)", async () => {
   const cache = criarCacheMockValido();
   const tmpDir = prepararPastaTemporaria(cache);
 
   try {
-    const resultado = carregarPadsOperacional({
+    const resultado = await carregarPadsOperacional({
       repoRoot: tmpDir,
       salvarRelatorio: false,
       conferirItensPadComRateios: () => ({

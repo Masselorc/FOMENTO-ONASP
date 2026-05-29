@@ -1,7 +1,5 @@
 const fs = require("node:fs");
 const path = require("node:path");
-
-const db = require("../../db/database");
 const { query } = require("../../db/postgres-client");
 const {
   reconstruirPlanoAplicacaoPadDryRun,
@@ -58,16 +56,18 @@ function criarChaveLinhaComparacao(linha) {
 }
 
 /** Carrega a carteira monitorada ativa indexada por número de convênio. */
-function carregarCarteiraMonitorada() {
-  const linhas = db.prepare(`
+async function carregarCarteiraMonitorada() {
+  const result = await query(`
     SELECT numero_convenio, ano, uf, instrumento
     FROM profor_convenios_monitorados
-    WHERE ativo = 1
-  `).all();
+    WHERE ativo = true
+  `);
   const carteira = new Map();
-  for (const linha of linhas) {
+  for (const linha of result.rows) {
     const numero = normalizarNumeroConvenio(linha.numero_convenio);
-    if (numero) carteira.set(numero, { uf: linha.uf, ano: linha.ano, instrumento: linha.instrumento });
+    if (numero) {
+      carteira.set(numero, { uf: linha.uf, ano: linha.ano, instrumento: linha.instrumento });
+    }
   }
   return carteira;
 }
@@ -80,20 +80,20 @@ function carregarCarteiraMonitorada() {
  * agregadas por item/área/natureza. Esta etapa não relê a planilha antiga nem
  * altera a origem ativa.
  */
-function montarPlanoOrigemAntiga() {
-  const carteira = carregarCarteiraMonitorada();
-  const linhas = db.prepare(`
+async function montarPlanoOrigemAntiga() {
+  const carteira = await carregarCarteiraMonitorada();
+  const result = await query(`
     SELECT i.numero_convenio, i.descricao_original_referencia, i.uf AS item_uf,
            i.ano AS item_ano, r.area, r.natureza, r.quantidade_referencia,
            r.valor_previsto_referencia, r.valor_executado_referencia
     FROM profor_2022_itens_conhecidos i
     JOIN profor_2022_item_rateios r
-      ON r.item_conhecido_id = i.id AND r.ativo = 1
-    WHERE i.ativo = 1
+      ON r.item_conhecido_id = i.id AND r.ativo = true
+    WHERE i.ativo = true
     ORDER BY i.numero_convenio, i.descricao_original_referencia, r.area, r.natureza
-  `).all();
+  `);
 
-  return linhas.map((linha) => {
+  return result.rows.map((linha) => {
     const numero = normalizarNumeroConvenio(linha.numero_convenio);
     const carteiraConvenio = numero ? carteira.get(numero) : null;
     const valorPrevisto = arredondarMoedaProfor(linha.valor_previsto_referencia);
@@ -298,7 +298,7 @@ async function compararPlanosPadDryRun(opcoes = {}) {
   const reconstrucao = opcoes.reconstrucao
     || await reconstruirPlanoAplicacaoPadDryRun({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
 
-  const planoAntigo = consolidarLinhasSaldoResidual(montarPlanoOrigemAntiga());
+  const planoAntigo = consolidarLinhasSaldoResidual(await montarPlanoOrigemAntiga());
   const planoNovo = consolidarLinhasSaldoResidual(reconstrucao.planoAplicacaoReconstruido);
   const conveniosComPendencia = await carregarConveniosComPendenciaBloqueante();
   const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || await carregarAplicacaoDecisoesDryRun();

@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   lerRelatoriosPadProfor2022,
 } = require("./profor-pad-report-reader");
@@ -20,20 +20,30 @@ function agoraIso() {
   return new Date().toISOString();
 }
 
-function carregarMemoriaRateios() {
-  const linhas = db.prepare(`
+async function carregarMemoriaRateios() {
+  const result = await query(`
     SELECT item_conhecido_id, area, natureza, quantidade_referencia,
            valor_previsto_referencia, valor_executado_referencia,
            percentual_quantidade, percentual_valor
     FROM profor_2022_item_rateios
-    WHERE ativo = 1
+    WHERE ativo = true
     ORDER BY item_conhecido_id, area, natureza
-  `).all();
+  `);
 
   const porItem = new Map();
-  for (const linha of linhas) {
-    if (!porItem.has(linha.item_conhecido_id)) porItem.set(linha.item_conhecido_id, []);
-    porItem.get(linha.item_conhecido_id).push(linha);
+  for (const linha of result.rows) {
+    const itemId = Number(linha.item_conhecido_id);
+    if (!porItem.has(itemId)) porItem.set(itemId, []);
+    porItem.get(itemId).push({
+      item_conhecido_id: itemId,
+      area: linha.area,
+      natureza: linha.natureza,
+      quantidade_referencia: Number(linha.quantidade_referencia) || 0,
+      valor_previsto_referencia: Number(linha.valor_previsto_referencia) || 0,
+      valor_executado_referencia: Number(linha.valor_executado_referencia) || 0,
+      percentual_quantidade: Number(linha.percentual_quantidade) || 0,
+      percentual_valor: Number(linha.percentual_valor) || 0,
+    });
   }
   return porItem;
 }
@@ -299,7 +309,7 @@ function gerarMarkdown(resultado) {
   return `${linhas.join("\n")}\n`;
 }
 
-function carregarPadsOperacional(opcoes = {}) {
+async function carregarPadsOperacional(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
   const dataHora = agoraIso();
 
@@ -312,8 +322,8 @@ function carregarPadsOperacional(opcoes = {}) {
     const gerarLinhas = opcoes.gerarLinhasItem || gerarLinhasItem;
 
     const leitura = lerPads(opcoes);
-    const conferencia = conferir(opcoes);
-    const memoriaRateios = carregarRateios();
+    const conferencia = await conferir(opcoes);
+    const memoriaRateios = await carregarRateios();
     const resultado = montarResumoBase({ dataHora, leitura, conferencia });
     const conveniosReconstruidos = new Set();
 

@@ -32,19 +32,17 @@ function imprimirResumo(resultado, arquivoSaidaRelativo) {
   }
 }
 
-function executar() {
+async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
   const caminhoSaida = path.join(repoRoot, "backend/data/relatorios/profor-2022-pad-rateios-dry-run.json");
-  const resultado = conferirItensPadComRateiosProfor2022({ repoRoot });
+  const resultado = await conferirItensPadComRateiosProfor2022({ repoRoot });
 
   salvarConferenciaPadRateios(resultado, caminhoSaida);
   imprimirResumo(resultado, caminhoRelativo(repoRoot, caminhoSaida));
 }
 
-try {
-  executar();
-} catch (erro) {
+executar().catch((erro) => {
   console.error("Falha na conferência dry-run dos itens PAD com rateios PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

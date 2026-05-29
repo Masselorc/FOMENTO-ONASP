@@ -1,6 +1,6 @@
 const path = require("node:path");
 
-const dbPadrao = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   carregarReferenciaPadExcel,
   selecionarConvenios,
@@ -57,15 +57,14 @@ function validarIntegridadeTecnica(extracao) {
   return bloqueios;
 }
 
-function obterMapaUfs(db) {
+async function obterMapaUfs() {
   try {
-    const linhas = db.prepare(
-      "SELECT numero_convenio, uf FROM profor_convenios_monitorados WHERE ativo = 1"
-    ).all();
-    return new Map(linhas.map((l) => [String(l.numero_convenio), l.uf]));
-  } catch {
-    // banco indisponivel/tabela ausente em teste/dev: nao bloqueia, segue sem UFs
-    return new Map();
+    const linhas = await query(
+      "SELECT numero_convenio, uf FROM profor_convenios_monitorados WHERE ativo = true"
+    );
+    return new Map(linhas.rows.map((l) => [String(l.numero_convenio), l.uf]));
+  } catch (erro) {
+    throw new Error(`Falha ao obter UFs da carteira monitorada no Postgres: ${erro?.message || erro}`);
   }
 }
 
@@ -76,22 +75,22 @@ function obterMapaUfs(db) {
  * @param {Object} opcoes
  * @param {string} [opcoes.repoRoot]
  * @param {(evento: Object) => void} [opcoes.onProgress]
- * @param {Object} [opcoes.db]  Banco SQLite (injetável para teste)
  * @param {Function} [opcoes.extrairPadTransferegov]
  * @param {Function} [opcoes.carregarPadsOperacional]
  * @param {Function} [opcoes.salvarCache] (cache, opcoes) => void
  * @param {Function} [opcoes.carregarReferenciaPadExcel]
  * @param {Function} [opcoes.selecionarConvenios]
+ * @param {Function} [opcoes.obterMapaUfs]
  */
 async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || repoRootPadrao();
-  const db = opcoes.db || dbPadrao;
   const onProgress = typeof opcoes.onProgress === "function" ? opcoes.onProgress : () => {};
   const extrair = opcoes.extrairPadTransferegov || extrairPadTransferegovPadrao;
   const recarga = opcoes.carregarPadsOperacional || carregarPadsOperacionalPadrao;
   const salvar = opcoes.salvarCache || salvarCachePadTransferegov;
   const carregarReferencia = opcoes.carregarReferenciaPadExcel || carregarReferenciaPadExcel;
   const escolherConvenios = opcoes.selecionarConvenios || selecionarConvenios;
+  const obterUfs = opcoes.obterMapaUfs || obterMapaUfs;
 
   function emitir(evento) {
     try {
@@ -112,7 +111,7 @@ async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
     throw new Error(erro.mensagem);
   }
   const total = convenios.length;
-  const mapaUfs = obterMapaUfs(db);
+  const mapaUfs = await obterUfs();
 
   emitir({
     etapa: "lista_convenios",
@@ -254,7 +253,7 @@ async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
 
   // 5. Recarga operacional a partir do cache recém-salvo.
   emitir({ etapa: "recarga_inicio", fase: FASES.RECARREGANDO_VISAO_LOCAL, mensagem: "Reconstruindo visão operacional local." });
-  const resultadoRecarga = recarga({ repoRoot });
+  const resultadoRecarga = await recarga({ repoRoot });
   emitir({ etapa: "recarga_concluida", fase: FASES.RECARREGANDO_VISAO_LOCAL, mensagem: "Recarga operacional concluída." });
 
   // 6. Conclusão.
