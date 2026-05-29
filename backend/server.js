@@ -1207,28 +1207,28 @@ prepararBanco().catch((erro) => {
   console.error("Falha ao preparar o banco (Postgres) no boot do servidor:");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-});
+}).then(() => {
+  const server = http.createServer((req, res) => {
+    const parsed = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    const pathname = decodeURIComponent(parsed.pathname || "/");
 
-const server = http.createServer((req, res) => {
-  const parsed = new URL(req.url, `http://${req.headers.host || "localhost"}`);
-  const pathname = decodeURIComponent(parsed.pathname || "/");
+    if (pathname.startsWith("/api/")) {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type"
+        });
+        res.end();
+        return;
+      }
 
-  if (pathname.startsWith("/api/")) {
-    if (req.method === "OPTIONS") {
-      res.writeHead(204, {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type"
-      });
-      res.end();
+      rotearApi(req, res, pathname);
       return;
     }
 
-    rotearApi(req, res, pathname);
-    return;
-  }
+    enviarArquivoEstatico(req, res, pathname);
+  });
 
-  enviarArquivoEstatico(req, res, pathname);
+  server.listen(port, host, exibirMensagemServidor);
 });
-
-server.listen(port, host, exibirMensagemServidor);

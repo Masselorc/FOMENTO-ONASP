@@ -650,7 +650,7 @@ async function aplicarRateioAntigo(relatorio, idAlvo) {
   }
   validarCandidatoParaAplicacao(candidato, idAlvo);
 
-  const resultado = revisaoService.registrarDecisao(candidato.id, {
+  const resultado = await revisaoService.registrarDecisao(candidato.id, {
     decisao: "ACEITO",
     justificativa: JUSTIFICATIVA_RATEIO_ANTIGO,
     usuario: USUARIO_DECISAO,
