@@ -75,13 +75,13 @@ function opcoesTeste(dados, capturas = []) {
   };
 }
 
-test("alteracao de area valida e aceita sem alterar quantidade", () => {
+test("alteracao de area valida e aceita sem alterar quantidade", async () => {
   const dados = montarDados();
   const mae = dados.linhasMae.DF.find((linha) => linha.tipo === "ITEM_NOVO");
   const filha = dados.linhasFilhas.DF.find((linha) => linha.parentId === mae.id);
   const capturas = [];
 
-  const resultado = salvarAreaRevisaoPlano({
+  const resultado = await salvarAreaRevisaoPlano({
     uf: "DF",
     numeroConvenio: mae.numeroConvenio,
     parentId: mae.id,
@@ -103,12 +103,12 @@ test("alteracao de area valida e aceita sem alterar quantidade", () => {
   assert.equal(capturas[0].evento, "ALTERAR_AREA_RATEIO");
 });
 
-test("area invalida e rejeitada", () => {
+test("area invalida e rejeitada", async () => {
   const dados = montarDados();
   const mae = dados.linhasMae.DF.find((linha) => linha.tipo === "ITEM_NOVO");
   const filha = dados.linhasFilhas.DF.find((linha) => linha.parentId === mae.id);
 
-  assert.throws(() => salvarAreaRevisaoPlano({
+  await assert.rejects(() => salvarAreaRevisaoPlano({
     parentId: mae.id,
     linhaFilhaId: filha.id,
     areaNova: "FINANCEIRO",
@@ -121,11 +121,11 @@ test("area invalida e rejeitada", () => {
   }, opcoesTeste(dados)), /Área inválida/);
 });
 
-test("rateio com soma divergente e rejeitado", () => {
+test("rateio com soma divergente e rejeitado", async () => {
   const dados = montarDados();
   const mae = dados.linhasMae.DF.find((linha) => linha.descricao === "Notebook operacional");
 
-  assert.throws(() => salvarRateioRevisaoPlano({
+  await assert.rejects(() => salvarRateioRevisaoPlano({
     parentId: mae.id,
     numeroConvenio: mae.numeroConvenio,
     descricao: mae.descricao,
@@ -140,12 +140,12 @@ test("rateio com soma divergente e rejeitado", () => {
   }, opcoesTeste(dados)), /Soma das quantidades/);
 });
 
-test("rateio com soma correta e aceito", () => {
+test("rateio com soma correta e aceito", async () => {
   const dados = montarDados();
   const mae = dados.linhasMae.DF.find((linha) => linha.descricao === "Notebook operacional");
   const capturas = [];
 
-  const resultado = salvarRateioRevisaoPlano({
+  const resultado = await salvarRateioRevisaoPlano({
     parentId: mae.id,
     numeroConvenio: mae.numeroConvenio,
     chaveItem: mae.chaveItem,
@@ -166,12 +166,12 @@ test("rateio com soma correta e aceito", () => {
   assert.equal(capturas[0].evento, "ALTERAR_QUANTIDADE_RATEIO");
 });
 
-test("item novo classificado deixa de ficar como NAO_CLASSIFICADO", () => {
+test("item novo classificado deixa de ficar como NAO_CLASSIFICADO", async () => {
   const dados = montarDados();
   const mae = dados.linhasMae.DF.find((linha) => linha.tipo === "ITEM_NOVO");
   const filha = dados.linhasFilhas.DF.find((linha) => linha.parentId === mae.id);
 
-  const resultado = salvarAreaRevisaoPlano({
+  const resultado = await salvarAreaRevisaoPlano({
     parentId: mae.id,
     linhaFilhaId: filha.id,
     areaAnterior: "NAO_CLASSIFICADO",

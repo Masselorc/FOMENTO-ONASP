@@ -1,4 +1,4 @@
-const dbPadrao = require("../../db/database");
+const { withTransaction } = require("../../db/postgres-client");
 const {
   AREAS_PERMITIDAS,
   montarRevisoesPlanoPad,
@@ -136,25 +136,32 @@ function validarLinhasRateio(linhas, contexto, { permitirUmaLinha = false } = {}
   return normalizadas;
 }
 
-function obterOuCriarItemConhecido(database, contexto) {
+async function obterOuCriarItemConhecido(client, contexto) {
   if (contexto.itemConhecidoId) {
-    const existentePorId = database.prepare("SELECT id FROM profor_2022_itens_conhecidos WHERE id = ?").get(contexto.itemConhecidoId);
-    if (existentePorId) return Number(existentePorId.id);
+    const existentePorId = await client.query(
+      "SELECT id FROM profor_2022_itens_conhecidos WHERE id = $1",
+      [contexto.itemConhecidoId]
+    );
+    if (existentePorId.rows[0]) return Number(existentePorId.rows[0].id);
   }
 
-  const existente = database.prepare("SELECT id FROM profor_2022_itens_conhecidos WHERE chave_item = ?").get(contexto.chaveItem);
-  if (existente) return Number(existente.id);
+  const existente = await client.query(
+    "SELECT id FROM profor_2022_itens_conhecidos WHERE chave_item = $1",
+    [contexto.chaveItem]
+  );
+  if (existente.rows[0]) return Number(existente.rows[0].id);
 
   const agora = agoraIso();
-  const info = database.prepare(`
+  const info = await client.query(`
     INSERT INTO profor_2022_itens_conhecidos (
       chave_item, numero_convenio, descricao_normalizada, descricao_original_referencia,
       uf, ano, naturezas_encontradas_json, unidades_encontradas_json,
       valor_unitario_referencia, origem, possui_pendencia_impeditiva,
       apto_para_importacao_futura, status_item, ultima_ocorrencia_em,
       ativo, criado_em, atualizado_em
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, '[]', ?, 'revisao-pad-plano', 0, 1, 'ATIVO', ?, 1, ?, ?)
-  `).run(
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, '[]', $8, 'revisao-pad-plano', 0, 1, 'ATIVO', $9, true, $10, $11)
+    RETURNING id
+  `, [
     contexto.chaveItem,
     contexto.numeroConvenio,
     contexto.descricaoNormalizada,
@@ -166,44 +173,43 @@ function obterOuCriarItemConhecido(database, contexto) {
     agora,
     agora,
     agora
-  );
-  return Number(info.lastInsertRowid);
+  ]);
+  return Number(info.rows[0].id);
 }
 
 function persistirRateiosOperacionais({ contexto, linhas, evento, detalhe }, opcoes = {}) {
-  const database = opcoes.db || dbPadrao;
-  const executar = database.transaction(() => {
-    const itemConhecidoId = obterOuCriarItemConhecido(database, contexto);
-    const anteriores = database.prepare(`
+  return withTransaction(async (client) => {
+    const itemConhecidoId = await obterOuCriarItemConhecido(client, contexto);
+    const anteriores = (await client.query(`
       SELECT area, natureza, quantidade_referencia, valor_previsto_referencia, percentual_quantidade, percentual_valor
       FROM profor_2022_item_rateios
-      WHERE item_conhecido_id = ? AND ativo = 1
+      WHERE item_conhecido_id = $1 AND ativo = true
       ORDER BY area, natureza
-    `).all(itemConhecidoId);
+    `, [itemConhecidoId])).rows;
     const agora = agoraIso();
-    database.prepare(`
+    await client.query(`
       UPDATE profor_2022_item_rateios
-      SET ativo = 0, atualizado_em = ?
-      WHERE item_conhecido_id = ? AND ativo = 1
-    `).run(agora, itemConhecidoId);
+      SET ativo = false, atualizado_em = $1
+      WHERE item_conhecido_id = $2 AND ativo = true
+    `, [agora, itemConhecidoId]);
 
     const valorTotal = linhas.reduce((total, linha) => total + linha.valorTotal, 0);
-    const inserir = database.prepare(`
-      INSERT INTO profor_2022_item_rateios (
-        item_conhecido_id, chave_item, area, natureza, quantidade_referencia,
-        valor_previsto_referencia, valor_executado_referencia,
-        percentual_quantidade, percentual_valor, ativo, lote_importacao_id,
-        criado_em, atualizado_em
-      ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, 1, NULL, ?, ?)
-    `);
-    const novas = linhas.map((linha) => {
+    const novas = [];
+    for (const linha of linhas) {
       const percentualQuantidade = contexto.quantidadeOriginal > 0
         ? arredondar((linha.quantidade / contexto.quantidadeOriginal) * 100, 6)
         : 0;
       const percentualValor = valorTotal > 0
         ? arredondar((linha.valorTotal / valorTotal) * 100, 6)
         : 0;
-      inserir.run(
+      await client.query(`
+        INSERT INTO profor_2022_item_rateios (
+          item_conhecido_id, chave_item, area, natureza, quantidade_referencia,
+          valor_previsto_referencia, valor_executado_referencia,
+          percentual_quantidade, percentual_valor, ativo, lote_importacao_id,
+          criado_em, atualizado_em
+        ) VALUES ($1, $2, $3, $4, $5, $6, 0, $7, $8, true, NULL, $9, $10)
+      `, [
         itemConhecidoId,
         contexto.chaveItem,
         linha.area,
@@ -214,16 +220,16 @@ function persistirRateiosOperacionais({ contexto, linhas, evento, detalhe }, opc
         percentualValor,
         agora,
         agora
-      );
-      return { area: linha.area, natureza: linha.natureza, quantidade: linha.quantidade, valorTotal: linha.valorTotal };
-    });
+      ]);
+      novas.push({ area: linha.area, natureza: linha.natureza, quantidade: linha.quantidade, valorTotal: linha.valorTotal });
+    }
 
-    database.prepare(`
+    await client.query(`
       INSERT INTO profor_2022_revisao_logs (
         entidade_tipo, entidade_id, evento, estado_anterior_json, estado_novo_json,
         usuario, detalhe, criado_em
-      ) VALUES ('rateio_plano', ?, ?, ?, ?, ?, ?, ?)
-    `).run(
+      ) VALUES ('rateio_plano', $1, $2, $3, $4, $5, $6, $7)
+    `, [
       itemConhecidoId,
       evento,
       JSON.stringify(anteriores),
@@ -231,11 +237,10 @@ function persistirRateiosOperacionais({ contexto, linhas, evento, detalhe }, opc
       USUARIO_SISTEMA,
       detalhe || null,
       agora
-    );
+    ]);
 
     return itemConhecidoId;
   });
-  return executar();
 }
 
 function persistirRateios(parametros, opcoes = {}) {
@@ -253,7 +258,7 @@ function regerarRecargaOperacional(opcoes = {}) {
   }
 }
 
-function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
+async function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
   const dados = obterDadosRevisoes(opcoes);
   const { mae, filhas, filha } = encontrarGrupo(dados, payload.parentId, payload.linhaFilhaId);
   if (!filha) throw new RevisoesPlanoDecisaoError("Linha-filha da revisão PAD não encontrada.", 404);
@@ -266,7 +271,7 @@ function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
     quantidade: linha.quantidade,
   }));
   const normalizadas = validarLinhasRateio(linhasAtualizadas, contexto, { permitirUmaLinha: true });
-  const itemConhecidoId = persistirRateios({
+  const itemConhecidoId = await persistirRateios({
     contexto,
     linhas: normalizadas,
     evento: "ALTERAR_AREA_RATEIO",
@@ -283,7 +288,7 @@ function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
   return { linhaFilhaAtualizada, statusGrupo };
 }
 
-function salvarRateioRevisaoPlano(payload = {}, opcoes = {}) {
+async function salvarRateioRevisaoPlano(payload = {}, opcoes = {}) {
   const dados = obterDadosRevisoes(opcoes);
   const { mae } = encontrarGrupo(dados, payload.parentId);
   const contexto = montarContextoItem(mae, payload);
@@ -294,7 +299,7 @@ function salvarRateioRevisaoPlano(payload = {}, opcoes = {}) {
     quantidade: linha.quantidade,
   }));
   const normalizadas = validarLinhasRateio(linhasBase, contexto, { permitirUmaLinha: false });
-  const itemConhecidoId = persistirRateios({
+  const itemConhecidoId = await persistirRateios({
     contexto,
     linhas: normalizadas,
     evento: "ALTERAR_QUANTIDADE_RATEIO",
