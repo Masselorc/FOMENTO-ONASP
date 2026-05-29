@@ -8,7 +8,11 @@ const {
   obterUltimaRecargaOperacional,
 } = require("../../backend/services/profor-2022/profor-pad-recarga-operacional-service");
 
-test("1. estrutura do retorno de recarregarPadsOperacional", async () => {
+// A recarga operacional aciona a reconstrução PAD, que lê estatísticas de revisão
+// do Postgres (obterEstatisticasAuditoria). Esses testes exigem DATABASE_URL.
+const testPostgres = process.env.DATABASE_URL ? test : test.skip;
+
+testPostgres("1. estrutura do retorno de recarregarPadsOperacional", async () => {
   const repoRoot = path.resolve(__dirname, "../..");
   const resultado = await recarregarPadsOperacional({ repoRoot });
 
@@ -38,7 +42,7 @@ test("1. estrutura do retorno de recarregarPadsOperacional", async () => {
   }
 });
 
-test("2. recarregarPadsOperacional escreve os relatórios nos caminhos apropriados", async () => {
+testPostgres("2. recarregarPadsOperacional escreve os relatórios nos caminhos apropriados", async () => {
   const repoRoot = path.resolve(__dirname, "../..");
   const caminhoJson = path.join(repoRoot, "backend/data/relatorios/profor-2022-pad-recarga-operacional.json");
   const caminhoMd = path.join(repoRoot, "backend/data/relatorios/profor-2022-pad-recarga-operacional.md");
@@ -66,7 +70,7 @@ test("2. recarregarPadsOperacional escreve os relatórios nos caminhos apropriad
   assert.equal(dadosPersistidos.dataHora, resultado.dataHora, "A data e hora no arquivo persistido deve coincidir com o resultado");
 });
 
-test("3. obterUltimaRecargaOperacional retorna o conteúdo da última recarga persistida", () => {
+testPostgres("3. obterUltimaRecargaOperacional retorna o conteúdo da última recarga persistida", () => {
   const repoRoot = path.resolve(__dirname, "../..");
   const caminhoJson = path.join(repoRoot, "backend/data/relatorios/profor-2022-pad-recarga-operacional.json");
 
@@ -93,7 +97,7 @@ test("4. rotas POST /api/profor-2022/pad/recarregar e GET /api/profor-2022/pad/u
   );
 });
 
-test("5. recarga operacional não publica dados, não aciona DETRU nem Transferegov", async () => {
+testPostgres("5. recarga operacional não publica dados, não aciona DETRU nem Transferegov", async () => {
   const repoRoot = path.resolve(__dirname, "../..");
 
   const originalWriteFileSync = fs.writeFileSync;
