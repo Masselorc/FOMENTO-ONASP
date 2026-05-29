@@ -1,4 +1,3 @@
-const { inicializarBanco } = require("../db/init-db");
 const {
   planejarSaneamentoDecisoesAntigas,
   aplicarSaneamentoDecisoesAntigas,
@@ -84,14 +83,22 @@ function imprimirDetalhe(plano) {
   }
 }
 
-function executar() {
+const CONFIRMACAO_APLICAR = "CONFIRMAR_SANEAMENTO_DECISOES_ANTIGAS";
+
+async function executar() {
   const opcoes = obterArgumentos();
-  inicializarBanco();
   imprimirCabecalho(opcoes);
 
+  if (opcoes.aplicar && process.env[CONFIRMACAO_APLICAR] !== "SIM") {
+    throw new Error(
+      `Modo --aplicar exige confirmacao explicita. Defina ${CONFIRMACAO_APLICAR}=SIM para autorizar a escrita. ` +
+      "Sem essa variavel, o saneamento real fica bloqueado por seguranca."
+    );
+  }
+
   const resultado = opcoes.aplicar
-    ? aplicarSaneamentoDecisoesAntigas({ convenios: opcoes.convenios })
-    : planejarSaneamentoDecisoesAntigas({ convenios: opcoes.convenios });
+    ? await aplicarSaneamentoDecisoesAntigas({ convenios: opcoes.convenios })
+    : await planejarSaneamentoDecisoesAntigas({ convenios: opcoes.convenios });
 
   imprimirDetalhe(resultado);
   console.log("\n===== RESUMO =====");
@@ -102,12 +109,11 @@ function executar() {
 }
 
 if (require.main === module) {
-  try {
-    executar();
-  } catch (erro) {
-    console.error("Falha no saneamento de decisões antigas:", erro);
+  executar().catch((erro) => {
+    console.error("Falha ao sanear decisões antigas PAD/PROFOR 2022.");
+    console.error(erro?.stack || erro?.message || erro);
     process.exit(1);
-  }
+  });
 }
 
 module.exports = {
