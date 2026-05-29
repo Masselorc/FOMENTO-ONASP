@@ -1,4 +1,4 @@
-const dbPadrao = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   persistirRateiosOperacionais,
   AREAS_PERMITIDAS,
@@ -44,16 +44,17 @@ function obterCampoPayloadDiv(divPayload, ...nomes) {
   return null;
 }
 
-function carregarUltimasDecisoesRateioManual(database, opcoes = {}) {
+async function carregarUltimasDecisoesRateioManual(opcoes = {}) {
   const filtros = [];
   const params = [];
   if (Array.isArray(opcoes.conveniosFiltro) && opcoes.conveniosFiltro.length) {
-    filtros.push(`d.numero_convenio IN (${opcoes.conveniosFiltro.map(() => "?").join(",")})`);
+    const placeholders = opcoes.conveniosFiltro.map((_, i) => `$${i + 1}`).join(",");
+    filtros.push(`d.numero_convenio IN (${placeholders})`);
     params.push(...opcoes.conveniosFiltro);
   }
   const where = filtros.length ? `AND ${filtros.join(" AND ")}` : "";
 
-  return database.prepare(`
+  const resultado = await query(`
     SELECT
       d.id AS divergencia_id,
       d.numero_convenio,
@@ -77,16 +78,25 @@ function carregarUltimasDecisoesRateioManual(database, opcoes = {}) {
       )
       ${where}
     ORDER BY d.id
-  `).all(...params);
+  `, params);
+  return resultado.rows;
+}
+
+// Tolera payload vindo como objeto (jsonb do Postgres, ja desserializado pelo
+// driver pg) ou como string TEXT (SQLite/testes em memoria).
+function parsearPayloadJson(valor) {
+  if (valor === null || valor === undefined || valor === "") return {};
+  if (typeof valor === "object") return valor;
+  return JSON.parse(valor);
 }
 
 function interpretarRegistro(linha) {
   const erros = [];
   let divPayload = null;
   let decPayload = null;
-  try { divPayload = linha.divergencia_payload_json ? JSON.parse(linha.divergencia_payload_json) : {}; }
+  try { divPayload = parsearPayloadJson(linha.divergencia_payload_json); }
   catch (e) { erros.push(`divergencia_payload_json invalido: ${e.message}`); }
-  try { decPayload = linha.decisao_payload_json ? JSON.parse(linha.decisao_payload_json) : {}; }
+  try { decPayload = parsearPayloadJson(linha.decisao_payload_json); }
   catch (e) { erros.push(`decisao_payload_json invalido: ${e.message}`); }
 
   if (erros.length) {
@@ -220,21 +230,26 @@ function interpretarRegistro(linha) {
   };
 }
 
-function verificarMaterializacao(database, chaveItem) {
-  const item = database.prepare("SELECT id FROM profor_2022_itens_conhecidos WHERE chave_item = ?").get(chaveItem);
+async function verificarMaterializacao(chaveItem) {
+  const itemResultado = await query(
+    "SELECT id FROM profor_2022_itens_conhecidos WHERE chave_item = $1",
+    [chaveItem]
+  );
+  const item = itemResultado.rows[0];
   if (!item) return { itemConhecidoId: null, possuiRateioAtivo: false };
-  const totalAtivos = database.prepare(
-    "SELECT COUNT(*) AS n FROM profor_2022_item_rateios WHERE item_conhecido_id = ? AND ativo = 1"
-  ).get(item.id).n;
+  const totalResultado = await query(
+    "SELECT COUNT(*) AS n FROM profor_2022_item_rateios WHERE item_conhecido_id = $1 AND ativo = true",
+    [item.id]
+  );
+  const totalAtivos = Number(totalResultado.rows[0].n);
   return { itemConhecidoId: Number(item.id), possuiRateioAtivo: totalAtivos > 0 };
 }
 
-function planejarSaneamentoDecisoesAntigas(opcoes = {}) {
-  const database = opcoes.db || dbPadrao;
+async function planejarSaneamentoDecisoesAntigas(opcoes = {}) {
   const conveniosFiltro = Array.isArray(opcoes.convenios)
     ? opcoes.convenios.map((c) => String(c).trim()).filter(Boolean)
     : [];
-  const linhas = carregarUltimasDecisoesRateioManual(database, { conveniosFiltro });
+  const linhas = await carregarUltimasDecisoesRateioManual({ conveniosFiltro });
   const candidatas = [];
   const jaMaterializadas = [];
   const ignoradas = [];
@@ -245,7 +260,7 @@ function planejarSaneamentoDecisoesAntigas(opcoes = {}) {
       ignoradas.push(interpretacao);
       continue;
     }
-    const estado = verificarMaterializacao(database, interpretacao.contexto.chaveItem);
+    const estado = await verificarMaterializacao(interpretacao.contexto.chaveItem);
     interpretacao.estadoAtual = estado;
     if (estado.itemConhecidoId && estado.possuiRateioAtivo) {
       jaMaterializadas.push(interpretacao);
@@ -264,9 +279,8 @@ function planejarSaneamentoDecisoesAntigas(opcoes = {}) {
 }
 
 async function aplicarSaneamentoDecisoesAntigas(opcoes = {}) {
-  const database = opcoes.db || dbPadrao;
   const persistir = opcoes.persistirRateiosOperacionais || persistirRateiosOperacionais;
-  const plano = planejarSaneamentoDecisoesAntigas({ ...opcoes, db: database });
+  const plano = await planejarSaneamentoDecisoesAntigas(opcoes);
   const aplicadas = [];
   const erros = [];
 
@@ -277,7 +291,7 @@ async function aplicarSaneamentoDecisoesAntigas(opcoes = {}) {
         linhas: candidata.linhasPersistencia,
         evento: "MATERIALIZAR_DECISAO_ANTIGA_RATEIO_MANUAL",
         detalhe: `Saneamento: decisão antiga ${candidata.registro.decisao_id} sobre divergência ${candidata.registro.divergencia_id} (${candidata.registro.decisao_decidido_em}).`,
-      }, { db: database, usuario: USUARIO_SANEAMENTO });
+      }, { usuario: USUARIO_SANEAMENTO });
       aplicadas.push({
         divergenciaId: candidata.registro.divergencia_id,
         decisaoId: candidata.registro.decisao_id,
