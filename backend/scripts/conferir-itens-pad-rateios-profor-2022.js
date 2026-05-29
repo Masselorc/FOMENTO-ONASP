@@ -41,10 +41,8 @@ async function executar() {
   imprimirResumo(resultado, caminhoRelativo(repoRoot, caminhoSaida));
 }
 
-try {
-  executar();
-} catch (erro) {
+executar().catch((erro) => {
   console.error("Falha na conferência dry-run dos itens PAD com rateios PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});
