@@ -747,7 +747,7 @@ async function rotearApi(req, res, pathname) {
 
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar-operacional") {
       try {
-        const resultado = carregarPadsOperacional();
+        const resultado = await carregarPadsOperacional();
         const primeiroImpedimento = Array.isArray(resultado?.impedimentos)
           ? resultado.impedimentos[0]
           : null;

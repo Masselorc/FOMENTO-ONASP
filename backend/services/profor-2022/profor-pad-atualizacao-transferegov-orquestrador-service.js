@@ -1,6 +1,6 @@
 const path = require("node:path");
 
-const dbPadrao = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   carregarReferenciaPadExcel,
   selecionarConvenios,
@@ -57,14 +57,14 @@ function validarIntegridadeTecnica(extracao) {
   return bloqueios;
 }
 
-function obterMapaUfs(db) {
+async function obterMapaUfs() {
   try {
-    const linhas = db.prepare(
-      "SELECT numero_convenio, uf FROM profor_convenios_monitorados WHERE ativo = 1"
-    ).all();
-    return new Map(linhas.map((l) => [String(l.numero_convenio), l.uf]));
-  } catch {
-    // banco indisponivel/tabela ausente em teste/dev: nao bloqueia, segue sem UFs
+    const linhas = await query(
+      "SELECT numero_convenio, uf FROM profor_convenios_monitorados WHERE ativo = true"
+    );
+    return new Map(linhas.rows.map((l) => [String(l.numero_convenio), l.uf]));
+  } catch (erro) {
+    console.error("Falha ao obter UFs do Postgres:", erro);
     return new Map();
   }
 }
@@ -85,7 +85,6 @@ function obterMapaUfs(db) {
  */
 async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || repoRootPadrao();
-  const db = opcoes.db || dbPadrao;
   const onProgress = typeof opcoes.onProgress === "function" ? opcoes.onProgress : () => {};
   const extrair = opcoes.extrairPadTransferegov || extrairPadTransferegovPadrao;
   const recarga = opcoes.carregarPadsOperacional || carregarPadsOperacionalPadrao;
@@ -112,7 +111,7 @@ async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
     throw new Error(erro.mensagem);
   }
   const total = convenios.length;
-  const mapaUfs = obterMapaUfs(db);
+  const mapaUfs = await obterMapaUfs();
 
   emitir({
     etapa: "lista_convenios",
@@ -254,7 +253,7 @@ async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
 
   // 5. Recarga operacional a partir do cache recém-salvo.
   emitir({ etapa: "recarga_inicio", fase: FASES.RECARREGANDO_VISAO_LOCAL, mensagem: "Reconstruindo visão operacional local." });
-  const resultadoRecarga = recarga({ repoRoot });
+  const resultadoRecarga = await recarga({ repoRoot });
   emitir({ etapa: "recarga_concluida", fase: FASES.RECARREGANDO_VISAO_LOCAL, mensagem: "Recarga operacional concluída." });
 
   // 6. Conclusão.

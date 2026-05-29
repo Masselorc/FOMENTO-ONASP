@@ -1,7 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const repoRevisao = require("./profor-pad-revisao-repository");
 const {
   conferirItensPadComRateiosProfor2022,
@@ -101,20 +100,30 @@ function distribuirTotal(total, pesos, arredondarFn) {
 }
 
 /** Carrega os rateios ativos persistidos, agrupados por item conhecido. */
-function carregarMemoriaRateios() {
-  const linhas = db.prepare(`
+async function carregarMemoriaRateios() {
+  const result = await query(`
     SELECT item_conhecido_id, area, natureza, quantidade_referencia,
            valor_previsto_referencia, valor_executado_referencia,
            percentual_quantidade, percentual_valor
     FROM profor_2022_item_rateios
-    WHERE ativo = 1
+    WHERE ativo = true
     ORDER BY item_conhecido_id, area, natureza
-  `).all();
+  `);
 
   const porItem = new Map();
-  for (const linha of linhas) {
-    if (!porItem.has(linha.item_conhecido_id)) porItem.set(linha.item_conhecido_id, []);
-    porItem.get(linha.item_conhecido_id).push(linha);
+  for (const linha of result.rows) {
+    const itemId = Number(linha.item_conhecido_id);
+    if (!porItem.has(itemId)) porItem.set(itemId, []);
+    porItem.get(itemId).push({
+      item_conhecido_id: itemId,
+      area: linha.area,
+      natureza: linha.natureza,
+      quantidade_referencia: Number(linha.quantidade_referencia) || 0,
+      valor_previsto_referencia: Number(linha.valor_previsto_referencia) || 0,
+      valor_executado_referencia: Number(linha.valor_executado_referencia) || 0,
+      percentual_quantidade: Number(linha.percentual_quantidade) || 0,
+      percentual_valor: Number(linha.percentual_valor) || 0,
+    });
   }
   return porItem;
 }
@@ -394,12 +403,12 @@ function gerarLinhasItem(itemPad, rateios, contexto = {}) {
 async function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
 
-  const conferencia = conferirItensPadComRateiosProfor2022({
+  const conferencia = await conferirItensPadComRateiosProfor2022({
     repoRoot,
     pastaRelativa: opcoes.pastaRelativa,
     usarExcelLegado: opcoes.usarExcelLegado,
   });
-  const memoria = carregarMemoriaRateios();
+  const memoria = await carregarMemoriaRateios();
   const auditoria = await repoRevisao.obterEstatisticasAuditoria();
   const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || await carregarAplicacaoDecisoesDryRun();
   const regras = aplicacaoDecisoes.regras;

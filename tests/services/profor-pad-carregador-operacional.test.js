@@ -55,8 +55,8 @@ function rateiosMemoria(rateios = [{ area: "OUVIDORIA", natureza: "CUSTEIO", per
   return new Map([[1, rateios]]);
 }
 
-function executar(opcoes = {}) {
-  return carregarPadsOperacional({
+async function executar(opcoes = {}) {
+  return await carregarPadsOperacional({
     repoRoot: path.resolve(__dirname, "../.."),
     salvarRelatorio: false,
     lerRelatoriosPad: () => opcoes.leitura || leitura(),
@@ -79,16 +79,16 @@ function executar(opcoes = {}) {
   });
 }
 
-test("carregador operacional exige 15 arquivos lidos", () => {
-  const resultado = executar({ leitura: leitura({ totalArquivosEncontrados: 14, totalRelatoriosLidos: 14 }) });
+test("carregador operacional exige 15 arquivos lidos", async () => {
+  const resultado = await executar({ leitura: leitura({ totalArquivosEncontrados: 14, totalRelatoriosLidos: 14 }) });
 
   assert.equal(resultado.arquivosEncontrados, 14);
   assert.ok(resultado.impedimentos.some((item) => item.tipo === "quantidade_arquivos_pad_invalida"));
   assert.ok(resultado.impedimentos.some((item) => item.tipo === "quantidade_relatorios_pad_lidos_invalida"));
 });
 
-test("instrumento duplicado gera impedimento", () => {
-  const resultado = executar({
+test("instrumento duplicado gera impedimento", async () => {
+  const resultado = await executar({
     leitura: leitura({
       alertas: [{
         tipo: "arquivo_duplicado_para_mesmo_instrumento",
@@ -102,9 +102,9 @@ test("instrumento duplicado gera impedimento", () => {
   assert.ok(resultado.impedimentos.some((item) => item.tipo === "arquivo_duplicado_para_mesmo_instrumento"));
 });
 
-test("item novo sem rateio vira pendencia de revisao e nao impede a recarga", () => {
+test("item novo sem rateio vira pendencia de revisao e nao impede a recarga", async () => {
   const novo = itemPad({ itemConhecidoId: null, descricaoOriginal: "Item novo", chaveItem: "900001::item-novo" });
-  const resultado = executar({
+  const resultado = await executar({
     conferencia: conferencia({
       itensPadReconhecidos: [],
       itensPadSemRateio: [novo],
@@ -120,7 +120,7 @@ test("item novo sem rateio vira pendencia de revisao e nao impede a recarga", ()
   assert.equal(resultado.aptoParaPublicacao, false);
 });
 
-test("item_novo_sem_rateio_memorizado preserva quantidade, valor e natureza do PAD", () => {
+test("item_novo_sem_rateio_memorizado preserva quantidade, valor e natureza do PAD", async () => {
   const novo = itemPad({
     itemConhecidoId: null,
     descricaoOriginal: "Computador Desktop completo",
@@ -131,7 +131,7 @@ test("item_novo_sem_rateio_memorizado preserva quantidade, valor e natureza do P
     natureza: "CAPITAL",
     codigoNaturezaDespesa: "44905200",
   });
-  const resultado = executar({
+  const resultado = await executar({
     conferencia: conferencia({
       itensPadReconhecidos: [],
       itensPadSemRateio: [novo],
@@ -150,7 +150,7 @@ test("item_novo_sem_rateio_memorizado preserva quantidade, valor e natureza do P
   assert.equal(pendencia.descricao, "Computador Desktop completo");
 });
 
-test("item_pad_sem_rateio_memorizado vira pendencia de revisao preservando dados do PAD", () => {
+test("item_pad_sem_rateio_memorizado vira pendencia de revisao preservando dados do PAD", async () => {
   const item = itemPad({
     itemConhecidoId: 7,
     descricaoOriginal: "Curso de Edição de Vídeos",
@@ -161,7 +161,7 @@ test("item_pad_sem_rateio_memorizado vira pendencia de revisao preservando dados
     natureza: "CUSTEIO",
     codigoNaturezaDespesa: "33903999",
   });
-  const resultado = executar({
+  const resultado = await executar({
     rateios: new Map(),
     conferencia: conferencia({
       itensPadReconhecidos: [item],
@@ -179,8 +179,8 @@ test("item_pad_sem_rateio_memorizado vira pendencia de revisao preservando dados
   assert.equal(resultado.sucesso, true);
 });
 
-test("item suprimido historico nao gera erro indevido e nao bloqueia recarga", () => {
-  const resultado = executar({
+test("item suprimido historico nao gera erro indevido e nao bloqueia recarga", async () => {
+  const resultado = await executar({
     conferencia: conferencia({
       itensConhecidosAusentesNoPad: [{
         numeroConvenio: "900001",
@@ -200,17 +200,17 @@ test("item suprimido historico nao gera erro indevido e nao bloqueia recarga", (
   assert.equal(resultado.sucesso, true);
 });
 
-test("rateio memorizado e aplicado", () => {
-  const resultado = executar();
+test("rateio memorizado e aplicado", async () => {
+  const resultado = await executar();
 
   assert.equal(resultado.rateiosAplicados, 1);
   assert.equal(resultado.linhasReconstruidas, 1);
   assert.equal(resultado.planoAplicacaoReconstruido[0].area, "OUVIDORIA");
 });
 
-test("distribuicao igual provisoria vira pendencia de revisao (nao impedimento tecnico)", () => {
+test("distribuicao igual provisoria vira pendencia de revisao (nao impedimento tecnico)", async () => {
   let geradorChamado = false;
-  const resultado = executar({
+  const resultado = await executar({
     rateios: rateiosMemoria([{ area: "OUVIDORIA", natureza: "CUSTEIO" }]),
     gerarLinhasItem: () => {
       geradorChamado = true;
@@ -224,20 +224,20 @@ test("distribuicao igual provisoria vira pendencia de revisao (nao impedimento t
   assert.equal(resultado.sucesso, true);
 });
 
-test("cache invalido / contagem de arquivos divergente continua como impedimento tecnico", () => {
-  const resultado = executar({ leitura: leitura({ totalArquivosEncontrados: 13, totalRelatoriosLidos: 13 }) });
+test("cache invalido / contagem de arquivos divergente continua como impedimento tecnico", async () => {
+  const resultado = await executar({ leitura: leitura({ totalArquivosEncontrados: 13, totalRelatoriosLidos: 13 }) });
   assert.ok(resultado.impedimentos.some((i) => i.tipo === "quantidade_arquivos_pad_invalida"));
   assert.equal(resultado.sucesso, false);
   assert.equal(resultado.aptoParaPublicacao, false);
 });
 
-test("sucesso tecnico nao implica em aptoParaPublicacao", () => {
-  const resultado = executar();
+test("sucesso tecnico nao implica em aptoParaPublicacao", async () => {
+  const resultado = await executar();
   assert.equal(resultado.sucesso, true);
   assert.equal(resultado.aptoParaPublicacao, false);
 });
 
-test("recarga nao exibe alertas de auditoria/comparacao/valores", () => {
+test("recarga nao exibe alertas de auditoria/comparacao/valores", async () => {
   const tiposSuprimidos = [
     "item_conhecido_ausente_no_pad",
     "item_suprimido_historico",
@@ -259,7 +259,7 @@ test("recarga nao exibe alertas de auditoria/comparacao/valores", () => {
     detalhe: `Alerta de auditoria ${tipo}`,
   }));
 
-  const resultado = executar({
+  const resultado = await executar({
     conferencia: conferencia({
       alertas: alertasFake,
     }),
@@ -281,10 +281,10 @@ test("recarga nao exibe alertas de auditoria/comparacao/valores", () => {
   assert.equal(resultado.sucesso, true);
 });
 
-test("pendenciasRevisaoResumo agrupa pendencias por convenio e UF", () => {
+test("pendenciasRevisaoResumo agrupa pendencias por convenio e UF", async () => {
   const novoA = itemPad({ itemConhecidoId: null, numeroConvenio: "937817", uf: "PI", chaveItem: "937817::a" });
   const novoB = itemPad({ itemConhecidoId: null, numeroConvenio: "938128", uf: "SE", chaveItem: "938128::a" });
-  const resultado = executar({
+  const resultado = await executar({
     conferencia: conferencia({
       itensPadReconhecidos: [],
       itensPadSemRateio: [novoA, novoB],
@@ -304,10 +304,10 @@ test("pendenciasRevisaoResumo agrupa pendencias por convenio e UF", () => {
   assert.equal(se.totalItens, 1);
 });
 
-test("pendencias do mesmo convenio/UF colapsam em uma linha com totalItens 2", () => {
+test("pendencias do mesmo convenio/UF colapsam em uma linha com totalItens 2", async () => {
   const a = itemPad({ itemConhecidoId: null, numeroConvenio: "937817", uf: "PI", chaveItem: "937817::a", descricaoOriginal: "Item A" });
   const b = itemPad({ itemConhecidoId: null, numeroConvenio: "937817", uf: "PI", chaveItem: "937817::b", descricaoOriginal: "Item B" });
-  const resultado = executar({
+  const resultado = await executar({
     conferencia: conferencia({
       itensPadReconhecidos: [],
       itensPadSemRateio: [a, b],
@@ -322,9 +322,9 @@ test("pendencias do mesmo convenio/UF colapsam em uma linha com totalItens 2", (
   assert.equal(resultado.pendenciasRevisaoResumo[0].totalItens, 2);
 });
 
-test("pendencia sem UF aparece sem quebrar (uf=null) no resumo", () => {
+test("pendencia sem UF aparece sem quebrar (uf=null) no resumo", async () => {
   const semUf = itemPad({ itemConhecidoId: null, numeroConvenio: "999999", uf: null, chaveItem: "999999::sem-uf" });
-  const resultado = executar({
+  const resultado = await executar({
     conferencia: conferencia({
       itensPadReconhecidos: [],
       itensPadSemRateio: [semUf],

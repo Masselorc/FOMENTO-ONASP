@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   lerRelatoriosPadProfor2022,
 } = require("./profor-pad-report-reader");
@@ -52,18 +52,18 @@ function criarChaveDescricaoOriginal(numeroConvenio, descricaoOriginal) {
   return numero && descricao ? `${numero}::${descricao}` : null;
 }
 
-function carregarCarteiraMonitorada() {
-  const linhas = db.prepare(`
+async function carregarCarteiraMonitorada() {
+  const result = await query(`
     SELECT id, numero_convenio, ano, uf, instrumento, programa_origem, ativo
     FROM profor_convenios_monitorados
-    WHERE ativo = 1
+    WHERE ativo = true
     ORDER BY numero_convenio, ano
-  `).all();
+  `);
 
-  return new Map(linhas.map((linha) => [
+  return new Map(result.rows.map((linha) => [
     String(linha.numero_convenio),
     {
-      id: linha.id,
+      id: Number(linha.id),
       numeroConvenio: linha.numero_convenio,
       ano: linha.ano,
       uf: linha.uf,
@@ -85,8 +85,8 @@ function interpretarJsonArray(valor) {
   }
 }
 
-function carregarItensConhecidos() {
-  const linhas = db.prepare(`
+async function carregarItensConhecidos() {
+  const result = await query(`
     SELECT
       i.id,
       i.chave_item,
@@ -108,21 +108,21 @@ function carregarItensConhecidos() {
     FROM profor_2022_itens_conhecidos i
     LEFT JOIN profor_2022_item_rateios r
       ON r.item_conhecido_id = i.id
-     AND r.ativo = 1
-    WHERE i.ativo = 1
-    GROUP BY i.id
+     AND r.ativo = true
+    WHERE i.ativo = true
+    GROUP BY i.id, i.chave_item, i.numero_convenio, i.descricao_normalizada,
+             i.descricao_original_referencia, i.uf, i.ano, i.valor_unitario_referencia,
+             i.naturezas_encontradas_json, i.apto_para_importacao_futura,
+             i.possui_pendencia_impeditiva, i.status_item, i.ativo
     ORDER BY i.numero_convenio, i.descricao_normalizada
-  `).all();
+  `);
 
   const porDescricaoOriginal = new Map();
   const porChaveNormalizada = new Map();
   const todos = [];
 
-  for (const linha of linhas) {
+  for (const linha of result.rows) {
     const valorUnitario = Number(linha.valor_unitario_referencia);
-    // Recomputa a chave normalizada do banco aplicando decodificacao de
-    // entidades HTML basicas, para tolerar residuos de import historico
-    // (ex.: "&#039;" em vez da apostrofe "'").
     const descricaoOriginalReferenciaDecodificada = decodificarEntidadesHtmlBasicas(linha.descricao_original_referencia);
     const numeroConvenioMemoria = normalizarNumeroConvenio(linha.numero_convenio);
     const chaveNormalizadaRecomputada = numeroConvenioMemoria
@@ -132,7 +132,7 @@ function carregarItensConhecidos() {
         )
       : linha.chave_item;
     const item = {
-      id: linha.id,
+      id: Number(linha.id),
       chaveItem: inlineChaveItem(chaveNormalizadaRecomputada || linha.chave_item),
       chaveItemOriginal: linha.chave_item,
       chaveDescricaoOriginal: criarChaveDescricaoOriginal(linha.numero_convenio, linha.descricao_original_referencia),
@@ -143,10 +143,10 @@ function carregarItensConhecidos() {
       ano: linha.ano,
       valorUnitarioReferencia: Number.isFinite(valorUnitario) ? valorUnitario : null,
       naturezasEncontradas: interpretarJsonArray(linha.naturezas_encontradas_json),
-      aptoParaImportacaoFutura: linha.apto_para_importacao_futura === 1,
-      possuiPendenciaImpedativa: linha.possui_pendencia_impeditiva === 1,
+      aptoParaImportacaoFutura: linha.apto_para_importacao_futura === true || linha.apto_para_importacao_futura === 1,
+      possuiPendenciaImpeditiva: linha.possui_pendencia_impeditiva === true || linha.possui_pendencia_impeditiva === 1,
       statusItem: linha.status_item,
-      ativo: linha.ativo === 1,
+      ativo: linha.ativo === true || linha.ativo === 1,
       totalRateiosAtivos: Number(linha.total_rateios_ativos) || 0,
       quantidadeReferencia: Number(linha.quantidade_referencia_soma) || 0,
       valorPrevistoReferencia: Number(linha.valor_previsto_referencia_soma) || 0,
@@ -333,11 +333,11 @@ function registrarInstrumentoNaoEncontrado(registro, instrumentosNaoEncontrados,
   }));
 }
 
-function conferirItensPadComRateiosProfor2022(opcoes = {}) {
+async function conferirItensPadComRateiosProfor2022(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
   const leituraPad = lerRelatoriosPadProfor2022({ repoRoot, pastaRelativa: opcoes.pastaRelativa, usarExcelLegado: opcoes.usarExcelLegado });
-  const carteiraPorNumero = carregarCarteiraMonitorada();
-  const itensConhecidos = carregarItensConhecidos();
+  const carteiraPorNumero = await carregarCarteiraMonitorada();
+  const itensConhecidos = await carregarItensConhecidos();
 
   const itensPadReconhecidos = [];
   const itensPadSemRateio = [];
