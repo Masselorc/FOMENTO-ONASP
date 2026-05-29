@@ -16,12 +16,12 @@ async function executar() {
   inicializarBanco();
 
   // 1. Garante uma divergência de teste num lote próprio de teste.
-  const loteId = repo.criarLoteRevisao({
+  const loteId = await repo.criarLoteRevisao({
     origem: "teste-manual-decisao",
     arquivoOrigem: null,
     hashOrigem: null,
   });
-  const upsert = repo.inserirOuAtualizarDivergencia(loteId, {
+  const upsert = await repo.inserirOuAtualizarDivergencia(loteId, {
     chaveDivergencia: CHAVE_TESTE,
     numeroConvenio: "000000",
     uf: "ZZ",
@@ -42,11 +42,11 @@ async function executar() {
   });
   console.log(`Divergência de teste ${upsert.acao} (id ${upsert.id}, lote ${loteId}).`);
 
-  const antes = repo.buscarDivergenciaPorId(upsert.id);
+  const antes = await repo.buscarDivergenciaPorId(upsert.id);
   console.log(`Status antes da decisão: ${antes.status}`);
 
   // 2. Registra uma decisão EM_REVISAO (justificativa recomendada, não obrigatória).
-  const resultado = decisaoService.registrarDecisao(upsert.id, {
+  const resultado = await decisaoService.registrarDecisao(upsert.id, {
     decisao: "EM_REVISAO",
     justificativa: "Teste automatizado da Etapa 5.4 — colocando em revisão.",
     usuario: "script-teste",

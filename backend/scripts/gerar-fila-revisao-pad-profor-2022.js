@@ -10,11 +10,11 @@ function imprimirLista(titulo, lista) {
   }
 }
 
-function executar() {
+async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
   inicializarBanco();
 
-  const resultado = gerarFilaRevisao({ repoRoot });
+  const resultado = await gerarFilaRevisao({ repoRoot });
   const { estatisticas } = resultado;
 
   console.log("Geração da fila de revisão PAD x memória PROFOR 2022");
@@ -35,10 +35,12 @@ function executar() {
   console.log("Nenhuma decisão foi aplicada; nenhum dado publicado foi alterado.");
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha ao gerar a fila de revisão PAD x memória PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

@@ -27,9 +27,9 @@ function imprimirLista(titulo, lista) {
   }
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
-  const aplicacao = carregarAplicacaoDecisoesDryRun();
+  const aplicacao = await carregarAplicacaoDecisoesDryRun();
 
   console.log("Auditoria de aplicação de decisões PAD x memória (dry-run) PROFOR 2022");
   console.log(`Decisões resolutivas encontradas: ${aplicacao.totalDecisoesResolutivasEncontradas}`);
@@ -42,10 +42,12 @@ function executar() {
   console.log("Etapa dry-run: nenhuma decisão é aplicada materialmente ao planoAplicacao.");
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha ao auditar a aplicação de decisões PAD x memória PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

@@ -9,7 +9,7 @@ const CAMINHO_DRY_RUN_JSON = "backend/data/relatorios/profor-2022-pendencias-dia
 // Status que já têm decisão resolutiva — não devem receber nova decisão.
 const STATUS_RESOLUTIVOS = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "APLICADO", "REVERTIDO"]);
 
-function executar() {
+async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
   const dryRunCaminho = path.join(repoRoot, CAMINHO_DRY_RUN_JSON);
 
@@ -57,7 +57,7 @@ function executar() {
     // Proteção defensiva: nunca registra decisão sobre divergência que já
     // tenha decisão resolutiva (evita decisão duplicada se a fila mudou
     // entre a auditoria e o saneamento).
-    const linhaAtual = repo.buscarDivergenciaPorId(id);
+    const linhaAtual = await repo.buscarDivergenciaPorId(id);
     if (!linhaAtual) {
       console.warn(`Aviso: ID #${id} não encontrado na base; ignorado.`);
       totalIgnorados++;
@@ -71,7 +71,7 @@ function executar() {
 
     try {
       console.log(`Aplicando decisão CORRIGIDO para ID #${id} (${item.chaveDivergencia})...`);
-      const resultado = registrarDecisao(id, {
+      const resultado = await registrarDecisao(id, {
         decisao: "CORRIGIDO",
         justificativa,
         usuario: "sistema-saneamento-diacritico",
@@ -87,9 +87,11 @@ function executar() {
   console.log(`Processo finalizado. Total saneados: ${totalSaneados}; ignorados (já decididos/ausentes): ${totalIgnorados}; de ${idsSaneaveis.length} candidatos.`);
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Erro no saneamento de diacríticos:", erro);
   process.exit(1);
-}
+});

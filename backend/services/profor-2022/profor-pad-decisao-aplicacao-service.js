@@ -1,4 +1,4 @@
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
   ehSaldoResidualProfor,
@@ -50,6 +50,7 @@ const TIPOS_CAMPO = new Set([
 
 function parseJsonSeguro(texto, padrao) {
   if (texto === null || texto === undefined || texto === "") return padrao;
+  if (typeof texto === "object") return texto;
   try {
     return JSON.parse(texto);
   } catch {
@@ -292,9 +293,11 @@ function interpretarDecisaoRevisao(divergencia, decisao) {
 }
 
 /** Carrega a última decisão resolutiva de cada divergência que tem alguma. */
-function carregarUltimasDecisoesResolutivas() {
-  const placeholders = DECISOES_RESOLUTIVAS.map(() => "?").join(", ");
-  return db.prepare(`
+async function carregarUltimasDecisoesResolutivas(client = null) {
+  const exec = client ? (sql, p) => client.query(sql, p) : (sql, p) => query(sql, p);
+  const p1 = DECISOES_RESOLUTIVAS.map((_, i) => `$${i + 1}`).join(", ");
+  const p2 = DECISOES_RESOLUTIVAS.map((_, i) => `$${DECISOES_RESOLUTIVAS.length + i + 1}`).join(", ");
+  const result = await exec(`
     SELECT
       d.id AS divergencia_id, d.chave_divergencia, d.numero_convenio, d.uf,
       d.chave_item, d.tipo_alerta, d.nivel, d.status, d.campo_afetado,
@@ -303,13 +306,14 @@ function carregarUltimasDecisoesResolutivas() {
       dec.usuario, dec.decidido_em, dec.payload_decisao_json
     FROM profor_2022_revisao_divergencias d
     JOIN profor_2022_revisao_decisoes dec ON dec.divergencia_id = d.id
-    WHERE dec.decisao IN (${placeholders})
+    WHERE dec.decisao IN (${p1})
       AND dec.id = (
         SELECT MAX(x.id) FROM profor_2022_revisao_decisoes x
-        WHERE x.divergencia_id = d.id AND x.decisao IN (${placeholders})
+        WHERE x.divergencia_id = d.id AND x.decisao IN (${p2})
       )
     ORDER BY d.id
-  `).all(...DECISOES_RESOLUTIVAS, ...DECISOES_RESOLUTIVAS);
+  `, [...DECISOES_RESOLUTIVAS, ...DECISOES_RESOLUTIVAS]);
+  return result.rows;
 }
 
 function criarRegrasVazias() {
@@ -379,8 +383,8 @@ function indexarRegraPorEfeito(regras, registro) {
  *
  * Modo somente leitura: não escreve em nenhuma tabela.
  */
-function carregarAplicacaoDecisoesDryRun() {
-  const linhas = carregarUltimasDecisoesResolutivas();
+async function carregarAplicacaoDecisoesDryRun(client = null) {
+  const linhas = await carregarUltimasDecisoesResolutivas(client);
   const regras = criarRegrasVazias();
   const decisoesResolutivasEncontradas = [];
   const decisoesAplicadasDryRun = [];
@@ -396,7 +400,7 @@ function carregarAplicacaoDecisoesDryRun() {
       tipoAlerta: linha.tipo_alerta,
       nivel: linha.nivel,
       campoAfetado: linha.campo_afetado,
-      bloqueiaPublicacao: linha.bloqueia_publicacao === 1,
+      bloqueiaPublicacao: linha.bloqueia_publicacao === true || linha.bloqueia_publicacao === 1,
       payload: parseJsonSeguro(linha.payload_json, {}),
     };
     const decisao = {

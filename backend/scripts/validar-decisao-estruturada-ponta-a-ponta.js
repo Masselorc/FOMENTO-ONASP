@@ -4,7 +4,7 @@
  */
 const assert = require("node:assert");
 const { inicializarBanco } = require("../db/init-db");
-const db = require("../db/database");
+const { query } = require("../db/postgres-client");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 const decisaoService = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 const { carregarAplicacaoDecisoesDryRun } = require("../services/profor-2022/profor-pad-decisao-aplicacao-service");
@@ -23,12 +23,12 @@ async function executar() {
 
   // Limpa possíveis resíduos de execuções de teste anteriores que falharam
   console.log("Limpando possíveis resíduos de testes anteriores...");
-  repo.limparDivergenciasTeste();
-  db.prepare("DELETE FROM profor_2022_revisao_lotes WHERE origem = ?").run("teste-valida-decisao-ponta-a-ponta");
+  await repo.limparDivergenciasTeste();
+  await query("DELETE FROM profor_2022_revisao_lotes WHERE origem = $1", ["teste-valida-decisao-ponta-a-ponta"]);
 
   // FASE 1: Verificação do Baseline
   console.log("Fase 1: Verificando baseline de produção...");
-  const estatisticasAntes = repo.obterEstatisticasAuditoria();
+  const estatisticasAntes = await repo.obterEstatisticasAuditoria();
   console.log(`  divergências reais encontradas: ${estatisticasAntes.totalDivergencias}`);
   console.log(`  pendentes: ${estatisticasAntes.totalPendentes}`);
   console.log(`  impeditivas: ${estatisticasAntes.totalImpeditivas}`);
@@ -68,7 +68,7 @@ async function executar() {
 
   // Criação do Lote Temporário de Teste
   console.log("Criando lote de revisão temporário para teste...");
-  const loteId = repo.criarLoteRevisao({
+  const loteId = await repo.criarLoteRevisao({
     origem: "teste-valida-decisao-ponta-a-ponta",
     arquivoOrigem: null,
     hashOrigem: null,
@@ -321,12 +321,12 @@ async function executar() {
 
   for (const caso of casosTeste) {
     console.log(`  Inserindo divergência de teste para: ${caso.tipo}...`);
-    const upsert = repo.inserirOuAtualizarDivergencia(loteId, caso.divergencia);
+    const upsert = await repo.inserirOuAtualizarDivergencia(loteId, caso.divergencia);
     assert.ok(upsert.id, "Falha ao obter ID da divergência inserida.");
     dbIds.push(upsert.id);
 
     console.log(`    Registrando decisão (${caso.entradaDecisao.decisao})...`);
-    const resReg = decisaoService.registrarDecisao(upsert.id, caso.entradaDecisao);
+    const resReg = await decisaoService.registrarDecisao(upsert.id, caso.entradaDecisao);
     
     // Asserções do POST Real
     assert.strictEqual(resReg.divergenciaId, upsert.id, "ID da divergência retornado difere.");
@@ -361,7 +361,7 @@ async function executar() {
   // FASE 4: Validação do Motor e Reconstrução Dry-run
   console.log("Fase 4: Validando interpretação das decisões de teste pelo motor dry-run...");
   
-  const aplicacaoDecisoes = carregarAplicacaoDecisoesDryRun();
+  const aplicacaoDecisoes = await carregarAplicacaoDecisoesDryRun();
   console.log(`  Decisões resolutivas encontradas no dry-run: ${aplicacaoDecisoes.totalDecisoesResolutivasEncontradas}`);
   console.log(`  Decisões interpretadas com sucesso: ${aplicacaoDecisoes.totalDecisoesInterpretadasDryRun}`);
   console.log(`  Decisões com efeito na reconstrução: ${aplicacaoDecisoes.totalDecisoesComEfeitoNaReconstrucao}`);
@@ -385,15 +385,15 @@ async function executar() {
 
   // Executando reconstrução e comparador dry-run completas
   console.log("  Executando reconstrução e comparação dry-run em lote...");
-  const reconstrucao = reconstruirPlanoAplicacaoPadDryRun({ aplicacaoDecisoes });
-  const comparacao = compararPlanosPadDryRun({ reconstrucao, aplicacaoDecisoes });
+  const reconstrucao = await reconstruirPlanoAplicacaoPadDryRun({ aplicacaoDecisoes });
+  const comparacao = await compararPlanosPadDryRun({ reconstrucao, aplicacaoDecisoes });
   console.log(`    Reconstrução dry-run concluída com ${reconstrucao.impedimentos.length} impedimentos.`);
   console.log(`    Comparação dry-run concluída com conclusão operacional.`);
   console.log("  [OK] Fase 4 finalizada com sucesso!\n");
 
   // FASE 5: Limpeza
   console.log("Fase 5: Executando limpeza das divergências de teste...");
-  const resultadoLimpeza = repo.limparDivergenciasTeste();
+  const resultadoLimpeza = await repo.limparDivergenciasTeste();
   console.log(`  divergências de teste localizadas: ${resultadoLimpeza.totalDivergenciasTeste}`);
   console.log(`  decisões de teste removidas: ${resultadoLimpeza.totalDecisoesRemovidas}`);
   console.log(`  logs de teste removidos: ${resultadoLimpeza.totalLogsRemovidos}`);
@@ -405,12 +405,12 @@ async function executar() {
   assert.ok(resultadoLimpeza.totalLogsRemovidos >= 6, "Deveria ter removido pelo menos 6 logs.");
 
   // Remover lote temporário
-  db.prepare("DELETE FROM profor_2022_revisao_lotes WHERE id = ?").run(loteId);
+  await query("DELETE FROM profor_2022_revisao_lotes WHERE id = $1", [loteId]);
   console.log("  Lote temporário excluído com sucesso.");
 
   // FASE 6: Verificação Pós-Limpeza
   console.log("\nFase 6: Verificando retorno ao baseline original...");
-  const estatisticasDepois = repo.obterEstatisticasAuditoria();
+  const estatisticasDepois = await repo.obterEstatisticasAuditoria();
   console.log(`  divergências reais após limpeza: ${estatisticasDepois.totalDivergencias}`);
   console.log(`  pendentes: ${estatisticasDepois.totalPendentes}`);
   console.log(`  impeditivas: ${estatisticasDepois.totalImpeditivas}`);

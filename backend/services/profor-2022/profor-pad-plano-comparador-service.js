@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   reconstruirPlanoAplicacaoPadDryRun,
 } = require("./profor-pad-plano-reconstrucao-service");
@@ -173,13 +174,14 @@ function consolidarLinhasSaldoResidual(linhas) {
 }
 
 /** Conjunto de convênios com divergência pendente que bloqueia publicação. */
-function carregarConveniosComPendenciaBloqueante() {
-  const linhas = db.prepare(`
+async function carregarConveniosComPendenciaBloqueante(client = null) {
+  const exec = client ? (sql, p) => client.query(sql, p) : (sql, p) => query(sql, p);
+  const result = await exec(`
     SELECT DISTINCT numero_convenio
     FROM profor_2022_revisao_divergencias
-    WHERE status IN ('PENDENTE', 'EM_REVISAO') AND bloqueia_publicacao = 1
-  `).all();
-  return new Set(linhas.map((linha) => normalizarNumeroConvenio(linha.numero_convenio)).filter(Boolean));
+    WHERE status IN ('PENDENTE', 'EM_REVISAO') AND bloqueia_publicacao = true
+  `, []);
+  return new Set(result.rows.map((linha) => normalizarNumeroConvenio(linha.numero_convenio)).filter(Boolean));
 }
 
 function indexarPorChave(linhas) {
@@ -291,15 +293,15 @@ function normalizarDescricoesPlanosPorEquivalencia(linhas, equivalenciasAceitas)
  * reconstruído pelos relatórios PAD. Não usa fuzzy matching, não consolida
  * itens ambíguos silenciosamente e não altera a origem ativa.
  */
-function compararPlanosPadDryRun(opcoes = {}) {
+async function compararPlanosPadDryRun(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
   const reconstrucao = opcoes.reconstrucao
-    || reconstruirPlanoAplicacaoPadDryRun({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
+    || await reconstruirPlanoAplicacaoPadDryRun({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
 
   const planoAntigo = consolidarLinhasSaldoResidual(montarPlanoOrigemAntiga());
   const planoNovo = consolidarLinhasSaldoResidual(reconstrucao.planoAplicacaoReconstruido);
-  const conveniosComPendencia = carregarConveniosComPendenciaBloqueante();
-  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
+  const conveniosComPendencia = await carregarConveniosComPendenciaBloqueante();
+  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || await carregarAplicacaoDecisoesDryRun();
   const regras = aplicacaoDecisoes.regras;
 
   normalizarDescricoesPlanosPorEquivalencia(planoAntigo, regras.equivalenciasAceitas);

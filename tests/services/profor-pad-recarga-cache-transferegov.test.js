@@ -8,6 +8,12 @@ const crypto = require("node:crypto");
 const { recarregarPadsOperacional } = require("../../backend/services/profor-2022/profor-pad-recarga-operacional-service");
 const { carregarPadsOperacional } = require("../../backend/services/profor-2022/profor-pad-carregador-operacional-service");
 
+// Cenários com cache válido executam a reconstrução PAD completa, que lê
+// estatísticas de revisão do Postgres (obterEstatisticasAuditoria). Esses
+// testes exigem DATABASE_URL. Cenários de cache ausente/inválido bloqueiam
+// antes da reconstrução e permanecem como test normal.
+const testPostgres = process.env.DATABASE_URL ? test : test.skip;
+
 const activeConvenios = [
   "937698", "937216", "937871", "937592", "937782",
   "937265", "938277", "937818", "938128", "937780",
@@ -92,7 +98,7 @@ function prepararPastaTemporaria(cachePayload = null) {
   return tmpDir;
 }
 
-test("1. recarga PAD usa cache Transferegov válido como origem padrão e 2. não lê Excel", async () => {
+testPostgres("1. recarga PAD usa cache Transferegov válido como origem padrão e 2. não lê Excel", async () => {
   const cache = criarCacheMockValido();
   const tmpDir = prepararPastaTemporaria(cache);
 
@@ -128,7 +134,7 @@ test("3. pastaRelativa sozinha não autoriza Excel", async () => {
   }
 });
 
-test("4. Excel legado só é lido com usarExcelLegado: true", async () => {
+testPostgres("4. Excel legado só é lido com usarExcelLegado: true", async () => {
   const tmpDir = prepararPastaTemporaria(null); // sem cache
 
   // Criar um arquivo Excel vazio fake ou pasta de excel
@@ -199,7 +205,7 @@ test("7. cache com erro bloqueante de validação não é usado", async () => {
   }
 });
 
-test("8-11. item novo, suprimido, valor alterado e divergência histórica não causam quebras na recarga", async () => {
+testPostgres("8-11. item novo, suprimido, valor alterado e divergência histórica não causam quebras na recarga", async () => {
   const cache = criarCacheMockValido();
   // Alterar valor e descrição de itens para simular novos itens e valores divergentes
   cache.convenios[0].itens[0].descricao = "Item Totalmente Novo Que Nao Existe No BD";

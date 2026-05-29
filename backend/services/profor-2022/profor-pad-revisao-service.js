@@ -2,7 +2,7 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const db = require("../../db/database");
+const { withTransaction } = require("../../db/postgres-client");
 const repo = require("./profor-pad-revisao-repository");
 
 const CAMINHO_SANEAMENTO = "backend/data/relatorios/profor-2022-pad-saneamento.json";
@@ -504,31 +504,32 @@ function calcularHashOrigem(repoRoot) {
 
 /**
  * Gera (ou atualiza) a fila de revisão a partir dos relatórios atuais.
- * Toda a operação ocorre em uma única transação.
+ * Toda a operação ocorre em uma única transação Postgres.
  */
-function gerarFilaRevisao(opcoes = {}) {
+async function gerarFilaRevisao(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || repoRootPadrao();
   const { divergencias } = coletarDivergencias(repoRoot);
   const hashOrigem = calcularHashOrigem(repoRoot);
 
-  const executar = db.transaction(() => {
-    const loteId = repo.criarLoteRevisao({
+  return withTransaction(async (client) => {
+    const loteId = await repo.criarLoteRevisao({
       origem: "relatorios-saneamento-pad",
       arquivoOrigem: CAMINHO_SANEAMENTO,
       hashOrigem,
-    });
+    }, client);
 
-    const chavesAntes = new Set(repo.listarChavesExistentes());
+    const chavesAntesList = await repo.listarChavesExistentes(client);
+    const chavesAntes = new Set(chavesAntesList);
     const chavesGeradas = new Set();
     let criadas = 0;
     let atualizadas = 0;
 
     for (const divergencia of divergencias) {
       chavesGeradas.add(divergencia.chaveDivergencia);
-      const resultado = repo.inserirOuAtualizarDivergencia(loteId, divergencia);
+      const resultado = await repo.inserirOuAtualizarDivergencia(loteId, divergencia, client);
       if (resultado.acao === "criada") criadas += 1;
       else atualizadas += 1;
-      repo.registrarLog({
+      await repo.registrarLog({
         entidadeTipo: "divergencia",
         entidadeId: resultado.id,
         evento: resultado.acao === "criada" ? "divergencia_criada" : "divergencia_atualizada",
@@ -539,36 +540,35 @@ function gerarFilaRevisao(opcoes = {}) {
           nivel: divergencia.nivel,
         },
         detalhe: `Divergência ${resultado.acao} a partir dos relatórios de saneamento.`,
-      });
+      }, client);
     }
 
     // Divergências antigas não reapresentadas: não são apagadas; apenas registradas em log.
     const naoReapresentadas = [...chavesAntes].filter((chave) => !chavesGeradas.has(chave));
     for (const chave of naoReapresentadas) {
-      const existente = repo.buscarDivergenciaPorChave(chave);
+      const existente = await repo.buscarDivergenciaPorChave(chave, client);
       if (existente && existente.status === "PENDENTE" && existente.bloqueia_publicacao === 1) {
-        db.prepare(`
-          UPDATE profor_2022_revisao_divergencias
-          SET bloqueia_publicacao = 0, atualizado_em = ?
-          WHERE id = ?
-        `).run(new Date().toISOString(), existente.id);
+        await client.query(
+          `UPDATE profor_2022_revisao_divergencias SET bloqueia_publicacao = false, atualizado_em = $1 WHERE id = $2`,
+          [new Date().toISOString(), existente.id]
+        );
       }
-      repo.registrarLog({
+      await repo.registrarLog({
         entidadeTipo: "divergencia",
         entidadeId: existente ? existente.id : null,
         evento: "divergencia_nao_reapresentada",
         estadoNovo: { loteGeracaoId: loteId, chaveDivergencia: chave },
         detalhe: "Divergência não reapareceu nesta geração; mantida no histórico sem alteração.",
-      });
+      }, client);
     }
 
-    const estatisticas = repo.obterEstatisticasAuditoria();
-    repo.atualizarTotaisLote(loteId, {
+    const estatisticas = await repo.obterEstatisticasAuditoria(client);
+    await repo.atualizarTotaisLote(loteId, {
       totalDivergencias: estatisticas.totalDivergencias,
       totalPendentes: estatisticas.totalPendentes,
       totalImpeditivas: estatisticas.totalImpeditivas,
-    });
-    repo.registrarLog({
+    }, client);
+    await repo.registrarLog({
       entidadeTipo: "lote",
       entidadeId: loteId,
       evento: "lote_gerado",
@@ -580,7 +580,7 @@ function gerarFilaRevisao(opcoes = {}) {
         naoReapresentadas: naoReapresentadas.length,
       },
       detalhe: "Lote de revisão gerado.",
-    });
+    }, client);
 
     return {
       loteId,
@@ -591,16 +591,11 @@ function gerarFilaRevisao(opcoes = {}) {
       estatisticas,
     };
   });
-
-  return executar();
 }
 
 /** Monta o relatório de auditoria da fila de revisão (somente leitura). */
 async function auditarFilaRevisao() {
-  // obterEstatisticasAuditoria ainda é SQLite (pendente Lote B — compartilha
-  // fluxo com a transação SQLite de gerarFilaRevisao). Os demais já vêm do
-  // Postgres.
-  const estatisticas = repo.obterEstatisticasAuditoria();
+  const estatisticas = await repo.obterEstatisticasAuditoria();
   const ultimoLote = await repo.obterUltimoLote();
   const comDecisao = await repo.contarDivergenciasComDecisao();
 

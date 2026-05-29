@@ -344,9 +344,7 @@ async function listarDivergencias(filtros = {}) {
 /** Retorna a divergência com payload parseado, decisões e logs. */
 async function obterDivergencia(id) {
   const revisaoService = require("./profor-pad-revisao-service");
-  // buscarDivergenciaPorId ainda é leitura SQLite (pendente Lote B — compartilha
-  // fluxo com a escrita registrarDecisao). decisoes/logs já vêm do Postgres.
-  const linha = repo.buscarDivergenciaPorId(id);
+  const linha = await repo.buscarDivergenciaPorId(id);
   if (!linha) {
     throw Object.assign(new Error("Divergência não encontrada."), { statusCode: 404 });
   }
@@ -376,8 +374,7 @@ async function obterDivergencia(id) {
 }
 
 async function listarLogsDaDivergencia(id) {
-  // buscarDivergenciaPorId ainda é leitura SQLite (pendente Lote B).
-  const linha = repo.buscarDivergenciaPorId(id);
+  const linha = await repo.buscarDivergenciaPorId(id);
   if (!linha) {
     throw Object.assign(new Error("Divergência não encontrada."), { statusCode: 404 });
   }
@@ -386,8 +383,8 @@ async function listarLogsDaDivergencia(id) {
 }
 
 /** Auditoria de pendências, com destaque para impeditivas. */
-function auditarPendencias() {
-  const estatisticas = repo.obterEstatisticasAuditoria();
+async function auditarPendencias() {
+  const estatisticas = await repo.obterEstatisticasAuditoria();
   return {
     totalDivergencias: estatisticas.totalDivergencias,
     totalPendentes: estatisticas.totalPendentes,
@@ -421,13 +418,13 @@ function auditarPendencias() {
  * NÃO aplica a decisão ao planoAplicacao — ACEITO significa apenas
  * "decisão humana registrada".
  */
-function registrarDecisao(divergenciaId, entrada = {}) {
+async function registrarDecisao(divergenciaId, entrada = {}) {
   const id = Number(divergenciaId);
   if (!Number.isInteger(id) || id <= 0) {
     throw new RevisaoDecisaoError("Identificador de divergência inválido.");
   }
 
-  const linha = repo.buscarDivergenciaPorId(id);
+  const linha = await repo.buscarDivergenciaPorId(id);
   if (!linha) {
     throw Object.assign(new Error("Divergência não encontrada."), { statusCode: 404 });
   }
@@ -471,7 +468,7 @@ function registrarDecisao(divergenciaId, entrada = {}) {
     },
   };
 
-  const resultado = repo.registrarDecisao({
+  const resultado = await repo.registrarDecisao({
     divergencia: linha,
     decisao,
     novoStatus,
