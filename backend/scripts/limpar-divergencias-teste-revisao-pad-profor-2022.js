@@ -7,10 +7,10 @@
 const { inicializarBanco } = require("../db/init-db");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 
-function executar() {
+async function executar() {
   inicializarBanco();
 
-  const resultado = repo.limparDivergenciasTeste();
+  const resultado = await repo.limparDivergenciasTeste();
 
   if (!resultado.totalDivergenciasTeste) {
     console.log("Nenhuma divergência de teste encontrada.");
@@ -27,10 +27,12 @@ function executar() {
   console.log("Lotes de revisão preservados. Divergências reais preservadas.");
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha ao limpar divergências de teste da revisão PAD PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

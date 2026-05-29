@@ -25,8 +25,23 @@
 
 const { registrarDecisao } = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
-const db = require("../db/database");
+const { query } = require("../db/postgres-client");
 const { inicializarBanco } = require("../db/init-db");
+
+// Normaliza payload_json (jsonb no Postgres vem como objeto) para string, de modo
+// que o consumo a seguir (JSON.parse(linha.payload_json || "{}")) permaneça válido.
+function normalizarLinhaSaneamento(linha) {
+  return {
+    ...linha,
+    // bigint no Postgres chega como string; o restante do script compara o id
+    // em Set numérico e o passa a registrarDecisao — manter Number preserva o
+    // comportamento anterior (SQLite retornava INTEGER como number).
+    id: Number(linha.id),
+    payload_json: typeof linha.payload_json === "string"
+      ? linha.payload_json
+      : JSON.stringify(linha.payload_json ?? {}),
+  };
+}
 
 const CONVENIO = "937221";
 const USUARIO = "sistema-saneamento-pad-al-937221";
@@ -75,25 +90,29 @@ function montarRateioItemNovo(item, payloadDivergencia) {
   }];
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
 
   // 1) Itens novos do PAD: classificação por área a partir do PDF.
-  const linhasNovas = db.prepare(`
-    SELECT id, chave_item, tipo_alerta, status, payload_json
-    FROM profor_2022_revisao_divergencias
-    WHERE numero_convenio = ? AND tipo_alerta = 'item_novo_sem_rateio'
-  `).all(CONVENIO);
+  const resNovas = await query(
+    `SELECT id, chave_item, tipo_alerta, status, payload_json
+     FROM profor_2022_revisao_divergencias
+     WHERE numero_convenio = $1 AND tipo_alerta = 'item_novo_sem_rateio'`,
+    [CONVENIO]
+  );
+  const linhasNovas = resNovas.rows.map(normalizarLinhaSaneamento);
   const mapaNovas = new Map(linhasNovas.map((l) => [l.chave_item, l]));
 
   // 2) Itens ausentes sem substituto: confirmados como realmente ausentes.
   //    A lista de "possível substituto com divergência" vem da auditoria de
   //    substitutos; esses NÃO são saneados aqui (exigem revisão humana).
-  const linhasAusentes = db.prepare(`
-    SELECT id, chave_item, tipo_alerta, status, payload_json
-    FROM profor_2022_revisao_divergencias
-    WHERE numero_convenio = ? AND tipo_alerta = 'item_ausente_no_pad'
-  `).all(CONVENIO);
+  const resAusentes = await query(
+    `SELECT id, chave_item, tipo_alerta, status, payload_json
+     FROM profor_2022_revisao_divergencias
+     WHERE numero_convenio = $1 AND tipo_alerta = 'item_ausente_no_pad'`,
+    [CONVENIO]
+  );
+  const linhasAusentes = resAusentes.rows.map(normalizarLinhaSaneamento);
 
   let substitutosComDivergencia = new Set();
   try {
@@ -138,7 +157,7 @@ function executar() {
       continue;
     }
     try {
-      const r = registrarDecisao(linha.id, {
+      const r = await registrarDecisao(linha.id, {
         decisao: "ACEITO",
         justificativa,
         usuario: USUARIO,
@@ -181,7 +200,7 @@ function executar() {
       continue;
     }
     try {
-      const r = registrarDecisao(linha.id, {
+      const r = await registrarDecisao(linha.id, {
         decisao: "ACEITO",
         justificativa,
         usuario: USUARIO,
@@ -208,9 +227,11 @@ function executar() {
   if (DRY_RUN) console.log("  (DRY-RUN: nenhuma decisão foi registrada.)");
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Erro no saneamento PAD AL 937221:", erro);
   process.exit(1);
-}
+});

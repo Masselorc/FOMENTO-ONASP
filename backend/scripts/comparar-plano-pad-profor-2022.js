@@ -68,7 +68,7 @@ function imprimirResumo(resultado, arquivoJson, arquivoMarkdown) {
   }
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
   const repoRoot = path.resolve(__dirname, "../..");
 
@@ -78,11 +78,11 @@ function executar() {
 
   // Executa a reconstrução dry-run e também a salva, para manter os dois
   // relatórios coerentes na mesma rodada.
-  const reconstrucao = reconstruirPlanoAplicacaoPadDryRun({ repoRoot, aplicacaoDecisoes });
+  const reconstrucao = await reconstruirPlanoAplicacaoPadDryRun({ repoRoot, aplicacaoDecisoes });
   const caminhoReconstrucao = path.join(repoRoot, CAMINHO_RELATORIO_RECONSTRUCAO);
   salvarRelatorioReconstrucao(reconstrucao, caminhoReconstrucao);
 
-  const resultado = compararPlanosPadDryRun({ repoRoot, reconstrucao, aplicacaoDecisoes });
+  const resultado = await compararPlanosPadDryRun({ repoRoot, reconstrucao, aplicacaoDecisoes });
   const caminhoJson = path.join(repoRoot, CAMINHO_RELATORIO_COMPARACAO_JSON);
   const caminhoMarkdown = path.join(repoRoot, CAMINHO_RELATORIO_COMPARACAO_MD);
   salvarRelatorioComparacao(resultado, caminhoJson, caminhoMarkdown);
@@ -94,10 +94,12 @@ function executar() {
   );
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha na comparação dry-run do planoAplicacao PAD PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

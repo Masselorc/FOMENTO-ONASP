@@ -13,13 +13,13 @@ function imprimirOrfaos(orfaos) {
   }
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
   const dryRun = process.argv.includes("--dry-run") || process.env.npm_config_dry_run === "true";
 
   if (dryRun) {
     console.log("Modo dry-run: conferência sem escrita.");
-    const orfaos = repo.listarStatusResolutivosOrfaos();
+    const orfaos = await repo.listarStatusResolutivosOrfaos();
     if (!orfaos.length) {
       console.log("Nenhum status resolutivo órfão encontrado.");
       return;
@@ -30,7 +30,7 @@ function executar() {
     return;
   }
 
-  const resultado = repo.sanearStatusResolutivosOrfaos();
+  const resultado = await repo.sanearStatusResolutivosOrfaos();
   if (!resultado.totalEncontrados) {
     console.log("Nenhum status resolutivo órfão encontrado.");
     return;
@@ -42,10 +42,12 @@ function executar() {
   console.log("Status revertidos para PENDENTE com log de auditoria. Nenhuma decisão foi criada ou aplicada ao planoAplicacao.");
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha ao sanear status órfãos da revisão PAD PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

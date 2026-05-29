@@ -48,20 +48,22 @@ function imprimirResumo(resultado, arquivoSaidaRelativo) {
   }
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
   const repoRoot = path.resolve(__dirname, "../..");
   const caminhoSaida = path.join(repoRoot, CAMINHO_RELATORIO_RECONSTRUCAO);
-  const resultado = reconstruirPlanoAplicacaoPadDryRun({ repoRoot });
+  const resultado = await reconstruirPlanoAplicacaoPadDryRun({ repoRoot });
 
   salvarRelatorioReconstrucao(resultado, caminhoSaida);
   imprimirResumo(resultado, caminhoRelativo(repoRoot, caminhoSaida));
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha na reconstrução dry-run do planoAplicacao PAD PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

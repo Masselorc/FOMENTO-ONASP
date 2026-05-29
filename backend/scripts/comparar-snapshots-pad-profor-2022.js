@@ -38,13 +38,13 @@ const CAMINHO_RELATORIO_MD = path.join(
   "../data/relatorios/profor-2022-pad-comparacao-snapshots-dry-run.md"
 );
 
-function main() {
+async function main() {
   console.log("=== Evolução PAD/PROFOR 2022: Comparador de Snapshots (Dry-Run) ===");
 
   try {
     // 1. Executar a reconstrução do plano de aplicação atual
     console.log("Executando reconstrução do plano de aplicação atual a partir dos relatórios PAD...");
-    const resultadoReconstrucao = reconstruirPlanoAplicacaoPadDryRun();
+    const resultadoReconstrucao = await reconstruirPlanoAplicacaoPadDryRun();
 
     if (!resultadoReconstrucao || !resultadoReconstrucao.planoAplicacaoReconstruido) {
       throw new Error("Falha ao reconstruir o plano de aplicação: dados vazios.");
@@ -112,5 +112,9 @@ function main() {
 }
 
 if (require.main === module) {
-  main();
+  main().catch((error) => {
+    console.error("\n[Erro Crítico] Falha na execução do comparador de snapshots:");
+    console.error(error.stack || error.message || error);
+    process.exit(1);
+  });
 }

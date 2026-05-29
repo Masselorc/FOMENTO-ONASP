@@ -28,7 +28,7 @@ const JUSTIFICATIVA = "Divergência de ausência saneada por vínculo com item s
   + "descrição/especificação, mantendo convênio, natureza, quantidade, valor unitário, valor "
   + "previsto, valor executado e saldo compatíveis. Vinculado a item novo já tratado na revisão.";
 
-function executar() {
+async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
   const dryRunCaminho = path.join(repoRoot, CAMINHO_DRY_RUN_JSON);
 
@@ -56,7 +56,7 @@ function executar() {
     const ausenteId = Number(vinculo.divergenciaAusenteId);
     const substitutaId = Number(vinculo.divergenciaSubstitutaId);
 
-    const linhaAusente = repo.buscarDivergenciaPorId(ausenteId);
+    const linhaAusente = await repo.buscarDivergenciaPorId(ausenteId);
     if (!linhaAusente) {
       console.warn(`Aviso: divergência ausente #${ausenteId} não encontrada; ignorada.`);
       totalIgnorados++;
@@ -91,7 +91,7 @@ function executar() {
 
     try {
       console.log(`Vinculando #${ausenteId} -> #${substitutaId} (decisão CORRIGIDO)...`);
-      const resultado = registrarDecisao(ausenteId, {
+      const resultado = await registrarDecisao(ausenteId, {
         decisao: "CORRIGIDO",
         justificativa: `${JUSTIFICATIVA} Vinculado à divergência #${substitutaId}.`,
         usuario: "sistema-saneamento-substituto-pad",
@@ -107,9 +107,11 @@ function executar() {
   console.log(`Processo finalizado. Vínculos saneados: ${totalSaneados}; ignorados (já decididos/ausentes): ${totalIgnorados}; de ${vinculos.length} candidatos.`);
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Erro no saneamento de ausentes com substituto:", erro);
   process.exit(1);
-}
+});
