@@ -860,7 +860,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/revisoes-plano/area") {
       try {
         const body = await lerJsonBody(req);
-        const resultado = salvarAreaRevisaoPlano(body);
+        const resultado = await salvarAreaRevisaoPlano(body);
         enviarJson(res, 200, {
           success: true,
           message: "Área salva.",
@@ -879,7 +879,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/revisoes-plano/rateio") {
       try {
         const body = await lerJsonBody(req);
-        const resultado = salvarRateioRevisaoPlano(body);
+        const resultado = await salvarRateioRevisaoPlano(body);
         enviarJson(res, 200, {
           success: true,
           message: "Rateio salvo.",

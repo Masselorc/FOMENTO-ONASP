@@ -277,7 +277,7 @@ test("ja materializadas nao sao reaplicadas (idempotencia por chave_item)", () =
   assert.equal(plano.jaMaterializadas[0].estadoAtual.itemConhecidoId, info.lastInsertRowid);
 });
 
-test("--aplicar usa servico existente (persistirRateiosOperacionais) e materializa", () => {
+test("--aplicar usa servico existente (persistirRateiosOperacionais) e materializa", async () => {
   const db = criarBancoComSchema();
   inserirDivergenciaComDecisao(db, {
     numeroConvenio: "937782", uf: "AC",
@@ -294,7 +294,7 @@ test("--aplicar usa servico existente (persistirRateiosOperacionais) e materiali
     return 42; // simulado: id do item conhecido criado
   };
 
-  const resultado = aplicarSaneamentoDecisoesAntigas({
+  const resultado = await aplicarSaneamentoDecisoesAntigas({
     db,
     persistirRateiosOperacionais: persistirFake,
   });

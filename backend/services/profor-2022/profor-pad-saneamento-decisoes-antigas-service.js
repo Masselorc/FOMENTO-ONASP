@@ -263,7 +263,7 @@ function planejarSaneamentoDecisoesAntigas(opcoes = {}) {
   };
 }
 
-function aplicarSaneamentoDecisoesAntigas(opcoes = {}) {
+async function aplicarSaneamentoDecisoesAntigas(opcoes = {}) {
   const database = opcoes.db || dbPadrao;
   const persistir = opcoes.persistirRateiosOperacionais || persistirRateiosOperacionais;
   const plano = planejarSaneamentoDecisoesAntigas({ ...opcoes, db: database });
@@ -272,7 +272,7 @@ function aplicarSaneamentoDecisoesAntigas(opcoes = {}) {
 
   for (const candidata of plano.candidatas) {
     try {
-      const itemConhecidoId = persistir({
+      const itemConhecidoId = await persistir({
         contexto: candidata.contexto,
         linhas: candidata.linhasPersistencia,
         evento: "MATERIALIZAR_DECISAO_ANTIGA_RATEIO_MANUAL",
