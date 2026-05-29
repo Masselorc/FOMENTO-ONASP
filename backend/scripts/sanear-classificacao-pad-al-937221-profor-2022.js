@@ -27,6 +27,7 @@ const { registrarDecisao } = require("../services/profor-2022/profor-pad-revisao
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 const { query } = require("../db/postgres-client");
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 
 // Normaliza payload_json (jsonb no Postgres vem como objeto) para string, de modo
 // que o consumo a seguir (JSON.parse(linha.payload_json || "{}")) permaneça válido.
@@ -91,6 +92,7 @@ function montarRateioItemNovo(item, payloadDivergencia) {
 }
 
 async function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("sanear-classificacao-pad-al-937221-profor-2022");
   inicializarBanco();
 
   // 1) Itens novos do PAD: classificação por área a partir do PDF.

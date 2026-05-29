@@ -1,7 +1,6 @@
 {
   "scripts": {
     "start": "node backend/server.js",
-    "init-db": "node backend/db/init-db.js",
     "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js",
     "publicar:dados": "node backend/scripts/publicar-dados-estaticos.js",
     "publicar:profor-2022": "node backend/scripts/publicar-profor-2022-estatico.js",

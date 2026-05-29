@@ -3,6 +3,7 @@ const path = require("node:path");
 const { registrarDecisao } = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 
 const CAMINHO_DRY_RUN_JSON = "backend/data/relatorios/profor-2022-pendencias-diacritico-dry-run.json";
 
@@ -12,6 +13,8 @@ const STATUS_RESOLUTIVOS = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "APLICAD
 async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
   const dryRunCaminho = path.join(repoRoot, CAMINHO_DRY_RUN_JSON);
+
+  exigirConfirmacaoAuditoriaSqliteLegado("sanear-pendencias-diacritico-pad-profor-2022");
 
   inicializarBanco();
 

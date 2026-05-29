@@ -1,6 +1,7 @@
 const path = require("node:path");
 
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const { gerarFilaRevisao } = require("../services/profor-2022/profor-pad-revisao-service");
 
 function imprimirLista(titulo, lista) {
@@ -11,6 +12,7 @@ function imprimirLista(titulo, lista) {
 }
 
 async function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("gerar-fila-revisao-pad-profor-2022");
   const repoRoot = path.resolve(__dirname, "../..");
   inicializarBanco();
 

@@ -7,12 +7,14 @@
  * execuções. Nenhuma decisão é aplicada ao planoAplicacao.
  */
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 const decisaoService = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 
 const CHAVE_TESTE = "revisao_teste:divergencia-controlada";
 
 async function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("testar-decisao-revisao-pad-profor-2022");
   inicializarBanco();
 
   // 1. Garante uma divergência de teste num lote próprio de teste.

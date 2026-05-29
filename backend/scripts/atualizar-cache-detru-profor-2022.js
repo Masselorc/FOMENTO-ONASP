@@ -10,10 +10,12 @@ require("dotenv").config({ path: path.join(__dirname, "..", "..", ".env") });
 const {
   assertChamadaExternaPermitida,
 } = require("../services/profor-2022/profor-workbook-fallback-guard-service");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 
 async function executar() {
   try {
     assertChamadaExternaPermitida("script_atualizar_cache_detru_profor_2022", { tipo: "DETRU", execucaoLocal: true });
+    exigirConfirmacaoAuditoriaSqliteLegado("atualizar-cache-detru-profor-2022");
 
     const { inicializarBanco } = require("../db/init-db");
     const {

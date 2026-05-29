@@ -1,6 +1,7 @@
 const path = require("node:path");
 
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const {
   CAMINHO_RELATORIO_RECONSTRUCAO,
   reconstruirPlanoAplicacaoPadDryRun,
@@ -69,6 +70,7 @@ function imprimirResumo(resultado, arquivoJson, arquivoMarkdown) {
 }
 
 async function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("comparar-plano-pad-profor-2022");
   inicializarBanco();
   const repoRoot = path.resolve(__dirname, "../..");
 

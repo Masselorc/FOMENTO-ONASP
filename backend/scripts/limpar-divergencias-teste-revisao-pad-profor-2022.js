@@ -5,9 +5,11 @@
  * por "revisao_teste:" e seus registros vinculados de decisões/logs.
  */
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 
 async function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("limpar-divergencias-teste-revisao-pad-profor-2022");
   inicializarBanco();
 
   const resultado = await repo.limparDivergenciasTeste();

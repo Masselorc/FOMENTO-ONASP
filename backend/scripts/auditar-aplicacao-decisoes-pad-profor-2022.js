@@ -7,6 +7,7 @@
  * e não publica.
  */
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const {
   carregarAplicacaoDecisoesDryRun,
 } = require("../services/profor-2022/profor-pad-decisao-aplicacao-service");
@@ -28,6 +29,7 @@ function imprimirLista(titulo, lista) {
 }
 
 async function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("auditar-aplicacao-decisoes-pad-profor-2022");
   inicializarBanco();
   const aplicacao = await carregarAplicacaoDecisoesDryRun();
 

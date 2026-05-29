@@ -5,6 +5,7 @@
  * não apaga divergências reais e ignora chaves de teste "revisao_teste:".
  */
 const { inicializarBanco } = require("../db/init-db");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 
 function imprimirOrfaos(orfaos) {
@@ -14,6 +15,7 @@ function imprimirOrfaos(orfaos) {
 }
 
 async function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("sanear-status-orfaos-revisao-pad-profor-2022");
   inicializarBanco();
   const dryRun = process.argv.includes("--dry-run") || process.env.npm_config_dry_run === "true";
 
