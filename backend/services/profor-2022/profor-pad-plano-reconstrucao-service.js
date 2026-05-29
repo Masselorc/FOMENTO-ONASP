@@ -611,7 +611,7 @@ async function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   let segurancaSemBloqueio = false;
   try {
     const seguranca = opcoes.segurancaPreAtivacao
-      || auditarSegurancaPreAtivacaoDryRun({ repoRoot });
+      || await auditarSegurancaPreAtivacaoDryRun({ repoRoot });
     segurancaPreAtivacao = resumoSegurancaParaRelatorio(seguranca);
     segurancaSemBloqueio = seguranca.resumo.totalBloqueiosAtivacao === 0;
   } catch (erro) {

@@ -21,6 +21,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const db = require("../db/database");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const {
   normalizarDescricao,
   agruparPorDescricao,
@@ -309,6 +310,7 @@ function classificarAchado(divergencia, fatores, grupoPad, jaDiagnosticado, temD
 }
 
 function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("auditar-regressao-saneamentos-pad-profor-2022");
   const { porChaveDescricao, porItemConhecido } = indexarGruposPad();
   const divergencias = carregarDivergencias();
   const decisoes = carregarDecisoesPorDivergencia();

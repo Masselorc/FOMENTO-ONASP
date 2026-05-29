@@ -3,7 +3,6 @@
  * Executa as Tarefas B, C, D e E de forma automatizada e controlada.
  */
 const assert = require("node:assert");
-const { inicializarBanco } = require("../db/init-db");
 const { query } = require("../db/postgres-client");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
 const decisaoService = require("../services/profor-2022/profor-pad-revisao-decisao-service");
@@ -18,9 +17,6 @@ console.log("Iniciando Validação Ponta a Ponta da Decisão Estruturada PAD/PRO
 console.log("======================================================================\n");
 
 async function executar() {
-  // Inicialização do Banco
-  inicializarBanco();
-
   // Limpa possíveis resíduos de execuções de teste anteriores que falharam
   console.log("Limpando possíveis resíduos de testes anteriores...");
   await repo.limparDivergenciasTeste();
@@ -373,7 +369,7 @@ async function executar() {
   // Validador de Segurança Pré-Ativação (produção)
   console.log("  Validando que decisões de teste não afetam a segurança pré-ativação de produção...");
   const repoRoot = path.resolve(__dirname, "../..");
-  const auditoriaSeguranca = auditarSegurancaPreAtivacaoDryRun({ repoRoot });
+  const auditoriaSeguranca = await auditarSegurancaPreAtivacaoDryRun({ repoRoot });
   
   // Assegurar que nenhum bloqueio ou aviso foi gerado referente a revisao_teste
   const testBlocks = auditoriaSeguranca.bloqueiosAtivacao.filter(item => item.chaveDivergencia && item.chaveDivergencia.startsWith("revisao_teste:"));

@@ -43,9 +43,9 @@ function imprimirResumo(relatorio, caminhoSaida) {
   }
 }
 
-function executar() {
+async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
-  const relatorio = validarDecisoesSaneamento({ repoRoot });
+  const relatorio = await validarDecisoesSaneamento({ repoRoot });
 
   salvarRelatorioValidacao(relatorio, path.join(repoRoot, CAMINHO_SAIDA));
   imprimirResumo(relatorio, CAMINHO_SAIDA);
@@ -56,10 +56,8 @@ function executar() {
   }
 }
 
-try {
-  executar();
-} catch (erro) {
+executar().catch((erro) => {
   console.error("Falha ao validar decisões de saneamento PAD PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

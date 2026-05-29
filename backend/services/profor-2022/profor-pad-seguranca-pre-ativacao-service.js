@@ -2,7 +2,7 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const { coletarDivergencias } = require("./profor-pad-revisao-service");
 const {
   carregarAplicacaoDecisoesDryRun,
@@ -28,6 +28,12 @@ const DECISOES_RESOLUTIVAS = ["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"];
 
 function agoraIso() {
   return new Date().toISOString();
+}
+
+// Normaliza flags booleanas: Postgres devolve boolean (true/false); o legado
+// SQLite usava 1/0. Aceita tambem as strings equivalentes por seguranca.
+function ehVerdadeiro(valor) {
+  return valor === true || valor === 1 || valor === "1" || valor === "t" || valor === "true";
 }
 
 function parseJsonSeguro(texto, padrao) {
@@ -61,8 +67,10 @@ function stringifyOrdenado(valor) {
 function normalizarParaHash(divergencia) {
   const d = divergencia || {};
   let payload = {};
-  if (typeof d.payload_json === "string") payload = parseJsonSeguro(d.payload_json, {});
-  else if (typeof d.payloadJson === "string") payload = parseJsonSeguro(d.payloadJson, {});
+  // payload_json pode chegar como string (legado) ou como objeto (jsonb do Postgres,
+  // ja desserializado pelo driver pg). parseJsonSeguro tolera ambos.
+  if (d.payload_json !== undefined && d.payload_json !== null) payload = parseJsonSeguro(d.payload_json, {});
+  else if (d.payloadJson !== undefined && d.payloadJson !== null) payload = parseJsonSeguro(d.payloadJson, {});
   else if (d.payload && typeof d.payload === "object") payload = d.payload;
   return {
     chaveDivergencia: d.chave_divergencia ?? d.chaveDivergencia ?? null,
@@ -130,9 +138,9 @@ function classificarDivergenciaReapresentacao({ reapresentada, status, bloqueiaP
 
 /* ----------------------------- auditoria de payload ----------------------------- */
 
-function auditarPayloadDecisoes() {
-  const placeholders = DECISOES_RESOLUTIVAS.map(() => "?").join(", ");
-  const linhas = db.prepare(`
+async function auditarPayloadDecisoes() {
+  const placeholders = DECISOES_RESOLUTIVAS.map((_, i) => `$${i + 1}`).join(", ");
+  const linhas = (await query(`
     SELECT
       dec.id AS decisao_id, dec.divergencia_id, dec.decisao, dec.usuario,
       dec.decidido_em, dec.payload_decisao_json,
@@ -143,11 +151,11 @@ function auditarPayloadDecisoes() {
     WHERE dec.decisao IN (${placeholders})
       AND (d.chave_divergencia IS NULL OR d.chave_divergencia NOT LIKE 'revisao_teste:%')
     ORDER BY dec.id
-  `).all(...DECISOES_RESOLUTIVAS);
+  `, DECISOES_RESOLUTIVAS)).rows;
 
   // Decisões que liberam ativação: última decisão resolutiva da divergência cujo
   // efeito altera a reconstrução ou cuja divergência bloqueia publicação.
-  const aplicacao = carregarAplicacaoDecisoesDryRun();
+  const aplicacao = await carregarAplicacaoDecisoesDryRun();
   const liberadorasPorDecisaoId = new Map();
   for (const registro of aplicacao.decisoesAplicadasDryRun) {
     const liberaAtivacao = Boolean(
@@ -199,7 +207,7 @@ function auditarPayloadDecisoes() {
       decisao: linha.decisao,
       usuario: linha.usuario || null,
       decididoEm: linha.decidido_em || null,
-      bloqueiaPublicacao: linha.bloqueia_publicacao === 1,
+      bloqueiaPublicacao: ehVerdadeiro(linha.bloqueia_publicacao),
       liberaAtivacao,
       temSnapshot,
       payloadHashNoMomentoDaDecisao: hashSnapshot,
@@ -213,7 +221,7 @@ function auditarPayloadDecisoes() {
 
 /* ------------------------- auditoria de divergências não reapresentadas ------------------------- */
 
-function auditarDivergenciasNaoReapresentadas(repoRoot) {
+async function auditarDivergenciasNaoReapresentadas(repoRoot) {
   let chavesGeradasHoje = null;
   let erroGeracao = null;
   try {
@@ -223,19 +231,19 @@ function auditarDivergenciasNaoReapresentadas(repoRoot) {
     erroGeracao = erro?.message || String(erro);
   }
 
-  const existentes = db.prepare(`
+  const existentes = (await query(`
     SELECT id, chave_divergencia, tipo_alerta, numero_convenio, uf, status, bloqueia_publicacao
     FROM profor_2022_revisao_divergencias
     WHERE chave_divergencia NOT LIKE 'revisao_teste:%'
     ORDER BY id
-  `).all();
+  `)).rows;
 
-  const placeholders = DECISOES_RESOLUTIVAS.map(() => "?").join(", ");
+  const placeholders = DECISOES_RESOLUTIVAS.map((_, i) => `$${i + 1}`).join(", ");
   const comDecisaoResolutiva = new Set(
-    db.prepare(`
+    (await query(`
       SELECT DISTINCT divergencia_id FROM profor_2022_revisao_decisoes
       WHERE decisao IN (${placeholders})
-    `).all(...DECISOES_RESOLUTIVAS).map((linha) => linha.divergencia_id)
+    `, DECISOES_RESOLUTIVAS)).rows.map((linha) => linha.divergencia_id)
   );
 
   const auditadas = existentes.map((divergencia) => {
@@ -245,7 +253,7 @@ function auditarDivergenciasNaoReapresentadas(repoRoot) {
     const classificacao = classificarDivergenciaReapresentacao({
       reapresentada,
       status: divergencia.status,
-      bloqueiaPublicacao: divergencia.bloqueia_publicacao === 1,
+      bloqueiaPublicacao: ehVerdadeiro(divergencia.bloqueia_publicacao),
       temDecisaoResolutiva: comDecisaoResolutiva.has(divergencia.id),
     });
     return {
@@ -255,7 +263,7 @@ function auditarDivergenciasNaoReapresentadas(repoRoot) {
       numeroConvenio: divergencia.numero_convenio,
       uf: divergencia.uf,
       status: divergencia.status,
-      bloqueiaPublicacao: divergencia.bloqueia_publicacao === 1,
+      bloqueiaPublicacao: ehVerdadeiro(divergencia.bloqueia_publicacao),
       temDecisaoResolutiva: comDecisaoResolutiva.has(divergencia.id),
       reapresentada,
       classificacao: classificacao.classificacao,
@@ -272,11 +280,11 @@ function auditarDivergenciasNaoReapresentadas(repoRoot) {
  * Executa a auditoria de segurança pré-ativação em dry-run.
  * Não escreve em tabelas.
  */
-function auditarSegurancaPreAtivacaoDryRun(opcoes = {}) {
+async function auditarSegurancaPreAtivacaoDryRun(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
 
-  const decisoesAuditadas = auditarPayloadDecisoes();
-  const divergencias = auditarDivergenciasNaoReapresentadas(repoRoot);
+  const decisoesAuditadas = await auditarPayloadDecisoes();
+  const divergencias = await auditarDivergenciasNaoReapresentadas(repoRoot);
 
   const payloadAlteradoAposDecisao = decisoesAuditadas.filter(
     (item) => item.classificacao === "payload_alterado_apos_decisao"

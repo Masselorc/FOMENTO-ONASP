@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const db = require("../db/database");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const { arredondarMoedaProfor } = require("../services/profor-2022/profor-plano-aplicacao-service");
 const {
   avaliarDivergenciaQuantidadeValorUnitario,
@@ -320,6 +321,7 @@ function renderMarkdown(relatorio) {
 }
 
 function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("auditar-quantidades-suspeitas-profor-2022");
   const repoRoot = path.resolve(__dirname, "../..");
   const caminhoJson = path.join(repoRoot, CAMINHO_JSON);
   const caminhoMd = path.join(repoRoot, CAMINHO_MD);

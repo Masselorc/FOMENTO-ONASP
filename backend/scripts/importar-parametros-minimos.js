@@ -260,6 +260,18 @@ function importarParametrosMinimos() {
 }
 
 if (require.main === module) {
+  // Este script importa a planilha de parametros minimos para o SQLite legado
+  // (backend/data/onasp.sqlite). Apos a migracao para Postgres, a escrita aqui
+  // nao reflete o Postgres/Supabase. Bloqueado por seguranca: exige confirmacao
+  // explicita ate a migracao definitiva da importacao para Postgres.
+  if (process.env.CONFIRMAR_IMPORTACAO_PARAMETROS_MINIMOS !== "SIM") {
+    console.error(
+      "Importacao de parametros minimos bloqueada: escreve no SQLite legado, " +
+      "ja migrado para Postgres. Defina CONFIRMAR_IMPORTACAO_PARAMETROS_MINIMOS=SIM " +
+      "apenas se realmente quiser popular o SQLite local. Migracao para Postgres pendente."
+    );
+    process.exit(1);
+  }
   const resultado = importarParametrosMinimos();
   console.log(`Parâmetros mínimos importados: ${resultado.registros} registro(s), ${resultado.parametros} parâmetro(s).`);
 }

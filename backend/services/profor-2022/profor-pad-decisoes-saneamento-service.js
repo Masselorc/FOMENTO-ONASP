@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const {
   normalizarNumeroConvenio,
 } = require("./profor-plano-aplicacao-service");
@@ -90,17 +90,15 @@ function carregarDecisoesSaneamento(opcoes = {}) {
 }
 
 /** Carrega o contexto de validação: carteira, itens conhecidos e itens PAD atuais. */
-function carregarContextoValidacao(repoRoot, opcoes = {}) {
+async function carregarContextoValidacao(repoRoot, opcoes = {}) {
   const conveniosCarteira = new Set(
-    db.prepare("SELECT numero_convenio FROM profor_convenios_monitorados WHERE ativo = 1")
-      .all()
+    (await query("SELECT numero_convenio FROM profor_convenios_monitorados WHERE ativo = true")).rows
       .map((linha) => normalizarNumeroConvenio(linha.numero_convenio))
       .filter(Boolean)
   );
 
   const itensConhecidosPorId = new Map(
-    db.prepare("SELECT id, chave_item, ativo FROM profor_2022_itens_conhecidos")
-      .all()
+    (await query("SELECT id, chave_item, ativo FROM profor_2022_itens_conhecidos")).rows
       .map((linha) => [Number(linha.id), linha])
   );
 
@@ -372,10 +370,10 @@ function listarPendentes(dados) {
 }
 
 /** Orquestra todas as regras de validação do arquivo de decisões. */
-function validarDecisoesSaneamento(opcoes = {}) {
+async function validarDecisoesSaneamento(opcoes = {}) {
   const carregado = carregarDecisoesSaneamento(opcoes);
   const { dados, repoRoot, caminhoRelativo } = carregado;
-  const ctx = carregarContextoValidacao(repoRoot, opcoes);
+  const ctx = await carregarContextoValidacao(repoRoot, opcoes);
 
   const problemas = [
     ...validarConveniosNaCarteira(dados, ctx),

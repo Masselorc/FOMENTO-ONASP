@@ -10,7 +10,6 @@
  */
 const path = require("node:path");
 
-const { inicializarBanco } = require("../db/init-db");
 const {
   CAMINHO_RELATORIO_SEGURANCA,
   CAMINHO_RELATORIO_SEGURANCA_MD,
@@ -49,10 +48,9 @@ function imprimirResumo(resultado, arquivoJson, arquivoMarkdown) {
   }
 }
 
-function executar() {
-  inicializarBanco();
+async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
-  const resultado = auditarSegurancaPreAtivacaoDryRun({ repoRoot });
+  const resultado = await auditarSegurancaPreAtivacaoDryRun({ repoRoot });
 
   const caminhoJson = path.join(repoRoot, CAMINHO_RELATORIO_SEGURANCA);
   const caminhoMarkdown = path.join(repoRoot, CAMINHO_RELATORIO_SEGURANCA_MD);
@@ -65,10 +63,8 @@ function executar() {
   );
 }
 
-try {
-  executar();
-} catch (erro) {
+executar().catch((erro) => {
   console.error("Falha na auditoria de segurança pré-ativação PAD PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});
