@@ -15,6 +15,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const db = require("../db/database");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const {
   classificarAusenteComSubstituto,
 } = require("../services/profor-2022/profor-pad-substituto-auditoria-service");
@@ -31,6 +32,7 @@ function parseJsonSeguro(texto) {
 }
 
 function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("auditar-ausentes-com-substituto-pad-profor-2022");
   const repoRoot = path.resolve(__dirname, "../..");
 
   // Todas as divergências da fila (com payload).

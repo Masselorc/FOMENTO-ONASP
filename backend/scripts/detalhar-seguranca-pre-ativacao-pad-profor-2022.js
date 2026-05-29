@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const db = require("../db/database");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 
 const ENTRADA = "backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json";
 const SAIDA_JSON = "backend/data/relatorios/profor-2022-seguranca-pre-ativacao-detalhada-dry-run.json";
@@ -265,6 +266,7 @@ function renderMarkdown(relatorio) {
 }
 
 function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("detalhar-seguranca-pre-ativacao-pad-profor-2022");
   const seguranca = lerJson(ENTRADA);
   const divergencias = carregarDivergencias();
   const { porDivergencia, porId } = carregarDecisoes();

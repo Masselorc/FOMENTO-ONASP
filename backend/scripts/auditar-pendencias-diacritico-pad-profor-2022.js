@@ -14,6 +14,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const db = require("../db/database");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const {
   classificarDivergenciaDiacritico,
   montarSaneadasMap,
@@ -32,6 +33,7 @@ function parseJsonSeguro(texto) {
 }
 
 function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("auditar-pendencias-diacritico-pad-profor-2022");
   const repoRoot = path.resolve(__dirname, "../..");
   const saneamentoCaminho = path.join(repoRoot, CAMINHO_SANEAMENTO);
 

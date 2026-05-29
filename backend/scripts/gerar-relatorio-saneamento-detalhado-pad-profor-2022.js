@@ -20,9 +20,9 @@ function imprimirResumo(relatorio) {
   console.log(`Alertas impeditivos vinculados: ${resumo.totalAlertasImpeditivosVinculados}`);
 }
 
-function executar() {
+async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
-  const relatorio = montarSaneamentoDetalhado({ repoRoot });
+  const relatorio = await montarSaneamentoDetalhado({ repoRoot });
 
   salvarSaneamentoDetalhado(relatorio, {
     caminhoJson: path.join(repoRoot, CAMINHO_SAIDA_JSON),
@@ -31,10 +31,8 @@ function executar() {
   imprimirResumo(relatorio);
 }
 
-try {
-  executar();
-} catch (erro) {
+executar().catch((erro) => {
   console.error("Falha ao gerar relatório de saneamento PAD detalhado PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

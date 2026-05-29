@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
 const { normalizarTextoProfor } = require("./profor-plano-aplicacao-service");
 
 const CAMINHO_SANEAMENTO_PADRAO = "backend/data/relatorios/profor-2022-pad-saneamento.json";
@@ -82,8 +82,8 @@ function carregarSaneamentoBase(opcoes = {}) {
  * Carrega os alertas da importação inicial agrupados por chave_item.
  * O cruzamento é feito apenas por igualdade exata de chave_item (sem fuzzy).
  */
-function carregarAlertasPorChaveItem() {
-  const linhas = db.prepare(`
+async function carregarAlertasPorChaveItem() {
+  const linhas = (await query(`
     SELECT
       a.id,
       a.lote_importacao_id,
@@ -101,7 +101,7 @@ function carregarAlertasPorChaveItem() {
       a.criado_em
     FROM profor_2022_rateio_import_alertas a
     ORDER BY a.chave_item, a.id
-  `).all();
+  `)).rows;
 
   const mapa = new Map();
   for (const linha of linhas) {
@@ -138,8 +138,8 @@ function carregarAlertasPorChaveItem() {
 }
 
 /** Carrega os itens conhecidos ativos indexados por chave_item. */
-function carregarItensConhecidosPorChave() {
-  const linhas = db.prepare(`
+async function carregarItensConhecidosPorChave() {
+  const linhas = (await query(`
     SELECT
       id,
       chave_item,
@@ -154,8 +154,8 @@ function carregarItensConhecidosPorChave() {
       status_item,
       lote_importacao_id
     FROM profor_2022_itens_conhecidos
-    WHERE ativo = 1
-  `).all();
+    WHERE ativo = true
+  `)).rows;
 
   const mapa = new Map();
   for (const linha of linhas) {
@@ -168,8 +168,10 @@ function carregarItensConhecidosPorChave() {
       uf: linha.uf,
       ano: linha.ano,
       valorUnitarioReferencia: linha.valor_unitario_referencia,
-      possuiPendenciaImpeditiva: linha.possui_pendencia_impeditiva === 1,
-      aptoParaImportacaoFutura: linha.apto_para_importacao_futura === 1,
+      // possui_pendencia_impeditiva e apto_para_importacao_futura sao integer no
+      // schema Postgres (0/1), mantidos por comparacao numerica.
+      possuiPendenciaImpeditiva: Number(linha.possui_pendencia_impeditiva) === 1,
+      aptoParaImportacaoFutura: Number(linha.apto_para_importacao_futura) === 1,
       statusItem: linha.status_item,
       loteImportacaoId: linha.lote_importacao_id,
     });
@@ -178,8 +180,8 @@ function carregarItensConhecidosPorChave() {
 }
 
 /** Carrega os rateios ativos agrupados por item_conhecido_id. */
-function carregarRateiosAtivosPorItem() {
-  const linhas = db.prepare(`
+async function carregarRateiosAtivosPorItem() {
+  const linhas = (await query(`
     SELECT
       item_conhecido_id,
       area,
@@ -190,9 +192,9 @@ function carregarRateiosAtivosPorItem() {
       percentual_quantidade,
       percentual_valor
     FROM profor_2022_item_rateios
-    WHERE ativo = 1
+    WHERE ativo = true
     ORDER BY item_conhecido_id, area, natureza
-  `).all();
+  `)).rows;
 
   const mapa = new Map();
   for (const linha of linhas) {
@@ -283,15 +285,16 @@ function enriquecerItensNaoAptos(itensNaoAptos, contexto) {
 }
 
 /** Orquestra a montagem do relatório de saneamento detalhado. */
-function montarSaneamentoDetalhado(opcoes = {}) {
+async function montarSaneamentoDetalhado(opcoes = {}) {
   const base = carregarSaneamentoBase(opcoes);
   const itensNaoAptos = garantirArray(base.dados.itensConhecidosNaoAptos);
 
-  const contexto = {
-    alertasPorChave: carregarAlertasPorChaveItem(),
-    itensPorChave: carregarItensConhecidosPorChave(),
-    rateiosPorItem: carregarRateiosAtivosPorItem(),
-  };
+  const [alertasPorChave, itensPorChave, rateiosPorItem] = await Promise.all([
+    carregarAlertasPorChaveItem(),
+    carregarItensConhecidosPorChave(),
+    carregarRateiosAtivosPorItem(),
+  ]);
+  const contexto = { alertasPorChave, itensPorChave, rateiosPorItem };
 
   const { detalhados, semAlertaOrigem } = enriquecerItensNaoAptos(itensNaoAptos, contexto);
 

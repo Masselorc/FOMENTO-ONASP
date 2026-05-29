@@ -1,8 +1,8 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const { inicializarBanco } = require("../db/init-db");
 const db = require("../db/database");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const revisaoService = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 
 const CAMINHO_SAIDA_JSON = "backend/data/relatorios/profor-2022-item-sem-rateio-rateio-antigo-dry-run.json";
@@ -717,8 +717,14 @@ function imprimirRelatorio(relatorio) {
 }
 
 async function executar() {
-  inicializarBanco();
+  exigirConfirmacaoAuditoriaSqliteLegado("auditar-itens-sem-rateio-com-rateio-antigo-pad-profor-2022");
   const aplicar = argumentoFlag("--aplicar");
+  if (aplicar && process.env.CONFIRMAR_SANEAMENTO_PROFOR_2022 !== "SIM") {
+    throw new Error(
+      "Modo --aplicar escreve decisao/rateio e exige confirmacao explicita. " +
+      "Defina CONFIRMAR_SANEAMENTO_PROFOR_2022=SIM para autorizar. Bloqueado por seguranca."
+    );
+  }
   const idAlvo = Number(argumentoValor("--id") || 23);
   const relatorio = await montarRelatorio();
   if (aplicar) {

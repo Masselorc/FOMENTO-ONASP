@@ -1203,7 +1203,11 @@ async function rotearApi(req, res, pathname) {
   }
 }
 
-prepararBanco();
+prepararBanco().catch((erro) => {
+  console.error("Falha ao preparar o banco (Postgres) no boot do servidor:");
+  console.error(erro?.stack || erro?.message || erro);
+  process.exit(1);
+});
 
 const server = http.createServer((req, res) => {
   const parsed = new URL(req.url, `http://${req.headers.host || "localhost"}`);

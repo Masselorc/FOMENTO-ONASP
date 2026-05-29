@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const db = require("../db/database");
+const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const {
   DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
   ehSaldoResidualProfor,
@@ -418,6 +419,7 @@ function renderMarkdown(relatorio) {
 }
 
 function executar() {
+  exigirConfirmacaoAuditoriaSqliteLegado("auditar-saldos-residuais-profor-2022");
   const registros = [];
   const fontes = [];
   const banco = carregarRegistrosBanco();
