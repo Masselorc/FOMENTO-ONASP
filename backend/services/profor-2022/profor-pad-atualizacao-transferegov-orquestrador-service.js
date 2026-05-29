@@ -64,8 +64,7 @@ async function obterMapaUfs() {
     );
     return new Map(linhas.rows.map((l) => [String(l.numero_convenio), l.uf]));
   } catch (erro) {
-    console.error("Falha ao obter UFs do Postgres:", erro);
-    return new Map();
+    throw new Error(`Falha ao obter UFs da carteira monitorada no Postgres: ${erro?.message || erro}`);
   }
 }
 
@@ -76,12 +75,12 @@ async function obterMapaUfs() {
  * @param {Object} opcoes
  * @param {string} [opcoes.repoRoot]
  * @param {(evento: Object) => void} [opcoes.onProgress]
- * @param {Object} [opcoes.db]  Banco SQLite (injetável para teste)
  * @param {Function} [opcoes.extrairPadTransferegov]
  * @param {Function} [opcoes.carregarPadsOperacional]
  * @param {Function} [opcoes.salvarCache] (cache, opcoes) => void
  * @param {Function} [opcoes.carregarReferenciaPadExcel]
  * @param {Function} [opcoes.selecionarConvenios]
+ * @param {Function} [opcoes.obterMapaUfs]
  */
 async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || repoRootPadrao();
@@ -91,6 +90,7 @@ async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
   const salvar = opcoes.salvarCache || salvarCachePadTransferegov;
   const carregarReferencia = opcoes.carregarReferenciaPadExcel || carregarReferenciaPadExcel;
   const escolherConvenios = opcoes.selecionarConvenios || selecionarConvenios;
+  const obterUfs = opcoes.obterMapaUfs || obterMapaUfs;
 
   function emitir(evento) {
     try {
@@ -111,7 +111,7 @@ async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
     throw new Error(erro.mensagem);
   }
   const total = convenios.length;
-  const mapaUfs = await obterMapaUfs();
+  const mapaUfs = await obterUfs();
 
   emitir({
     etapa: "lista_convenios",

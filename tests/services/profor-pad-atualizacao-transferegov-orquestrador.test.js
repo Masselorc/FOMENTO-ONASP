@@ -70,11 +70,13 @@ function colaboradoresFake({
     };
   };
   const db = { prepare: () => ({ all: () => [] }) };
+  const obterMapaUfs = async () => new Map();
   return { chamadas, colaboradores: {
     carregarReferenciaPadExcel, selecionarConvenios,
     extrairPadTransferegov: extrair,
     salvarCache,
     carregarPadsOperacional,
+    obterMapaUfs,
     db,
   } };
 }
