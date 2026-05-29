@@ -391,7 +391,7 @@ function gerarLinhasItem(itemPad, rateios, contexto = {}) {
  * divergências pendentes — registra impedimentos e mantém aptoParaAtivacao/
  * aptoParaPublicacao como false enquanto houver pendências.
  */
-function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
+async function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
 
   const conferencia = conferirItensPadComRateiosProfor2022({
@@ -400,7 +400,7 @@ function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
     usarExcelLegado: opcoes.usarExcelLegado,
   });
   const memoria = carregarMemoriaRateios();
-  const auditoria = repoRevisao.obterEstatisticasAuditoria();
+  const auditoria = await repoRevisao.obterEstatisticasAuditoria();
   const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
   const regras = aplicacaoDecisoes.regras;
 

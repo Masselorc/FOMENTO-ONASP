@@ -139,7 +139,7 @@ async function recarregarPadsOperacional(opcoes = {}) {
 
     // 2. Executar reconstrução dry-run
     etapaAtual = "reconstruir_plano";
-    const reconstrucao = reconstruirPlanoAplicacaoPadDryRun(opcoes);
+    const reconstrucao = await reconstruirPlanoAplicacaoPadDryRun(opcoes);
 
     etapaAtual = "salvar_relatorio_reconstrucao";
     salvarRelatorioReconstrucao(reconstrucao, CAMINHO_RECONSTRUCAO_JSON);
@@ -154,7 +154,7 @@ async function recarregarPadsOperacional(opcoes = {}) {
 
     // 3. Executar comparação
     etapaAtual = "comparar_plano";
-    const comparacao = compararPlanosPadDryRun({ repoRoot, reconstrucao });
+    const comparacao = await compararPlanosPadDryRun({ repoRoot, reconstrucao });
 
     etapaAtual = "salvar_relatorio_comparacao";
     salvarRelatorioComparacao(comparacao, CAMINHO_COMPARACAO_JSON, CAMINHO_COMPARACAO_MD);

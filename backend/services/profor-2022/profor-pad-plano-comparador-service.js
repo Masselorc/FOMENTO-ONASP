@@ -291,10 +291,10 @@ function normalizarDescricoesPlanosPorEquivalencia(linhas, equivalenciasAceitas)
  * reconstruído pelos relatórios PAD. Não usa fuzzy matching, não consolida
  * itens ambíguos silenciosamente e não altera a origem ativa.
  */
-function compararPlanosPadDryRun(opcoes = {}) {
+async function compararPlanosPadDryRun(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
   const reconstrucao = opcoes.reconstrucao
-    || reconstruirPlanoAplicacaoPadDryRun({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
+    || await reconstruirPlanoAplicacaoPadDryRun({ repoRoot, pastaRelativa: opcoes.pastaRelativa });
 
   const planoAntigo = consolidarLinhasSaldoResidual(montarPlanoOrigemAntiga());
   const planoNovo = consolidarLinhasSaldoResidual(reconstrucao.planoAplicacaoReconstruido);
