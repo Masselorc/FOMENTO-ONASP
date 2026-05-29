@@ -361,7 +361,7 @@ async function executar() {
   // FASE 4: Validação do Motor e Reconstrução Dry-run
   console.log("Fase 4: Validando interpretação das decisões de teste pelo motor dry-run...");
   
-  const aplicacaoDecisoes = carregarAplicacaoDecisoesDryRun();
+  const aplicacaoDecisoes = await carregarAplicacaoDecisoesDryRun();
   console.log(`  Decisões resolutivas encontradas no dry-run: ${aplicacaoDecisoes.totalDecisoesResolutivasEncontradas}`);
   console.log(`  Decisões interpretadas com sucesso: ${aplicacaoDecisoes.totalDecisoesInterpretadasDryRun}`);
   console.log(`  Decisões com efeito na reconstrução: ${aplicacaoDecisoes.totalDecisoesComEfeitoNaReconstrucao}`);

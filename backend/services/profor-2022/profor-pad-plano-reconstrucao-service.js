@@ -401,7 +401,7 @@ async function reconstruirPlanoAplicacaoPadDryRun(opcoes = {}) {
   });
   const memoria = carregarMemoriaRateios();
   const auditoria = await repoRevisao.obterEstatisticasAuditoria();
-  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
+  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || await carregarAplicacaoDecisoesDryRun();
   const regras = aplicacaoDecisoes.regras;
 
   const plano = [];

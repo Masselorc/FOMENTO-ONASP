@@ -74,7 +74,7 @@ async function executar() {
 
   // Carrega o motor de decisões uma única vez e o compartilha entre a
   // reconstrução e o comparador, garantindo coerência na mesma rodada.
-  const aplicacaoDecisoes = carregarAplicacaoDecisoesDryRun();
+  const aplicacaoDecisoes = await carregarAplicacaoDecisoesDryRun();
 
   // Executa a reconstrução dry-run e também a salva, para manter os dois
   // relatórios coerentes na mesma rodada.

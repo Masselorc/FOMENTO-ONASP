@@ -301,7 +301,7 @@ async function compararPlanosPadDryRun(opcoes = {}) {
   const planoAntigo = consolidarLinhasSaldoResidual(montarPlanoOrigemAntiga());
   const planoNovo = consolidarLinhasSaldoResidual(reconstrucao.planoAplicacaoReconstruido);
   const conveniosComPendencia = await carregarConveniosComPendenciaBloqueante();
-  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || carregarAplicacaoDecisoesDryRun();
+  const aplicacaoDecisoes = opcoes.aplicacaoDecisoes || await carregarAplicacaoDecisoesDryRun();
   const regras = aplicacaoDecisoes.regras;
 
   normalizarDescricoesPlanosPorEquivalencia(planoAntigo, regras.equivalenciasAceitas);
