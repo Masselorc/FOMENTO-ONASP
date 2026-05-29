@@ -1161,7 +1161,8 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "GET" && pathname === "/api/profor-2022/revisao/auditoria") {
-      enviarJson(res, 200, { success: true, auditoria: revisaoDecisaoService.auditarPendencias() });
+      const auditoria = await revisaoDecisaoService.auditarPendencias();
+      enviarJson(res, 200, { success: true, auditoria });
       return;
     }
 
@@ -1181,7 +1182,7 @@ async function rotearApi(req, res, pathname) {
       if (req.method === "POST" && /^\d+\/decisoes$/.test(resto)) {
         const id = Number(resto.split("/")[0]);
         const payload = await lerJsonBody(req);
-        const resultado = revisaoDecisaoService.registrarDecisao(id, payload);
+        const resultado = await revisaoDecisaoService.registrarDecisao(id, payload);
         enviarJson(res, 201, { success: true, decisao: resultado });
         return;
       }
