@@ -12,7 +12,7 @@ const decisaoService = require("../services/profor-2022/profor-pad-revisao-decis
 
 const CHAVE_TESTE = "revisao_teste:divergencia-controlada";
 
-function executar() {
+async function executar() {
   inicializarBanco();
 
   // 1. Garante uma divergência de teste num lote próprio de teste.
@@ -56,7 +56,7 @@ function executar() {
     + `aplicadaAoPlano=${resultado.aplicadaAoPlano}.`);
 
   // 3. Confere decisão e log gravados.
-  const detalhe = decisaoService.obterDivergencia(upsert.id);
+  const detalhe = await decisaoService.obterDivergencia(upsert.id);
   const ultimaDecisao = detalhe.decisoes[0];
   const ultimoLog = detalhe.logs[0];
   console.log(`Decisões registradas para a divergência: ${detalhe.decisoes.length}.`);
@@ -78,10 +78,12 @@ function executar() {
     + "não pertence à fila real de 145 divergências.");
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha no teste de decisão da revisão assistida PAD PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

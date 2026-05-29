@@ -17,7 +17,7 @@ console.log("===================================================================
 console.log("Iniciando Validação Ponta a Ponta da Decisão Estruturada PAD/PROFOR 2022");
 console.log("======================================================================\n");
 
-function executar() {
+async function executar() {
   // Inicialização do Banco
   inicializarBanco();
 
@@ -334,7 +334,7 @@ function executar() {
     assert.strictEqual(resReg.aplicadaAoPlano, false, "Decisão não deve ser aplicada diretamente ao planoAplicacao.");
     
     // Obter dados gravados para validações estruturadas
-    const detalhe = decisaoService.obterDivergencia(upsert.id);
+    const detalhe = await decisaoService.obterDivergencia(upsert.id);
     assert.strictEqual(detalhe.status, resReg.statusNovo, "Status final da divergência difere.");
     
     const ultimaDecisao = detalhe.decisoes[0];
@@ -430,10 +430,12 @@ function executar() {
   console.log("======================================================================");
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("\n[FALHA] Erro durante a validação ponta a ponta:");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

@@ -640,17 +640,21 @@ function classificarDivergencia(divergencia, contexto = {}) {
   });
 }
 
-function carregarDivergenciasItemNaoApto() {
+async function carregarDivergenciasItemNaoApto() {
   const divergencias = [];
   let offset = 0;
   const limite = 500;
   while (true) {
-    const pagina = revisaoService.listarDivergencias({ tipo: "item_nao_apto", limite, offset });
+    const pagina = await revisaoService.listarDivergencias({ tipo: "item_nao_apto", limite, offset });
     divergencias.push(...pagina.divergencias);
     offset += pagina.divergencias.length;
     if (offset >= pagina.total || !pagina.divergencias.length) break;
   }
-  return divergencias.map((divergencia) => revisaoService.obterDivergencia(divergencia.id));
+  const detalhes = [];
+  for (const divergencia of divergencias) {
+    detalhes.push(await revisaoService.obterDivergencia(divergencia.id));
+  }
+  return detalhes;
 }
 
 function agruparPorClassificacao(itens) {
@@ -768,8 +772,8 @@ function renderMarkdown(relatorio) {
   return linhas.join("\n");
 }
 
-function montarRelatorio({ aplicar }) {
-  const divergencias = carregarDivergenciasItemNaoApto();
+async function montarRelatorio({ aplicar }) {
+  const divergencias = await carregarDivergenciasItemNaoApto();
   const itensPad = carregarItensPadRelatorio();
   const classificados = divergencias.map((divergencia) => classificarDivergencia(divergencia, { itensPad }));
   const grupos = agruparPorClassificacao(classificados);
@@ -856,23 +860,25 @@ function imprimirRelatorio(relatorio) {
   console.log(`Saída Markdown: ${CAMINHO_SAIDA_MD}`);
 }
 
-function executar() {
+async function executar() {
   const aplicar = process.argv.includes("--aplicar");
   inicializarBanco();
-  const relatorio = montarRelatorio({ aplicar });
+  const relatorio = await montarRelatorio({ aplicar });
   escreverArquivoJson(CAMINHO_SAIDA_JSON, relatorio);
   escreverArquivoTexto(CAMINHO_SAIDA_MD, renderMarkdown(relatorio));
   imprimirRelatorio(relatorio);
 }
 
+async function main() {
+  await executar();
+}
+
 if (require.main === module) {
-  try {
-    executar();
-  } catch (erro) {
+  main().catch((erro) => {
     console.error("Falha ao auditar itens item_nao_apto sem divergência material PAD/PROFOR 2022.");
     console.error(erro?.stack || erro?.message || erro);
     process.exit(1);
-  }
+  });
 }
 
 module.exports = {

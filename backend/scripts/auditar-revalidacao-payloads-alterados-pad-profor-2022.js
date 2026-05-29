@@ -127,8 +127,8 @@ function classificar({ chaveDivergenciaPreservada, totalDecisoes, decisoesComMes
   };
 }
 
-function montarLinha(id, indices, segurancaFinalPorId) {
-  const divergencia = revisao.obterDivergencia(id);
+async function montarLinha(id, indices, segurancaFinalPorId) {
+  const divergencia = await revisao.obterDivergencia(id);
   const hashAtual = gerarHashPayloadDivergencia(divergencia);
   const decisoesResolutivas = (divergencia.decisoes || [])
     .filter((d) => ["ACEITO", "REJEITADO", "CORRIGIDO", "REVERTIDO"].includes(String(d.decisao || "").toUpperCase()));
@@ -284,7 +284,7 @@ function renderMarkdown(relatorio) {
   return linhas.join("\n") + "\n";
 }
 
-function executar() {
+async function executar() {
   const seguranca = lerJson(FONTES.segurancaJson);
   const segurancaFinal = lerJson(FONTES.segurancaFinalJson);
   const reconstrucao = lerJson(FONTES.reconstrucaoJson);
@@ -301,7 +301,10 @@ function executar() {
   const segurancaFinalPorId = new Map();
   for (const item of segurancaFinal.matrizFinal || []) segurancaFinalPorId.set(item.id, item);
 
-  const matriz = IDS_REVALIDAR.map((id) => montarLinha(id, indices, segurancaFinalPorId));
+  const matriz = [];
+  for (const id of IDS_REVALIDAR) {
+    matriz.push(await montarLinha(id, indices, segurancaFinalPorId));
+  }
 
   const totalPorClassificacao = {};
   for (const m of matriz) totalPorClassificacao[m.classificacaoRevalidacao] = (totalPorClassificacao[m.classificacaoRevalidacao] || 0) + 1;
@@ -373,14 +376,16 @@ function executar() {
   console.log(`Pode sair do bloqueio mediante revalidacao: ${matriz.filter((m) => m.classificacaoRevalidacao === "revalidacao_por_prevalencia_pad").length}`);
 }
 
+async function main() {
+  await executar();
+}
+
 if (require.main === module) {
-  try {
-    executar();
-  } catch (erro) {
+  main().catch((erro) => {
     console.error("Falha na revalidacao dry-run dos payloads alterados PAD/PROFOR 2022.");
     console.error(erro?.stack || erro?.message || erro);
     process.exit(1);
-  }
+  });
 }
 
 module.exports = { IDS_REVALIDAR, classificar };
