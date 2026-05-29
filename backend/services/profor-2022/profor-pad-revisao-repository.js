@@ -1,4 +1,42 @@
 const db = require("../../db/database");
+const { query } = require("../../db/postgres-client");
+
+// Normaliza linha vinda do Postgres para preservar o contrato esperado pelos
+// consumidores (formatarDivergencia em profor-pad-revisao-decisao-service):
+// - bloqueia_publicacao: boolean -> 0/1 (consumidor compara === 1)
+// - *_json: objeto/array -> string JSON (consumidor faz parseJsonSeguro)
+function normalizarLinhaDivergencia(linha) {
+  if (!linha) return linha;
+  return {
+    ...linha,
+    bloqueia_publicacao: linha.bloqueia_publicacao === true || linha.bloqueia_publicacao === 1 ? 1 : 0,
+    payload_json: typeof linha.payload_json === "string"
+      ? linha.payload_json
+      : JSON.stringify(linha.payload_json ?? {}),
+  };
+}
+
+function normalizarLinhaDecisao(linha) {
+  if (!linha) return linha;
+  return {
+    ...linha,
+    payload_decisao_json: typeof linha.payload_decisao_json === "string"
+      ? linha.payload_decisao_json
+      : JSON.stringify(linha.payload_decisao_json ?? {}),
+  };
+}
+
+function normalizarLinhaLog(linha) {
+  if (!linha) return linha;
+  const norm = { ...linha };
+  if (norm.estado_anterior_json !== null && norm.estado_anterior_json !== undefined && typeof norm.estado_anterior_json !== "string") {
+    norm.estado_anterior_json = JSON.stringify(norm.estado_anterior_json);
+  }
+  if (norm.estado_novo_json !== null && norm.estado_novo_json !== undefined && typeof norm.estado_novo_json !== "string") {
+    norm.estado_novo_json = JSON.stringify(norm.estado_novo_json);
+  }
+  return norm;
+}
 
 const STATUS_VALIDOS = [
   "PENDENTE",
@@ -143,7 +181,14 @@ function inserirOuAtualizarDivergencia(loteId, divergencia) {
   return { id: existente.id, acao: "atualizada" };
 }
 
-/** Lista todas as chaves de divergência atualmente persistidas. */
+/**
+ * Lista todas as chaves de divergência atualmente persistidas.
+ *
+ * MANTIDA SQLITE no Lote A: é consumida dentro da transação SQLite
+ * `gerarFilaRevisao` (profor-pad-revisao-service.js). Migrar para Postgres
+ * agora misturaria leitura Postgres com escrita SQLite na mesma transação.
+ * Pendente para o Lote B (escrita).
+ */
 function listarChavesExistentes() {
   return db.prepare("SELECT chave_divergencia FROM profor_2022_revisao_divergencias")
     .all()
@@ -151,10 +196,11 @@ function listarChavesExistentes() {
 }
 
 /** Conta divergências decididas (com pelo menos uma decisão registrada). */
-function contarDivergenciasComDecisao() {
-  return db.prepare(`
-    SELECT COUNT(DISTINCT divergencia_id) AS total FROM profor_2022_revisao_decisoes
-  `).get().total;
+async function contarDivergenciasComDecisao() {
+  const result = await query(
+    "SELECT COUNT(DISTINCT divergencia_id) AS total FROM profor_2022_revisao_decisoes"
+  );
+  return Number(result.rows[0]?.total || 0);
 }
 
 /* --------------------------- consultas de auditoria --------------------------- */
@@ -168,6 +214,14 @@ function agregar(coluna) {
   `).all();
 }
 
+/**
+ * Estatísticas de auditoria da revisão PAD.
+ *
+ * MANTIDA SQLITE no Lote A: é consumida dentro da transação SQLite
+ * `gerarFilaRevisao` (profor-pad-revisao-service.js linha 565). Migrar para
+ * Postgres agora misturaria leitura Postgres com escrita SQLite na mesma
+ * transação. Pendente para o Lote B (escrita).
+ */
 function obterEstatisticasAuditoria() {
   const resolutivasSql = DECISOES_RESOLUTIVAS.map(() => "?").join(", ");
   const totais = db.prepare(`
@@ -232,9 +286,10 @@ const COLUNAS_DIVERGENCIA = `
  * Lista divergências com filtros opcionais (status, nivel, tipo_alerta,
  * numero_convenio, uf, bloqueia_publicacao) e paginação.
  */
-function listarDivergencias(filtros = {}) {
+async function listarDivergencias(filtros = {}) {
   const condicoes = [];
   const parametros = [];
+  let proximoIndice = 1;
   const mapaFiltro = {
     status: "status",
     nivel: "nivel",
@@ -244,46 +299,49 @@ function listarDivergencias(filtros = {}) {
   };
   for (const [chaveFiltro, coluna] of Object.entries(mapaFiltro)) {
     if (filtros[chaveFiltro] !== undefined && filtros[chaveFiltro] !== null && filtros[chaveFiltro] !== "") {
-      condicoes.push(`${coluna} = ?`);
+      condicoes.push(`${coluna} = $${proximoIndice++}`);
       parametros.push(String(filtros[chaveFiltro]));
     }
   }
   if (filtros.bloqueiaPublicacao !== undefined && filtros.bloqueiaPublicacao !== null) {
-    condicoes.push("bloqueia_publicacao = ?");
-    parametros.push(filtros.bloqueiaPublicacao ? 1 : 0);
+    condicoes.push(`bloqueia_publicacao = $${proximoIndice++}`);
+    parametros.push(Boolean(filtros.bloqueiaPublicacao));
   }
-  if (filtros.semDecisaoResolutiva !== undefined && filtros.semDecisaoResolutiva !== null) {
-    condicoes.push(`${filtros.semDecisaoResolutiva ? "NOT " : ""}EXISTS (
+  const adicionarFiltroDecisaoResolutiva = (negado) => {
+    const placeholders = DECISOES_RESOLUTIVAS.map(() => `$${proximoIndice++}`).join(", ");
+    condicoes.push(`${negado ? "NOT " : ""}EXISTS (
       SELECT 1 FROM profor_2022_revisao_decisoes x
       WHERE x.divergencia_id = profor_2022_revisao_divergencias.id
-        AND x.decisao IN (${DECISOES_RESOLUTIVAS.map(() => "?").join(", ")})
+        AND x.decisao IN (${placeholders})
     )`);
     parametros.push(...DECISOES_RESOLUTIVAS);
+  };
+  if (filtros.semDecisaoResolutiva !== undefined && filtros.semDecisaoResolutiva !== null) {
+    adicionarFiltroDecisaoResolutiva(Boolean(filtros.semDecisaoResolutiva));
   }
   if (filtros.comDecisaoResolutiva !== undefined && filtros.comDecisaoResolutiva !== null) {
-    condicoes.push(`${filtros.comDecisaoResolutiva ? "" : "NOT "}EXISTS (
-      SELECT 1 FROM profor_2022_revisao_decisoes x
-      WHERE x.divergencia_id = profor_2022_revisao_divergencias.id
-        AND x.decisao IN (${DECISOES_RESOLUTIVAS.map(() => "?").join(", ")})
-    )`);
-    parametros.push(...DECISOES_RESOLUTIVAS);
+    adicionarFiltroDecisaoResolutiva(!filtros.comDecisaoResolutiva);
   }
 
   const where = condicoes.length ? `WHERE ${condicoes.join(" AND ")}` : "";
   const limite = Math.min(Math.max(Number(filtros.limite) || 100, 1), 500);
   const offset = Math.max(Number(filtros.offset) || 0, 0);
 
-  const total = db.prepare(
-    `SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias ${where}`
-  ).get(...parametros).t;
+  const totalResult = await query(
+    `SELECT COUNT(*) AS t FROM profor_2022_revisao_divergencias ${where}`,
+    parametros
+  );
+  const total = Number(totalResult.rows[0]?.t || 0);
 
-  const linhas = db.prepare(`
-    SELECT ${COLUNAS_DIVERGENCIA}
-    FROM profor_2022_revisao_divergencias
-    ${where}
-    ORDER BY (nivel = 'impeditivo') DESC, numero_convenio, id
-    LIMIT ? OFFSET ?
-  `).all(...parametros, limite, offset);
+  const linhasResult = await query(
+    `SELECT ${COLUNAS_DIVERGENCIA}
+     FROM profor_2022_revisao_divergencias
+     ${where}
+     ORDER BY (nivel = 'impeditivo') DESC, numero_convenio, id
+     LIMIT $${proximoIndice++} OFFSET $${proximoIndice++}`,
+    [...parametros, limite, offset]
+  );
+  const linhas = linhasResult.rows.map(normalizarLinhaDivergencia);
 
   return { total, limite, offset, divergencias: linhas };
 }
@@ -297,25 +355,29 @@ function buscarDivergenciaPorId(id) {
 }
 
 /** Lista as decisões registradas para uma divergência (mais recentes primeiro). */
-function listarDecisoesDaDivergencia(divergenciaId) {
-  return db.prepare(`
-    SELECT id, divergencia_id, decisao, valor_aplicado, justificativa, usuario,
-           decidido_em, lote_saneamento_id, payload_decisao_json, criado_em
-    FROM profor_2022_revisao_decisoes
-    WHERE divergencia_id = ?
-    ORDER BY id DESC
-  `).all(Number(divergenciaId));
+async function listarDecisoesDaDivergencia(divergenciaId) {
+  const result = await query(
+    `SELECT id, divergencia_id, decisao, valor_aplicado, justificativa, usuario,
+            decidido_em, lote_saneamento_id, payload_decisao_json, criado_em
+     FROM profor_2022_revisao_decisoes
+     WHERE divergencia_id = $1
+     ORDER BY id DESC`,
+    [Number(divergenciaId)]
+  );
+  return result.rows.map(normalizarLinhaDecisao);
 }
 
 /** Lista os logs de uma divergência (mais recentes primeiro). */
-function listarLogsDaDivergencia(divergenciaId) {
-  return db.prepare(`
-    SELECT id, entidade_tipo, entidade_id, evento, estado_anterior_json,
-           estado_novo_json, usuario, detalhe, criado_em
-    FROM profor_2022_revisao_logs
-    WHERE entidade_tipo = 'divergencia' AND entidade_id = ?
-    ORDER BY id DESC
-  `).all(Number(divergenciaId));
+async function listarLogsDaDivergencia(divergenciaId) {
+  const result = await query(
+    `SELECT id, entidade_tipo, entidade_id, evento, estado_anterior_json,
+            estado_novo_json, usuario, detalhe, criado_em
+     FROM profor_2022_revisao_logs
+     WHERE entidade_tipo = 'divergencia' AND entidade_id = $1
+     ORDER BY id DESC`,
+    [Number(divergenciaId)]
+  );
+  return result.rows.map(normalizarLinhaLog);
 }
 
 /**
@@ -376,19 +438,24 @@ function registrarDecisao({ divergencia, decisao, novoStatus, valorAplicado, jus
 }
 
 /** Retorna o último lote de revisão registrado. */
-function obterUltimoLote() {
-  return db.prepare(`
-    SELECT * FROM profor_2022_revisao_lotes ORDER BY id DESC LIMIT 1
-  `).get() || null;
+async function obterUltimoLote() {
+  const result = await query(
+    "SELECT * FROM profor_2022_revisao_lotes ORDER BY id DESC LIMIT 1"
+  );
+  return result.rows[0] || null;
 }
 
 /** Conta divergências criadas/atualizadas em um lote (via logs do lote). */
-function contarEventosDoLote(loteId, evento) {
-  return db.prepare(`
-    SELECT COUNT(*) AS t FROM profor_2022_revisao_logs
-    WHERE entidade_tipo = 'divergencia' AND evento = ?
-      AND json_extract(estado_novo_json, '$.loteGeracaoId') = ?
-  `).get(evento, loteId).t;
+async function contarEventosDoLote(loteId, evento) {
+  // Em Postgres usamos jsonb com `->>` para extrair o campo loteGeracaoId
+  // como texto e comparamos contra o id do lote (também convertido a texto).
+  const result = await query(
+    `SELECT COUNT(*) AS t FROM profor_2022_revisao_logs
+     WHERE entidade_tipo = 'divergencia' AND evento = $1
+       AND estado_novo_json->>'loteGeracaoId' = $2`,
+    [evento, String(loteId)]
+  );
+  return Number(result.rows[0]?.t || 0);
 }
 
 /**

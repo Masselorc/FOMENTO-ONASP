@@ -596,18 +596,23 @@ function gerarFilaRevisao(opcoes = {}) {
 }
 
 /** Monta o relatório de auditoria da fila de revisão (somente leitura). */
-function auditarFilaRevisao() {
+async function auditarFilaRevisao() {
+  // obterEstatisticasAuditoria ainda é SQLite (pendente Lote B — compartilha
+  // fluxo com a transação SQLite de gerarFilaRevisao). Os demais já vêm do
+  // Postgres.
   const estatisticas = repo.obterEstatisticasAuditoria();
-  const ultimoLote = repo.obterUltimoLote();
-  const comDecisao = repo.contarDivergenciasComDecisao();
+  const ultimoLote = await repo.obterUltimoLote();
+  const comDecisao = await repo.contarDivergenciasComDecisao();
 
   let criadasUltimoLote = 0;
   let atualizadasUltimoLote = 0;
   let naoReapresentadasUltimoLote = 0;
   if (ultimoLote) {
-    criadasUltimoLote = repo.contarEventosDoLote(ultimoLote.id, "divergencia_criada");
-    atualizadasUltimoLote = repo.contarEventosDoLote(ultimoLote.id, "divergencia_atualizada");
-    naoReapresentadasUltimoLote = repo.contarEventosDoLote(ultimoLote.id, "divergencia_nao_reapresentada");
+    [criadasUltimoLote, atualizadasUltimoLote, naoReapresentadasUltimoLote] = await Promise.all([
+      repo.contarEventosDoLote(ultimoLote.id, "divergencia_criada"),
+      repo.contarEventosDoLote(ultimoLote.id, "divergencia_atualizada"),
+      repo.contarEventosDoLote(ultimoLote.id, "divergencia_nao_reapresentada"),
+    ]);
   }
 
   return {

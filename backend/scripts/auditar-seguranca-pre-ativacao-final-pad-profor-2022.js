@@ -119,8 +119,8 @@ function agruparPayloadPorDivergencia(itens) {
   return mapa;
 }
 
-function montarDiagnosticoPayloadAlterado(id, entradasSeguranca, pendencia, regressao) {
-  const divergencia = revisao.obterDivergencia(id);
+async function montarDiagnosticoPayloadAlterado(id, entradasSeguranca, pendencia, regressao) {
+  const divergencia = await revisao.obterDivergencia(id);
   const decisaoVigente = ultimoResolutivo(divergencia);
   const hashes = entradasSeguranca.map((item) => ({
     decisaoId: Number(item.decisaoId),
@@ -185,7 +185,7 @@ function montarDiagnosticoPayloadAlterado(id, entradasSeguranca, pendencia, regr
   };
 }
 
-function montarDiagnosticoPendenciaTecnica(
+async function montarDiagnosticoPendenciaTecnica(
   id,
   pendencia,
   regressao,
@@ -195,7 +195,7 @@ function montarDiagnosticoPendenciaTecnica(
   impedimentosComparacaoPorChaveItem,
   impedimentosComparacaoPorDivergenciaId
 ) {
-  const divergencia = revisao.obterDivergencia(id);
+  const divergencia = await revisao.obterDivergencia(id);
   const decisaoVigente = ultimoResolutivo(divergencia);
   const snapshot = decisaoVigente?.payloadDecisao?._segurancaPreAtivacao || null;
   const atual = hashAtual(divergencia);
@@ -383,7 +383,7 @@ function renderMarkdown(relatorio) {
   ].join("\n") + "\n";
 }
 
-function executar() {
+async function executar() {
   const fontes = Object.fromEntries(
     Object.entries(FONTES).map(([nome, caminho]) => [nome, fonteObrigatoriaResumo(caminho)])
   );
@@ -434,17 +434,19 @@ function executar() {
     }
   }
 
-  const payloadAlteradoAposDecisao = IDS_PAYLOAD_ALTERADO_ESPERADOS.map((id) => (
-    montarDiagnosticoPayloadAlterado(
+  const payloadAlteradoAposDecisao = [];
+  for (const id of IDS_PAYLOAD_ALTERADO_ESPERADOS) {
+    payloadAlteradoAposDecisao.push(await montarDiagnosticoPayloadAlterado(
       id,
       payloadPorDivergencia.get(id) || [],
       pendenciasPorId.get(id),
       regressaoPorId.get(id)
-    )
-  ));
+    ));
+  }
 
-  const decisoesResolutivasComPendenciaTecnica = IDS_PENDENCIA_TECNICA_ESPERADOS.map((id) => (
-    montarDiagnosticoPendenciaTecnica(
+  const decisoesResolutivasComPendenciaTecnica = [];
+  for (const id of IDS_PENDENCIA_TECNICA_ESPERADOS) {
+    decisoesResolutivasComPendenciaTecnica.push(await montarDiagnosticoPendenciaTecnica(
       id,
       pendenciasPorId.get(id),
       regressaoPorId.get(id),
@@ -453,8 +455,8 @@ function executar() {
       diferencasCriticasPorChaveItem,
       impedimentosComparacaoPorChaveItem,
       impedimentosComparacaoPorDivergenciaId
-    )
-  ));
+    ));
+  }
 
   const matrizMap = new Map();
   for (const item of [...payloadAlteradoAposDecisao, ...decisoesResolutivasComPendenciaTecnica]) {
@@ -550,14 +552,16 @@ function executar() {
   console.log(`Apto para ativação controlada: ${resumo.aptoParaAtivacaoControlada ? "sim" : "não"}`);
 }
 
+async function main() {
+  await executar();
+}
+
 if (require.main === module) {
-  try {
-    executar();
-  } catch (erro) {
+  main().catch((erro) => {
     console.error("Falha na auditoria final de segurança pré-ativação PAD/PROFOR 2022.");
     console.error(erro?.stack || erro?.message || erro);
     process.exit(1);
-  }
+  });
 }
 
 module.exports = {

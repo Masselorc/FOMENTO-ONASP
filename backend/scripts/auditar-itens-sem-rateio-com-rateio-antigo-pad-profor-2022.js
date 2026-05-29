@@ -141,17 +141,21 @@ function extrairPad(divergencia) {
   };
 }
 
-function carregarDivergenciasItemNovoSemRateio() {
+async function carregarDivergenciasItemNovoSemRateio() {
   const divergencias = [];
   let offset = 0;
   const limite = 500;
   while (true) {
-    const pagina = revisaoService.listarDivergencias({ tipo: "item_novo_sem_rateio", limite, offset });
+    const pagina = await revisaoService.listarDivergencias({ tipo: "item_novo_sem_rateio", limite, offset });
     divergencias.push(...pagina.divergencias);
     offset += pagina.divergencias.length;
     if (offset >= pagina.total || !pagina.divergencias.length) break;
   }
-  return divergencias.map((divergencia) => revisaoService.obterDivergencia(divergencia.id));
+  const detalhes = [];
+  for (const divergencia of divergencias) {
+    detalhes.push(await revisaoService.obterDivergencia(divergencia.id));
+  }
+  return detalhes;
 }
 
 function carregarMemoriaSqlite() {
@@ -529,8 +533,8 @@ function renderMarkdown(relatorio) {
   return linhas.join("\n");
 }
 
-function montarRelatorio() {
-  const divergencias = carregarDivergenciasItemNovoSemRateio();
+async function montarRelatorio() {
+  const divergencias = await carregarDivergenciasItemNovoSemRateio();
   const memoriasSqlite = carregarMemoriaSqlite();
   const memoriasFallback = carregarMemoriaRateioInicialDryRun();
   const classificados = divergencias.map((divergencia) =>
@@ -637,7 +641,7 @@ function montarPayloadDecisao(candidato) {
   };
 }
 
-function aplicarRateioAntigo(relatorio, idAlvo) {
+async function aplicarRateioAntigo(relatorio, idAlvo) {
   const candidatos = relatorio.candidatosRateioAntigoCompativel;
   const candidato = candidatos.find((item) => item.id === idAlvo);
   if (candidatos.some((item) => item.id !== idAlvo)) {
@@ -656,7 +660,7 @@ function aplicarRateioAntigo(relatorio, idAlvo) {
     throw new Error(`Decisão ${resultado.decisaoId} retornou aplicadaAoPlano diferente de false.`);
   }
 
-  const detalhe = revisaoService.obterDivergencia(candidato.id);
+  const detalhe = await revisaoService.obterDivergencia(candidato.id);
   const decisao = detalhe.decisoes.find((item) => item.id === resultado.decisaoId);
   const temSnapshot = Boolean(decisao?.payloadDecisao?._segurancaPreAtivacao);
   const temLog = detalhe.logs.some((log) =>
@@ -712,13 +716,13 @@ function imprimirRelatorio(relatorio) {
   }
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
   const aplicar = argumentoFlag("--aplicar");
   const idAlvo = Number(argumentoValor("--id") || 23);
-  const relatorio = montarRelatorio();
+  const relatorio = await montarRelatorio();
   if (aplicar) {
-    const aplicado = aplicarRateioAntigo(relatorio, idAlvo);
+    const aplicado = await aplicarRateioAntigo(relatorio, idAlvo);
     relatorio.modo = "aplicacao-assistida";
     relatorio.aplicacao = {
       solicitada: true,
@@ -732,10 +736,12 @@ function executar() {
   imprimirRelatorio(relatorio);
 }
 
-try {
-  executar();
-} catch (erro) {
+async function main() {
+  await executar();
+}
+
+main().catch((erro) => {
   console.error("Falha ao auditar rateio antigo em itens PAD sem rateio PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});

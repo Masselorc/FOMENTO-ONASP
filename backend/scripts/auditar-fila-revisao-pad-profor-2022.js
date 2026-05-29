@@ -8,9 +8,9 @@ function imprimirLista(titulo, lista) {
   }
 }
 
-function executar() {
+async function executar() {
   inicializarBanco();
-  const auditoria = auditarFilaRevisao();
+  const auditoria = await auditarFilaRevisao();
   const { estatisticas, ultimoLote } = auditoria;
 
   console.log("Auditoria da fila de revisão PAD x memória PROFOR 2022");
@@ -44,10 +44,8 @@ function executar() {
   }
 }
 
-try {
-  executar();
-} catch (erro) {
+executar().catch((erro) => {
   console.error("Falha ao auditar a fila de revisão PAD x memória PROFOR 2022.");
   console.error(erro?.stack || erro?.message || erro);
   process.exit(1);
-}
+});
