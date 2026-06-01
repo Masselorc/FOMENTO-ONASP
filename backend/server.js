@@ -577,13 +577,13 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "GET" && pathname === "/api/faf2021") {
-      enviarJson(res, 200, listarFaf2021());
+      enviarJson(res, 200, await listarFaf2021());
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/faf2021/salvar") {
       const payload = await lerJsonBody(req);
-      const resultado = salvarExecucaoFaf2021(payload);
+      const resultado = await salvarExecucaoFaf2021(payload);
       const resposta = await publicarAposSalvamento(resultado);
       enviarJson(res, resposta.success ? 200 : 400, resposta);
       return;
