@@ -1,5 +1,3 @@
-const { inicializarBanco } = require("../db/init-db");
-const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const { auditarFilaRevisao } = require("../services/profor-2022/profor-pad-revisao-service");
 
 function imprimirLista(titulo, lista) {
@@ -10,8 +8,6 @@ function imprimirLista(titulo, lista) {
 }
 
 async function executar() {
-  exigirConfirmacaoAuditoriaSqliteLegado("auditar-fila-revisao-pad-profor-2022");
-  inicializarBanco();
   const auditoria = await auditarFilaRevisao();
   const { estatisticas, ultimoLote } = auditoria;
 

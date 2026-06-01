@@ -1,8 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const { inicializarBanco } = require("../db/init-db");
-const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 const revisaoService = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 const {
   DIAGNOSTICO_SALDO_RESIDUAL_NATUREZA,
@@ -863,8 +861,12 @@ function imprimirRelatorio(relatorio) {
 
 async function executar() {
   const aplicar = process.argv.includes("--aplicar");
-  exigirConfirmacaoAuditoriaSqliteLegado("auditar-item-nao-apto-sem-divergencia-pad-profor-2022");
-  inicializarBanco();
+  if (aplicar && process.env.CONFIRMAR_SANEAMENTO_PROFOR_2022 !== "SIM") {
+    throw new Error(
+      "Modo --aplicar registra decisao via servico (escrita real) e exige confirmacao explicita. " +
+      "Defina CONFIRMAR_SANEAMENTO_PROFOR_2022=SIM para autorizar. Bloqueado por seguranca."
+    );
+  }
   const relatorio = await montarRelatorio({ aplicar });
   escreverArquivoJson(CAMINHO_SAIDA_JSON, relatorio);
   escreverArquivoTexto(CAMINHO_SAIDA_MD, renderMarkdown(relatorio));

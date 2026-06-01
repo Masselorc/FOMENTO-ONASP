@@ -16,8 +16,6 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { registrarDecisao } = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
-const { inicializarBanco } = require("../db/init-db");
-const { exigirConfirmacaoAuditoriaSqliteLegado } = require("./_guard-sqlite-legado");
 
 const CAMINHO_DRY_RUN_JSON = "backend/data/relatorios/profor-2022-ausentes-substitutos-dry-run.json";
 
@@ -32,10 +30,6 @@ const JUSTIFICATIVA = "Divergência de ausência saneada por vínculo com item s
 async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
   const dryRunCaminho = path.join(repoRoot, CAMINHO_DRY_RUN_JSON);
-
-  exigirConfirmacaoAuditoriaSqliteLegado("sanear-ausentes-com-substituto-pad-profor-2022");
-
-  inicializarBanco();
 
   if (!fs.existsSync(dryRunCaminho)) {
     console.error(`Erro: relatório dry-run não encontrado em ${dryRunCaminho}`);
