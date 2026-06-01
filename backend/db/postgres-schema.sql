@@ -542,3 +542,30 @@ CREATE INDEX IF NOT EXISTS idx_revisao_decisoes_divergencia
 -- Índices de profor_2022_revisao_logs
 CREATE INDEX IF NOT EXISTS idx_revisao_logs_entidade
   ON profor_2022_revisao_logs(entidade_tipo, entidade_id);
+
+-- ---------------------------------------------------------------------------
+-- 20. faf_2021_itens
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS faf_2021_itens (
+  item_id text PRIMARY KEY,
+  indice_dados_base integer,
+  uf text NOT NULL,
+  objeto text NOT NULL,
+  quantidade numeric(14,2) NOT NULL DEFAULT 0,
+  valor_unitario numeric(15,2) NOT NULL DEFAULT 0,
+  valor_total numeric(15,2) NOT NULL DEFAULT 0,
+  valor_executado numeric(15,2) NOT NULL DEFAULT 0,
+  observacao_execucao text,
+  atualizado_em timestamptz,
+  instrumento text NOT NULL DEFAULT 'FAF 2021',
+  payload_original_json jsonb,
+  criado_em timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT faf_2021_itens_valor_total_nao_negativo CHECK (valor_total >= 0),
+  CONSTRAINT faf_2021_itens_valor_executado_nao_negativo CHECK (valor_executado >= 0)
+);
+
+CREATE INDEX IF NOT EXISTS idx_faf_2021_itens_uf
+  ON faf_2021_itens (uf);
+
+CREATE INDEX IF NOT EXISTS idx_faf_2021_itens_instrumento
+  ON faf_2021_itens (instrumento);
