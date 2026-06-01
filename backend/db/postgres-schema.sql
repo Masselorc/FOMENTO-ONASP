@@ -561,8 +561,7 @@ CREATE TABLE IF NOT EXISTS faf_2021_itens (
   payload_original_json jsonb,
   criado_em timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT faf_2021_itens_valor_total_nao_negativo CHECK (valor_total >= 0),
-  CONSTRAINT faf_2021_itens_valor_executado_nao_negativo CHECK (valor_executado >= 0),
-  CONSTRAINT faf_2021_itens_valor_executado_limite CHECK (valor_total = 0 OR valor_executado <= valor_total + 0.01)
+  CONSTRAINT faf_2021_itens_valor_executado_nao_negativo CHECK (valor_executado >= 0)
 );
 
 CREATE INDEX IF NOT EXISTS idx_faf_2021_itens_uf
