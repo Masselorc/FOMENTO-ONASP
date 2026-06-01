@@ -16,7 +16,6 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { registrarDecisao } = require("../services/profor-2022/profor-pad-revisao-decisao-service");
 const repo = require("../services/profor-2022/profor-pad-revisao-repository");
-const { inicializarBanco } = require("../db/init-db");
 
 const CAMINHO_DRY_RUN_JSON = "backend/data/relatorios/profor-2022-ausentes-substitutos-dry-run.json";
 
@@ -28,11 +27,18 @@ const JUSTIFICATIVA = "Divergência de ausência saneada por vínculo com item s
   + "descrição/especificação, mantendo convênio, natureza, quantidade, valor unitário, valor "
   + "previsto, valor executado e saldo compatíveis. Vinculado a item novo já tratado na revisão.";
 
+function exigirConfirmacaoSaneamentoProfor2022(nomeScript) {
+  if (process.env.CONFIRMAR_SANEAMENTO_PROFOR_2022 === "SIM") return;
+  throw new Error(
+    `${nomeScript} executa saneamento com escrita real e exige CONFIRMAR_SANEAMENTO_PROFOR_2022=SIM. ` +
+    "Execução bloqueada por segurança."
+  );
+}
+
 async function executar() {
+  exigirConfirmacaoSaneamentoProfor2022("sanear-ausentes-com-substituto-pad-profor-2022");
   const repoRoot = path.resolve(__dirname, "../..");
   const dryRunCaminho = path.join(repoRoot, CAMINHO_DRY_RUN_JSON);
-
-  inicializarBanco();
 
   if (!fs.existsSync(dryRunCaminho)) {
     console.error(`Erro: relatório dry-run não encontrado em ${dryRunCaminho}`);

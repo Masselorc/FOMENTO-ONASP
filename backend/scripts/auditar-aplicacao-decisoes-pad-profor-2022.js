@@ -6,7 +6,6 @@
  * e as não aplicáveis. Não escreve em nenhuma tabela, não altera a origem ativa
  * e não publica.
  */
-const { inicializarBanco } = require("../db/init-db");
 const {
   carregarAplicacaoDecisoesDryRun,
 } = require("../services/profor-2022/profor-pad-decisao-aplicacao-service");
@@ -28,7 +27,6 @@ function imprimirLista(titulo, lista) {
 }
 
 async function executar() {
-  inicializarBanco();
   const aplicacao = await carregarAplicacaoDecisoesDryRun();
 
   console.log("Auditoria de aplicação de decisões PAD x memória (dry-run) PROFOR 2022");

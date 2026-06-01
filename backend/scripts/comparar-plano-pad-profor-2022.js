@@ -1,6 +1,5 @@
 const path = require("node:path");
 
-const { inicializarBanco } = require("../db/init-db");
 const {
   CAMINHO_RELATORIO_RECONSTRUCAO,
   reconstruirPlanoAplicacaoPadDryRun,
@@ -69,7 +68,6 @@ function imprimirResumo(resultado, arquivoJson, arquivoMarkdown) {
 }
 
 async function executar() {
-  inicializarBanco();
   const repoRoot = path.resolve(__dirname, "../..");
 
   // Carrega o motor de decisões uma única vez e o compartilha entre a

@@ -11,7 +11,6 @@ const ARQUIVOS = [
   "backend/services/orcamento-2026-service.js",
   "backend/services/faf-2021-service.js",
   "backend/services/historico-service.js",
-  "backend/services/backup-service.js",
   "backend/services/static-publication-service.js",
   "backend/services/excel-export-service.js",
   "backend/services/dashboard-publication-service.js",

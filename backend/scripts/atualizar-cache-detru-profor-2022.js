@@ -15,12 +15,9 @@ async function executar() {
   try {
     assertChamadaExternaPermitida("script_atualizar_cache_detru_profor_2022", { tipo: "DETRU", execucaoLocal: true });
 
-    const { inicializarBanco } = require("../db/init-db");
     const {
       atualizarCacheDetruProfor2022,
     } = require("../services/profor-2022/profor-detru-update-service");
-
-    inicializarBanco();
 
     const arg = process.argv[2];
     const opcoes = arg ? { caminhoZip: arg } : {};

@@ -1,4 +1,3 @@
-const { inicializarBanco } = require("../db/init-db");
 const { auditarFilaRevisao } = require("../services/profor-2022/profor-pad-revisao-service");
 
 function imprimirLista(titulo, lista) {
@@ -9,7 +8,6 @@ function imprimirLista(titulo, lista) {
 }
 
 async function executar() {
-  inicializarBanco();
   const auditoria = await auditarFilaRevisao();
   const { estatisticas, ultimoLote } = auditoria;
 

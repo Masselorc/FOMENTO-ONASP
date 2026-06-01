@@ -1,6 +1,5 @@
 const path = require("node:path");
 
-const { inicializarBanco } = require("../db/init-db");
 const { gerarFilaRevisao } = require("../services/profor-2022/profor-pad-revisao-service");
 
 function imprimirLista(titulo, lista) {
@@ -12,7 +11,6 @@ function imprimirLista(titulo, lista) {
 
 async function executar() {
   const repoRoot = path.resolve(__dirname, "../..");
-  inicializarBanco();
 
   const resultado = await gerarFilaRevisao({ repoRoot });
   const { estatisticas } = resultado;
