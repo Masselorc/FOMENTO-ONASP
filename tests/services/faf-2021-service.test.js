@@ -88,6 +88,8 @@ test("salvarExecucaoFaf2021 atualiza valor e observacao validos", async () => {
     itemId: "faf2021_idx_10",
     uf: "AC",
     objeto: "Equipamento de ouvidoria",
+    quantidade: 3,
+    valorUnitario: "100,25",
     valorExecutado: "100,25",
     observacaoExecucao: "Nova observacao"
   });
@@ -95,7 +97,11 @@ test("salvarExecucaoFaf2021 atualiza valor e observacao validos", async () => {
   assert.equal(resultado.success, true);
   assert.equal(resultado.itemId, "faf2021_idx_10");
   assert.equal(resultado.atualizadoEm, "2026-02-03T04:05:06.000Z");
-  assert.deepEqual(parametrosUpdate, ["faf2021_idx_10", 100.25, true, "Nova observacao"]);
+  assert.equal(resultado.quantidade, 3);
+  assert.equal(resultado.valorUnitario, 100.25);
+  assert.equal(resultado.valorTotal, 300.75);
+  assert.equal(resultado.valorExecutado, 100.25);
+  assert.deepEqual(parametrosUpdate, ["faf2021_idx_10", 3, 100.25, 300.75, 100.25, true, "Nova observacao"]);
 });
 
 test("salvarExecucaoFaf2021 rejeita senha invalida", async () => {
@@ -168,7 +174,7 @@ test("salvarExecucaoFaf2021 rejeita valor negativo", async () => {
   assert.match(resultado.message, /negativo/i);
 });
 
-test("salvarExecucaoFaf2021 rejeita valor maior que total", async () => {
+test("salvarExecucaoFaf2021 aceita valor executado maior que total", async () => {
   instalarTransacaoMock();
 
   const resultado = await service.salvarExecucaoFaf2021({
@@ -179,8 +185,84 @@ test("salvarExecucaoFaf2021 rejeita valor maior que total", async () => {
     valorExecutado: 202
   });
 
+  assert.equal(resultado.success, true);
+  assert.equal(resultado.valorTotal, 201);
+  assert.equal(resultado.valorExecutado, 202);
+  assert.ok(resultado.percentualExecutado > 100);
+});
+
+test("salvarExecucaoFaf2021 rejeita quantidade negativa", async () => {
+  instalarTransacaoMock();
+
+  const resultado = await service.salvarExecucaoFaf2021({
+    password: "senha-correta-testes",
+    itemId: "faf2021_idx_10",
+    uf: "AC",
+    objeto: "Equipamento de ouvidoria",
+    quantidade: -1,
+    valorUnitario: 100,
+    valorExecutado: 10
+  });
+
   assert.equal(resultado.success, false);
-  assert.match(resultado.message, /maior que o valor total/i);
+  assert.match(resultado.message, /Quantidade não pode ser negativa/i);
+});
+
+test("salvarExecucaoFaf2021 rejeita valor unitario negativo", async () => {
+  instalarTransacaoMock();
+
+  const resultado = await service.salvarExecucaoFaf2021({
+    password: "senha-correta-testes",
+    itemId: "faf2021_idx_10",
+    uf: "AC",
+    objeto: "Equipamento de ouvidoria",
+    quantidade: 1,
+    valorUnitario: -100,
+    valorExecutado: 10
+  });
+
+  assert.equal(resultado.success, false);
+  assert.match(resultado.message, /Valor unitário não pode ser negativo/i);
+});
+
+test("salvarExecucaoFaf2021 rejeita valor total calculado invalido", async () => {
+  instalarTransacaoMock();
+
+  const resultado = await service.salvarExecucaoFaf2021({
+    password: "senha-correta-testes",
+    itemId: "faf2021_idx_10",
+    uf: "AC",
+    objeto: "Equipamento de ouvidoria",
+    quantidade: 1e308,
+    valorUnitario: 1e308,
+    valorExecutado: 10
+  });
+
+  assert.equal(resultado.success, false);
+  assert.match(resultado.message, /Valor total inválido/i);
+});
+
+test("salvarExecucaoFaf2021 preserva quantidade e valor unitario atuais quando ausentes no payload", async () => {
+  let parametrosUpdate = null;
+  instalarTransacaoMock({
+    onUpdate(_sql, params) {
+      parametrosUpdate = params;
+    }
+  });
+
+  const resultado = await service.salvarExecucaoFaf2021({
+    password: "senha-correta-testes",
+    itemId: "faf2021_idx_10",
+    uf: "AC",
+    objeto: "Equipamento de ouvidoria",
+    valorExecutado: 10
+  });
+
+  assert.equal(resultado.success, true);
+  assert.equal(resultado.quantidade, 2);
+  assert.equal(resultado.valorUnitario, 100.5);
+  assert.equal(resultado.valorTotal, 201);
+  assert.deepEqual(parametrosUpdate, ["faf2021_idx_10", 2, 100.5, 201, 10, false, null]);
 });
 
 test("salvarExecucaoFaf2021 rejeita HTML na observacao", async () => {
@@ -222,6 +304,8 @@ testPostgres("salvarExecucaoFaf2021 funciona com seed isolado no Postgres", asyn
         ON CONFLICT (item_id) DO UPDATE SET
           uf = EXCLUDED.uf,
           objeto = EXCLUDED.objeto,
+          quantidade = EXCLUDED.quantidade,
+          valor_unitario = EXCLUDED.valor_unitario,
           valor_total = EXCLUDED.valor_total,
           valor_executado = 0
       `,
@@ -233,17 +317,22 @@ testPostgres("salvarExecucaoFaf2021 funciona com seed isolado no Postgres", asyn
       itemId,
       uf: "ZZ",
       objeto: "Item teste FAF 2021",
-      valorExecutado: 10,
+      quantidade: 2,
+      valorUnitario: 50,
+      valorExecutado: 110,
       observacaoExecucao: "Teste integrado"
     });
 
     assert.equal(resultado.success, true);
 
     const conferido = await queryOriginal(
-      "SELECT valor_executado, observacao_execucao FROM faf_2021_itens WHERE item_id = $1",
+      "SELECT quantidade, valor_unitario, valor_total, valor_executado, observacao_execucao FROM faf_2021_itens WHERE item_id = $1",
       [itemId]
     );
-    assert.equal(Number(conferido.rows[0].valor_executado), 10);
+    assert.equal(Number(conferido.rows[0].quantidade), 2);
+    assert.equal(Number(conferido.rows[0].valor_unitario), 50);
+    assert.equal(Number(conferido.rows[0].valor_total), 100);
+    assert.equal(Number(conferido.rows[0].valor_executado), 110);
     assert.equal(conferido.rows[0].observacao_execucao, "Teste integrado");
   } finally {
     await queryOriginal("DELETE FROM faf_2021_itens WHERE item_id = $1", [itemId]);

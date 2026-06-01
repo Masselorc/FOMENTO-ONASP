@@ -7215,15 +7215,15 @@ async function carregarLogoParaPDF() {
             `;
         }
 
-        function validarValorExecutadoFaf2021(valor) {
+        function validarNumeroNaoNegativoFaf2021(valor, rotulo) {
             if (typeof valor === 'number' && Number.isFinite(valor)) {
-                if (valor < 0) throw new Error('Valor executado não pode ser negativo.');
+                if (valor < 0) throw new Error(`${rotulo} não pode ser negativo.`);
                 return valor;
             }
 
             const texto = String(valor ?? '').trim();
             if (!texto) {
-                throw new Error('Valor executado é obrigatório.');
+                throw new Error(`${rotulo} é obrigatório.`);
             }
 
             const normalizado = texto.replace(/^R\$/i, '').replace(/\s+/g, '');
@@ -7234,14 +7234,18 @@ async function carregarLogoParaPDF() {
                     : Number.parseFloat(normalizado);
 
             if (!Number.isFinite(numero)) {
-                throw new Error('Valor executado inválido.');
+                throw new Error(`${rotulo} inválido.`);
             }
 
             if (numero < 0) {
-                throw new Error('Valor executado não pode ser negativo.');
+                throw new Error(`${rotulo} não pode ser negativo.`);
             }
 
             return numero;
+        }
+
+        function validarValorExecutadoFaf2021(valor) {
+            return validarNumeroNaoNegativoFaf2021(valor, 'Valor executado');
         }
 
         function renderizarBotaoEdicaoFaf2021(item) {
@@ -7266,7 +7270,7 @@ async function carregarLogoParaPDF() {
                             <div class="modal-header">
                                 <div>
                                     <p class="section-eyebrow mb-1">FAF 2021</p>
-                                    <h5 class="modal-title">Editar execução</h5>
+                                    <h5 class="modal-title">Editar valores e execução</h5>
                                 </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                             </div>
@@ -7274,8 +7278,6 @@ async function carregarLogoParaPDF() {
                                 <div class="faf2021-editor-summary">
                                     <div><span>UF</span><strong>${escapeHtml(item.uf || '-')}</strong></div>
                                     <div><span>Objeto</span><strong>${escapeHtml(item.objeto || '-')}</strong></div>
-                                    <div><span>Quantidade</span><strong>${formatarQuantidadeProfor(item.quantidade)}</strong></div>
-                                    <div><span>Valor unitário</span><strong>${formatMoney(item.valorUnitario)}</strong></div>
                                     <div><span>Valor total</span><strong>${formatMoney(item.valorTotal)}</strong></div>
                                     <div><span>Executado atual</span><strong>${formatMoney(item.valorExecutado)}</strong></div>
                                     <div><span>Instrumento</span><strong>${escapeHtml(item.instrumento || '-')}</strong></div>
@@ -7283,6 +7285,40 @@ async function carregarLogoParaPDF() {
                                 </div>
 
                                 <div class="row g-3 mt-1">
+                                    <div class="col-md-4">
+                                        <label class="form-label" for="faf2021Quantidade">Quantidade</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="faf2021Quantidade"
+                                            min="0"
+                                            step="0.000001"
+                                            inputmode="decimal"
+                                            value="${escapeHtml(String(item.quantidade ?? 0))}"
+                                        >
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label" for="faf2021ValorUnitario">Valor unitário previsto</label>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            id="faf2021ValorUnitario"
+                                            min="0"
+                                            step="0.01"
+                                            inputmode="decimal"
+                                            value="${escapeHtml(String(item.valorUnitario ?? 0))}"
+                                        >
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label" for="faf2021ValorTotalPrevisto">Valor total previsto</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="faf2021ValorTotalPrevisto"
+                                            value="${escapeHtml(formatMoney(item.valorTotal))}"
+                                            readonly
+                                        >
+                                    </div>
                                     <div class="col-md-6">
                                         <label class="form-label" for="faf2021ValorExecutado">Novo valor executado</label>
                                         <input
@@ -7357,6 +7393,26 @@ async function carregarLogoParaPDF() {
             document.getElementById('faf2021SalvarExecucao')?.addEventListener('click', async () => {
                 await salvarExecucaoFaf2021(item.itemId, modal);
             });
+
+            const atualizarTotalPrevisto = () => {
+                const totalEl = document.getElementById('faf2021ValorTotalPrevisto');
+                if (!totalEl) return;
+
+                try {
+                    const quantidade = validarNumeroNaoNegativoFaf2021(document.getElementById('faf2021Quantidade')?.value, 'Quantidade');
+                    const valorUnitario = validarNumeroNaoNegativoFaf2021(document.getElementById('faf2021ValorUnitario')?.value, 'Valor unitário');
+                    totalEl.value = formatMoney(quantidade * valorUnitario);
+                    totalEl.classList.remove('is-invalid');
+                } catch (_) {
+                    totalEl.value = 'Valor inválido';
+                    totalEl.classList.add('is-invalid');
+                }
+            };
+
+            ['faf2021Quantidade', 'faf2021ValorUnitario'].forEach((id) => {
+                document.getElementById(id)?.addEventListener('input', atualizarTotalPrevisto);
+            });
+            atualizarTotalPrevisto();
         }
 
         async function salvarExecucaoFaf2021(itemId, modal = null) {
@@ -7372,9 +7428,13 @@ async function carregarLogoParaPDF() {
             }
 
             let valorExecutado;
+            let quantidade;
+            let valorUnitario;
             let observacaoExecucao = '';
 
             try {
+                quantidade = validarNumeroNaoNegativoFaf2021(document.getElementById('faf2021Quantidade')?.value, 'Quantidade');
+                valorUnitario = validarNumeroNaoNegativoFaf2021(document.getElementById('faf2021ValorUnitario')?.value, 'Valor unitário');
                 valorExecutado = validarValorExecutadoFaf2021(document.getElementById('faf2021ValorExecutado')?.value);
                 observacaoExecucao = String(document.getElementById('faf2021ObservacaoExecucao')?.value || '').trim();
                 if (/<[^>]+>/.test(observacaoExecucao)) {
@@ -7396,6 +7456,8 @@ async function carregarLogoParaPDF() {
                         itemId: item.itemId,
                         uf: item.uf,
                         objeto: item.objeto,
+                        quantidade,
+                        valorUnitario,
                         valorExecutado,
                         observacaoExecucao
                     })
