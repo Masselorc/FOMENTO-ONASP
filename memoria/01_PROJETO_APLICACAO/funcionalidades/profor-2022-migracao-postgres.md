@@ -27,7 +27,10 @@ A homologacao funcional D5 foi aprovada localmente, com recarga PAD concluida se
 
 | PR | Branch | Escopo | Merge commit | Resultado |
 |---|---|---|---|---|
-| #14 | `refactor/profor-2022-pad-rateios-writes-postgres` | Conversao da escrita de rateios PAD para Postgres. | `20c47d1` | Escritas de rateios migradas para Postgres. |
+| #11 | `refactor/profor-2022-pad-revisao-readonly-postgres` | Leituras puras da revisão PAD para Postgres; ajustes async/await em consumidores e rotas GET. | `946e8744f2f8043c57c726690e9b7eee0b7dde53` | Leituras da revisão PAD migradas para Postgres. |
+| #12 | `refactor/profor-2022-pad-revisao-writes-postgres` | Escritas/transações da revisão PAD; decisões, logs, lotes, reconstrução, comparador e recarga operacional para Postgres. | `dbbdb22cc0fefa2bdf86f2b9507433a31ea6a79d` | Escritas e reconstrução da revisão PAD migradas para Postgres. |
+| #13 | `refactor/profor-2022-pad-rateios-readonly-postgres` | Leituras de itens conhecidos, rateios e carteira monitorada para Postgres. | `ff1e03d03c19c42eabc2a44eb5623dbfc3ba7c79` | Leituras de rateios e carteira migradas para Postgres. |
+| #14 | `refactor/profor-2022-pad-rateios-writes-postgres` | Conversao da escrita de rateios PAD para Postgres. | `20c47d1483f2f035627ec461ec4a927218a6bdc0` | Escritas de rateios migradas para Postgres. |
 | #15 | `refactor/profor-2022-pad-saneamento-antigo-postgres` | Saneamento antigo de rateios para Postgres. | `7878a09` | Saneamento antigo migrado para Postgres. |
 | #16 | `refactor/sqlite-residual-postgres-final` | Eliminacao de residuos SQLite operacionais. | `68e2d79324c8e6500c13e644a33c4b8f34905404` | Fluxos operacionais sem residuos SQLite bloqueantes. |
 | #17 | `chore/sqlite-legado-guards-remocao-morta` | Remocao de legados SQLite sem consumidor e guards para scripts remanescentes. | `4fbc263408853700de01de866499cfc0e86bf682` | Legados sem consumidor removidos e scripts sensiveis protegidos. |
@@ -106,9 +109,13 @@ Trechos historicos sobre SQLite, planilha antiga, banco-cache legado e comparado
 Rollback dos merges principais:
 
 ```bash
-git revert -m 1 4fbc263
-git revert -m 1 68e2d79
+git revert -m 1 4fbc263408853700de01de866499cfc0e86bf682
+git revert -m 1 68e2d79324c8e6500c13e644a33c4b8f34905404
 git revert -m 1 7878a09
+git revert -m 1 20c47d1483f2f035627ec461ec4a927218a6bdc0
+git revert -m 1 ff1e03d03c19c42eabc2a44eb5623dbfc3ba7c79
+git revert -m 1 dbbdb22cc0fefa2bdf86f2b9507433a31ea6a79d
+git revert -m 1 946e8744f2f8043c57c726690e9b7eee0b7dde53
 ```
 
 Os PRs sao encadeados. Qualquer rollback deve ser planejado, validado em branch propria e acompanhado de nova homologacao funcional do fluxo PAD/PROFOR 2022.
