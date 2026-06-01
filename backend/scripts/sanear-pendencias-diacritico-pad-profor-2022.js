@@ -8,7 +8,16 @@ const CAMINHO_DRY_RUN_JSON = "backend/data/relatorios/profor-2022-pendencias-dia
 // Status que já têm decisão resolutiva — não devem receber nova decisão.
 const STATUS_RESOLUTIVOS = new Set(["ACEITO", "REJEITADO", "CORRIGIDO", "APLICADO", "REVERTIDO"]);
 
+function exigirConfirmacaoSaneamentoProfor2022(nomeScript) {
+  if (process.env.CONFIRMAR_SANEAMENTO_PROFOR_2022 === "SIM") return;
+  throw new Error(
+    `${nomeScript} executa saneamento com escrita real e exige CONFIRMAR_SANEAMENTO_PROFOR_2022=SIM. ` +
+    "Execução bloqueada por segurança."
+  );
+}
+
 async function executar() {
+  exigirConfirmacaoSaneamentoProfor2022("sanear-pendencias-diacritico-pad-profor-2022");
   const repoRoot = path.resolve(__dirname, "../..");
   const dryRunCaminho = path.join(repoRoot, CAMINHO_DRY_RUN_JSON);
 

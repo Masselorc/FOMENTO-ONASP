@@ -12,6 +12,14 @@ function imprimirOrfaos(orfaos) {
   }
 }
 
+function exigirConfirmacaoSaneamentoProfor2022(nomeScript) {
+  if (process.env.CONFIRMAR_SANEAMENTO_PROFOR_2022 === "SIM") return;
+  throw new Error(
+    `${nomeScript} executa saneamento com escrita real e exige CONFIRMAR_SANEAMENTO_PROFOR_2022=SIM. ` +
+    "Execução bloqueada por segurança."
+  );
+}
+
 async function executar() {
   const dryRun = process.argv.includes("--dry-run") || process.env.npm_config_dry_run === "true";
 
@@ -28,6 +36,7 @@ async function executar() {
     return;
   }
 
+  exigirConfirmacaoSaneamentoProfor2022("sanear-status-orfaos-revisao-pad-profor-2022");
   const resultado = await repo.sanearStatusResolutivosOrfaos();
   if (!resultado.totalEncontrados) {
     console.log("Nenhum status resolutivo órfão encontrado.");

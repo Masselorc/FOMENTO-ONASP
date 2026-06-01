@@ -89,7 +89,19 @@ function montarRateioItemNovo(item, payloadDivergencia) {
   }];
 }
 
+function exigirConfirmacaoSaneamentoProfor2022(nomeScript) {
+  if (process.env.CONFIRMAR_SANEAMENTO_PROFOR_2022 === "SIM") return;
+  throw new Error(
+    `${nomeScript} executa saneamento com escrita real e exige CONFIRMAR_SANEAMENTO_PROFOR_2022=SIM. ` +
+    "Execução bloqueada por segurança."
+  );
+}
+
 async function executar() {
+  // Em modo padrao (sem --dry-run) o script registra decisoes reais; exige confirmacao.
+  if (!DRY_RUN) {
+    exigirConfirmacaoSaneamentoProfor2022("sanear-classificacao-pad-al-937221-profor-2022");
+  }
   // 1) Itens novos do PAD: classificação por área a partir do PDF.
   const resNovas = await query(
     `SELECT id, chave_item, tipo_alerta, status, payload_json
