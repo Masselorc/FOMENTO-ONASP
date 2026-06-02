@@ -55,3 +55,7 @@ backend/data/onasp.sqlite-wal
 
 # Backups locais de banco de dados
 backend/backups/
+
+# Supabase CLI/Docker local
+# Não versionar enquanto o projeto não adotar supabase/migrations como fluxo oficial.
+supabase/
