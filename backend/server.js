@@ -584,8 +584,9 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/faf2021/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = await salvarExecucaoFaf2021(payload);
-      const resposta = await publicarAposSalvamento(resultado);
-      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      // Salvamento operacional FAF 2021 nao aciona publicacao estatica automaticamente.
+      // A publicacao de frontend/data/publicados permanece como etapa propria e futura.
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 

@@ -7298,7 +7298,7 @@ async function carregarLogoParaPDF() {
                                         >
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label" for="faf2021ValorUnitario">Valor unitário previsto</label>
+                                        <label class="form-label" for="faf2021ValorUnitario">Valor unitário previsto (R$)</label>
                                         <input
                                             type="number"
                                             class="form-control"
@@ -7306,11 +7306,12 @@ async function carregarLogoParaPDF() {
                                             min="0"
                                             step="0.01"
                                             inputmode="decimal"
-                                            value="${escapeHtml(String(item.valorUnitario ?? 0))}"
+                                            placeholder="0.00"
+                                            value="${escapeHtml(Number(item.valorUnitario ?? 0).toFixed(2))}"
                                         >
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label" for="faf2021ValorTotalPrevisto">Valor total previsto</label>
+                                        <label class="form-label" for="faf2021ValorTotalPrevisto">Valor total previsto (R$)</label>
                                         <input
                                             type="text"
                                             class="form-control"
@@ -7320,7 +7321,7 @@ async function carregarLogoParaPDF() {
                                         >
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label" for="faf2021ValorExecutado">Novo valor executado</label>
+                                        <label class="form-label" for="faf2021ValorExecutado">Novo valor executado (R$)</label>
                                         <input
                                             type="number"
                                             class="form-control"
@@ -7328,8 +7329,10 @@ async function carregarLogoParaPDF() {
                                             min="0"
                                             step="0.01"
                                             inputmode="decimal"
-                                            value="${escapeHtml(String(item.valorExecutado ?? 0))}"
+                                            placeholder="0.00"
+                                            value="${escapeHtml(Number(item.valorExecutado ?? 0).toFixed(2))}"
                                         >
+                                        <div class="form-text">Pode ser maior que o valor total previsto (execução acima de 100%).</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label" for="faf2021SenhaEdicao">Senha de confirmação</label>
