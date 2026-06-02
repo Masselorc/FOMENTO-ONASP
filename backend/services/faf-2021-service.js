@@ -107,6 +107,8 @@ async function buscarItemFaf2021(client, itemId) {
         indice_dados_base,
         uf,
         objeto,
+        quantidade,
+        valor_unitario,
         valor_total
       FROM faf_2021_itens
       WHERE item_id = $1
@@ -143,8 +145,39 @@ async function salvarExecucaoFaf2021(payload = {}) {
       return { success: false, message: "Objeto informado não confere com o item original." };
     }
 
+    const quantidade = Object.prototype.hasOwnProperty.call(payload, "quantidade")
+      ? converterNumero(payload.quantidade)
+      : Number(item.quantidade);
+    const valorUnitario = Object.prototype.hasOwnProperty.call(payload, "valorUnitario")
+      ? converterNumero(payload.valorUnitario)
+      : Number(item.valor_unitario);
     const valorExecutado = converterNumero(payload.valorExecutado);
-    const valorTotal = Number(item.valor_total) || 0;
+
+    if (!Number.isFinite(quantidade)) {
+      return { success: false, message: "Quantidade inválida." };
+    }
+
+    if (quantidade < 0) {
+      return { success: false, message: "Quantidade não pode ser negativa." };
+    }
+
+    if (!Number.isFinite(valorUnitario)) {
+      return { success: false, message: "Valor unitário inválido." };
+    }
+
+    if (valorUnitario < 0) {
+      return { success: false, message: "Valor unitário não pode ser negativo." };
+    }
+
+    const valorTotal = Number((quantidade * valorUnitario).toFixed(2));
+
+    if (!Number.isFinite(valorTotal)) {
+      return { success: false, message: "Valor total inválido." };
+    }
+
+    if (valorTotal < 0) {
+      return { success: false, message: "Valor total não pode ser negativo." };
+    }
 
     if (!Number.isFinite(valorExecutado)) {
       return { success: false, message: "Valor executado inválido." };
@@ -152,10 +185,6 @@ async function salvarExecucaoFaf2021(payload = {}) {
 
     if (valorExecutado < 0) {
       return { success: false, message: "Valor executado não pode ser negativo." };
-    }
-
-    if (valorTotal > 0 && valorExecutado > valorTotal + 0.01) {
-      return { success: false, message: "Valor executado não pode ser maior que o valor total do item." };
     }
 
     const atualizarObservacao = Object.prototype.hasOwnProperty.call(payload, "observacaoExecucao");
@@ -169,20 +198,28 @@ async function salvarExecucaoFaf2021(payload = {}) {
       `
         UPDATE faf_2021_itens
         SET
-          valor_executado = $2,
-          observacao_execucao = CASE WHEN $3::boolean THEN $4 ELSE observacao_execucao END,
+          quantidade = $2,
+          valor_unitario = $3,
+          valor_total = $4,
+          valor_executado = $5,
+          observacao_execucao = CASE WHEN $6::boolean THEN $7 ELSE observacao_execucao END,
           atualizado_em = now()
         WHERE item_id = $1
         RETURNING atualizado_em
       `,
-      [payload.itemId, valorExecutado, atualizarObservacao, observacao]
+      [payload.itemId, quantidade, valorUnitario, valorTotal, valorExecutado, atualizarObservacao, observacao]
     );
 
     return {
       success: true,
       message: "Execução do item FAF 2021 atualizada com sucesso.",
       itemId: payload.itemId,
-      atualizadoEm: formatarData(atualizado.rows[0]?.atualizado_em)
+      atualizadoEm: formatarData(atualizado.rows[0]?.atualizado_em),
+      quantidade,
+      valorUnitario,
+      valorTotal,
+      valorExecutado,
+      percentualExecutado: valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0
     };
   });
 }
