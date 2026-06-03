@@ -5171,7 +5171,10 @@ async function carregarLogoParaPDF() {
                 { valor: 'profor_rendimentos_atualizacao_erro', rotulo: 'Rendimentos — erro' },
                 { valor: 'publicacao_estatica_inicio', rotulo: 'Publicação estática — início' },
                 { valor: 'publicacao_estatica_sucesso', rotulo: 'Publicação estática — sucesso' },
-                { valor: 'publicacao_estatica_erro', rotulo: 'Publicação estática — erro' }
+                { valor: 'publicacao_estatica_erro', rotulo: 'Publicação estática — erro' },
+                { valor: 'profor_pad_revisao_decisao_registrada', rotulo: 'PAD — decisão registrada' },
+                { valor: 'profor_pad_revisao_rateio_atualizado', rotulo: 'PAD — rateio atualizado' },
+                { valor: 'profor_pad_revisao_area_atualizada', rotulo: 'PAD — área atualizada' }
             ];
             const statusOpcoes = [
                 { valor: '', rotulo: 'Todos os status' },

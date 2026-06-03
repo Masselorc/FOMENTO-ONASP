@@ -8,6 +8,7 @@ const {
 const {
   avaliarDivergenciaQuantidadeValorUnitario,
 } = require("./profor-pad-consistencia-quantidade-service");
+const logsOperacionaisService = require("../logs-operacionais-service");
 
 // Decisões que o usuário pode registrar pela revisão assistida.
 // COMENTAR mantém o status PENDENTE (apenas registra comentário/log).
@@ -476,6 +477,26 @@ async function registrarDecisao(divergenciaId, entrada = {}) {
     justificativa: justificativa || null,
     usuario,
     payloadDecisao,
+  });
+
+  logsOperacionaisService.registrarLogOperacional({
+    modulo: "profor-2022",
+    tipoEvento: "profor_pad_revisao_decisao_registrada",
+    status: "sucesso",
+    resumo: `Decisão PAD registrada: ${decisao} para divergência ${id} (${linha.tipo_alerta || "-"}) / ${linha.uf || "-"}`,
+    payload: {
+      divergenciaId: id,
+      chaveDivergencia: linha.chave_divergencia || null,
+      tipoAlerta: linha.tipo_alerta || null,
+      uf: linha.uf || null,
+      decisao,
+      statusAnterior: resultado.statusAnterior,
+      statusNovo: resultado.statusNovo,
+      decididoEm: resultado.decididoEm,
+      origem: "interface",
+    },
+  }).catch(() => {
+    // Falha de auditoria nao pode bloquear o registro de decisao.
   });
 
   return {

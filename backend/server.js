@@ -28,7 +28,8 @@ const {
 } = require("./services/orcamento-2026-service");
 const {
   listarFaf2021,
-  salvarExecucaoFaf2021
+  salvarExecucaoFaf2021,
+  listarHistoricoFaf2021,
 } = require("./services/faf-2021-service");
 const {
   listarConveniosMonitorados,
@@ -581,6 +582,18 @@ async function rotearApi(req, res, pathname) {
       // Salvamento operacional FAF 2021 nao aciona publicacao estatica automaticamente.
       // A publicacao de frontend/data/publicados permanece como etapa propria e futura.
       enviarJson(res, resultado.success ? 200 : 400, resultado);
+      return;
+    }
+
+    if (req.method === "GET" && pathname.startsWith("/api/faf2021/historico/")) {
+      try {
+        const itemId = decodeURIComponent(pathname.slice("/api/faf2021/historico/".length));
+        const limite = parsed.searchParams.get("limite");
+        const historico = await listarHistoricoFaf2021(itemId, { limite: limite ? Number(limite) : 100 });
+        enviarJson(res, 200, { ok: true, itemId, historico });
+      } catch (erro) {
+        enviarJson(res, erro.statusCode || 500, { ok: false, message: erro.message || "Erro ao consultar histórico FAF 2021." });
+      }
       return;
     }
 

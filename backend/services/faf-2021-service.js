@@ -305,9 +305,32 @@ async function salvarExecucaoFaf2021(payload = {}) {
   });
 }
 
+async function listarHistoricoFaf2021(itemId, opcoes = {}) {
+  const texto = limparTexto(itemId);
+  if (!texto.startsWith(PREFIXO_ITEM_ID)) {
+    throw Object.assign(new Error("itemId FAF 2021 inválido."), { statusCode: 400 });
+  }
+  const limite = Math.min(Math.max(1, Number(opcoes.limite) || 100), 500);
+  const resultado = await postgresClient.query(
+    `SELECT campo, valor_anterior, valor_novo, alterado_em
+     FROM historico_alteracoes
+     WHERE pagina = $1 AND registro = $2
+     ORDER BY alterado_em DESC
+     LIMIT $3`,
+    [PAGINA_FAF, texto, limite]
+  );
+  return resultado.rows.map((row) => ({
+    campo: row.campo,
+    valorAnterior: row.valor_anterior,
+    valorNovo: row.valor_novo,
+    alteradoEm: row.alterado_em,
+  }));
+}
+
 module.exports = {
   listarFaf2021,
   salvarExecucaoFaf2021,
+  listarHistoricoFaf2021,
   montarItemFaf2021,
   obterIndiceItemFaf2021,
   converterNumero
