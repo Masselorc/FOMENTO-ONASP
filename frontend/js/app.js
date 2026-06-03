@@ -5146,7 +5146,11 @@ async function carregarLogoParaPDF() {
                 { valor: 'profor_atualizacao_consolidada', rotulo: 'Atualização consolidada PROFOR 2022' },
                 { valor: 'profor_publicacao_estatica', rotulo: 'Publicação estática PROFOR 2022' },
                 { valor: 'profor_detru', rotulo: 'Atualização DETRU' },
-                { valor: 'profor_rendimentos_transferegov', rotulo: 'Rendimentos Transferegov' }
+                { valor: 'profor_rendimentos_transferegov', rotulo: 'Rendimentos Transferegov' },
+                { valor: 'faf_2021_edicao', rotulo: 'FAF 2021 — edição' },
+                { valor: 'profor_convenio_monitorado_criacao', rotulo: 'PROFOR — criação de convênio monitorado' },
+                { valor: 'profor_convenio_monitorado_edicao', rotulo: 'PROFOR — edição de convênio monitorado' },
+                { valor: 'profor_convenio_monitorado_inativacao', rotulo: 'PROFOR — inativação de convênio monitorado' }
             ];
             const statusOpcoes = [
                 { valor: '', rotulo: 'Todos os status' },

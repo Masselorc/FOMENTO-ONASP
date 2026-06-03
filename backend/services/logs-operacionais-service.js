@@ -9,6 +9,7 @@ const { query } = require("../db/postgres-client");
 const MODULOS_PERMITIDOS = new Set([
   "profor-2022",
   "sistema",
+  "faf-2021",
 ]);
 
 const TIPOS_EVENTO_PERMITIDOS = new Set([
@@ -16,6 +17,10 @@ const TIPOS_EVENTO_PERMITIDOS = new Set([
   "profor_publicacao_estatica",
   "profor_detru",
   "profor_rendimentos_transferegov",
+  "faf_2021_edicao",
+  "profor_convenio_monitorado_criacao",
+  "profor_convenio_monitorado_edicao",
+  "profor_convenio_monitorado_inativacao",
 ]);
 
 const STATUS_PERMITIDOS = new Set([
