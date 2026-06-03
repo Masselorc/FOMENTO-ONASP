@@ -42,6 +42,9 @@ const TIPOS_EVENTO_PERMITIDOS = new Set([
   "publicacao_estatica_inicio",
   "publicacao_estatica_sucesso",
   "publicacao_estatica_erro",
+  "profor_pad_revisao_decisao_registrada",
+  "profor_pad_revisao_rateio_atualizado",
+  "profor_pad_revisao_area_atualizada",
 ]);
 
 const STATUS_PERMITIDOS = new Set([

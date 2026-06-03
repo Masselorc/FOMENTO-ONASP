@@ -3,6 +3,7 @@ const {
   AREAS_PERMITIDAS,
   montarRevisoesPlanoPad,
 } = require("./profor-pad-revisoes-plano-service");
+const logsOperacionaisService = require("../logs-operacionais-service");
 const {
   carregarPadsOperacional,
 } = require("./profor-pad-carregador-operacional-service");
@@ -285,6 +286,25 @@ async function salvarAreaRevisaoPlano(payload = {}, opcoes = {}) {
     : "AREA_ALTERADA";
 
   await regerarRecargaOperacional(opcoes);
+
+  logsOperacionaisService.registrarLogOperacional({
+    modulo: "profor-2022",
+    tipoEvento: "profor_pad_revisao_area_atualizada",
+    status: "sucesso",
+    resumo: `Área PAD atualizada: ${payload.areaAnterior || filha.area || "-"} → ${areaNova} (item ${payload.itemId || contexto.chaveItem || "-"} / ${contexto.uf || "-"})`,
+    payload: {
+      itemConhecidoId,
+      chaveItem: contexto.chaveItem || null,
+      uf: contexto.uf || null,
+      areaAnterior: payload.areaAnterior || filha.area || null,
+      areaNova,
+      statusGrupo,
+      origem: "interface",
+    },
+  }).catch(() => {
+    // Falha de auditoria nao pode bloquear a operacao.
+  });
+
   return { linhaFilhaAtualizada, statusGrupo };
 }
 
@@ -311,6 +331,24 @@ async function salvarRateioRevisaoPlano(payload = {}, opcoes = {}) {
     : "RATEIO_ALTERADO";
 
   await regerarRecargaOperacional(opcoes);
+
+  logsOperacionaisService.registrarLogOperacional({
+    modulo: "profor-2022",
+    tipoEvento: "profor_pad_revisao_rateio_atualizado",
+    status: "sucesso",
+    resumo: `Rateio PAD atualizado: item ${contexto.chaveItem || "-"} / ${contexto.uf || "-"} (${normalizadas.length} linha(s))`,
+    payload: {
+      itemConhecidoId,
+      chaveItem: contexto.chaveItem || null,
+      uf: contexto.uf || null,
+      totalLinhas: normalizadas.length,
+      statusGrupo,
+      origem: "interface",
+    },
+  }).catch(() => {
+    // Falha de auditoria nao pode bloquear a operacao.
+  });
+
   return { linhasFilhasAtualizadas, statusGrupo };
 }
 
