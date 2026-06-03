@@ -9,6 +9,7 @@ const {
 const {
   salvarAreaRevisaoPlano,
   salvarRateioRevisaoPlano,
+  persistirRateiosOperacionais,
 } = require("../../backend/services/profor-2022/profor-pad-revisoes-plano-decisoes-service");
 
 function montarDados() {
@@ -68,12 +69,143 @@ function montarDados() {
 function opcoesTeste(dados, capturas = []) {
   return {
     carregarRevisoesPlano: () => dados,
+    pularRegerarRecarga: true,
     persistirRateiosOperacionais: (parametros) => {
       capturas.push(parametros);
       return 123;
     },
   };
 }
+
+function contextoPersistencia(sufixo = "notebook") {
+  return {
+    itemConhecidoId: null,
+    chaveItem: `900001::${sufixo}`,
+    numeroConvenio: "900001",
+    uf: "DF",
+    descricao: "Notebook operacional",
+    descricaoNormalizada: "notebook operacional",
+    natureza: "CUSTEIO",
+    codigoNatureza: "339030",
+    quantidadeOriginal: 10,
+    valorUnitario: 3000,
+  };
+}
+
+function linhasPersistencia() {
+  return [
+    { area: "OUVIDORIA", natureza: "CUSTEIO", quantidade: 4, valorTotal: 12000 },
+    { area: "CORREGEDORIA", natureza: "CUSTEIO", quantidade: 6, valorTotal: 18000 },
+  ];
+}
+
+function criarClienteMock(respostas = []) {
+  const chamadas = [];
+  return {
+    chamadas,
+    async query(sql, params = []) {
+      chamadas.push({ sql: String(sql).replace(/\s+/g, " ").trim(), params });
+      const resposta = respostas.shift();
+      if (resposta instanceof Error) throw resposta;
+      if (typeof resposta === "function") return resposta(sql, params);
+      return resposta || { rows: [] };
+    },
+  };
+}
+
+test("persistirRateiosOperacionais cria item conhecido e substitui rateios em Postgres", async () => {
+  const client = criarClienteMock([
+    { rows: [] },
+    { rows: [{ id: 321 }] },
+    { rows: [{ area: "NAO_CLASSIFICADO", natureza: "CUSTEIO", quantidade_referencia: "10" }] },
+    { rows: [] },
+    { rows: [] },
+    { rows: [] },
+    { rows: [] },
+  ]);
+
+  const itemConhecidoId = await persistirRateiosOperacionais({
+    contexto: contextoPersistencia(),
+    linhas: linhasPersistencia(),
+    evento: "ALTERAR_QUANTIDADE_RATEIO",
+    detalhe: "Teste unitario D2",
+  }, {
+    withTransaction: async (callback) => callback(client),
+  });
+
+  assert.equal(itemConhecidoId, 321);
+  assert.match(client.chamadas[0].sql, /SELECT id FROM profor_2022_itens_conhecidos WHERE chave_item = \$1/);
+  assert.match(client.chamadas[1].sql, /INSERT INTO profor_2022_itens_conhecidos/);
+  assert.match(client.chamadas[2].sql, /FROM profor_2022_item_rateios/);
+  assert.match(client.chamadas[3].sql, /UPDATE profor_2022_item_rateios SET ativo = false/);
+  assert.match(client.chamadas[4].sql, /INSERT INTO profor_2022_item_rateios/);
+  assert.match(client.chamadas[5].sql, /INSERT INTO profor_2022_item_rateios/);
+  assert.match(client.chamadas[6].sql, /INSERT INTO profor_2022_revisao_logs/);
+  assert.equal(client.chamadas[4].params[0], 321);
+  assert.equal(client.chamadas[4].params[6], 40);
+  assert.equal(client.chamadas[5].params[6], 60);
+  assert.equal(client.chamadas[6].params[1], "ALTERAR_QUANTIDADE_RATEIO");
+});
+
+test("persistirRateiosOperacionais reutiliza item conhecido por chave sem duplicar item", async () => {
+  const client = criarClienteMock([
+    { rows: [{ id: 654 }] },
+    { rows: [] },
+    { rows: [] },
+    { rows: [] },
+    { rows: [] },
+    { rows: [] },
+  ]);
+
+  const itemConhecidoId = await persistirRateiosOperacionais({
+    contexto: contextoPersistencia("item-existente"),
+    linhas: linhasPersistencia(),
+    evento: "ALTERAR_AREA_RATEIO",
+    detalhe: "Teste item existente",
+  }, {
+    withTransaction: async (callback) => callback(client),
+  });
+
+  assert.equal(itemConhecidoId, 654);
+  assert.equal(client.chamadas.some((c) => /INSERT INTO profor_2022_itens_conhecidos/.test(c.sql)), false);
+  assert.equal(client.chamadas.filter((c) => /INSERT INTO profor_2022_item_rateios/.test(c.sql)).length, 2);
+});
+
+test("persistirRateiosOperacionais propaga falha de Postgres sem fallback silencioso", async () => {
+  const client = criarClienteMock([
+    { rows: [] },
+    { rows: [{ id: 987 }] },
+    { rows: [] },
+    { rows: [] },
+    new Error("falha postgres simulada"),
+  ]);
+  const eventosTransacao = [];
+
+  await assert.rejects(
+    () => persistirRateiosOperacionais({
+      contexto: contextoPersistencia("erro"),
+      linhas: linhasPersistencia(),
+      evento: "ALTERAR_QUANTIDADE_RATEIO",
+      detalhe: "Teste erro",
+    }, {
+      withTransaction: async (callback) => {
+        eventosTransacao.push("BEGIN");
+        try {
+          const resultado = await callback(client);
+          eventosTransacao.push("COMMIT");
+          return resultado;
+        } catch (erro) {
+          eventosTransacao.push("ROLLBACK");
+          throw erro;
+        }
+      },
+    }),
+    /falha postgres simulada/
+  );
+
+  assert.deepEqual(eventosTransacao, ["BEGIN", "ROLLBACK"]);
+  assert.equal(client.chamadas.some((c) => /INSERT INTO profor_2022_revisao_logs/.test(c.sql)), false);
+});
 
 test("alteracao de area valida e aceita sem alterar quantidade", async () => {
   const dados = montarDados();

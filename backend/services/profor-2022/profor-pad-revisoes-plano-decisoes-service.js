@@ -179,7 +179,8 @@ async function obterOuCriarItemConhecido(client, contexto) {
 }
 
 function persistirRateiosOperacionais({ contexto, linhas, evento, detalhe }, opcoes = {}) {
-  return withTransaction(async (client) => {
+  const executarTransacao = opcoes.withTransaction || withTransaction;
+  return executarTransacao(async (client) => {
     const itemConhecidoId = await obterOuCriarItemConhecido(client, contexto);
     const anteriores = (await client.query(`
       SELECT area, natureza, quantidade_referencia, valor_previsto_referencia, percentual_quantidade, percentual_valor
