@@ -5156,7 +5156,22 @@ async function carregarLogoParaPDF() {
                 { valor: 'orcamento_2026_edicao', rotulo: 'Orçamento 2026 — edição' },
                 { valor: 'orcamento_2026_criacao_processo_vinculado', rotulo: 'Orçamento 2026 — criação vinculada' },
                 { valor: 'orcamento_2026_inativacao', rotulo: 'Orçamento 2026 — inativação' },
-                { valor: 'orcamento_2026_alocacao_saldo', rotulo: 'Orçamento 2026 — alocação de saldo' }
+                { valor: 'orcamento_2026_alocacao_saldo', rotulo: 'Orçamento 2026 — alocação de saldo' },
+                { valor: 'profor_pad_recarga_operacional_inicio', rotulo: 'Recarga PAD — início' },
+                { valor: 'profor_pad_recarga_operacional_sucesso', rotulo: 'Recarga PAD — sucesso' },
+                { valor: 'profor_pad_recarga_operacional_erro', rotulo: 'Recarga PAD — erro' },
+                { valor: 'profor_pad_transferegov_atualizacao_inicio', rotulo: 'PAD/Transferegov — início' },
+                { valor: 'profor_pad_transferegov_atualizacao_sucesso', rotulo: 'PAD/Transferegov — sucesso' },
+                { valor: 'profor_pad_transferegov_atualizacao_erro', rotulo: 'PAD/Transferegov — erro' },
+                { valor: 'profor_detru_atualizacao_inicio', rotulo: 'DETRU — início' },
+                { valor: 'profor_detru_atualizacao_sucesso', rotulo: 'DETRU — sucesso' },
+                { valor: 'profor_detru_atualizacao_erro', rotulo: 'DETRU — erro' },
+                { valor: 'profor_rendimentos_atualizacao_inicio', rotulo: 'Rendimentos — início' },
+                { valor: 'profor_rendimentos_atualizacao_sucesso', rotulo: 'Rendimentos — sucesso' },
+                { valor: 'profor_rendimentos_atualizacao_erro', rotulo: 'Rendimentos — erro' },
+                { valor: 'publicacao_estatica_inicio', rotulo: 'Publicação estática — início' },
+                { valor: 'publicacao_estatica_sucesso', rotulo: 'Publicação estática — sucesso' },
+                { valor: 'publicacao_estatica_erro', rotulo: 'Publicação estática — erro' }
             ];
             const statusOpcoes = [
                 { valor: '', rotulo: 'Todos os status' },

@@ -11,6 +11,9 @@ const {
 const {
   gerarLinhasItem,
 } = require("./profor-pad-plano-reconstrucao-service");
+const {
+  registrarLogOperacional,
+} = require("../logs-operacionais-service");
 
 const RELATORIO_JSON = "backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json";
 const RELATORIO_MD = "backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.md";
@@ -18,6 +21,40 @@ const TOTAL_PAD_ESPERADO = 15;
 
 function agoraIso() {
   return new Date().toISOString();
+}
+
+function calcularDuracaoMs(iniciadoEm, concluidoEm = agoraIso()) {
+  const inicio = new Date(iniciadoEm).getTime();
+  const fim = new Date(concluidoEm).getTime();
+  return Number.isFinite(inicio) && Number.isFinite(fim) ? Math.max(0, fim - inicio) : null;
+}
+
+function montarPayloadLogRecarga(resultado = {}, extras = {}) {
+  return {
+    totalArquivosPad: Number(resultado.totalArquivosPad || resultado.arquivosEncontrados || 0),
+    totalRelatoriosLidos: Number(resultado.totalRelatoriosLidos || resultado.arquivosLidos || 0),
+    totalItensPad: Number(resultado.totalItensPad || resultado.itensProcessados || 0),
+    totalLinhasReconstruidas: Number(resultado.totalLinhasReconstruidas || resultado.linhasReconstruidas || 0),
+    totalConveniosReconstruidos: Number(resultado.totalConveniosReconstruidos || resultado.conveniosReconstruidos || 0),
+    totalImpedimentos: Number(resultado.totalImpedimentos || 0),
+    totalAlertas: Number(resultado.totalAlertas || 0),
+    caminhosRelatorios: resultado.caminhosRelatorios || {
+      recargaJson: RELATORIO_JSON,
+      recargaMd: RELATORIO_MD,
+    },
+    origem: resultado.origem || extras.origem || null,
+    duracaoMs: extras.duracaoMs ?? null,
+    erro: extras.erro || null,
+  };
+}
+
+async function registrarLogRecargaSeguro(log, opcoes = {}) {
+  const registrar = opcoes.registrarLogOperacional || registrarLogOperacional;
+  try {
+    await registrar(log);
+  } catch {
+    // Falha de auditoria nao pode bloquear a recarga operacional.
+  }
 }
 
 async function carregarMemoriaRateios() {
@@ -312,7 +349,19 @@ function gerarMarkdown(resultado) {
 async function carregarPadsOperacional(opcoes = {}) {
   const repoRoot = opcoes.repoRoot || path.resolve(__dirname, "../../..");
   const dataHora = agoraIso();
+  const iniciadoEm = dataHora;
 
+  await registrarLogRecargaSeguro({
+    modulo: "profor-2022",
+    tipoEvento: "profor_pad_recarga_operacional_inicio",
+    status: "sucesso",
+    iniciadoEm,
+    concluidoEm: iniciadoEm,
+    resumo: "Recarga PAD operacional iniciada.",
+    payload: {
+      origem: opcoes.origem || "cache_transferegov",
+    },
+  }, opcoes);
 
 
   try {
@@ -465,6 +514,19 @@ async function carregarPadsOperacional(opcoes = {}) {
     resultado.aptoParaPublicacao = false;
 
     if (opcoes.salvarRelatorio !== false) salvarRelatorio(resultado, repoRoot);
+    const concluidoEm = agoraIso();
+    await registrarLogRecargaSeguro({
+      modulo: "profor-2022",
+      tipoEvento: "profor_pad_recarga_operacional_sucesso",
+      status: "sucesso",
+      iniciadoEm,
+      concluidoEm,
+      duracaoMs: calcularDuracaoMs(iniciadoEm, concluidoEm),
+      resumo: `Recarga PAD operacional concluída: ${resultado.totalRelatoriosLidos}/${resultado.totalArquivosPad} PADs lidos, ${resultado.totalLinhasReconstruidas} linha(s) reconstruída(s).`,
+      payload: montarPayloadLogRecarga(resultado, {
+        duracaoMs: calcularDuracaoMs(iniciadoEm, concluidoEm),
+      }),
+    }, opcoes);
     return resultado;
   } catch (erro) {
     const resultadoErro = {
@@ -518,6 +580,20 @@ async function carregarPadsOperacional(opcoes = {}) {
       },
     };
     if (opcoes.salvarRelatorio !== false) salvarRelatorio(resultadoErro, repoRoot);
+    const concluidoEm = agoraIso();
+    await registrarLogRecargaSeguro({
+      modulo: "profor-2022",
+      tipoEvento: "profor_pad_recarga_operacional_erro",
+      status: "falha",
+      iniciadoEm,
+      concluidoEm,
+      duracaoMs: calcularDuracaoMs(iniciadoEm, concluidoEm),
+      resumo: `Erro na recarga PAD operacional: ${erro?.message || erro}`,
+      payload: montarPayloadLogRecarga(resultadoErro, {
+        duracaoMs: calcularDuracaoMs(iniciadoEm, concluidoEm),
+        erro: erro?.message || String(erro),
+      }),
+    }, opcoes);
     return resultadoErro;
   }
 }
@@ -537,4 +613,5 @@ module.exports = {
   carregarPadsOperacional,
   obterUltimaRecargaOperacionalV2,
   agruparAlertasPorTipo,
+  montarPayloadLogRecarga,
 };

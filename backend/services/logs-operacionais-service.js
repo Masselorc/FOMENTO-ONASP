@@ -27,6 +27,21 @@ const TIPOS_EVENTO_PERMITIDOS = new Set([
   "orcamento_2026_criacao_processo_vinculado",
   "orcamento_2026_inativacao",
   "orcamento_2026_alocacao_saldo",
+  "profor_pad_recarga_operacional_inicio",
+  "profor_pad_recarga_operacional_sucesso",
+  "profor_pad_recarga_operacional_erro",
+  "profor_pad_transferegov_atualizacao_inicio",
+  "profor_pad_transferegov_atualizacao_sucesso",
+  "profor_pad_transferegov_atualizacao_erro",
+  "profor_detru_atualizacao_inicio",
+  "profor_detru_atualizacao_sucesso",
+  "profor_detru_atualizacao_erro",
+  "profor_rendimentos_atualizacao_inicio",
+  "profor_rendimentos_atualizacao_sucesso",
+  "profor_rendimentos_atualizacao_erro",
+  "publicacao_estatica_inicio",
+  "publicacao_estatica_sucesso",
+  "publicacao_estatica_erro",
 ]);
 
 const STATUS_PERMITIDOS = new Set([
@@ -44,7 +59,7 @@ const TAMANHO_MAX_RESUMO = 600;
 const TAMANHO_MAX_STRING_PAYLOAD = 600;
 const TAMANHO_MAX_PAYLOAD_JSON = 32_000;
 
-const REGEX_CAMPOS_PROIBIDOS = /(jsessionid|samlrequest|samlresponse|cookie|set-cookie|authorization|bearer|onasp_edit_password|detru_siconv_convenio_url|password|senha|token|secret)/i;
+const REGEX_CAMPOS_PROIBIDOS = /(jsessionid|samlrequest|samlresponse|cookie|set-cookie|authorization|bearer|onasp_edit_password|detru_siconv_convenio_url|database_url|password|senha|token|secret)/i;
 const PADROES_TEXTO_PROIBIDO = [
   /JSESSIONID/i,
   /SAMLRequest/i,
@@ -55,6 +70,10 @@ const PADROES_TEXTO_PROIBIDO = [
   /Bearer\s+/i,
   /ONASP_EDIT_PASSWORD/i,
   /DETRU_SICONV_CONVENIO_URL/i,
+  /DATABASE_URL/i,
+  /password/i,
+  /senha/i,
+  /token/i,
   /C:\\Users\\/i,
   /\.sqlite/i,
   /\.har\b/i,
