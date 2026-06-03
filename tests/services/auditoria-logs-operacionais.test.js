@@ -152,6 +152,19 @@ test("logs-operacionais aceita tipos de convenio monitorado", () => {
   assert.ok(logsService.TIPOS_EVENTO_PERMITIDOS.has("profor_convenio_monitorado_inativacao"));
 });
 
+test("logs-operacionais aceita tipos de historico existente", () => {
+  [
+    "parametros_minimos_edicao",
+    "formalizacao_profor_edicao",
+    "orcamento_2026_edicao",
+    "orcamento_2026_criacao_processo_vinculado",
+    "orcamento_2026_inativacao",
+    "orcamento_2026_alocacao_saldo",
+  ].forEach((tipo) => {
+    assert.ok(logsService.TIPOS_EVENTO_PERMITIDOS.has(tipo), `Tipo ausente: ${tipo}`);
+  });
+});
+
 test("logs-operacionais mantem tipos antigos", () => {
   assert.ok(logsService.TIPOS_EVENTO_PERMITIDOS.has("profor_atualizacao_consolidada"));
   assert.ok(logsService.TIPOS_EVENTO_PERMITIDOS.has("profor_publicacao_estatica"));
@@ -174,6 +187,264 @@ test("sanitizarPayloadLog remove token do objeto", () => {
   const r = logsService.sanitizarPayloadLog({ token: "bearer-xyz", dado: "ok" });
   assert.equal(r.token, "[REMOVIDO_POR_SANITIZACAO]");
   assert.equal(r.dado, "ok");
+});
+
+function recarregarServico(caminho) {
+  delete require.cache[require.resolve(caminho)];
+  return require(caminho);
+}
+
+function instalarMockParametros({ anterior = { status: "PENDENTE", quantidade_atual: null, quantidade_ideal: null }, falhaLog = false } = {}) {
+  const historicos = [];
+  const logs = [];
+
+  historicoService.registrarHistoricoPostgres = async (_client, args) => {
+    historicos.push({ ...args });
+  };
+  logsService.registrarLogOperacional = async (log) => {
+    logs.push({ ...log });
+    if (falhaLog) throw new Error("falha simulada de log");
+    return { id: 1 };
+  };
+  postgresClient.withTransaction = async (callback) => callback({
+    async query(sql) {
+      if (/SELECT status, quantidade_atual, quantidade_ideal FROM parametros_minimos/i.test(sql)) {
+        return { rows: anterior ? [anterior] : [] };
+      }
+      if (/INSERT INTO parametros_minimos/i.test(sql)) return { rows: [] };
+      throw new Error(`SQL inesperado no mock Parametros: ${sql}`);
+    },
+  });
+
+  const service = recarregarServico("../../backend/services/parametros-minimos-service");
+  return { service, historicos, logs };
+}
+
+function instalarMockFormalizacao({ anterior = { status: "PENDENTE", observacao: "" } } = {}) {
+  const historicos = [];
+  const logs = [];
+
+  historicoService.registrarHistoricoPostgres = async (_client, args) => {
+    historicos.push({ ...args });
+  };
+  logsService.registrarLogOperacional = async (log) => {
+    logs.push({ ...log });
+    return { id: 1 };
+  };
+  postgresClient.query = async (sql) => {
+    if (/SELECT COUNT\(\*\)::int AS total FROM formalizacao_profor/i.test(sql)) {
+      return { rows: [{ total: 1 }] };
+    }
+    throw new Error(`postgresClient.query inesperado no mock Formalizacao: ${sql}`);
+  };
+  postgresClient.withTransaction = async (callback) => callback({
+    async query(sql) {
+      if (/SELECT status, observacao FROM formalizacao_profor/i.test(sql)) return { rows: anterior ? [anterior] : [] };
+      if (/INSERT INTO formalizacao_profor/i.test(sql)) return { rows: [] };
+      throw new Error(`SQL inesperado no mock Formalizacao: ${sql}`);
+    },
+  });
+
+  const service = recarregarServico("../../backend/services/formalizacao-profor-service");
+  return { service, historicos, logs };
+}
+
+const linhaOrcamento = {
+  id: "ITEM-1",
+  categoria: "Aparelhamento",
+  descricao: "Item teste",
+  acao_orcamentaria: "",
+  plano_orcamentario: "",
+  natureza: "449052",
+  valor_previsto: 1000,
+  valor_disponibilizado: 0,
+  valor_empenhado: 0,
+  valor_executado: 0,
+  valor_estimado_pesquisa_preco: 0,
+  processo_autuado: false,
+  processo_sei: "",
+  status: "PLANEJADO",
+  setor_atual: "",
+  responsavel_atual: "",
+  data_entrada_setor: "",
+  pendencia_atual: "",
+  observacao: "",
+  compoe_orcamento: true,
+  processo_pai_id: "",
+  tipo_processo: "PRINCIPAL",
+  origem_recurso_id: "",
+  ordem_exibicao: 1,
+  valor_alocado_origem: 0,
+  classificacao_gerencial: "APARELHAMENTO",
+  ativo: true,
+  tipo_rastreio: "GERAL",
+};
+
+function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } = {}) {
+  const historicos = [];
+  const logs = [];
+
+  historicoService.registrarHistoricoPostgres = async (_client, args) => {
+    historicos.push({ ...args });
+  };
+  logsService.registrarLogOperacional = async (log) => {
+    logs.push({ ...log });
+    if (falhaLog) throw new Error("falha simulada de log");
+    return { id: 1 };
+  };
+  postgresClient.query = async (sql) => {
+    if (/SELECT \* FROM orcamento_2026_movimentacoes WHERE ativo = true/i.test(sql)) return { rows: [] };
+    if (/SELECT \* FROM orcamento_2026/i.test(sql)) return { rows: linhas };
+    if (/SELECT id, status, processo_autuado/i.test(sql)) return { rows: [] };
+    if (/SELECT id, classificacao_gerencial/i.test(sql)) return { rows: [] };
+    throw new Error(`postgresClient.query inesperado no mock Orcamento: ${sql}`);
+  };
+  postgresClient.withTransaction = async (callback) => callback({
+    async query(sql, params = []) {
+      if (/SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = true/i.test(sql)) return { rows: [] };
+      if (/SELECT \* FROM orcamento_2026 WHERE id = \$1/i.test(sql)) {
+        const id = String(params[0] || "");
+        return { rows: linhas.filter((linha) => String(linha.id) === id) };
+      }
+      if (/INSERT INTO orcamento_2026_movimentacoes/i.test(sql)) return { rows: [{ id: 77 }] };
+      if (/INSERT INTO orcamento_2026/i.test(sql) || /UPDATE orcamento_2026/i.test(sql)) return { rows: [] };
+      throw new Error(`SQL inesperado no mock Orcamento: ${sql}`);
+    },
+  });
+
+  const service = recarregarServico("../../backend/services/orcamento-2026-service");
+  return { service, historicos, logs };
+}
+
+test("salvarParametrosMinimos registra log operacional resumido sem senha", async () => {
+  const { service, logs } = instalarMockParametros();
+
+  const resultado = await service.salvarParametrosMinimos({
+    password: "senha-correta-testes",
+    changes: { AC: { atoNormativoEspecifico: "ATENDE" } },
+  });
+
+  assert.equal(resultado.success, true);
+  assert.equal(logs.length, 1);
+  assert.equal(logs[0].tipoEvento, "parametros_minimos_edicao");
+  assert.equal(logs[0].modulo, "sistema");
+  assert.deepEqual(logs[0].payload.camposAlterados, ["atoNormativoEspecifico"]);
+  assert.ok(!("password" in logs[0].payload));
+  assert.ok(!("senha" in logs[0].payload));
+});
+
+test("salvarParametrosMinimos nao quebra salvamento quando log falha", async () => {
+  const warnOriginal = console.warn;
+  console.warn = () => {};
+  try {
+    const { service } = instalarMockParametros({ falhaLog: true });
+    const resultado = await service.salvarParametrosMinimos({
+      password: "senha-correta-testes",
+      changes: { AC: { atoNormativoEspecifico: "ATENDE" } },
+    });
+    assert.equal(resultado.success, true);
+  } finally {
+    console.warn = warnOriginal;
+  }
+});
+
+test("salvarFormalizacaoProfor preserva historico e registra log operacional", async () => {
+  const { service, historicos, logs } = instalarMockFormalizacao();
+
+  const resultado = await service.salvarFormalizacaoProfor({
+    password: "senha-correta-testes",
+    changes: { AM: { propostaCadastrada: { status: "CONCLUÍDO", observacao: "ok" } } },
+  });
+
+  assert.equal(resultado.success, true);
+  assert.ok(historicos.some((h) => h.campo === "propostaCadastrada"));
+  assert.ok(historicos.some((h) => h.campo === "propostaCadastrada.observacao"));
+  assert.equal(logs.length, 1);
+  assert.equal(logs[0].tipoEvento, "formalizacao_profor_edicao");
+  assert.equal(logs[0].modulo, "profor-2022");
+  assert.ok(logs[0].payload.camposAlterados.includes("propostaCadastrada"));
+  assert.ok(logs[0].payload.camposAlterados.includes("propostaCadastrada.observacao"));
+});
+
+test("salvarOrcamento2026 registra log de edicao resumido", async () => {
+  const { service, logs } = instalarMockOrcamento();
+
+  const resultado = await service.salvarOrcamento2026({
+    password: "senha-correta-testes",
+    changes: { "ITEM-1": { observacao: "Atualizado" } },
+  });
+
+  assert.equal(resultado.success, true);
+  assert.ok(logs.some((log) => log.tipoEvento === "orcamento_2026_edicao"));
+  const log = logs.find((item) => item.tipoEvento === "orcamento_2026_edicao");
+  assert.deepEqual(log.payload.idsAfetados, ["ITEM-1"]);
+  assert.deepEqual(log.payload.camposAlterados, ["observacao"]);
+  assert.ok(!("password" in log.payload));
+});
+
+test("salvarOrcamento2026 registra log de inativacao", async () => {
+  const { service, logs } = instalarMockOrcamento();
+
+  const resultado = await service.salvarOrcamento2026({
+    password: "senha-correta-testes",
+    inativos: ["ITEM-1"],
+  });
+
+  assert.equal(resultado.success, true);
+  assert.ok(logs.some((log) => log.tipoEvento === "orcamento_2026_inativacao"));
+});
+
+test("criarProcessoVinculadoOrcamento2026 registra log de criacao vinculada", async () => {
+  const { service, logs } = instalarMockOrcamento();
+
+  const resultado = await service.criarProcessoVinculadoOrcamento2026({
+    password: "senha-correta-testes",
+    processoPaiId: "ITEM-1",
+    descricao: "Processo vinculado teste",
+    valorAlocado: 100,
+  });
+
+  assert.equal(resultado.success, true);
+  const log = logs.find((item) => item.tipoEvento === "orcamento_2026_criacao_processo_vinculado");
+  assert.ok(log);
+  assert.equal(log.payload.processoPaiId, "ITEM-1");
+  assert.equal(log.payload.valor, 100);
+  assert.ok(log.payload.idFilho);
+});
+
+test("alocarSaldoOrcamento2026 registra log de alocacao", async () => {
+  const destino = { ...linhaOrcamento, id: "ITEM-2", valor_previsto: 0 };
+  const { service, logs } = instalarMockOrcamento({ linhas: [linhaOrcamento, destino] });
+
+  const resultado = await service.alocarSaldoOrcamento2026({
+    password: "senha-correta-testes",
+    origemId: "ITEM-1",
+    destinoId: "ITEM-2",
+    valor: 100,
+    justificativa: "Ajuste de saldo",
+  });
+
+  assert.equal(resultado.success, true);
+  const log = logs.find((item) => item.tipoEvento === "orcamento_2026_alocacao_saldo");
+  assert.ok(log);
+  assert.equal(log.payload.origemId, "ITEM-1");
+  assert.equal(log.payload.destinoId, "ITEM-2");
+  assert.equal(log.payload.valor, 100);
+});
+
+test("salvarOrcamento2026 nao quebra operacao principal quando log falha", async () => {
+  const warnOriginal = console.warn;
+  console.warn = () => {};
+  try {
+    const { service } = instalarMockOrcamento({ falhaLog: true });
+    const resultado = await service.salvarOrcamento2026({
+      password: "senha-correta-testes",
+      changes: { "ITEM-1": { observacao: "Atualizado" } },
+    });
+    assert.equal(resultado.success, true);
+  } finally {
+    console.warn = warnOriginal;
+  }
 });
 
 // ---------------------------------------------------------------------------

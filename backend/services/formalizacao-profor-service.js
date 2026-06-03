@@ -4,6 +4,7 @@ const XLSX = require("xlsx");
 const { query, withTransaction } = require("../db/postgres-client");
 const { registrarHistoricoPostgres } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
+const logsOperacionaisService = require("./logs-operacionais-service");
 
 const PAGINA = "formalizacao-profor";
 const PLANILHA_FORMALIZACAO = path.join(__dirname, "..", "..", "Planilhas", "Planilha_Formalizacao_PROFOR_2026.xlsx");
@@ -25,6 +26,20 @@ const ETAPAS_FORMALIZACAO = [
   { key: "celebracao", label: "Celebração" },
   { key: "publicacao", label: "Publicação" }
 ];
+
+async function registrarLogFormalizacaoSeguro(payload) {
+  try {
+    await logsOperacionaisService.registrarLogOperacional({
+      modulo: "profor-2022",
+      tipoEvento: "formalizacao_profor_edicao",
+      status: "sucesso",
+      resumo: "Formalização PROFOR atualizada",
+      payload,
+    });
+  } catch (error) {
+    console.warn(`[logs-operacionais] Falha ao registrar formalizacao_profor_edicao: ${error?.message || "erro desconhecido"}`);
+  }
+}
 
 function normalizarTexto(valor) {
   return String(valor ?? "")
@@ -396,27 +411,52 @@ async function salvarFormalizacaoProfor({ password, changes }) {
       observacao = excluded.observacao,
       atualizado_em = excluded.atualizado_em
   `;
+  const camposAlterados = new Set();
+  const propostasAfetadas = new Set();
+  let totalAlteracoes = 0;
 
   await withTransaction(async (client) => {
     for (const item of atualizacoes) {
       const { rows: [anterior] } = await client.query(selectAtualSql, [item.uf, item.etapa]);
+      const statusAnterior = anterior ? anterior.status : "";
+      const observacaoAnterior = anterior ? anterior.observacao || "" : "";
       await client.query(upsertSql, [item.uf, item.etapa, item.status, item.observacao, updatedAt]);
       await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: item.etapa,
-        valorAnterior: anterior ? anterior.status : "",
+        valorAnterior: statusAnterior,
         valorNovo: item.status
       });
       await registrarHistoricoPostgres(client, {
         pagina: PAGINA,
         registro: item.uf,
         campo: `${item.etapa}.observacao`,
-        valorAnterior: anterior ? anterior.observacao || "" : "",
+        valorAnterior: observacaoAnterior,
         valorNovo: item.observacao
       });
+      if (String(statusAnterior) !== String(item.status)) {
+        totalAlteracoes += 1;
+        camposAlterados.add(item.etapa);
+        propostasAfetadas.add(item.uf);
+      }
+      if (String(observacaoAnterior) !== String(item.observacao)) {
+        totalAlteracoes += 1;
+        camposAlterados.add(`${item.etapa}.observacao`);
+        propostasAfetadas.add(item.uf);
+      }
     }
   });
+
+  if (totalAlteracoes > 0) {
+    await registrarLogFormalizacaoSeguro({
+      totalAlteracoes,
+      propostasAfetadas: Array.from(propostasAfetadas).sort(),
+      ufsAfetadas: Array.from(propostasAfetadas).sort(),
+      camposAlterados: Array.from(camposAlterados).sort(),
+      origem: "interface",
+    });
+  }
 
   return {
     success: true,

@@ -17,10 +17,16 @@ const TIPOS_EVENTO_PERMITIDOS = new Set([
   "profor_publicacao_estatica",
   "profor_detru",
   "profor_rendimentos_transferegov",
+  "parametros_minimos_edicao",
+  "formalizacao_profor_edicao",
   "faf_2021_edicao",
   "profor_convenio_monitorado_criacao",
   "profor_convenio_monitorado_edicao",
   "profor_convenio_monitorado_inativacao",
+  "orcamento_2026_edicao",
+  "orcamento_2026_criacao_processo_vinculado",
+  "orcamento_2026_inativacao",
+  "orcamento_2026_alocacao_saldo",
 ]);
 
 const STATUS_PERMITIDOS = new Set([
