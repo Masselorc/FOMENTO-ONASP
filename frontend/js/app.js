@@ -5147,10 +5147,16 @@ async function carregarLogoParaPDF() {
                 { valor: 'profor_publicacao_estatica', rotulo: 'Publicação estática PROFOR 2022' },
                 { valor: 'profor_detru', rotulo: 'Atualização DETRU' },
                 { valor: 'profor_rendimentos_transferegov', rotulo: 'Rendimentos Transferegov' },
+                { valor: 'parametros_minimos_edicao', rotulo: 'Parâmetros mínimos — edição' },
+                { valor: 'formalizacao_profor_edicao', rotulo: 'Formalização PROFOR — edição' },
                 { valor: 'faf_2021_edicao', rotulo: 'FAF 2021 — edição' },
                 { valor: 'profor_convenio_monitorado_criacao', rotulo: 'PROFOR — criação de convênio monitorado' },
                 { valor: 'profor_convenio_monitorado_edicao', rotulo: 'PROFOR — edição de convênio monitorado' },
-                { valor: 'profor_convenio_monitorado_inativacao', rotulo: 'PROFOR — inativação de convênio monitorado' }
+                { valor: 'profor_convenio_monitorado_inativacao', rotulo: 'PROFOR — inativação de convênio monitorado' },
+                { valor: 'orcamento_2026_edicao', rotulo: 'Orçamento 2026 — edição' },
+                { valor: 'orcamento_2026_criacao_processo_vinculado', rotulo: 'Orçamento 2026 — criação vinculada' },
+                { valor: 'orcamento_2026_inativacao', rotulo: 'Orçamento 2026 — inativação' },
+                { valor: 'orcamento_2026_alocacao_saldo', rotulo: 'Orçamento 2026 — alocação de saldo' }
             ];
             const statusOpcoes = [
                 { valor: '', rotulo: 'Todos os status' },

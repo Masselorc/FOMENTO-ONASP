@@ -1,6 +1,7 @@
 const { query, withTransaction } = require("../db/postgres-client");
 const { registrarHistoricoPostgres } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
+const logsOperacionaisService = require("./logs-operacionais-service");
 const {
   PARAMETROS_MINIMOS,
   isStatusParametroMinimo,
@@ -19,6 +20,20 @@ function ehObjetoPlano(valor) {
   if (!valor || typeof valor !== "object" || Array.isArray(valor)) return false;
   const proto = Object.getPrototypeOf(valor);
   return proto === Object.prototype || proto === null;
+}
+
+async function registrarLogParametrosMinimosSeguro(payload) {
+  try {
+    await logsOperacionaisService.registrarLogOperacional({
+      modulo: "sistema",
+      tipoEvento: "parametros_minimos_edicao",
+      status: "sucesso",
+      resumo: "Parâmetros mínimos atualizados",
+      payload,
+    });
+  } catch (error) {
+    console.warn(`[logs-operacionais] Falha ao registrar parametros_minimos_edicao: ${error?.message || "erro desconhecido"}`);
+  }
 }
 
 function normalizarUf(uf) {
@@ -339,6 +354,10 @@ async function salvarParametrosMinimos({ password, changes }) {
       atualizado_em = excluded.atualizado_em
   `;
 
+  const camposAlterados = new Set();
+  const registrosAfetados = new Set();
+  let totalAlteracoes = 0;
+
   await withTransaction(async (client) => {
     for (const item of atualizacao) {
       const { rows: [anterior] } = await client.query(selectAtualSql, [item.uf, item.parametro]);
@@ -346,6 +365,7 @@ async function salvarParametrosMinimos({ password, changes }) {
         ? `${anterior.status}${anterior.quantidade_atual !== null && anterior.quantidade_atual !== undefined ? ` | atual ${anterior.quantidade_atual}` : ""}${anterior.quantidade_ideal !== null && anterior.quantidade_ideal !== undefined ? ` | ideal ${anterior.quantidade_ideal}` : ""}`
         : "";
       const valorNovo = `${item.status}${item.quantidadeAtual !== undefined ? ` | atual ${item.quantidadeAtual}` : ""}${item.quantidadeIdeal !== undefined ? ` | ideal ${item.quantidadeIdeal}` : ""}`;
+      const houveAlteracao = String(valorAnterior) !== String(valorNovo);
 
       await client.query(upsertSql, [
         item.uf,
@@ -362,8 +382,23 @@ async function salvarParametrosMinimos({ password, changes }) {
         valorAnterior,
         valorNovo
       });
+      if (houveAlteracao) {
+        totalAlteracoes += 1;
+        camposAlterados.add(item.parametro);
+        registrosAfetados.add(item.uf);
+      }
     }
   });
+
+  if (totalAlteracoes > 0) {
+    await registrarLogParametrosMinimosSeguro({
+      totalAlteracoes,
+      registrosAfetados: Array.from(registrosAfetados).sort(),
+      ufsAfetadas: Array.from(registrosAfetados).sort(),
+      camposAlterados: Array.from(camposAlterados).sort(),
+      origem: "interface",
+    });
+  }
 
   return {
     success: true,

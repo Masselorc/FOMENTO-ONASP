@@ -4,6 +4,7 @@ const XLSX = require("xlsx");
 const { query, withTransaction } = require("../db/postgres-client");
 const { registrarHistoricoPostgres } = require("./historico-service");
 const { validarSenhaEdicao } = require("./auth-service");
+const logsOperacionaisService = require("./logs-operacionais-service");
 
 const PAGINA = "orcamento-2026";
 const PLANILHA_ORCAMENTO = path.join(__dirname, "..", "..", "Planilhas", "orcamento_onasp.xlsx");
@@ -21,6 +22,20 @@ const STATUS_ORCAMENTO = [
   "CANCELADO",
   "VALIDAR"
 ];
+
+async function registrarLogOrcamentoSeguro(tipoEvento, resumo, payload) {
+  try {
+    await logsOperacionaisService.registrarLogOperacional({
+      modulo: "sistema",
+      tipoEvento,
+      status: "sucesso",
+      resumo,
+      payload,
+    });
+  } catch (error) {
+    console.warn(`[logs-operacionais] Falha ao registrar ${tipoEvento}: ${error?.message || "erro desconhecido"}`);
+  }
+}
 
 const CAMPOS_EDITAVEIS_BASE = [
   "categoria",
@@ -1265,6 +1280,19 @@ async function criarProcessoVinculadoOrcamento2026(payload = {}) {
     });
   });
 
+  await registrarLogOrcamentoSeguro(
+    "orcamento_2026_criacao_processo_vinculado",
+    "Orçamento 2026: processo vinculado criado",
+    {
+      processoPaiId: processoPai.id,
+      idFilho: item.id,
+      valor: valorAlocado,
+      totalAlteracoes: 1,
+      camposAlterados: ["processo_vinculado"],
+      origem: "interface",
+    }
+  );
+
   return {
     success: true,
     message: "Processo vinculado criado com sucesso.",
@@ -1452,6 +1480,11 @@ async function salvarOrcamento2026({ password, changes, novos, inativos }) {
   `;
   const inativarSql = "UPDATE orcamento_2026 SET ativo = false, atualizado_em = $1 WHERE id = $2";
   const alteracoesPorItem = new Map();
+  const idsCriados = [];
+  const idsAlterados = new Set();
+  const idsInativadosEfetivos = [];
+  const camposAlteradosLog = new Set();
+  let totalAlteracoesLog = 0;
 
   alteracoes.forEach((item) => {
     if (!alteracoesPorItem.has(item.id)) {
@@ -1473,6 +1506,10 @@ async function salvarOrcamento2026({ password, changes, novos, inativos }) {
         valorAnterior: "",
         valorNovo: "criado"
       });
+      idsCriados.push(item.id);
+      idsAlterados.add(item.id);
+      camposAlteradosLog.add("registro");
+      totalAlteracoesLog += 1;
     }
 
     for (const [id, camposAlterados] of alteracoesPorItem.entries()) {
@@ -1513,6 +1550,9 @@ async function salvarOrcamento2026({ password, changes, novos, inativos }) {
           valorAnterior: obterValorAtual(atual, campo),
           valorNovo
         });
+        idsAlterados.add(id);
+        camposAlteradosLog.add(campo);
+        totalAlteracoesLog += 1;
       }
     }
 
@@ -1528,8 +1568,38 @@ async function salvarOrcamento2026({ password, changes, novos, inativos }) {
         valorAnterior: valorBooleano(atual.ativo),
         valorNovo: false
       });
+      if (valorBooleano(atual.ativo) !== false) {
+        idsInativadosEfetivos.push(id);
+      }
     }
   });
+
+  if (totalAlteracoesLog > 0) {
+    await registrarLogOrcamentoSeguro(
+      "orcamento_2026_edicao",
+      "Orçamento 2026: itens atualizados",
+      {
+        idsAfetados: Array.from(idsAlterados).sort(),
+        idsCriados: idsCriados.sort(),
+        totalAlteracoes: totalAlteracoesLog,
+        camposAlterados: Array.from(camposAlteradosLog).sort(),
+        origem: "interface",
+      }
+    );
+  }
+
+  if (idsInativadosEfetivos.length > 0) {
+    await registrarLogOrcamentoSeguro(
+      "orcamento_2026_inativacao",
+      "Orçamento 2026: itens inativados",
+      {
+        idsAfetados: idsInativadosEfetivos.sort(),
+        totalAlteracoes: idsInativadosEfetivos.length,
+        camposAlterados: ["ativo"],
+        origem: "interface",
+      }
+    );
+  }
 
   return {
     success: true,
@@ -1687,6 +1757,20 @@ async function alocarSaldoOrcamento2026(payload = {}) {
       valorNovo: `origem=${origem.id}; destino=${destino.id}; valor=${valor.toFixed(2)}`
     });
   });
+
+  await registrarLogOrcamentoSeguro(
+    "orcamento_2026_alocacao_saldo",
+    "Orçamento 2026: saldo alocado",
+    {
+      origemId: origem.id,
+      destinoId: destino.id,
+      valor,
+      movimentacaoId,
+      totalAlteracoes: 1,
+      camposAlterados: ["alocacao_saldo"],
+      origem: "interface",
+    }
+  );
 
   return {
     success: true,
