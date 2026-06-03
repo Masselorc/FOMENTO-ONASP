@@ -6,6 +6,15 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const { query, withTransaction } = require("../../db/postgres-client");
+const { registrarLogOperacional } = require("../logs-operacionais-service");
+
+async function registrarLogDetruSeguro(log) {
+  try {
+    await registrarLogOperacional(log);
+  } catch {
+    // Falha de auditoria nao pode bloquear a rotina DETRU.
+  }
+}
 
 function calcularHashArquivo(caminhoArquivo) {
   const conteudo = fs.readFileSync(caminhoArquivo);
@@ -109,7 +118,19 @@ async function registrarAtualizacaoDetruInicio(metadados = {}) {
     "INSERT INTO profor_detru_atualizacoes (iniciado_em, caminho_arquivo, arquivo_hash) VALUES ($1, $2, $3) RETURNING id",
     [new Date().toISOString(), caminhoArquivo, arquivoHash]
   );
-  return result.rows[0].id;
+  const idAtualizacao = result.rows[0].id;
+  await registrarLogDetruSeguro({
+    modulo: "profor-2022",
+    tipoEvento: "profor_detru_atualizacao_inicio",
+    status: "sucesso",
+    resumo: "Atualização DETRU iniciada.",
+    payload: {
+      idAtualizacao,
+      caminhoArquivo,
+      arquivoHash,
+    },
+  });
+  return idAtualizacao;
 }
 
 async function registrarAtualizacaoDetruFim(idAtualizacao, resultado) {
@@ -132,6 +153,20 @@ async function registrarAtualizacaoDetruFim(idAtualizacao, resultado) {
     JSON.stringify(resultado),
     idAtualizacao
   ]);
+  await registrarLogDetruSeguro({
+    modulo: "profor-2022",
+    tipoEvento: "profor_detru_atualizacao_sucesso",
+    status: "sucesso",
+    resumo: `Atualização DETRU concluída: ${Number(resultado.totalEncontrados || 0)} encontrado(s), ${Number(resultado.totalNaoEncontrados || 0)} não encontrado(s).`,
+    payload: {
+      idAtualizacao,
+      arquivoHash: resultado.arquivoHash || null,
+      totalCarteiraAtiva: Number(resultado.totalCarteiraAtiva || 0),
+      totalLinhasDetruLidas: Number(resultado.totalLinhasDetruLidas || 0),
+      totalEncontrados: Number(resultado.totalEncontrados || 0),
+      totalNaoEncontrados: Number(resultado.totalNaoEncontrados || 0),
+    },
+  });
 }
 
 async function registrarAtualizacaoDetruErro(idAtualizacao, erro) {
@@ -143,6 +178,16 @@ async function registrarAtualizacaoDetruErro(idAtualizacao, erro) {
       erro         = $2
     WHERE id = $3
   `, [new Date().toISOString(), mensagem, idAtualizacao]);
+  await registrarLogDetruSeguro({
+    modulo: "profor-2022",
+    tipoEvento: "profor_detru_atualizacao_erro",
+    status: "falha",
+    resumo: `Erro na atualização DETRU: ${mensagem}`,
+    payload: {
+      idAtualizacao,
+      erro: mensagem,
+    },
+  });
 }
 
 async function obterUltimaAtualizacaoDetru() {

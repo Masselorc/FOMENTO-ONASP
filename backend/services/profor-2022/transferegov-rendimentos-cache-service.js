@@ -1,4 +1,13 @@
 const { query } = require("../../db/postgres-client");
+const { registrarLogOperacional } = require("../logs-operacionais-service");
+
+async function registrarLogRendimentosSeguro(log) {
+  try {
+    await registrarLogOperacional(log);
+  } catch {
+    // Falha de auditoria nao pode bloquear a rotina de rendimentos.
+  }
+}
 
 function normalizarAno(ano) {
   return ano !== undefined && ano !== null && ano !== "" ? String(ano).trim() : null;
@@ -145,7 +154,21 @@ async function registrarConsultaRendimentosInicio(metadados = {}) {
     [iniciadoEm, metadados.totalCarteiraAtiva ?? 0]
   );
 
-  return result.rows[0].id;
+  const idConsulta = result.rows[0].id;
+  await registrarLogRendimentosSeguro({
+    modulo: "profor-2022",
+    tipoEvento: "profor_rendimentos_atualizacao_inicio",
+    status: "sucesso",
+    iniciadoEm,
+    concluidoEm: iniciadoEm,
+    resumo: "Atualização de rendimentos Transferegov iniciada.",
+    payload: {
+      idConsulta,
+      totalCarteiraAtiva: Number(metadados.totalCarteiraAtiva || 0),
+    },
+  });
+
+  return idConsulta;
 }
 
 async function registrarConsultaRendimentosFim(idConsulta, resumo) {
@@ -169,6 +192,19 @@ async function registrarConsultaRendimentosFim(idConsulta, resumo) {
     JSON.stringify(resumo),
     idConsulta
   ]);
+  await registrarLogRendimentosSeguro({
+    modulo: "profor-2022",
+    tipoEvento: "profor_rendimentos_atualizacao_sucesso",
+    status: "sucesso",
+    resumo: `Atualização de rendimentos concluída: ${Number(resumo.totalSucesso || 0)} sucesso(s), ${Number(resumo.totalFalha || 0)} falha(s).`,
+    payload: {
+      idConsulta,
+      totalCarteiraAtiva: Number(resumo.totalCarteiraAtiva || 0),
+      totalConsultados: Number(resumo.totalConsultados || 0),
+      totalSucesso: Number(resumo.totalSucesso || 0),
+      totalFalha: Number(resumo.totalFalha || 0),
+    },
+  });
 }
 
 async function registrarConsultaRendimentosErro(idConsulta, erro) {
@@ -180,6 +216,16 @@ async function registrarConsultaRendimentosErro(idConsulta, erro) {
       erro         = $2
     WHERE id = $3
   `, [new Date().toISOString(), mensagem, idConsulta]);
+  await registrarLogRendimentosSeguro({
+    modulo: "profor-2022",
+    tipoEvento: "profor_rendimentos_atualizacao_erro",
+    status: "falha",
+    resumo: `Erro na atualização de rendimentos Transferegov: ${mensagem}`,
+    payload: {
+      idConsulta,
+      erro: mensagem,
+    },
+  });
 }
 
 async function obterUltimaConsultaRendimentos() {

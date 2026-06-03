@@ -3,13 +3,17 @@ const crypto = require("node:crypto");
 const {
   atualizarPadsTransferegovEOperacional,
 } = require("./profor-pad-atualizacao-transferegov-orquestrador-service");
+const {
+  registrarLogOperacional,
+} = require("../logs-operacionais-service");
 
 const MAX_EVENTOS_RETIDOS = 200;
 
 class GerenciadorAtualizacaoTransferegov {
-  constructor() {
+  constructor(dependencias = {}) {
     this.atualPorChave = new Map(); // chave -> jobId em execução
     this.jobs = new Map();          // jobId -> job
+    this.registrarLogOperacional = dependencias.registrarLogOperacional || registrarLogOperacional;
   }
 
   novoJobId() {
@@ -60,6 +64,18 @@ class GerenciadorAtualizacaoTransferegov {
     this.atualPorChave.set(chave, jobId);
 
     const orquestrador = opcoes.orquestrador || atualizarPadsTransferegovEOperacional;
+    this._registrarLogSeguro({
+      modulo: "profor-2022",
+      tipoEvento: "profor_pad_transferegov_atualizacao_inicio",
+      status: "sucesso",
+      iniciadoEm: job.criadoEm,
+      concluidoEm: job.criadoEm,
+      resumo: "Atualização PAD/Transferegov iniciada.",
+      payload: {
+        jobId,
+        chave,
+      },
+    });
 
     // Dispara assíncrono e captura tanto sucesso quanto falha.
     Promise.resolve()
@@ -112,6 +128,16 @@ class GerenciadorAtualizacaoTransferegov {
     job.atualizadoEm = job.concluidoEm;
     job.resumo = resumo || null;
     job.resultadoRecarga = (resumo && resumo.resultadoRecarga) || null;
+    this._registrarLogSeguro({
+      modulo: "profor-2022",
+      tipoEvento: "profor_pad_transferegov_atualizacao_sucesso",
+      status: "sucesso",
+      iniciadoEm: job.criadoEm,
+      concluidoEm: job.concluidoEm,
+      duracaoMs: this._calcularDuracaoMs(job.criadoEm, job.concluidoEm),
+      resumo: `Atualização PAD/Transferegov concluída: ${Number(resumo?.totalConveniosAtualizados || 0)} convênio(s), ${Number(resumo?.totalItensExtraidos || 0)} item(ns).`,
+      payload: this._montarPayloadResumo(job, resumo),
+    });
     if (this.atualPorChave.get(job.chave) === jobId) {
       this.atualPorChave.delete(job.chave);
     }
@@ -129,9 +155,48 @@ class GerenciadorAtualizacaoTransferegov {
       stack: erro?.stack || null,
     };
     job.mensagemAtual = job.erro.mensagem;
+    this._registrarLogSeguro({
+      modulo: "profor-2022",
+      tipoEvento: "profor_pad_transferegov_atualizacao_erro",
+      status: "falha",
+      iniciadoEm: job.criadoEm,
+      concluidoEm: job.concluidoEm,
+      duracaoMs: this._calcularDuracaoMs(job.criadoEm, job.concluidoEm),
+      resumo: `Erro na atualização PAD/Transferegov: ${job.erro.mensagem}`,
+      payload: this._montarPayloadResumo(job, null, { erro: job.erro.mensagem }),
+    });
     if (this.atualPorChave.get(job.chave) === jobId) {
       this.atualPorChave.delete(job.chave);
     }
+  }
+
+  _calcularDuracaoMs(iniciadoEm, concluidoEm) {
+    const inicio = new Date(iniciadoEm).getTime();
+    const fim = new Date(concluidoEm).getTime();
+    return Number.isFinite(inicio) && Number.isFinite(fim) ? Math.max(0, fim - inicio) : null;
+  }
+
+  _montarPayloadResumo(job, resumo = null, extras = {}) {
+    return {
+      jobId: job.jobId,
+      totalConvenios: Number(job.totalConvenios || resumo?.totalConveniosAtualizados || 0),
+      totalConveniosAtualizados: Number(resumo?.totalConveniosAtualizados || 0),
+      totalAptosTecnicos: Number(resumo?.totalAptosTecnicos || 0),
+      totalBloqueiosTecnicos: Number(resumo?.totalBloqueiosTecnicos || 0),
+      totalItensExtraidos: Number(resumo?.totalItensExtraidos || 0),
+      cacheSalvo: resumo?.cacheSalvo === true,
+      hashGlobal: resumo?.hashGlobal || null,
+      duracaoMs: this._calcularDuracaoMs(job.criadoEm, job.concluidoEm || job.atualizadoEm),
+      erro: extras.erro || null,
+    };
+  }
+
+  _registrarLogSeguro(log) {
+    Promise.resolve()
+      .then(() => this.registrarLogOperacional(log))
+      .catch(() => {
+        // Falha de auditoria nao pode quebrar o job operacional em memória.
+      });
   }
 
   publico(job) {
