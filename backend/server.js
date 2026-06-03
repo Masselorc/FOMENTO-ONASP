@@ -447,8 +447,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/parametros-minimos/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = await salvarParametrosMinimos(payload);
-      const resposta = await publicarAposSalvamento(resultado);
-      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 
@@ -463,8 +462,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/parametros-minimos/historico/reverter") {
       const payload = await lerJsonBody(req);
       const resultado = await reverterHistoricoParametrosMinimos(payload);
-      const resposta = await publicarAposSalvamento(resultado);
-      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 
@@ -490,8 +488,7 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/formalizacao-profor/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = await salvarFormalizacaoProfor(payload);
-      const resposta = await publicarAposSalvamento(resultado);
-      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 
@@ -525,24 +522,21 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/orcamento-2026/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = await salvarOrcamento2026(payload);
-      const resposta = await publicarAposSalvamento(resultado);
-      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/orcamento-2026/processos-vinculados/criar") {
       const payload = await lerJsonBody(req);
       const resultado = await criarProcessoVinculadoOrcamento2026(payload);
-      const resposta = await publicarAposSalvamento(resultado);
-      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/orcamento-2026/saldos/alocar") {
       const payload = await lerJsonBody(req);
       const resultado = await alocarSaldoOrcamento2026(payload);
-      const resposta = await publicarAposSalvamento(resultado);
-      enviarJson(res, resposta.success ? 200 : 400, resposta);
+      enviarJson(res, resultado.success ? 200 : 400, resultado);
       return;
     }
 
