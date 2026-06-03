@@ -39,11 +39,23 @@ function instalarTransacaoMock({ item = linhaBase(), updateDate = "2026-02-03T04
           return { rows: [{ atualizado_em: updateDate }] };
         }
 
+        // Suporte a historico e logs inseridos dentro da mesma transacao.
+        if (/INSERT\s+INTO\s+historico_alteracoes/i.test(sql)) {
+          return { rows: [] };
+        }
+
         throw new Error(`SQL inesperado no mock: ${sql}`);
       }
     };
 
     return callback(client);
+  };
+  // Mock para registrarLogOperacional que usa postgresClient.query diretamente.
+  postgresClient.query = async (sql) => {
+    if (/INSERT\s+INTO\s+logs_operacionais/i.test(sql)) {
+      return { rows: [{ id: 1 }] };
+    }
+    return { rows: [] };
   };
 }
 

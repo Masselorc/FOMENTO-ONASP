@@ -1,5 +1,9 @@
 const postgresClient = require("../db/postgres-client");
 const { validarSenhaEdicao } = require("./auth-service");
+const historicoService = require("./historico-service");
+const logsOperacionaisService = require("./logs-operacionais-service");
+
+const PAGINA_FAF = "faf-2021";
 
 const PREFIXO_ITEM_ID = "faf2021_idx_";
 
@@ -109,7 +113,9 @@ async function buscarItemFaf2021(client, itemId) {
         objeto,
         quantidade,
         valor_unitario,
-        valor_total
+        valor_total,
+        valor_executado,
+        observacao_execucao
       FROM faf_2021_itens
       WHERE item_id = $1
       LIMIT 1
@@ -194,6 +200,14 @@ async function salvarExecucaoFaf2021(payload = {}) {
       return { success: false, message: "Observação não pode conter HTML." };
     }
 
+    // Estado anterior — necessário para histórico por campo.
+    const qtdAntes = Number(item.quantidade);
+    const vuAntes = Number(item.valor_unitario);
+    const vtAntes = Number(item.valor_total);
+    const veAntes = Number(item.valor_executado) || 0;
+    const obsAntes = limparTexto(item.observacao_execucao || "");
+    const obsNova = atualizarObservacao ? observacao : obsAntes;
+
     const atualizado = await client.query(
       `
         UPDATE faf_2021_itens
@@ -210,16 +224,83 @@ async function salvarExecucaoFaf2021(payload = {}) {
       [payload.itemId, quantidade, valorUnitario, valorTotal, valorExecutado, atualizarObservacao, observacao]
     );
 
+    // Histórico por campo — registra apenas campos com diferença real.
+    const camposAlterados = [];
+    const valoresAntes = {};
+    const valoresDepois = {};
+
+    const arredondar2 = (v) => Number(v.toFixed(2));
+
+    if (arredondar2(qtdAntes) !== arredondar2(quantidade)) {
+      await historicoService.registrarHistoricoPostgres(client, { pagina: PAGINA_FAF, registro: payload.itemId, campo: "quantidade", valorAnterior: qtdAntes, valorNovo: quantidade });
+      camposAlterados.push("quantidade");
+      valoresAntes.quantidade = qtdAntes;
+      valoresDepois.quantidade = quantidade;
+    }
+    if (arredondar2(vuAntes) !== arredondar2(valorUnitario)) {
+      await historicoService.registrarHistoricoPostgres(client, { pagina: PAGINA_FAF, registro: payload.itemId, campo: "valor_unitario", valorAnterior: vuAntes, valorNovo: valorUnitario });
+      camposAlterados.push("valor_unitario");
+      valoresAntes.valor_unitario = vuAntes;
+      valoresDepois.valor_unitario = valorUnitario;
+    }
+    if (arredondar2(vtAntes) !== arredondar2(valorTotal)) {
+      await historicoService.registrarHistoricoPostgres(client, { pagina: PAGINA_FAF, registro: payload.itemId, campo: "valor_total", valorAnterior: vtAntes, valorNovo: valorTotal });
+      camposAlterados.push("valor_total");
+      valoresAntes.valor_total = vtAntes;
+      valoresDepois.valor_total = valorTotal;
+    }
+    if (arredondar2(veAntes) !== arredondar2(valorExecutado)) {
+      await historicoService.registrarHistoricoPostgres(client, { pagina: PAGINA_FAF, registro: payload.itemId, campo: "valor_executado", valorAnterior: veAntes, valorNovo: valorExecutado });
+      camposAlterados.push("valor_executado");
+      valoresAntes.valor_executado = veAntes;
+      valoresDepois.valor_executado = valorExecutado;
+    }
+    if (atualizarObservacao && obsAntes !== obsNova) {
+      await historicoService.registrarHistoricoPostgres(client, { pagina: PAGINA_FAF, registro: payload.itemId, campo: "observacao_execucao", valorAnterior: obsAntes, valorNovo: obsNova });
+      camposAlterados.push("observacao_execucao");
+      valoresAntes.observacao_execucao = obsAntes;
+      valoresDepois.observacao_execucao = obsNova;
+    }
+
+    const percentualExecutado = valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0;
+
+    // Log operacional — apenas quando houve alteração efetiva.
+    if (camposAlterados.length > 0) {
+      try {
+        await logsOperacionaisService.registrarLogOperacional({
+          modulo: "faf-2021",
+          tipoEvento: "faf_2021_edicao",
+          status: "sucesso",
+          resumo: `Edição FAF 2021: ${payload.itemId} / ${payload.uf}`,
+          payload: {
+            itemId: payload.itemId,
+            uf: payload.uf,
+            objeto: payload.objeto,
+            camposAlterados,
+            valoresAntes,
+            valoresDepois,
+            percentualExecutado: Number(percentualExecutado.toFixed(4)),
+            origem: "interface",
+          },
+        });
+      } catch {
+        // Falha no log não interrompe a operação.
+      }
+    }
+
     return {
       success: true,
-      message: "Execução do item FAF 2021 atualizada com sucesso.",
+      message: camposAlterados.length > 0
+        ? "Execução do item FAF 2021 atualizada com sucesso."
+        : "Nenhuma alteração efetiva detectada.",
       itemId: payload.itemId,
       atualizadoEm: formatarData(atualizado.rows[0]?.atualizado_em),
       quantidade,
       valorUnitario,
       valorTotal,
       valorExecutado,
-      percentualExecutado: valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0
+      percentualExecutado,
+      camposAlterados,
     };
   });
 }
