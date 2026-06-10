@@ -3208,6 +3208,7 @@ body.dark-mode .budget-tracking-management strong,
 .profor-finance-item {
     display: grid;
     gap: 0.25rem;
+    border-left-width: 3px;
 }
 
 .profor-finance-item span,
@@ -3225,6 +3226,27 @@ body.dark-mode .budget-tracking-management strong,
     font-size: 0.95rem;
     overflow-wrap: anywhere;
 }
+
+/* Destaques de cor nos cards financeiros do detalhe do convênio. A borda lateral
+   colorida segue o padrão dos KPI cards; o valor recebe o tom correspondente
+   (a classe inline .text-danger continua prevalecendo em valores negativos). */
+.profor-finance-item.-success { border-left-color: #10b981; }
+.profor-finance-item.-success strong { color: #34d399; }
+
+.profor-finance-item.-warning { border-left-color: #f59e0b; }
+.profor-finance-item.-warning strong { color: #fbbf24; }
+
+.profor-finance-item.-info { border-left-color: #3b82f6; }
+.profor-finance-item.-info strong { color: #60a5fa; }
+
+.profor-finance-item.-danger { border-left-color: #ef4444; }
+.profor-finance-item.-danger strong { color: #f87171; }
+
+.profor-finance-item.-total {
+    border-left-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.10);
+}
+.profor-finance-item.-total strong { color: #c4b5fd; }
 
 .profor-area-summary-grid {
     display: grid;
@@ -3263,7 +3285,7 @@ body.dark-mode .budget-tracking-management strong,
 }
 
 .profor-area-filter {
-    background: #ffffff;
+    background: var(--color-surface-muted);
     border: 1px solid var(--color-border);
     border-radius: 999px;
     color: var(--color-primary-strong);
@@ -3288,7 +3310,7 @@ body.dark-mode .budget-tracking-management strong,
 .profor-plan-summary {
     display: grid;
     gap: 0.75rem;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     margin-bottom: 0.9rem;
 }
 
@@ -8375,6 +8397,15 @@ body {
     border-bottom-color: rgba(148, 163, 184, 0.16) !important;
     color: var(--color-muted) !important;
     font-weight: 700;
+}
+
+/* Cabecalhos das tabelas PROFOR: a regra generica acima os deixava em
+   --color-muted (cinza/"branco"); restaurar o azul de cabecalho. */
+.app-data-table.profor-data-table thead th,
+.app-data-table.profor-plan-table thead th {
+    background-color: var(--color-surface-elevated) !important;
+    border-bottom-color: var(--color-border-strong) !important;
+    color: var(--color-primary-strong) !important;
 }
 
 .app-data-table tbody td,

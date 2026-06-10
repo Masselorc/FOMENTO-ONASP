@@ -5945,6 +5945,59 @@ async function carregarLogoParaPDF() {
             });
         }
 
+        function obterItensOuvidoriaProfor(convenio) {
+            return (convenio?.planoAplicacao || []).filter((item) => normalizarBusca(item.area) === 'ouvidoria');
+        }
+
+        // Métricas de execução que NÃO deixam a sobre-execução de um item "cobrir"
+        // a pendência de outro. "Execução do plano" limita cada item a 100%, então
+        // só chega a 100% quando todos os itens foram, de fato, executados.
+        function calcularMetricasExecucaoProfor(itens) {
+            const lista = Array.isArray(itens) ? itens : [];
+            let previsto = 0;
+            let executado = 0;
+            let saldoAExecutar = 0;    // Σ saldos positivos (itens ainda pendentes)
+            let execucaoAcima = 0;     // Σ saldos negativos (execução acima do previsto)
+            let executadoNoPlano = 0;  // Σ min(executado, previsto)
+            let itensComExecucao = 0;
+
+            for (const item of lista) {
+                const previstoItem = Number(item.valorPrevisto) || 0;
+                const executadoItem = Number(item.valorExecutado) || 0;
+                previsto += previstoItem;
+                executado += executadoItem;
+                saldoAExecutar += Math.max(0, previstoItem - executadoItem);
+                execucaoAcima += Math.max(0, executadoItem - previstoItem);
+                executadoNoPlano += Math.min(executadoItem, previstoItem);
+                if (executadoItem > 0) itensComExecucao += 1;
+            }
+
+            return {
+                totalItens: lista.length,
+                itensComExecucao,
+                previsto,
+                executado,
+                saldoAExecutar,
+                execucaoAcima,
+                // Execução do plano (limitada a 100% por item).
+                execucaoPlanoPercentual: previsto > 0 ? (executadoNoPlano / previsto) * 100 : 0,
+                // Razão financeira bruta executado/previsto (pode passar de 100%).
+                execucaoFinanceiraPercentual: previsto > 0 ? (executado / previsto) * 100 : 0
+            };
+        }
+
+        // Recalcula o percentual de execução da Ouvidoria como "execução do plano"
+        // (cap 100%), corrigindo o efeito em que itens executados acima do previsto
+        // mascaravam itens ainda pendentes (ex.: MS aparecia com 108,5%).
+        function garantirMetricasOuvidoriaProfor(convenio) {
+            if (!convenio) return;
+            const metricas = calcularMetricasExecucaoProfor(obterItensOuvidoriaProfor(convenio));
+            convenio.execucaoFinanceiraOuvidoriaPercentual = metricas.execucaoFinanceiraPercentual;
+            convenio.execucaoOuvidoriaPercentual = metricas.execucaoPlanoPercentual;
+            convenio.saldoAExecutarOuvidoria = metricas.saldoAExecutar;
+            convenio.execucaoAcimaPrevistoOuvidoria = metricas.execucaoAcima;
+        }
+
         function calcularResumoConveniosProfor(convenios) {
             const resumo = convenios.reduce((acc, convenio) => {
                 acc.valorGlobal += Number(convenio.valorGlobal) || 0;
@@ -5974,9 +6027,13 @@ async function carregarLogoParaPDF() {
             resumo.execucaoGeralPercentual = baseExecucaoGeral > 0
                 ? (resumo.valorExecutadoGeral / baseExecucaoGeral) * 100
                 : 0;
-            resumo.execucaoOuvidoriaPercentual = resumo.previstoOuvidoria > 0
-                ? (resumo.valorExecutadoOuvidoria / resumo.previstoOuvidoria) * 100
-                : 0;
+            const metricasOuvidoria = calcularMetricasExecucaoProfor(
+                convenios.flatMap((convenio) => obterItensOuvidoriaProfor(convenio))
+            );
+            resumo.execucaoOuvidoriaPercentual = metricasOuvidoria.execucaoPlanoPercentual;
+            resumo.execucaoFinanceiraOuvidoriaPercentual = metricasOuvidoria.execucaoFinanceiraPercentual;
+            resumo.saldoAExecutarOuvidoria = metricasOuvidoria.saldoAExecutar;
+            resumo.execucaoAcimaPrevistoOuvidoria = metricasOuvidoria.execucaoAcima;
 
             return resumo;
         }
@@ -6221,7 +6278,7 @@ async function carregarLogoParaPDF() {
                 if (busca) busca.value = '';
                 if (uf) uf.value = '';
                 if (situacao) situacao.value = '';
-                if (ordenacao) ordenacao.value = 'alfabetica';
+                if (ordenacao) ordenacao.value = 'execucao-desc';
                 atualizar();
             });
 
@@ -6545,6 +6602,8 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
+            (dadosProfor.convenios || []).forEach(garantirMetricasOuvidoriaProfor);
+
             const resumo = dadosProfor.resumo;
             const resumoConvenios = calcularResumoConveniosProfor(dadosProfor.convenios || []);
             const origemBancoCache = dadosProfor.origemDadosEfetiva === 'banco-cache';
@@ -6687,7 +6746,7 @@ async function carregarLogoParaPDF() {
                                 <select id="ordenacaoProfor" class="form-select">
                                     <option value="alfabetica">Ordem alfabética</option>
                                     <option value="regiao">Regiões</option>
-                                    <option value="execucao-desc">Execução: maior para menor</option>
+                                    <option value="execucao-desc" selected>Execução: maior para menor</option>
                                     <option value="execucao-asc">Execução: menor para maior</option>
                                 </select>
                             </div>
@@ -6822,33 +6881,37 @@ async function carregarLogoParaPDF() {
             const itens = (convenio.planoAplicacao || []).filter((item) => (
                 !areaSelecionada || normalizarBusca(item.area) === normalizarBusca(areaSelecionada)
             ));
-            const totalPrevisto = itens.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0);
-            const totalExecutado = itens.reduce((total, item) => total + (Number(item.valorExecutado) || 0), 0);
             const calcularSaldoItemProfor = (item) => (Number(item.valorPrevisto) || 0) - (Number(item.valorExecutado) || 0);
-            const totalSaldo = itens.reduce((total, item) => total + calcularSaldoItemProfor(item), 0);
-            const percentual = totalPrevisto > 0 ? (totalExecutado / totalPrevisto) * 100 : 0;
+            const metricas = calcularMetricasExecucaoProfor(itens);
 
             areaLabel.textContent = areaSelecionada || 'Todas as áreas';
+            const cardAcimaPrevisto = metricas.execucaoAcima > 0.01 ? `
+                <div class="profor-plan-summary-item" title="Soma do que foi executado acima do valor previsto, item a item (sobre-execução).">
+                    <span>Acima do previsto</span>
+                    <strong class="text-warning">${formatMoney(metricas.execucaoAcima)}</strong>
+                </div>
+            ` : '';
             resumo.innerHTML = `
                 <div class="profor-plan-summary-item">
                     <span>Itens</span>
-                    <strong>${itens.length}</strong>
+                    <strong>${metricas.totalItens}</strong>
                 </div>
                 <div class="profor-plan-summary-item">
                     <span>Previsto</span>
-                    <strong>${formatMoney(totalPrevisto)}</strong>
+                    <strong>${formatMoney(metricas.previsto)}</strong>
                 </div>
                 <div class="profor-plan-summary-item">
                     <span>Executado</span>
-                    <strong>${formatMoney(totalExecutado)}</strong>
+                    <strong class="${metricas.executado > 0.01 ? 'text-success' : ''}">${formatMoney(metricas.executado)}</strong>
                 </div>
-                <div class="profor-plan-summary-item">
-                    <span>Saldo</span>
-                    <strong class="${totalSaldo < 0 ? 'text-danger' : ''}">${formatMoney(totalSaldo)}</strong>
+                <div class="profor-plan-summary-item" title="Soma dos saldos ainda pendentes de execução (itens cujo executado é menor que o previsto).">
+                    <span>A executar</span>
+                    <strong class="${metricas.saldoAExecutar > 0.01 ? 'text-danger' : ''}">${formatMoney(metricas.saldoAExecutar)}</strong>
                 </div>
-                <div class="profor-plan-summary-item">
-                    <span>Execução</span>
-                    <strong>${formatPercent(percentual)}</strong>
+                ${cardAcimaPrevisto}
+                <div class="profor-plan-summary-item" title="Execução física do PAD: cada item é limitado a 100%, então a execução acima do previsto de um item não compensa a pendência de outro.">
+                    <span>Execução física do PAD</span>
+                    <strong>${formatPercent(metricas.execucaoPlanoPercentual)} <small class="text-muted fw-normal">(${metricas.itensComExecucao}/${metricas.totalItens})</small></strong>
                 </div>
             `;
 
@@ -6901,6 +6964,8 @@ async function carregarLogoParaPDF() {
                 toggleView('profor2022');
                 return;
             }
+
+            garantirMetricasOuvidoriaProfor(convenio);
 
             proforConvenioAtual = uf;
             proforFiltroAreaAtual = areaInicial;
@@ -6959,42 +7024,42 @@ async function carregarLogoParaPDF() {
                     </section>
 
                     <section class="profor-finance-grid mb-4" aria-label="Saldos e rendimentos">
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item -info">
                             <span>Rendimento aprovado</span>
                             <strong>${formatMoney(convenio.rendimentoAprovado)}</strong>
                         </div>
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item -success">
                             <span>Saldo de rendimentos atual</span>
                             <strong>${formatMoney(convenio.saldoRendimentosAtual)}</strong>
                         </div>
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item ${convenio.saldoResidualCapital < 0 ? '-danger' : '-success'}">
                             <span>Saldo residual capital</span>
                             <strong class="${convenio.saldoResidualCapital < 0 ? 'text-danger' : ''}">${formatMoney(convenio.saldoResidualCapital)}</strong>
                         </div>
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item ${convenio.saldoResidualCusteio < 0 ? '-danger' : '-success'}">
                             <span>Saldo residual custeio</span>
                             <strong class="${convenio.saldoResidualCusteio < 0 ? 'text-danger' : ''}">${formatMoney(convenio.saldoResidualCusteio)}</strong>
                         </div>
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item -info">
                             <span>Contrapartida integralizada</span>
                             <strong>${formatMoney(convenio.contrapartidaIntegralizada)}</strong>
                         </div>
                     </section>
 
                     <section class="profor-finance-grid mb-4" aria-label="Composição do potencial destinável à Ouvidoria">
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item -success">
                             <span>Saldo de rendimentos</span>
                             <strong>${formatMoney(convenio.saldoRendimentosAtual)}</strong>
                         </div>
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item -warning">
                             <span>Economicidade capital</span>
                             <strong>${formatMoney(convenio.saldoEconomicidadeCapital)}</strong>
                         </div>
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item -warning">
                             <span>Economicidade custeio</span>
                             <strong>${formatMoney(convenio.saldoEconomicidadeCusteio)}</strong>
                         </div>
-                        <div class="profor-finance-item">
+                        <div class="profor-finance-item -total">
                             <span>Total potencial destinável</span>
                             <strong>${formatMoney(convenio.saldoPotencialDestinavelOuvidoria)}</strong>
                         </div>

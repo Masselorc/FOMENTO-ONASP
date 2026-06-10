@@ -28,7 +28,12 @@ function linhaCacheParaCamelCase(row) {
     id: row.id,
     numeroConvenio: row.numero_convenio,
     ano: row.ano,
-    saldoRendimentosAtual: row.saldo_rendimentos_atual,
+    // Defensivo: garante numero mesmo que o driver devolva NUMERIC como string,
+    // evitando que o parser de moeda BR interprete o ponto decimal como milhar.
+    saldoRendimentosAtual:
+      row.saldo_rendimentos_atual === null || row.saldo_rendimentos_atual === undefined
+        ? null
+        : Number(row.saldo_rendimentos_atual),
     valorOriginal: row.valor_original,
     subtitulo: row.subtitulo,
     aviso: row.aviso,
