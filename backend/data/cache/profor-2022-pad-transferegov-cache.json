@@ -1,16 +1,16 @@
 {
   "versao": 1,
   "origem": "transferegov",
-  "geradoEm": "2026-05-27T17:10:01.241Z",
+  "geradoEm": "2026-06-10T12:17:04.228Z",
   "totalConvenios": 15,
   "totalItens": 525,
-  "hashGlobal": "6c0afe4bbf94c12f3b3c074db75f13f2ee6fdfddf702d09f9de8f88f99da246d",
+  "hashGlobal": "c80644574a0ced77da376bfc7bd95fee370eda29c99c9f03015e9b846e42fe0c",
   "convenios": [
     {
       "numeroConvenio": "937698",
       "uf": "MT",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 12,
       "totalizadores": {
         "concedente": "",
@@ -199,7 +199,7 @@
       "numeroConvenio": "937216",
       "uf": "GO",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 50,
       "totalizadores": {
         "concedente": "",
@@ -920,7 +920,7 @@
       "numeroConvenio": "937871",
       "uf": "PR",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 17,
       "totalizadores": {
         "concedente": "",
@@ -1179,7 +1179,7 @@
       "numeroConvenio": "937592",
       "uf": "AM",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 11,
       "totalizadores": {
         "concedente": "",
@@ -1354,7 +1354,7 @@
       "numeroConvenio": "937782",
       "uf": "AC",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 34,
       "totalizadores": {
         "concedente": "",
@@ -1851,7 +1851,7 @@
       "numeroConvenio": "937265",
       "uf": "MS",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 72,
       "totalizadores": {
         "concedente": "",
@@ -2880,7 +2880,7 @@
       "numeroConvenio": "938277",
       "uf": "MA",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 45,
       "totalizadores": {
         "concedente": "",
@@ -3531,7 +3531,7 @@
       "numeroConvenio": "937818",
       "uf": "PB",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 13,
       "totalizadores": {
         "concedente": "",
@@ -3734,7 +3734,7 @@
       "numeroConvenio": "938128",
       "uf": "SP",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 47,
       "totalizadores": {
         "concedente": "",
@@ -4413,7 +4413,7 @@
       "numeroConvenio": "937780",
       "uf": "PI",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 23,
       "totalizadores": {
         "concedente": "",
@@ -4756,7 +4756,7 @@
       "numeroConvenio": "937917",
       "uf": "RO",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 37,
       "totalizadores": {
         "concedente": "",
@@ -5295,17 +5295,17 @@
       "numeroConvenio": "937468",
       "uf": "TO",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 55,
       "totalizadores": {
         "concedente": "",
         "convenente": "",
         "situacao": "",
         "valorTotalPrevisto": 287128.78,
-        "valorTotalExecutado": 17125.91,
-        "saldoTotal": 270002.87
+        "valorTotalExecutado": 38993.91,
+        "saldoTotal": 248134.87
       },
-      "hashConteudo": "f042be4ad18aabce552360be474c0b306692c5158914d9765a2fc0986e2f3860",
+      "hashConteudo": "f722f8cf1dd5167514f1c68f66076745921dab87a2fed1370edc55b80c2698fb",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -5713,8 +5713,8 @@
           "quantidade": 7,
           "valorUnitario": 3124,
           "valorTotalPrevisto": 21868,
-          "valorTotalExecutado": 0,
-          "saldo": 21868
+          "valorTotalExecutado": 21868,
+          "saldo": 0
         },
         {
           "instrumento": "937468",
@@ -5825,8 +5825,8 @@
           "quantidade": 3,
           "valorUnitario": 1179.99,
           "valorTotalPrevisto": 3539.97,
-          "valorTotalExecutado": 0,
-          "saldo": 3539.97
+          "valorTotalExecutado": 10619.91,
+          "saldo": -7079.94
         },
         {
           "instrumento": "937468",
@@ -5909,8 +5909,8 @@
           "quantidade": 6,
           "valorUnitario": 1179.99,
           "valorTotalPrevisto": 7079.94,
-          "valorTotalExecutado": 10619.91,
-          "saldo": -3539.97
+          "valorTotalExecutado": 0,
+          "saldo": 7079.94
         },
         {
           "instrumento": "937468",
@@ -6086,7 +6086,7 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 28,
       "totalizadores": {
         "concedente": "",
@@ -6499,7 +6499,7 @@
       "numeroConvenio": "937817",
       "uf": "RJ",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 59,
       "totalizadores": {
         "concedente": "",
@@ -7346,7 +7346,7 @@
       "numeroConvenio": "937783",
       "uf": "SC",
       "origemUsada": "http",
-      "extraidoEm": "2026-05-27T17:07:22.385Z",
+      "extraidoEm": "2026-06-10T12:14:16.986Z",
       "totalItens": 22,
       "totalizadores": {
         "concedente": "",

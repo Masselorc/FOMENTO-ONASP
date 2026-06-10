@@ -1,5 +1,5 @@
 // Origem "reconstrucao-pad" do planoAplicacao PROFOR 2022.
-// Lê o relatório dry-run reconstruído a partir dos relatórios PAD/PROFOR 2022 e
+// Lê o relatório operacional v2 reconstruído a partir do cache PAD/Transferegov e
 // adapta-o ao formato canônico consumido pelo restante do fluxo (mesma forma
 // que extrairPlanoAplicacaoProforDoWorkbook).
 //
@@ -17,7 +17,7 @@ const CAMINHO_PADRAO_RECONSTRUCAO_PAD = path.join(
   "..",
   "data",
   "relatorios",
-  "profor-2022-pad-plano-reconstruido-dry-run.json"
+  "profor-2022-pad-recarga-operacional-v2.json"
 );
 
 const CAMPOS_OBRIGATORIOS_ITEM = Object.freeze([
@@ -64,7 +64,7 @@ function lerArquivoReconstrucaoPad(caminho) {
   if (!fs.existsSync(caminho)) {
     throw new ReconstrucaoPadIndisponivelError(
       `Arquivo de reconstrucao PAD ausente em ${caminho}. ` +
-        `Execute 'npm run profor:pad:reconstruir-plano:dry-run' antes de usar a origem reconstrucao-pad.`,
+        `Atualize os PADs pela tela Sistema antes de usar a origem reconstrucao-pad.`,
       { caminho }
     );
   }

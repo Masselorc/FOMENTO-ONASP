@@ -114,6 +114,7 @@ test("flags por origem retornam true apenas para reconstrucao-pad", () => {
 test("resolverCaminhoReconstrucaoPad usa padrao quando nada e informado", () => {
   assert.equal(resolverCaminhoReconstrucaoPad(), CAMINHO_PADRAO_RECONSTRUCAO_PAD);
   assert.equal(resolverCaminhoReconstrucaoPad({}), CAMINHO_PADRAO_RECONSTRUCAO_PAD);
+  assert.match(CAMINHO_PADRAO_RECONSTRUCAO_PAD, /profor-2022-pad-recarga-operacional-v2\.json$/);
 });
 
 test("CAMPOS_OBRIGATORIOS_ITEM cobre os campos minimos esperados pelo planoAplicacao", () => {
@@ -247,6 +248,30 @@ test("carregarPlanoAplicacaoReconstrucaoPad respeita conveniosEsperados=15 e min
   });
   assert.equal(r.metadados.totalConvenios, 15);
   assert.equal(r.metadados.totalLinhas, 568);
+});
+
+test("carregarPlanoAplicacaoReconstrucaoPad usa recarga v2 atual nos itens alterados do Tocantins", () => {
+  const r = carregarPlanoAplicacaoReconstrucaoPad({
+    conveniosEsperados: 15,
+    minimoLinhasExigido: 568,
+  });
+  const itensTocantins = r.planoAplicacao.filter((item) => item.numero === "937468");
+  const porDescricao = new Map(itensTocantins.map((item) => [item.descricao, item]));
+
+  const tablet = porDescricao.get("ETAPA 2 - CORREGEDORIA - Tablet, tela su");
+  assert.equal(tablet.valorExecutado, 21868);
+  assert.equal(tablet.saldo, 0);
+  assert.equal(tablet.percentualExecucao, 100);
+
+  const monitorEtapa1 = porDescricao.get("ETAPA 1 - OUVIDORIA - Monitor");
+  assert.equal(monitorEtapa1.valorExecutado, 10619.91);
+  assert.equal(monitorEtapa1.saldo, -7079.94);
+  assert.equal(monitorEtapa1.percentualExecucao, 300);
+
+  const monitorEtapa2 = porDescricao.get("ETAPA 2 - CORREGEDORIA - Monitor");
+  assert.equal(monitorEtapa2.valorExecutado, 0);
+  assert.equal(monitorEtapa2.saldo, 7079.94);
+  assert.equal(monitorEtapa2.percentualExecucao, 0);
 });
 
 test("modulo de origem reconstrucao-pad NAO importa publicacao, SQLite, init-db ou Transferegov", () => {

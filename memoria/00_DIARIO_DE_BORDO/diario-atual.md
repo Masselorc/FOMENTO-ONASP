@@ -7551,6 +7551,41 @@ Logs operacionais gravados:
 - Risco: medio - fontes publicas podem mudar entre execucoes; divergencias parecem refletir atualizacao da fonte e nao erro tecnico.
 - Rollback: reverter o commit; remover os relatorios locais de investigacao se desejar limpar o workspace.
 
+## 10/06/2026 - PROFOR 2022: leitura pré-atualização DETRU, Transferegov e PAD
+
+- Branch: `main`.
+- Objetivo: registrar fotografia antes de rodar nova atualização completa dos convênios PROFOR.
+- Escopo executado: análise somente leitura de scripts, logs locais, API local, Supabase/Postgres e relatórios PAD; sem executar atualização DETRU, rendimentos, PAD ou publicação.
+- Supabase: conexão validada com senha temporária do clipboard, sem imprimir ou gravar `DATABASE_URL`.
+- Estado prévio: carteira Supabase com 18 convênios, 15 ativos; DETRU com cache 15 e última execução `id=13` em `2026-05-19T23:03:11Z`, sucesso 15/15; rendimentos Transferegov com cache 15 e última consulta `id=12` em `2026-05-19T23:03:14Z`, sucesso 15/15.
+- PAD: relatório operacional v2 local em `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json`, origem `cache_transferegov`, 15 convênios, 525 itens processados, 568 linhas reconstruídas, 0 impedimentos, 0 alertas e 0 pendências de revisão; cache PAD Transferegov local gerado em `2026-05-27T17:10:01Z`.
+- Logs: `logs/atualizacao-profor-2022.log` registra tentativas recentes no comando legado `atualizar:profor-2022`, que está aposentado e bloqueia antes de banco/rede; `logs_operacionais` no Supabase tem 3 eventos consolidados PROFOR de `2026-05-19` e não tem eventos granulares recentes de `profor_detru_atualizacao_*`, `profor_rendimentos_atualizacao_*` ou `profor_pad_*`.
+- Risco observado: os dados de DETRU/rendimentos estão consistentes, mas defasados desde `19/05/2026`; o PAD operacional local deriva de cache Transferegov de `27/05/2026` e recarga de `28/05/2026`.
+- Próxima etapa combinada: aguardar comando do usuário para rodar atualização completa e depois repetir a análise comparativa.
+
+## 10/06/2026 - PROFOR 2022: validação pós-atualização manual
+
+- Branch: `main`.
+- Objetivo: verificar execução manual acionada pela UI: DETRU, rendimentos Transferegov e PADs.
+- Supabase: consulta feita com senha temporária do clipboard, sem imprimir ou gravar `DATABASE_URL`.
+- DETRU: nova execução `id=14`, iniciada `2026-06-10T12:12:02Z`, concluída `2026-06-10T12:12:05Z`, sucesso `15/15`, `0` não encontrados, cache atualizado em `2026-06-10T12:12:02Z`, `282968` linhas DETRU lidas.
+- Rendimentos Transferegov: nova consulta `id=13`, iniciada `2026-06-10T12:12:19Z`, concluída `2026-06-10T12:14:06Z`, sucesso `15/15`, `0` falhas, cache atualizado em `2026-06-10T12:14:06Z`.
+- PAD/Transferegov: log operacional `id=30` registrou sucesso em `2026-06-10T12:17:04Z`, `15` convênios e `525` itens; cache local `backend/data/cache/profor-2022-pad-transferegov-cache.json` atualizado em `2026-06-10T12:17:04Z`, hash `c80644574a0ced77da376bfc7bd95fee370eda29c99c9f03015e9b846e42fe0c`.
+- Recarga PAD operacional: log `id=29`, sucesso, `15/15` PADs lidos, `568` linhas reconstruídas; relatório `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json` com `0` impedimentos, `0` alertas, `0` pendências de revisão, `aptoParaUsoLocal=true` e `aptoParaPublicacao=false`.
+- Logs operacionais: registrados eventos granulares novos de início/sucesso para DETRU, rendimentos, PAD/Transferegov e recarga PAD. Nenhum evento de falha encontrado nesses fluxos.
+- Arquivos alterados pela atualização: `backend/data/cache/profor-2022-pad-transferegov-cache.json`, `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json` e `.md`; mantidos como evidência local, sem publicação estática.
+- Comparação de itens PAD contra o cache versionado anterior: não houve item novo nem item removido; houve alteração de saldo/execução em 3 itens existentes do convênio `937468/TO` (`Tablet`, `Monitor` etapa 1 e `Monitor` etapa 2). Totalizadores do convênio `937468` mudaram de executado `17125.91` para `38993.91` e saldo `270002.87` para `248134.87`.
+
+## 10/06/2026 - PROFOR 2022: correção da tela principal para usar recarga PAD v2
+
+- Branch: `main`.
+- Problema: a tela principal PROFOR continuava exibindo valores antigos para itens do convênio `937468/TO`, mesmo após cache PAD e endpoint de recarga operacional estarem atualizados.
+- Causa: a origem `reconstrucao-pad` ainda apontava por padrão para `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`, arquivo antigo não regravado pelo botão "Atualizar PADs". A UI principal consome o consolidado, que monta o plano por essa origem.
+- Correção: `backend/services/profor-2022/profor-pad-origem-reconstrucao-service.js` passou a usar `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json` como caminho padrão da reconstrução PAD.
+- Teste: adicionado caso em `tests/services/profor-pad-origem-reconstrucao.test.js` garantindo que o caminho padrão usa o relatório v2 e que os itens alterados do Tocantins retornam: Tablet `21868/0/100%`, Monitor etapa 1 `10619.91/-7079.94/300%`, Monitor etapa 2 `0/7079.94/0%`.
+- Validações: `node --check` no serviço e teste; `node --test tests/services/profor-pad-origem-reconstrucao.test.js` com `29` testes passando e `3` pulados por exigirem `DATABASE_URL`.
+- Validação HTTP pós-restart: servidor Node reiniciado em `127.0.0.1:8790` com Supabase; `GET /api/profor-2022/consolidado` passou a retornar para `937468/TO`: Tablet etapa 2 `valorExecutado=21868`, `saldo=0`, `percentualExecucao=100`; Monitor etapa 1 `valorExecutado=10619.91`, `saldo=-7079.94`, `percentualExecucao=300`; Monitor etapa 2 `valorExecutado=0`, `saldo=7079.94`, `percentualExecucao=0`.
+
 ## 25/05/2026 - PROFOR 2022: Excel como auditoria historica PAD
 
 - Branch: `main`.
