@@ -34,3 +34,21 @@ test("cabecalho PDF preserva proporcao real do logo SENAPPEN", () => {
   assert.match(appCode, /logoImg\.width\s*=\s*90;/);
   assert.match(appCode, /logoImg\.height\s*=\s*64;/);
 });
+
+test("relatorio PDF usa texto solido nos KPIs sem barras de gradiente", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const cssPath = path.join(repoRoot, "frontend/css/app.css");
+  const css = fs.readFileSync(cssPath, "utf8");
+
+  const blocoInicio = css.indexOf(".report-content .kpi-card");
+  assert.notEqual(blocoInicio, -1, "CSS do relatorio deve ter bloco proprio para KPIs");
+  const bloco = css.slice(blocoInicio, blocoInicio + 2400);
+
+  assert.match(bloco, /\.report-content \.kpi-value/);
+  assert.match(bloco, /background:\s*none\s*!important/);
+  assert.match(bloco, /-webkit-text-fill-color:\s*currentColor\s*!important/);
+  assert.match(bloco, /text-shadow:\s*none\s*!important/);
+  assert.match(bloco, /\.is-exporting \.report-content \.kpi-value/);
+  assert.match(bloco, /\.report-content \.text-muted/);
+  assert.match(bloco, /\.report-content \.small\.text-uppercase\.fw-bold/);
+});

@@ -7679,3 +7679,16 @@ Logs operacionais gravados:
 - Preservacoes: sem alterar Supabase, caches, dados publicados, `.env`, backend ou fluxo de atualizacao; sem commit/push.
 - Risco: baixo - mudanca restrita ao cabecalho/asset do logo e validada contra a proporcao real do PNG.
 - Rollback: reverter `index.html`, `frontend/css/app.css`, `frontend/js/app.js` e remover `tests/services/pdf-logo-header.test.js`.
+
+## 10/06/2026 - PDF: remove barras/gradientes dos KPIs do relatorio estadual
+
+- Branch: `main`.
+- Objetivo: corrigir barras horizontais e contraste ruim nos KPIs do relatorio estadual/PDF.
+- Causa: o CSS global de acabamento metalico/neon aplicava `background-clip: text`, `-webkit-text-fill-color: transparent` e gradientes em `.kpi-value`/`.text-money`; o `html2canvas` renderizava esse efeito como faixas horizontais nos valores do PDF.
+- Arquivos: `frontend/css/app.css`; `tests/services/pdf-logo-header.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: criado override especifico para `.report-content` e `.is-exporting .report-content` removendo gradiente, background-clip e text-shadow dos valores dos KPIs; valores passaram a usar cores solidas por tipo (azul, verde, amarelo). Tambem elevado contraste de `.text-muted` e rotulos internos dos cards do relatorio.
+- Validacao funcional: Playwright abriu o detalhamento RJ, confirmou `backgroundImage: none`, `textShadow: none` e `-webkit-text-fill-color` solido nos quatro KPIs principais; captura visual `#conteudo-relatorio-pdf` ficou sem barras; exportacao baixou `Relatorio_Ouvidoria_RJ.pdf` com 20.144.460 bytes.
+- Testes: `node --check frontend/js/app.js`; `node --check tests/services/pdf-logo-header.test.js`; `node --test tests/services/pdf-logo-header.test.js tests/services/profor-pad-origem-reconstrucao.test.js` (35 testes: 32 pass, 3 skip).
+- Preservacoes: sem alterar Supabase, caches, dados publicados, backend ou fluxo de atualizacao; sem commit/push.
+- Risco: baixo - override restrito ao conteudo de relatorio/PDF; dashboard fora do relatorio mantem o tema global.
+- Rollback: remover o bloco de override `.report-content` em `frontend/css/app.css` e o teste correspondente.

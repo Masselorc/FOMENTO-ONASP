@@ -9491,6 +9491,66 @@ table.dataTable thead .sorting_desc::after {
     text-shadow: 0 0 10px rgba(239, 68, 68, 0.18);
 }
 
+/* Relatorios/PDF: html2canvas renderiza background-clip:text como faixas.
+   Dentro do relatorio os KPIs usam cores solidas, sem gradiente nem glow. */
+.report-content .kpi-card {
+    background: #1d2a3b !important;
+    border: 1px solid #3a4d64 !important;
+    border-left-width: 1px !important;
+    box-shadow: none !important;
+    min-height: 116px;
+}
+
+.report-content .kpi-title {
+    color: #b9c7da !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0;
+    margin-bottom: 0.45rem !important;
+}
+
+.report-content .text-muted,
+.report-content .small.text-uppercase.fw-bold {
+    color: #aebdd2 !important;
+}
+
+.report-content .border.rounded .text-muted,
+.report-content .border.rounded .small.text-uppercase.fw-bold {
+    color: #8fa2bc !important;
+}
+
+.report-content .kpi-value,
+.report-content .kpi-card .kpi-value,
+.report-content .text-money,
+.report-content .text-info,
+.is-exporting .report-content .kpi-value,
+.is-exporting .report-content .text-money,
+.is-exporting .report-content .text-info {
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    -webkit-text-fill-color: currentColor !important;
+    color: #8ebdff !important;
+    text-shadow: none !important;
+}
+
+.report-content .text-success,
+.report-content .text-success.text-money,
+.report-content .text-money.text-success,
+.is-exporting .report-content .text-success,
+.is-exporting .report-content .text-success.text-money,
+.is-exporting .report-content .text-money.text-success {
+    color: #2ee6a8 !important;
+}
+
+.report-content .text-warning,
+.report-content .text-warning.text-money,
+.report-content .text-money.text-warning,
+.is-exporting .report-content .text-warning,
+.is-exporting .report-content .text-warning.text-money,
+.is-exporting .report-content .text-money.text-warning {
+    color: #ffb020 !important;
+}
+
 /* 6. Borda lateral colorida em todos os KPI cards */
 .kpi-card,
 .app-summary-card,
