@@ -24,10 +24,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      # Monta uma pasta de publicação contendo APENAS os arquivos que o site
+      # estático carrega. Evita expor dados sensíveis (ex.: backend/data/*.sqlite,
+      # Dados/, Planilhas/, memoria/). A estrutura de diretórios é preservada
+      # porque data-service.js resolve os JSON via import.meta.url (../../frontend/...).
+      - name: Assemble static site
+        run: |
+          set -euo pipefail
+          mkdir -p _site/frontend _site/backend/services
+          cp index.html _site/index.html
+          cp -r frontend/. _site/frontend/
+          cp backend/services/data-service.js _site/backend/services/data-service.js
+          cp backend/services/analytics.js _site/backend/services/analytics.js
+          # Garante que nenhum banco de dados foi copiado por engano.
+          if find _site -name '*.sqlite*' | grep -q .; then
+            echo "ERRO: arquivo .sqlite encontrado no artefato de publicação" >&2
+            exit 1
+          fi
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: frontend
+          path: _site
 
   deploy:
     name: Deploy to GitHub Pages
