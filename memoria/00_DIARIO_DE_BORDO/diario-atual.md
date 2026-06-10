@@ -7653,3 +7653,16 @@ Logs operacionais gravados:
 - Preservacoes: sem alterar banco por SQL direto, sem alterar `backend/data/cache`, `backend/data/relatorios`, `frontend/data/publicados`, `.env`, SQLite/WAL/SHM, `package.json`/lock, `backend/server.js`. Sem Transferegov, sem DETRU/rendimentos, sem Playwright. Validacao funcional manual: reiniciar servidor, Ctrl+F5, Sistema, "Atualizar PADs" — 937782/AC e 937265/MS devem deixar de aparecer como pendencia.
 - Risco: baixo — decodificacao HTML e aditiva (so adiciona pareamentos perdidos), saneamento cosmetico exige coincidencia da chave normalizada (segue exigindo conv+descricao normalizada igual).
 - Rollback: `git revert <SHA>` && `git push origin main`.
+
+## 10/06/2026 - PROFOR 2022: detalhamento estadual exibe itens PAD de Ouvidoria
+
+- Branch: `main`.
+- Objetivo: corrigir a tela de detalhamento estadual para que a secao de Convenio liste os itens reais de Ouvidoria do PAD, em vez de uma linha agregada generica por convenio.
+- Causa: `montarItensDashboardProforBancoCache` substituia os convenios do dashboard por uma unica linha consolidada por convenio (`PROFOR 2022 - Convenio NNNNNN/2022`), descartando `planoAplicacao[].descricao`.
+- Arquivos: `frontend/js/app.js`; `tests/services/profor-pad-origem-reconstrucao.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: a montagem agora expande `convenio.planoAplicacao` com `flatMap`, filtra `area === 'ouvidoria'`, usa `item.descricao` como objeto da linha e preserva quantidade, valor unitario, valor previsto, executado, saldo, percentual, area, natureza, numero e ano do convenio. Mantido fallback agregado apenas para payload sem `planoAplicacao`.
+- Validacao funcional: endpoint `GET /api/profor-2022/consolidado` mostrou para RJ o item de Ouvidoria `MINIBUS PARA ATENDIMENTO DE CIDADOES IN`, quantidade 1, previsto R$ 323.838,87 e executado R$ 0,00; Playwright clicou `abrirDetalheEstado('RJ')` e confirmou `RJ_DETAIL_HAS_OUVIDORIA_ITEM=true` no detalhamento.
+- Testes: `node --check frontend/js/app.js`; `node --check tests/services/profor-pad-origem-reconstrucao.test.js`; `node --test tests/services/profor-pad-origem-reconstrucao.test.js` (33 testes: 30 pass, 3 skip). Adicionado teste estatico para impedir regressao da montagem por `planoAplicacao`/Ouvidoria.
+- Preservacoes: sem alterar Supabase, sem atualizar caches, sem publicar, sem alterar `frontend/data/publicados`, sem `.env`, sem commit/push.
+- Risco: baixo - mudanca restrita ao formato das linhas de Convenio no dashboard/detalhamento; totais seguem derivados da soma dos itens de Ouvidoria.
+- Rollback: reverter as alteracoes em `frontend/js/app.js` e no teste correspondente.

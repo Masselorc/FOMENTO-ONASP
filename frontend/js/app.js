@@ -1587,13 +1587,14 @@ async function carregarLogoParaPDF() {
                 return null;
             }
 
-            return (dadosProfor.convenios || []).map((convenio) => {
+            const montarItemAgregadoConvenio = (convenio) => {
                 const valorTotal = Number(
                     convenio.previstoOuvidoria ?? convenio.valorGlobal ?? convenio.valorTotal
                 ) || 0;
                 const valorExecutado = Number(
                     convenio.valorExecutadoOuvidoria ?? convenio.valorExecutadoGeral ?? convenio.valorExecutado
                 ) || 0;
+
                 return {
                     uf: convenio.uf,
                     regiao: '',
@@ -1607,6 +1608,44 @@ async function carregarLogoParaPDF() {
                     percentualExecucao: valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0,
                     origemDados: 'reconstrucao-pad'
                 };
+            };
+
+            return (dadosProfor.convenios || []).flatMap((convenio) => {
+                if (!Array.isArray(convenio.planoAplicacao)) {
+                    return [montarItemAgregadoConvenio(convenio)];
+                }
+
+                return convenio.planoAplicacao
+                    .filter((item) => normalizarBusca(item.area) === 'ouvidoria')
+                    .map((item) => {
+                        const quantidade = parseNumeroMonetarioFrontend(item.quantidade);
+                        const valorTotal = parseNumeroMonetarioFrontend(item.valorPrevisto ?? item.valorTotal);
+                        const valorExecutado = parseNumeroMonetarioFrontend(item.valorExecutado);
+                        const valorUnitarioInformado = parseNumeroMonetarioFrontend(item.valorUnitario);
+                        const valorUnitario = valorUnitarioInformado || (quantidade > 0 ? valorTotal / quantidade : valorTotal);
+                        const saldoInformado = item.saldo === undefined || item.saldo === null || item.saldo === ''
+                            ? valorTotal - valorExecutado
+                            : parseNumeroMonetarioFrontend(item.saldo);
+                        const percentualInformado = parseNumeroMonetarioFrontend(item.percentualExecucao);
+
+                        return {
+                            uf: convenio.uf,
+                            regiao: '',
+                            instrumento: 'Convênio PROFOR 2022',
+                            objeto: item.descricao || `PROFOR 2022 - Convênio ${convenio.numero || convenio.numeroConvenio || ''}/${convenio.ano || ''}`.trim(),
+                            quantidade: quantidade > 0 ? quantidade : 1,
+                            valorUnitario,
+                            valorTotal,
+                            valorExecutado,
+                            saldo: saldoInformado,
+                            percentualExecucao: percentualInformado || (valorTotal > 0 ? (valorExecutado / valorTotal) * 100 : 0),
+                            area: item.area,
+                            natureza: item.natureza,
+                            numeroConvenio: convenio.numero || convenio.numeroConvenio || '',
+                            ano: convenio.ano || '',
+                            origemDados: 'reconstrucao-pad'
+                        };
+                    });
             });
         }
 

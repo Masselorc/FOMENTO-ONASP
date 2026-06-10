@@ -442,3 +442,19 @@ test("UI da recarga PAD filtra alertas de auditoria mesmo de payload antigo", ()
       `Lista de tipos suprimidos da UI deve incluir ${tipo}`);
   }
 });
+
+test("Detalhamento estadual usa itens de Ouvidoria do plano PAD nos convenios", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const appPath = path.join(repoRoot, "frontend/js/app.js");
+  const appCode = fs.readFileSync(appPath, "utf8");
+
+  const blocoInicio = appCode.indexOf("function montarItensDashboardProforBancoCache");
+  assert.notEqual(blocoInicio, -1, "Montagem de itens PROFOR para dashboard deve existir");
+  const bloco = appCode.slice(blocoInicio, blocoInicio + 5000);
+
+  assert.match(bloco, /\.flatMap\(\(convenio\)/);
+  assert.match(bloco, /convenio\.planoAplicacao/);
+  assert.match(bloco, /normalizarBusca\(item\.area\)\s*===\s*['"]ouvidoria['"]/);
+  assert.match(bloco, /objeto:\s*item\.descricao/);
+  assert.match(bloco, /valorTotal\s*=\s*parseNumeroMonetarioFrontend\(item\.valorPrevisto/);
+});
