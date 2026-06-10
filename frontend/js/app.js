@@ -1342,7 +1342,7 @@ async function carregarLogoParaPDF() {
             if (!logoImg) return;
 
             const fallback = document.getElementById('logo-senappen-fallback');
-            logoImg.width = 210;
+            logoImg.width = 90;
             logoImg.height = 64;
             logoImg.style.width = '';
             logoImg.style.height = '';

@@ -7666,3 +7666,16 @@ Logs operacionais gravados:
 - Preservacoes: sem alterar Supabase, sem atualizar caches, sem publicar, sem alterar `frontend/data/publicados`, sem `.env`, sem commit/push.
 - Risco: baixo - mudanca restrita ao formato das linhas de Convenio no dashboard/detalhamento; totais seguem derivados da soma dos itens de Ouvidoria.
 - Rollback: reverter as alteracoes em `frontend/js/app.js` e no teste correspondente.
+
+## 10/06/2026 - PDF: corrige proporcao do logo SENAPPEN no cabecalho
+
+- Branch: `main`.
+- Objetivo: corrigir o achatamento do logo SENAPPEN no cabecalho capturado pelas exportacoes PDF.
+- Causa: o asset `frontend/assets/senappen-logo.png` tem dimensoes `1526x1080` (proporcao aproximada 1,413), mas o HTML/CSS/JS forçavam `210x64` (proporcao 3,281), deformando o logo no `html2canvas`/PDF.
+- Arquivos: `index.html`; `frontend/css/app.css`; `frontend/js/app.js`; `tests/services/pdf-logo-header.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: ajustados atributos do `<img>` para `90x64`, CSS `.senappen-logo` para `width/max-width: 90px`, `height: 64px`, `aspect-ratio: 1526 / 1080`, e rotina `carregarLogoLocalParaPDF()` para usar a mesma largura. Regras responsivas do fallback textual foram preservadas separadas do logo real.
+- Validacao funcional: Playwright mediu o logo em modo normal e em modo de exportacao (`is-exporting` + `main-wrapper` com 1200px): `90x64`, proporcao `1,406`, `object-fit: contain`, natural `1526x1080`. Exportacao PDF do RJ baixou `Relatorio_Ouvidoria_RJ.pdf` com 20.298.060 bytes.
+- Testes: `node --check frontend/js/app.js`; `node --check tests/services/pdf-logo-header.test.js`; `node --test tests/services/pdf-logo-header.test.js tests/services/profor-pad-origem-reconstrucao.test.js` (34 testes: 31 pass, 3 skip).
+- Preservacoes: sem alterar Supabase, caches, dados publicados, `.env`, backend ou fluxo de atualizacao; sem commit/push.
+- Risco: baixo - mudanca restrita ao cabecalho/asset do logo e validada contra a proporcao real do PNG.
+- Rollback: reverter `index.html`, `frontend/css/app.css`, `frontend/js/app.js` e remover `tests/services/pdf-logo-header.test.js`.

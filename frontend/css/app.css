@@ -718,13 +718,14 @@ input:focus-visible,
 }
 
 .senappen-logo {
+    aspect-ratio: 1526 / 1080;
     display: block;
     flex: 0 0 auto;
     height: 64px;
-    max-width: 210px;
+    max-width: 90px;
     object-fit: contain;
     filter: brightness(1.18) contrast(1.18) saturate(1.05) drop-shadow(0 2px 8px rgba(7, 29, 65, 0.42));
-    width: 210px;
+    width: 90px;
     background: transparent !important;
     border: none !important;
     outline: none !important;
@@ -4413,7 +4414,11 @@ body.dark-mode .budget-tracking-management strong,
         gap: 0.75rem;
     }
 
-    .senappen-logo,
+    .senappen-logo {
+        height: 54px;
+        width: 76px;
+    }
+
     .senappen-logo-fallback {
         height: 54px;
         width: 150px;
@@ -4501,7 +4506,11 @@ body.dark-mode .budget-tracking-management strong,
         min-width: 0;
     }
 
-    .senappen-logo,
+    .senappen-logo {
+        height: 44px;
+        width: 62px;
+    }
+
     .senappen-logo-fallback {
         height: 44px;
         width: 116px;
