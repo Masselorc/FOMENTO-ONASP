@@ -5979,6 +5979,8 @@ async function carregarLogoParaPDF() {
                 executado,
                 saldoAExecutar,
                 execucaoAcima,
+                // Execução física: proporção de itens do plano com execução registrada.
+                execucaoFisicaPercentual: lista.length > 0 ? (itensComExecucao / lista.length) * 100 : 0,
                 // Execução do plano (limitada a 100% por item).
                 execucaoPlanoPercentual: previsto > 0 ? (executadoNoPlano / previsto) * 100 : 0,
                 // Razão financeira bruta executado/previsto (pode passar de 100%).
@@ -6909,9 +6911,13 @@ async function carregarLogoParaPDF() {
                     <strong class="${metricas.saldoAExecutar > 0.01 ? 'text-danger' : ''}">${formatMoney(metricas.saldoAExecutar)}</strong>
                 </div>
                 ${cardAcimaPrevisto}
-                <div class="profor-plan-summary-item" title="Execução física do PAD: cada item é limitado a 100%, então a execução acima do previsto de um item não compensa a pendência de outro.">
+                <div class="profor-plan-summary-item" title="Execução física do PAD: percentual de itens do plano com execução registrada (itens executados / total de itens).">
                     <span>Execução física do PAD</span>
-                    <strong>${formatPercent(metricas.execucaoPlanoPercentual)} <small class="text-muted fw-normal">(${metricas.itensComExecucao}/${metricas.totalItens})</small></strong>
+                    <strong>${formatPercent(metricas.execucaoFisicaPercentual)} <small class="text-muted fw-normal">(${metricas.itensComExecucao}/${metricas.totalItens})</small></strong>
+                </div>
+                <div class="profor-plan-summary-item" title="Execução financeira do PAD: valor executado sobre o previsto, com cada item limitado a 100%, então a execução acima do previsto de um item não compensa a pendência de outro.">
+                    <span>Execução financeira do PAD</span>
+                    <strong>${formatPercent(metricas.execucaoPlanoPercentual)}</strong>
                 </div>
             `;
 
