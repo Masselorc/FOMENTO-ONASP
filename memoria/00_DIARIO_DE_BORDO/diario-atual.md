@@ -7625,6 +7625,17 @@ Logs operacionais gravados:
 - Risco: baixo - mudança restrita ao backend de salvamento do Orçamento 2026; a replicação só ocorre para itens ativos com mesmo `processo_sei` e não sobrescreve campos explicitamente editados no mesmo payload.
 - Rollback: reverter as alterações em `backend/services/orcamento-2026-service.js`, `tests/services/auditoria-logs-operacionais.test.js` e esta entrada do diário.
 
+## 12/06/2026 - Orçamento 2026: sincronização pontual da autorização no processo 08016.003997/2026-30
+
+- Branch: `main`.
+- Objetivo: corrigir o dado já divergente dos itens do mesmo processo SEI após constatar que a correção de código não retroage registros salvos anteriormente.
+- Evidência antes: `GET /api/orcamento-2026` mostrava `APON-003` com `autorizacaoAutoridade=35718291`, link SEI e data `29/05/2026`, enquanto `APON-004` e `APON-002` estavam vazios nos mesmos campos, apesar do mesmo `processoSei=08016.003997/2026-30`.
+- Ação: usado `POST /api/orcamento-2026/salvar` com payload restrito a `APON-004` e `APON-002`, copiando os campos de autorização de `APON-003`. Senhas não foram impressas; a chamada usou credencial local em memória.
+- Reinício: o backend local foi reiniciado para carregar o commit `ba4ed59` já enviado ao `origin/main`; listener validado em `127.0.0.1:8790` com HTTP 200 e PID `19588`.
+- Evidência depois: `GET /api/orcamento-2026` confirmou `APON-002`, `APON-003` e `APON-004` com `autorizacaoAutoridade=35718291` e `dataAutorizacaoAutoridade=29/05/2026 03:00:00`.
+- Preservações: sem alterar `frontend/data/publicados`, sem publicar dados, sem imprimir senha, sem novo commit/push nesta etapa operacional.
+- Rollback: pelo endpoint de edição, limpar `autorizacao_autoridade`, `link_autorizacao_autoridade` e `data_autorizacao_autoridade` em `APON-002` e `APON-004`, se necessário.
+
 ## 26/05/2026 - PROFOR 2022: recarga PAD exibe so pendencias por convenio/UF
 
 - Branch: `main`.
