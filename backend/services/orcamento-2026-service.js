@@ -133,6 +133,10 @@ const CAMPOS_ACOMPANHAMENTO_GERENCIAL = new Set([
   "pendencia_atual",
   "observacao"
 ]);
+const CAMPOS_REPLICAVEIS_POR_PROCESSO = new Set([
+  ...CAMPOS_ACOMPANHAMENTO_GERENCIAL,
+  ...CAMPOS_EDITAVEIS_RASTREIO
+]);
 const CAMPOS_MONETARIOS_ORCAMENTO = new Set([
   "valor_previsto",
   "valor_disponibilizado",
@@ -1371,7 +1375,7 @@ async function replicarAcompanhamentoGerencialPorProcesso(client, alteracoesPorI
     if (!itemAtual || idsInativosSet.has(String(id))) return;
 
     const acompanhamento = Object.fromEntries(
-      Object.entries(camposAlterados).filter(([campo]) => CAMPOS_ACOMPANHAMENTO_GERENCIAL.has(campo))
+      Object.entries(camposAlterados).filter(([campo]) => CAMPOS_REPLICAVEIS_POR_PROCESSO.has(campo))
     );
     if (!Object.keys(acompanhamento).length) return;
 

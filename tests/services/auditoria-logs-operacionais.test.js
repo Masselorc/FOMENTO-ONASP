@@ -283,6 +283,7 @@ const linhaOrcamento = {
 function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } = {}) {
   const historicos = [];
   const logs = [];
+  const updates = [];
 
   historicoService.registrarHistoricoPostgres = async (_client, args) => {
     historicos.push({ ...args });
@@ -301,19 +302,28 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
   };
   postgresClient.withTransaction = async (callback) => callback({
     async query(sql, params = []) {
-      if (/SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = true/i.test(sql)) return { rows: [] };
+      if (/SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = true/i.test(sql)) {
+        return {
+          rows: linhas
+            .filter((linha) => linha.ativo !== false)
+            .map((linha) => ({ id: linha.id, processo_sei: linha.processo_sei }))
+        };
+      }
       if (/SELECT \* FROM orcamento_2026 WHERE id = \$1/i.test(sql)) {
         const id = String(params[0] || "");
         return { rows: linhas.filter((linha) => String(linha.id) === id) };
       }
       if (/INSERT INTO orcamento_2026_movimentacoes/i.test(sql)) return { rows: [{ id: 77 }] };
-      if (/INSERT INTO orcamento_2026/i.test(sql) || /UPDATE orcamento_2026/i.test(sql)) return { rows: [] };
+      if (/INSERT INTO orcamento_2026/i.test(sql) || /UPDATE orcamento_2026/i.test(sql)) {
+        updates.push({ sql, params });
+        return { rows: [] };
+      }
       throw new Error(`SQL inesperado no mock Orcamento: ${sql}`);
     },
   });
 
   const service = recarregarServico("../../backend/services/orcamento-2026-service");
-  return { service, historicos, logs };
+  return { service, historicos, logs, updates };
 }
 
 test("salvarParametrosMinimos registra log operacional resumido sem senha", async () => {
@@ -380,6 +390,39 @@ test("salvarOrcamento2026 registra log de edicao resumido", async () => {
   assert.deepEqual(log.payload.idsAfetados, ["ITEM-1"]);
   assert.deepEqual(log.payload.camposAlterados, ["observacao"]);
   assert.ok(!("password" in log.payload));
+});
+
+test("salvarOrcamento2026 replica rastreio para itens ativos do mesmo processo SEI", async () => {
+  const processoSei = "08016003997202630";
+  const linhas = [
+    { ...linhaOrcamento, id: "ITEM-1", processo_sei: processoSei },
+    { ...linhaOrcamento, id: "ITEM-2", descricao: "Item relacionado", processo_sei: processoSei },
+  ];
+  const { service, historicos, logs, updates } = instalarMockOrcamento({ linhas });
+
+  const resultado = await service.salvarOrcamento2026({
+    password: "senha-correta-testes",
+    changes: {
+      "ITEM-1": {
+        autorizacao_autoridade: "SEI 35718291",
+        link_autorizacao_autoridade: "https://sei.example/processo/35718291",
+        data_autorizacao_autoridade: "2026-05-29",
+      },
+    },
+  });
+
+  assert.equal(resultado.success, true);
+
+  const updatesItem2 = updates.filter((update) => update.params.includes("ITEM-2"));
+  assert.equal(updatesItem2.length, 1);
+  assert.match(updatesItem2[0].sql, /autorizacao_autoridade/);
+  assert.match(updatesItem2[0].sql, /link_autorizacao_autoridade/);
+  assert.match(updatesItem2[0].sql, /data_autorizacao_autoridade/);
+  assert.ok(historicos.some((h) => h.registro === "ITEM-2" && h.campo === "autorizacao_autoridade"));
+
+  const log = logs.find((item) => item.tipoEvento === "orcamento_2026_edicao");
+  assert.deepEqual(log.payload.idsAfetados, ["ITEM-1", "ITEM-2"]);
+  assert.ok(log.payload.camposAlterados.includes("autorizacao_autoridade"));
 });
 
 test("salvarOrcamento2026 registra log de inativacao", async () => {

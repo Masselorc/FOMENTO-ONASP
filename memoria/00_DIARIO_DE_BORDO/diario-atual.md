@@ -7612,6 +7612,19 @@ Logs operacionais gravados:
 - Risco: baixo - a mudanca apenas reinterpreta o contador no ramo cache para representar PADs/convenios, mantendo todas as travas tecnicas (cache ausente, cache invalido, contagem != 15 no Excel legado).
 - Rollback: reverter o commit.
 
+## 12/06/2026 - Orçamento 2026: replica rastreio entre itens do mesmo processo SEI
+
+- Branch: `main`.
+- Objetivo: corrigir a regra de propagação para que alterações no andamento processual de um item sejam aplicadas aos demais itens ativos com o mesmo `processo_sei`.
+- Problema: a função de replicação no backend propagava apenas acompanhamento gerencial (`setor_atual`, `responsavel_atual`, `data_entrada_setor`, `pendencia_atual`, `observacao`). Campos da linha do tempo, como `autorizacao_autoridade`, `link_autorizacao_autoridade` e `data_autorizacao_autoridade`, eram salvos somente no item editado.
+- Correção: criado `CAMPOS_REPLICAVEIS_POR_PROCESSO` em `backend/services/orcamento-2026-service.js`, combinando acompanhamento gerencial e todos os campos editáveis de rastreio (`CAMPOS_EDITAVEIS_RASTREIO`). A rotina `replicarAcompanhamentoGerencialPorProcesso` passa a usar esse conjunto antes de montar os updates por item relacionado.
+- Arquivos: `backend/services/orcamento-2026-service.js`; `tests/services/auditoria-logs-operacionais.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Teste de regressão: adicionado caso em `auditoria-logs-operacionais.test.js` simulando dois itens ativos com o mesmo SEI; ao salvar autorização da autoridade em `ITEM-1`, o teste confirma update, histórico e log também para `ITEM-2`.
+- Validações: `node --check backend/services/orcamento-2026-service.js`; `node --check tests/services/auditoria-logs-operacionais.test.js`; `node --test tests/services/auditoria-logs-operacionais.test.js` (29/29 OK); `npm run validar:syntax` (110 arquivos OK).
+- Preservações: sem alterar `frontend/data/publicados`, sem publicar dados, sem tocar banco real/local, sem alterar frontend além do diff pré-existente do PDF, sem commit/push.
+- Risco: baixo - mudança restrita ao backend de salvamento do Orçamento 2026; a replicação só ocorre para itens ativos com mesmo `processo_sei` e não sobrescreve campos explicitamente editados no mesmo payload.
+- Rollback: reverter as alterações em `backend/services/orcamento-2026-service.js`, `tests/services/auditoria-logs-operacionais.test.js` e esta entrada do diário.
+
 ## 26/05/2026 - PROFOR 2022: recarga PAD exibe so pendencias por convenio/UF
 
 - Branch: `main`.
