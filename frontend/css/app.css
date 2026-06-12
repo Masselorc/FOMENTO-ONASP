@@ -11974,3 +11974,86 @@ table.dataTable thead th {
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+/* ============================================================ */
+/* Gráficos da tela de orçamento (roscas + legenda)             */
+/* ============================================================ */
+.budget-chart-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    height: 100%;
+    padding: 1rem 1.1rem;
+}
+
+.budget-chart-title {
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.35;
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.budget-chart-body {
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0.85rem;
+    min-width: 0;
+    width: 100%;
+}
+
+.budget-chart-pie {
+    flex: 0 0 auto;
+    height: 180px;
+    width: 180px;
+}
+
+.budget-chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.budget-chart-legend-item {
+    align-items: center;
+    display: flex;
+    font-size: 0.78rem;
+    gap: 0.5rem;
+    line-height: 1.25;
+    min-width: 0;
+}
+
+.budget-chart-legend-color {
+    border-radius: 3px;
+    flex: 0 0 auto;
+    height: 12px;
+    width: 12px;
+}
+
+.budget-chart-legend-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.budget-chart-legend-value {
+    color: var(--color-muted);
+    flex: 0 0 auto;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}

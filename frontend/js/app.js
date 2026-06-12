@@ -268,6 +268,7 @@ const UI_ICONS = {
     split: 'fa-code-branch',
     save: 'fa-floppy-disk',
     cancel: 'fa-xmark',
+    delete: 'fa-trash-can',
     history: 'fa-clock-rotate-left',
     exportExcel: 'fa-file-excel',
     exportPdf: 'fa-file-pdf',
@@ -10105,7 +10106,9 @@ async function carregarLogoParaPDF() {
         function calcularResumoItensOrcamento(itens) {
             return itens.reduce((resumo, item) => {
                 const valorTotal = Number(item.valorPrevisto ?? item.valorTotal) || 0;
-                const valorEstimado = Number(item.valorEstimadoPesquisaPreco) || 0;
+                // Mesma regra do resumo oficial do backend: só conta como "em execução"
+                // item autuado e não cancelado/suspenso (valorEmExecucaoConsiderado).
+                const valorEstimado = Number(item.valorEmExecucaoConsiderado ?? item.valorEstimadoPesquisaPreco) || 0;
                 resumo.total += valorTotal;
                 resumo.quantidade += 1;
                 resumo.frentes.add(item.frente);
@@ -10552,7 +10555,7 @@ async function carregarLogoParaPDF() {
 
         // Renderiza uma linha extra abaixo do item da tabela. Essa linha só entra
         // no DOM quando o item está expandido, permitindo múltiplas trilhas.
-        function renderizarRastreioOrcamento(item, colspan = 11) {
+        function renderizarRastreioOrcamento(item, colspan = 10) {
             const etapas = obterEtapasRastreioOrcamento(item);
             const etapaAtual = etapas.find((etapa) => etapa.estado === 'atual') || etapas[0];
             const idRastreio = obterIdRastreioOrcamento(item);
@@ -10884,7 +10887,6 @@ async function carregarLogoParaPDF() {
                     : 0;
                 const processoSei = obterValorPendenteOrcamento(filho, 'processo_sei') || filho.processoSei;
                 const status = obterValorPendenteOrcamento(filho, 'status');
-                const observacao = obterValorPendenteOrcamento(filho, 'observacao');
                 const resumoSaldoFilho = calcularResumoSaldoVisualOrcamento(filho, dadosBudget, orcamentoMovimentacoes, contexto);
 
                 return `
@@ -10930,9 +10932,6 @@ async function carregarLogoParaPDF() {
                         <td data-label="Status" class="text-center align-middle">
                             ${renderizarStatusOrcamento(status)}
                         </td>
-                        <td data-label="Acompanhamento" class="align-middle" title="${escapeHtml(observacao)}">
-                            ${renderizarResumoAcompanhamentoGerencialOrcamento(filho)}
-                        </td>
                         <td data-label="Ações" class="text-center align-middle">
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(filho)}
@@ -10941,7 +10940,7 @@ async function carregarLogoParaPDF() {
                             </div>
                         </td>
                     </tr>
-                    ${renderizarPainelEdicaoOrcamento(filho, 11)}
+                    ${renderizarPainelEdicaoOrcamento(filho, 10)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(filho) : ''}
                 `;
             }).join('');
@@ -11469,7 +11468,6 @@ async function carregarLogoParaPDF() {
                     <th scope="col" title="Valor empenhado"><div class="budget-header-cell"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i> <span>Emp.</span></div></th>
                     <th scope="col" title="Valor executado"><div class="budget-header-cell"><i class="fas fa-check-double" aria-hidden="true"></i> <span>Exec.</span></div></th>
                     <th scope="col"><div class="budget-header-cell"><i class="fas fa-info-circle" aria-hidden="true"></i> <span>Status</span></div></th>
-                    <th scope="col" title="Acompanhamento gerencial"><div class="budget-header-cell"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span>Acomp.</span></div></th>
                     <th scope="col"><div class="budget-header-cell"><i class="fas fa-cogs" aria-hidden="true"></i> <span>Ações</span></div></th>
                 </tr>
             `;
@@ -11567,6 +11565,14 @@ async function carregarLogoParaPDF() {
                                     backend: true,
                                     attributes: `data-orcamento-cancelar-linha="${escapeHtml(itemId)}"`
                                 })}
+                                ${itemEhProcessoVinculadoOrcamento(item) ? renderActionButton({
+                                    type: 'delete',
+                                    label: 'Excluir item',
+                                    variant: 'outline-danger',
+                                    backend: true,
+                                    title: 'Excluir (inativar) este processo vinculado. O valor alocado retorna ao saldo do processo de origem.',
+                                    attributes: `data-orcamento-excluir-item="${escapeHtml(itemId)}"`
+                                }) : ''}
                             </div>
                         </div>
                     </td>
@@ -11605,7 +11611,7 @@ async function carregarLogoParaPDF() {
             if (!grupos.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="11" class="py-4">
+                        <td colspan="10" class="py-4">
                             ${renderEmptyState({
                                 titulo: 'Nenhum item orçamentário encontrado.',
                                 descricao: 'Ajuste os filtros aplicados ou verifique se os dados foram carregados corretamente.',
@@ -11634,7 +11640,6 @@ async function carregarLogoParaPDF() {
                         : 0;
                     const processoSei = obterValorPendenteOrcamento(item, 'processo_sei') || item.processoSei;
                     const status = obterValorPendenteOrcamento(item, 'status');
-                    const observacao = obterValorPendenteOrcamento(item, 'observacao');
                     const filhosVinculados = obterFilhosVinculadosOrcamento(item.id, budgetData, contextoRenderizacao);
                     const resumoVinculosItem = filhosVinculados.length
                         ? calcularResumoVinculosOrcamento(item, filhosVinculados)
@@ -11679,9 +11684,6 @@ async function carregarLogoParaPDF() {
                         <td data-label="Status" class="text-center align-middle">
                             ${renderizarStatusOrcamento(status)}
                         </td>
-                        <td data-label="Acompanhamento" class="align-middle" title="${escapeHtml(observacao)}">
-                            ${renderizarResumoAcompanhamentoGerencialOrcamento(item)}
-                        </td>
                         <td data-label="Ações" class="text-center align-middle">
                             <div class="budget-row-actions justify-content-center">
                                 ${renderizarLinksOrcamento(item)}
@@ -11689,7 +11691,7 @@ async function carregarLogoParaPDF() {
                                 ${renderizarBotaoAlocarSaldoOrcamento(item, resumoSaldoItem)}
                                 ${renderizarBotaoEdicaoOrcamento(item.id)}
                             </div>
-                        </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 11)}
+                        </td>                    </tr>                    ${renderizarPainelEdicaoOrcamento(item, 10)}
                     ${rastreioAberto ? renderizarRastreioOrcamento(item) : ''}
                     ${renderizarFilhosVinculadosOrcamento(filhosVinculados, budgetData, contextoRenderizacao)}
                 `;
@@ -11697,7 +11699,7 @@ async function carregarLogoParaPDF() {
 
                 return `
                     <tr class="budget-group-row">
-                        <td colspan="11">
+                        <td colspan="10">
                             <div class="budget-group-heading">
                                 <div>
                                     <span class="budget-group-label">Frente</span>
@@ -11739,6 +11741,7 @@ async function carregarLogoParaPDF() {
                     '[data-orcamento-dividir-recurso]',
                     '[data-orcamento-alocar-saldo]',
                     '[data-orcamento-inativar]',
+                    '[data-orcamento-excluir-item]',
                     '[data-orcamento-remover-novo]',
                     '[data-orcamento-salvar-novo]'
                 ].join(','));
@@ -11780,6 +11783,21 @@ async function carregarLogoParaPDF() {
                     if (!window.confirm('Inativar este processo de interesse? A alteração só será aplicada ao salvar.')) return;
                     orcamentoProcessosInativos.add(alvo.dataset.orcamentoInativar);
                     renderOrcamentoView();
+                    return;
+                }
+
+                if (alvo.matches('[data-orcamento-excluir-item]')) {
+                    const itemIdExcluir = String(alvo.dataset.orcamentoExcluirItem);
+                    if (!window.confirm('Excluir este item? Ele será inativado e deixará de aparecer na tabela após a confirmação com senha.')) return;
+                    orcamentoProcessosInativos.add(itemIdExcluir);
+                    abrirModalSenhaOrcamento(itemIdExcluir);
+                    // Se o modal de senha for fechado sem salvar, desfaz a marcação de exclusão.
+                    document.getElementById('modalSenhaOrcamento')?.addEventListener('hidden.bs.modal', () => {
+                        if (orcamentoProcessosInativos.has(itemIdExcluir)) {
+                            orcamentoProcessosInativos.delete(itemIdExcluir);
+                            renderOrcamentoView();
+                        }
+                    }, { once: true });
                     return;
                 }
 
@@ -12182,6 +12200,81 @@ async function carregarLogoParaPDF() {
             }
         }
 
+        // Conteúdo de um card de gráfico na tela: pizza (canvas -> dataURL) + legenda.
+        function renderizarConteudoGraficoOrcamento(segmentos) {
+            const segmentosValidos = segmentos.filter((seg) => (seg.valor || 0) > 0);
+            const total = segmentosValidos.reduce((soma, seg) => soma + seg.valor, 0);
+            if (!segmentosValidos.length || total <= 0) {
+                return '<p class="text-muted small mb-0">Sem valores para exibir.</p>';
+            }
+            const dataUrl = gerarPizzaDataUrlOrcamento(segmentosValidos, 320);
+            const legenda = segmentosValidos.map((seg) => {
+                const pct = (seg.valor / total) * 100;
+                return `
+                    <li class="budget-chart-legend-item">
+                        <span class="budget-chart-legend-color" style="background: rgb(${seg.cor[0]}, ${seg.cor[1]}, ${seg.cor[2]});"></span>
+                        <span class="budget-chart-legend-label" title="${escapeHtml(seg.rotulo)}">${escapeHtml(seg.rotulo)}</span>
+                        <span class="budget-chart-legend-value">${formatMoney(seg.valor)} (${formatPercent(pct)})</span>
+                    </li>
+                `;
+            }).join('');
+            return `
+                <div class="budget-chart-body">
+                    <img class="budget-chart-pie" src="${dataUrl}" alt="Gráfico de pizza" loading="lazy">
+                    <ul class="budget-chart-legend">${legenda}</ul>
+                </div>
+            `;
+        }
+
+        // Mesmos gráficos do relatório PDF, exibidos na tela: execução x saldo,
+        // divisão por frente e divisão por item (todos por valor previsto).
+        function renderizarGraficosOrcamento(budgetData, resumo, itensOrcamento) {
+            const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
+            const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
+            const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao);
+            const grupos = agruparItensOrcamentoPorFrente(itensOrcamento);
+
+            const segmentosExecucao = [
+                { rotulo: 'Valor em execução', valor: Math.max(0, valorEmExecucao), cor: [245, 158, 11] },
+                { rotulo: 'Saldo planejado', valor: Math.max(0, saldoPlanejado), cor: [16, 185, 129] }
+            ];
+            const segmentosFrentes = grupos.map((grupo, indice) => ({
+                rotulo: grupo.frente,
+                valor: Number(grupo.resumo.total) || 0,
+                cor: PALETA_GRAFICOS_ORCAMENTO[indice % PALETA_GRAFICOS_ORCAMENTO.length]
+            }));
+            const segmentosItens = itensOrcamento.map((item, indice) => ({
+                rotulo: item.descricao || item.id || '-',
+                valor: Number(item.valorPrevisto ?? item.valorTotal) || 0,
+                cor: PALETA_GRAFICOS_ORCAMENTO[indice % PALETA_GRAFICOS_ORCAMENTO.length]
+            }));
+
+            const card = (titulo, segmentos) => `
+                <div class="col">
+                    <div class="budget-chart-card">
+                        <h3 class="budget-chart-title">${escapeHtml(titulo)}</h3>
+                        ${renderizarConteudoGraficoOrcamento(segmentos)}
+                    </div>
+                </div>
+            `;
+
+            return `
+                <section class="table-container mb-5 budget-charts-section pdf-hidden" aria-label="Gráficos do orçamento">
+                    <div class="section-header compact">
+                        <div>
+                            <p class="section-eyebrow mb-1">Distribuição</p>
+                            <h2>Gráficos do Orçamento 2026</h2>
+                        </div>
+                    </div>
+                    <div class="row row-cols-1 row-cols-lg-3 g-3">
+                        ${card('Valor em execução x Saldo planejado', segmentosExecucao)}
+                        ${card('Divisão entre frentes (valor previsto)', segmentosFrentes)}
+                        ${card('Divisão entre todos os itens (valor previsto)', segmentosItens)}
+                    </div>
+                </section>
+            `;
+        }
+
         function renderOrcamentoView() {
             const container = document.getElementById('view-orcamento');
             if (!container) return;
@@ -12362,6 +12455,8 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
+                ${renderizarGraficosOrcamento(budgetData, resumo, itensOrcamento)}
+
                 <section class="table-container mb-5">
                     <div class="section-header compact">
                         <div>
@@ -12381,12 +12476,11 @@ async function carregarLogoParaPDF() {
                                 <col class="budget-col-empenhado">
                                 <col class="budget-col-executado">
                                 <col class="budget-col-status">
-                            <col class="budget-col-observacao">
                             <col class="budget-col-acoes">
                         </colgroup>
                         <tbody id="budget-table-body">
                             <tr>
-                                <td colspan="11" class="py-4 text-center text-muted">
+                                <td colspan="10" class="py-4 text-center text-muted">
                                     Carregando itens do orçamento...
                                 </td>
                             </tr>
@@ -12670,6 +12764,455 @@ async function carregarLogoParaPDF() {
                 }
                 if (viewOriginal !== 'orcamento') {
                     await toggleView(viewOriginal);
+                }
+                hideLoading();
+            }
+        }
+
+        // Carrega a logo da SENAPPEN como dataURL para embutir no PDF.
+        // Usa a imagem já presente no DOM (mesma origem) e retorna null em caso
+        // de falha, para que o relatório seja gerado mesmo sem a logo.
+        async function obterLogoSenappenParaPdf() {
+            try {
+                const imgExistente = document.getElementById('img-logo-senappen');
+                const src = imgExistente?.getAttribute('src') || './frontend/assets/senappen-logo.png';
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = src;
+                });
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+                return {
+                    dataUrl: canvas.toDataURL('image/png'),
+                    proporcao: img.naturalWidth / img.naturalHeight
+                };
+            } catch {
+                return null;
+            }
+        }
+
+        // Paleta de cores para os gráficos do relatório (RGB).
+        const PALETA_GRAFICOS_ORCAMENTO = [
+            [37, 99, 235], [16, 185, 129], [245, 158, 11], [239, 68, 68], [139, 92, 246],
+            [14, 165, 233], [234, 88, 12], [132, 204, 22], [236, 72, 153], [20, 184, 166],
+            [99, 102, 241], [217, 119, 6], [168, 85, 247], [5, 150, 105], [202, 138, 4],
+            [220, 38, 38], [2, 132, 199], [101, 163, 13], [190, 24, 93], [13, 148, 136]
+        ];
+
+        // Desenha um gráfico de rosca (donut) num canvas e devolve dataURL.
+        // Fatias com percentual >= 4% recebem o rótulo do percentual; o centro
+        // exibe o total. A legenda é desenhada em vetor no próprio PDF.
+        function gerarPizzaDataUrlOrcamento(segmentos, tamanhoPx = 640, opcoes = {}) {
+            const canvas = document.createElement('canvas');
+            canvas.width = tamanhoPx;
+            canvas.height = tamanhoPx;
+            const ctx = canvas.getContext('2d');
+            const cx = tamanhoPx / 2;
+            const cy = tamanhoPx / 2;
+            const raioExterno = (tamanhoPx / 2) - 8;
+            const raioInterno = raioExterno * (opcoes.raioInternoFator ?? 0.58);
+            const total = segmentos.reduce((soma, seg) => soma + Math.max(0, seg.valor || 0), 0);
+
+            if (total <= 0) {
+                ctx.fillStyle = '#e2e8f0';
+                ctx.beginPath();
+                ctx.arc(cx, cy, raioExterno, 0, Math.PI * 2);
+                ctx.arc(cx, cy, raioInterno, 0, Math.PI * 2, true);
+                ctx.fill();
+                return canvas.toDataURL('image/png');
+            }
+
+            let anguloInicial = -Math.PI / 2;
+            const rotulos = [];
+            segmentos.forEach((seg) => {
+                const fracao = Math.max(0, seg.valor || 0) / total;
+                if (fracao <= 0) return;
+                const anguloFinal = anguloInicial + (fracao * Math.PI * 2);
+                ctx.beginPath();
+                ctx.arc(cx, cy, raioExterno, anguloInicial, anguloFinal);
+                ctx.arc(cx, cy, raioInterno, anguloFinal, anguloInicial, true);
+                ctx.closePath();
+                ctx.fillStyle = `rgb(${seg.cor[0]}, ${seg.cor[1]}, ${seg.cor[2]})`;
+                ctx.fill();
+                ctx.lineWidth = Math.max(3, tamanhoPx / 200);
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+                if (fracao >= 0.04) {
+                    rotulos.push({ angulo: (anguloInicial + anguloFinal) / 2, texto: `${(fracao * 100).toFixed(1).replace('.', ',')}%` });
+                }
+                anguloInicial = anguloFinal;
+            });
+
+            // Percentuais sobre as fatias.
+            const raioRotulo = (raioExterno + raioInterno) / 2;
+            ctx.font = `bold ${Math.round(tamanhoPx / 24)}px Helvetica, Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            rotulos.forEach((rotulo) => {
+                const x = cx + (Math.cos(rotulo.angulo) * raioRotulo);
+                const yTexto = cy + (Math.sin(rotulo.angulo) * raioRotulo);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(rotulo.texto, x, yTexto);
+            });
+
+            // Disco branco no furo: garante leitura do total em qualquer fundo
+            // (PDF branco ou card escuro da tela).
+            ctx.beginPath();
+            ctx.arc(cx, cy, raioInterno - Math.max(2, tamanhoPx / 200), 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            // Total no centro da rosca.
+            ctx.fillStyle = '#5f6c7c';
+            ctx.font = `${Math.round(tamanhoPx / 26)}px Helvetica, Arial, sans-serif`;
+            ctx.fillText(opcoes.tituloCentro || 'Total', cx, cy - (tamanhoPx / 22));
+            ctx.fillStyle = '#1f3b57';
+            ctx.font = `bold ${Math.round(tamanhoPx / 22)}px Helvetica, Arial, sans-serif`;
+            ctx.fillText(opcoes.valorCentro || formatMoney(total), cx, cy + (tamanhoPx / 26));
+
+            return canvas.toDataURL('image/png');
+        }
+
+        // Relatório PDF estruturado do orçamento 2026 (tabelas nativas via
+        // jspdf-autotable, sem captura de tela): cards de resumo e itens
+        // agrupados por frente com o total previsto de cada frente.
+        async function exportarResumoOrcamentoPDF() {
+            let budgetData = obterDadosOrcamento();
+            if (!budgetData) {
+                showLoading('Carregando Orçamento 2026...');
+                try {
+                    budgetData = await carregarDadosOrcamento();
+                } finally {
+                    hideLoading();
+                }
+            }
+
+            const itensOrcamento = Array.isArray(budgetData?.itens) ? budgetData.itens : [];
+            if (!itensOrcamento.length) {
+                mostrarAlertaCarregamentoPlanilha(
+                    'Dados orçamentários indisponíveis: não foi possível carregar a planilha de orçamento.',
+                    false,
+                    'warning'
+                );
+                return;
+            }
+
+            const { jsPDF } = window.jspdf || {};
+            if (!jsPDF) {
+                mostrarAlertaCarregamentoPlanilha('Não foi possível gerar o relatório: a biblioteca jsPDF não foi carregada.', false, 'danger');
+                return;
+            }
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            if (typeof pdf.autoTable !== 'function') {
+                mostrarAlertaCarregamentoPlanilha('Não foi possível gerar o relatório: o componente de tabelas PDF (jspdf-autotable) não foi carregado.', false, 'danger');
+                return;
+            }
+
+            const btnPdf = document.getElementById('btn-export-budget-resumo-pdf');
+            const originalHtml = btnPdf?.innerHTML || '';
+            const originalDisabled = btnPdf?.disabled || false;
+            if (btnPdf) {
+                btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gerando relatório...';
+                btnPdf.disabled = true;
+            }
+            showLoading('Gerando relatório resumido do orçamento 2026...');
+
+            try {
+                const resumo = budgetData.resumo || {};
+                const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
+                const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
+                const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao);
+                const processosAutuados = resumo.processosAutuados || 0;
+                const percentualEmExecucao = resumo.percentualEmExecucao
+                    ?? (totalOrcamento > 0 ? (valorEmExecucao / totalOrcamento) * 100 : 0);
+
+                const margem = 12;
+                const larguraPagina = pdf.internal.pageSize.getWidth();
+                const larguraUtil = larguraPagina - (margem * 2);
+                const corPrimaria = [31, 59, 87];
+                const dataGeracao = new Date().toLocaleString('pt-BR');
+
+                const logo = await obterLogoSenappenParaPdf();
+
+                // Cabeçalho
+                pdf.setFillColor(...corPrimaria);
+                pdf.rect(0, 0, larguraPagina, 26, 'F');
+
+                // Logo da SENAPPEN em um cartão branco (a logo é colorida e não
+                // teria contraste diretamente sobre a faixa azul-escura).
+                let textoEsquerda = margem;
+                if (logo) {
+                    const caixaX = margem;
+                    const caixaY = 3;
+                    const caixaLargura = 30;
+                    const caixaAltura = 20;
+                    pdf.setFillColor(255, 255, 255);
+                    pdf.roundedRect(caixaX, caixaY, caixaLargura, caixaAltura, 2, 2, 'F');
+                    const padding = 2;
+                    let logoAltura = caixaAltura - (padding * 2);
+                    let logoLargura = logoAltura * (logo.proporcao || 1.47);
+                    if (logoLargura > caixaLargura - (padding * 2)) {
+                        logoLargura = caixaLargura - (padding * 2);
+                        logoAltura = logoLargura / (logo.proporcao || 1.47);
+                    }
+                    const logoX = caixaX + ((caixaLargura - logoLargura) / 2);
+                    const logoY = caixaY + ((caixaAltura - logoAltura) / 2);
+                    pdf.addImage(logo.dataUrl, 'PNG', logoX, logoY, logoLargura, logoAltura);
+                    textoEsquerda = caixaX + caixaLargura + 5;
+                }
+
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(14);
+                pdf.text('Planejamento Orçamentário 2026', textoEsquerda, 11);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+                pdf.text('Resumo dos itens por frente — ONASP / Ouvidoria Nacional de Serviços Penais', textoEsquerda, 18);
+                pdf.setFontSize(8);
+                pdf.text(`Gerado em ${dataGeracao}`, larguraPagina - margem, 23, { align: 'right' });
+
+                // Cards de resumo (mesmos indicadores da tela)
+                const cards = [
+                    { titulo: 'Total do orçamento', valor: formatMoney(totalOrcamento), descricao: 'Orçamento oficial ONASP' },
+                    { titulo: 'Valor em execução', valor: formatMoney(valorEmExecucao), descricao: 'Itens autuados, não cancelados/suspensos' },
+                    { titulo: 'Saldo planejado', valor: formatMoney(saldoPlanejado), descricao: 'Total menos valor em execução' },
+                    { titulo: 'Processos autuados', valor: String(processosAutuados), descricao: 'Itens com autuação registrada' },
+                    { titulo: 'Percentual em execução', valor: formatPercent(percentualEmExecucao), descricao: 'Valor em execução / orçamento total' }
+                ];
+                const desenharCard = (card, x, y, largura) => {
+                    pdf.setDrawColor(205, 214, 226);
+                    pdf.setFillColor(247, 249, 252);
+                    pdf.roundedRect(x, y, largura, 19, 2, 2, 'FD');
+                    pdf.setTextColor(95, 108, 124);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(7);
+                    pdf.text(card.titulo.toUpperCase(), x + 4, y + 5.5);
+                    pdf.setTextColor(...corPrimaria);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(11);
+                    pdf.text(card.valor, x + 4, y + 11.5);
+                    pdf.setTextColor(130, 140, 152);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(6.5);
+                    pdf.text(card.descricao, x + 4, y + 16);
+                };
+
+                const espacamentoCards = 4;
+                const larguraCardTrio = (larguraUtil - (espacamentoCards * 2)) / 3;
+                const larguraCardDuo = (larguraUtil - espacamentoCards) / 2;
+                let y = 32;
+                cards.slice(0, 3).forEach((card, indice) => {
+                    desenharCard(card, margem + (indice * (larguraCardTrio + espacamentoCards)), y, larguraCardTrio);
+                });
+                y += 19 + espacamentoCards;
+                cards.slice(3).forEach((card, indice) => {
+                    desenharCard(card, margem + (indice * (larguraCardDuo + espacamentoCards)), y, larguraCardDuo);
+                });
+                y += 19 + 8;
+
+                // Tabelas por frente
+                const grupos = agruparItensOrcamentoPorFrente(itensOrcamento);
+                grupos.forEach((grupo) => {
+                    if (y > 250) {
+                        pdf.addPage();
+                        y = 14;
+                    }
+                    pdf.autoTable({
+                        startY: y,
+                        margin: { left: margem, right: margem, bottom: 16 },
+                        head: [
+                            [{
+                                content: `${grupo.frente}   —   Total da frente: ${formatMoney(grupo.resumo.total)}`,
+                                colSpan: 5,
+                                styles: { halign: 'center', valign: 'middle', fillColor: corPrimaria, textColor: 255, fontStyle: 'bold', fontSize: 9 }
+                            }],
+                            ['Item', 'Processo SEI', 'Modalidade', 'Previsto\n(Total / Original / Recebido)', 'Em execução']
+                        ],
+                        body: grupo.itens.map((item) => {
+                            // Mesmo cálculo da tela: total = envelope ajustado (original
+                            // + recebido por alocação - cedido - vinculado aos filhos).
+                            const saldo = calcularResumoSaldoVisualOrcamento(item, budgetData, orcamentoMovimentacoes);
+                            const previstoTexto = [
+                                `Total: ${formatMoney(saldo.envelopeVisualAjustado)}`,
+                                `Original: ${formatMoney(saldo.valorOriginal)}`,
+                                `Recebido: ${formatMoney(saldo.valorRecebidoPorAlocacao)}`
+                            ].join('\n');
+                            return [
+                                String(item.descricao || item.id || '-'),
+                                String(item.processoSei || '—'),
+                                String(item.modalidade || '-'),
+                                previstoTexto,
+                                formatMoney(Number(item.valorEmExecucaoConsiderado ?? item.valorEstimadoPesquisaPreco) || 0)
+                            ];
+                        }),
+                        theme: 'grid',
+                        styles: { fontSize: 7.5, cellPadding: 1.6, overflow: 'linebreak', halign: 'center', valign: 'middle', textColor: [40, 48, 58], lineColor: [215, 222, 232], lineWidth: 0.15 },
+                        headStyles: { fillColor: [223, 231, 241], textColor: [31, 41, 55], fontStyle: 'bold', fontSize: 8, halign: 'center', valign: 'middle' },
+                        alternateRowStyles: { fillColor: [248, 250, 252] },
+                        columnStyles: {
+                            0: { cellWidth: 56 },
+                            1: { cellWidth: 32 },
+                            2: { cellWidth: 26 },
+                            3: { cellWidth: 40 },
+                            4: { cellWidth: 32 }
+                        }
+                    });
+                    y = pdf.lastAutoTable.finalY + 6;
+                });
+
+                // ====================================================================
+                // Gráficos (rosca) ao final do relatório, na sequência das tabelas
+                // ====================================================================
+                const alturaPagina = pdf.internal.pageSize.getHeight();
+                const corTexto = [40, 48, 58];
+                const centroX = larguraPagina / 2;
+
+                // Bloco centralizado: título, rosca e legenda em duas colunas.
+                // Os rótulos da legenda são exibidos por completo, quebrando em
+                // múltiplas linhas quando necessário (sem truncar).
+                const desenharBlocoGrafico = (titulo, segmentos) => {
+                    const segmentosValidos = segmentos.filter((seg) => (seg.valor || 0) > 0);
+                    const totalSeg = segmentosValidos.reduce((soma, seg) => soma + seg.valor, 0);
+                    const tamanhoGrafico = 62; // mm
+                    const larguraColuna = 84;
+                    const espacoColunas = 8;
+                    const alturaLinhaTexto = 3.6;
+                    const espacoEntreItens = 1.8;
+
+                    // Pré-calcula as linhas de cada item da legenda (texto completo
+                    // com quebra) para dimensionar o bloco antes de desenhar.
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(7.5);
+                    const itensLegenda = segmentosValidos.map((seg) => {
+                        const percentual = (seg.valor / totalSeg) * 100;
+                        const texto = `${seg.rotulo} — ${formatMoney(seg.valor)} (${formatPercent(percentual)})`;
+                        return { seg, linhas: pdf.splitTextToSize(texto, larguraColuna - 5) };
+                    });
+                    // Altura de cada "fileira" da legenda = item mais alto do par.
+                    const alturasFileiras = [];
+                    for (let i = 0; i < itensLegenda.length; i += 2) {
+                        const linhasMax = Math.max(
+                            itensLegenda[i].linhas.length,
+                            itensLegenda[i + 1]?.linhas.length || 0
+                        );
+                        alturasFileiras.push((linhasMax * alturaLinhaTexto) + espacoEntreItens);
+                    }
+                    const alturaLegenda = alturasFileiras.reduce((soma, altura) => soma + altura, 0);
+                    const alturaBloco = 8 + tamanhoGrafico + 6 + alturaLegenda + 8;
+
+                    if (y + alturaBloco > alturaPagina - 18) {
+                        pdf.addPage();
+                        y = 16;
+                    }
+
+                    // Título centralizado
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(11);
+                    pdf.setTextColor(...corPrimaria);
+                    pdf.text(titulo, centroX, y, { align: 'center' });
+                    y += 5;
+
+                    if (!segmentosValidos.length || totalSeg <= 0) {
+                        pdf.setFont('helvetica', 'italic');
+                        pdf.setFontSize(8);
+                        pdf.setTextColor(130, 140, 152);
+                        pdf.text('Sem valores para exibir.', centroX, y + 4, { align: 'center' });
+                        y += 14;
+                        return;
+                    }
+
+                    // Rosca centralizada na página
+                    const dataUrl = gerarPizzaDataUrlOrcamento(segmentosValidos, 760);
+                    pdf.addImage(dataUrl, 'PNG', centroX - (tamanhoGrafico / 2), y, tamanhoGrafico, tamanhoGrafico);
+                    y += tamanhoGrafico + 6;
+
+                    // Legenda em duas colunas centradas, com rótulos integrais.
+                    const inicioLegendaX = centroX - larguraColuna - (espacoColunas / 2);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(7.5);
+                    let fileiraY = y;
+                    for (let i = 0; i < itensLegenda.length; i += 2) {
+                        [itensLegenda[i], itensLegenda[i + 1]].forEach((itemLegenda, coluna) => {
+                            if (!itemLegenda) return;
+                            const itemX = inicioLegendaX + (coluna * (larguraColuna + espacoColunas));
+                            pdf.setFillColor(itemLegenda.seg.cor[0], itemLegenda.seg.cor[1], itemLegenda.seg.cor[2]);
+                            pdf.roundedRect(itemX, fileiraY - 2.6, 3.4, 3.4, 0.8, 0.8, 'F');
+                            pdf.setTextColor(...corTexto);
+                            itemLegenda.linhas.forEach((linhaTexto, indiceLinha) => {
+                                pdf.text(linhaTexto, itemX + 5, fileiraY + (indiceLinha * alturaLinhaTexto));
+                            });
+                        });
+                        fileiraY += alturasFileiras[i / 2];
+                    }
+                    y = fileiraY + 8;
+                };
+
+                // Título da seção na sequência das tabelas (sem forçar página nova).
+                y += 4;
+                if (y > alturaPagina - 60) {
+                    pdf.addPage();
+                    y = 16;
+                }
+                pdf.setDrawColor(205, 214, 226);
+                pdf.setLineWidth(0.3);
+                pdf.line(margem, y - 2, larguraPagina - margem, y - 2);
+                y += 6;
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(13);
+                pdf.setTextColor(...corPrimaria);
+                pdf.text('Gráficos do Orçamento 2026', centroX, y, { align: 'center' });
+                y += 9;
+
+                // 1) Valor em execução x Saldo planejado
+                desenharBlocoGrafico('Valor em execução x Saldo planejado', [
+                    { rotulo: 'Valor em execução', valor: Math.max(0, valorEmExecucao), cor: [245, 158, 11] },
+                    { rotulo: 'Saldo planejado', valor: Math.max(0, saldoPlanejado), cor: [16, 185, 129] }
+                ]);
+
+                // 2) Divisão entre frentes (por valor previsto)
+                const segmentosFrentes = grupos.map((grupo, indice) => ({
+                    rotulo: grupo.frente,
+                    valor: Number(grupo.resumo.total) || 0,
+                    cor: PALETA_GRAFICOS_ORCAMENTO[indice % PALETA_GRAFICOS_ORCAMENTO.length]
+                }));
+                desenharBlocoGrafico('Divisão entre frentes (valor previsto)', segmentosFrentes);
+
+                // 3) Divisão entre todos os itens (por valor previsto)
+                const segmentosItens = itensOrcamento.map((item, indice) => ({
+                    rotulo: item.descricao || item.id || '-',
+                    valor: Number(item.valorPrevisto ?? item.valorTotal) || 0,
+                    cor: PALETA_GRAFICOS_ORCAMENTO[indice % PALETA_GRAFICOS_ORCAMENTO.length]
+                }));
+                desenharBlocoGrafico('Divisão entre todos os itens (valor previsto)', segmentosItens);
+
+                // Rodapé com paginação
+                const totalPaginas = pdf.getNumberOfPages();
+                for (let pagina = 1; pagina <= totalPaginas; pagina += 1) {
+                    pdf.setPage(pagina);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(7);
+                    pdf.setTextColor(130, 140, 152);
+                    pdf.text(`Painel ONASP — Resumo do Orçamento 2026 — gerado em ${dataGeracao}`, margem, 291);
+                    pdf.text(`Página ${pagina} de ${totalPaginas}`, larguraPagina - margem, 291, { align: 'right' });
+                }
+
+                pdf.save('Resumo_Orcamento_2026_ONASP.pdf');
+            } catch (erro) {
+                console.error('Erro na exportação do resumo do orçamento para PDF:', erro);
+                mostrarAlertaCarregamentoPlanilha(
+                    'Não foi possível gerar o relatório resumido em PDF. Tente novamente.',
+                    false,
+                    'danger'
+                );
+            } finally {
+                if (btnPdf) {
+                    btnPdf.innerHTML = originalHtml;
+                    btnPdf.disabled = originalDisabled;
                 }
                 hideLoading();
             }
@@ -13934,6 +14477,13 @@ async function carregarLogoParaPDF() {
                         label: 'PDF',
                         variant: 'export',
                         onClick: 'exportarOrcamentoPDF()'
+                    })}
+                    ${renderActionButton({
+                        id: 'btn-export-budget-resumo-pdf',
+                        type: 'exportPdf',
+                        label: 'Relatório resumido (PDF)',
+                        variant: 'export',
+                        onClick: 'exportarResumoOrcamentoPDF()'
                     })}
                     ${renderActionButton({
                         id: 'btnExportarResumoOrcamentoTexto',
@@ -16494,6 +17044,7 @@ window.exportarRelatorioEstadoSelecionado = exportarRelatorioEstadoSelecionado;
 window.exportarDashboardPDF = exportarDashboardPDF;
 window.exportarRelatorioPDF = exportarRelatorioPDF;
 window.exportarOrcamentoPDF = exportarOrcamentoPDF;
+window.exportarResumoOrcamentoPDF = exportarResumoOrcamentoPDF;
 window.exportarContatos = exportarContatos;
 window.abrirSeletorManualPlanilha = abrirSeletorManualPlanilha;
 window.abrirOrcamento = () => toggleView('orcamento');

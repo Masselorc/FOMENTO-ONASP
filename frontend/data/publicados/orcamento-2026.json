@@ -386,7 +386,7 @@
       "id": "APON-005",
       "categoria": "Aparelhamento de Ouvidorias Estaduais",
       "frente": "Aparelhamento de Ouvidorias Estaduais",
-      "descricao": "Kits para Leitura de Cartas",
+      "descricao": "Implantação de Modelo Local de Inteligência Artificial",
       "acaoOrcamentaria": "Doações",
       "modalidade": "Doações",
       "planoOrcamentario": "Nacional",
@@ -1338,7 +1338,7 @@
       "id": "APON-005",
       "categoria": "Aparelhamento de Ouvidorias Estaduais",
       "frente": "Aparelhamento de Ouvidorias Estaduais",
-      "descricao": "Kits para Leitura de Cartas",
+      "descricao": "Implantação de Modelo Local de Inteligência Artificial",
       "acaoOrcamentaria": "Doações",
       "modalidade": "Doações",
       "planoOrcamentario": "Nacional",
@@ -2313,7 +2313,7 @@
     "itensPendentesPesquisaPreco": [
       {
         "id": "APON-005",
-        "descricao": "Kits para Leitura de Cartas",
+        "descricao": "Implantação de Modelo Local de Inteligência Artificial",
         "processoSei": "08016.009541/2026-83"
       }
     ]
