@@ -56,7 +56,8 @@ const CAMPOS_EDITAVEIS_BASE = [
   "data_entrada_setor",
   "pendencia_atual",
   "observacao",
-  "classificacao_gerencial"
+  "classificacao_gerencial",
+  "pena_justa"
 ];
 
 const CAMPOS_EDITAVEIS_RASTREIO = [
@@ -124,7 +125,8 @@ const ALIASES_CAMPOS_EDITAVEIS = {
   setorAtual: "setor_atual",
   responsavelAtual: "responsavel_atual",
   dataEntradaSetor: "data_entrada_setor",
-  pendenciaAtual: "pendencia_atual"
+  pendenciaAtual: "pendencia_atual",
+  penaJusta: "pena_justa"
 };
 const CAMPOS_ACOMPANHAMENTO_GERENCIAL = new Set([
   "setor_atual",
@@ -155,6 +157,8 @@ const CAMPOS_NOVOS_PERMITIDOS = new Set([
   "valorEstimadoPesquisaPreco",
   "processo_autuado",
   "processoAutuado",
+  "pena_justa",
+  "penaJusta",
   "processo_sei",
   "processoSei",
   "status",
@@ -196,6 +200,7 @@ const COLUNAS_ORCAMENTO = [
   "ordem_exibicao",
   "valor_alocado_origem",
   "classificacao_gerencial",
+  "pena_justa",
   "ativo",
   "tipo_rastreio",
   "abrangencia",
@@ -284,6 +289,7 @@ const MAPA_CAMEL = {
   ordem_exibicao: "ordemExibicao",
   valor_alocado_origem: "valorAlocadoOrigem",
   classificacao_gerencial: "classificacaoGerencial",
+  pena_justa: "penaJustaNumero",
   link_processo_sei: "linkProcessoSei",
   data_processo_sei: "dataProcessoSei",
   demanda_formalizada: "demandaFormalizada",
@@ -846,7 +852,7 @@ function preencherColunas(item) {
       acc[coluna] = item[coluna] ?? null;
       return acc;
     }
-    if (["processo_autuado", "compoe_orcamento", "ativo"].includes(coluna)) {
+    if (["processo_autuado", "compoe_orcamento", "ativo", "pena_justa"].includes(coluna)) {
       acc[coluna] = item[coluna] !== undefined && item[coluna] !== null ? valorBooleano(item[coluna]) : false;
       return acc;
     }
@@ -961,7 +967,12 @@ async function executarBackfillClassificacaoGerencial() {
   });
 }
 
+async function garantirColunasOrcamento2026Postgres() {
+  await query("ALTER TABLE orcamento_2026 ADD COLUMN IF NOT EXISTS pena_justa boolean DEFAULT false");
+}
+
 async function inicializarOrcamento2026() {
+  await garantirColunasOrcamento2026Postgres();
   await executarBackfillOrcamento();
   await executarBackfillAutuacaoPorStatus();
   await executarBackfillClassificacaoGerencial();
@@ -973,13 +984,15 @@ function linhaParaItem(linha) {
   const compoeOrcamento = valorBooleano(linha.compoe_orcamento);
   const statusNormalizado = normalizarStatusOrcamento(linha.status);
   const processoAutuado = valorBooleano(linha.processo_autuado) || statusIndicaProcessoAutuado(statusNormalizado);
+  const penaJusta = valorBooleano(linha.pena_justa);
   const classificacaoGerencial = normalizarClassificacaoGerencial(
     linha.classificacao_gerencial || classificarGerencialmenteItemOrcamento(linha)
   );
   const deveConsiderarEmExecucao = compoeOrcamento
     && processoAutuado
     && !statusNormalizado.includes("CANCELADO")
-    && !statusNormalizado.includes("SUSPENSO");
+    && !statusNormalizado.includes("SUSPENSO")
+    && !statusNormalizado.includes("EXECUTADO");
   const valorEmExecucaoConsiderado = deveConsiderarEmExecucao ? valorEstimadoPesquisaPreco : 0;
   const saldoAparelhamento = classificacaoGerencial === "APARELHAMENTO"
     ? Math.max(0, arredondarMoeda(valorPrevisto - valorEmExecucaoConsiderado))
@@ -1005,6 +1018,8 @@ function linhaParaItem(linha) {
     valorEstimadoPesquisaPreco,
     processoAutuado,
     processoAutuadoNumero: processoAutuado ? 1 : 0,
+    penaJusta,
+    penaJustaNumero: penaJusta ? 1 : 0,
     processoSei: linha.processo_sei || "",
     status: normalizarStatusOrcamento(linha.status || "PLANEJADO"),
     setorAtual: linha.setor_atual || "",
@@ -1054,7 +1069,7 @@ function montarResumo(itensOficiais) {
   const valorEmExecucao = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorEmExecucaoConsiderado, 0));
   const valorEmpenhado = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorEmpenhado, 0));
   const valorExecutado = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorExecutado, 0));
-  const saldoPlanejado = arredondarMoeda(totalOrcamento - valorEmExecucao);
+  const saldoPlanejado = arredondarMoeda(totalOrcamento - valorEmExecucao - valorExecutado);
   const processosAutuados = itensOficiais.filter((item) => item.processoAutuado).length;
 
   return {
@@ -1126,6 +1141,19 @@ async function listarOrcamento2026() {
     ORDER BY compoe_orcamento DESC, categoria, descricao
   `);
   const itens = linhas.map(linhaParaItem);
+
+  // Realiza rollup dos valores de empenho e execução dos processos vinculados para seus respectivos pais
+  const mapaItens = new Map(itens.map((item) => [item.id, item]));
+  itens.forEach((item) => {
+    if (item.processoPaiId) {
+      const pai = mapaItens.get(item.processoPaiId);
+      if (pai) {
+        pai.valorEmpenhado = arredondarMoeda((pai.valorEmpenhado || 0) + (item.valorEmpenhado || 0));
+        pai.valorExecutado = arredondarMoeda((pai.valorExecutado || 0) + (item.valorExecutado || 0));
+      }
+    }
+  });
+
   const itensOficiais = itens.filter((item) => item.compoeOrcamento);
   const outrosProcessos = itens.filter((item) => !item.compoeOrcamento);
 
@@ -1310,7 +1338,7 @@ function valorParaBanco(campo, valor) {
   if (ehCampoMonetarioOrcamento(campo)) {
     return normalizarNumeroNaoNegativoOrcamento(valor, campo);
   }
-  if (campo === "processo_autuado" || campo === "ativo" || campo === "compoe_orcamento") {
+  if (campo === "processo_autuado" || campo === "ativo" || campo === "compoe_orcamento" || campo === "pena_justa") {
     return valorBooleano(valor);
   }
   if (campo === "status") {
@@ -1441,6 +1469,7 @@ function validarNovos(novos) {
         item.valor_estimado_pesquisa_preco ?? item.valorEstimadoPesquisaPreco
       ),
       processo_autuado: sincronizado.processo_autuado,
+      pena_justa: valorParaBanco("pena_justa", item.pena_justa ?? item.penaJusta),
       processo_sei: limparTexto(item.processo_sei ?? item.processoSei),
       status: sincronizado.status,
       setor_atual: limparTexto(item.setor_atual ?? item.setorAtual),

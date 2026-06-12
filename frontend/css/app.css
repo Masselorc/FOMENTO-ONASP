@@ -1850,8 +1850,88 @@ table.dataTable thead td,
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.budget-insight-grid-five {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .budget-insight-card {
     min-height: 88px;
+}
+
+.budget-pena-justa-summary {
+    background: linear-gradient(180deg, #162233 0%, #111c2b 100%);
+    border: 1px solid #32465e;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+    padding: 0.8rem;
+}
+
+.budget-pena-justa-summary-header {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.7rem;
+}
+
+.budget-pena-justa-summary-header h3 {
+    color: #f4f7fb;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.budget-pena-justa-summary-header .section-eyebrow {
+    color: #f4b63f;
+}
+
+.budget-pena-justa-summary-logo {
+    flex: 0 0 auto;
+    height: 2.25rem;
+    object-fit: contain;
+    width: 4.6rem;
+}
+
+.budget-pena-justa-card {
+    background: #101b2a !important;
+    border: 1px solid #2f435a !important;
+    border-left: 4px solid #ec3817 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+.budget-pena-justa-card .kpi-title {
+    color: #c5d2e3 !important;
+}
+
+.budget-pena-justa-card .kpi-desc {
+    color: #9fb0c7 !important;
+}
+
+.budget-pena-justa-card .kpi-value,
+.budget-pena-justa-card .text-money,
+.budget-pena-justa-card .text-info {
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    -webkit-text-fill-color: currentColor !important;
+    color: #dbe8f8 !important;
+    text-shadow: none !important;
+}
+
+.budget-pena-justa-card .text-success,
+.budget-pena-justa-card .text-success.text-money,
+.budget-pena-justa-card .text-money.text-success {
+    color: #2ee6a8 !important;
+}
+
+.budget-pena-justa-card .text-warning,
+.budget-pena-justa-card .text-warning.text-money,
+.budget-pena-justa-card .text-money.text-warning {
+    color: #ffbd4a !important;
+}
+
+.budget-pena-justa-card .card-watermark {
+    color: rgba(174, 190, 212, 0.2) !important;
 }
 
 .budget-report-actions {
@@ -2165,6 +2245,15 @@ table.dataTable thead td,
 .budget-item-title[aria-expanded="true"] i {
     color: var(--color-primary);
     transform: rotate(180deg);
+}
+
+.budget-pena-justa-logo {
+    display: inline-block;
+    flex: 0 0 auto;
+    height: 1.35rem;
+    margin-top: -0.05rem;
+    object-fit: contain;
+    width: 3.9rem;
 }
 
 .budget-item-meta {
@@ -2666,6 +2755,38 @@ body.dark-mode .budget-balance-detail-negative,
     flex-direction: column;
     gap: 0.28rem;
     margin: 0;
+}
+
+.budget-edit-checkbox-field {
+    justify-content: flex-end;
+}
+
+.budget-edit-checkbox {
+    align-items: center;
+    background: rgba(23, 74, 124, 0.06);
+    border: 1px solid rgba(23, 74, 124, 0.12);
+    border-radius: 6px;
+    display: flex;
+    gap: 0.45rem;
+    min-height: 31px;
+    padding: 0.35rem 0.55rem;
+}
+
+.budget-edit-checkbox .form-check-input {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.budget-edit-checkbox .form-check-label {
+    color: var(--color-text);
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.budget-other-pena-justa-field {
+    margin-top: 0.45rem;
+    max-width: 230px;
 }
 
 .budget-edit-grid-wide {
@@ -10423,6 +10544,63 @@ table.dataTable thead th {
 
 .intro-badges .btn i {
     font-size: 0.68rem !important;
+}
+
+/* Correção final de contraste do recorte Pena Justa.
+   Fica no fim da cascata para vencer os gradientes globais dos KPIs. */
+.budget-pena-justa-summary {
+    background: linear-gradient(180deg, #162233 0%, #111c2b 100%) !important;
+    border-color: #32465e !important;
+    color: #e6edf3 !important;
+}
+
+.budget-pena-justa-summary .budget-pena-justa-summary-header h3 {
+    color: #f4f7fb !important;
+}
+
+.budget-pena-justa-summary .section-eyebrow {
+    color: #f4b63f !important;
+}
+
+.budget-pena-justa-summary .budget-pena-justa-card {
+    background: #101b2a !important;
+    background-image: none !important;
+    border-color: #2f435a !important;
+    border-left-color: #ec3817 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+    color: #e6edf3 !important;
+}
+
+.budget-pena-justa-summary .budget-pena-justa-card .kpi-title {
+    color: #c5d2e3 !important;
+}
+
+.budget-pena-justa-summary .budget-pena-justa-card .kpi-desc {
+    color: #9fb0c7 !important;
+}
+
+.budget-pena-justa-summary .budget-pena-justa-card .kpi-value,
+.budget-pena-justa-summary .budget-pena-justa-card .text-money,
+.budget-pena-justa-summary .budget-pena-justa-card .text-info {
+    background: none !important;
+    background-image: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    -webkit-text-fill-color: currentColor !important;
+    color: #dbe8f8 !important;
+    text-shadow: none !important;
+}
+
+.budget-pena-justa-summary .budget-pena-justa-card .text-success,
+.budget-pena-justa-summary .budget-pena-justa-card .text-success.text-money,
+.budget-pena-justa-summary .budget-pena-justa-card .text-money.text-success {
+    color: #2ee6a8 !important;
+}
+
+.budget-pena-justa-summary .budget-pena-justa-card .text-warning,
+.budget-pena-justa-summary .budget-pena-justa-card .text-warning.text-money,
+.budget-pena-justa-summary .budget-pena-justa-card .text-money.text-warning {
+    color: #ffbd4a !important;
 }
 
 /* ============================================================ */

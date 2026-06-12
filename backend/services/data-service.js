@@ -3620,13 +3620,51 @@ function normalizarDadosOrcamentoPublicado(dados) {
         throw new Error('Dados do orçamento carregados, mas nenhum item foi encontrado.');
     }
 
+    const outrosProcessos = Array.isArray(dados?.outrosProcessos) ? dados.outrosProcessos : [];
+    const todosItens = [...itens, ...outrosProcessos];
+    const mapaItens = new Map(todosItens.map((item) => [item.id, item]));
+
+    // Realiza o rollup dos filhos (processos vinculados) para os pais no lado do cliente
+    todosItens.forEach((item) => {
+        if (item.processoPaiId) {
+            const pai = mapaItens.get(item.processoPaiId);
+            if (pai) {
+                pai.valorEmpenhado = Number(((pai.valorEmpenhado || 0) + (item.valorEmpenhado || 0)).toFixed(2));
+                pai.valorExecutado = Number(((pai.valorExecutado || 0) + (item.valorExecutado || 0)).toFixed(2));
+            }
+        }
+    });
+
     const base = Array.isArray(dados) ? {} : (dados || {});
+    
+    // Recalcula o resumo orçamentário completo na ponta (frontend)
+    const totalOrcamento = Number(itens.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0).toFixed(2));
+    const valorEmExecucao = Number(itens.reduce((total, item) => total + (Number(item.valorEmExecucaoConsiderado) || 0), 0).toFixed(2));
+    const valorEmpenhado = Number(itens.reduce((total, item) => total + (Number(item.valorEmpenhado) || 0), 0).toFixed(2));
+    const valorExecutado = Number(itens.reduce((total, item) => total + (Number(item.valorExecutado) || 0), 0).toFixed(2));
+    const saldoPlanejado = Number(Math.max(0, totalOrcamento - valorEmExecucao - valorExecutado).toFixed(2));
+    const processosAutuados = itens.filter((item) => item.processoAutuado).length;
+
+    const resumoConsolidado = {
+        ...(base.resumo || {}),
+        totalGeral: totalOrcamento,
+        totalOrcamento,
+        totalItens: itens.length,
+        totalEmpenhado: valorEmpenhado,
+        valorEmpenhado,
+        totalExecutado: valorExecutado,
+        valorExecutado,
+        valorEmExecucao,
+        totalEmExecucao: valorEmExecucao,
+        saldoPlanejado,
+        processosAutuados
+    };
 
     return {
         ...base,
         disponivel: true,
         itens,
-        resumo: base.resumo || montarResumoOrcamento(itens),
+        resumo: resumoConsolidado,
         filtros: base.filtros || {
             frentes: obterValoresUnicosOrcamento(itens, 'frente'),
             status: obterValoresUnicosOrcamento(itens, 'status'),

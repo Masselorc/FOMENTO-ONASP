@@ -7716,3 +7716,63 @@ Logs operacionais gravados:
 - Preservacoes: sem alterar Supabase, caches, dados publicados, backend ou fluxo de atualizacao; sem commit/push.
 - Risco: baixo - override restrito ao conteudo de relatorio/PDF; dashboard fora do relatorio mantem o tema global.
 - Rollback: remover o bloco de override `.report-content` em `frontend/css/app.css` e o teste correspondente.
+
+## 12/06/2026 - Orcamento 2026: vinculo visual Pena Justa por item
+
+- Branch: `main`.
+- Objetivo: permitir marcar itens do Orcamento 2026 como vinculados ao Pena Justa e exibir a marca na linha do item e no relatorio PDF.
+- Arquivos: `backend/services/orcamento-2026-service.js`; `backend/db/init-db.js`; `backend/db/postgres-schema.sql`; `frontend/js/app.js`; `frontend/css/app.css`; `frontend/assets/pena-justa-logo.svg`; `index.html`; `tests/services/auditoria-logs-operacionais.test.js`; `tests/services/pdf-logo-header.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: criado asset SVG transparente do logo Pena Justa; novo campo booleano `pena_justa` com evolucao Postgres idempotente e coluna SQLite legada; checkbox de edicao por item; exibicao da logo junto ao nome do item principal, filho vinculado e outros processos; desenho da logo no PDF estruturado de Orcamento quando o item estiver marcado.
+- Preservacoes: sem alterar `frontend/data/publicados`, sem gravar credenciais, sem reverter mudancas locais existentes em `frontend/js/app.js` e `index.html`.
+- Validacoes planejadas: `node --check` nos arquivos JS alterados, `node --test` nas suites afetadas e `npm run validar:syntax`.
+- Risco: medio-baixo - adiciona coluna nova e UI aditiva; a migracao e idempotente e o default e `false`.
+- Rollback: reverter os arquivos listados e remover a coluna `pena_justa` apenas se for decidido desfazer a funcionalidade no banco.
+
+### Complemento - cards iniciais Pena Justa
+
+- Objetivo: acrescentar cards especificos do recorte Pena Justa no inicio da tela de Orcamento 2026.
+- Implementacao: `frontend/js/app.js` calcula os itens com `pena_justa` ativo e renderiza cards de valor total, valor em execucao, saldo planejado e quantidade de itens; `frontend/css/app.css` adiciona faixa e acabamento visual com a logo; `tests/services/pdf-logo-header.test.js` cobre a presenca dos cards.
+- Escopo preservado: sem alterar dados publicados e sem mudar a regra de calculo dos KPIs gerais do Orcamento.
+
+### Complemento - contraste dos cards Pena Justa
+
+- Objetivo: corrigir contraste e cores do bloco inicial "Recorte Pena Justa" na tela de Orcamento 2026.
+- Causa: o bloco usava fundo claro sem compatibilidade com o tema escuro e os cards herdavam gradientes globais de KPI, deixando rótulos e valores com baixo contraste.
+- Implementacao: `frontend/css/app.css` passou a usar superficie escura em gradiente discreto, borda azul-grafite, titulo branco, eyebrow ambar, cards escuros com borda vermelha Pena Justa e valores solidos sem `background-clip:text`; adicionado override final para vencer a cascata global dos KPIs.
+- Testes: `node --check frontend/js/app.js`; `node --check tests/services/pdf-logo-header.test.js`; `node --test tests/services/pdf-logo-header.test.js` (3/3).
+- Validacao visual: Playwright abriu a tela de Orcamento, confirmou `backgroundImage: none` nos valores dos cards, `-webkit-text-fill-color` solido e capturou o bloco com fundo escuro/alto contraste.
+- Preservacoes: sem alterar regras de calculo, dados publicados, Supabase, backend ou fluxo de salvamento.
+- Rollback: remover os overrides `.budget-pena-justa-*` adicionados em `frontend/css/app.css` e os asserts correspondentes no teste.
+
+### Complemento - salvamento do vinculo Pena Justa
+
+- Sintoma reportado: ao confirmar a edicao, a aplicacao exibiu `Campo nao permitido: pena_justa`.
+- Diagnostico: o arquivo atual `backend/services/orcamento-2026-service.js` ja inclui `pena_justa` em `CAMPOS_EDITAVEIS_BASE`, aliases, campos novos permitidos, colunas, conversao booleana e migracao Postgres idempotente; a suite `auditoria-logs-operacionais.test.js` confirmou `salvarOrcamento2026 registra vinculo Pena Justa`.
+- Evidencia operacional: havia processo Node ativo em `127.0.0.1:8790` (PID 19588) iniciado antes da validacao atual, e o clipboard estava vazio; por seguranca, o servidor nao foi derrubado sem senha Supabase disponivel para reinicializacao.
+- Validacoes: `node --test tests/services/auditoria-logs-operacionais.test.js` (30/30) e `node --test tests/services/pdf-logo-header.test.js` (3/3).
+- Acao pendente: reiniciar o servidor local com a senha Supabase para que o Node carregue a versao atual do back-end que aceita `pena_justa`.
+
+### Complemento - servidor reiniciado para carregar `pena_justa`
+
+- Acao executada: apos senha Supabase ser recolocada no clipboard, o servidor Node local foi reiniciado sem imprimir nem persistir credencial.
+- Resultado: processo antigo da porta `8790` saiu de uso e novo processo `backend/server.js` ficou ativo no PID 18440, iniciado em 12/06/2026 13:21:09.
+- Validacao: `GET http://127.0.0.1:8790/index.html` retornou HTTP 200; logs de erro do launcher nao exibiram falha recente.
+- Observacao: o navegador deve tentar novamente contra o processo novo; se ainda houver estado antigo em tela, usar `Ctrl+F5` antes de salvar.
+
+### Complemento - cards Pena Justa no relatório PDF estruturado
+
+- Sintoma reportado: o bloco de cards "Recorte Pena Justa" aparecia na tela, mas nao entrava no relatorio PDF estruturado do Orcamento.
+- Implementacao: `exportarResumoOrcamentoPDF()` agora calcula `resumoPenaJusta`, carrega a logo Pena Justa ja usada nas linhas da tabela e desenha uma secao propria antes das tabelas por frente, com os quatro cards: valor total Pena Justa, valor em execucao, saldo planejado e itens vinculados.
+- Arquivos: `frontend/js/app.js`; `tests/services/pdf-logo-header.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Validacoes: `node --check frontend/js/app.js`; `node --check tests/services/pdf-logo-header.test.js`; `node --test tests/services/pdf-logo-header.test.js tests/services/auditoria-logs-operacionais.test.js` (33/33); Playwright acionou `window.exportarResumoOrcamentoPDF()` e baixou `Resumo_Orcamento_2026_ONASP.pdf` com 13.769.848 bytes.
+- Preservacoes: sem alterar regra de calculo, Supabase, dados publicados ou backend; mudanca restrita ao desenho do PDF e teste estatico.
+- Rollback: remover `desenharResumoPenaJustaPdf()` e assercoes correlatas do teste.
+
+### Complemento - regra do valor em execucao Pena Justa
+
+- Sintoma reportado: o card Pena Justa exibia divergencia entre valor total e valor em execucao, embora os itens vinculados ja estivessem autuados ou em execucao.
+- Diagnostico: o resumo Pena Justa usava `valorEmExecucaoConsiderado`, que representa o valor estimado/pesquisado do item elegivel, e nao o valor previsto integral do item em execucao; por isso itens com pesquisa menor/maior que o previsto geravam saldo residual.
+- Implementacao: `calcularResumoPenaJustaOrcamento()` passou a calcular `valorEmExecucao` pelo valor previsto integral dos itens Pena Justa ativos quando o status indica `EM EXECUCAO`, `PROCESSO AUTUADO`, `EXECUTADO` ou pesquisa de precos, desde que nao estejam cancelados/suspensos.
+- Arquivos: `frontend/js/app.js`; `tests/services/pdf-logo-header.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Preservacoes: sem alterar Supabase, backend, dados gravados ou a regra geral dos KPIs do Orcamento 2026; mudanca restrita ao recorte Pena Justa na tela/PDF.
+- Rollback: voltar `valorEmExecucao` do resumo Pena Justa para a soma de `valorEmExecucaoConsiderado ?? valorEstimadoPesquisaPreco`.

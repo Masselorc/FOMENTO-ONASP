@@ -262,6 +262,7 @@ const linhaOrcamento = {
   valor_executado: 0,
   valor_estimado_pesquisa_preco: 0,
   processo_autuado: false,
+  pena_justa: false,
   processo_sei: "",
   status: "PLANEJADO",
   setor_atual: "",
@@ -294,6 +295,7 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
     return { id: 1 };
   };
   postgresClient.query = async (sql) => {
+    if (/ALTER TABLE orcamento_2026 ADD COLUMN IF NOT EXISTS pena_justa/i.test(sql)) return { rows: [] };
     if (/SELECT \* FROM orcamento_2026_movimentacoes WHERE ativo = true/i.test(sql)) return { rows: [] };
     if (/SELECT \* FROM orcamento_2026/i.test(sql)) return { rows: linhas };
     if (/SELECT id, status, processo_autuado/i.test(sql)) return { rows: [] };
@@ -389,6 +391,27 @@ test("salvarOrcamento2026 registra log de edicao resumido", async () => {
   const log = logs.find((item) => item.tipoEvento === "orcamento_2026_edicao");
   assert.deepEqual(log.payload.idsAfetados, ["ITEM-1"]);
   assert.deepEqual(log.payload.camposAlterados, ["observacao"]);
+  assert.ok(!("password" in log.payload));
+});
+
+test("salvarOrcamento2026 registra vinculo Pena Justa", async () => {
+  const { service, historicos, logs, updates } = instalarMockOrcamento();
+
+  const resultado = await service.salvarOrcamento2026({
+    password: "senha-correta-testes",
+    changes: { "ITEM-1": { pena_justa: true } },
+  });
+
+  assert.equal(resultado.success, true);
+
+  const updateItem = updates.find((update) => update.params.includes("ITEM-1"));
+  assert.ok(updateItem);
+  assert.match(updateItem.sql, /pena_justa/);
+  assert.ok(historicos.some((h) => h.registro === "ITEM-1" && h.campo === "pena_justa" && h.valorNovo === true));
+
+  const log = logs.find((item) => item.tipoEvento === "orcamento_2026_edicao");
+  assert.deepEqual(log.payload.idsAfetados, ["ITEM-1"]);
+  assert.deepEqual(log.payload.camposAlterados, ["pena_justa"]);
   assert.ok(!("password" in log.payload));
 });
 

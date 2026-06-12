@@ -26,7 +26,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260525-02-data-service-pad';
+} from '../../backend/services/data-service.js?v=20260612-17-orcamento-executado-resumo-v2';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,
@@ -10166,6 +10166,77 @@ async function carregarLogoParaPDF() {
             };
         }
 
+        function calcularResumoPenaJustaOrcamento(itens) {
+            const itensPenaJusta = (Array.isArray(itens) ? itens : [])
+                .filter((item) => itemVinculadoPenaJustaOrcamento(item) && item.ativo !== false);
+            const valorTotal = itensPenaJusta.reduce((total, item) => total + (Number(item.valorPrevisto ?? item.valorTotal) || 0), 0);
+            const valorEmExecucao = itensPenaJusta.reduce((total, item) => (
+                total + (Number(item.valorEmExecucaoConsiderado ?? item.valorEstimadoPesquisaPreco) || 0)
+            ), 0);
+            const valorExecutado = itensPenaJusta.reduce((total, item) => total + (Number(item.valorExecutado) || 0), 0);
+            return {
+                quantidadeItens: itensPenaJusta.length,
+                valorTotal,
+                valorEmExecucao,
+                valorExecutado,
+                saldo: Math.max(0, valorTotal - valorEmExecucao - valorExecutado),
+                percentualEmExecucao: valorTotal > 0 ? (valorEmExecucao / valorTotal) * 100 : 0
+            };
+        }
+
+        function renderizarCardsPenaJustaOrcamento(resumoPenaJusta) {
+            const resumo = resumoPenaJusta || calcularResumoPenaJustaOrcamento([]);
+            return `
+                <section class="budget-pena-justa-summary mb-3" aria-label="Indicadores Pena Justa no orçamento">
+                    <div class="budget-pena-justa-summary-header">
+                        <img src="${PENA_JUSTA_LOGO_SRC}" class="budget-pena-justa-summary-logo" alt="Pena Justa" loading="lazy">
+                        <div>
+                            <p class="section-eyebrow mb-1">Recorte Pena Justa</p>
+                            <h3>Itens orçamentários vinculados</h3>
+                        </div>
+                    </div>
+                    <div class="budget-insight-grid budget-insight-grid-five">
+                        <div class="card kpi-card dynamic-card budget-insight-card budget-pena-justa-card py-2">
+                            <div>
+                                <div class="kpi-title mb-0">Valor total Pena Justa</div>
+                                <div class="kpi-value text-money text-success">${formatMoney(resumo.valorTotal)}</div>
+                            </div>
+                            <i class="fas fa-scale-balanced card-watermark" aria-hidden="true"></i>
+                        </div>
+                        <div class="card kpi-card dynamic-card budget-insight-card budget-pena-justa-card py-2">
+                            <div>
+                                <div class="kpi-title mb-0">Valor em execução</div>
+                                <div class="kpi-value text-money text-warning">${formatMoney(resumo.valorEmExecucao)}</div>
+                            </div>
+                            <i class="fas fa-hourglass-half card-watermark text-warning" aria-hidden="true"></i>
+                        </div>
+                        <div class="card kpi-card dynamic-card budget-insight-card budget-pena-justa-card py-2">
+                            <div>
+                                <div class="kpi-title mb-0">Valor executado</div>
+                                <div class="kpi-value text-money text-success">${formatMoney(resumo.valorExecutado)}</div>
+                            </div>
+                            <i class="fas fa-check-double card-watermark text-success" aria-hidden="true"></i>
+                        </div>
+                        <div class="card kpi-card dynamic-card budget-insight-card budget-pena-justa-card py-2">
+                            <div>
+                                <div class="kpi-title mb-0">Saldo planejado</div>
+                                <div class="kpi-value text-money">${formatMoney(resumo.saldo)}</div>
+                            </div>
+                            <i class="fas fa-vault card-watermark" aria-hidden="true"></i>
+                        </div>
+                        <div class="card kpi-card dynamic-card budget-insight-card budget-pena-justa-card py-2">
+                            <div>
+                                <div class="kpi-title mb-0">Itens vinculados</div>
+                                <div class="kpi-value">${resumo.quantidadeItens.toLocaleString('pt-BR')}</div>
+                                <div class="kpi-desc">${formatPercent(resumo.percentualEmExecucao)} em execução</div>
+                            </div>
+                            <i class="fas fa-list-check card-watermark text-info" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
         function itemUsaRastreioProfor(item) {
             const tipoRastreio = normalizarBusca(item.tipoRastreio);
             return tipoRastreio.includes('profor')
@@ -10201,6 +10272,7 @@ async function carregarLogoParaPDF() {
                     item.id,
                     item.frente,
                     item.descricao,
+                    item.penaJusta ? 'Pena Justa' : '',
                     item.natureza,
                     item.modalidade,
                     item.abrangencia,
@@ -10624,6 +10696,23 @@ async function carregarLogoParaPDF() {
             return ['1', 'true', 'sim', 's'].includes(texto);
         }
 
+        const PENA_JUSTA_LOGO_SRC = './frontend/assets/pena-justa-logo.svg';
+
+        function campoBooleanoOrcamento(campo) {
+            return campo === 'processo_autuado' || campo === 'pena_justa';
+        }
+
+        function itemVinculadoPenaJustaOrcamento(item) {
+            const valor = obterValorPendenteOrcamento(item, 'pena_justa', item?.penaJusta ?? item?.pena_justa);
+            return normalizarBooleanOrcamento(valor);
+        }
+
+        function renderizarLogoPenaJustaOrcamento(item, classeExtra = '') {
+            if (!itemVinculadoPenaJustaOrcamento(item)) return '';
+            const classe = ['budget-pena-justa-logo', classeExtra].filter(Boolean).join(' ');
+            return `<img src="${PENA_JUSTA_LOGO_SRC}" class="${escapeHtml(classe)}" alt="Pena Justa" title="Item vinculado ao Pena Justa" loading="lazy">`;
+        }
+
         function renderizarBotaoEdicaoOrcamento(itemId, opcoes = {}) {
             if (orcamentoEmModoPublicacaoEstatico()) return '';
 
@@ -10901,9 +10990,10 @@ async function carregarLogoParaPDF() {
                             ${podeExibirRastreio ? `
                                 <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(filhoId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
                                     <span>${escapeHtml(filho.descricao)}</span>
+                                    ${renderizarLogoPenaJustaOrcamento(filho)}
                                     <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                 </button>
-                            ` : `<div class="budget-item-title budget-item-title-static">${escapeHtml(filho.descricao)}</div>`}
+                            ` : `<div class="budget-item-title budget-item-title-static"><span>${escapeHtml(filho.descricao)}</span>${renderizarLogoPenaJustaOrcamento(filho)}</div>`}
                             ${processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(processoSei)}</div>` : ''}
                         </td>
                         <td data-label="Modalidade/Natureza" class="align-middle">
@@ -11519,6 +11609,10 @@ async function carregarLogoParaPDF() {
                                     <span>Classificação gerencial</span>
                                     ${renderizarCampoOrcamento(item, 'classificacao_gerencial')}
                                 </label>
+                                <label class="budget-edit-checkbox-field">
+                                    <span>Pena Justa</span>
+                                    ${renderizarCampoOrcamento(item, 'pena_justa', 'checkbox')}
+                                </label>
                             </div>
                             <div class="budget-edit-section mt-3">
                                 <div class="budget-edit-section-header">
@@ -11652,9 +11746,10 @@ async function carregarLogoParaPDF() {
                             ${podeExibirRastreio ? `
                                 <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
                                     <span>${escapeHtml(item.descricao)}</span>
+                                    ${renderizarLogoPenaJustaOrcamento(item)}
                                     <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                 </button>
-                            ` : `<div class="budget-item-title budget-item-title-static">${escapeHtml(item.descricao)}</div>`}
+                            ` : `<div class="budget-item-title budget-item-title-static"><span>${escapeHtml(item.descricao)}</span>${renderizarLogoPenaJustaOrcamento(item)}</div>`}
                             ${item.processoSei ? `<div class="budget-item-meta">SEI ${escapeHtml(item.processoSei)}</div>` : ''}
                             ${renderizarResumoVinculosNoPaiOrcamento(item, filhosVinculados)}
                         </td>
@@ -11820,7 +11915,9 @@ async function carregarLogoParaPDF() {
                     atualizarNovoProcessoOrcamento(
                         campo.dataset.orcamentoNovoId,
                         campo.dataset.orcamentoNovoCampo,
-                        campo.dataset.orcamentoNovoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
+                        campoBooleanoOrcamento(campo.dataset.orcamentoNovoCampo)
+                            ? normalizarBooleanOrcamento(campo.type === 'checkbox' ? campo.checked : campo.value)
+                            : campo.value
                     );
                     renderOrcamentoView();
                     return;
@@ -11830,7 +11927,9 @@ async function carregarLogoParaPDF() {
                     campo.dataset.orcamentoId,
                     campo.dataset.orcamentoCampo,
                     campo.dataset.orcamentoOriginal,
-                    campo.dataset.orcamentoCampo === 'processo_autuado' ? normalizarBooleanOrcamento(campo.value) : campo.value
+                    campoBooleanoOrcamento(campo.dataset.orcamentoCampo)
+                        ? normalizarBooleanOrcamento(campo.type === 'checkbox' ? campo.checked : campo.value)
+                        : campo.value
                 );
                 renderOrcamentoView();
             });
@@ -11905,10 +12004,12 @@ async function carregarLogoParaPDF() {
                             ${podeExibirRastreio ? `
                                 <button type="button" class="budget-item-title budget-tracking-toggle" data-budget-item-id="${escapeHtml(itemId)}" aria-expanded="${rastreioAberto}" aria-controls="${escapeHtml(idRastreio)}">
                                     <span>${descricao}</span>
+                                    ${renderizarLogoPenaJustaOrcamento(item)}
                                     <i class="fas fa-chevron-down" aria-hidden="true"></i>
                                 </button>
-                            ` : `<div class="budget-item-title budget-item-title-static">${descricao}</div>`}
+                            ` : `<div class="budget-item-title budget-item-title-static"><span>${descricao}</span>${renderizarLogoPenaJustaOrcamento(item)}</div>`}
                             ${linkedBadge}
+                            ${editando ? `<div class="budget-other-pena-justa-field">${renderizarCampoOutrosOrcamento(item, 'pena_justa', 'checkbox')}</div>` : ''}
                         </div>
                     </td>
                     <td data-label="Processo SEI">${renderizarCampoOutrosOrcamento(item, 'processo_sei')}</td>
@@ -11998,6 +12099,7 @@ async function carregarLogoParaPDF() {
                 processo_sei: '',
                 valor_estimado_pesquisa_preco: 0,
                 processo_autuado: false,
+                pena_justa: false,
                 status: 'PLANEJADO',
                 setor_atual: '',
                 responsavel_atual: '',
@@ -12321,11 +12423,12 @@ async function carregarLogoParaPDF() {
             const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
             const valorEmpenhado = resumo.valorEmpenhado ?? resumo.totalEmpenhado ?? 0;
             const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
-            const saldoPlanejado = resumo.saldoPlanejado ?? ((resumo.totalOrcamento || resumo.totalGeral || 0) - valorEmExecucao);
+            const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
+            const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao - valorExecutado);
             const processosAutuados = resumo.processosAutuados || 0;
             const inicioResumoAparelhamento = DEBUG_PERF_ONASP ? performance.now() : 0;
             const resumoAparelhamento = budgetData.resumoAparelhamento || calcularResumoAparelhamentoFrontend(itensOrcamento);
-            const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
+            const resumoPenaJusta = calcularResumoPenaJustaOrcamento(itensOrcamento);
             const percentualEmExecucao = totalOrcamento > 0 ? (valorEmExecucao / totalOrcamento) * 100 : 0;
             const saldoAparelhamento = Number(resumoAparelhamento.saldoAparelhamento || 0);
             const notaSaldoAparelhamento = saldoAparelhamento > 0
@@ -12352,7 +12455,7 @@ async function carregarLogoParaPDF() {
 
                 ${renderizarAcoesOrcamento()}
 
-                <section class="row mb-2 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" aria-label="Indicadores orçamentários">
+                <section class="row mb-2 row-cols-1 row-cols-md-2 row-cols-xl-6 g-3" aria-label="Indicadores orçamentários">
                     <div class="col">
                         ${renderKpiCard({
                             titulo: 'Total do orçamento',
@@ -12369,6 +12472,15 @@ async function carregarLogoParaPDF() {
                             descricao: 'Base gerencial das pesquisas de preço',
                             icon: 'fa-hourglass-half',
                             variant: 'warning'
+                        })}
+                    </div>
+                    <div class="col">
+                        ${renderKpiCard({
+                            titulo: 'Valor executado',
+                            valor: `<span class="text-money text-success">${formatMoney(valorExecutado)}</span>`,
+                            descricao: 'Execução financeira acumulada',
+                            icon: 'fa-check-double',
+                            variant: 'success'
                         })}
                     </div>
                     <div class="col">
@@ -12399,6 +12511,8 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
                 <div class="mt-2"></div>
+
+                ${renderizarCardsPenaJustaOrcamento(resumoPenaJusta)}
 
                 <section class="filter-section budget-filter-bar mb-3" aria-label="Filtros da tabela de orçamento">
                     <div class="budget-filter-bar-title">
@@ -12796,6 +12910,28 @@ async function carregarLogoParaPDF() {
             }
         }
 
+        async function obterLogoPenaJustaParaPdf() {
+            try {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = PENA_JUSTA_LOGO_SRC;
+                });
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth || 370;
+                canvas.height = img.naturalHeight || 192;
+                canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                return {
+                    dataUrl: canvas.toDataURL('image/png'),
+                    proporcao: canvas.width / canvas.height
+                };
+            } catch {
+                return null;
+            }
+        }
+
         // Paleta de cores para os gráficos do relatório (RGB).
         const PALETA_GRAFICOS_ORCAMENTO = [
             [37, 99, 235], [16, 185, 129], [245, 158, 11], [239, 68, 68], [139, 92, 246],
@@ -12926,18 +13062,22 @@ async function carregarLogoParaPDF() {
                 const resumo = budgetData.resumo || {};
                 const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
                 const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
-                const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao);
+                const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
+                const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao - valorExecutado);
                 const processosAutuados = resumo.processosAutuados || 0;
                 const percentualEmExecucao = resumo.percentualEmExecucao
                     ?? (totalOrcamento > 0 ? (valorEmExecucao / totalOrcamento) * 100 : 0);
+                const resumoPenaJusta = calcularResumoPenaJustaOrcamento(itensOrcamento);
 
                 const margem = 12;
                 const larguraPagina = pdf.internal.pageSize.getWidth();
                 const larguraUtil = larguraPagina - (margem * 2);
+                const alturaPagina = pdf.internal.pageSize.getHeight();
                 const corPrimaria = [31, 59, 87];
                 const dataGeracao = new Date().toLocaleString('pt-BR');
 
                 const logo = await obterLogoSenappenParaPdf();
+                const logoPenaJusta = await obterLogoPenaJustaParaPdf();
 
                 // Cabeçalho
                 pdf.setFillColor(...corPrimaria);
@@ -12980,6 +13120,7 @@ async function carregarLogoParaPDF() {
                 const cards = [
                     { titulo: 'Total do orçamento', valor: formatMoney(totalOrcamento), descricao: 'Orçamento oficial ONASP' },
                     { titulo: 'Valor em execução', valor: formatMoney(valorEmExecucao), descricao: 'Itens autuados, não cancelados/suspensos' },
+                    { titulo: 'Valor executado', valor: formatMoney(valorExecutado), descricao: 'Execução financeira acumulada', cor: [16, 130, 95] },
                     { titulo: 'Saldo planejado', valor: formatMoney(saldoPlanejado), descricao: 'Total menos valor em execução' },
                     { titulo: 'Processos autuados', valor: String(processosAutuados), descricao: 'Itens com autuação registrada' },
                     { titulo: 'Percentual em execução', valor: formatPercent(percentualEmExecucao), descricao: 'Valor em execução / orçamento total' }
@@ -12992,7 +13133,7 @@ async function carregarLogoParaPDF() {
                     pdf.setFont('helvetica', 'normal');
                     pdf.setFontSize(7);
                     pdf.text(card.titulo.toUpperCase(), x + 4, y + 5.5);
-                    pdf.setTextColor(...corPrimaria);
+                    pdf.setTextColor(...(card.cor || corPrimaria));
                     pdf.setFont('helvetica', 'bold');
                     pdf.setFontSize(11);
                     pdf.text(card.valor, x + 4, y + 11.5);
@@ -13004,16 +13145,99 @@ async function carregarLogoParaPDF() {
 
                 const espacamentoCards = 4;
                 const larguraCardTrio = (larguraUtil - (espacamentoCards * 2)) / 3;
-                const larguraCardDuo = (larguraUtil - espacamentoCards) / 2;
                 let y = 32;
                 cards.slice(0, 3).forEach((card, indice) => {
                     desenharCard(card, margem + (indice * (larguraCardTrio + espacamentoCards)), y, larguraCardTrio);
                 });
                 y += 19 + espacamentoCards;
-                cards.slice(3).forEach((card, indice) => {
-                    desenharCard(card, margem + (indice * (larguraCardDuo + espacamentoCards)), y, larguraCardDuo);
+                cards.slice(3, 6).forEach((card, indice) => {
+                    desenharCard(card, margem + (indice * (larguraCardTrio + espacamentoCards)), y, larguraCardTrio);
                 });
                 y += 19 + 8;
+
+                const desenharResumoPenaJustaPdf = () => {
+                    const alturaBloco = 48;
+                    if (y + alturaBloco > alturaPagina - 18) {
+                        pdf.addPage();
+                        y = 14;
+                    }
+
+                    pdf.setDrawColor(207, 80, 55);
+                    pdf.setFillColor(249, 250, 252);
+                    pdf.roundedRect(margem, y, larguraUtil, alturaBloco, 2, 2, 'FD');
+                    pdf.setFillColor(236, 56, 23);
+                    pdf.rect(margem, y, 1.6, alturaBloco, 'F');
+
+                    let tituloX = margem + 6;
+                    if (logoPenaJusta) {
+                        const logoAltura = 10;
+                        const logoLargura = logoAltura * (logoPenaJusta.proporcao || 1.93);
+                        pdf.addImage(logoPenaJusta.dataUrl, 'PNG', margem + 5, y + 4, logoLargura, logoAltura);
+                        tituloX = margem + 8 + logoLargura;
+                    }
+
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(7.5);
+                    pdf.setTextColor(185, 45, 26);
+                    pdf.text('RECORTE PENA JUSTA', tituloX, y + 7.5);
+                    pdf.setFontSize(10.5);
+                    pdf.setTextColor(...corPrimaria);
+                    pdf.text('Itens orçamentários vinculados', tituloX, y + 13.5);
+
+                    const cardsPenaJusta = [
+                        { titulo: 'Valor total Pena Justa', valor: formatMoney(resumoPenaJusta.valorTotal), cor: [16, 130, 95] },
+                        { titulo: 'Valor em execução', valor: formatMoney(resumoPenaJusta.valorEmExecucao), cor: [180, 100, 15] },
+                        { titulo: 'Valor executado', valor: formatMoney(resumoPenaJusta.valorExecutado), cor: [16, 130, 95] },
+                        { titulo: 'Saldo planejado', valor: formatMoney(resumoPenaJusta.saldo), cor: corPrimaria },
+                        {
+                            titulo: 'Itens vinculados',
+                            valor: resumoPenaJusta.quantidadeItens.toLocaleString('pt-BR'),
+                            descricao: `${formatPercent(resumoPenaJusta.percentualEmExecucao)} em execução`,
+                            cor: corPrimaria
+                        }
+                    ];
+
+                    const cardY = y + 19;
+                    const cardAltura = 22;
+                    const espaco = 3;
+                    const cardLargura = (larguraUtil - (espaco * 4) - 10) / 5;
+                    cardsPenaJusta.forEach((card, indice) => {
+                        const cardX = margem + 5 + (indice * (cardLargura + espaco));
+                        pdf.setDrawColor(215, 222, 232);
+                        pdf.setFillColor(255, 255, 255);
+                        pdf.roundedRect(cardX, cardY, cardLargura, cardAltura, 2, 2, 'FD');
+                        pdf.setFillColor(236, 56, 23);
+                        pdf.rect(cardX, cardY, 1.1, cardAltura, 'F');
+
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(6.5);
+                        pdf.setTextColor(95, 108, 124);
+                        pdf.text(card.titulo.toUpperCase(), cardX + 3.2, cardY + 5.2, { maxWidth: cardLargura - 6 });
+
+                        pdf.setFont('helvetica', 'bold');
+                        const valorTexto = String(card.valor);
+                        let tamanhoFonte = 10.5;
+                        if (valorTexto.length > 13) {
+                            tamanhoFonte = 8.0;
+                        } else if (valorTexto.length > 10) {
+                            tamanhoFonte = 9.0;
+                        }
+                        pdf.setFontSize(tamanhoFonte);
+                        pdf.setTextColor(...card.cor);
+                        pdf.text(valorTexto, cardX + 3.2, cardY + 12.5);
+
+                        if (card.descricao) {
+                            pdf.setFont('helvetica', 'normal');
+                            pdf.setFontSize(6.2);
+                            pdf.setTextColor(110, 124, 142);
+                            pdf.text(card.descricao, cardX + 3.2, cardY + 18);
+                        }
+                    });
+
+                    y += alturaBloco + 8;
+                };
+
+                desenharResumoPenaJustaPdf();
 
                 // Tabelas por frente
                 const grupos = agruparItensOrcamentoPorFrente(itensOrcamento);
@@ -13028,10 +13252,10 @@ async function carregarLogoParaPDF() {
                         head: [
                             [{
                                 content: `${grupo.frente}   —   Total da frente: ${formatMoney(grupo.resumo.total)}`,
-                                colSpan: 5,
+                                colSpan: 6,
                                 styles: { halign: 'center', valign: 'middle', fillColor: corPrimaria, textColor: 255, fontStyle: 'bold', fontSize: 9 }
                             }],
-                            ['Item', 'Processo SEI', 'Modalidade', 'Previsto\n(Total / Original / Recebido)', 'Em execução']
+                            ['Item', 'Processo SEI', 'Modalidade', 'Previsto\n(Total / Original / Recebido)', 'Em execução', 'Acompanhamento\n(Setor / Dias no setor)']
                         ],
                         body: grupo.itens.map((item) => {
                             // Mesmo cálculo da tela: total = envelope ajustado (original
@@ -13042,12 +13266,23 @@ async function carregarLogoParaPDF() {
                                 `Original: ${formatMoney(saldo.valorOriginal)}`,
                                 `Recebido: ${formatMoney(saldo.valorRecebidoPorAlocacao)}`
                             ].join('\n');
+                            // Acompanhamento gerencial: setor atual e dias no setor
+                            // (mesmo cálculo da tela via formatarDiasNoSetorAtualOrcamento).
+                            const setorAtual = String(item.setorAtual || '').trim();
+                            const acompanhamentoTexto = [
+                                `Setor: ${setorAtual || '—'}`,
+                                `Dias no setor: ${formatarDiasNoSetorAtualOrcamento(item.dataEntradaSetor)}`
+                            ].join('\n');
                             return [
-                                String(item.descricao || item.id || '-'),
+                                {
+                                    content: String(item.descricao || item.id || '-'),
+                                    penaJusta: itemVinculadoPenaJustaOrcamento(item)
+                                },
                                 String(item.processoSei || '—'),
                                 String(item.modalidade || '-'),
                                 previstoTexto,
-                                formatMoney(Number(item.valorEmExecucaoConsiderado ?? item.valorEstimadoPesquisaPreco) || 0)
+                                formatMoney(Number(item.valorEmExecucaoConsiderado ?? item.valorEstimadoPesquisaPreco) || 0),
+                                acompanhamentoTexto
                             ];
                         }),
                         theme: 'grid',
@@ -13055,11 +13290,26 @@ async function carregarLogoParaPDF() {
                         headStyles: { fillColor: [223, 231, 241], textColor: [31, 41, 55], fontStyle: 'bold', fontSize: 8, halign: 'center', valign: 'middle' },
                         alternateRowStyles: { fillColor: [248, 250, 252] },
                         columnStyles: {
-                            0: { cellWidth: 56 },
-                            1: { cellWidth: 32 },
-                            2: { cellWidth: 26 },
-                            3: { cellWidth: 40 },
-                            4: { cellWidth: 32 }
+                            0: { cellWidth: 46 },
+                            1: { cellWidth: 28 },
+                            2: { cellWidth: 22 },
+                            3: { cellWidth: 38 },
+                            4: { cellWidth: 24 },
+                            5: { cellWidth: 28 }
+                        },
+                        didParseCell: (data) => {
+                            if (data.section === 'body' && data.column.index === 0 && data.cell.raw?.penaJusta) {
+                                data.cell.styles.halign = 'left';
+                                data.cell.styles.cellPadding = { top: 1.6, right: 1.6, bottom: 1.6, left: 18 };
+                            }
+                        },
+                        didDrawCell: (data) => {
+                            if (data.section !== 'body' || data.column.index !== 0 || !data.cell.raw?.penaJusta || !logoPenaJusta) return;
+                            const logoAltura = 7;
+                            const logoLargura = logoAltura * (logoPenaJusta.proporcao || 1.93);
+                            const logoX = data.cell.x + 2;
+                            const logoY = data.cell.y + ((data.cell.height - logoAltura) / 2);
+                            pdf.addImage(logoPenaJusta.dataUrl, 'PNG', logoX, logoY, logoLargura, logoAltura);
                         }
                     });
                     y = pdf.lastAutoTable.finalY + 6;
@@ -13068,7 +13318,6 @@ async function carregarLogoParaPDF() {
                 // ====================================================================
                 // Gráficos (rosca) ao final do relatório, na sequência das tabelas
                 // ====================================================================
-                const alturaPagina = pdf.internal.pageSize.getHeight();
                 const corTexto = [40, 48, 58];
                 const centroX = larguraPagina / 2;
 
@@ -14310,6 +14559,7 @@ async function carregarLogoParaPDF() {
                 valor_estimado_pesquisa_preco: item.valorEstimadoPesquisaPreco,
                 valor_empenhado: item.valorEmpenhado,
                 processo_autuado: item.processoAutuado,
+                pena_justa: item.penaJusta ?? item.pena_justa,
                 processo_sei: item.processoSei,
                 status: item.status,
                 setor_atual: item.setorAtual,
@@ -14411,7 +14661,7 @@ async function carregarLogoParaPDF() {
         function registrarAlteracaoOrcamento(id, campo, valorOriginal, novoValor) {
             const originalNormalizado = campo.startsWith('valor_')
                 ? parseNumeroMonetarioFrontend(valorOriginal)
-                : campo === 'processo_autuado'
+                : campoBooleanoOrcamento(campo)
                     ? normalizarBooleanOrcamento(valorOriginal)
                     : campo === 'classificacao_gerencial'
                         ? normalizarClassificacaoGerencialOrcamento(valorOriginal)
@@ -14420,7 +14670,7 @@ async function carregarLogoParaPDF() {
                     : String(valorOriginal ?? '');
             const novoNormalizado = campo.startsWith('valor_')
                 ? parseNumeroMonetarioFrontend(novoValor)
-                : campo === 'processo_autuado'
+                : campoBooleanoOrcamento(campo)
                     ? normalizarBooleanOrcamento(novoValor)
                     : campo === 'classificacao_gerencial'
                         ? normalizarClassificacaoGerencialOrcamento(novoValor)
@@ -14887,10 +15137,37 @@ async function carregarLogoParaPDF() {
                     const autuado = calcularProcessoAutuadoVisualOrcamento(item);
                     return `<span class="profor-alert-badge profor-alert-${autuado ? 'success' : 'warning'}">${autuado ? 'Sim' : 'Não'}</span>`;
                 }
+                if (campo === 'pena_justa') {
+                    return itemVinculadoPenaJustaOrcamento(item)
+                        ? renderizarLogoPenaJustaOrcamento(item)
+                        : '<span class="text-muted small">Não</span>';
+                }
                 if (campo.startsWith('valor_')) return formatMoney(Number(valor) || 0);
                 if (campo === 'status') return renderizarStatusOrcamento(valor);
                 if (campo === 'classificacao_gerencial') return renderizarClassificacaoGerencialOrcamento(valor, item.saldoAparelhamento || 0);
                 return escapeHtml(valor || '-');
+            }
+
+            if (campo === 'pena_justa') {
+                const vinculado = normalizarBooleanOrcamento(valor);
+                const vinculadoOriginal = normalizarBooleanOrcamento(valorOriginal);
+                const inputId = `pena-justa-${String(item.id).replace(/[^a-zA-Z0-9_-]/g, '-')}`;
+                return `
+                    <div class="form-check budget-edit-checkbox">
+                        <input
+                            id="${escapeHtml(inputId)}"
+                            type="checkbox"
+                            class="form-check-input budget-edit-control"
+                            data-orcamento-id="${escapeHtml(item.id)}"
+                            data-orcamento-campo="${campo}"
+                            data-orcamento-original="${vinculadoOriginal ? '1' : ''}"
+                            ${vinculado ? 'checked' : ''}
+                        >
+                        <label class="form-check-label" for="${escapeHtml(inputId)}">
+                            Vinculado ao Pena Justa
+                        </label>
+                    </div>
+                `;
             }
 
             if (campo === 'processo_autuado') {
@@ -14959,7 +15236,7 @@ async function carregarLogoParaPDF() {
         function atualizarNovoProcessoOrcamento(tempId, campo, valor) {
             const item = orcamentoNovosProcessos.find((processo) => processo.tempId === tempId);
             if (!item) return;
-            item[campo] = campo === 'processo_autuado'
+            item[campo] = campoBooleanoOrcamento(campo)
                 ? normalizarBooleanOrcamento(valor)
                 : campo === 'valor_estimado_pesquisa_preco'
                     ? parseNumeroMonetarioFrontend(valor)

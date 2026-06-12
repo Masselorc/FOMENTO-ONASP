@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS orcamento_2026 (
   -- A chamada garantirColuna na linha 66 é redundante (idempotente no SQLite).
   -- Não duplicamos aqui.
   processo_autuado boolean DEFAULT false, -- SQLite: INTEGER DEFAULT 0
+  pena_justa boolean DEFAULT false,       -- SQLite: INTEGER DEFAULT 0
   processo_sei text,
   -- NOTA: setor_atual, responsavel_atual, data_entrada_setor, pendencia_atual
   -- já declarados acima. As chamadas garantirColuna (linhas 69-72) são redundantes.

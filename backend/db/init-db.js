@@ -65,6 +65,7 @@ function inicializarBanco() {
   garantirColuna("orcamento_2026", "valor_estimado_pesquisa_preco", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "valor_empenhado", "REAL DEFAULT 0");
   garantirColuna("orcamento_2026", "processo_autuado", "INTEGER DEFAULT 0");
+  garantirColuna("orcamento_2026", "pena_justa", "INTEGER DEFAULT 0");
   garantirColuna("orcamento_2026", "processo_sei", "TEXT");
   garantirColuna("orcamento_2026", "setor_atual", "TEXT");
   garantirColuna("orcamento_2026", "responsavel_atual", "TEXT");
