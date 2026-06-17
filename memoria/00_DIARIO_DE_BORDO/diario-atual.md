@@ -1,5 +1,19 @@
 # Diário de bordo
 
+## 17/06/2026 - Orçamento 2026: publicação estática automática após salvamentos
+
+- Objetivo: corrigir a defasagem entre o servidor normal/Supabase da página "Orçamento 2026" e a versão estática do GitHub Pages, que consome `frontend/data/publicados/*.json`.
+- Causa: os endpoints `POST /api/orcamento-2026/salvar`, `POST /api/orcamento-2026/processos-vinculados/criar` e `POST /api/orcamento-2026/saldos/alocar` persistiam dados no banco, mas respondiam o resultado bruto dos services sem chamar `publicarAposSalvamento(resultado)`.
+- Correção: `backend/server.js` passou a chamar `publicarAposSalvamento(resultado)` nos três endpoints de escrita do Orçamento 2026 e a responder com `resultadoPublicado`.
+- Teste de contrato: `tests/services/auditoria-salvamento-sem-publicacao.test.js` foi ajustado para manter `parametros-minimos` e `formalizacao-profor` sem publicação automática, mas exigir publicação automática nos três endpoints de Orçamento 2026.
+- Publicação: `npm run publicar:dados` foi executado pelo script oficial, com `DATABASE_URL` reaproveitada apenas em memória a partir do processo Node local ativo; nenhuma credencial foi impressa ou gravada. O script regenerou o pacote público em `frontend/data/publicados/`.
+- Evidências: `resumo-publicacao.json` ficou com `publicadoEm=2026-06-17T18:59:52.328Z`; `orcamento-2026.json` reflete a base atual, com `CAMP-001.valorPrevisto=300000`, `resumo.totalOrcamento=7000000` e 10 itens publicados.
+- Arquivos alterados: `backend/server.js`, `tests/services/auditoria-salvamento-sem-publicacao.test.js`, `frontend/data/publicados/aplicacao.json`, `frontend/data/publicados/dashboard-geral.json`, `frontend/data/publicados/formalizacao-profor.json`, `frontend/data/publicados/orcamento-2026.json`, `frontend/data/publicados/resumo-publicacao.json` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Validações executadas: `npm run publicar:dados`; `npm run validar:json`; `node --test tests/services/auditoria-salvamento-sem-publicacao.test.js`; `npm run validar:syntax`; `npm run validar:services`; `git diff --check`.
+- Segurança: busca por termos sensíveis em `frontend/data/publicados` não encontrou `DATABASE_URL`, URLs Postgres, tokens ou chaves; os achados foram textos funcionais como "secretária/secretaria".
+- Risco: baixo a médio. Baixo no backend, pois `publicarAposSalvamento` já existia e preserva salvamento mesmo se a publicação falhar; médio nos JSONs publicados porque o script oficial regrava o pacote público completo e trouxe dados atuais também para dashboard/PROFOR e formalização, sem executar rotinas PROFOR/PAD de atualização.
+- Rollback: `git revert <SHA_DO_COMMIT>` ou, antes do commit, `git restore backend/server.js tests/services/auditoria-salvamento-sem-publicacao.test.js frontend/data/publicados/aplicacao.json frontend/data/publicados/dashboard-geral.json frontend/data/publicados/formalizacao-profor.json frontend/data/publicados/orcamento-2026.json frontend/data/publicados/resumo-publicacao.json memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+
 ## 27/05/2026 — PROFOR 2022: tela Sistema atualiza PADs Transferegov → cache → recarga em fluxo único com progresso
 
 - Objetivo: corrigir o botão da tela Sistema para executar o fluxo real Transferegov → cache → recarga em duas fases visíveis. Antes, "Atualizar PADs" só lia o cache existente e reconstruía a visão local (terminava em <1 s); a atualização real só era possível via script CLI (`atualizar-cache-pads-transferegov-profor-2022.js --salvar-cache`).

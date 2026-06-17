@@ -3,8 +3,9 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
-// Salvamentos operacionais com historico/logs nao devem publicar dados estaticos.
-// A atualizacao de frontend/data/publicados permanece como etapa explicita.
+// Salvamentos operacionais gerais com historico/logs nao devem publicar dados
+// estaticos. Orçamento 2026 e excecao porque alimenta a pagina estatica do
+// GitHub Pages a partir dos JSONs publicados.
 
 const repoRoot = path.resolve(__dirname, "../..");
 const serverCode = fs.readFileSync(path.join(repoRoot, "backend/server.js"), "utf8");
@@ -31,7 +32,10 @@ const rotasOperacionais = [
   {
     rota: "/api/formalizacao-profor/salvar",
     service: "salvarFormalizacaoProfor"
-  },
+  }
+];
+
+const rotasOrcamentoPublicadas = [
   {
     rota: "/api/orcamento-2026/salvar",
     service: "salvarOrcamento2026"
@@ -62,6 +66,36 @@ for (const { rota, service } of rotasOperacionais) {
       handler,
       /publicarAposSalvamento|publicarDadosEstaticos/,
       `O handler ${rota} nao deve disparar publicacao estatica automaticamente`
+    );
+  });
+}
+
+for (const { rota, service } of rotasOrcamentoPublicadas) {
+  test(`POST ${rota} usa o service operacional esperado`, () => {
+    const handler = extrairHandler(serverCode, rota);
+    assert.match(
+      handler,
+      new RegExp(`${service}\\s*\\(`),
+      `O handler ${rota} deve persistir via ${service}`
+    );
+  });
+
+  test(`POST ${rota} publica dados estaticos apos sucesso`, () => {
+    const handler = extrairHandler(serverCode, rota);
+    assert.match(
+      handler,
+      new RegExp(`const\\s+resultado\\s*=\\s*await\\s+${service}\\s*\\(`),
+      `O handler ${rota} deve obter o resultado de ${service}`
+    );
+    assert.match(
+      handler,
+      /const\s+resultadoPublicado\s*=\s*await\s+publicarAposSalvamento\s*\(\s*resultado\s*\)/,
+      `O handler ${rota} deve publicar dados estaticos apos salvamento bem-sucedido`
+    );
+    assert.match(
+      handler,
+      /enviarJson\s*\(\s*res\s*,\s*resultadoPublicado\.success\s*\?\s*200\s*:\s*400\s*,\s*resultadoPublicado\s*\)/,
+      `O handler ${rota} deve responder com o resultado publicado`
     );
   });
 }

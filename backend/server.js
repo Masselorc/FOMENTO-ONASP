@@ -523,21 +523,24 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/orcamento-2026/salvar") {
       const payload = await lerJsonBody(req);
       const resultado = await salvarOrcamento2026(payload);
-      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      const resultadoPublicado = await publicarAposSalvamento(resultado);
+      enviarJson(res, resultadoPublicado.success ? 200 : 400, resultadoPublicado);
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/orcamento-2026/processos-vinculados/criar") {
       const payload = await lerJsonBody(req);
       const resultado = await criarProcessoVinculadoOrcamento2026(payload);
-      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      const resultadoPublicado = await publicarAposSalvamento(resultado);
+      enviarJson(res, resultadoPublicado.success ? 200 : 400, resultadoPublicado);
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/orcamento-2026/saldos/alocar") {
       const payload = await lerJsonBody(req);
       const resultado = await alocarSaldoOrcamento2026(payload);
-      enviarJson(res, resultado.success ? 200 : 400, resultado);
+      const resultadoPublicado = await publicarAposSalvamento(resultado);
+      enviarJson(res, resultadoPublicado.success ? 200 : 400, resultadoPublicado);
       return;
     }
 
