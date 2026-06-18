@@ -7790,3 +7790,12 @@ Logs operacionais gravados:
 - Arquivos: `frontend/js/app.js`; `tests/services/pdf-logo-header.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
 - Preservacoes: sem alterar Supabase, backend, dados gravados ou a regra geral dos KPIs do Orcamento 2026; mudanca restrita ao recorte Pena Justa na tela/PDF.
 - Rollback: voltar `valorEmExecucao` do resumo Pena Justa para a soma de `valorEmExecucaoConsiderado ?? valorEstimadoPesquisaPreco`.
+
+## 18/06/2026 - Correcao do atalho desktop de inicializacao
+
+- Sintoma: o atalho da area de trabalho para executar a aplicacao deixou de funcionar.
+- Causa: os atalhos `FOMENTO ONASP - Supabase.lnk` e `Iniciar FOMENTO-ONASP com Supabase.lnk` apontavam para o caminho versionado do PowerShell `7.6.2`, que nao existia mais apos atualizacao para `7.6.3`.
+- Implementacao: os dois atalhos foram regravados para o alias estavel `C:\Users\marcelo.cortez\AppData\Local\Microsoft\WindowsApps\pwsh.exe`; o script local `C:\Users\marcelo.cortez\scripts\iniciar-fomento-onasp-local.ps1` tambem passou a abrir a janela interna com `pwsh.exe`, nao `powershell.exe`.
+- Validacao: atalhos conferidos com `TargetExists=True` e `ScriptExists=True`; script principal acionado; launcher iniciou `backend/server.js` no PID 2864; `GET http://127.0.0.1:8790/index.html` retornou HTTP 200.
+- Preservacoes: sem imprimir, gravar ou versionar credenciais; sem alterar banco de dados, dados publicados ou codigo funcional da aplicacao.
+- Rollback: retargetear os atalhos manualmente para outro executavel PowerShell valido e desfazer a troca de `Start-Process` no script local, se necessario.
