@@ -111,6 +111,7 @@ Permitir manutenção técnica do Orçamento 2026 com rastreabilidade de process
 | POST | `/api/orcamento-2026/salvar` | `backend/server.js` -> `salvarOrcamento2026()` | `password`, `changes`, `novos`, `inativos` | JSON com sucesso, mensagem, `updatedAt` e `backupPath` | Publicação indireta em caso de sucesso |
 | POST | `/api/orcamento-2026/processos-vinculados/criar` | `backend/server.js` -> `criarProcessoVinculadoOrcamento2026()` | `password`, `processoPaiId`, `valorAlocado`, `descricao`, `status`, `tipoRastreio` | JSON com sucesso ou erro de validação | Cria filho vinculado |
 | POST | `/api/orcamento-2026/saldos/alocar` | `backend/server.js` -> `alocarSaldoOrcamento2026()` | `password`, `origemId`, `destinoId`, `valor`, `justificativa`, `criadoPor` | JSON com sucesso ou erro de saldo/validação | Registra movimentação |
+| POST | `/api/orcamento-2026/frentes/salvar` | `backend/server.js` -> `salvarValorFrenteOrcamento2026()` | `password`, `frente`, `valorDisponivel` | JSON com sucesso ou erro de validação | Atualiza o valor disponível da frente |
 | GET | `/api/orcamento-2026/movimentacoes` | `backend/server.js` -> `listarMovimentacoesOrcamento2026()` | Não aplicável | Lista de movimentações ativas | Base da modal de saldo |
 | GET | `/api/orcamento-2026/historico` | `backend/server.js` -> `listarHistoricoOrcamento2026()` | Não aplicável | Lista de histórico recente | Rastreabilidade |
 | GET | `/api/orcamento-2026/exportar` | `backend/server.js` -> `exportarOrcamento2026Excel()` | Não aplicável | Arquivo `.xlsx` | Exportação da planilha |
@@ -132,6 +133,7 @@ Permitir manutenção técnica do Orçamento 2026 com rastreabilidade de process
 | --- | --- | --- | --- |
 | `orcamento_2026` | Processos, itens, valores, rastreio, classificação e vínculo | Alteração de colunas pode quebrar cálculo e publicação | Tabela principal |
 | `orcamento_2026_movimentacoes` | Movimentações de saldo entre processos | Duplicidade ou inconsistência afeta saldo transferível | Não há foreign key explícita confirmada |
+| `orcamento_2026_frentes` | Valor disponível informado para cada frente | Divergência afeta total por frente e saldo disponível | Tabela aditiva, chaveada por nome da frente |
 | `historico_alteracoes` | Registro de alterações da página | Histórico inconsistente dificulta auditoria | Relacionamento operacional por `pagina` |
 
 ### 2.6. JSONs publicados e modo estático
@@ -213,6 +215,7 @@ Base operacional confirmada na memória e no código:
 - Leitura principal: `GET /api/orcamento-2026`.
 - Movimentações: `GET /api/orcamento-2026/movimentacoes`.
 - Escrita: `POST /api/orcamento-2026/salvar`, `POST /api/orcamento-2026/processos-vinculados/criar`, `POST /api/orcamento-2026/saldos/alocar`.
+- Valor da frente: `POST /api/orcamento-2026/frentes/salvar`.
 - Histórico: `GET /api/orcamento-2026/historico`.
 - Exportação: `GET /api/orcamento-2026/exportar`.
 
@@ -228,6 +231,7 @@ Base operacional confirmada na memória e no código:
 
 - Alterações vão para `orcamento_2026`.
 - Alocações vão para `orcamento_2026_movimentacoes`.
+- Valores disponíveis por frente vão para `orcamento_2026_frentes`.
 - Alterações e reversões de trilha vão para `historico_alteracoes`.
 - O serviço cria backup antes de salvar alterações.
 
@@ -502,6 +506,7 @@ Base operacional confirmada na memória e no código:
 | Renderização incorreta de processo vinculado em agrupamento visual | erro real | memória de erro e correção do projeto | Regra relevante para revisão de árvore pai/filho |
 | Saldo visual ajustado sem substituir a validação do backend | decisão técnica | comentário no front-end | Mantém UX sem quebrar a fonte de verdade |
 | Alocação de saldo preservando rastreabilidade | decisão técnica | serviço de movimentações | Movimentação não sobrescreve valor original |
+| Valor disponível por frente separado dos processos | decisão técnica | `orcamento_2026_frentes` e rota `/api/orcamento-2026/frentes/salvar` | O saldo da frente é calculado por valor disponível menos o previsto dos processos |
 
 ## 16. Arquivos que devem ser atualizados junto com esta funcionalidade
 

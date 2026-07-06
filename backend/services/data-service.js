@@ -3637,8 +3637,14 @@ function normalizarDadosOrcamentoPublicado(dados) {
 
     const base = Array.isArray(dados) ? {} : (dados || {});
     
-    // Recalcula o resumo orçamentário completo na ponta (frontend)
-    const totalOrcamento = Number(itens.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0).toFixed(2));
+    const resumoFrentes = Array.isArray(base.resumoFrentes) ? base.resumoFrentes : [];
+    const totalItensOrcamento = Number(itens.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0).toFixed(2));
+    const totalFrentesOrcamento = resumoFrentes.length
+        ? Number(resumoFrentes.reduce((total, frente) => total + (Number(frente.valorDisponivel ?? frente.total) || 0), 0).toFixed(2))
+        : 0;
+
+    // Recalcula o resumo orçamentário completo na ponta, preservando o valor disponível por frente quando informado.
+    const totalOrcamento = totalFrentesOrcamento || totalItensOrcamento;
     const valorEmExecucao = Number(itens.reduce((total, item) => total + (Number(item.valorEmExecucaoConsiderado) || 0), 0).toFixed(2));
     const valorEmpenhado = Number(itens.reduce((total, item) => total + (Number(item.valorEmpenhado) || 0), 0).toFixed(2));
     const valorExecutado = Number(itens.reduce((total, item) => total + (Number(item.valorExecutado) || 0), 0).toFixed(2));
@@ -3664,6 +3670,7 @@ function normalizarDadosOrcamentoPublicado(dados) {
         ...base,
         disponivel: true,
         itens,
+        resumoFrentes,
         resumo: resumoConsolidado,
         filtros: base.filtros || {
             frentes: obterValoresUnicosOrcamento(itens, 'frente'),

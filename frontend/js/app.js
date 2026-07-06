@@ -10338,6 +10338,52 @@ async function carregarLogoParaPDF() {
                 });
         }
 
+        function obterResumoFrenteOrcamento(budgetData, grupo) {
+            const chave = normalizarBusca(grupo?.frente || '');
+            const resumoApi = (budgetData?.resumoFrentes || [])
+                .find((frente) => normalizarBusca(frente?.frente || frente?.nome) === chave);
+            if (resumoApi) {
+                const valorPrevistoGrupo = Number(grupo?.resumo?.total) || 0;
+                const valorEmExecucaoGrupo = Number(grupo?.resumo?.emExecucao) || 0;
+                const valorDisponivel = Number(resumoApi.valorDisponivel ?? resumoApi.total) || 0;
+                const valorPrevistoProcessos = Number(resumoApi.valorPrevistoProcessos) || valorPrevistoGrupo;
+                return {
+                    frente: resumoApi.frente || resumoApi.nome || grupo.frente,
+                    itens: Number(resumoApi.itens) || grupo.itens.length,
+                    valorDisponivel,
+                    valorPrevistoProcessos,
+                    valorEmExecucao: Number(resumoApi.valorEmExecucao) || valorEmExecucaoGrupo,
+                    saldoDisponivel: Number.isFinite(Number(resumoApi.saldoDisponivel))
+                        ? Number(resumoApi.saldoDisponivel)
+                        : valorDisponivel - valorPrevistoProcessos
+                };
+            }
+
+            const valorPrevistoProcessos = Number(grupo?.resumo?.total) || 0;
+            return {
+                frente: grupo?.frente || 'Não informado',
+                itens: grupo?.itens?.length || 0,
+                valorDisponivel: valorPrevistoProcessos,
+                valorPrevistoProcessos,
+                valorEmExecucao: Number(grupo?.resumo?.emExecucao) || 0,
+                saldoDisponivel: 0
+            };
+        }
+
+        function renderizarBotaoEditarValorFrenteOrcamento(frente) {
+            return renderActionButton({
+                type: 'edit',
+                label: 'Editar valor da frente',
+                variant: 'outline-primary',
+                backend: true,
+                iconOnly: true,
+                title: 'Editar valor disponível da frente',
+                extraClass: 'budget-group-edit-button pdf-hidden',
+                disabled: orcamentoEmModoPublicacaoEstatico(),
+                attributes: `data-orcamento-editar-frente="${escapeHtml(frente)}"`
+            });
+        }
+
         function renderizarStatusOrcamento(status) {
             const statusNormalizado = normalizarBusca(status);
             const classe = statusNormalizado.includes('execucao')
@@ -11718,6 +11764,7 @@ async function carregarLogoParaPDF() {
             }
 
             tbody.innerHTML = grupos.map((grupo) => {
+                const resumoFrente = obterResumoFrenteOrcamento(budgetData, grupo);
                 const linhas = grupo.itens.map((item) => {
                     const itemId = String(item.id);
                     const podeExibirRastreio = itemPodeExibirRastreioOrcamento(item);
@@ -11801,8 +11848,12 @@ async function carregarLogoParaPDF() {
                                     <strong>${escapeHtml(grupo.frente).toLocaleUpperCase('pt-BR')}</strong>
                                 </div>
                                 <div class="budget-group-metrics">
-                                    <span>${grupo.itens.length} item(ns)</span>
-                                    <span>${formatMoney(grupo.resumo.total)}</span>
+                                    <span>${resumoFrente.itens} item(ns)</span>
+                                    <span>Valor da frente: ${formatMoney(resumoFrente.valorDisponivel)}</span>
+                                    <span>Previsto: ${formatMoney(resumoFrente.valorPrevistoProcessos)}</span>
+                                    <span>Em execução: ${formatMoney(resumoFrente.valorEmExecucao)}</span>
+                                    <span class="${resumoFrente.saldoDisponivel < 0 ? 'budget-group-metric-negative' : 'budget-group-metric-positive'}">Saldo: ${formatMoney(resumoFrente.saldoDisponivel)}</span>
+                                    ${renderizarBotaoEditarValorFrenteOrcamento(grupo.frente)}
                                 </div>
                             </div>
                         </td>
@@ -11835,6 +11886,7 @@ async function carregarLogoParaPDF() {
                     '[data-orcamento-cancelar-linha]',
                     '[data-orcamento-dividir-recurso]',
                     '[data-orcamento-alocar-saldo]',
+                    '[data-orcamento-editar-frente]',
                     '[data-orcamento-inativar]',
                     '[data-orcamento-excluir-item]',
                     '[data-orcamento-remover-novo]',
@@ -11871,6 +11923,11 @@ async function carregarLogoParaPDF() {
 
                 if (alvo.matches('[data-orcamento-alocar-saldo]')) {
                     abrirModalAlocarSaldoOrcamento(alvo.dataset.orcamentoAlocarSaldo);
+                    return;
+                }
+
+                if (alvo.matches('[data-orcamento-editar-frente]')) {
+                    abrirModalEditarValorFrenteOrcamento(alvo.dataset.orcamentoEditarFrente);
                     return;
                 }
 
@@ -12120,6 +12177,81 @@ async function carregarLogoParaPDF() {
             return obterQuantidadeAlteracoesLinhaOrcamento(id) + (orcamentoProcessosInativos.has(id) ? 1 : 0);
         }
 
+        function abrirModalEditarValorFrenteOrcamento(frente) {
+            if (orcamentoEmModoPublicacaoEstatico()) {
+                alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+
+            const budgetData = obterDadosOrcamento();
+            const grupo = agruparItensOrcamentoPorFrente(budgetData?.itens || [])
+                .find((item) => normalizarBusca(item.frente) === normalizarBusca(frente));
+            const resumoFrente = obterResumoFrenteOrcamento(budgetData, grupo || { frente, itens: [], resumo: { total: 0, emExecucao: 0 } });
+
+            removerModalOnasp('modalValorFrenteOrcamento');
+            document.body.insertAdjacentHTML('beforeend', `
+                <div class="modal fade" id="modalValorFrenteOrcamento" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editar valor da frente</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="budget-front-modal-summary">
+                                    <span>Frente</span>
+                                    <strong>${escapeHtml(frente)}</strong>
+                                    <small>Previsto em processos: ${formatMoney(resumoFrente.valorPrevistoProcessos)} · saldo atual: ${formatMoney(resumoFrente.saldoDisponivel)}</small>
+                                </div>
+                                <label class="form-label" for="valorDisponivelFrenteOrcamento">Valor disponível da frente</label>
+                                <input type="text" class="form-control" id="valorDisponivelFrenteOrcamento" inputmode="decimal" value="${escapeHtml(formatarValorMonetarioInput(resumoFrente.valorDisponivel))}">
+                                <label class="form-label mt-3" for="senhaValorFrenteOrcamento">Senha de confirmação</label>
+                                <input type="password" class="form-control" id="senhaValorFrenteOrcamento" autocomplete="current-password">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                ${renderActionButton({
+                                    id: 'confirmarSalvarValorFrenteOrcamento',
+                                    type: 'save',
+                                    label: 'Salvar valor',
+                                    variant: 'primary',
+                                    backend: true
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            const modalElement = document.getElementById('modalValorFrenteOrcamento');
+            const modal = new window.bootstrap.Modal(modalElement);
+            modal.show();
+            document.getElementById('confirmarSalvarValorFrenteOrcamento')?.addEventListener('click', async () => {
+                const valorDisponivel = parseNumeroMonetarioFrontend(document.getElementById('valorDisponivelFrenteOrcamento')?.value || '');
+                const password = document.getElementById('senhaValorFrenteOrcamento')?.value || '';
+
+                try {
+                    const { resposta, payload } = await fetchJsonApiOnasp('/api/orcamento-2026/frentes/salvar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password, frente, valorDisponivel })
+                    });
+
+                    if (!resposta.ok || !payload.success) {
+                        alert(payload.message || 'Não foi possível salvar o valor da frente.');
+                        return;
+                    }
+
+                    modal.hide();
+                    await carregarDadosOrcamento(true);
+                    renderOrcamentoView();
+                    alert(obterMensagemSalvamento(payload));
+                } catch (error) {
+                    alert(`Não foi possível salvar o valor da frente: ${error.message}`);
+                }
+            });
+        }
+
         function abrirModalSenhaOrcamento(escopoId = null) {
             if (orcamentoEmModoPublicacaoEstatico()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
@@ -12342,7 +12474,7 @@ async function carregarLogoParaPDF() {
             ];
             const segmentosFrentes = grupos.map((grupo, indice) => ({
                 rotulo: grupo.frente,
-                valor: Number(grupo.resumo.total) || 0,
+                valor: Number(obterResumoFrenteOrcamento(budgetData, grupo).valorDisponivel) || 0,
                 cor: PALETA_GRAFICOS_ORCAMENTO[indice % PALETA_GRAFICOS_ORCAMENTO.length]
             }));
             const segmentosItens = itensOrcamento.map((item, indice) => ({
@@ -12370,7 +12502,7 @@ async function carregarLogoParaPDF() {
                     </div>
                     <div class="row row-cols-1 row-cols-lg-3 g-3">
                         ${card('Valor em execução x Saldo planejado', segmentosExecucao)}
-                        ${card('Divisão entre frentes (valor previsto)', segmentosFrentes)}
+                        ${card('Divisão entre frentes (valor disponível)', segmentosFrentes)}
                         ${card('Divisão entre todos os itens (valor previsto)', segmentosItens)}
                     </div>
                 </section>

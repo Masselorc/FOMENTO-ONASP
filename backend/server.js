@@ -23,6 +23,7 @@ const {
   alocarSaldoOrcamento2026,
   listarMovimentacoesOrcamento2026,
   salvarOrcamento2026,
+  salvarValorFrenteOrcamento2026,
   listarHistoricoOrcamento2026,
   inicializarOrcamento2026
 } = require("./services/orcamento-2026-service");
@@ -539,6 +540,14 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/orcamento-2026/saldos/alocar") {
       const payload = await lerJsonBody(req);
       const resultado = await alocarSaldoOrcamento2026(payload);
+      const resultadoPublicado = await publicarAposSalvamento(resultado);
+      enviarJson(res, resultadoPublicado.success ? 200 : 400, resultadoPublicado);
+      return;
+    }
+
+    if (req.method === "POST" && pathname === "/api/orcamento-2026/frentes/salvar") {
+      const payload = await lerJsonBody(req);
+      const resultado = await salvarValorFrenteOrcamento2026(payload);
       const resultadoPublicado = await publicarAposSalvamento(resultado);
       enviarJson(res, resultadoPublicado.success ? 200 : 400, resultadoPublicado);
       return;

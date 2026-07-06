@@ -969,6 +969,13 @@ async function executarBackfillClassificacaoGerencial() {
 
 async function garantirColunasOrcamento2026Postgres() {
   await query("ALTER TABLE orcamento_2026 ADD COLUMN IF NOT EXISTS pena_justa boolean DEFAULT false");
+  await query(`
+    CREATE TABLE IF NOT EXISTS orcamento_2026_frentes (
+      frente text PRIMARY KEY,
+      valor_disponivel numeric(15,2) NOT NULL DEFAULT 0,
+      atualizado_em timestamptz
+    )
+  `);
 }
 
 async function inicializarOrcamento2026() {
@@ -1064,8 +1071,75 @@ function agruparResumo(itens, chave, campoValor = "valorPrevisto") {
   return Array.from(mapa.values()).sort((a, b) => b.total - a.total || a.nome.localeCompare(b.nome, "pt-BR"));
 }
 
-function montarResumo(itensOficiais) {
-  const totalOrcamento = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorPrevisto, 0));
+function montarResumoFrentes(itensOficiais, frentesPersistidas = []) {
+  const valoresPorFrente = new Map(
+    (Array.isArray(frentesPersistidas) ? frentesPersistidas : []).map((frente) => [
+      normalizarTexto(frente.frente),
+      {
+        frente: frente.frente || "Não informado",
+        valorDisponivel: Number(frente.valor_disponivel ?? frente.valorDisponivel) || 0,
+        atualizadoEm: frente.atualizado_em ?? frente.atualizadoEm ?? ""
+      }
+    ])
+  );
+  const mapa = new Map();
+
+  itensOficiais.forEach((item) => {
+    const nome = item.frente || "Não informado";
+    const chave = normalizarTexto(nome);
+    const atual = mapa.get(chave) || {
+      nome,
+      frente: nome,
+      itens: 0,
+      valorPrevistoProcessos: 0,
+      valorEmExecucao: 0,
+      valorEmpenhado: 0,
+      valorExecutado: 0
+    };
+
+    atual.itens += 1;
+    atual.valorPrevistoProcessos = arredondarMoeda(atual.valorPrevistoProcessos + (Number(item.valorPrevisto) || 0));
+    atual.valorEmExecucao = arredondarMoeda(atual.valorEmExecucao + (Number(item.valorEmExecucaoConsiderado) || 0));
+    atual.valorEmpenhado = arredondarMoeda(atual.valorEmpenhado + (Number(item.valorEmpenhado) || 0));
+    atual.valorExecutado = arredondarMoeda(atual.valorExecutado + (Number(item.valorExecutado) || 0));
+    mapa.set(chave, atual);
+  });
+
+  valoresPorFrente.forEach((valorFrente, chave) => {
+    if (!mapa.has(chave)) {
+      mapa.set(chave, {
+        nome: valorFrente.frente,
+        frente: valorFrente.frente,
+        itens: 0,
+        valorPrevistoProcessos: 0,
+        valorEmExecucao: 0,
+        valorEmpenhado: 0,
+        valorExecutado: 0
+      });
+    }
+  });
+
+  return Array.from(mapa.entries()).map(([chave, resumo]) => {
+    const valorPersistido = valoresPorFrente.get(chave);
+    const valorDisponivel = valorPersistido
+      ? arredondarMoeda(valorPersistido.valorDisponivel)
+      : arredondarMoeda(resumo.valorPrevistoProcessos);
+    return {
+      ...resumo,
+      valorDisponivel,
+      total: valorDisponivel,
+      saldoDisponivel: arredondarMoeda(valorDisponivel - resumo.valorPrevistoProcessos),
+      atualizadoEm: valorPersistido?.atualizadoEm || ""
+    };
+  }).sort((a, b) => b.valorDisponivel - a.valorDisponivel || a.nome.localeCompare(b.nome, "pt-BR"));
+}
+
+function montarResumo(itensOficiais, resumoFrentes = []) {
+  const totalOrcamento = arredondarMoeda(
+    (Array.isArray(resumoFrentes) && resumoFrentes.length)
+      ? resumoFrentes.reduce((total, frente) => total + (Number(frente.valorDisponivel) || 0), 0)
+      : itensOficiais.reduce((total, item) => total + item.valorPrevisto, 0)
+  );
   const valorEmExecucao = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorEmExecucaoConsiderado, 0));
   const valorEmpenhado = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorEmpenhado, 0));
   const valorExecutado = arredondarMoeda(itensOficiais.reduce((total, item) => total + item.valorExecutado, 0));
@@ -1088,7 +1162,16 @@ function montarResumo(itensOficiais) {
     porStatus: agruparResumo(itensOficiais, "status"),
     porNatureza: agruparResumo(itensOficiais, "natureza"),
     porModalidade: agruparResumo(itensOficiais, "modalidade"),
-    porFrente: agruparResumo(itensOficiais, "frente")
+    porFrente: Array.isArray(resumoFrentes) && resumoFrentes.length
+      ? resumoFrentes.map((frente) => ({
+        nome: frente.nome,
+        itens: frente.itens,
+        total: frente.valorDisponivel,
+        valorPrevistoProcessos: frente.valorPrevistoProcessos,
+        valorEmExecucao: frente.valorEmExecucao,
+        saldoDisponivel: frente.saldoDisponivel
+      }))
+      : agruparResumo(itensOficiais, "frente")
   };
 }
 
@@ -1156,6 +1239,11 @@ async function listarOrcamento2026() {
 
   const itensOficiais = itens.filter((item) => item.compoeOrcamento);
   const outrosProcessos = itens.filter((item) => !item.compoeOrcamento);
+  const { rows: frentesPersistidas } = await query(`
+    SELECT frente, valor_disponivel, atualizado_em
+    FROM orcamento_2026_frentes
+  `);
+  const resumoFrentes = montarResumoFrentes(itensOficiais, frentesPersistidas);
 
   return {
     arquivo: "Dados consolidados ONASP",
@@ -1165,7 +1253,8 @@ async function listarOrcamento2026() {
     itensOficiais,
     outrosProcessos,
     statusPermitidos: STATUS_ORCAMENTO,
-    resumo: montarResumo(itensOficiais),
+    resumo: montarResumo(itensOficiais, resumoFrentes),
+    resumoFrentes,
     resumoAparelhamento: calcularResumoAparelhamento(itensOficiais),
     filtros: {
       frentes: valoresUnicos(itensOficiais, "frente"),
@@ -1173,6 +1262,71 @@ async function listarOrcamento2026() {
       naturezas: valoresUnicos(itensOficiais, "natureza"),
       modalidades: valoresUnicos(itensOficiais, "modalidade")
     }
+  };
+}
+
+async function salvarValorFrenteOrcamento2026(payload = {}) {
+  const senha = payload.password ?? payload.senha;
+  if (!validarSenhaEdicao(senha)) {
+    return { success: false, message: "Senha inválida. Alterações não foram salvas." };
+  }
+
+  const frente = limparTexto(payload.frente);
+  if (!frente) {
+    return { success: false, message: "Frente é obrigatória." };
+  }
+
+  const valorBruto = converterNumeroEstrito(payload.valorDisponivel ?? payload.valor_disponivel);
+  if (!Number.isFinite(valorBruto) || valorBruto < 0) {
+    return { success: false, message: "Valor disponível da frente deve ser um número maior ou igual a zero." };
+  }
+
+  await inicializarOrcamento2026();
+  const valorDisponivel = arredondarMoeda(valorBruto);
+  const atualizadoEm = new Date().toISOString();
+  const { rows: atuais } = await query(
+    "SELECT valor_disponivel FROM orcamento_2026_frentes WHERE frente = $1",
+    [frente]
+  );
+  const valorAnterior = atuais[0]?.valor_disponivel ?? "";
+
+  await withTransaction(async (client) => {
+    await client.query(`
+      INSERT INTO orcamento_2026_frentes (frente, valor_disponivel, atualizado_em)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (frente)
+      DO UPDATE SET valor_disponivel = EXCLUDED.valor_disponivel,
+                    atualizado_em = EXCLUDED.atualizado_em
+    `, [frente, valorDisponivel, atualizadoEm]);
+
+    await registrarHistoricoPostgres(client, {
+      pagina: PAGINA,
+      registro: `frente:${frente}`,
+      campo: "valor_disponivel_frente",
+      valorAnterior,
+      valorNovo: valorDisponivel
+    });
+  });
+
+  await registrarLogOrcamentoSeguro(
+    "orcamento_2026_frente_valor_disponivel",
+    "Orçamento 2026: valor disponível da frente atualizado",
+    {
+      frente,
+      valorDisponivel,
+      totalAlteracoes: 1,
+      camposAlterados: ["valor_disponivel_frente"],
+      origem: "interface",
+    }
+  );
+
+  return {
+    success: true,
+    message: "Valor da frente atualizado com sucesso.",
+    frente,
+    valorDisponivel,
+    updatedAt: atualizadoEm,
+    backupPath: null
   };
 }
 
@@ -1842,6 +1996,7 @@ module.exports = {
   alocarSaldoOrcamento2026,
   listarMovimentacoesOrcamento2026,
   salvarOrcamento2026,
+  salvarValorFrenteOrcamento2026,
   listarHistoricoOrcamento2026,
   valorBooleano,
   normalizarDataPostgres

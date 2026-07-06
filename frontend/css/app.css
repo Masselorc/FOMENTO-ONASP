@@ -2189,6 +2189,50 @@ table.dataTable thead td,
     padding: 0.28rem 0.6rem;
 }
 
+.budget-group-metrics .budget-group-metric-positive {
+    border-color: rgba(22, 163, 74, 0.3);
+    color: #166534;
+}
+
+.budget-group-metrics .budget-group-metric-negative {
+    border-color: rgba(220, 38, 38, 0.32);
+    color: #991b1b;
+}
+
+.budget-group-edit-button {
+    border-radius: 999px;
+    min-height: 28px;
+    width: 32px;
+}
+
+.budget-front-modal-summary {
+    background: #f8fafc;
+    border: 1px solid rgba(23, 74, 124, 0.14);
+    border-radius: 8px;
+    display: grid;
+    gap: 0.15rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+}
+
+.budget-front-modal-summary span {
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.budget-front-modal-summary strong {
+    color: var(--color-primary-strong);
+    font-size: 0.98rem;
+    line-height: 1.25;
+}
+
+.budget-front-modal-summary small {
+    color: var(--color-text-muted, #5f6f82);
+    font-size: 0.78rem;
+}
+
 .budget-group-status-summary {
     align-items: center;
     display: inline-flex;

@@ -164,6 +164,12 @@ function garantirTabelaMovimentacoesOrcamento2026() {
       criado_por TEXT,
       ativo INTEGER DEFAULT 1
     );
+
+    CREATE TABLE IF NOT EXISTS orcamento_2026_frentes (
+      frente TEXT PRIMARY KEY,
+      valor_disponivel REAL NOT NULL DEFAULT 0,
+      atualizado_em TEXT
+    );
   `);
 }
 

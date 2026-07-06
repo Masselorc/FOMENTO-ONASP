@@ -7799,3 +7799,16 @@ Logs operacionais gravados:
 - Validacao: atalhos conferidos com `TargetExists=True` e `ScriptExists=True`; script principal acionado; launcher iniciou `backend/server.js` no PID 2864; `GET http://127.0.0.1:8790/index.html` retornou HTTP 200.
 - Preservacoes: sem imprimir, gravar ou versionar credenciais; sem alterar banco de dados, dados publicados ou codigo funcional da aplicacao.
 - Rollback: retargetear os atalhos manualmente para outro executavel PowerShell valido e desfazer a troca de `Start-Process` no script local, se necessario.
+
+## 06/07/2026 - Orçamento 2026: valor disponível por frente
+
+- Branch: `main`.
+- Objetivo: permitir informar o valor disponível de cada frente e exibir, por frente, valor disponível, orçamento previsto pelos processos, valor em execução e saldo disponível.
+- Arquivos alterados: `backend/db/postgres-schema.sql`; `backend/db/init-db.js`; `backend/server.js`; `backend/services/orcamento-2026-service.js`; `backend/services/data-service.js`; `frontend/js/app.js`; `frontend/css/app.css`; `tests/services/auditoria-logs-operacionais.test.js`; `memoria/01_PROJETO_APLICACAO/funcionalidades/orcamento-2026.md`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementacao: criada tabela aditiva `orcamento_2026_frentes`; adicionada rota `POST /api/orcamento-2026/frentes/salvar`; o serviço passa a retornar `resumoFrentes` e usa o total disponível das frentes no resumo geral quando houver valor informado; a UI ganhou botão de edição no cabeçalho de cada frente e modal com senha.
+- Regra aplicada: `saldoDisponivel = valorDisponivelDaFrente - valorPrevistoProcessosDaFrente`; quando uma frente ainda não tem valor informado, o fallback preserva o somatório atual dos processos.
+- Preservacoes: sem edição manual dos JSONs publicados; os arquivos em `frontend/data/publicados/` já estavam modificados antes desta tarefa e foram tratados como alteração pré-existente.
+- Validacoes: `node --check backend/services/orcamento-2026-service.js`; `node --check backend/server.js`; `node --check backend/services/data-service.js`; `node --check frontend/js/app.js`; `node --check tests/services/auditoria-logs-operacionais.test.js`; `node --check tests/services/auditoria-salvamento-sem-publicacao.test.js`; `npm run validar:syntax` (110 arquivos); `node --test tests/services/auditoria-logs-operacionais.test.js tests/services/auditoria-salvamento-sem-publicacao.test.js` (45/45).
+- Validacao ampla: `npm run validar:services` foi executado e teve 1 falha fora do escopo em `tests/services/profor-pad-origem-reconstrucao.test.js` (`0 !== 10619.91`), enquanto os testes de Orçamento/rotas afetadas passaram.
+- Risco: medio - altera contrato de API, schema aditivo e indicadores financeiros por frente; requer validação manual no servidor local com base real antes de commit/publicação.
+- Rollback: reverter os arquivos alterados; se a tabela já tiver sido criada no banco real e for necessário desfazer completamente, avaliar backup antes de remover `orcamento_2026_frentes`.

@@ -47,6 +47,10 @@ const rotasOrcamentoPublicadas = [
   {
     rota: "/api/orcamento-2026/saldos/alocar",
     service: "alocarSaldoOrcamento2026"
+  },
+  {
+    rota: "/api/orcamento-2026/frentes/salvar",
+    service: "salvarValorFrenteOrcamento2026"
   }
 ];
 

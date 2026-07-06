@@ -294,8 +294,13 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
     if (falhaLog) throw new Error("falha simulada de log");
     return { id: 1 };
   };
-  postgresClient.query = async (sql) => {
+  postgresClient.query = async (sql, params = []) => {
     if (/ALTER TABLE orcamento_2026 ADD COLUMN IF NOT EXISTS pena_justa/i.test(sql)) return { rows: [] };
+    if (/CREATE TABLE IF NOT EXISTS orcamento_2026_frentes/i.test(sql)) return { rows: [] };
+    if (/SELECT frente, valor_disponivel, atualizado_em\s+FROM orcamento_2026_frentes/i.test(sql)) return { rows: [] };
+    if (/SELECT valor_disponivel FROM orcamento_2026_frentes WHERE frente = \$1/i.test(sql)) {
+      return { rows: params[0] === "Aparelhamento" ? [{ valor_disponivel: 1000 }] : [] };
+    }
     if (/SELECT \* FROM orcamento_2026_movimentacoes WHERE ativo = true/i.test(sql)) return { rows: [] };
     if (/SELECT \* FROM orcamento_2026/i.test(sql)) return { rows: linhas };
     if (/SELECT id, status, processo_autuado/i.test(sql)) return { rows: [] };
@@ -316,6 +321,10 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
         return { rows: linhas.filter((linha) => String(linha.id) === id) };
       }
       if (/INSERT INTO orcamento_2026_movimentacoes/i.test(sql)) return { rows: [{ id: 77 }] };
+      if (/INSERT INTO orcamento_2026_frentes/i.test(sql)) {
+        updates.push({ sql, params });
+        return { rows: [] };
+      }
       if (/INSERT INTO orcamento_2026/i.test(sql) || /UPDATE orcamento_2026/i.test(sql)) {
         updates.push({ sql, params });
         return { rows: [] };
@@ -392,6 +401,26 @@ test("salvarOrcamento2026 registra log de edicao resumido", async () => {
   assert.deepEqual(log.payload.idsAfetados, ["ITEM-1"]);
   assert.deepEqual(log.payload.camposAlterados, ["observacao"]);
   assert.ok(!("password" in log.payload));
+});
+
+test("salvarValorFrenteOrcamento2026 registra historico e log operacional", async () => {
+  const { service, historicos, logs, updates } = instalarMockOrcamento();
+
+  const resultado = await service.salvarValorFrenteOrcamento2026({
+    password: "senha-correta-testes",
+    frente: "Aparelhamento",
+    valorDisponivel: 1500,
+  });
+
+  assert.equal(resultado.success, true);
+  const updateFrente = updates.find((update) => /INSERT INTO orcamento_2026_frentes/.test(update.sql));
+  const historicoFrente = historicos.find((historico) => historico.campo === "valor_disponivel_frente");
+  assert.ok(updateFrente);
+  assert.equal(historicoFrente.registro, "frente:Aparelhamento");
+  assert.equal(historicoFrente.campo, "valor_disponivel_frente");
+  assert.equal(logs.length, 1);
+  assert.equal(logs[0].tipoEvento, "orcamento_2026_frente_valor_disponivel");
+  assert.deepEqual(logs[0].payload.camposAlterados, ["valor_disponivel_frente"]);
 });
 
 test("salvarOrcamento2026 registra vinculo Pena Justa", async () => {
