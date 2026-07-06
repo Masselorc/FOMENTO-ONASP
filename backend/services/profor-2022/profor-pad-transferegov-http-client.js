@@ -63,6 +63,40 @@ function headersBase(headers = {}) {
   };
 }
 
+function sanitizarUrlDiagnostico(url) {
+  try {
+    const parsed = new URL(url);
+    for (const chave of Array.from(parsed.searchParams.keys())) {
+      if (/^(usr|user|usuario|pwd|password|senha|token|authorization|cookie)$/i.test(chave)) {
+        parsed.searchParams.set(chave, "[omitido]");
+      }
+    }
+    return parsed.href;
+  } catch {
+    return String(url || "");
+  }
+}
+
+function montarErroFetchTransferegov(erro, contexto = {}) {
+  const etapa = contexto.etapa || "fetch";
+  const metodo = contexto.metodo || "GET";
+  const url = sanitizarUrlDiagnostico(contexto.url);
+  const indiceRedirect = Number.isInteger(contexto.indiceRedirect)
+    ? ` redirect=${contexto.indiceRedirect}`
+    : "";
+  const nomeErro = erro?.name || "Error";
+  const mensagemErro = erro?.message || String(erro);
+  const codigoCause = erro?.cause?.code ? ` cause=${erro.cause.code}` : "";
+  const mensagemCause = erro?.cause?.message ? ` causeMessage=${erro.cause.message}` : "";
+  const detalheUrl = url ? ` ${url}` : "";
+  const falha = new Error(
+    `Falha HTTP PAD Transferegov na etapa ${etapa} ${metodo}${detalheUrl}: ${nomeErro} ${mensagemErro}${codigoCause}${mensagemCause}${indiceRedirect}`
+  );
+  falha.codigo = erro?.codigo || "ERRO_EXTRACAO_PAD_TRANSFEREGOV";
+  falha.cause = erro;
+  return falha;
+}
+
 function decodificarHtml(valor) {
   return String(valor || "")
     .replace(/&amp;/gi, "&")
@@ -120,12 +154,22 @@ async function fetchComSessao(url, opcoes = {}, contexto = {}) {
     if (cookie) headers.Cookie = cookie;
     if (referer) headers.Referer = referer;
 
-    const resposta = await fetch(atual, {
-      method: metodo,
-      headers,
-      body,
-      redirect: "manual",
-    });
+    let resposta;
+    try {
+      resposta = await fetch(atual, {
+        method: metodo,
+        headers,
+        body,
+        redirect: "manual",
+      });
+    } catch (erro) {
+      throw montarErroFetchTransferegov(erro, {
+        etapa: opcoes.etapa || "fetch",
+        url: atual,
+        metodo,
+        indiceRedirect: i,
+      });
+    }
     jar.absorverSetCookie(resposta.headers, atual);
 
     if ([301, 302, 303, 307, 308].includes(resposta.status)) {
@@ -232,5 +276,6 @@ module.exports = {
   extrairViewState,
   fetchComSessao,
   montarPayloadRelatorioPad,
+  sanitizarUrlDiagnostico,
   obterHtmlRelatorioPadTransferegov,
 };
