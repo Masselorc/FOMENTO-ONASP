@@ -68,6 +68,31 @@ async function obterMapaUfs() {
   }
 }
 
+function pontuarDetalheTecnico(texto) {
+  const detalhe = String(texto || "").trim();
+  if (!detalhe) return "Sem detalhe técnico.";
+  return /[.!?]$/.test(detalhe) ? detalhe : `${detalhe}.`;
+}
+
+function formatarPrimeiroBloqueioTecnico(cache) {
+  const convenios = Array.isArray(cache?.convenios) ? cache.convenios : [];
+  const convenio = convenios.find((item) => (
+    item?.aptoParaImportacaoTecnica === false
+    || (Array.isArray(item?.bloqueiosTecnicos) && item.bloqueiosTecnicos.length > 0)
+  ));
+  const bloqueio = Array.isArray(convenio?.bloqueiosTecnicos)
+    ? convenio.bloqueiosTecnicos[0]
+    : null;
+
+  if (!convenio || !bloqueio) return null;
+
+  const numeroConvenio = convenio.numeroConvenio || "convênio";
+  const uf = convenio.uf && convenio.uf !== "UF" ? `/${convenio.uf}` : "";
+  const tipo = bloqueio.tipo || "bloqueio_tecnico";
+  const detalhe = pontuarDetalheTecnico(bloqueio.detalhe || bloqueio.mensagem);
+  return `${numeroConvenio}${uf} — ${tipo}: ${detalhe}`;
+}
+
 /**
  * Orquestra: atualizar cache Transferegov (convênio por convênio) → salvar →
  * validar → recarregar visão operacional. Emite progresso via callback.
@@ -229,9 +254,13 @@ async function atualizarPadsTransferegovEOperacional(opcoes = {}) {
   const validacao = validarCachePadTransferegov(cache);
 
   if (!validacao.valido || !cacheTecnicamenteApto) {
-    const motivo = !validacao.valido
+    const motivoBase = !validacao.valido
       ? `Cache inválido: ${validacao.erro}`
       : "Cache não está tecnicamente apto (extração com falhas) — gravação abortada.";
+    const detalheTecnico = formatarPrimeiroBloqueioTecnico(cache);
+    const motivo = detalheTecnico
+      ? `${motivoBase} Detalhe técnico: ${detalheTecnico}`
+      : motivoBase;
     emitir({
       etapa: "cache_invalido", fase: FASES.ERRO,
       mensagem: motivo,
