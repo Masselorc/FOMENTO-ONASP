@@ -385,6 +385,21 @@ test("Tela de recarga PAD continua vinculada a status-sistema e recarrega a Home
   assert.match(appCode, /await garantirDadosBaseAplicacao\(\);/i);
 });
 
+test("Atualizacao Transferegov publica dados e recarrega cache da aplicacao na UI", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const appPath = path.join(repoRoot, "frontend/js/app.js");
+  const appCode = fs.readFileSync(appPath, "utf8");
+
+  const blocoInicio = appCode.indexOf("async function executarAtualizacaoPadsTransferegovUI");
+  assert.notEqual(blocoInicio, -1, "Fluxo de atualização Transferegov deve existir");
+  const bloco = appCode.slice(blocoInicio, blocoInicio + 5000);
+
+  assert.match(appCode, /publicando_dados_estaticos/);
+  assert.match(bloco, /catalogoAplicacao\s*=\s*\{\}/);
+  assert.match(bloco, /dadosFaf\s*=\s*\[\]/);
+  assert.match(bloco, /await garantirDadosBaseAplicacao\(\);/);
+});
+
 test("UI da recarga PAD nao fala mais em substituir os 15 Excel nem em fluxo Excel antigo", () => {
   const repoRoot = path.resolve(__dirname, "../..");
   const appPath = path.join(repoRoot, "frontend/js/app.js");

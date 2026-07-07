@@ -179,6 +179,7 @@ test("Atualização PAD/Transferegov registra início e sucesso no job com mock"
   const logs = [];
   const gerenciador = new GerenciadorAtualizacaoTransferegov({
     registrarLogOperacional: async (log) => { logs.push(log); return { id: logs.length }; },
+    publicarDadosEstaticos: async () => ({ success: true, publicadoEm: "2026-07-07T12:00:00.000Z" }),
   });
   const resumo = {
     totalConveniosAtualizados: 2,
@@ -199,6 +200,8 @@ test("Atualização PAD/Transferegov registra início e sucesso no job com mock"
   ]);
   assert.equal(logs[1].payload.totalItensExtraidos, 10);
   assert.equal(logs[1].payload.cacheSalvo, true);
+  assert.equal(logs[1].payload.publicacaoEstatica, true);
+  assert.equal(logs[1].payload.publicadoEm, "2026-07-07T12:00:00.000Z");
 });
 
 test("Atualização PAD/Transferegov registra erro no job com mock", async () => {

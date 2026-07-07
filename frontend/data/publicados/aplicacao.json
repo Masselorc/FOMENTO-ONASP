@@ -1831,8 +1831,6 @@
     }
   ],
   "dadosProfor2022": {
-    "origemDados": "reconstrucao-pad",
-    "geradoEm": "2026-07-06T14:16:00.271Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -1841,24 +1839,24 @@
       "repasseDesembolsado": 10217254.54,
       "rendimentoAprovado": 174346.59,
       "saldoRendimentosAtual": 1262894.45,
-      "saldoDisponivelOuvidoria": 1325724.41,
-      "saldoEconomicidadeCapital": 1099504.38,
+      "saldoDisponivelOuvidoria": 1322184.44,
+      "saldoEconomicidadeCapital": 1082674.58,
       "saldoEconomicidadeCusteio": 517610.18,
-      "saldoPotencialDestinavelOuvidoria": 2880009.01,
+      "saldoPotencialDestinavelOuvidoria": 2863179.21,
       "contrapartidaIntegralizada": 272414.11,
       "valorExecutadoGeral": 3262182.36,
       "previstoOuvidoria": 1721047.05,
       "previstoCorregedoria": 2580604.57,
       "previstoEscolaPenal": 5086311.22,
       "valorPrevistoGeral": 10664015.24,
-      "valorExecutadoOuvidoria": 476696.53,
-      "valorExecutadoCorregedoria": 571129.36,
+      "valorExecutadoOuvidoria": 487316.44,
+      "valorExecutadoCorregedoria": 560509.45,
       "valorExecutadoEscolaPenal": 2213506.47,
-      "saldoResidualCapital": 4667423.19,
-      "saldoResidualCusteio": 2734409.69,
+      "saldoResidualCapital": 4670873.19,
+      "saldoResidualCusteio": 2730959.69,
       "execucaoGeralPercentual": 30.59,
-      "execucaoOuvidoriaPercentual": 27.7,
-      "execucaoCorregedoriaPercentual": 22.13,
+      "execucaoOuvidoriaPercentual": 28.32,
+      "execucaoCorregedoriaPercentual": 21.72,
       "execucaoEscolaPenalPercentual": 43.52
     },
     "convenios": [
@@ -4426,7 +4424,7 @@
         "repasseDesembolsado": 259498.63,
         "rendimentoAprovado": 21868,
         "saldoRendimentosAtual": 21812.63,
-        "saldoDisponivelOuvidoria": 59674.73,
+        "saldoDisponivelOuvidoria": 56134.76,
         "saldoEconomicidadeCapital": 2421,
         "saldoEconomicidadeCusteio": 13594.58,
         "saldoPotencialDestinavelOuvidoria": 37828.21,
@@ -4438,12 +4436,12 @@
         "previstoCorregedoria": 105826.66,
         "previstoEscolaPenal": 104267.81,
         "valorPrevistoGeral": 287128.78,
-        "valorExecutadoOuvidoria": 1344,
-        "valorExecutadoCorregedoria": 33831.91,
+        "valorExecutadoOuvidoria": 11963.91,
+        "valorExecutadoCorregedoria": 23212,
         "valorExecutadoEscolaPenal": 3818,
         "execucaoGeralPercentual": 13.58,
-        "execucaoOuvidoriaPercentual": 2.2,
-        "execucaoCorregedoriaPercentual": 31.97,
+        "execucaoOuvidoriaPercentual": 19.61,
+        "execucaoCorregedoriaPercentual": 21.93,
         "execucaoEscolaPenalPercentual": 3.66,
         "valorRelativoOuvidoria": null,
         "totalItensPlano": 55,
@@ -5036,10 +5034,10 @@
             "quantidade": 3,
             "valorUnitario": 1179.99,
             "valorPrevisto": 3539.97,
-            "valorExecutado": 0,
-            "saldo": 3539.97,
+            "valorExecutado": 10619.91,
+            "saldo": -7079.94,
             "saldoEconomicidade": 0,
-            "percentualExecucao": 0
+            "percentualExecucao": 300
           },
           {
             "uf": "TO",
@@ -5132,10 +5130,10 @@
             "quantidade": 6,
             "valorUnitario": 1179.99,
             "valorPrevisto": 7079.94,
-            "valorExecutado": 10619.91,
-            "saldo": -3539.97,
+            "valorExecutado": 0,
+            "saldo": 7079.94,
             "saldoEconomicidade": 0,
-            "percentualExecucao": 150
+            "percentualExecucao": 0
           },
           {
             "uf": "TO",
@@ -5337,6 +5335,7 @@
           "Plano de aplicação filtrado"
         ],
         "avisos": [
+          "Item da OUVIDORIA com sobre-execucao; saldo disponivel considera zero no item.",
           "Item com sobre-execucao para economicidade; valor negativo ajustado para zero."
         ],
         "origemDados": "reconstrucao-pad"
@@ -7600,11 +7599,11 @@
         "rendimentoAprovado": 101341.43,
         "saldoRendimentosAtual": 169123.87,
         "saldoDisponivelOuvidoria": 323838.87,
-        "saldoEconomicidadeCapital": 162350.44,
+        "saldoEconomicidadeCapital": 145520.64,
         "saldoEconomicidadeCusteio": 33049.27,
-        "saldoPotencialDestinavelOuvidoria": 364523.58,
-        "saldoResidualCapital": 1337381.69,
-        "saldoResidualCusteio": 82444.18,
+        "saldoPotencialDestinavelOuvidoria": 347693.78,
+        "saldoResidualCapital": 1340831.69,
+        "saldoResidualCusteio": 78994.18,
         "contrapartidaIntegralizada": 66621.71,
         "valorExecutadoGeral": 163193.05,
         "previstoOuvidoria": 323838.87,
@@ -7761,10 +7760,10 @@
             "quantidade": 10,
             "valorUnitario": 94.666,
             "valorPrevisto": 946.66,
-            "valorExecutado": 0,
-            "saldo": 946.66,
+            "valorExecutado": 3450,
+            "saldo": -2503.34,
             "saldoEconomicidade": 0,
-            "percentualExecucao": 0
+            "percentualExecucao": 364.44
           },
           {
             "uf": "RJ",
@@ -8177,10 +8176,10 @@
             "quantidade": 30,
             "valorUnitario": 81.88,
             "valorPrevisto": 2456.4,
-            "valorExecutado": 0,
-            "saldo": 2456.4,
+            "valorExecutado": 5238.2,
+            "saldo": -2781.8,
             "saldoEconomicidade": 0,
-            "percentualExecucao": 0
+            "percentualExecucao": 213.25
           },
           {
             "uf": "RJ",
@@ -8257,10 +8256,10 @@
             "quantidade": 4,
             "valorUnitario": 5737.9125,
             "valorPrevisto": 22951.65,
-            "valorExecutado": 23130,
-            "saldo": -178.35,
+            "valorExecutado": 0,
+            "saldo": 22951.65,
             "saldoEconomicidade": 0,
-            "percentualExecucao": 100.78
+            "percentualExecucao": 0
           },
           {
             "uf": "RJ",
@@ -8449,10 +8448,10 @@
             "quantidade": 1,
             "valorUnitario": 101341.43,
             "valorPrevisto": 101341.43,
-            "valorExecutado": 23468.3,
-            "saldo": 77873.13,
-            "saldoEconomicidade": 77873.13,
-            "percentualExecucao": 23.16
+            "valorExecutado": 40298.1,
+            "saldo": 61043.33,
+            "saldoEconomicidade": 61043.33,
+            "percentualExecucao": 39.76
           },
           {
             "uf": "RJ",
@@ -8561,10 +8560,10 @@
             "quantidade": 10,
             "valorUnitario": 177.547,
             "valorPrevisto": 1775.47,
-            "valorExecutado": 2388,
-            "saldo": -612.53,
+            "valorExecutado": 0,
+            "saldo": 1775.47,
             "saldoEconomicidade": 0,
-            "percentualExecucao": 134.5
+            "percentualExecucao": 0
           }
         ],
         "fontesUtilizadas": [
@@ -11717,12 +11716,11 @@
       ]
     },
     "avisos": [],
-    "pendenciasConhecidas": [],
     "diagnostico": {
       "totalConvenios": 15,
       "totalAvisos": 0,
       "reconstrucaoPad": {
-        "caminho": "C:\\Users\\marcelo.cortez\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\relatorios\\profor-2022-pad-recarga-operacional-v2.json",
+        "caminho": "C:\\Users\\marce\\OneDrive - MINISTERIO DA JUSTIÇA\\1. SENAPPEN\\2. OUVIDORIA\\GITHUB\\FOMENTO-ONASP\\FOMENTO-ONASP\\backend\\data\\relatorios\\profor-2022-pad-recarga-operacional-v2.json",
         "geradoEm": null,
         "modo": null,
         "totalLinhas": 568,
@@ -11730,8 +11728,9 @@
         "origemReconstrucao": "relatorios-pad-rateados"
       }
     },
+    "origemDados": "reconstrucao-pad",
     "origemDadosEfetiva": "reconstrucao-pad",
-    "fallbackUsado": false,
+    "geradoEm": "2026-07-07T13:48:34.721Z",
     "ultimaAtualizacaoDados": {
       "dataHora": "2026-07-06T11:52:02.426Z",
       "fonte": "Transferegov/rendimentos",
@@ -11739,10 +11738,12 @@
         "detru": "2026-07-06T11:50:06.840Z",
         "rendimentos": "2026-07-06T11:52:02.426Z"
       }
-    }
+    },
+    "pendenciasConhecidas": [],
+    "fallbackUsado": false
   },
   "metadadosPublicacao": {
-    "publicadoEm": "2026-07-06T14:16:00.193Z",
+    "publicadoEm": "2026-07-07T13:48:35.089Z",
     "fonteDadosBase": "dados consolidados da Home local",
     "origemProfor2022": "reconstrucao-pad"
   }

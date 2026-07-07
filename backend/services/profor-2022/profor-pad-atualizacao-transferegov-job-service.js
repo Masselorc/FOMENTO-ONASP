@@ -6,14 +6,19 @@ const {
 const {
   registrarLogOperacional,
 } = require("../logs-operacionais-service");
+const {
+  publicarDadosEstaticos,
+} = require("../static-publication-service");
 
 const MAX_EVENTOS_RETIDOS = 200;
+const FASE_PUBLICACAO_ESTATICA = "publicando_dados_estaticos";
 
 class GerenciadorAtualizacaoTransferegov {
   constructor(dependencias = {}) {
     this.atualPorChave = new Map(); // chave -> jobId em execução
     this.jobs = new Map();          // jobId -> job
     this.registrarLogOperacional = dependencias.registrarLogOperacional || registrarLogOperacional;
+    this.publicarDadosEstaticos = dependencias.publicarDadosEstaticos || publicarDadosEstaticos;
   }
 
   novoJobId() {
@@ -57,6 +62,7 @@ class GerenciadorAtualizacaoTransferegov {
       mensagemAtual: "Iniciando atualização dos PADs no Transferegov.",
       eventos: [],
       resultadoRecarga: null,
+      resultadoPublicacao: null,
       resumo: null,
       erro: null,
     };
@@ -84,6 +90,11 @@ class GerenciadorAtualizacaoTransferegov {
         onProgress: (evento) => this._registrarEvento(jobId, evento),
         ...(opcoes.opcoesOrquestrador || {}),
       }))
+      .then(async (resumo) => {
+        this._registrarResumoParcial(jobId, resumo);
+        const resultadoPublicacao = await this._publicarDadosEstaticos(jobId);
+        return { ...resumo, resultadoPublicacao };
+      })
       .then((resumo) => this._concluir(jobId, resumo))
       .catch((erro) => this._falhar(jobId, erro));
 
@@ -119,6 +130,31 @@ class GerenciadorAtualizacaoTransferegov {
     }
   }
 
+  _registrarResumoParcial(jobId, resumo) {
+    const job = this.jobs.get(jobId);
+    if (!job) return;
+    job.resumo = resumo || null;
+    job.resultadoRecarga = (resumo && resumo.resultadoRecarga) || null;
+  }
+
+  async _publicarDadosEstaticos(jobId) {
+    this._registrarEvento(jobId, {
+      etapa: "publicacao_estatica_inicio",
+      fase: FASE_PUBLICACAO_ESTATICA,
+      mensagem: "Publicando dados estáticos atualizados para a aplicação.",
+    });
+
+    const resultadoPublicacao = await this.publicarDadosEstaticos();
+
+    this._registrarEvento(jobId, {
+      etapa: "publicacao_estatica_concluida",
+      fase: FASE_PUBLICACAO_ESTATICA,
+      status: "sucesso",
+      mensagem: "Dados estáticos publicados a partir da recarga PAD/Transferegov.",
+    });
+    return resultadoPublicacao;
+  }
+
   _concluir(jobId, resumo) {
     const job = this.jobs.get(jobId);
     if (!job) return;
@@ -128,6 +164,7 @@ class GerenciadorAtualizacaoTransferegov {
     job.atualizadoEm = job.concluidoEm;
     job.resumo = resumo || null;
     job.resultadoRecarga = (resumo && resumo.resultadoRecarga) || null;
+    job.resultadoPublicacao = (resumo && resumo.resultadoPublicacao) || null;
     this._registrarLogSeguro({
       modulo: "profor-2022",
       tipoEvento: "profor_pad_transferegov_atualizacao_sucesso",
@@ -186,6 +223,8 @@ class GerenciadorAtualizacaoTransferegov {
       totalItensExtraidos: Number(resumo?.totalItensExtraidos || 0),
       cacheSalvo: resumo?.cacheSalvo === true,
       hashGlobal: resumo?.hashGlobal || null,
+      publicacaoEstatica: resumo?.resultadoPublicacao?.success === true,
+      publicadoEm: resumo?.resultadoPublicacao?.publicadoEm || null,
       duracaoMs: this._calcularDuracaoMs(job.criadoEm, job.concluidoEm || job.atualizadoEm),
       erro: extras.erro || null,
     };
@@ -215,6 +254,7 @@ class GerenciadorAtualizacaoTransferegov {
       concluidoEm: job.concluidoEm,
       eventos: job.eventos,
       resultadoRecarga: job.resultadoRecarga,
+      resultadoPublicacao: job.resultadoPublicacao,
       resumo: job.resumo,
       erro: job.erro,
     };
@@ -227,4 +267,5 @@ const gerenciadorPadrao = new GerenciadorAtualizacaoTransferegov();
 module.exports = {
   GerenciadorAtualizacaoTransferegov,
   gerenciadorPadrao,
+  FASE_PUBLICACAO_ESTATICA,
 };

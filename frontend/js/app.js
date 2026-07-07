@@ -4713,6 +4713,7 @@ async function carregarLogoParaPDF() {
                 case 'salvando_cache': return 'Salvando cache local validado';
                 case 'validando_cache': return 'Validando cache local';
                 case 'recarregando_visao_local': return 'Reconstruindo visão operacional local';
+                case 'publicando_dados_estaticos': return 'Publicando dados da aplicação';
                 case 'concluido': return 'Concluído';
                 case 'erro': return 'Erro';
                 default: return fase || '-';
@@ -4745,6 +4746,7 @@ async function carregarLogoParaPDF() {
                 if (payload.status === 'concluido') pct = 100;
                 else if (payload.fase === 'salvando_cache' || payload.fase === 'validando_cache') pct = total > 0 ? 92 : 90;
                 else if (payload.fase === 'recarregando_visao_local') pct = 97;
+                else if (payload.fase === 'publicando_dados_estaticos') pct = 99;
                 else if (total > 0) pct = Math.min(90, Math.round((indice / total) * 90));
                 barra.style.width = `${pct}%`;
                 barra.setAttribute('aria-valuenow', String(pct));
@@ -4841,7 +4843,12 @@ async function carregarLogoParaPDF() {
                     `;
                 }
 
+                catalogoAplicacao = {};
+                dadosFaf = [];
+                configurarEstadoDadosValidados(false);
+
                 try {
+                    await garantirDadosBaseAplicacao();
                     await carregarListaRevisao();
                 } catch (errorAtualizacaoUi) {
                     console.warn('Falha ao atualizar interface após atualização PADs:', errorAtualizacaoUi);

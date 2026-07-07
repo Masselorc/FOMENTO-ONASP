@@ -81,6 +81,13 @@ function colaboradoresFake({
   } };
 }
 
+function criarGerenciadorTeste(dependencias = {}) {
+  return new GerenciadorAtualizacaoTransferegov({
+    publicarDadosEstaticos: async () => ({ success: true, publicadoEm: "2026-07-07T00:00:00.000Z" }),
+    ...dependencias,
+  });
+}
+
 test("orquestrador chama extracao para cada convenio e salva cache validado antes da recarga", async () => {
   const repoRoot = criarRepoRootTemporario();
   const { chamadas, colaboradores } = colaboradoresFake({ convenios: ["900001", "900002", "900003"] });
@@ -172,7 +179,7 @@ test("orquestrador nao chama DETRU/rendimentos/publicacao", async () => {
 test("gerenciador inicia job e retorna jobId", async () => {
   const repoRoot = criarRepoRootTemporario();
   const { colaboradores } = colaboradoresFake({ convenios: ["900001"] });
-  const gerenciador = new GerenciadorAtualizacaoTransferegov();
+  const gerenciador = criarGerenciadorTeste();
   const orquestrador = (opcoes) => atualizarPadsTransferegovEOperacional({
     ...opcoes, ...colaboradores,
   });
@@ -187,6 +194,30 @@ test("gerenciador inicia job e retorna jobId", async () => {
   assert.ok(final.resumo);
   assert.ok(final.resultadoRecarga);
   assert.equal(final.resultadoRecarga.origem, "cache_transferegov");
+  assert.equal(final.resultadoPublicacao.success, true);
+});
+
+test("gerenciador publica dados estaticos depois da recarga do job completo", async () => {
+  const repoRoot = criarRepoRootTemporario();
+  const { colaboradores } = colaboradoresFake({ convenios: ["900001"] });
+  const chamadasPublicacao = [];
+  const gerenciador = criarGerenciadorTeste({
+    publicarDadosEstaticos: async () => {
+      chamadasPublicacao.push(new Date().toISOString());
+      return { success: true, publicadoEm: "2026-07-07T12:00:00.000Z" };
+    },
+  });
+  const orquestrador = (opcoes) => atualizarPadsTransferegovEOperacional({
+    ...opcoes, ...colaboradores,
+  });
+  const { jobId } = gerenciador.iniciar({ repoRoot, orquestrador });
+  await new Promise((r) => setTimeout(r, 50));
+
+  const final = gerenciador.publico(gerenciador.obter(jobId));
+  assert.equal(final.status, "concluido");
+  assert.equal(chamadasPublicacao.length, 1);
+  assert.equal(final.resultadoPublicacao.publicadoEm, "2026-07-07T12:00:00.000Z");
+  assert.ok(final.eventos.some((evento) => evento.fase === "publicando_dados_estaticos"));
 });
 
 test("gerenciador bloqueia execucao concorrente (mesma chave)", async () => {
@@ -197,7 +228,7 @@ test("gerenciador bloqueia execucao concorrente (mesma chave)", async () => {
   const promessaLenta = new Promise((resolve) => { resolverLento = resolve; });
   const orquestrador = () => promessaLenta;
 
-  const gerenciador = new GerenciadorAtualizacaoTransferegov();
+  const gerenciador = criarGerenciadorTeste();
   const primeiro = gerenciador.iniciar({ repoRoot, orquestrador });
   assert.equal(primeiro.jaEstavaEmAndamento, false);
 
@@ -216,7 +247,7 @@ test("gerenciador bloqueia execucao concorrente (mesma chave)", async () => {
 
 test("gerenciador registra erro quando orquestrador falha", async () => {
   const orquestrador = () => Promise.reject(new Error("boom Transferegov"));
-  const gerenciador = new GerenciadorAtualizacaoTransferegov();
+  const gerenciador = criarGerenciadorTeste();
   const { jobId } = gerenciador.iniciar({ orquestrador });
   await new Promise((r) => setTimeout(r, 30));
   const final = gerenciador.publico(gerenciador.obter(jobId));
@@ -228,7 +259,7 @@ test("gerenciador acumula eventos com fase, indice, total, convenio, status", as
   const repoRoot = criarRepoRootTemporario();
   const { colaboradores } = colaboradoresFake({ convenios: ["A", "B", "C"] });
   const orquestrador = (opcoes) => atualizarPadsTransferegovEOperacional({ ...opcoes, ...colaboradores });
-  const gerenciador = new GerenciadorAtualizacaoTransferegov();
+  const gerenciador = criarGerenciadorTeste();
   const { jobId } = gerenciador.iniciar({ repoRoot, orquestrador });
   await new Promise((r) => setTimeout(r, 50));
   const final = gerenciador.publico(gerenciador.obter(jobId));

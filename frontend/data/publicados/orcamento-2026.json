@@ -2326,30 +2326,112 @@
       {
         "nome": "Aparelhamento de Ouvidorias Estaduais",
         "itens": 6,
-        "total": 5623875
+        "total": 5623875,
+        "valorPrevistoProcessos": 5623875,
+        "valorEmExecucao": 5623875,
+        "saldoDisponivel": 0
       },
       {
         "nome": "Pessoal",
         "itens": 1,
-        "total": 766125
+        "total": 766125,
+        "valorPrevistoProcessos": 766125,
+        "valorEmExecucao": 0,
+        "saldoDisponivel": 0
       },
       {
         "nome": "Campanha Nacional de Fortalecimento das Ouvidorias de Serviços Penais",
         "itens": 1,
-        "total": 300000
+        "total": 300000,
+        "valorPrevistoProcessos": 300000,
+        "valorEmExecucao": 285584,
+        "saldoDisponivel": 0
       },
       {
         "nome": "Capacitação para os Estados",
         "itens": 1,
-        "total": 250000
+        "total": 250000,
+        "valorPrevistoProcessos": 250000,
+        "valorEmExecucao": 250000,
+        "saldoDisponivel": 0
       },
       {
         "nome": "Cursos ONASP",
         "itens": 1,
-        "total": 60000
+        "total": 60000,
+        "valorPrevistoProcessos": 60000,
+        "valorEmExecucao": 0,
+        "saldoDisponivel": 0
       }
     ]
   },
+  "resumoFrentes": [
+    {
+      "nome": "Aparelhamento de Ouvidorias Estaduais",
+      "frente": "Aparelhamento de Ouvidorias Estaduais",
+      "itens": 6,
+      "valorPrevistoProcessos": 5623875,
+      "valorEmExecucao": 5623875,
+      "valorEmpenhado": 0,
+      "valorExecutado": 0,
+      "valorDisponivel": 5623875,
+      "total": 5623875,
+      "saldoDisponivel": 0,
+      "atualizadoEm": ""
+    },
+    {
+      "nome": "Pessoal",
+      "frente": "Pessoal",
+      "itens": 1,
+      "valorPrevistoProcessos": 766125,
+      "valorEmExecucao": 0,
+      "valorEmpenhado": 0,
+      "valorExecutado": 0,
+      "valorDisponivel": 766125,
+      "total": 766125,
+      "saldoDisponivel": 0,
+      "atualizadoEm": ""
+    },
+    {
+      "nome": "Campanha Nacional de Fortalecimento das Ouvidorias de Serviços Penais",
+      "frente": "Campanha Nacional de Fortalecimento das Ouvidorias de Serviços Penais",
+      "itens": 1,
+      "valorPrevistoProcessos": 300000,
+      "valorEmExecucao": 285584,
+      "valorEmpenhado": 14416,
+      "valorExecutado": 14416,
+      "valorDisponivel": 300000,
+      "total": 300000,
+      "saldoDisponivel": 0,
+      "atualizadoEm": ""
+    },
+    {
+      "nome": "Capacitação para os Estados",
+      "frente": "Capacitação para os Estados",
+      "itens": 1,
+      "valorPrevistoProcessos": 250000,
+      "valorEmExecucao": 250000,
+      "valorEmpenhado": 0,
+      "valorExecutado": 0,
+      "valorDisponivel": 250000,
+      "total": 250000,
+      "saldoDisponivel": 0,
+      "atualizadoEm": ""
+    },
+    {
+      "nome": "Cursos ONASP",
+      "frente": "Cursos ONASP",
+      "itens": 1,
+      "valorPrevistoProcessos": 60000,
+      "valorEmExecucao": 0,
+      "valorEmpenhado": 0,
+      "valorExecutado": 0,
+      "valorDisponivel": 60000,
+      "total": 60000,
+      "saldoDisponivel": 0,
+      "atualizadoEm": ""
+    }
+  ],
   "resumoAparelhamento": {
     "previstoAparelhamento": 5623875,
     "emExecucaoAparelhamento": 5623875,
