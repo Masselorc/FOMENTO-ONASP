@@ -427,7 +427,7 @@ test("salvarValorFrenteOrcamento2026 registra historico e log operacional", asyn
   assert.deepEqual(logs[0].payload.camposAlterados, ["valor_disponivel_frente"]);
 });
 
-test("listarOrcamento2026 aplica ajuste operacional do modelo local e remove Pessoal", async () => {
+test("listarOrcamento2026 aplica ajustes operacionais do orçamento", async () => {
   const linhas = [
     linhaOrcamento,
     {
@@ -452,6 +452,34 @@ test("listarOrcamento2026 aplica ajuste operacional do modelo local e remove Pes
       classificacao_gerencial: "NAO_APARELHAMENTO",
       status: "PLANEJADO",
     },
+    {
+      ...linhaOrcamento,
+      id: "CURS-001",
+      categoria: "Cursos ONASP",
+      descricao: "Inscrições em cursos para servidores da ONASP",
+      valor_previsto: 60000,
+      valor_unitario: 5000,
+      classificacao_gerencial: "NAO_APARELHAMENTO",
+      status: "PLANEJADO",
+    },
+    {
+      ...linhaOrcamento,
+      id: "CURS-001-F01",
+      categoria: "Cursos ONASP",
+      descricao: "Congresso Brasileiro de Ouvidores",
+      acao_orcamentaria: "Cursos",
+      plano_orcamentario: "ONASP",
+      valor_previsto: 4600,
+      valor_unitario: 4600,
+      valor_estimado_pesquisa_preco: 4600,
+      compoe_orcamento: false,
+      processo_pai_id: "CURS-001",
+      tipo_processo: "VINCULADO",
+      origem_recurso_id: "CURS-001",
+      valor_alocado_origem: 4600,
+      classificacao_gerencial: "NAO_APARELHAMENTO",
+      status: "EM EXECUÇÃO",
+    },
   ];
   const { service, updates } = instalarMockOrcamento({ linhas });
 
@@ -472,7 +500,30 @@ test("listarOrcamento2026 aplica ajuste operacional do modelo local e remove Pes
 
   const remocaoFrente = updates.find((update) => /DELETE FROM orcamento_2026_frentes/.test(update.sql));
   assert.ok(remocaoFrente);
-  assert.deepEqual(remocaoFrente.params, ["Pessoal"]);
+  assert.ok(updates.some((update) => /DELETE FROM orcamento_2026_frentes/.test(update.sql) && update.params[0] === "Pessoal"));
+
+  const remanejamentoCongresso = updates.find((update) => (
+    update.params.includes("CURS-001-F01")
+    && /categoria = \$1/.test(update.sql)
+    && /tipo_processo = 'PRINCIPAL'/.test(update.sql)
+  ));
+  assert.ok(remanejamentoCongresso);
+  assert.equal(remanejamentoCongresso.params[0], "Capacitação para os Estados");
+
+  const inativacaoCursos = updates.find((update) => (
+    update.params.includes("CURS-001")
+    && /compoe_orcamento = false/.test(update.sql)
+  ));
+  assert.ok(inativacaoCursos);
+
+  const valorCapacitacao = updates.find((update) => (
+    /INSERT INTO orcamento_2026_frentes/.test(update.sql)
+    && update.params[0] === "Capacitação para os Estados"
+  ));
+  assert.ok(valorCapacitacao);
+  assert.equal(valorCapacitacao.params[1], 254600);
+
+  assert.ok(updates.some((update) => /DELETE FROM orcamento_2026_frentes/.test(update.sql) && update.params[0] === "Cursos ONASP"));
 });
 
 test("salvarOrcamento2026 registra vinculo Pena Justa", async () => {

@@ -29,6 +29,11 @@ const VALOR_UNITARIO_MODELO_LOCAL_IA = 14000;
 const VALOR_ESTIMADO_MODELO_LOCAL_IA = 696991.41;
 const FRENTE_PESSOAL = "Pessoal";
 const PROCESSO_DIARIAS_ID = "PESS-001";
+const FRENTE_CAPACITACAO = "Capacitação para os Estados";
+const VALOR_DISPONIVEL_CAPACITACAO_COM_CONGRESSO = 254600;
+const FRENTE_CURSOS_ONASP = "Cursos ONASP";
+const PROCESSO_INSCRICOES_CURSOS_ID = "CURS-001";
+const PROCESSO_CONGRESSO_OUVIDORES_ID = "CURS-001-F01";
 
 async function registrarLogOrcamentoSeguro(tipoEvento, resumo, payload) {
   try {
@@ -1017,6 +1022,59 @@ async function executarAjustesOperacionaisOrcamento2026() {
       DELETE FROM orcamento_2026_frentes
       WHERE LOWER(TRIM(frente)) = LOWER($1)
     `, [FRENTE_PESSOAL]);
+
+    await client.query(`
+      UPDATE orcamento_2026
+      SET categoria = $1,
+          acao_orcamentaria = 'Capacitação',
+          plano_orcamentario = 'Nacional',
+          compoe_orcamento = true,
+          processo_pai_id = '',
+          tipo_processo = 'PRINCIPAL',
+          origem_recurso_id = '',
+          valor_alocado_origem = 0,
+          atualizado_em = $2
+      WHERE id = $3
+        AND (
+          categoria IS DISTINCT FROM $1
+          OR acao_orcamentaria IS DISTINCT FROM 'Capacitação'
+          OR plano_orcamentario IS DISTINCT FROM 'Nacional'
+          OR compoe_orcamento IS DISTINCT FROM true
+          OR COALESCE(processo_pai_id, '') <> ''
+          OR COALESCE(tipo_processo, '') <> 'PRINCIPAL'
+          OR COALESCE(origem_recurso_id, '') <> ''
+          OR COALESCE(valor_alocado_origem, 0) <> 0
+        )
+    `, [FRENTE_CAPACITACAO, updatedAt, PROCESSO_CONGRESSO_OUVIDORES_ID]);
+
+    await client.query(`
+      UPDATE orcamento_2026
+      SET ativo = false,
+          compoe_orcamento = false,
+          atualizado_em = $1
+      WHERE ativo = true
+        AND (
+          id = $2
+          OR (
+            LOWER(TRIM(categoria)) = LOWER($3)
+            AND LOWER(TRIM(descricao)) = 'inscrições em cursos para servidores da onasp'
+          )
+        )
+    `, [updatedAt, PROCESSO_INSCRICOES_CURSOS_ID, FRENTE_CURSOS_ONASP]);
+
+    await client.query(`
+      INSERT INTO orcamento_2026_frentes (frente, valor_disponivel, atualizado_em)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (frente) DO UPDATE
+      SET valor_disponivel = GREATEST(orcamento_2026_frentes.valor_disponivel, EXCLUDED.valor_disponivel),
+          atualizado_em = EXCLUDED.atualizado_em
+      WHERE orcamento_2026_frentes.valor_disponivel < EXCLUDED.valor_disponivel
+    `, [FRENTE_CAPACITACAO, VALOR_DISPONIVEL_CAPACITACAO_COM_CONGRESSO, updatedAt]);
+
+    await client.query(`
+      DELETE FROM orcamento_2026_frentes
+      WHERE LOWER(TRIM(frente)) = LOWER($1)
+    `, [FRENTE_CURSOS_ONASP]);
   });
 }
 

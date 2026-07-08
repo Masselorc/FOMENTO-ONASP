@@ -7824,3 +7824,13 @@ Logs operacionais gravados:
 - Validações executadas: `node --check backend/services/orcamento-2026-service.js`; `node --check tests/services/auditoria-logs-operacionais.test.js`; `node --test tests/services/auditoria-logs-operacionais.test.js tests/services/auditoria-salvamento-sem-publicacao.test.js` (46/46); `npm run validar:json`; `npm run validar:syntax` (110 arquivos); `git diff --check`.
 - Risco: médio-baixo - altera dados de orçamento e saneamento de frente removida; a rotina é idempotente e preserva itens não relacionados.
 - Rollback: reverter os arquivos alterados; se a rotina já tiver rodado no banco real, reativar `PESS-001` e restaurar a frente `Pessoal` somente se houver decisão administrativa formal para retornar esse processo.
+
+### Complemento - remanejamento do Congresso e eliminação de Cursos ONASP
+
+- Objetivo: remanejar `CURS-001-F01` (`Congresso Brasileiro de Ouvidores`) para a frente `Capacitação para os Estados` e eliminar a frente `Cursos ONASP` com o processo `CURS-001` (`Inscrições em cursos para servidores da ONASP`).
+- Implementação: o Congresso foi promovido para processo principal da frente de capacitação, com `compoe_orcamento=true`, modalidade `Capacitação` e sem vínculo ao processo removido; `CURS-001` passou a ser inativado pela rotina idempotente do serviço.
+- Orçamento da frente: o valor disponível de `Capacitação para os Estados` foi consolidado em `R$ 254.600,00`, incorporando os `R$ 4.600,00` do Congresso para manter saldo disponível zerado após o remanejamento.
+- Publicação estática: `frontend/data/publicados/orcamento-2026.json` foi recalculado sem a frente `Cursos ONASP`, sem modalidade `Cursos` e sem status `PLANEJADO`; o resumo geral passou para `R$ 6.054.600,00` com 9 itens oficiais.
+- Validações executadas: `node --check backend/services/orcamento-2026-service.js`; `node --check tests/services/auditoria-logs-operacionais.test.js`; `node --test tests/services/auditoria-logs-operacionais.test.js tests/services/auditoria-salvamento-sem-publicacao.test.js` (46/46); `npm run validar:json`; `npm run validar:syntax` (110 arquivos); `git diff --check`.
+- Risco: médio-baixo - altera classificação orçamentária e composição de frente; a rotina preserva dados de rastreio do Congresso e remove apenas o processo/frente solicitados.
+- Rollback: reverter os arquivos alterados; se a rotina já tiver sido aplicada no banco, reativar `CURS-001`, retornar `CURS-001-F01` para `Cursos ONASP` como vinculado e restaurar a frente `Cursos ONASP` conforme decisão administrativa.
