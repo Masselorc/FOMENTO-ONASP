@@ -302,7 +302,7 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
       return { rows: params[0] === "Aparelhamento" ? [{ valor_disponivel: 1000 }] : [] };
     }
     if (/SELECT \* FROM orcamento_2026_movimentacoes WHERE ativo = true/i.test(sql)) return { rows: [] };
-    if (/SELECT \* FROM orcamento_2026/i.test(sql)) return { rows: linhas };
+    if (/SELECT\s+\*\s+FROM\s+orcamento_2026/i.test(sql)) return { rows: linhas };
     if (/SELECT id, status, processo_autuado/i.test(sql)) return { rows: [] };
     if (/SELECT id, classificacao_gerencial/i.test(sql)) return { rows: [] };
     throw new Error(`postgresClient.query inesperado no mock Orcamento: ${sql}`);
@@ -322,6 +322,10 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
       }
       if (/INSERT INTO orcamento_2026_movimentacoes/i.test(sql)) return { rows: [{ id: 77 }] };
       if (/INSERT INTO orcamento_2026_frentes/i.test(sql)) {
+        updates.push({ sql, params });
+        return { rows: [] };
+      }
+      if (/DELETE FROM orcamento_2026_frentes/i.test(sql)) {
         updates.push({ sql, params });
         return { rows: [] };
       }
@@ -421,6 +425,54 @@ test("salvarValorFrenteOrcamento2026 registra historico e log operacional", asyn
   assert.equal(logs.length, 1);
   assert.equal(logs[0].tipoEvento, "orcamento_2026_frente_valor_disponivel");
   assert.deepEqual(logs[0].payload.camposAlterados, ["valor_disponivel_frente"]);
+});
+
+test("listarOrcamento2026 aplica ajuste operacional do modelo local e remove Pessoal", async () => {
+  const linhas = [
+    linhaOrcamento,
+    {
+      ...linhaOrcamento,
+      id: "APON-005",
+      categoria: "Aparelhamento de Ouvidorias Estaduais",
+      descricao: "Implantação de Modelo Local de Inteligência Artificial",
+      quantidade: "30",
+      unidade: "un",
+      valor_previsto: 543875,
+      valor_unitario: 18129.17,
+      valor_estimado_pesquisa_preco: 820866.41,
+      status: "EM EXECUÇÃO",
+    },
+    {
+      ...linhaOrcamento,
+      id: "PESS-001",
+      categoria: "Pessoal",
+      descricao: "Diárias",
+      valor_previsto: 766125,
+      valor_unitario: 766125,
+      classificacao_gerencial: "NAO_APARELHAMENTO",
+      status: "PLANEJADO",
+    },
+  ];
+  const { service, updates } = instalarMockOrcamento({ linhas });
+
+  await service.listarOrcamento2026();
+
+  const ajusteModeloLocal = updates.find((update) => (
+    update.params.includes("APON-005")
+    && /valor_estimado_pesquisa_preco/.test(update.sql)
+  ));
+  assert.ok(ajusteModeloLocal);
+  assert.deepEqual(ajusteModeloLocal.params.slice(0, 3), [420000, 14000, 696991.41]);
+
+  const inativacaoPessoal = updates.find((update) => (
+    update.params.includes("PESS-001")
+    && /compoe_orcamento = false/.test(update.sql)
+  ));
+  assert.ok(inativacaoPessoal);
+
+  const remocaoFrente = updates.find((update) => /DELETE FROM orcamento_2026_frentes/.test(update.sql));
+  assert.ok(remocaoFrente);
+  assert.deepEqual(remocaoFrente.params, ["Pessoal"]);
 });
 
 test("salvarOrcamento2026 registra vinculo Pena Justa", async () => {

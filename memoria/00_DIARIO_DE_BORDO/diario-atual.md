@@ -7812,3 +7812,15 @@ Logs operacionais gravados:
 - Validacao ampla: `npm run validar:services` foi executado e teve 1 falha fora do escopo em `tests/services/profor-pad-origem-reconstrucao.test.js` (`0 !== 10619.91`), enquanto os testes de Orçamento/rotas afetadas passaram.
 - Risco: medio - altera contrato de API, schema aditivo e indicadores financeiros por frente; requer validação manual no servidor local com base real antes de commit/publicação.
 - Rollback: reverter os arquivos alterados; se a tabela já tiver sido criada no banco real e for necessário desfazer completamente, avaliar backup antes de remover `orcamento_2026_frentes`.
+
+## 08/07/2026 - Orçamento 2026: ajuste do modelo local e remoção de Pessoal
+
+- Branch: `main`.
+- Objetivo: reduzir o valor previsto exibido do item `APON-005` (`Implantação de Modelo Local de Inteligência Artificial`) para `R$ 696.991,41` e remover a frente `Pessoal` com o processo `Diárias`.
+- Arquivos alterados: `backend/services/orcamento-2026-service.js`; `frontend/data/publicados/orcamento-2026.json`; `tests/services/auditoria-logs-operacionais.test.js`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Implementação: o item `APON-005` passou a ter valor original de `R$ 420.000,00`, valor unitário de `R$ 14.000,00` para `30 un` e valor estimado/em execução de `R$ 696.991,41`; com a movimentação recebida de `R$ 276.991,41`, o envelope visual fica em `R$ 696.991,41`.
+- Remoção operacional: a rotina idempotente do serviço inativa `PESS-001`, marca `compoe_orcamento=false` e remove a frente `Pessoal` da tabela de valores disponíveis; o JSON publicado também foi recalculado sem `PESS-001`, sem `Pessoal` e sem a modalidade `Diárias`.
+- Limitação operacional: a API local em `127.0.0.1:8790` não estava ativa e a sessão não tinha `DATABASE_URL`/senha de edição; por isso não houve escrita direta no banco real nesta sessão.
+- Validações executadas: `node --check backend/services/orcamento-2026-service.js`; `node --check tests/services/auditoria-logs-operacionais.test.js`; `node --test tests/services/auditoria-logs-operacionais.test.js tests/services/auditoria-salvamento-sem-publicacao.test.js` (46/46); `npm run validar:json`; `npm run validar:syntax` (110 arquivos); `git diff --check`.
+- Risco: médio-baixo - altera dados de orçamento e saneamento de frente removida; a rotina é idempotente e preserva itens não relacionados.
+- Rollback: reverter os arquivos alterados; se a rotina já tiver rodado no banco real, reativar `PESS-001` e restaurar a frente `Pessoal` somente se houver decisão administrativa formal para retornar esse processo.

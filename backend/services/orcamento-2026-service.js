@@ -23,6 +23,13 @@ const STATUS_ORCAMENTO = [
   "VALIDAR"
 ];
 
+const ITEM_MODELO_LOCAL_IA_ID = "APON-005";
+const VALOR_ORIGINAL_MODELO_LOCAL_IA = 420000;
+const VALOR_UNITARIO_MODELO_LOCAL_IA = 14000;
+const VALOR_ESTIMADO_MODELO_LOCAL_IA = 696991.41;
+const FRENTE_PESSOAL = "Pessoal";
+const PROCESSO_DIARIAS_ID = "PESS-001";
+
 async function registrarLogOrcamentoSeguro(tipoEvento, resumo, payload) {
   try {
     await logsOperacionaisService.registrarLogOperacional({
@@ -967,6 +974,52 @@ async function executarBackfillClassificacaoGerencial() {
   });
 }
 
+async function executarAjustesOperacionaisOrcamento2026() {
+  const updatedAt = new Date().toISOString();
+
+  await withTransaction(async (client) => {
+    await client.query(`
+      UPDATE orcamento_2026
+      SET valor_previsto = $1,
+          valor_unitario = $2,
+          valor_estimado_pesquisa_preco = $3,
+          atualizado_em = $4
+      WHERE id = $5
+        AND (
+          valor_previsto IS DISTINCT FROM $1
+          OR valor_unitario IS DISTINCT FROM $2
+          OR valor_estimado_pesquisa_preco IS DISTINCT FROM $3
+        )
+    `, [
+      VALOR_ORIGINAL_MODELO_LOCAL_IA,
+      VALOR_UNITARIO_MODELO_LOCAL_IA,
+      VALOR_ESTIMADO_MODELO_LOCAL_IA,
+      updatedAt,
+      ITEM_MODELO_LOCAL_IA_ID
+    ]);
+
+    await client.query(`
+      UPDATE orcamento_2026
+      SET ativo = false,
+          compoe_orcamento = false,
+          atualizado_em = $1
+      WHERE ativo = true
+        AND (
+          id = $2
+          OR (
+            LOWER(TRIM(categoria)) = LOWER($3)
+            AND LOWER(TRIM(descricao)) IN ('diárias', 'diarias')
+          )
+        )
+    `, [updatedAt, PROCESSO_DIARIAS_ID, FRENTE_PESSOAL]);
+
+    await client.query(`
+      DELETE FROM orcamento_2026_frentes
+      WHERE LOWER(TRIM(frente)) = LOWER($1)
+    `, [FRENTE_PESSOAL]);
+  });
+}
+
 async function garantirColunasOrcamento2026Postgres() {
   await query("ALTER TABLE orcamento_2026 ADD COLUMN IF NOT EXISTS pena_justa boolean DEFAULT false");
   await query(`
@@ -983,6 +1036,7 @@ async function inicializarOrcamento2026() {
   await executarBackfillOrcamento();
   await executarBackfillAutuacaoPorStatus();
   await executarBackfillClassificacaoGerencial();
+  await executarAjustesOperacionaisOrcamento2026();
 }
 
 function linhaParaItem(linha) {
