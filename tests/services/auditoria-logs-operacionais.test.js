@@ -521,7 +521,7 @@ test("listarOrcamento2026 aplica ajustes operacionais do orçamento", async () =
     && update.params[0] === "Capacitação para os Estados"
   ));
   assert.ok(valorCapacitacao);
-  assert.equal(valorCapacitacao.params[1], 254600);
+  assert.equal(valorCapacitacao.params[1], 300000);
 
   assert.ok(updates.some((update) => /DELETE FROM orcamento_2026_frentes/.test(update.sql) && update.params[0] === "Cursos ONASP"));
 });

@@ -3610,6 +3610,7 @@ async function carregarJsonPublicadoPorChave(chave, mensagemErro = null) {
 }
 
 function normalizarDadosOrcamentoPublicado(dados) {
+    const base = Array.isArray(dados) ? {} : (dados || {});
     const itens = Array.isArray(dados?.itens)
         ? dados.itens
         : Array.isArray(dados)
@@ -3623,19 +3624,20 @@ function normalizarDadosOrcamentoPublicado(dados) {
     const outrosProcessos = Array.isArray(dados?.outrosProcessos) ? dados.outrosProcessos : [];
     const todosItens = [...itens, ...outrosProcessos];
     const mapaItens = new Map(todosItens.map((item) => [item.id, item]));
+    const deveAplicarRollupCliente = !base.resumo && !base.resumoFrentes;
 
-    // Realiza o rollup dos filhos (processos vinculados) para os pais no lado do cliente
-    todosItens.forEach((item) => {
-        if (item.processoPaiId) {
-            const pai = mapaItens.get(item.processoPaiId);
-            if (pai) {
-                pai.valorEmpenhado = Number(((pai.valorEmpenhado || 0) + (item.valorEmpenhado || 0)).toFixed(2));
-                pai.valorExecutado = Number(((pai.valorExecutado || 0) + (item.valorExecutado || 0)).toFixed(2));
+    if (deveAplicarRollupCliente) {
+        // Formatos legados sem resumo nao vinham consolidados pela API.
+        todosItens.forEach((item) => {
+            if (item.processoPaiId) {
+                const pai = mapaItens.get(item.processoPaiId);
+                if (pai) {
+                    pai.valorEmpenhado = Number(((pai.valorEmpenhado || 0) + (item.valorEmpenhado || 0)).toFixed(2));
+                    pai.valorExecutado = Number(((pai.valorExecutado || 0) + (item.valorExecutado || 0)).toFixed(2));
+                }
             }
-        }
-    });
-
-    const base = Array.isArray(dados) ? {} : (dados || {});
+        });
+    }
     
     const resumoFrentes = Array.isArray(base.resumoFrentes) ? base.resumoFrentes : [];
     const totalItensOrcamento = Number(itens.reduce((total, item) => total + (Number(item.valorPrevisto) || 0), 0).toFixed(2));

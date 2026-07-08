@@ -1958,8 +1958,8 @@
     "VALIDAR"
   ],
   "resumo": {
-    "totalGeral": 6054600,
-    "totalOrcamento": 6054600,
+    "totalGeral": 6100000,
+    "totalOrcamento": 6100000,
     "totalItens": 9,
     "totalEmpenhado": 14416,
     "valorEmpenhado": 14416,
@@ -1967,8 +1967,8 @@
     "valorEmExecucao": 6040184,
     "totalExecutado": 14416,
     "valorExecutado": 14416,
-    "saldoPlanejado": 0,
-    "percentualEmExecucao": 99.76190004294256,
+    "saldoPlanejado": 45400,
+    "percentualEmExecucao": 99.01940983606558,
     "processosAutuados": 9,
     "porStatus": [
       {
@@ -2036,10 +2036,10 @@
       {
         "nome": "Capacitação para os Estados",
         "itens": 2,
-        "total": 254600,
+        "total": 300000,
         "valorPrevistoProcessos": 254600,
         "valorEmExecucao": 254600,
-        "saldoDisponivel": 0
+        "saldoDisponivel": 45400
       }
     ]
   },
@@ -2078,9 +2078,9 @@
       "valorEmExecucao": 254600,
       "valorEmpenhado": 0,
       "valorExecutado": 0,
-      "valorDisponivel": 254600,
-      "total": 254600,
-      "saldoDisponivel": 0,
+      "valorDisponivel": 300000,
+      "total": 300000,
+      "saldoDisponivel": 45400,
       "atualizadoEm": "2026-07-08T15:35:39.824Z"
     }
   ],

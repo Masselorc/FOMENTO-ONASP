@@ -10104,6 +10104,40 @@ async function carregarLogoParaPDF() {
             return resumos?.find((item) => normalizarBusca(item.nome) === chave)?.total || 0;
         }
 
+        function calcularTotalFrentesOrcamento(budgetData) {
+            const resumoFrentes = Array.isArray(budgetData?.resumoFrentes) ? budgetData.resumoFrentes : [];
+            if (!resumoFrentes.length) return 0;
+            return resumoFrentes.reduce((total, frente) => (
+                total + (Number(frente.valorDisponivel ?? frente.total) || 0)
+            ), 0);
+        }
+
+        function obterTotalOrcamentoGerencial(budgetData, resumo = {}) {
+            const totalFrentes = calcularTotalFrentesOrcamento(budgetData);
+            if (totalFrentes > 0) return totalFrentes;
+            return Number(resumo.totalOrcamento ?? resumo.totalGeral) || 0;
+        }
+
+        function calcularSaldoPlanejadoOrcamento(budgetData, resumo = {}, valorEmExecucao = 0, valorExecutado = 0) {
+            const totalFrentes = calcularTotalFrentesOrcamento(budgetData);
+            const totalOrcamento = totalFrentes || (Number(resumo.totalOrcamento ?? resumo.totalGeral) || 0);
+            if (totalFrentes > 0) {
+                return totalOrcamento - valorEmExecucao - valorExecutado;
+            }
+            return resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao - valorExecutado);
+        }
+
+        function calcularValorTotalSelecaoOrcamento(budgetData, itensFiltrados, resumoSelecao) {
+            const itens = Array.isArray(budgetData?.itens) ? budgetData.itens : [];
+            if (!itens.length || itensFiltrados.length !== itens.length) {
+                return resumoSelecao.total;
+            }
+
+            const idsFiltrados = new Set(itensFiltrados.map((item) => String(item.id)));
+            const todosSelecionados = itens.every((item) => idsFiltrados.has(String(item.id)));
+            return todosSelecionados ? obterTotalOrcamentoGerencial(budgetData, budgetData?.resumo || {}) : resumoSelecao.total;
+        }
+
         function renderizarOpcoesFiltroOrcamento(opcoes) {
             return opcoes.map((valor) => (
                 `<option value="${escapeHtml(valor)}">${escapeHtml(valor)}</option>`
@@ -11737,6 +11771,7 @@ async function carregarLogoParaPDF() {
 
             const itensFiltrados = filtrarItensOrcamento(budgetData);
             const resumoSelecao = calcularResumoItensOrcamento(itensFiltrados);
+            const valorTotalSelecao = calcularValorTotalSelecaoOrcamento(budgetData, itensFiltrados, resumoSelecao);
 
             const idsFilhosVinculados = Array.from(contextoRenderizacao.filhosPorPai.values())
                 .flat()
@@ -11749,7 +11784,7 @@ async function carregarLogoParaPDF() {
                 Array.from(orcamentoItensRastreioAbertos).filter((itemId) => idsFiltrados.has(itemId))
             );
 
-            document.getElementById('budget-selected-total').textContent = formatMoney(resumoSelecao.total);
+            document.getElementById('budget-selected-total').textContent = formatMoney(valorTotalSelecao);
             document.getElementById('budget-selected-running').textContent = formatMoney(resumoSelecao.emExecucao);
             document.getElementById('budget-selected-committed').textContent = formatMoney(resumoSelecao.empenhado);
             document.getElementById('budget-selected-executed').textContent = formatMoney(resumoSelecao.executado);
@@ -12470,9 +12505,10 @@ async function carregarLogoParaPDF() {
         // Mesmos gráficos do relatório PDF, exibidos na tela: execução x saldo,
         // divisão por frente e divisão por item (todos por valor previsto).
         function renderizarGraficosOrcamento(budgetData, resumo, itensOrcamento) {
-            const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
+            const totalOrcamento = obterTotalOrcamentoGerencial(budgetData, resumo);
             const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
-            const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao);
+            const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
+            const saldoPlanejado = calcularSaldoPlanejadoOrcamento(budgetData, resumo, valorEmExecucao, valorExecutado);
             const grupos = agruparItensOrcamentoPorFrente(itensOrcamento);
 
             const segmentosExecucao = [
@@ -12562,8 +12598,8 @@ async function carregarLogoParaPDF() {
             const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
             const valorEmpenhado = resumo.valorEmpenhado ?? resumo.totalEmpenhado ?? 0;
             const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
-            const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
-            const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao - valorExecutado);
+            const totalOrcamento = obterTotalOrcamentoGerencial(budgetData, resumo);
+            const saldoPlanejado = calcularSaldoPlanejadoOrcamento(budgetData, resumo, valorEmExecucao, valorExecutado);
             const processosAutuados = resumo.processosAutuados || 0;
             const inicioResumoAparelhamento = DEBUG_PERF_ONASP ? performance.now() : 0;
             const resumoAparelhamento = budgetData.resumoAparelhamento || calcularResumoAparelhamentoFrontend(itensOrcamento);
@@ -13199,13 +13235,12 @@ async function carregarLogoParaPDF() {
 
             try {
                 const resumo = budgetData.resumo || {};
-                const totalOrcamento = resumo.totalOrcamento ?? resumo.totalGeral ?? 0;
+                const totalOrcamento = obterTotalOrcamentoGerencial(budgetData, resumo);
                 const valorEmExecucao = resumo.valorEmExecucao ?? resumo.totalEmExecucao ?? 0;
                 const valorExecutado = resumo.valorExecutado ?? resumo.totalExecutado ?? 0;
-                const saldoPlanejado = resumo.saldoPlanejado ?? (totalOrcamento - valorEmExecucao - valorExecutado);
+                const saldoPlanejado = calcularSaldoPlanejadoOrcamento(budgetData, resumo, valorEmExecucao, valorExecutado);
                 const processosAutuados = resumo.processosAutuados || 0;
-                const percentualEmExecucao = resumo.percentualEmExecucao
-                    ?? (totalOrcamento > 0 ? (valorEmExecucao / totalOrcamento) * 100 : 0);
+                const percentualEmExecucao = totalOrcamento > 0 ? (valorEmExecucao / totalOrcamento) * 100 : 0;
                 const resumoPenaJusta = calcularResumoPenaJustaOrcamento(itensOrcamento);
 
                 const margem = 12;

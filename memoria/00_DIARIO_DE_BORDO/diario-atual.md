@@ -7829,8 +7829,16 @@ Logs operacionais gravados:
 
 - Objetivo: remanejar `CURS-001-F01` (`Congresso Brasileiro de Ouvidores`) para a frente `Capacitação para os Estados` e eliminar a frente `Cursos ONASP` com o processo `CURS-001` (`Inscrições em cursos para servidores da ONASP`).
 - Implementação: o Congresso foi promovido para processo principal da frente de capacitação, com `compoe_orcamento=true`, modalidade `Capacitação` e sem vínculo ao processo removido; `CURS-001` passou a ser inativado pela rotina idempotente do serviço.
-- Orçamento da frente: o valor disponível de `Capacitação para os Estados` foi consolidado em `R$ 254.600,00`, incorporando os `R$ 4.600,00` do Congresso e mantendo saldo disponível zerado após o remanejamento.
-- Publicação estática: `frontend/data/publicados/orcamento-2026.json` foi recalculado sem a frente `Cursos ONASP`, sem modalidade `Cursos` e sem status `PLANEJADO`; o resumo geral passou para `R$ 6.054.600,00` com 9 itens oficiais.
+- Orçamento da frente: o valor disponível de `Capacitação para os Estados` foi consolidado em `R$ 300.000,00`; os processos da frente somam `R$ 254.600,00` e o saldo disponível da frente fica em `R$ 45.400,00`.
+- Publicação estática: `frontend/data/publicados/orcamento-2026.json` foi recalculado sem a frente `Cursos ONASP`, sem modalidade `Cursos` e sem status `PLANEJADO`; o total das frentes passou para `R$ 6.100.000,00`, com 9 itens oficiais e saldo planejado de `R$ 45.400,00`.
 - Validações executadas: `node --check backend/services/orcamento-2026-service.js`; `node --check tests/services/auditoria-logs-operacionais.test.js`; `node --test tests/services/auditoria-logs-operacionais.test.js tests/services/auditoria-salvamento-sem-publicacao.test.js` (46/46); `npm run validar:json`; `npm run validar:syntax` (110 arquivos); `git diff --check`.
 - Risco: médio-baixo - altera classificação orçamentária e composição de frente; a rotina preserva dados de rastreio do Congresso e remove apenas o processo/frente solicitados.
 - Rollback: reverter os arquivos alterados; se a rotina já tiver sido aplicada no banco, reativar `CURS-001`, retornar `CURS-001-F01` para `Cursos ONASP` como vinculado e restaurar a frente `Cursos ONASP` conforme decisão administrativa.
+
+### Complemento - revisão dos cards da página de Orçamento
+
+- Sintoma reportado: o valor total das frentes deveria ser `R$ 6.100.000,00`, mas os cards da página não refletiam esse total de forma consistente.
+- Diagnóstico: a frente `Capacitação para os Estados` precisava manter valor disponível de `R$ 300.000,00`, enquanto seus processos somam `R$ 254.600,00`; além disso, o normalizador de dados da página reaplicava rollup de processos vinculados mesmo quando a API/publicação já entregava o resumo consolidado, duplicando valores de empenhado/executado no carregamento visual.
+- Implementação: o total gerencial passou a priorizar o somatório dos valores disponíveis das frentes; o saldo planejado é recalculado sobre esse total; o card de seleção sem filtro passa a exibir o total das frentes; e o rollup local ficou restrito a formatos legados sem `resumo` e sem `resumoFrentes`.
+- Resultado esperado: total das frentes `R$ 6.100.000,00`, valor em execução `R$ 6.040.184,00`, valor executado `R$ 14.416,00` e saldo planejado `R$ 45.400,00`.
+- Rollback: reverter os ajustes em `frontend/js/app.js`, `backend/services/data-service.js`, `backend/services/orcamento-2026-service.js`, `frontend/data/publicados/orcamento-2026.json` e o valor esperado do teste de auditoria.
