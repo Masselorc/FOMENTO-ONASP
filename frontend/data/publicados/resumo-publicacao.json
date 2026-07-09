@@ -1,5 +1,5 @@
 {
-  "publicadoEm": "2026-07-07T13:48:35.089Z",
+  "publicadoEm": "2026-07-09T18:05:32.458Z",
   "fonte": "Dados locais ONASP",
   "arquivos": [
     "aplicacao.json",
@@ -38,6 +38,6 @@
     "conveniosProfor2022": 15,
     "parametrosMinimos": 28,
     "formalizacaoProfor": 14,
-    "orcamento2026": 10
+    "orcamento2026": 9
   }
 }

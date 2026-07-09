@@ -1,5 +1,18 @@
 # Diário de bordo
 
+## 09/07/2026 - Orçamento 2026: sincronização da publicação estática após ajuste de valores
+
+- Branch: `main`.
+- Objetivo: refletir na página estática/GitHub Pages os ajustes de valores realizados em processo do Orçamento 2026 e sincronizar a alteração com `origin/main`.
+- Estado inicial: os quatro JSONs públicos já estavam modificados com os valores ajustados e metadados de publicação; não havia divergência entre `main` e `origin/main`.
+- Publicação: a execução de `npm run publicar:dados` foi tentada pelo script oficial, mas foi bloqueada por ausência de `DATABASE_URL` nesta sessão; nenhum JSON foi alterado por essa tentativa. Os JSONs já presentes foram tratados como saída publicada dos ajustes realizados.
+- Arquivos públicos versionados: `frontend/data/publicados/orcamento-2026.json`, `frontend/data/publicados/aplicacao.json`, `frontend/data/publicados/dashboard-geral.json` e `frontend/data/publicados/resumo-publicacao.json`.
+- Validações: `npm run validar:json`; `git diff --check`; conferência de `resumo-publicacao.json`; conferência do processo ajustado e do resumo do Orçamento; backup externo dos JSONs em diretório temporário; `git fetch origin` com `main` alinhada a `origin/main` antes do commit.
+- Segurança: nenhuma credencial foi impressa, gravada ou versionada; não houve escrita no banco, uso de SQLite ou atualização externa de dados.
+- Resultado: commit e sincronização serão concluídos somente com os arquivos públicos acima e este registro de bordo.
+- Risco: médio-baixo; a regeneração integral a partir do banco não foi possível nesta sessão, embora os JSONs existentes estejam válidos e contenham os valores ajustados.
+- Rollback: `git revert <SHA_DO_COMMIT>`; os JSONs originais também foram preservados em cópia temporária fora do repositório.
+
 ## 17/06/2026 - Orçamento 2026: publicação estática automática após salvamentos
 
 - Objetivo: corrigir a defasagem entre o servidor normal/Supabase da página "Orçamento 2026" e a versão estática do GitHub Pages, que consome `frontend/data/publicados/*.json`.
