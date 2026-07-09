@@ -9,7 +9,7 @@
 - Arquivos públicos versionados: `frontend/data/publicados/orcamento-2026.json`, `frontend/data/publicados/aplicacao.json`, `frontend/data/publicados/dashboard-geral.json` e `frontend/data/publicados/resumo-publicacao.json`.
 - Validações: `npm run validar:json`; `git diff --check`; conferência de `resumo-publicacao.json`; conferência do processo ajustado e do resumo do Orçamento; backup externo dos JSONs em diretório temporário; `git fetch origin` com `main` alinhada a `origin/main` antes do commit.
 - Segurança: nenhuma credencial foi impressa, gravada ou versionada; não houve escrita no banco, uso de SQLite ou atualização externa de dados.
-- Resultado: commit e sincronização serão concluídos somente com os arquivos públicos acima e este registro de bordo.
+- Resultado: commit e sincronização concluídos somente com os arquivos públicos acima e este registro de bordo.
 - Risco: médio-baixo; a regeneração integral a partir do banco não foi possível nesta sessão, embora os JSONs existentes estejam válidos e contenham os valores ajustados.
 - Rollback: `git revert <SHA_DO_COMMIT>`; os JSONs originais também foram preservados em cópia temporária fora do repositório.
 
