@@ -50,6 +50,7 @@ const {
 const { resolverOrigemDadosProfor2022 } = require("./services/profor-2022/profor-origem-service");
 const {
   assertEndpointAdminPermitido,
+  assertTokenAdminProforValido,
   assertChamadaExternaPermitida,
 } = require("./services/profor-2022/profor-workbook-fallback-guard-service");
 const {
@@ -96,7 +97,7 @@ const {
 
 const rootDir = path.join(__dirname, "..");
 const catalogoAplicacaoPath = path.join(__dirname, "data", "aplicacao.json");
-const host = process.env.HOST || "0.0.0.0";
+const host = process.env.HOST || "127.0.0.1";
 const port = Number(process.env.PORT || 8790);
 
 const mimeTypes = {
@@ -162,7 +163,7 @@ function enviarJson(res, statusCode, payload) {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-Profor-Admin-Token, Authorization",
     "Content-Length": Buffer.byteLength(body)
   });
   res.end(body);
@@ -650,11 +651,12 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/detru/atualizar") {
+      const requisicaoLocal = ehRequisicaoLocal(req);
+      assertEndpointAdminPermitido("api_profor_2022_detru_atualizar", { requisicaoLocal });
+      assertTokenAdminProforValido("api_profor_2022_detru_atualizar", { headers: req.headers });
+      assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU", requisicaoLocal });
       const body = await lerJsonBody(req);
       try {
-        const requisicaoLocal = ehRequisicaoLocal(req);
-        assertEndpointAdminPermitido("api_profor_2022_detru_atualizar", { requisicaoLocal });
-        assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU", requisicaoLocal });
         const resultado = await atualizarCacheDetruProfor2022(body || {});
         const ultimaAtualizacao = normalizarUltimaAtualizacaoDetru(await obterUltimaAtualizacaoDetru());
         enviarJson(res, 200, {
@@ -688,14 +690,15 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/rendimentos/atualizar") {
+      const requisicaoLocal = ehRequisicaoLocal(req);
+      assertEndpointAdminPermitido("api_profor_2022_rendimentos_atualizar", { requisicaoLocal });
+      assertTokenAdminProforValido("api_profor_2022_rendimentos_atualizar", { headers: req.headers });
+      assertChamadaExternaPermitida("api_profor_2022_rendimentos_atualizar", {
+        tipo: "Transferegov",
+        requisicaoLocal,
+      });
       const body = await lerJsonBody(req);
       try {
-        const requisicaoLocal = ehRequisicaoLocal(req);
-        assertEndpointAdminPermitido("api_profor_2022_rendimentos_atualizar", { requisicaoLocal });
-        assertChamadaExternaPermitida("api_profor_2022_rendimentos_atualizar", {
-          tipo: "Transferegov",
-          requisicaoLocal,
-        });
         const resultado = await executarEtapaRendimentos({ ...(body || {}), requisicaoLocal });
         enviarJson(res, 200, {
           success: resultado.sucesso,
@@ -738,6 +741,9 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar") {
+      const requisicaoLocal = ehRequisicaoLocal(req);
+      assertEndpointAdminPermitido("api_profor_2022_pad_recarregar", { requisicaoLocal });
+      assertTokenAdminProforValido("api_profor_2022_pad_recarregar", { headers: req.headers });
       try {
         const resultado = await recarregarPadsOperacional();
         const primeiroImpedimento = Array.isArray(resultado?.impedimentos)
@@ -766,6 +772,9 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar-operacional") {
+      const requisicaoLocal = ehRequisicaoLocal(req);
+      assertEndpointAdminPermitido("api_profor_2022_pad_recarregar_operacional", { requisicaoLocal });
+      assertTokenAdminProforValido("api_profor_2022_pad_recarregar_operacional", { headers: req.headers });
       try {
         const resultado = await carregarPadsOperacional();
         const primeiroImpedimento = Array.isArray(resultado?.impedimentos)
@@ -789,6 +798,13 @@ async function rotearApi(req, res, pathname) {
     }
 
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/atualizar-transferegov") {
+      const requisicaoLocal = ehRequisicaoLocal(req);
+      assertEndpointAdminPermitido("api_profor_2022_pad_atualizar_transferegov", { requisicaoLocal });
+      assertTokenAdminProforValido("api_profor_2022_pad_atualizar_transferegov", { headers: req.headers });
+      assertChamadaExternaPermitida("api_profor_2022_pad_atualizar_transferegov", {
+        tipo: "Transferegov",
+        requisicaoLocal,
+      });
       try {
         const { jobId, jaEstavaEmAndamento, job } = gerenciadorAtualizacaoTransferegov.iniciar();
         enviarJson(res, jaEstavaEmAndamento ? 409 : 202, {
@@ -1237,7 +1253,7 @@ prepararBanco().catch((erro) => {
         res.writeHead(204, {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type"
+          "Access-Control-Allow-Headers": "Content-Type, X-Profor-Admin-Token, Authorization"
         });
         res.end();
         return;

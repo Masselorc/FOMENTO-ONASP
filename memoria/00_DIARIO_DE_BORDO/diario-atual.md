@@ -1,5 +1,15 @@
 # Diário de bordo
 
+## 10/07/2026 - PROFOR 2022: documentação operacional do token administrativo
+
+- Branch: `agent/profor-admin-token-hardening`.
+- Objetivo: documentar o uso seguro de `PROFOR_ADMIN_TOKEN` nas cinco rotas administrativas sensíveis do PROFOR 2022.
+- Alteração: incluída no guia operacional a configuração por variável de ambiente, os headers aceitos, o comportamento `403`, um exemplo local com placeholder e a proibição de armazenar ou enviar o token pelo frontend público.
+- Segurança: nenhum token real, `.env`, frontend, backend funcional, dado publicado ou cache foi alterado; nenhuma rotina de atualização, publicação ou agendamento foi executada.
+- Validações: `git diff --check`, `npm run validar:syntax` e `npm run validar:services`.
+- Risco de regressão: baixo; mudança exclusivamente documental.
+- Rollback: restaurar `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md` e `memoria/00_DIARIO_DE_BORDO/diario-atual.md` a partir do controle de versão.
+
 ## 09/07/2026 - Orçamento 2026: sincronização da publicação estática após ajuste de valores
 
 - Branch: `main`.

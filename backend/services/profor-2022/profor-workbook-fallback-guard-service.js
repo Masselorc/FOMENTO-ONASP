@@ -5,7 +5,9 @@
 //
 // Esses guards são chamados em pontos de entrada operacionais (server.js,
 // scripts sensíveis). Não acessam banco, não publicam e não chamam serviços
-// externos. São puros sobre `process.env`.
+// externos. São puros sobre as opções de ambiente e headers recebidas.
+
+const crypto = require("node:crypto");
 
 const VALORES_PRODUCAO_NODE_ENV = new Set(["production", "prod"]);
 const VALORES_PRODUCAO_APP_ENV = new Set(["production", "prod", "producao"]);
@@ -48,6 +50,43 @@ function erroGovernanca(mensagem, statusCode = 403) {
   const erro = new Error(mensagem);
   erro.statusCode = statusCode;
   return erro;
+}
+
+function obterValorHeader(headers, nome) {
+  const valor = headers?.[nome];
+  if (Array.isArray(valor)) return String(valor[0] || "");
+  return String(valor || "");
+}
+
+function extrairTokenAdminProfor(headers = {}) {
+  const tokenHeader = obterValorHeader(headers, "x-profor-admin-token");
+  if (tokenHeader) return tokenHeader;
+
+  const authorization = obterValorHeader(headers, "authorization");
+  const matchBearer = authorization.match(/^Bearer\s+(.+)$/i);
+  return matchBearer ? matchBearer[1] : "";
+}
+
+function tokensIguais(tokenInformado, tokenEsperado) {
+  const informado = Buffer.from(String(tokenInformado || ""), "utf8");
+  const esperado = Buffer.from(String(tokenEsperado || ""), "utf8");
+  return informado.length === esperado.length && crypto.timingSafeEqual(informado, esperado);
+}
+
+function assertTokenAdminProforValido(contexto = "endpoint_admin", opcoes = {}) {
+  const env = opcoes.env || process.env;
+  const tokenEsperado = String(env.PROFOR_ADMIN_TOKEN || "");
+
+  if (!tokenEsperado.trim()) {
+    throw erroGovernanca(
+      `[${contexto}] Acesso administrativo PROFOR 2022 bloqueado: token administrativo não configurado.`
+    );
+  }
+
+  const tokenInformado = opcoes.token ?? extrairTokenAdminProfor(opcoes.headers);
+  if (!tokensIguais(tokenInformado, tokenEsperado)) {
+    throw erroGovernanca(`[${contexto}] Acesso administrativo PROFOR 2022 negado.`);
+  }
 }
 
 // Considera "execucao local" tanto chamadas vindas de localhost/127.0.0.1/::1
@@ -136,6 +175,8 @@ module.exports = {
   isAmbienteProducao,
   isAmbienteTeste,
   isExecucaoLocal,
+  extrairTokenAdminProfor,
+  assertTokenAdminProforValido,
   assertEndpointAdminPermitido,
   assertChamadaExternaPermitida,
   assertAgendadorPermitido,
