@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 10/07/2026 - PROFOR 2022: revisão documental de rotas e banco legado
+
+- Branch: `agent/docs-rotas-banco-legado`.
+- Objetivo: alinhar a documentação de rotas e banco ao backend atual, evitando uso operacional da rota consolidada descontinuada e do SQLite legado como se fossem fluxos ativos.
+- Arquivos revisados: `backend/server.js`, serviços de persistência, `package.json`, `memoria/08_ROTAS_BANCO_API/rotas.md`, `memoria/08_ROTAS_BANCO_API/schema-banco.md` e a referência histórica em `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md`.
+- Correções: `POST /api/profor-2022/atualizar` passou a ser documentada como rota legada que retorna `410` sem efeitos colaterais; os fluxos dedicados DETRU, rendimentos e PAD foram registrados, com referência à exigência de `PROFOR_ADMIN_TOKEN`.
+- Banco: o Postgres/Supabase via backend e `DATABASE_URL` foi registrado como banco operacional atual. `backend/data/onasp.sqlite`, `better-sqlite3` e `backend/db/init-db.js` foram preservados na documentação como artefatos/referências legadas, não como fallback do boot atual.
+- Escopo: mudança exclusivamente documental; sem alteração de código funcional, frontend, migrations, `.env`, segredos, caches, dados publicados ou dados de banco; sem SQL remoto, atualização, publicação ou agendamento.
+- Validações: `git diff --check` aprovado; `npm run validar:syntax` com 110 arquivos aprovados; `npm run validar:services` com 519 testes aprovados, 20 pulados e 0 falhas.
+- Risco de regressão: baixo; o risco principal é documental e foi reduzido ao distinguir fluxo atual, legado e histórico.
+- Rollback: reverter este commit documental ou restaurar individualmente os quatro arquivos Markdown pelo controle de versão.
+
 ## 10/07/2026 - Supabase: aplicação remota da restrição de execução da função de auto-RLS
 
 - Branch: `main`.

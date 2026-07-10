@@ -1,42 +1,41 @@
-# Schema do Banco Local — FOMENTO-ONASP
+# Schema de banco — FOMENTO-ONASP
 
 ## Finalidade
 
-Este arquivo documenta o schema real do banco SQLite local do FOMENTO-ONASP, com base nos arquivos existentes no repositório.
+Este arquivo diferencia o banco operacional Postgres/Supabase do artefato SQLite local legado e preserva a descrição histórica do schema anterior.
 
-O objetivo é apoiar manutenção, revisão técnica, uso de Codex/IA, validação de migrations futuras e prevenção de perda de dados. Este documento não propõe migration nova e não substitui a leitura de `backend/db/init-db.js`, que é a fonte de verdade do schema.
+O objetivo é apoiar manutenção, revisão técnica e validação de migrations sem induzir o operador a usar o SQLite como banco atual. Para o estado operacional, as fontes de verdade são `supabase/migrations/`, `backend/db/postgres-client.js`, `backend/db/preparar-banco.js` e o SQL dos serviços. `backend/db/init-db.js` permanece como referência do schema SQLite legado, não como inicializador do banco usado no boot atual.
 
 ## Visão geral
 
-O projeto usa banco SQLite local para os fluxos editáveis do modo local/API.
+O backend local/API atual depende de Postgres/Supabase por `DATABASE_URL`. O boot é Postgres-only e não possui fallback para SQLite.
 
 Pontos confirmados:
 
-- o arquivo de banco é `backend/data/onasp.sqlite`;
-- o banco é aberto por `backend/db/database.js`;
-- a dependência usada é `better-sqlite3`;
-- a criação e evolução do schema ficam em `backend/db/init-db.js`;
-- o preparo operacional do banco fica em `backend/db/preparar-banco.js`;
-- serviços em `backend/services/` leem e gravam nas tabelas;
+- o pool operacional é criado por `backend/db/postgres-client.js` a partir de `DATABASE_URL`;
+- `backend/db/preparar-banco.js` valida a conexão/tabela mínima e executa apenas backfills Postgres idempotentes;
+- serviços ativos em `backend/services/` leem e gravam no Postgres/Supabase;
+- o schema Postgres versionado fica em `supabase/migrations/`;
+- `backend/data/onasp.sqlite` ainda pode existir localmente como artefato legado, aberto por `backend/db/database.js` em scripts antigos e controlados;
+- `better-sqlite3` e `backend/db/init-db.js` permanecem para compatibilidade/histórico de fluxos legados, não para o boot operacional atual;
 - rotas em `backend/server.js` acionam os serviços;
-- o modo estático/GitHub Pages não usa o banco local, mas sim JSONs publicados em `frontend/data/publicados/`.
+- o modo estático/GitHub Pages não consulta o banco em tempo real; usa JSONs publicados em `frontend/data/publicados/`.
 
-O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser versionados.
+O arquivo SQLite, WAL, SHM e backups continuam sendo artefatos locais não versionáveis. Menções a eles nas seções históricas abaixo não autorizam seu uso como fonte operacional atual.
 
 ## Arquivos responsáveis pelo banco
 
-- `backend/db/database.js`: cria o diretório `backend/data`, abre `backend/data/onasp.sqlite`, aplica PRAGMAs e exporta a instância do banco e `dbPath`.
-- `backend/db/init-db.js`: cria as tabelas confirmadas, adiciona colunas por evolução incremental e cria a tabela de movimentações do Orçamento 2026.
-- `backend/db/preparar-banco.js`: executa `inicializarBanco()`, importa Parâmetros Mínimos quando a tabela está vazia, atualiza respostas originais, inicializa Formalização PROFOR e inicializa Orçamento 2026.
-- `backend/services/parametros-minimos-service.js`: lê e grava `parametros_minimos`; lê e grava histórico em `historico_alteracoes`.
-- `backend/services/formalizacao-profor-service.js`: inicializa, lê e grava `formalizacao_profor`; grava histórico em `historico_alteracoes`.
-- `backend/services/orcamento-2026-service.js`: inicializa, lê e grava `orcamento_2026`; lê e grava `orcamento_2026_movimentacoes`; grava histórico em `historico_alteracoes`.
-- `backend/services/historico-service.js`: insere registros em `historico_alteracoes`.
+- `backend/db/postgres-client.js`: cria o pool Postgres e fornece `query`/transações aos serviços ativos.
+- `backend/db/preparar-banco.js`: exige `DATABASE_URL`, valida a disponibilidade do Postgres e não toca o SQLite.
+- `supabase/migrations/`: registra a evolução versionada do schema Postgres/Supabase.
+- `backend/db/database.js`: abre `backend/data/onasp.sqlite` somente para compatibilidade com scripts legados ainda existentes.
+- `backend/db/init-db.js`: descreve/cria o schema SQLite legado; não é chamado pelo preparo operacional atual.
+- `backend/services/parametros-minimos-service.js`, `formalizacao-profor-service.js`, `orcamento-2026-service.js` e `historico-service.js`: usam Postgres/Supabase.
 - `backend/services/excel-export-service.js`: lê dados por serviços para exportar Excel.
 - `backend/services/static-publication-service.js`: lê dados por serviços para gerar JSONs publicados.
-- `backend/scripts/importar-parametros-minimos.js`: importa e atualiza dados de `parametros_minimos`.
-- `backend/scripts/publicar-dados-estaticos.js`: chama `prepararBanco()` antes de publicar JSONs estáticos.
-- `backend/server.js`: chama `prepararBanco()` ao iniciar o servidor local e expõe rotas que acionam os serviços.
+- `backend/scripts/importar-parametros-minimos.js`: mantém um caminho SQLite legado explicitamente bloqueado por guard; não representa o fluxo operacional Postgres.
+- `backend/scripts/publicar-dados-estaticos.js`: chama o preparo Postgres antes da publicação.
+- `backend/server.js`: chama o preparo Postgres ao iniciar e expõe rotas que acionam os serviços.
 
 ## Convenções deste documento
 
@@ -44,6 +43,8 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 - **Origem:** criação inicial por `CREATE TABLE` ou evolução incremental por `garantirColuna`.
 - **Constraint confirmada:** constraint explícita no SQL do código.
 - **Relação operacional:** relação observada em serviços e rotas, sem afirmar foreign key quando ela não aparece no SQL.
+- **Estado operacional:** comportamento confirmado no Postgres/Supabase pelos serviços e migrations atuais.
+- **Legado SQLite:** estrutura histórica/local que não participa do boot atual, salvo scripts explicitamente identificados e protegidos.
 - **Não confirmado:** item não evidenciado nos arquivos lidos.
 
 ## Estratégia Supabase/Postgres e RLS
@@ -69,11 +70,11 @@ Qualquer acesso futuro de leitura ou escrita pelo frontend via Supabase Client
 deve receber grants e policies explícitas, mínimas e revisadas para o caso de
 uso. Não criar policy genérica do tipo `allow all`.
 
-## Banco local
+## SQLite legado/local — não operacional no boot atual
 
-**Caminho confirmado:** `backend/data/onasp.sqlite`.
+**Caminho legado confirmado:** `backend/data/onasp.sqlite`.
 
-**Dependência:** `better-sqlite3`.
+**Dependência legada:** `better-sqlite3`.
 
 **PRAGMAs confirmados:**
 
@@ -82,11 +83,13 @@ uso. Não criar policy genérica do tipo `allow all`.
 
 **Versionamento:** `.gitignore` ignora `backend/data/onasp.sqlite`, `backend/data/onasp.sqlite-*`, `*.sqlite`, `*.sqlite3`, `*.db`, `*.sqlite-shm`, `*.sqlite-wal` e `backend/data/backups/`.
 
-**Backup:** serviços de escrita chamam `criarBackupBanco(pagina)`, que copia o SQLite para `backend/data/backups/<pagina>/onasp-<timestamp>.sqlite`.
+**Backup histórico:** os fluxos SQLite anteriores criavam cópias em `backend/data/backups/<pagina>/onasp-<timestamp>.sqlite`. Os serviços operacionais Postgres atuais não usam esse mecanismo como backup do banco remoto.
 
-**Observação:** esta tarefa não abriu nem alterou o arquivo SQLite.
+**Observação:** esta revisão não abriu nem alterou o SQLite. Scripts que ainda importam `backend/db/database.js` devem ser tratados como legados e executados somente sob seus guards específicos.
 
-## Tabelas confirmadas
+## Tabelas documentadas no legado SQLite
+
+As seções de colunas e tipos abaixo preservam a fotografia do schema SQLite anterior. Nomes e relações continuam úteis para rastreabilidade, mas os tipos/constraints operacionais devem ser confirmados nas migrations e no SQL Postgres dos serviços antes de qualquer alteração.
 
 ### parametros_minimos
 
@@ -662,9 +665,9 @@ e divergências genéricas de campo. O serviço acrescenta o snapshot
 
 **Índices confirmados:** `idx_revisao_logs_entidade`.
 
-## Evolução incremental de schema
+## Evolução incremental do schema SQLite legado
 
-`backend/db/init-db.js` usa `garantirColuna(tabela, coluna, definicao)` para evolução incremental.
+`backend/db/init-db.js` usa `garantirColuna(tabela, coluna, definicao)` para evolução incremental do artefato SQLite legado. O fluxo operacional Postgres usa migrations e SQL compatível com Postgres; não usar esta seção como procedimento atual de migration.
 
 Funcionamento confirmado:
 
@@ -679,12 +682,14 @@ Tabelas com evolução incremental confirmada:
 
 Riscos:
 
-- `garantirColuna` não remove, renomeia ou altera tipo de coluna existente.
-- não há tabela de versionamento de migrations confirmada.
-- remover ou renomear coluna exige migration própria, backup e validação completa.
-- colunas adicionadas com `DEFAULT` afetam registros antigos conforme regras do SQLite.
+- no legado, `garantirColuna` não remove, renomeia ou altera tipo de coluna existente;
+- no legado, não há tabela própria de versionamento de migrations confirmada;
+- no Postgres/Supabase operacional, remover ou renomear coluna exige migration versionada, revisão e rollback;
+- colunas adicionadas no SQLite legado com `DEFAULT` afetam registros antigos conforme as regras desse mecanismo.
 
-## Relação entre tabelas, serviços e rotas
+## Relação operacional atual entre tabelas, serviços e rotas
+
+Os serviços relacionados abaixo usam Postgres/Supabase via `DATABASE_URL`, salvo indicação explícita de legado.
 
 | Tabela | Serviço principal | Rotas que impactam | Publicação estática relacionada |
 |---|---|---|---|
@@ -694,10 +699,10 @@ Riscos:
 | `orcamento_2026_movimentacoes` | `orcamento-2026-service.js` | `POST /api/orcamento-2026/saldos/alocar` | não há publicação estática específica confirmada para movimentações no estado atual. |
 | `historico_alteracoes` | `historico-service.js` | escritas de Parâmetros Mínimos, Formalização PROFOR e Orçamento 2026; reversão de Parâmetros Mínimos | não há JSON público específico de histórico confirmado. |
 | `profor_convenios_monitorados` | `backend/services/profor-2022/convenios-monitorados-service.js` | `GET /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados`, `POST /api/profor-2022/convenios-monitorados/:id/salvar`, `POST /api/profor-2022/convenios-monitorados/:id/inativar` | nenhuma publicação estática criada nesta etapa. |
-| `profor_detru_cache` | `backend/services/profor-2022/profor-detru-cache-service.js` | nenhuma rota pública criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
-| `profor_detru_atualizacoes` | `backend/services/profor-2022/profor-detru-cache-service.js` | nenhuma rota pública criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
-| `profor_transferegov_rendimentos_cache` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
-| `profor_transferegov_rendimentos_consultas` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | nenhuma rota criada nesta etapa | nenhuma publicação estática criada nesta etapa. |
+| `profor_detru_cache` | `backend/services/profor-2022/profor-detru-cache-service.js` | `POST /api/profor-2022/detru/atualizar`, leituras de status/consolidado | não publica automaticamente. |
+| `profor_detru_atualizacoes` | `backend/services/profor-2022/profor-detru-cache-service.js` | `POST /api/profor-2022/detru/atualizar`, `GET /api/profor-2022/detru/ultima-atualizacao` | não publica automaticamente. |
+| `profor_transferegov_rendimentos_cache` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | `POST /api/profor-2022/rendimentos/atualizar`, leituras de status/consolidado | não publica automaticamente. |
+| `profor_transferegov_rendimentos_consultas` | `backend/services/profor-2022/transferegov-rendimentos-cache-service.js` | `POST /api/profor-2022/rendimentos/atualizar`, leituras de status | não publica automaticamente. |
 | `profor_2022_revisao_divergencias` | `profor-pad-revisao-repository.js`, `profor-pad-revisao-decisao-service.js` | `GET /api/profor-2022/revisao/divergencias`, `GET /api/profor-2022/revisao/divergencias/:id`, `GET /api/profor-2022/revisao/auditoria` | nenhuma publicação estática criada nesta etapa. |
 | `profor_2022_revisao_decisoes` | `profor-pad-revisao-decisao-service.js` | `POST /api/profor-2022/revisao/divergencias/:id/decisoes` | nenhuma publicação estática criada nesta etapa. |
 | `profor_2022_revisao_logs` | `profor-pad-revisao-repository.js` | `GET /api/profor-2022/revisao/divergencias/:id/logs` (leitura); escrita em toda decisão | nenhuma publicação estática criada nesta etapa. |
@@ -711,17 +716,17 @@ Relações operacionais confirmadas:
 - `orcamento_2026_movimentacoes.origem_id` e `destino_id` apontam operacionalmente para `orcamento_2026.id`, sem foreign key.
 - `orcamento_2026.processo_pai_id` e `origem_recurso_id` apontam operacionalmente para `orcamento_2026.id`, sem foreign key.
 
-## Dados fora do SQLite
+## Artefatos fora do banco operacional
 
-Dados confirmados fora do SQLite:
+Artefatos confirmados fora do Postgres/Supabase operacional:
 
-- `backend/data/aplicacao.json`: fonte local para catálogo/base da aplicação e persistência do fluxo FAF 2021.
-- FAF 2021: `backend/services/faf-2021-service.js` grava `valorExecutado`, `observacaoExecucao` e `atualizadoEm` diretamente em `backend/data/aplicacao.json`.
+- `backend/data/aplicacao.json`: catálogo/base local ainda consumido por partes da aplicação; não é a persistência operacional atual do FAF 2021.
+- FAF 2021: `backend/services/faf-2021-service.js` lê e grava a tabela `faf_2021_itens` no Postgres/Supabase.
 - `Planilhas/`: fontes locais de importação, inicialização e leitura, incluindo Parâmetros Mínimos, Diagnóstico, Formalização PROFOR e Orçamento 2026.
 - `frontend/data/publicados/*.json`: JSONs derivados para modo estático/GitHub Pages.
-- `backend/data/backups/`: cópias locais do SQLite criadas antes de alterações, ignoradas pelo Git.
+- `backend/data/onasp.sqlite` e `backend/data/backups/`: artefatos SQLite legados locais, ignorados pelo Git.
 
-Esses dados não devem ser confundidos com tabelas do SQLite.
+Esses artefatos não devem ser confundidos com as tabelas operacionais do Postgres/Supabase.
 
 ## Cuidados com versionamento
 
@@ -735,7 +740,8 @@ Esses dados não devem ser confundidos com tabelas do SQLite.
 ## Riscos ao alterar schema
 
 - Perda de dados por migration destrutiva.
-- Corrupção do banco local.
+- Divergência entre migrations Postgres e schema remoto.
+- Corrupção do artefato SQLite legado quando algum script antigo for autorizado.
 - Divergência entre serviço e tabela.
 - Quebra de `COLUNAS_ORCAMENTO` por remoção/renomeação de coluna.
 - Quebra de upserts por alteração de constraints únicas.
@@ -750,24 +756,25 @@ Esses dados não devem ser confundidos com tabelas do SQLite.
 
 Não executadas nesta tarefa documental, mas recomendadas para mudança real de banco:
 
-- criar backup do SQLite antes de migration;
-- revisar `git status --short` antes e depois para confirmar que o banco não entrou no diff;
-- executar `npm run init-db`;
-- executar `npm start`;
+- criar e revisar migration Postgres/Supabase com rollback antes de alteração estrutural;
+- conferir o histórico de migrations e validar o schema no ambiente apropriado;
+- revisar `git status --short` antes e depois para confirmar que nenhum banco, dump ou segredo entrou no diff;
+- executar `npm start` somente com `DATABASE_URL` configurada de forma segura;
 - testar rotas afetadas por leitura e escrita controlada;
 - testar exportações Excel afetadas;
 - executar `npm run validar:json` se a publicação for impactada;
 - executar `npm run publicar:dados` somente quando a etapa exigir atualização controlada de JSONs publicados;
 - conferir `frontend/data/publicados/` quando houver publicação;
-- validar rollback por backup do banco e por `git revert` quando houver alteração de código versionado.
+- validar rollback por migration compensatória/reversível e por `git revert` quando houver alteração versionada;
+- se um script SQLite legado for expressamente autorizado, criar backup local antes de executá-lo e não versionar o artefato.
 
 ## O que não está confirmado
 
-- Integridade dos dados reais dentro de `backend/data/onasp.sqlite`, pois o banco não foi aberto nesta tarefa.
-- Foreign keys formais entre tabelas; `foreign_keys = ON` está ativo, mas o SQL de criação não declara foreign keys nas tabelas documentadas.
+- Integridade dos dados no artefato legado `backend/data/onasp.sqlite`, pois ele não foi aberto nesta tarefa.
+- Foreign keys formais do SQLite legado; `foreign_keys = ON` está ativo nesse arquivo, mas o SQL histórico não declara foreign keys em todas as tabelas documentadas.
 - Índices além dos índices implícitos de `PRIMARY KEY` e `UNIQUE` confirmados no SQL.
-- Triggers, views ou tabelas auxiliares criadas fora de `backend/db/init-db.js`.
-- Histórico completo de migrations anteriores além do estado atual codificado em `init-db.js`.
+- Triggers, views ou tabelas auxiliares do legado criadas fora de `backend/db/init-db.js`.
+- Correspondência integral entre todas as seções históricas deste documento e o schema Postgres atual; para operação, prevalecem migrations e serviços.
 - Política de retenção de backups em `backend/data/backups/`.
 
 ## Modelo de auditoria da revisão assistida de divergências PAD
@@ -860,7 +867,7 @@ persistida**. Apenas leem, em modo somente leitura, as tabelas
 `profor_2022_itens_conhecidos`, `profor_2022_item_rateios`,
 `profor_2022_revisao_divergencias`, `profor_2022_revisao_decisoes` e
 `profor_convenios_monitorados`, além dos relatórios PAD em `Planilhas/`. A
-saída é gravada apenas em arquivos de relatório, fora do SQLite:
+saída é gravada apenas em arquivos de relatório, fora do banco operacional:
 
 - `backend/data/relatorios/profor-2022-pad-plano-reconstruido-dry-run.json`;
 - `backend/data/relatorios/profor-2022-pad-plano-comparacao-dry-run.json`;
@@ -896,7 +903,7 @@ snapshot são tratadas como “sem snapshot”. A auditoria lê
 `profor_2022_revisao_divergencias` e `profor_2022_revisao_decisoes`, recompõe a
 geração atual da fila e grava a saída apenas em
 `backend/data/relatorios/profor-2022-pad-seguranca-pre-ativacao-dry-run.json` e
-`.md`, fora do SQLite.
+`.md`, fora do banco operacional.
 
 ## Critérios para atualizar este arquivo
 

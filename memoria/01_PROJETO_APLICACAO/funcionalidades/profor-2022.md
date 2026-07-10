@@ -513,7 +513,7 @@ git push origin HEAD
 - Bloco 17: integração controlada da origem consolidada com fallback. `backend/services/data-service.js` preserva a origem `planilha` e acrescenta metadados seguros ao objeto PROFOR 2022 sem mudar o shape consumido pela tela. `backend/services/dashboard-publication-service.js` passa a resolver a origem por flag/opção: `planilha` mantém o fluxo antigo; `banco-cache` chama `profor-consolidado-service.js` com plano extraído das abas UF; falhas retornam para `planilha` com aviso. `backend/services/static-publication-service.js` sanitiza o catálogo público para não publicar a seção interna `detru`. Frontend, rotas, banco, `backend/data/aplicacao.json` e JSONs publicados não foram alterados; `npm run publicar:dados` não foi executado.
 - Bloco 18: validação final local e rotas somente leitura. Histórico: `backend/server.js` recebeu `GET /api/profor-2022/consolidado` e `GET /api/profor-2022/comparar-origens`. **Estado atual (24/05/2026):** `/consolidado` permanece operacional e usa PAD/reconstrução; `/comparar-origens` foi removida; planilha antiga e banco-cache legado não são mais origens operacionais.
 - Correção do fluxo público Transferegov (18/05/2026): `backend/services/profor-2022/transferegov-rendimentos-client.js` passou a reproduzir o fluxo público completo de rendimentos por sessão Acesso Livre: inicialização guest, consulta pública por `numeroConvenio`, extração de `idConvenio`, seleção do instrumento e leitura da tela de Rendimento de Aplicação. O cliente tenta HTTP com cookie jar em memória e, quando o IdP/SAML impede sessão por HTTP simples, usa fallback local com Playwright/Chromium já disponível no projeto, sem login, sem credenciais e sem cookies persistidos. Testes reais: `880892` → `idConvenio=732378`, R$ 131.799,75; `937216` → `idConvenio=1031156`, -R$ 25.373,11. `npm run atualizar:rendimentos-profor` populou o cache para 15/15 convênios. `totalComRendimentos` passou a 15. Banco-cache continua fora do padrão.
-- Rotina operacional consolidada (18/05/2026): `backend/services/profor-2022/profor-atualizacao-consolidada-service.js` criado como orquestrador único. Executa DETRU → rendimentos Transferegov → montagem do consolidado → validação de diagnóstico, com `executarEtapaComProtecao` envolvendo cada etapa para preservar relatório e nunca apagar caches anteriores (todas as gravações continuam sendo upsert). Funções: `atualizarProfor2022Consolidado()`, `validarDiagnosticoConsolidado()`, `resumirAtualizacaoConsolidada()`, `executarEtapaComProtecao()`. Script CLI `npm run atualizar:profor-2022` e agendador `npm run agendar:profor-2022` adicionados (horário configurável por `PROFOR_2022_ATUALIZACAO_DIARIA_HORA`, fallback `06:30`). Rotas locais/API administrativas criadas: `POST /api/profor-2022/atualizar` e `GET /api/profor-2022/atualizacao/status`. Frontend recebeu botão `btnAtualizarProfor2022` e linha de status, ambos restritos ao modo local/API. Teste real: 15/15 DETRU, 15/15 rendimentos, 15/15 consolidado em 119s. Publicação estática NÃO executada. JSONs publicados NÃO alterados.
+- **Registro histórico de 18/05/2026, descontinuado em 25/05/2026:** `backend/services/profor-2022/profor-atualizacao-consolidada-service.js` foi criado como orquestrador único de DETRU → rendimentos → consolidado. Naquele momento também foram criados os comandos `atualizar:profor-2022`/`agendar:profor-2022`, a rota `POST /api/profor-2022/atualizar` e o botão `btnAtualizarProfor2022`. No estado atual, os comandos legados são bloqueados, o botão foi removido e a rota retorna HTTP `410`; permanecem os fluxos dedicados e o `GET /api/profor-2022/atualizacao/status` somente leitura.
 
 ### 10.1.0. Visão geral exibe data/hora da última atualização operacional
 
@@ -527,18 +527,18 @@ Complemento operacional: o rótulo da visão geral não deve ser sobrescrito por
 
 Regra de exibição da faixa técnica: a faixa administrativa de origem/diagnóstico (`Origem local/API`, `Diagnóstico`, avisos de campos pendentes como `saldoDisponivelOuvidoria`) não é exibida na visão principal, nem em modo local/API nem em modo estático/GitHub Pages. A informação técnica deve permanecer restrita a endpoints/status ou a área administrativa recolhida, quando houver necessidade operacional. A página PROFOR 2022 não deve mostrar `banco-cache`, contagens DETRU/Plano/Rendimentos ou pendências internas como mensagem visual para o usuário final.
 
-### 10.1.1. Rotina operacional diária consolidada (referência rápida)
+### 10.1.1. Rotina consolidada descontinuada (referência histórica)
+
+O fluxo consolidado abaixo não é orientação operacional atual. Atualizações devem usar as rotas dedicadas de DETRU, rendimentos e PAD; as cinco rotas administrativas sensíveis exigem `PROFOR_ADMIN_TOKEN`, conforme `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`, seção 11.
 
 | Item | Detalhe |
 | --- | --- |
-| Comando manual | `npm run atualizar:profor-2022` |
-| Comando de agendamento | `npm run agendar:profor-2022` (processo separado) |
-| Horário diário | `PROFOR_2022_ATUALIZACAO_DIARIA_HORA` no `.env` (fallback `06:30`) |
-| Rota administrativa | `POST /api/profor-2022/atualizar` |
+| Comando manual legado | `npm run atualizar:profor-2022` — bloqueado pelo wrapper de legado |
+| Comando de agendamento legado | `npm run agendar:profor-2022` — bloqueado pelo wrapper de legado |
+| Rota administrativa legada | `POST /api/profor-2022/atualizar` — retorna HTTP `410` sem executar atualização |
 | Rota de status (somente leitura) | `GET /api/profor-2022/atualizacao/status` |
-| Botão UI | "Atualizar PROFOR 2022" no painel da Carteira Monitorada (oculto no modo estático) |
-| Preservação de cache | Todas as gravações são upsert; em falha de DETRU ou rendimentos, o cache anterior permanece e o relatório registra a falha |
-| Não publica dados estáticos | `npm run publicar:dados` NÃO é chamado pela rotina; JSONs públicos não são alterados |
+| Botão UI legado | "Atualizar PROFOR 2022" — removido |
+| Fluxos atuais | `POST /api/profor-2022/detru/atualizar`, `POST /api/profor-2022/rendimentos/atualizar`, `POST /api/profor-2022/pad/atualizar-transferegov`, `POST /api/profor-2022/pad/recarregar` e `POST /api/profor-2022/pad/recarregar-operacional` |
 
 ### 10.1.2. Rotina semiautomática de publicação estática recorrente
 
