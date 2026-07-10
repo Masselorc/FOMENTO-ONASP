@@ -1,5 +1,18 @@
 # Diário de bordo
 
+## 10/07/2026 - Supabase: aplicação remota da restrição de execução da função de auto-RLS
+
+- Branch: `main`.
+- Migration aplicada: `supabase/migrations/20260710142445_revoke_rls_auto_enable_execute.sql`, enviada isoladamente pelo conector oficial Supabase e registrada no remoto como `20260710164346_revoke_rls_auto_enable_execute`.
+- Estado anterior: consulta somente leitura confirmou `EXECUTE=true` para `PUBLIC`, `anon` e `authenticated`; a função existia como `SECURITY DEFINER`, o event trigger `ensure_rls` estava vinculado à função e 21 tabelas do schema `public` estavam com RLS habilitado.
+- Estado posterior: consulta somente leitura confirmou `EXECUTE=false` para `PUBLIC`, `anon` e `authenticated`; a função permaneceu `SECURITY DEFINER`, o event trigger `ensure_rls` permaneceu vinculado e a contagem de 21 tabelas públicas com RLS foi preservada.
+- Supabase Advisor: os lints `0028_anon_security_definer_function_executable` e `0029_authenticated_security_definer_function_executable` deixaram de ser reportados. Permaneceram apenas avisos informativos `0008_rls_enabled_no_policy`, coerentes com o acesso backend-only já documentado e sem criação de policy permissiva.
+- Preservações: nenhuma tabela ou dado foi alterado; não houve `DROP`, desabilitação de RLS, criação de policy, alteração da função ou do event trigger. `.env`, segredos, frontend, backend funcional, caches e dados publicados permaneceram intactos.
+- Validações remotas: histórico de migrations conferido antes e depois; privilégios conferidos antes e depois; função, event trigger e RLS conferidos; Advisor de segurança executado após a aplicação.
+- Validações locais: `git diff --check` aprovado; `npm run validar:syntax` com 110 arquivos aprovados; `npm run validar:services` com 519 testes aprovados, 20 pulados e 0 falhas.
+- Risco de regressão: baixo; somente chamadas diretas à função por papéis expostos deixam de funcionar, que é o bloqueio de segurança pretendido.
+- Rollback: somente se houver necessidade operacional expressamente revisada, criar nova migration que conceda `EXECUTE` ao menor conjunto de papéis necessário; não editar nem apagar a migration já aplicada.
+
 ## 10/07/2026 - Supabase: restrição de execução da função de auto-RLS
 
 - Branch: `agent/supabase-rls-hardening`.
