@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 10/07/2026 - Supabase: restrição de execução da função de auto-RLS
+
+- Branch: `agent/supabase-rls-hardening`.
+- Objetivo: corrigir a exposição da função `public.rls_auto_enable()` apontada pelo Supabase Advisor e registrar a estratégia de RLS do projeto.
+- Alteração: criada migration idempotente que, quando a função existe, revoga `EXECUTE` de `PUBLIC`, `anon` e `authenticated`, sem remover a função, desabilitar RLS ou alterar dados.
+- Arquitetura: documentado o acesso preferencial ao Postgres/Supabase pelo backend via `DATABASE_URL`; o frontend público não deve acessar tabelas sensíveis pela Data API. RLS sem policy mantém bloqueio por padrão para papéis expostos em fluxos backend-only.
+- Segurança: nenhuma policy permissiva foi criada; `.env`, segredos, frontend, caches, dados publicados e dados de banco foram preservados.
+- Evidência remota: consulta somente leitura confirmou owner `postgres`, `SECURITY DEFINER`, ACL padrão e execução disponível para `anon` e `authenticated`; o Advisor confirmou os lints 0028 e 0029. Nenhuma migration foi aplicada ao banco nesta etapa.
+- Validações: `git diff --check`; `npm run validar:syntax` com 110 arquivos aprovados; `npm run validar:services` com 519 testes aprovados, 20 pulados e 0 falhas. O lint local de schema não foi executado porque o Docker/Supabase local não estava ativo.
+- Risco de regressão: baixo; a mudança afeta somente a capacidade dos papéis públicos de invocar diretamente a função administrativa.
+- Rollback: reverter a migration e a documentação pelo controle de versão; se for indispensável restaurar a execução, criar migration explícita e revisada com o menor `GRANT EXECUTE` necessário.
+
 ## 10/07/2026 - PROFOR 2022: documentação operacional do token administrativo
 
 - Branch: `agent/profor-admin-token-hardening`.

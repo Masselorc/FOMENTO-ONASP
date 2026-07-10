@@ -46,6 +46,29 @@ O arquivo SQLite, WAL, SHM e backups são artefatos locais e não devem ser vers
 - **Relação operacional:** relação observada em serviços e rotas, sem afirmar foreign key quando ela não aparece no SQL.
 - **Não confirmado:** item não evidenciado nos arquivos lidos.
 
+## Estratégia Supabase/Postgres e RLS
+
+O acesso operacional ao Postgres/Supabase ocorre preferencialmente pelo backend,
+por conexão direta configurada em `DATABASE_URL`. O frontend público não deve
+consultar diretamente tabelas sensíveis por Supabase Client, PostgREST ou outra
+interface da Data API.
+
+Para tabelas expostas, RLS habilitado sem policy representa bloqueio por padrão
+para os papéis `anon` e `authenticated`, não uma autorização nem um erro
+funcional quando o fluxo previsto é backend-only. Essa situação deve permanecer
+registrada como decisão de arquitetura e ser reavaliada se o modelo de acesso
+mudar.
+
+A função `public.rls_auto_enable()` mantém o auto-RLS das novas tabelas, mas,
+por ser `SECURITY DEFINER`, não deve ser executável por `PUBLIC`, `anon` ou
+`authenticated`. A migration
+`supabase/migrations/20260710142445_revoke_rls_auto_enable_execute.sql` revoga
+esses privilégios sem remover a função, desabilitar RLS ou alterar dados.
+
+Qualquer acesso futuro de leitura ou escrita pelo frontend via Supabase Client
+deve receber grants e policies explícitas, mínimas e revisadas para o caso de
+uso. Não criar policy genérica do tipo `allow all`.
+
 ## Banco local
 
 **Caminho confirmado:** `backend/data/onasp.sqlite`.
