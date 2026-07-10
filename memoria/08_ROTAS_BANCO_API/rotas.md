@@ -6,7 +6,7 @@ Este arquivo documenta as rotas reais da API local do FOMENTO-ONASP, com base em
 
 A API descrita aqui é local. Ela apoia o modo local/API, editável, servido por `npm start`. Não se trata de API pública externa e não é usada diretamente pelo modo estático/GitHub Pages.
 
-O detalhamento de tabelas, colunas, tipos e constraints do SQLite deve ficar em `schema-banco.md`.
+O detalhamento do banco operacional Postgres/Supabase e do artefato SQLite legado deve ficar em `schema-banco.md`.
 
 ## Visão geral
 
@@ -71,11 +71,11 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Payload:** confirmado. Usa `lerJsonBody`. O serviço espera `password` e `changes`. O frontend envia `changes` a partir de `parametrosMinimosAlteracoesPendentes`; o serviço valida alterações por UF e parâmetro, aceitando status e, para parâmetros quantitativos, `quantidadeAtual` e `quantidadeIdeal`.
 
-**Resposta:** confirmada. Em sucesso, o serviço retorna `success: true`, `message`, `updatedAt` e `backupPath`; o roteador acrescenta `publicacaoEstatica` quando `publicarAposSalvamento` conclui.
+**Resposta:** confirmada. Em sucesso, o serviço retorna `success: true`, `message` e `updatedAt`.
 
-**Efeito colateral:** grava SQLite; cria backup do banco; registra histórico; aciona publicação estática se `success: true`.
+**Efeito colateral:** grava Postgres/Supabase pelo backend via `DATABASE_URL` e registra histórico. Não aciona publicação estática automaticamente.
 
-**Publicação estática:** sim, via `publicarAposSalvamento`.
+**Publicação estática:** não.
 
 **Frontend consumidor:** `salvarParametrosMinimosComSenha()` em `frontend/js/app.js`.
 
@@ -111,11 +111,11 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Payload:** confirmado. Usa `lerJsonBody`. O serviço espera `password` e `historicoId`.
 
-**Resposta:** confirmada. Em sucesso, retorna `success: true`, `message`, `updatedAt` e `backupPath`; o roteador acrescenta `publicacaoEstatica` quando a publicação conclui.
+**Resposta:** confirmada. Em sucesso, retorna `success: true`, `message` e `updatedAt`.
 
-**Efeito colateral:** grava SQLite; cria backup do banco; registra novo histórico de reversão; aciona publicação estática se `success: true`.
+**Efeito colateral:** grava Postgres/Supabase pelo backend via `DATABASE_URL` e registra novo histórico de reversão. Não aciona publicação estática automaticamente.
 
-**Publicação estática:** sim, via `publicarAposSalvamento`.
+**Publicação estática:** não.
 
 **Frontend consumidor:** `reverterHistoricoParametrosMinimos(historicoId)` em `frontend/js/app.js`.
 
@@ -155,7 +155,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** confirmada. Retorna objeto com `arquivo`, `disponivel`, `aba`, `ufsAutorizadas`, `ufsCondicaoSuspensiva`, `valorRepassePadrao`, `etapas`, `statusPermitidos`, `propostas`, `registros`, `diagnostico` e `resumo`.
 
-**Efeito colateral:** inicializa dados locais quando necessário pelo serviço; nenhum salvamento de payload da requisição.
+**Efeito colateral:** pode executar backfill idempotente no Postgres/Supabase quando necessário pelo serviço; não salva payload da requisição.
 
 **Publicação estática:** não.
 
@@ -173,11 +173,11 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Payload:** confirmado. Usa `lerJsonBody`. O serviço espera `password` e `changes`. O frontend envia `changes` por UF e etapa, com `status` e `observacao`.
 
-**Resposta:** confirmada. Em sucesso, retorna `success: true`, `message`, `updatedAt` e `backupPath`; o roteador acrescenta `publicacaoEstatica` quando a publicação conclui.
+**Resposta:** confirmada. Em sucesso, retorna `success: true`, `message` e `updatedAt`.
 
-**Efeito colateral:** grava SQLite; cria backup do banco; registra histórico de status e observação; aciona publicação estática se `success: true`.
+**Efeito colateral:** grava Postgres/Supabase pelo backend via `DATABASE_URL` e registra histórico de status e observação. Não aciona publicação estática automaticamente.
 
-**Publicação estática:** sim, via `publicarAposSalvamento`.
+**Publicação estática:** não.
 
 **Frontend consumidor:** `salvarFormalizacaoComSenha()` em `frontend/js/app.js`.
 
@@ -237,7 +237,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** confirmada. Retorna objeto com `arquivo`, `disponivel`, `aba`, `itens`, `itensOficiais`, `outrosProcessos`, `statusPermitidos`, `resumo`, `resumoAparelhamento` e `filtros`.
 
-**Efeito colateral:** inicializa dados locais quando necessário pelo serviço; nenhum salvamento de payload da requisição.
+**Efeito colateral:** pode executar backfills idempotentes no Postgres/Supabase quando necessário pelo serviço; não salva payload da requisição.
 
 **Publicação estática:** não.
 
@@ -257,7 +257,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** confirmada. Em sucesso, retorna `success: true`, `message`, `updatedAt` e `backupPath`; o roteador acrescenta `publicacaoEstatica` quando a publicação conclui.
 
-**Efeito colateral:** grava SQLite; cria backup do banco; registra histórico de criação, alteração ou inativação; aciona publicação estática se `success: true`.
+**Efeito colateral:** grava Postgres/Supabase pelo backend via `DATABASE_URL`; registra histórico de criação, alteração ou inativação; aciona publicação estática se `success: true`.
 
 **Publicação estática:** sim, via `publicarAposSalvamento`.
 
@@ -277,7 +277,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** confirmada. Em sucesso, retorna `success: true`, `message`, `updatedAt`, `backupPath` e `item`; o roteador acrescenta `publicacaoEstatica` quando a publicação conclui.
 
-**Efeito colateral:** grava SQLite; cria backup do banco; registra histórico; aciona publicação estática se `success: true`.
+**Efeito colateral:** grava Postgres/Supabase pelo backend via `DATABASE_URL`; registra histórico; aciona publicação estática se `success: true`.
 
 **Publicação estática:** sim, via `publicarAposSalvamento`.
 
@@ -297,7 +297,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** confirmada. Em sucesso, retorna `success: true`, `message`, `backupPath` e `movimentacao`; o roteador acrescenta `publicacaoEstatica` quando a publicação conclui.
 
-**Efeito colateral:** grava SQLite na tabela de movimentações do Orçamento 2026; cria backup do banco; registra histórico; aciona publicação estática se `success: true`.
+**Efeito colateral:** grava Postgres/Supabase na tabela de movimentações do Orçamento 2026 pelo backend via `DATABASE_URL`; registra histórico; aciona publicação estática se `success: true`.
 
 **Publicação estática:** sim, via `publicarAposSalvamento`.
 
@@ -399,7 +399,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** `{ success: true, convenio: { ... } }` com o registro criado em camelCase. Em erro de validação ou duplicidade: `{ success: false, message: "..." }` com status `400`.
 
-**Efeito colateral:** grava `profor_convenios_monitorados` no SQLite local.
+**Efeito colateral:** grava `profor_convenios_monitorados` no Postgres/Supabase pelo backend via `DATABASE_URL`.
 
 **Publicação estática:** não.
 
@@ -419,7 +419,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** `{ success: true, convenio: { ... } }` com o registro atualizado. Em erro: `{ success: false, message: "..." }` com status `400`.
 
-**Efeito colateral:** grava `profor_convenios_monitorados` no SQLite local; atualiza `atualizado_em`.
+**Efeito colateral:** grava `profor_convenios_monitorados` no Postgres/Supabase pelo backend via `DATABASE_URL`; atualiza `atualizado_em`.
 
 **Publicação estática:** não.
 
@@ -459,37 +459,37 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Resposta:** confirmada. Em sucesso retorna `{ success: true, message, totalSalvos, resultadoResumo, ultimaAtualizacao }`. Em erro retorna `{ success: false, message }` com status controlado.
 
-**Efeito colateral:** lê o ZIP configurado/local, calcula hash, registra início e fim da atualização, faz cruzamento com a carteira e salva snapshot no cache DETRU. Não publica JSONs estáticos e não altera banco/schema.
+**Efeito colateral:** lê o ZIP configurado/local, calcula hash, registra início e fim da atualização, faz cruzamento com a carteira e salva o snapshot no cache DETRU do Postgres/Supabase. Não publica JSONs estáticos e não altera o schema.
 
 **Publicação estática:** não.
 
 **Frontend consumidor:** botão "Atualizar DETRU" na Carteira Monitorada da página PROFOR 2022.
 
-**Observações de manutenção:** rota local/API בלבד. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador.
+**Observações de manutenção:** rota local/API בלבד. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador. Exige os guards de ambiente/localidade e `PROFOR_ADMIN_TOKEN`; ver a seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
 
-#### POST /api/profor-2022/atualizar
+#### POST /api/profor-2022/atualizar — legada/descontinuada
 
-**Finalidade:** disparar administrativamente a rotina operacional consolidada PROFOR 2022 (DETRU → rendimentos Transferegov → montagem do consolidado → validação).
+**Finalidade:** manter resposta explícita para clientes legados. Esta rota não executa atualização consolidada.
 
-**Serviço chamado:** `atualizarProfor2022Consolidado(opcoes)`, de `backend/services/profor-2022/profor-atualizacao-consolidada-service.js`.
+**Serviço chamado:** nenhum.
 
-**Tipo:** escrita local/API.
+**Tipo:** endpoint descontinuado.
 
-**Payload:** opcional. Aceita `{ detru?: { caminhoZip? }, intervaloEntreConsultasMs?, origemDados? }` em camelCase. Quando ausente, o serviço usa o arquivo DETRU configurado/local e o intervalo padrão de 500ms entre consultas Transferegov.
+**Payload:** ignorado.
 
-**Resposta:** confirmada. Em sucesso retorna `{ success: true, message, resultado }`, onde `resultado` contém `{ sucesso, iniciadoEm, finalizadoEm, duracaoMs, origemDados, detru, rendimentos, consolidado, avisos, erros }`. Cada bloco (`detru`, `rendimentos`, `consolidado`) traz `{ executado, sucesso, totais, erro, avisos }`. Em erro genérico retorna `{ success: false, message }` com status `500`.
+**Resposta:** HTTP `410 Gone`, com `success: false` e mensagem que orienta o uso dos fluxos dedicados.
 
-**Efeito colateral:** executa o serviço de atualização DETRU (download/local, hash, snapshot, log), itera a carteira ativa consultando o Transferegov público e gravando o cache de rendimentos (apenas em sucesso), e monta o consolidado em memória para validação. Caches anteriores não são apagados em falha (todas as gravações são upsert).
+**Efeito colateral:** nenhum. Não chama serviço, não consulta rede, não grava cache e não publica dados.
 
-**Publicação estática:** não. A rotina NÃO chama `npm run publicar:dados` e não altera JSONs publicados.
+**Fluxos atuais separados:** `POST /api/profor-2022/detru/atualizar`, `POST /api/profor-2022/rendimentos/atualizar`, `POST /api/profor-2022/pad/atualizar-transferegov`, `POST /api/profor-2022/pad/recarregar` e `POST /api/profor-2022/pad/recarregar-operacional`. Para leitura, usar `GET /api/profor-2022/consolidado`.
 
-**Frontend consumidor:** botão "Atualizar PROFOR 2022" na Carteira Monitorada da página PROFOR 2022 (apenas no modo local/API).
+**Token administrativo:** as cinco rotas sensíveis de escrita listadas acima exigem `PROFOR_ADMIN_TOKEN`, além dos guards existentes. Os headers aceitos e o procedimento operacional estão documentados na seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
 
-**Observações de manutenção:** rota local/API. Não existe no modo estático/GitHub Pages. Pode demorar minutos por consultar Transferegov para cada convênio.
+**Observações de manutenção:** chamadas antigas devem migrar para o fluxo dedicado correspondente; o retorno `410` é intencional.
 
 #### GET /api/profor-2022/atualizacao/status
 
-**Finalidade:** retornar o estado atual da rotina consolidada PROFOR 2022: origem efetiva, última atualização DETRU, última consulta de rendimentos e diagnóstico do consolidado.
+**Finalidade:** retornar diagnóstico agregado, somente leitura, dos fluxos separados do PROFOR 2022: origem efetiva, última atualização DETRU, última consulta de rendimentos e diagnóstico do consolidado.
 
 **Serviço chamado:** `resolverOrigemDadosProfor2022({ detalhado: true })`, `obterUltimaAtualizacaoDetru()`, `obterUltimaConsultaRendimentos()` e `montarConsolidadoProfor2022({ origemDados: "banco-cache", planoAplicacao })` em modo somente leitura.
 
@@ -531,7 +531,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 #### GET /api/faf2021
 
-**Finalidade:** retornar itens FAF 2021 derivados de `backend/data/aplicacao.json`.
+**Finalidade:** retornar itens FAF 2021 persistidos no Postgres/Supabase.
 
 **Serviço chamado:** `listarFaf2021()`, de `backend/services/faf-2021-service.js`.
 
@@ -559,15 +559,15 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Payload:** confirmado. Usa `lerJsonBody`. O frontend envia `password`, `itemId`, `uf`, `objeto`, `valorExecutado` e `observacaoExecucao`.
 
-**Resposta:** confirmada. Em sucesso, o serviço retorna `success: true`, `message`, `itemId` e `atualizadoEm`; o roteador acrescenta `publicacaoEstatica` quando a publicação conclui.
+**Resposta:** confirmada. Em sucesso, o serviço retorna `success: true`, `message`, `itemId` e `atualizadoEm`.
 
-**Efeito colateral:** grava `backend/data/aplicacao.json`; aciona publicação estática se `success: true`.
+**Efeito colateral:** grava Postgres/Supabase pelo backend via `DATABASE_URL`; não publica automaticamente os dados estáticos nesta rota.
 
-**Publicação estática:** sim, via `publicarAposSalvamento`.
+**Publicação estática:** não.
 
 **Frontend consumidor:** `salvarExecucaoFaf2021()` em `frontend/js/app.js`.
 
-**Observações de manutenção:** este fluxo não usa SQLite no serviço atual; por isso exige atenção especial para diff de `backend/data/aplicacao.json` e JSONs publicados quando a escrita for executada.
+**Observações de manutenção:** este fluxo não usa o SQLite legado nem grava `backend/data/aplicacao.json`; a persistência atual ocorre no Postgres/Supabase.
 
 ## Rotas de arquivos estáticos
 
@@ -610,15 +610,12 @@ Não há rota de exportação Excel confirmada para:
 
 Rotas que acionam `publicarAposSalvamento` quando o serviço retorna `success: true`:
 
-- `POST /api/parametros-minimos/salvar`;
-- `POST /api/parametros-minimos/historico/reverter`;
-- `POST /api/formalizacao-profor/salvar`;
 - `POST /api/orcamento-2026/salvar`;
 - `POST /api/orcamento-2026/processos-vinculados/criar`;
 - `POST /api/orcamento-2026/saldos/alocar`;
-- `POST /api/faf2021/salvar`.
+- `POST /api/orcamento-2026/frentes/salvar`.
 
-Rotas de leitura, histórico e exportação não acionam publicação estática.
+Parâmetros Mínimos, Formalização PROFOR e FAF 2021 não acionam publicação estática automática nas rotas de salvamento atuais. Rotas de leitura, histórico e exportação também não acionam publicação estática.
 
 `publicarAposSalvamento` chama `publicarDadosEstaticos()` de `backend/services/static-publication-service.js`. Em sucesso, adiciona `publicacaoEstatica` à resposta. Em falha de publicação, mantém a alteração local e retorna `warning: true` com detalhes da falha de publicação.
 
@@ -670,11 +667,11 @@ No modo estático/GitHub Pages, `frontend/js/core/static-mode.js` bloqueia contr
 
 Relação em alto nível:
 
-- Parâmetros Mínimos usa `parametros-minimos-service.js` e SQLite.
-- Formalização PROFOR usa `formalizacao-profor-service.js` e SQLite.
-- Orçamento 2026 usa `orcamento-2026-service.js` e SQLite, incluindo movimentações de saldo.
-- PROFOR 2022 — carteira de convênios usa `profor-2022/convenios-monitorados-service.js` e SQLite; sem publicação estática nesta etapa.
-- FAF 2021 usa `faf-2021-service.js` e grava `backend/data/aplicacao.json`.
+- Parâmetros Mínimos usa `parametros-minimos-service.js` e Postgres/Supabase via `DATABASE_URL`.
+- Formalização PROFOR usa `formalizacao-profor-service.js` e Postgres/Supabase via `DATABASE_URL`.
+- Orçamento 2026 usa `orcamento-2026-service.js` e Postgres/Supabase via `DATABASE_URL`, incluindo movimentações de saldo.
+- PROFOR 2022 — carteira, caches DETRU/rendimentos e revisão PAD usam serviços em `backend/services/profor-2022/` sobre Postgres/Supabase; scripts SQLite remanescentes são legados e protegidos por guard específico.
+- FAF 2021 usa `faf-2021-service.js` e Postgres/Supabase via `DATABASE_URL`.
 - Histórico usa `historico-service.js`.
 - Exportações usam `excel-export-service.js`.
 - Publicação estática usa `static-publication-service.js`.
