@@ -6,6 +6,8 @@ const { spawnSync } = require("node:child_process");
 
 const {
   isAmbienteProducao,
+  extrairTokenAdminProfor,
+  assertTokenAdminProforValido,
   assertEndpointAdminPermitido,
   assertChamadaExternaPermitida,
   assertAgendadorPermitido,
@@ -77,6 +79,39 @@ test("endpoint administrativo em dev: permite local sem flag, bloqueia nao-local
   );
 });
 
+test("token administrativo bloqueia configuracao ausente, token ausente e token incorreto", () => {
+  assert.throws(
+    () => assertTokenAdminProforValido("detru_atualizar", {
+      env: envDev(),
+      token: "token-informado-sem-configuracao",
+    }),
+    (erro) => erro?.statusCode === 403 && /token administrativo não configurado/.test(erro.message),
+  );
+
+  const env = envDev({ PROFOR_ADMIN_TOKEN: "token-esperado" });
+  assert.throws(
+    () => assertTokenAdminProforValido("detru_atualizar", { env }),
+    (erro) => erro?.statusCode === 403 && /Acesso administrativo PROFOR 2022 negado/.test(erro.message),
+  );
+  assert.throws(
+    () => assertTokenAdminProforValido("detru_atualizar", { env, token: "token-incorreto" }),
+    (erro) => erro?.statusCode === 403 && !erro.message.includes("token-esperado"),
+  );
+});
+
+test("token administrativo correto libera header explicito e Authorization Bearer", () => {
+  const env = envDev({ PROFOR_ADMIN_TOKEN: "token-correto" });
+  assert.doesNotThrow(() => assertTokenAdminProforValido("detru_atualizar", {
+    env,
+    headers: { "x-profor-admin-token": "token-correto" },
+  }));
+  assert.equal(extrairTokenAdminProfor({ authorization: "Bearer token-correto" }), "token-correto");
+  assert.doesNotThrow(() => assertTokenAdminProforValido("detru_atualizar", {
+    env,
+    headers: { authorization: "Bearer token-correto" },
+  }));
+});
+
 test("chamada externa DETRU/Transferegov: permite local sem flag, bloqueia nao-local sem flag", () => {
   assert.throws(
     () => assertChamadaExternaPermitida("detru", { env: envDev(), tipo: "DETRU" }),
@@ -129,16 +164,35 @@ test("agendador PROFOR bloqueia sem flag e bloqueia producao", () => {
   );
 });
 
-test("server aplica guard admin e externo antes dos endpoints DETRU/Transferegov e propaga requisicaoLocal", () => {
+test("server aplica guards antes dos efeitos sensiveis PROFOR 2022", () => {
   const server = ler("backend/server.js");
-  assert.match(server, /assertEndpointAdminPermitido\("api_profor_2022_detru_atualizar", \{ requisicaoLocal \}\)/);
-  assert.match(server, /assertChamadaExternaPermitida\("api_profor_2022_detru_atualizar", \{ tipo: "DETRU", requisicaoLocal \}\)/);
-  assert.match(server, /assertEndpointAdminPermitido\("api_profor_2022_rendimentos_atualizar", \{ requisicaoLocal \}\)/);
-  assert.match(server, /tipo: "Transferegov"/);
+  const casos = [
+    ["api_profor_2022_detru_atualizar", "atualizarCacheDetruProfor2022"],
+    ["api_profor_2022_rendimentos_atualizar", "executarEtapaRendimentos"],
+    ["api_profor_2022_pad_recarregar", "recarregarPadsOperacional"],
+    ["api_profor_2022_pad_recarregar_operacional", "carregarPadsOperacional"],
+    ["api_profor_2022_pad_atualizar_transferegov", "gerenciadorAtualizacaoTransferegov.iniciar"],
+  ];
+
+  for (const [contexto, efeito] of casos) {
+    const inicio = server.indexOf(`assertEndpointAdminPermitido("${contexto}"`);
+    const token = server.indexOf(`assertTokenAdminProforValido("${contexto}"`, inicio);
+    const sideEffect = server.indexOf(efeito, inicio);
+    assert.ok(inicio >= 0, `${contexto} deve aplicar guard de ambiente/localidade`);
+    assert.ok(token > inicio, `${contexto} deve validar token depois do guard existente`);
+    assert.ok(sideEffect > token, `${contexto} deve validar token antes de ${efeito}`);
+  }
+
   // O helper local deve existir e considerar apenas loopback (sem X-Forwarded-For).
   assert.match(server, /function ehRequisicaoLocal\(req\)/);
   assert.match(server, /127\.0\.0\.1/);
   assert.match(server, /::1/);
+});
+
+test("server usa loopback como host padrao e preserva override por HOST", () => {
+  const server = ler("backend/server.js");
+  assert.match(server, /const host = process\.env\.HOST \|\| "127\.0\.0\.1";/);
+  assert.doesNotMatch(server, /const host = process\.env\.HOST \|\| "0\.0\.0\.0";/);
 });
 
 test("/api/profor-2022/consolidado continua operacional por PAD/reconstrucao", () => {
