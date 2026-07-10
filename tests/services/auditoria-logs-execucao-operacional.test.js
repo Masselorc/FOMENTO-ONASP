@@ -248,11 +248,15 @@ test("DETRU: registrar início/fim/erro também chama log operacional", async ()
   assertSemSegredo(logs[2].payload);
 });
 
-test("Rendimentos: registrar início/fim/erro também chama log operacional", async () => {
+test("Rendimentos: logs distinguem sucesso, parcial e falha", async () => {
   const logs = [];
+  const atualizacoes = [];
   postgresClient.query = async (sql, params = []) => {
     if (/INSERT INTO profor_transferegov_rendimentos_consultas/i.test(sql)) return { rows: [{ id: 88 }] };
-    if (/UPDATE profor_transferegov_rendimentos_consultas/i.test(sql)) return { rows: [] };
+    if (/UPDATE profor_transferegov_rendimentos_consultas/i.test(sql)) {
+      atualizacoes.push(params);
+      return { rows: [] };
+    }
     if (/INSERT INTO logs_operacionais/i.test(sql)) {
       logs.push({ tipoEvento: params[1], status: params[2], payload: params[7] ? JSON.parse(params[7]) : null });
       return { rows: [{ id: logs.length }] };
@@ -265,18 +269,34 @@ test("Rendimentos: registrar início/fim/erro também chama log operacional", as
   await service.registrarConsultaRendimentosFim(id, {
     totalCarteiraAtiva: 4,
     totalConsultados: 4,
+    totalSucesso: 4,
+    totalFalha: 0,
+  });
+  await service.registrarConsultaRendimentosFim(id, {
+    totalCarteiraAtiva: 4,
+    totalConsultados: 4,
     totalSucesso: 3,
     totalFalha: 1,
+  });
+  await service.registrarConsultaRendimentosFim(id, {
+    totalCarteiraAtiva: 4,
+    totalConsultados: 4,
+    totalSucesso: 0,
+    totalFalha: 4,
   });
   await service.registrarConsultaRendimentosErro(id, new Error("token bearer-secreto"));
 
   assert.deepEqual(logs.map((log) => log.tipoEvento), [
     "profor_rendimentos_atualizacao_inicio",
     "profor_rendimentos_atualizacao_sucesso",
+    "profor_rendimentos_transferegov",
+    "profor_rendimentos_atualizacao_erro",
     "profor_rendimentos_atualizacao_erro",
   ]);
-  assert.equal(logs[1].payload.totalSucesso, 3);
-  assertSemSegredo(logs[2].payload);
+  assert.deepEqual(logs.slice(1, 4).map((log) => log.status), ["sucesso", "parcial", "falha"]);
+  assert.equal(logs[2].payload.statusResultado, "parcial");
+  assert.deepEqual(atualizacoes.slice(0, 3).map((params) => params[1]), [true, false, false]);
+  assertSemSegredo(logs[4].payload);
 });
 
 test("Publicação estática explícita registra início/sucesso com mocks sem escrever arquivos reais", async () => {

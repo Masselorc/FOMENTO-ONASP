@@ -1,5 +1,17 @@
 # Diário de bordo
 
+## 10/07/2026 - PROFOR 2022: classificação do lote de rendimentos Transferegov
+
+- Branch: `agent/profor-rendimentos-status-parcial`.
+- Objetivo: impedir que lotes com falhas individuais sejam registrados como sucesso pleno e melhorar a rastreabilidade da atualização de rendimentos.
+- Arquivos alterados: serviços de atualização consolidada e cache/auditoria de rendimentos; testes focados e de logs; guia operacional; referência do schema; este diário.
+- Regra implementada: `sucesso` quando `totalFalha = 0`; `parcial` quando `totalSucesso > 0` e `totalFalha > 0`; `falha` quando `totalSucesso = 0` e `totalFalha > 0`. O campo booleano `sucesso` permanece no contrato, mas passa a ser `true` somente no sucesso integral; `statusResultado` distingue os três estados.
+- Cache e logs: somente consultas individuais bem-sucedidas executam o upsert; falhas preservam o cache anterior. O encerramento persiste o status no resumo e registra log operacional com `status` correspondente, sem incluir payload sensível.
+- Testes: nova suíte cobre sucesso integral, sucesso parcial, falha total, resumo inconsistente e preservação do cache; a auditoria de logs cobre os três estados e o booleano persistido. Suítes focadas: 31 testes aprovados. Gates finais: `git diff --check` aprovado; `npm run validar:syntax` com 110 arquivos aprovados; `npm run validar:services` com 523 testes aprovados, 20 pulados e 0 falhas.
+- Preservações: sem alteração de `.env`, segredos, frontend, migrations, caches, dados publicados ou dados de banco; sem atualização real do Transferegov, publicação, agendamento, SQL remoto ou Playwright/E2E.
+- Risco de regressão: baixo a médio; consumidores que interpretavam conclusão parcial como `sucesso=true` passarão a receber `false`, conforme correção intencional. O campo textual novo permite distinguir parcial de falha total.
+- Rollback: reverter o commit desta branch ou restaurar individualmente os serviços, testes e arquivos Markdown alterados pelo controle de versão.
+
 ## 10/07/2026 - PROFOR 2022: revisão documental de rotas e banco legado
 
 - Branch: `agent/docs-rotas-banco-legado`.

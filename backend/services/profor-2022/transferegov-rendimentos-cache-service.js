@@ -21,6 +21,19 @@ function parsePayload(raw) {
   return raw;
 }
 
+function classificarResultadoRendimentos(resumo = {}) {
+  const totalSucesso = Math.max(0, Number(resumo.totalSucesso) || 0);
+  const totalFalha = Math.max(0, Number(resumo.totalFalha) || 0);
+  const totalConsultados = Math.max(
+    0,
+    Number(resumo.totalConsultados ?? resumo.totalCarteiraAtiva) || totalSucesso + totalFalha
+  );
+
+  if (totalFalha === 0 && totalSucesso === totalConsultados) return "sucesso";
+  if (totalSucesso > 0) return "parcial";
+  return "falha";
+}
+
 function linhaCacheParaCamelCase(row) {
   if (!row) return null;
 
@@ -50,17 +63,21 @@ function linhaCacheParaCamelCase(row) {
 function linhaConsultaParaCamelCase(row) {
   if (!row) return null;
 
+  const resumo = parsePayload(row.resumo_json);
+  const sucesso = row.sucesso === true || row.sucesso === 1;
+
   return {
     id: row.id,
     iniciadoEm: row.iniciado_em,
     concluidoEm: row.concluido_em,
-    sucesso: row.sucesso === true || row.sucesso === 1,
+    sucesso,
+    statusResultado: resumo?.statusResultado || (sucesso ? "sucesso" : "falha"),
     totalCarteiraAtiva: row.total_carteira_ativa,
     totalConsultados: row.total_consultados,
     totalSucesso: row.total_sucesso,
     totalFalha: row.total_falha,
     erro: row.erro,
-    resumo: parsePayload(row.resumo_json),
+    resumo,
   };
 }
 
@@ -177,39 +194,60 @@ async function registrarConsultaRendimentosInicio(metadados = {}) {
 }
 
 async function registrarConsultaRendimentosFim(idConsulta, resumo) {
+  const statusResultado = classificarResultadoRendimentos(resumo);
+  const sucessoIntegral = statusResultado === "sucesso";
+  const resumoFinal = {
+    ...resumo,
+    statusResultado,
+  };
+
   await query(`
     UPDATE profor_transferegov_rendimentos_consultas SET
       concluido_em          = $1,
-      sucesso               = true,
-      total_carteira_ativa  = $2,
-      total_consultados     = $3,
-      total_sucesso         = $4,
-      total_falha           = $5,
+      sucesso               = $2,
+      total_carteira_ativa  = $3,
+      total_consultados     = $4,
+      total_sucesso         = $5,
+      total_falha           = $6,
       erro                  = NULL,
-      resumo_json           = $6
-    WHERE id = $7
+      resumo_json           = $7
+    WHERE id = $8
   `, [
     new Date().toISOString(),
+    sucessoIntegral,
     resumo.totalCarteiraAtiva ?? 0,
     resumo.totalConsultados ?? 0,
     resumo.totalSucesso ?? 0,
     resumo.totalFalha ?? 0,
-    JSON.stringify(resumo),
+    JSON.stringify(resumoFinal),
     idConsulta
   ]);
+
+  const tipoEvento = statusResultado === "sucesso"
+    ? "profor_rendimentos_atualizacao_sucesso"
+    : statusResultado === "parcial"
+      ? "profor_rendimentos_transferegov"
+      : "profor_rendimentos_atualizacao_erro";
+
   await registrarLogRendimentosSeguro({
     modulo: "profor-2022",
-    tipoEvento: "profor_rendimentos_atualizacao_sucesso",
-    status: "sucesso",
-    resumo: `Atualização de rendimentos concluída: ${Number(resumo.totalSucesso || 0)} sucesso(s), ${Number(resumo.totalFalha || 0)} falha(s).`,
+    tipoEvento,
+    status: statusResultado,
+    resumo: `Atualização de rendimentos concluída com status ${statusResultado}: ${Number(resumo.totalSucesso || 0)} sucesso(s), ${Number(resumo.totalFalha || 0)} falha(s).`,
     payload: {
       idConsulta,
+      statusResultado,
       totalCarteiraAtiva: Number(resumo.totalCarteiraAtiva || 0),
       totalConsultados: Number(resumo.totalConsultados || 0),
       totalSucesso: Number(resumo.totalSucesso || 0),
       totalFalha: Number(resumo.totalFalha || 0),
     },
   });
+
+  return {
+    sucesso: sucessoIntegral,
+    statusResultado,
+  };
 }
 
 async function registrarConsultaRendimentosErro(idConsulta, erro) {
@@ -241,6 +279,7 @@ async function obterUltimaConsultaRendimentos() {
 }
 
 module.exports = {
+  classificarResultadoRendimentos,
   salvarSaldoRendimentoTransferegov,
   obterSaldoRendimentoPorConvenio,
   listarSaldosRendimentosCache,

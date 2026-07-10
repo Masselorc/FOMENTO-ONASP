@@ -416,7 +416,7 @@ As seções de colunas e tipos abaixo preservam a fotografia do schema SQLite an
 
 **Serviços relacionados:** `backend/services/profor-2022/transferegov-rendimentos-cache-service.js`; cliente de captura em `backend/services/profor-2022/transferegov-rendimentos-client.js`; script de atualização em `backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js` (`npm run atualizar:rendimentos-profor`).
 
-**Rotas relacionadas:** nenhuma rota criada nesta etapa.
+**Rotas relacionadas:** `POST /api/profor-2022/rendimentos/atualizar`.
 
 **Chave primária:** `id INTEGER PRIMARY KEY AUTOINCREMENT`.
 
@@ -468,19 +468,19 @@ As seções de colunas e tipos abaixo preservam a fotografia do schema SQLite an
 | `id` | `INTEGER` | criação inicial | `PRIMARY KEY AUTOINCREMENT`. |
 | `iniciado_em` | `TEXT` | criação inicial | `NOT NULL`; timestamp ISO de início da rotina. |
 | `concluido_em` | `TEXT` | criação inicial | timestamp ISO de encerramento. |
-| `sucesso` | `INTEGER DEFAULT 0` | criação inicial | `1` quando a execução da rotina conclui; `0` em falha fatal. |
+| `sucesso` | `INTEGER DEFAULT 0` | criação inicial | `1` somente no sucesso integral; `0` em sucesso parcial ou falha. |
 | `total_carteira_ativa` | `INTEGER DEFAULT 0` | criação inicial | total de convênios ativos no início da rotina. |
 | `total_consultados` | `INTEGER DEFAULT 0` | criação inicial | total de convênios consultados. |
 | `total_sucesso` | `INTEGER DEFAULT 0` | criação inicial | consultas salvas no cache. |
 | `total_falha` | `INTEGER DEFAULT 0` | criação inicial | consultas que retornaram erro controlado. |
 | `erro` | `TEXT` | criação inicial | erro fatal da rotina, quando houver. |
-| `resumo_json` | `TEXT` | criação inicial | resumo da execução, incluindo falhas por convênio. |
+| `resumo_json` | `TEXT` | criação inicial | resumo da execução, incluindo `statusResultado` (`sucesso`, `parcial` ou `falha`) e falhas por convênio. |
 
 **Campos adicionados por evolução incremental:** não há; a tabela é criada completa por `CREATE TABLE IF NOT EXISTS`.
 
 **Riscos de alteração:** esta tabela é trilha de auditoria operacional; limpeza ou alteração destrutiva reduz capacidade de diagnóstico de instabilidade no acesso público do Transferegov.
 
-**Observações de manutenção:** falhas por ausência de sessão pública, HTTP não 200 ou mudança de HTML devem ficar registradas no resumo da consulta sem afetar o cache válido.
+**Observações de manutenção:** falhas por ausência de sessão pública, HTTP não 200 ou mudança de HTML devem ficar registradas no resumo da consulta sem afetar o cache válido. Lotes com sucessos e falhas são `parcial`; lotes sem qualquer sucesso são `falha`.
 
 ### historico_alteracoes
 

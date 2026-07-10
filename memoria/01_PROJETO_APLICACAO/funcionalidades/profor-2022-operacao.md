@@ -36,6 +36,14 @@ Estado operacional atual:
 - `fetch-publico` existe como caminho de coleta quando disponível;
 - a diferença entre os fluxos deve ser monitorada nos logs operacionais.
 
+Classificação do lote de rendimentos:
+
+- `sucesso`: todos os convênios foram consultados com sucesso; o booleano `sucesso` é `true`;
+- `parcial`: há sucessos e falhas no mesmo lote; o booleano `sucesso` é `false` e `statusResultado` é `parcial`;
+- `falha`: nenhum convênio foi consultado com sucesso; o booleano `sucesso` é `false` e `statusResultado` é `falha`.
+
+Somente resultados individuais com sucesso atualizam o cache. Em falha individual, o último cache válido do convênio é preservado. Os logs operacionais registram o status textual do lote sem payload de autenticação ou conteúdo sensível.
+
 ### Plano de aplicação
 
 O plano de aplicação permanece vindo das abas estaduais da planilha.

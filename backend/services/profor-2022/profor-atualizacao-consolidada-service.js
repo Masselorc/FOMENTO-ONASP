@@ -9,6 +9,7 @@ const {
   registrarConsultaRendimentosInicio,
   registrarConsultaRendimentosFim,
   registrarConsultaRendimentosErro,
+  classificarResultadoRendimentos,
 } = require("./transferegov-rendimentos-cache-service");
 const {
   assertChamadaExternaPermitida,
@@ -48,6 +49,7 @@ async function executarEtapaComProtecao(nome, fn) {
       nome,
       executado: true,
       sucesso: false,
+      statusResultado: "falha",
       iniciadoEm,
       finalizadoEm: new Date().toISOString(),
       erro: error?.message || String(error),
@@ -56,19 +58,30 @@ async function executarEtapaComProtecao(nome, fn) {
   }
 }
 
-async function executarEtapaRendimentos(opcoes = {}) {
+async function executarEtapaRendimentos(opcoes = {}, dependencias = {}) {
+  const deps = {
+    assertChamadaExternaPermitida,
+    listarConveniosMonitorados,
+    consultarSaldoRendimentosConvenio,
+    salvarSaldoRendimentoTransferegov,
+    registrarConsultaRendimentosInicio,
+    registrarConsultaRendimentosFim,
+    registrarConsultaRendimentosErro,
+    ...dependencias,
+  };
+
   return executarEtapaComProtecao("rendimentos", async () => {
-    assertChamadaExternaPermitida("executarEtapaRendimentos", {
+    deps.assertChamadaExternaPermitida("executarEtapaRendimentos", {
       tipo: "Transferegov",
       requisicaoLocal: opcoes.requisicaoLocal,
       execucaoLocal: opcoes.execucaoLocal,
     });
-    const convenios = await listarConveniosMonitorados({ incluirInativos: false });
+    const convenios = await deps.listarConveniosMonitorados({ incluirInativos: false });
     const intervaloMs = Number.isFinite(opcoes.intervaloEntreConsultasMs)
       ? Math.max(0, opcoes.intervaloEntreConsultasMs)
       : INTERVALO_RENDIMENTOS_PADRAO_MS;
     const inicioEtapa = Date.now();
-    const idConsulta = await registrarConsultaRendimentosInicio({
+    const idConsulta = await deps.registrarConsultaRendimentosInicio({
       totalCarteiraAtiva: convenios.length,
     });
     const falhas = [];
@@ -81,7 +94,7 @@ async function executarEtapaRendimentos(opcoes = {}) {
     try {
       for (const convenio of convenios) {
         try {
-          const resultado = await consultarSaldoRendimentosConvenio(convenio.numeroConvenio);
+          const resultado = await deps.consultarSaldoRendimentosConvenio(convenio.numeroConvenio);
           const resultadoComCarteira = {
             ...resultado,
             ano: convenio.ano ?? null,
@@ -107,7 +120,7 @@ async function executarEtapaRendimentos(opcoes = {}) {
           }
 
           if (resultadoComCarteira.sucesso) {
-            await salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
+            await deps.salvarSaldoRendimentoTransferegov(resultadoComCarteira, {
               numeroConvenio: convenio.numeroConvenio,
               ano: convenio.ano ?? null,
             });
@@ -136,7 +149,14 @@ async function executarEtapaRendimentos(opcoes = {}) {
         }
       }
 
+      const statusResultado = classificarResultadoRendimentos({
+        totalConsultados: convenios.length,
+        totalSucesso,
+        totalFalha: falhas.length,
+      });
+      const sucesso = statusResultado === "sucesso";
       const resumo = {
+        statusResultado,
         totalCarteiraAtiva: convenios.length,
         totalConsultados: convenios.length,
         totalSucesso,
@@ -151,7 +171,7 @@ async function executarEtapaRendimentos(opcoes = {}) {
           : 0,
         falhas,
       };
-      await registrarConsultaRendimentosFim(idConsulta, resumo);
+      await deps.registrarConsultaRendimentosFim(idConsulta, resumo);
 
       const avisos = [];
       if (falhas.length > 0) {
@@ -161,6 +181,8 @@ async function executarEtapaRendimentos(opcoes = {}) {
       }
 
       return {
+        sucesso,
+        statusResultado,
         totalConsultados: convenios.length,
         totalSucessos: totalSucesso,
         totalFalhas: falhas.length,
@@ -174,7 +196,7 @@ async function executarEtapaRendimentos(opcoes = {}) {
         falhas,
       };
     } catch (error) {
-      await registrarConsultaRendimentosErro(idConsulta, error);
+      await deps.registrarConsultaRendimentosErro(idConsulta, error);
       throw error;
     }
   });
