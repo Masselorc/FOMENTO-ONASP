@@ -7952,3 +7952,12 @@ Logs operacionais gravados:
 - Validação automatizada: `node --check frontend/js/app.js`; teste específico 4/4; `npm run validar:syntax` (110 arquivos); `npm run validar:services` (544 testes, 524 aprovados, 20 ignorados, 0 falhas); `git diff --check` sem erro.
 - Preservações: sem alterar dados, cálculos, backend, banco, Supabase ou JSONs publicados; mudanças restritas ao PDF, teste e documentação. Sem commit ou push.
 - Risco e rollback: risco baixo, restrito à classe temporária de exportação. Para rollback, remover a paleta clara de `.is-exporting-budget`, restaurar o uso da altura integral do canvas e reverter as asserções correlatas.
+
+## 24/07/2026 - Higiene de artefatos locais de QA
+
+- Branch: `agent/profor-rendimentos-status-parcial`.
+- Situação: após o commit dos dados publicados, a fila do Git ainda mostrava 72 arquivos não rastreados: 58 em `tmp/` (PDFs e imagens de validação) e 14 em `.playwright-cli/` (capturas e relatório do Playwright).
+- Correção: adicionados `tmp/` e `.playwright-cli/` ao `.gitignore`; nenhum artefato local foi apagado ou versionado.
+- Validação: `git status --short` sem alterações rastreadas e sem os artefatos na fila.
+- Risco de regressão: baixo; os diretórios não possuíam arquivos versionados.
+- Rollback: remover as duas entradas do `.gitignore` caso algum dia o repositório passe a exigir artefatos de QA versionados.
