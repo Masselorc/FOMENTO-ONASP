@@ -7914,3 +7914,41 @@ Logs operacionais gravados:
 - Implementação: o total gerencial passou a priorizar o somatório dos valores disponíveis das frentes; o saldo planejado é recalculado sobre esse total; o card de seleção sem filtro passa a exibir o total das frentes; e o rollup local ficou restrito a formatos legados sem `resumo` e sem `resumoFrentes`.
 - Resultado esperado: total das frentes `R$ 6.100.000,00`, valor em execução `R$ 6.040.184,00`, valor executado `R$ 14.416,00` e saldo planejado `R$ 45.400,00`.
 - Rollback: reverter os ajustes em `frontend/js/app.js`, `backend/services/data-service.js`, `backend/services/orcamento-2026-service.js`, `frontend/data/publicados/orcamento-2026.json` e o valor esperado do teste de auditoria.
+
+## 21/07/2026 - Restauração do Supabase de homologação
+
+- Branch local durante a intervenção: `agent/profor-rendimentos-status-parcial`.
+- Problema: o projeto Supabase `fomento-onasp-homologacao` (`utfezwbahchwupuncvna`) estava pausado, impedindo a conexão da aplicação.
+- Diagnóstico: o conector Supabase confirmou o estado inicial `INACTIVE`; o aviso por e-mail anexado era anterior e informava apenas risco de pausa futura.
+- Ação executada: restauração solicitada pelo conector oficial; estados observados em sequência: `INACTIVE` -> `COMING_UP` -> `RESTORING` -> `ACTIVE_HEALTHY`.
+- Validação remota: consulta SQL somente de leitura respondeu em PostgreSQL 17.6; `public.parametros_minimos` existe e contém dado de prontidão; logs registraram `database system is ready to accept connections`.
+- Aplicação local: o launcher oficial `scripts/windows/iniciar-fomento-supabase.ps1` foi aberto para receber a senha diretamente do usuário, sem imprimir ou persistir credenciais; ele valida HTTP 200 na porta `8790` antes de abrir o Chrome.
+- Preservações: nenhuma migration, dado de negócio, chave, senha, `.env`, configuração do Supabase ou código funcional foi alterado; sem commit ou push.
+- Risco residual: em plano gratuito, o Supabase pode pausar novamente após baixa atividade; uso periódico da aplicação reduz o risco, enquanto plano pago evita pausa automática.
+- Rollback: não se aplica à restauração, pois ela apenas reativou o projeto preservando dados e configurações; se houver falha posterior, consultar logs e suporte Supabase antes de qualquer operação destrutiva.
+
+## 23/07/2026 - Orçamento 2026: PDF completo com andamentos expandidos
+
+- Branch: `agent/profor-rendimentos-status-parcial`.
+- Problema: o botão `PDF` capturava apenas o estado corrente da página; as linhas de rastreio tinham a classe `pdf-hidden` e só existiam no DOM quando abertas manualmente. O relatório também repetia o fundo branco nas páginas e cortava processos e etapas da linha do tempo nas bordas.
+- Implementação: `exportarOrcamentoPDF()` passou a abrir temporariamente todos os rastreios elegíveis das tabelas principal e de outros processos, capturar a view completa, gerar páginas A4 com cabeçalho, logo, numeração, rodapé e fundo uniforme, e restaurar exatamente o estado visual anterior ao fim da exportação.
+- Paginação: as métricas são coletadas na cópia interna usada pelo `html2canvas`; cada linha de processo e seu painel de andamento formam um bloco indivisível, evitando separação entre páginas.
+- Layout: a exportação ganhou contraste específico, fundo `#edf2f7`, trilhas compactadas, tabelas sem largura mínima excedente e distribuição de todas as etapas dentro da página. Botões e ações de edição não entram no relatório.
+- Arquivos alterados nesta tarefa: `frontend/js/app.js`; `frontend/css/app.css`; `tests/services/pdf-logo-header.test.js`; `memoria/01_PROJETO_APLICACAO/funcionalidades/orcamento-2026.md`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Validação automatizada: `node --check frontend/js/app.js`; `node --test tests/services/pdf-logo-header.test.js` (4/4); `npm run validar:syntax` (110 arquivos); `npm run validar:services` (544 testes, 524 aprovados, 20 ignorados, 0 falhas); `git diff --check` sem erro.
+- Validação real: Playwright abriu a página local em `127.0.0.1:8790`, acionou o botão `PDF` e confirmou a restauração da tela (`bodyClass` vazio e nenhum rastreio deixado aberto). O PDF A4 final teve 4 páginas e 9.621.662 bytes; as quatro páginas foram renderizadas e inspecionadas visualmente, com 11 processos, respectivas etapas, datas/referências e campos de acompanhamento gerencial legíveis.
+- Preservações: sem alterar backend, banco, Supabase, regras financeiras ou arquivos JSON publicados. As modificações já existentes em `frontend/data/publicados/` foram preservadas; sem commit ou push.
+- Risco de regressão: baixo e restrito à exportação PDF do Orçamento 2026; a tela normal não recebe os estilos de captura e seu estado é restaurado em bloco `finally`, inclusive em caso de erro.
+- Rollback: reverter o bloco de `exportarOrcamentoPDF()` em `frontend/js/app.js`, os seletores `.is-exporting-budget` em `frontend/css/app.css`, o teste correspondente e esta atualização documental.
+
+### Complemento - correção integral de contraste e acabamento do PDF
+
+- Evidência recebida: a captura do PDF mostrava cartões escuros com textos cinza/azul de baixo contraste e valores renderizados como faixas coloridas, além do cabeçalho vazio de ações.
+- Causa: a captura herdava o tema escuro e regras globais de gradiente com `background-clip: text`; o `html2canvas` convertia esses gradientes em retângulos. A altura integral da view também preservava um rodapé interno residual e criava uma quinta página praticamente vazia.
+- Correção visual: criada paleta clara exclusiva para `.is-exporting-budget`, com superfícies brancas, texto principal `#172033`, texto secundário `#526173`, cabeçalhos de tabela `#244764` com texto branco, recorte Pena Justa em `#fff8e8`, status e trilhas em tons claros e cores monetárias sólidas. Marcas d'água e colunas de ações foram removidas da captura.
+- Correção de paginação: `obterMetricasPaginacao()` passou a medir o último conteúdo útil na cópia interna do `html2canvas`; a fatia final ignora apenas o espaço residual externo, sem omitir processos ou andamentos.
+- Contraste medido: texto principal 16,27:1; texto secundário 6,33:1; cabeçalho de tabela 9,72:1; verde de KPI 6,09:1; âmbar de KPI 6,39:1; títulos/chips 9,41:1. Todas as combinações principais superam 4,5:1.
+- Validação real: PDF A4 final com 4 páginas e 9.671.999 bytes; todas as páginas foram renderizadas a 120 DPI e inspecionadas. Não restaram faixas de gradiente, texto de baixo contraste, coluna de ações, painel cortado ou página vazia. O navegador confirmou `backgroundImage: none` nos valores e zero cabeçalhos de ações visíveis durante a captura.
+- Validação automatizada: `node --check frontend/js/app.js`; teste específico 4/4; `npm run validar:syntax` (110 arquivos); `npm run validar:services` (544 testes, 524 aprovados, 20 ignorados, 0 falhas); `git diff --check` sem erro.
+- Preservações: sem alterar dados, cálculos, backend, banco, Supabase ou JSONs publicados; mudanças restritas ao PDF, teste e documentação. Sem commit ou push.
+- Risco e rollback: risco baixo, restrito à classe temporária de exportação. Para rollback, remover a paleta clara de `.is-exporting-budget`, restaurar o uso da altura integral do canvas e reverter as asserções correlatas.
