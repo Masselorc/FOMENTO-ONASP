@@ -37,7 +37,7 @@ Permitir manutenção técnica do Orçamento 2026 com rastreabilidade de process
 | Perfil | Uso esperado | Observação |
 | --- | --- | --- |
 | Pessoa editora autorizada | Editar registros, criar processo vinculado, alocar saldo e salvar alterações | A escrita exige senha de confirmação no serviço |
-| Pessoa revisora | Conferir histórico, exportar Excel e validar saldo | Deve usar a fonte real do backend e do JSON publicado |
+| Pessoa revisora | Conferir histórico, exportar Excel/PDF e validar saldo | Deve usar a fonte real do backend e do JSON publicado |
 | Agente documental | Entender a funcionalidade com leitura mínima | Deve abrir este MD antes de varrer o projeto |
 
 ### 1.4. Escopo incluído
@@ -47,7 +47,7 @@ Permitir manutenção técnica do Orçamento 2026 com rastreabilidade de process
 - Criação de processo vinculado a partir de processo pai.
 - Alocação de saldo entre processos da mesma categoria observada no serviço.
 - Consulta de movimentações e histórico.
-- Exportação em Excel.
+- Exportação em Excel e PDF completo, com os andamentos processuais expandidos.
 - Publicação estática em `orcamento-2026.json`.
 
 ### 1.5. Fora do escopo
@@ -75,7 +75,9 @@ Permitir manutenção técnica do Orçamento 2026 com rastreabilidade de process
 - A criação de processo vinculado valida processo pai, valor, status e tipo de rastreio.
 - A alocação de saldo valida origem, destino, valor, justificativa e saldo transferível.
 - O histórico mostra registros recentes da página `orcamento-2026`.
-- A exportação entrega `.xlsx`.
+- A exportação em planilha entrega `.xlsx`.
+- A exportação em PDF inclui cada processo com o respectivo andamento, atualizações cadastradas e paginação que não separa a linha do painel de rastreio.
+- O PDF usa paleta clara independente do tema da tela, valores em cores sólidas, contraste mínimo de 4,5:1 nas combinações principais e não cria página final apenas com o rodapé interno da view.
 
 ## 2. Plan — Planejamento técnico
 
@@ -83,8 +85,8 @@ Permitir manutenção técnica do Orçamento 2026 com rastreabilidade de process
 
 | Camada | Arquivo | Papel na funcionalidade | Observação |
 | --- | --- | --- | --- |
-| front-end | `frontend/js/app.js` | View `orcamento`, carregamento de dados, cálculo visual de saldo, modais de alocação e divisão, salvamento, histórico e exportação | Fonte principal da interação |
-| front-end | `frontend/css/app.css` | Estilo da tabela, modal, ações da linha e responsividade | Inclui regras para o modo estático |
+| front-end | `frontend/js/app.js` | View `orcamento`, carregamento de dados, cálculo visual de saldo, modais de alocação e divisão, salvamento, histórico e exportações Excel/PDF | Fonte principal da interação |
+| front-end | `frontend/css/app.css` | Estilo da tabela, modal, ações da linha, responsividade e layout da captura do PDF | Inclui regras para o modo estático |
 | front-end | `frontend/data/publicados/orcamento-2026.json` | Fonte lida no modo estático | Não editar manualmente sem escopo claro |
 | documentação | `memoria/01_PROJETO_APLICACAO/funcionalidades/orcamento-2026.md` | Guia técnico da funcionalidade | Documento desta tarefa |
 
@@ -363,6 +365,7 @@ Base operacional confirmada na memória e no código:
 | Cálculo visual de saldo | Recalcula por item e movimentação | Pode pesar em listas maiores |
 | Renderização da tabela | Complexidade de layout | Tabela extensa exige responsividade |
 | Exportação Excel | Custo de geração de arquivo | Execução pontual, mas relevante |
+| Exportação PDF completo | Captura temporária da view com todas as trilhas abertas | Execução pontual; restaura o estado visual ao terminar |
 | Publicação estática | Recompõe JSON | Deve ocorrer só quando necessário |
 | Hierarquia pai/filho | Agrupamento e expansão | Pode gerar regressão visual se alterado sem cuidado |
 
@@ -399,7 +402,8 @@ Base operacional confirmada na memória e no código:
 - Abrir a modal de alocação.
 - Testar criação de processo vinculado.
 - Testar salvamento de alteração.
-- Testar exportação.
+- Testar exportação Excel.
+- Testar o PDF com todos os rastreios abertos, observações legíveis, etapas completas e blocos não divididos entre páginas.
 
 ### 10.2. Testes de API
 

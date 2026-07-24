@@ -10713,7 +10713,8 @@ async function carregarLogoParaPDF() {
         }
 
         // Renderiza uma linha extra abaixo do item da tabela. Essa linha só entra
-        // no DOM quando o item está expandido, permitindo múltiplas trilhas.
+        // no DOM quando o item está expandido, permitindo múltiplas trilhas. Na
+        // exportação completa, todas as trilhas são abertas temporariamente.
         function renderizarRastreioOrcamento(item, colspan = 10) {
             const etapas = obterEtapasRastreioOrcamento(item);
             const etapaAtual = etapas.find((etapa) => etapa.estado === 'atual') || etapas[0];
@@ -12989,48 +12990,241 @@ async function carregarLogoParaPDF() {
                 await new Promise(resolve => setTimeout(resolve, 120));
             }
 
-            const elementoParaCapturar = document.getElementById('main-wrapper');
             const viewOrcamento = document.getElementById('view-orcamento');
-            const headerActions = document.getElementById('header-actions');
-            const originalHeaderActionsDisplay = headerActions?.style.display || '';
+            const elementoParaCapturar = viewOrcamento || document.getElementById('main-wrapper');
+            const rastreiosAbertosAntes = new Set(orcamentoItensRastreioAbertos);
+            const idsRastreioExportacao = new Set([
+                ...(Array.isArray(budgetData.itens) ? budgetData.itens : []),
+                ...(Array.isArray(budgetData.outrosProcessos) ? budgetData.outrosProcessos : [])
+            ]
+                .filter((item) => item?.id && itemPodeExibirRastreioOrcamento(item))
+                .map((item) => String(item.id)));
             const originalWidth = elementoParaCapturar.style.width;
+            const originalMaxWidth = elementoParaCapturar.style.maxWidth;
             const originalMargin = elementoParaCapturar.style.margin;
-            const originalOrcamentoWidth = viewOrcamento?.style.width || '';
 
             document.body.classList.add('is-exporting');
             document.body.classList.add('is-exporting-budget');
-            if (headerActions) headerActions.style.display = 'none';
+
+            // A tabela principal restringe o conjunto de IDs ao aplicar filtros.
+            // Reaplicamos os IDs antes de renderizar a tabela de outros processos
+            // para que todas as trilhas visíveis entrem no PDF.
+            idsRastreioExportacao.forEach((itemId) => orcamentoItensRastreioAbertos.add(itemId));
+            atualizarTabelaOrcamento(budgetData);
+            idsRastreioExportacao.forEach((itemId) => orcamentoItensRastreioAbertos.add(itemId));
+            atualizarTabelaOutrosOrcamento(budgetData);
+
             elementoParaCapturar.style.width = '1200px';
             elementoParaCapturar.style.margin = '0';
-            if (viewOrcamento) viewOrcamento.style.width = '1200px';
+            elementoParaCapturar.style.maxWidth = '1200px';
+
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
             try {
+                const obterMetricasPaginacao = (elemento) => {
+                    const retanguloCaptura = elemento.getBoundingClientRect();
+                    const pontosQuebraCss = Array.from(elemento.querySelectorAll([
+                        '.budget-intro',
+                        '.budget-insight-grid',
+                        '.budget-pena-justa-summary',
+                        '.budget-tracking-row',
+                        '.budget-item-row:not(.budget-item-row-open)',
+                        '#budget-other-table-body > tr:last-child'
+                    ].join(',')))
+                        .map((alvo) => alvo.getBoundingClientRect().bottom - retanguloCaptura.top)
+                        .filter((posicao) => Number.isFinite(posicao) && posicao > 0);
+                    const blocosRastreioCss = Array.from(elemento.querySelectorAll('.budget-item-row-open'))
+                        .map((linhaItem) => {
+                            const linhaRastreio = linhaItem.nextElementSibling;
+                            if (!linhaRastreio?.matches('.budget-tracking-row')) return null;
+
+                            const retanguloItem = linhaItem.getBoundingClientRect();
+                            const retanguloRastreio = linhaRastreio.getBoundingClientRect();
+                            return {
+                                inicio: retanguloItem.top - retanguloCaptura.top,
+                                fim: retanguloRastreio.bottom - retanguloCaptura.top
+                            };
+                        })
+                        .filter((bloco) => bloco && bloco.inicio >= 0 && bloco.fim > bloco.inicio);
+                    const alvosFinais = Array.from(elemento.querySelectorAll([
+                        '.budget-pena-justa-summary',
+                        '.budget-insight-grid',
+                        '.budget-data-table',
+                        '#budget-other-content'
+                    ].join(',')));
+                    const fimConteudoMedido = alvosFinais.reduce((maiorFim, alvo) => (
+                        Math.max(maiorFim, alvo.getBoundingClientRect().bottom - retanguloCaptura.top)
+                    ), 0);
+                    const fimConteudoCss = fimConteudoMedido > 0
+                        ? fimConteudoMedido
+                        : retanguloCaptura.height;
+
+                    return {
+                        altura: retanguloCaptura.height,
+                        fimConteudoCss,
+                        pontosQuebraCss,
+                        blocosRastreioCss
+                    };
+                };
+                let metricasPaginacao = obterMetricasPaginacao(elementoParaCapturar);
+
                 const canvas = await html2canvas(elementoParaCapturar, {
                     scale: 2,
                     useCORS: true,
-                    backgroundColor: '#f3f6fa',
-                    windowWidth: 1200
+                    backgroundColor: '#edf2f7',
+                    windowWidth: 1200,
+                    scrollX: 0,
+                    scrollY: -window.scrollY,
+                    logging: false,
+                    onclone: (documentoClonado) => {
+                        const elementoClonado = documentoClonado.getElementById(elementoParaCapturar.id);
+                        if (elementoClonado) metricasPaginacao = obterMetricasPaginacao(elementoClonado);
+                    }
                 });
 
-                const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const imgHeightOnPdf = (canvas.height * pdfWidth) / canvas.width;
+                const larguraPagina = pdf.internal.pageSize.getWidth();
+                const alturaPagina = pdf.internal.pageSize.getHeight();
+                const margem = 8;
+                const topoConteudo = 21;
+                const alturaRodape = 12;
+                const larguraConteudo = larguraPagina - (margem * 2);
+                const alturaConteudo = alturaPagina - topoConteudo - alturaRodape;
+                const pixelsPorMm = canvas.width / larguraConteudo;
+                const alturaMaximaFatiaPx = Math.floor(alturaConteudo * pixelsPorMm);
+                // O html2canvas pode ajustar altura e largura em proporções
+                // diferentes ao clonar tabelas extensas. A paginação usa apenas
+                // coordenadas verticais, portanto deve seguir a escala real de Y.
+                const escalaCanvasVertical = canvas.height / Math.max(metricasPaginacao.altura, 1);
+                const alturaCapturaUtil = Math.min(
+                    canvas.height,
+                    Math.ceil((metricasPaginacao.fimConteudoCss + 8) * escalaCanvasVertical)
+                );
+                const pontosQuebraPx = metricasPaginacao.pontosQuebraCss
+                    .map((posicao) => Math.round(posicao * escalaCanvasVertical))
+                    .filter((posicao) => posicao > 0 && posicao < alturaCapturaUtil)
+                    .sort((a, b) => a - b);
+                const blocosRastreioPx = metricasPaginacao.blocosRastreioCss.map((bloco) => ({
+                    inicio: Math.round(bloco.inicio * escalaCanvasVertical),
+                    fim: Math.round(bloco.fim * escalaCanvasVertical)
+                }));
+                const fatias = [];
+                let inicioFatia = 0;
 
-                let heightLeft = imgHeightOnPdf;
-                let position = 0;
+                while (inicioFatia < alturaCapturaUtil) {
+                    const fimIdeal = Math.min(alturaCapturaUtil, inicioFatia + alturaMaximaFatiaPx);
+                    let fimFatia = fimIdeal;
 
-                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeightOnPdf);
-                heightLeft -= pageHeight;
+                    if (fimIdeal < alturaCapturaUtil) {
+                        // Se o limite ideal atravessar um processo, antecipa a
+                        // quebra para antes da linha do item. Assim, a linha e seu
+                        // painel de andamento sempre começam juntos na página.
+                        const blocoInterceptado = blocosRastreioPx.find((bloco) => (
+                            bloco.inicio > inicioFatia
+                            && bloco.inicio < fimIdeal
+                            && bloco.fim > fimIdeal
+                        ));
 
-                while (heightLeft > 0) {
-                    position -= pageHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeightOnPdf);
-                    heightLeft -= pageHeight;
+                        if (blocoInterceptado) {
+                            fimFatia = blocoInterceptado.inicio;
+                        } else {
+                            const limiteMinimo = inicioFatia + Math.floor(alturaMaximaFatiaPx * 0.35);
+                            const candidatos = pontosQuebraPx.filter((posicao) => posicao >= limiteMinimo && posicao <= fimIdeal);
+                            if (candidatos.length) fimFatia = candidatos[candidatos.length - 1];
+                        }
+                    }
+
+                    if (fimFatia <= inicioFatia) fimFatia = fimIdeal;
+                    fatias.push({ inicio: inicioFatia, altura: fimFatia - inicioFatia });
+                    inicioFatia = fimFatia;
                 }
+
+                const logo = await obterLogoSenappenParaPdf();
+                const dataGeracao = new Date().toLocaleString('pt-BR');
+                pdf.setProperties({
+                    title: 'Relatório completo do Orçamento 2026 - ONASP',
+                    subject: 'Itens orçamentários, andamentos processuais e atualizações cadastradas',
+                    author: 'ONASP / SENAPPEN'
+                });
+
+                fatias.forEach((fatia, indice) => {
+                    if (indice > 0) pdf.addPage();
+
+                    pdf.setFillColor(237, 242, 247);
+                    pdf.rect(0, 0, larguraPagina, alturaPagina, 'F');
+                    pdf.setFillColor(31, 59, 87);
+                    pdf.rect(0, 0, larguraPagina, 18, 'F');
+
+                    let tituloX = margem;
+                    if (logo) {
+                        const caixaX = margem;
+                        const caixaY = 2.5;
+                        const caixaLargura = 25;
+                        const caixaAltura = 13;
+                        pdf.setFillColor(255, 255, 255);
+                        pdf.roundedRect(caixaX, caixaY, caixaLargura, caixaAltura, 1.5, 1.5, 'F');
+                        const logoAltura = 10;
+                        const logoLargura = Math.min(21, logoAltura * (logo.proporcao || 1.47));
+                        pdf.addImage(
+                            logo.dataUrl,
+                            'PNG',
+                            caixaX + ((caixaLargura - logoLargura) / 2),
+                            caixaY + ((caixaAltura - logoAltura) / 2),
+                            logoLargura,
+                            logoAltura
+                        );
+                        tituloX = caixaX + caixaLargura + 4;
+                    }
+
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(11);
+                    pdf.text('Planejamento Orçamentário 2026', tituloX, 7.5);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(7.5);
+                    pdf.text('Relatório completo com andamentos e atualizações cadastradas', tituloX, 13);
+                    pdf.text(`Página ${indice + 1} de ${fatias.length}`, larguraPagina - margem, 13, { align: 'right' });
+
+                    const canvasPagina = document.createElement('canvas');
+                    canvasPagina.width = canvas.width;
+                    canvasPagina.height = fatia.altura;
+                    const contextoPagina = canvasPagina.getContext('2d');
+                    contextoPagina.fillStyle = '#edf2f7';
+                    contextoPagina.fillRect(0, 0, canvasPagina.width, canvasPagina.height);
+                    contextoPagina.drawImage(
+                        canvas,
+                        0,
+                        fatia.inicio,
+                        canvas.width,
+                        fatia.altura,
+                        0,
+                        0,
+                        canvasPagina.width,
+                        canvasPagina.height
+                    );
+
+                    const alturaImagem = fatia.altura / pixelsPorMm;
+                    pdf.addImage(
+                        canvasPagina.toDataURL('image/jpeg', 0.92),
+                        'JPEG',
+                        margem,
+                        topoConteudo,
+                        larguraConteudo,
+                        alturaImagem,
+                        undefined,
+                        'FAST'
+                    );
+
+                    pdf.setDrawColor(170, 184, 202);
+                    pdf.setLineWidth(0.2);
+                    pdf.line(margem, alturaPagina - 8.5, larguraPagina - margem, alturaPagina - 8.5);
+                    pdf.setTextColor(91, 107, 126);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(6.8);
+                    pdf.text(`Painel ONASP / SENAPPEN - gerado em ${dataGeracao}`, margem, alturaPagina - 5);
+                    pdf.text('Orçamento 2026', larguraPagina - margem, alturaPagina - 5, { align: 'right' });
+                });
 
                 pdf.save('Relatorio_Orcamento_2026_ONASP.pdf');
             } catch (erro) {
@@ -13043,10 +13237,13 @@ async function carregarLogoParaPDF() {
             } finally {
                 document.body.classList.remove('is-exporting');
                 document.body.classList.remove('is-exporting-budget');
-                if (headerActions) headerActions.style.display = originalHeaderActionsDisplay;
                 elementoParaCapturar.style.width = originalWidth;
+                elementoParaCapturar.style.maxWidth = originalMaxWidth;
                 elementoParaCapturar.style.margin = originalMargin;
-                if (viewOrcamento) viewOrcamento.style.width = originalOrcamentoWidth;
+                orcamentoItensRastreioAbertos = new Set(rastreiosAbertosAntes);
+                atualizarTabelaOrcamento(budgetData);
+                orcamentoItensRastreioAbertos = new Set(rastreiosAbertosAntes);
+                atualizarTabelaOutrosOrcamento(budgetData);
                 if (btnPdf) {
                     btnPdf.innerHTML = originalHtml;
                     btnPdf.disabled = originalDisabled;

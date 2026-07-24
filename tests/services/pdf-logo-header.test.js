@@ -112,3 +112,53 @@ test("orcamento exibe vinculo Pena Justa na tela e no PDF", () => {
   assert.match(blocoFinal, /background-image:\s*none\s*!important/);
   assert.match(blocoFinal, /-webkit-text-fill-color:\s*currentColor\s*!important/);
 });
+
+test("PDF completo do orcamento expande andamentos e pagina a captura", () => {
+  const repoRoot = path.resolve(__dirname, "../..");
+  const css = fs.readFileSync(path.join(repoRoot, "frontend/css/app.css"), "utf8");
+  const appCode = fs.readFileSync(path.join(repoRoot, "frontend/js/app.js"), "utf8");
+  const inicio = appCode.indexOf("async function exportarOrcamentoPDF()");
+  const fim = appCode.indexOf("async function obterLogoSenappenParaPdf()", inicio);
+
+  assert.notEqual(inicio, -1, "Exportacao completa do Orçamento 2026 deve existir");
+  assert.notEqual(fim, -1, "Bloco da exportacao completa deve ter limite identificavel");
+
+  const bloco = appCode.slice(inicio, fim);
+  assert.match(bloco, /rastreiosAbertosAntes/);
+  assert.match(bloco, /idsRastreioExportacao/);
+  assert.match(bloco, /itemPodeExibirRastreioOrcamento/);
+  assert.match(bloco, /atualizarTabelaOrcamento\(budgetData\)/);
+  assert.match(bloco, /atualizarTabelaOutrosOrcamento\(budgetData\)/);
+  assert.match(bloco, /\.budget-tracking-row/);
+  assert.match(bloco, /const blocosRastreioCss/);
+  assert.match(bloco, /onclone:/);
+  assert.match(bloco, /metricasPaginacao = obterMetricasPaginacao\(elementoClonado\)/);
+  assert.match(bloco, /const blocoInterceptado/);
+  assert.match(bloco, /fimFatia = blocoInterceptado\.inicio/);
+  assert.match(bloco, /const escalaCanvasVertical = canvas\.height/);
+  assert.match(bloco, /const alturaCapturaUtil = Math\.min/);
+  assert.match(bloco, /metricasPaginacao\.fimConteudoCss/);
+  assert.match(bloco, /const fatias = \[\]/);
+  assert.match(bloco, /canvasPagina\.toDataURL\('image\/jpeg', 0\.92\)/);
+  assert.match(bloco, /pdf\.setFillColor\(237, 242, 247\)/);
+  assert.match(bloco, /Relatório completo com andamentos e atualizações cadastradas/);
+  assert.match(bloco, /orcamentoItensRastreioAbertos = new Set\(rastreiosAbertosAntes\)/);
+
+  assert.match(
+    css,
+    /\.is-exporting-budget #view-orcamento \.budget-tracking-row\.pdf-hidden\s*\{[^}]*display:\s*table-row\s*!important;/s
+  );
+  assert.match(css, /\.is-exporting-budget #view-orcamento\s*\{[^}]*background:\s*#edf2f7\s*!important;/s);
+  assert.match(css, /\.is-exporting-budget #view-orcamento > \.action-buttons-floating/);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.budget-data-table\s*\{[^}]*min-width:\s*0\s*!important;/s);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.budget-pena-justa-summary\s*\{[^}]*background:\s*#fff8e8\s*!important;/s);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.budget-data-table thead th[^{]*\{[^}]*background:\s*#244764\s*!important;/s);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.text-money[^{]*\{[^}]*background-image:\s*none\s*!important;/s);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.budget-main-table th:last-child/);
+  assert.match(css, /#budget-other-content thead th:last-child/);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.budget-tracking-status\s*\{[^}]*background:\s*#e7edf3\s*!important;/s);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.budget-tracking-label/);
+  assert.match(css, /\.is-exporting-budget #view-orcamento \.budget-tracking-management/);
+  assert.match(css, /grid-template-columns:\s*repeat\(var\(--budget-tracking-steps, 13\), minmax\(0, 1fr\)\)\s*!important/);
+  assert.match(css, /color:\s*#1f2937\s*!important/);
+});
