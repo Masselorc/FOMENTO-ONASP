@@ -1,5 +1,14 @@
 # Diário de bordo
 
+## 06/08/2026 - GitHub Pages: remoção de deploy concorrente e publicação segura
+
+- Problema: o push do commit `3523356` disparou simultaneamente o workflow controlado `.github/workflows/build.yml` e o pipeline automático `pages build and deployment`, ambos tentando publicar o mesmo SHA no ambiente `github-pages`.
+- Evidência: os dois builds foram concluídos com sucesso, mas os deploys permaneceram em `deployment_queued`; após 10 minutos, o workflow controlado atingiu timeout e cancelou o deployment compartilhado, fazendo os dois jobs terminarem em falha. O artefato controlado tinha `1,01 MB`; o pipeline automático de branch montou artefato de `6,41 MB`.
+- Correção operacional: em `Settings > Pages > Build and deployment`, a origem foi alterada de `Deploy from a branch` para `GitHub Actions`. Assim, apenas o workflow controlado permanece responsável pelo deploy e continua montando `_site` somente com `index.html`, `frontend/` e os dois serviços públicos necessários.
+- Nova tentativa: a reexecução do job sobre o SHA cancelado foi rejeitada pelo Pages porque reutilizou o mesmo identificador de deployment. Este registro gera um novo SHA para disparar uma execução limpa sob a configuração corrigida.
+- Segurança: nenhuma credencial foi lida, impressa ou alterada; o ajuste reduz o escopo do artefato publicado e preserva a restrição existente contra bancos SQLite no pacote do site.
+- Rollback: restaurar `Deploy from a branch` apenas se o workflow controlado for removido ou ficar comprovadamente indisponível; nessa hipótese, revisar antes o risco de publicação de arquivos além do frontend.
+
 ## 10/07/2026 - PROFOR 2022: classificação do lote de rendimentos Transferegov
 
 - Branch: `agent/profor-rendimentos-status-parcial`.
