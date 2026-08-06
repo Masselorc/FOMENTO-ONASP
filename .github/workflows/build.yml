@@ -19,6 +19,8 @@ jobs:
   build:
     name: Build static site
     runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.pages-artifact.outputs.artifact_id }}
 
     steps:
       - name: Checkout repository
@@ -43,6 +45,7 @@ jobs:
           fi
 
       - name: Upload Pages artifact
+        id: pages-artifact
         uses: actions/upload-pages-artifact@v5
         with:
           path: _site
@@ -51,15 +54,78 @@ jobs:
     name: Deploy to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 65
 
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy Pages artifact
+      # actions/deploy-pages cancela o deployment após o limite interno de
+      # 10 minutos. A API oficial é usada diretamente para preservar uma
+      # publicação válida durante períodos excepcionais de fila do Pages.
+      - name: Create and monitor Pages deployment
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/github-script@v8
+        env:
+          ARTIFACT_ID: ${{ needs.build.outputs.artifact_id }}
         with:
-          # O Pages pode manter deployments válidos em fila por mais de 10 minutos.
-          timeout: 3600000
+          script: |
+            const artifactId = Number(process.env.ARTIFACT_ID);
+            if (!Number.isSafeInteger(artifactId) || artifactId <= 0) {
+              core.setFailed(`Invalid Pages artifact ID: ${process.env.ARTIFACT_ID}`);
+              return;
+            }
+
+            const idToken = await core.getIDToken();
+            const { data: deployment } = await github.request(
+              'POST /repos/{owner}/{repo}/pages/deployments',
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifactId,
+                pages_build_version: context.sha,
+                oidc_token: idToken
+              }
+            );
+
+            const pageUrl = deployment.page_url ||
+              `https://${context.repo.owner}.github.io/${context.repo.repo}/`;
+            core.setOutput('page_url', pageUrl);
+
+            const deploymentId = deployment.id ??
+              deployment.status_url?.split('/').filter(Boolean).pop() ??
+              context.sha;
+            const finalErrors = new Set([
+              'deployment_failed',
+              'deployment_content_failed',
+              'deployment_cancelled',
+              'deployment_lost'
+            ]);
+            const deadline = Date.now() + 60 * 60 * 1000;
+
+            while (Date.now() < deadline) {
+              await new Promise((resolve) => setTimeout(resolve, 10000));
+              const { data: current } = await github.request(
+                'GET /repos/{owner}/{repo}/pages/deployments/{deploymentId}',
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  deploymentId
+                }
+              );
+              core.info(`Pages deployment status: ${current.status}`);
+
+              if (current.status === 'succeed') {
+                return;
+              }
+              if (finalErrors.has(current.status)) {
+                core.setFailed(`Pages deployment ended with status: ${current.status}`);
+                return;
+              }
+            }
+
+            core.setFailed(
+              'Pages deployment did not complete within 60 minutes; ' +
+              'it was left active for GitHub to finish.'
+            );
