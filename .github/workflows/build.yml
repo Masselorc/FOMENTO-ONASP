@@ -43,6 +43,8 @@ jobs:
       # Publica somente o conteúdo de _site em uma branch gerada. A origem do
       # Pages deve permanecer configurada como gh-pages /(root).
       - name: Publish safe site to gh-pages branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           touch _site/.nojekyll
@@ -53,11 +55,8 @@ jobs:
           git -C _site commit -m "chore(pages): publish ${GITHUB_SHA}"
           git -C _site branch -M gh-pages
 
-          # Reutiliza a credencial efêmera configurada por actions/checkout,
-          # sem imprimir nem persistir token no conteúdo publicado.
-          git config --local --get-regexp '^http\..*\.extraheader$' |
-          while read -r key value; do
-            git -C _site config "$key" "$value"
-          done
-          git -C _site remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git -C _site push --force origin gh-pages
+          # O token efêmero é usado somente neste comando; o GitHub Actions o
+          # mascara nos logs e ele não é salvo na branch gerada.
+          git -C _site push --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            gh-pages
