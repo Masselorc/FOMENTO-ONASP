@@ -9,8 +9,11 @@
 - Limite confirmado: a tentativa de ampliar o input `timeout` de `actions/deploy-pages@v5` foi rejeitada pela própria ação, que limitou o valor a `600.000 ms` e cancelou novamente o deployment após 10 minutos.
 - Resiliência da fila: a etapa de deploy passou a criar e consultar a publicação pela API oficial do GitHub Pages, usando o ID do artefato produzido pelo job de build. O workflow consulta o estado por até 60 minutos e não cancela uma publicação válida apenas por permanecer em fila além do limite interno da ação pronta.
 - Escopo preservado: a alteração não muda os arquivos nem o conteúdo do artefato; permanece a montagem restrita de `_site`, o bloqueio de SQLite e o uso do ambiente protegido `github-pages` com token OIDC de curta duração.
+- Resultado da API: a publicação permaneceu efetivamente em `deployment_queued` por cerca de 17 minutos, sem cancelamento pelo workflow, e então o próprio serviço Pages devolveu `deployment_failed`. O build e o artefato de `1,01 MB` continuaram aprovados; a página anterior permaneceu disponível durante toda a tentativa.
+- Contingência aplicada: o workflow passou a publicar o mesmo `_site` restrito em uma branch gerada `gh-pages`, e a origem do Pages deve ser `gh-pages /(root)`. Esse é o mesmo mecanismo de branch que consta no histórico como última publicação bem-sucedida, mas agora sem usar `main` nem empacotar o repositório inteiro.
+- Automação futura: cada push em `main` reconstrói o site seguro e substitui somente a branch gerada `gh-pages`; `.nojekyll` é incluído e nenhuma credencial é persistida no conteúdo. O token efêmero recebe `contents: write` exclusivamente para atualizar essa branch.
 - Segurança: nenhuma credencial foi lida, impressa ou alterada; o ajuste reduz o escopo do artefato publicado e preserva a restrição existente contra bancos SQLite no pacote do site.
-- Rollback: restaurar a etapa `actions/deploy-pages@v5` se o serviço deixar de apresentar filas superiores a 10 minutos. Restaurar `Deploy from a branch` apenas se o workflow controlado for removido ou ficar comprovadamente indisponível; nessa hipótese, revisar antes o risco de publicação de arquivos além do frontend.
+- Rollback: restaurar `actions/upload-pages-artifact@v5` + `actions/deploy-pages@v5`, devolver `contents: read`, `pages: write` e `id-token: write`, e selecionar `GitHub Actions` como origem quando o serviço de artifact deployment voltar a concluir normalmente. Não selecionar `main` como branch de publicação.
 
 ## 10/07/2026 - PROFOR 2022: classificação do lote de rendimentos Transferegov
 
