@@ -7,7 +7,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
@@ -15,8 +17,10 @@ concurrency:
 
 jobs:
   build:
-    name: Build and publish static site
+    name: Build static site
     runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.pages-artifact.outputs.artifact_id }}
 
     steps:
       - name: Checkout repository
@@ -40,23 +44,88 @@ jobs:
             exit 1
           fi
 
-      # Publica somente o conteúdo de _site em uma branch gerada. A origem do
-      # Pages deve permanecer configurada como gh-pages /(root).
-      - name: Publish safe site to gh-pages branch
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          touch _site/.nojekyll
-          git -C _site init
-          git -C _site config user.name "github-actions[bot]"
-          git -C _site config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git -C _site add --all
-          git -C _site commit -m "chore(pages): publish ${GITHUB_SHA}"
-          git -C _site branch -M gh-pages
+      - name: Upload Pages artifact
+        id: pages-artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
 
-          # O token efêmero é usado somente neste comando; o GitHub Actions o
-          # mascara nos logs e ele não é salvo na branch gerada.
-          git -C _site push --force \
-            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
-            gh-pages
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # A ação pronta cancela o deployment após 10 minutos. A API oficial é
+      # consultada diretamente para preservar o estado deployment_in_progress.
+      - name: Create and monitor Pages deployment
+        id: deployment
+        uses: actions/github-script@v8
+        env:
+          ARTIFACT_ID: ${{ needs.build.outputs.artifact_id }}
+        with:
+          script: |
+            const artifactId = Number(process.env.ARTIFACT_ID);
+            if (!Number.isSafeInteger(artifactId) || artifactId <= 0) {
+              core.setFailed(`Invalid Pages artifact ID: ${process.env.ARTIFACT_ID}`);
+              return;
+            }
+
+            const idToken = await core.getIDToken();
+            const { data: deployment } = await github.request(
+              'POST /repos/{owner}/{repo}/pages/deployments',
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifactId,
+                pages_build_version: context.sha,
+                oidc_token: idToken
+              }
+            );
+
+            core.setOutput(
+              'page_url',
+              deployment.page_url ||
+                `https://${context.repo.owner}.github.io/${context.repo.repo}/`
+            );
+            const deploymentId = deployment.id ??
+              deployment.status_url?.split('/').filter(Boolean).pop() ??
+              context.sha;
+            const finalErrors = new Set([
+              'deployment_failed',
+              'deployment_content_failed',
+              'deployment_cancelled',
+              'deployment_lost'
+            ]);
+            const deadline = Date.now() + 60 * 60 * 1000;
+
+            while (Date.now() < deadline) {
+              await new Promise((resolve) => setTimeout(resolve, 10000));
+              const { data: current } = await github.request(
+                'GET /repos/{owner}/{repo}/pages/deployments/{deploymentId}',
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  deploymentId
+                }
+              );
+              core.info(`Pages deployment status: ${current.status}`);
+
+              if (current.status === 'succeed') {
+                return;
+              }
+              if (finalErrors.has(current.status)) {
+                core.setFailed(`Pages deployment ended with status: ${current.status}`);
+                return;
+              }
+            }
+
+            core.setFailed(
+              'Pages deployment did not complete within 60 minutes; ' +
+              'it was left active for GitHub to finish.'
+            );
