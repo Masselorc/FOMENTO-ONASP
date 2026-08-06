@@ -526,6 +526,46 @@ test("listarOrcamento2026 aplica ajustes operacionais do orçamento", async () =
   assert.ok(updates.some((update) => /DELETE FROM orcamento_2026_frentes/.test(update.sql) && update.params[0] === "Cursos ONASP"));
 });
 
+test("listarOrcamento2026 mantém empenho e execução do processo vinculado separados do pai", async () => {
+  const pai = {
+    ...linhaOrcamento,
+    id: "CAMP-001",
+    categoria: "Campanha Nacional",
+    descricao: "Contratação de serviços de produção de materiais gráficos",
+    valor_previsto: 300000,
+    valor_empenhado: 0,
+    valor_executado: 0,
+    classificacao_gerencial: "NAO_APARELHAMENTO",
+  };
+  const filho = {
+    ...linhaOrcamento,
+    id: "CAMP-001-F01",
+    categoria: "Campanha Nacional",
+    descricao: "Materiais Personalizados (Encontro Nacional)",
+    valor_previsto: 14416,
+    valor_empenhado: 14416,
+    valor_executado: 14416,
+    compoe_orcamento: false,
+    processo_pai_id: "CAMP-001",
+    tipo_processo: "VINCULADO",
+    origem_recurso_id: "CAMP-001",
+    valor_alocado_origem: 14416,
+    classificacao_gerencial: "NAO_APARELHAMENTO",
+  };
+  const { service } = instalarMockOrcamento({ linhas: [pai, filho] });
+
+  const resultado = await service.listarOrcamento2026();
+  const paiRetornado = resultado.itens.find((item) => item.id === "CAMP-001");
+  const filhoRetornado = resultado.outrosProcessos.find((item) => item.id === "CAMP-001-F01");
+
+  assert.equal(paiRetornado.valorEmpenhado, 0);
+  assert.equal(paiRetornado.valorExecutado, 0);
+  assert.equal(filhoRetornado.valorEmpenhado, 14416);
+  assert.equal(filhoRetornado.valorExecutado, 14416);
+  assert.equal(resultado.resumo.valorEmpenhado, 0);
+  assert.equal(resultado.resumo.valorExecutado, 0);
+});
+
 test("salvarOrcamento2026 registra vinculo Pena Justa", async () => {
   const { service, historicos, logs, updates } = instalarMockOrcamento();
 

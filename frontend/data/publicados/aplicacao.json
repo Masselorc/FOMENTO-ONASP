@@ -1832,7 +1832,7 @@
   ],
   "dadosProfor2022": {
     "origemDados": "reconstrucao-pad",
-    "geradoEm": "2026-07-23T14:38:12.126Z",
+    "geradoEm": "2026-08-06T12:26:09.224Z",
     "resumo": {
       "totalConvenios": 15,
       "valorGlobal": 10664015.24,
@@ -11743,7 +11743,7 @@
     }
   },
   "metadadosPublicacao": {
-    "publicadoEm": "2026-07-23T14:38:11.855Z",
+    "publicadoEm": "2026-08-06T12:26:09.122Z",
     "fonteDadosBase": "dados consolidados da Home local",
     "origemProfor2022": "reconstrucao-pad"
   }

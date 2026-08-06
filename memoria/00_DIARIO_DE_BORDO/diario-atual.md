@@ -7953,6 +7953,20 @@ Logs operacionais gravados:
 - Preservações: sem alterar dados, cálculos, backend, banco, Supabase ou JSONs publicados; mudanças restritas ao PDF, teste e documentação. Sem commit ou push.
 - Risco e rollback: risco baixo, restrito à classe temporária de exportação. Para rollback, remover a paleta clara de `.is-exporting-budget`, restaurar o uso da altura integral do canvas e reverter as asserções correlatas.
 
+## 06/08/2026 - Orçamento 2026: separação financeira entre processo pai e vinculado
+
+- Problema: a linha `CAMP-001` (`Contratação de serviços de produção de materiais gráficos`) exibia `R$ 14.416,00` como empenhado e executado, embora esses valores pertençam somente ao processo vinculado `CAMP-001-F01` (`Materiais Personalizados (Encontro Nacional)`).
+- Evidência: no Supabase, o pai está persistido com `valor_empenhado=0` e `valor_executado=0`; o filho está persistido com `valor_empenhado=14416`, `valor_executado=14416` e `valor_alocado_origem=14416`.
+- Causa: `listarOrcamento2026()` somava os valores financeiros dos processos vinculados aos respectivos pais durante a montagem da resposta, apesar de os envelopes já terem sido separados na criação do vínculo.
+- Correção: removido o rollup de empenho e execução de filhos para pais. O valor distribuído continua descontado do saldo básico do pai, enquanto empenho e execução permanecem associados exclusivamente ao processo que os registrou.
+- Teste de regressão: incluído cenário com pai zerado e filho de `R$ 14.416,00`, exigindo que o pai e o resumo oficial permaneçam zerados e que o filho preserve seus próprios valores.
+- Validações: consulta remota de leitura confirmou os valores brutos no Supabase; teste focal `33/33`; `npm run validar:syntax` (`110` arquivos); `npm run validar:services` (`545` testes, `525` aprovados, `20` ignorados, `0` falhas); `npm run validar:json`; `git diff --check`.
+- Publicação estática: após o reinício pelo fluxo oficial, o pacote público foi regenerado em `06/08/2026 09:26:09 BRT` (`publicadoEm=2026-08-06T12:26:09.122Z`). A saída separa os valores do pai `CAMP-001`, preserva `R$ 14.416,00` no vinculado `CAMP-001-F01` e inclui o novo vinculado `CAMP-001-F03` (`Fardamentos Institucionais`). A sessão de entrega não contém `DATABASE_URL`; por isso, o pacote já regenerado foi validado sem nova tentativa de conexão e sem reconstrução ou exposição de credencial.
+- Validações finais da publicação: teste focal `33/33`; `npm run validar:json`; `npm run validar:syntax` (`110` arquivos); `npm run validar:services` (`545` testes, `525` aprovados, `20` ignorados, `0` falhas); `git diff --check` sem erro.
+- Arquivos alterados: `backend/services/orcamento-2026-service.js`; `tests/services/auditoria-logs-operacionais.test.js`; `frontend/data/publicados/aplicacao.json`; `frontend/data/publicados/dashboard-geral.json`; `frontend/data/publicados/orcamento-2026.json`; `frontend/data/publicados/resumo-publicacao.json`; `memoria/00_DIARIO_DE_BORDO/diario-atual.md`.
+- Risco de regressão: baixo; a alteração remove somente uma agregação de apresentação incorreta e preserva cálculo de saldo, vínculo, valor alocado e dados persistidos.
+- Rollback: restaurar o bloco de rollup em `listarOrcamento2026()` e remover o teste específico, caso a regra administrativa volte a exigir consolidação financeira de filhos no pai.
+
 ## 24/07/2026 - Higiene de artefatos locais de QA
 
 - Branch: `agent/profor-rendimentos-status-parcial`.

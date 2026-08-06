@@ -1337,18 +1337,6 @@ async function listarOrcamento2026() {
   `);
   const itens = linhas.map(linhaParaItem);
 
-  // Realiza rollup dos valores de empenho e execução dos processos vinculados para seus respectivos pais
-  const mapaItens = new Map(itens.map((item) => [item.id, item]));
-  itens.forEach((item) => {
-    if (item.processoPaiId) {
-      const pai = mapaItens.get(item.processoPaiId);
-      if (pai) {
-        pai.valorEmpenhado = arredondarMoeda((pai.valorEmpenhado || 0) + (item.valorEmpenhado || 0));
-        pai.valorExecutado = arredondarMoeda((pai.valorExecutado || 0) + (item.valorExecutado || 0));
-      }
-    }
-  });
-
   const itensOficiais = itens.filter((item) => item.compoeOrcamento);
   const outrosProcessos = itens.filter((item) => !item.compoeOrcamento);
   const { rows: frentesPersistidas } = await query(`
