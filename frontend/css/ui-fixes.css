@@ -1,0 +1,88 @@
+/* ==========================================================================
+   Ajustes globais de interface
+   --------------------------------------------------------------------------
+   Correções pequenas e transversais que não pertencem a módulos específicos
+   de página. Mantém o HTML, dados, JS, listeners e cálculos.
+   ========================================================================== */
+
+/* Acesso ao menu lateral
+   Mantém o acionador como o último botão do grupo (extremo direito). */
+#header-actions [data-bs-target="#app-sidebar"] {
+    order: 99;
+    flex: 0 0 auto;
+    margin-left: 0;
+    border-color: #334155 !important;
+    color: #93a4bd !important;
+    background: #182338 !important;
+}
+
+/* Home: neutro e discreto */
+#header-actions button[onclick="toggleView('dashboard')"] {
+    border-color: #3b82f6 !important;
+    color: #93c5fd !important;
+    background: #13233a !important;
+}
+
+#header-actions button[onclick="toggleView('dashboard')"]:hover {
+    color: #dbeafe !important;
+    background: #1e3a5f !important;
+}
+
+/* Detalhamento: principal ação de navegação */
+#header-actions button[onclick="toggleView('detalhamento')"] {
+    border-color: #3b82f6 !important;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+    color: #f8fbff !important;
+}
+
+#header-actions button[onclick="toggleView('detalhamento')"]:hover {
+    border-color: #60a5fa !important;
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+}
+
+/* Menu lateral: ação utilitária */
+#header-actions [data-bs-target="#app-sidebar"]:hover {
+    border-color: #60a5fa !important;
+    color: #dbeafe !important;
+    background: #1f3555 !important;
+}
+
+#header-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+@media (max-width: 768px) {
+    #header-actions {
+        gap: 0.375rem;
+    }
+
+    #header-actions .btn-icon-text span {
+        display: none;
+    }
+
+    #header-actions .btn-icon-text,
+    #header-actions .btn-square {
+        flex: 0 0 auto;
+        width: 2.5rem;
+        min-width: 2.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    #header-actions {
+        gap: 0.25rem;
+    }
+
+    #header-actions .btn-icon-text,
+    #header-actions .btn-square {
+        width: 2.25rem;
+        min-width: 2.25rem;
+    }
+}

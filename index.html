@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Acompanhamento Fundo a Fundo</title>
+    <!-- Evita a busca automática por favicon.ico, que gera 404 desnecessário em ambiente local ou estático. -->
+    <link rel="icon" href="data:,">
+
+    <!-- Dependências visuais de CDN. O app também funciona com HTML estático,
+         mas precisa ser servido por HTTP para carregar planilhas via fetch. -->
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap 5 CSS -->
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <!-- html2canvas & jsPDF para Exportação em PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <link href="./frontend/css/app.css?v=20260612-01-budget-charts" rel="stylesheet">
+    <link href="./frontend/css/budget-dark-fix.css?v=20260525-02-orcamento" rel="stylesheet">
+    <link href="./frontend/css/ui-fixes.css?v=20260525-02-menu-responsivo" rel="stylesheet">
+</head>
+<body>
+
+    <!-- LOADING OVERLAY
+         Usado por operações assíncronas: carregamento de planilhas e geração
+         de PDFs. O texto é atualizado em frontend/js/app.js. -->
+    <div id="loading-overlay" class="d-none">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <h4 class="text-light mt-3" id="loading-message">Processando...</h4>
+    </div>
+
+    <!-- MENU LATERAL
+         Navegação secundária e ações menos frequentes. A barra superior mantém
+         os atalhos de uso mais comum. -->
+    <aside class="offcanvas offcanvas-end app-offcanvas pdf-hidden" tabindex="-1" id="app-sidebar" aria-labelledby="app-sidebar-title">
+        <div class="offcanvas-header">
+            <div>
+                <p class="section-eyebrow mb-1">Navegação</p>
+                <h2 class="offcanvas-title" id="app-sidebar-title">Painel ONASP</h2>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar menu"></button>
+        </div>
+        <div class="offcanvas-body">
+            <nav class="sidebar-nav" aria-label="Navegação principal">
+                <button type="button" class="sidebar-link app-menu-link active" data-view="dashboard" onclick="toggleView('dashboard')" aria-current="page">
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                    <span>Home / Painel Geral</span>
+                </button>
+                <button type="button" class="sidebar-link sidebar-folder-toggle" id="btn-repasses-funpen" aria-expanded="false" aria-controls="submenu-repasses-funpen">
+                    <i class="fas fa-folder" aria-hidden="true"></i>
+                    <span>Repasses FUNPEN</span>
+                    <i class="fas fa-chevron-down sidebar-folder-chevron" aria-hidden="true"></i>
+                </button>
+                <div class="sidebar-submenu d-none" id="submenu-repasses-funpen">
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-detail app-menu-link" data-view="detalhamento" onclick="toggleView('detalhamento')">
+                        <i class="fas fa-map" aria-hidden="true"></i>
+                        <span>Detalhamento por Estado</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-formalizacao app-menu-link" data-view="formalizacao" onclick="toggleView('formalizacao')">
+                        <i class="fas fa-file-signature" aria-hidden="true"></i>
+                        <span>Formalização PROFOR 2026</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-profor app-menu-link" data-view="profor2022" onclick="toggleView('profor2022')">
+                        <i class="fas fa-file-contract" aria-hidden="true"></i>
+                        <span>PROFOR 2022</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-faf app-menu-link" data-view="faf2021" onclick="toggleView('faf2021')">
+                        <i class="fas fa-landmark" aria-hidden="true"></i>
+                        <span>FAF 2021</span>
+                    </button>
+                    <button type="button" class="sidebar-link sidebar-submenu-link sidebar-link-doacoes app-menu-link" data-view="doacoes2023" onclick="toggleView('doacoes2023')">
+                        <i class="fas fa-gift" aria-hidden="true"></i>
+                        <span>DOAÇÕES 2023</span>
+                    </button>
+                </div>
+                <button type="button" class="sidebar-link app-menu-link" data-view="contatos" onclick="toggleView('contatos')">
+                    <i class="fas fa-address-book" aria-hidden="true"></i>
+                    <span>Contatos UFs</span>
+                </button>
+                <button type="button" class="sidebar-link app-menu-link" data-view="diagnostico-ouvidorias" onclick="toggleView('diagnostico-ouvidorias')">
+                    <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+                    <span>Parâmetros Mínimos</span>
+                </button>
+                <button type="button" class="sidebar-link sidebar-link-budget app-menu-link" data-view="orcamento" onclick="toggleView('orcamento')">
+                    <i class="fas fa-wallet" aria-hidden="true"></i>
+                    <span>Orçamento 2026</span>
+                </button>
+                <button type="button" class="sidebar-link app-menu-link" data-view="status-sistema" onclick="toggleView('status-sistema')">
+                    <i class="fas fa-server" aria-hidden="true"></i>
+                    <span>Sistema</span>
+                </button>
+                <button type="button" class="sidebar-link app-menu-link" data-view="revisao-divergencias" onclick="toggleView('revisao-divergencias')">
+                    <i class="fas fa-clipboard-list" aria-hidden="true"></i>
+                    <span>Revisão de divergências</span>
+                </button>
+            </nav>
+
+        </div>
+    </aside>
+
+    <!-- WRAPPER PRINCIPAL PARA O PDF CAPTURAR TUDO INCLUINDO O HEADER -->
+    <div id="main-wrapper">
+
+        <!-- CABEÇALHO -->
+        <header class="app-header">
+            <div class="container app-header-inner">
+                <div class="brand-block">
+                    <img id="img-logo-senappen" class="senappen-logo" src="./frontend/assets/senappen-logo.png" alt="Logo SENAPPEN" width="90" height="64" loading="eager" decoding="sync">
+                    <div id="logo-senappen-fallback" class="senappen-logo-fallback d-none" aria-hidden="true">
+                        <strong>SENAPPEN</strong>
+                        <span>Secretaria Nacional de Políticas Penais</span>
+                    </div>
+                    <div class="brand-copy">
+                        <p class="section-eyebrow mb-1">Ouvidoria Nacional de Serviços Penais</p>
+                        <h1 class="header-title">Painel de Acompanhamento</h1>
+                        <p class="header-subtitle">Monitoramento de recursos FAF, convênios e doações</p>
+                    </div>
+                </div>
+
+                <div class="header-actions pdf-hidden" id="header-actions">
+                    <button type="button" class="btn btn-outline-primary btn-square" onclick="toggleView('dashboard')" aria-label="Ir para Home" title="Home">
+                        <i class="fas fa-home" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-square" onclick="toggleView('detalhamento')" aria-label="Ir para Detalhamento" title="Detalhamento">
+                        <i class="fas fa-th-large" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-square" data-bs-toggle="offcanvas" data-bs-target="#app-sidebar" aria-controls="app-sidebar" aria-label="Abrir menu lateral" title="Menu lateral">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="container">
+                <div id="alerta-carregamento-planilha" class="alert alert-warning d-none mt-3 mb-0" role="alert"></div>
+                <input id="input-planilha-convenios" type="file" accept=".xlsx,.xls" class="d-none">
+            </div>
+        </header>
+
+        <!-- VIEW 1: DASHBOARD GERAL -->
+        <main id="view-dashboard" class="container app-view fade-in">
+            <section class="dashboard-intro app-page-hero">
+                <div>
+                    <p class="section-eyebrow app-page-eyebrow mb-1">Visão geral</p>
+                    <h2 class="app-page-title">Fomento para Ouvidoria</h2>
+                    <p id="dashboard-ultima-atualizacao" class="app-page-subtitle" aria-live="polite">Atualização não registrada</p>
+                </div>
+                <div class="intro-badges app-page-actions" aria-label="Tipos de instrumentos monitorados">
+                    <span><i class="fas fa-landmark" aria-hidden="true"></i> FAF</span>
+                    <span><i class="fas fa-file-contract" aria-hidden="true"></i> Convênios</span>
+                    <span><i class="fas fa-gift" aria-hidden="true"></i> Doações</span>
+                </div>
+            </section>
+
+            <!-- KPIs (6 cards em barra compacta) -->
+            <section class="app-summary-grid metric-strip -cols-6 mb-3" aria-label="Indicadores principais">
+                <div class="card kpi-card app-summary-card metric-tile -success">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-briefcase" aria-hidden="true"></i>Total de Fomento</div>
+                    <div class="kpi-value app-summary-card-value text-money" id="kpi-total-fomento-ouvidoria">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Repassado + Doações</div>
+                </div>
+                <div class="card kpi-card app-summary-card metric-tile -success">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-check-circle" aria-hidden="true"></i>Total Executado</div>
+                    <div class="kpi-value app-summary-card-value text-money" id="kpi-total-executado">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Convênios e FAF</div>
+                </div>
+                <div class="card kpi-card app-summary-card metric-tile -info">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-chart-pie" aria-hidden="true"></i>Execução Global</div>
+                    <div class="kpi-value app-summary-card-value" id="kpi-percentual-global">0,0%</div>
+                    <div class="kpi-desc app-summary-card-desc">Média Nacional (Conv/FAF)</div>
+                </div>
+                <div class="card kpi-card app-summary-card metric-tile">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-map-marked-alt" aria-hidden="true"></i>UFs com Fomento</div>
+                    <div class="kpi-value app-summary-card-value" id="kpi-total-ufs-fomento">0</div>
+                    <div class="kpi-desc app-summary-card-desc">Cobertura nacional</div>
+                </div>
+                <div class="card kpi-card app-summary-card metric-tile">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>Total Repassado</div>
+                    <div class="kpi-value app-summary-card-value text-money" id="kpi-total-contratado">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Convênios e FAF</div>
+                </div>
+                <div class="card kpi-card app-summary-card metric-tile -warning">
+                    <div class="kpi-title app-summary-card-title"><i class="fas fa-gift" aria-hidden="true"></i>Total em Doações</div>
+                    <div class="kpi-value app-summary-card-value text-money text-warning" id="kpi-total-doado">R$ 0,00</div>
+                    <div class="kpi-desc app-summary-card-desc">Veículos e Equipamentos</div>
+                </div>
+            </section>
+
+            <section class="app-section mb-2" id="cards-instrumentos-section-wrapper" aria-label="Por instrumento">
+                <div class="app-section-header">
+                    <div>
+                        <p class="section-eyebrow mb-1">Por instrumento</p>
+                        <h2 class="app-section-title">Visão por tipo de instrumento</h2>
+                    </div>
+                </div>
+                <div id="cards-instrumentos-section" class="instrument-grid-layout" aria-label="Indicadores por instrumento">
+                    <div class="instrument-grid-finance">
+                        <div class="card kpi-card instrument-summary-card instrument-value-card convenio">
+                            <div class="instrument-value-body">
+                                <div class="kpi-title"><i class="fas fa-file-contract" aria-hidden="true"></i>Total em Convênios (Ouvidoria)</div>
+                                <div class="instrument-metric-line">
+                                    <div class="kpi-value text-money" id="kpi-total-convenios">R$ 0,00</div>
+                                    <span class="instrument-percent" id="kpi-percentual-convenios">0,0%</span>
+                                </div>
+                                <div class="kpi-desc" id="kpi-desc-convenios">Executado: R$ 0,00</div>
+                            </div>
+                            <div class="instrument-mini-chart" aria-label="Percentual executado em convênios">
+                                <div class="mini-pie mini-pie-convenio" id="mini-pie-convenios" aria-hidden="true"></div>
+                                <div class="mini-pie-caption">
+                                    <span>Executado</span>
+                                    <strong id="mini-pie-convenios-label">0,0%</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card kpi-card instrument-summary-card instrument-value-card faf">
+                            <div class="instrument-value-body">
+                                <div class="kpi-title"><i class="fas fa-landmark" aria-hidden="true"></i>Total em FaF</div>
+                                <div class="instrument-metric-line">
+                                    <div class="kpi-value text-money" id="kpi-total-faf">R$ 0,00</div>
+                                    <span class="instrument-percent" id="kpi-percentual-faf">0,0%</span>
+                                </div>
+                                <div class="kpi-desc" id="kpi-desc-faf">Executado: R$ 0,00</div>
+                            </div>
+                            <div class="instrument-mini-chart" aria-label="Percentual executado em FaF">
+                                <div class="mini-pie mini-pie-faf" id="mini-pie-faf" aria-hidden="true"></div>
+                                <div class="mini-pie-caption">
+                                    <span>Executado</span>
+                                    <strong id="mini-pie-faf-label">0,0%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="instrument-grid-coverage">
+                        <div class="card kpi-card instrument-summary-card instrument-coverage-card convenio">
+                            <div class="instrument-coverage-header">
+                                <div class="kpi-title"><i class="fas fa-map-marked-alt" aria-hidden="true"></i>UFs com Convênios</div>
+                                <div class="kpi-value" id="kpi-ufs-convenios-qtd">0</div>
+                            </div>
+                            <div class="uf-chip-list" id="kpi-ufs-convenios-lista"></div>
+                        </div>
+                        <div class="card kpi-card instrument-summary-card instrument-coverage-card faf">
+                            <div class="instrument-coverage-header">
+                                <div class="kpi-title"><i class="fas fa-map-marker-alt" aria-hidden="true"></i>UFs com FaF</div>
+                                <div class="kpi-value" id="kpi-ufs-faf-qtd">0</div>
+                            </div>
+                            <div class="uf-chip-list" id="kpi-ufs-faf-lista"></div>
+                        </div>
+                        <div class="card kpi-card instrument-summary-card instrument-coverage-card doacao">
+                            <div class="instrument-coverage-header">
+                                <div class="kpi-title"><i class="fas fa-gift" aria-hidden="true"></i>UFs com Doações</div>
+                                <div class="kpi-value" id="kpi-ufs-doacao-qtd">0</div>
+                            </div>
+                            <div class="uf-chip-list" id="kpi-ufs-doacao-lista"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FILTROS MULTI-SELECT -->
+            <section class="row" id="filter-row-section" aria-label="Filtros da tabela">
+                <div class="col-12">
+                    <div class="filter-section filter-bar">
+                        <div class="filter-bar-main">
+                            <div class="filter-title">
+                                <i class="fas fa-filter text-secondary" aria-hidden="true"></i>
+                                <strong>Filtros</strong>
+                            </div>
+                            <input type="text" id="filtroObjeto" class="form-control filter-bar-search" placeholder="Buscar por descrição do objeto..." aria-label="Buscar por descrição do objeto">
+                            <button id="btnLimparFiltros" type="button" class="btn btn-outline-secondary btn-icon-text">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                <span>Limpar</span>
+                            </button>
+                            <span id="filtroAtivoBadge" class="active-filter-badge" role="button" tabindex="0">
+                                <span id="textoFiltroAtivo"></span> <i class="fas fa-times ms-1" aria-hidden="true"></i>
+                            </span>
+                        </div>
+
+                        <details class="filter-bar-advanced" id="filter-bar-advanced">
+                            <summary class="filter-bar-advanced-toggle">
+                                <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                                <span>Mais filtros</span>
+                                <small class="text-muted">Regiões · Instrumentos · UFs</small>
+                            </summary>
+
+                            <div class="visible-filter-grid app-filter-compact">
+                                <div class="visible-filter-group">
+                                    <div class="visible-filter-title">Regiões</div>
+                                    <div class="visible-check-list" id="filtroRegiaoOpcoes">
+                                        <!-- Opções preenchidas via JS -->
+                                    </div>
+                                </div>
+
+                                <div class="visible-filter-group">
+                                    <div class="visible-filter-title">Instrumentos</div>
+                                    <div class="visible-check-list" id="filtroInstrumentoOpcoes">
+                                        <!-- Opções preenchidas via JS -->
+                                    </div>
+                                </div>
+
+                                <div class="visible-filter-group">
+                                    <div class="visible-filter-title">UFs</div>
+                                    <div class="visible-check-list uf-check-list" id="filtroUFOpcoes">
+                                        <!-- Opções preenchidas via JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="filter-counts compact-summary-row" aria-label="Contadores de UFs da seleção por instrumento" aria-live="polite">
+                                <div class="filter-count-item convenio">
+                                    <div class="filter-count-summary">
+                                        <span>UFs com Convênios</span>
+                                        <strong id="count-convenios">0</strong>
+                                    </div>
+                                    <div class="filter-count-uf-list" id="count-convenios-ufs"></div>
+                                </div>
+                                <div class="filter-count-item faf">
+                                    <div class="filter-count-summary">
+                                        <span>UFs com FaF</span>
+                                        <strong id="count-faf">0</strong>
+                                    </div>
+                                    <div class="filter-count-uf-list" id="count-faf-ufs"></div>
+                                </div>
+                                <div class="filter-count-item doacao">
+                                    <div class="filter-count-summary">
+                                        <span>UFs com Doações</span>
+                                        <strong id="count-doacoes">0</strong>
+                                    </div>
+                                    <div class="filter-count-uf-list" id="count-doacoes-ufs"></div>
+                                </div>
+                                <div class="filter-count-item total">
+                                    <div class="filter-count-summary">
+                                        <span>Quantidade de UFs com Fomento</span>
+                                        <strong id="count-ufs-instrumentos">0</strong>
+                                    </div>
+                                    <div class="filter-count-uf-list" id="count-ufs-instrumentos-lista"></div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CHART SECTION -->
+            <section class="panel-section mb-4">
+                <div class="section-header">
+                    <div>
+                        <p class="section-eyebrow mb-1">Execução financeira</p>
+                        <h2>Execução por UF (%)</h2>
+                    </div>
+                    <small class="text-muted"><i class="fas fa-mouse-pointer me-1" aria-hidden="true"></i> Clique na barra para filtrar</small>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartExecucaoUF"></canvas>
+                </div>
+            </section>
+
+            <!-- CARDS DINÂMICOS (PÓS-FILTRO) -->
+            <section class="row mb-4 row-cols-1 row-cols-md-2 row-cols-xl-5 g-3" id="cards-dinamicos-section" aria-label="Resumo da seleção atual">
+                <div class="col-12 w-100 mb-0">
+                    <span class="section-pill"><i class="fas fa-calculator" aria-hidden="true"></i> Resumo da Seleção Atual</span>
+                </div>
+                <div class="col">
+                    <div class="card kpi-card dynamic-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Repassado (Filtro)</div>
+                            <div class="kpi-value text-money" id="dyn-total-repassado">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-filter card-watermark" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card kpi-card dynamic-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Executado (Filtro)</div>
+                            <div class="kpi-value text-success text-money" id="dyn-total-executado">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-coins card-watermark text-success" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card kpi-card dynamic-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">% Exec. (Conv/FAF)</div>
+                            <div class="kpi-value" id="dyn-percentual">0,0%</div>
+                        </div>
+                        <i class="fas fa-percentage card-watermark text-primary" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card kpi-card dynamic-card py-2 kpi-card-warning">
+                        <div>
+                            <div class="kpi-title mb-0">Doado (Filtro)</div>
+                            <div class="kpi-value text-warning text-money" id="dyn-total-doado">R$ 0,00</div>
+                        </div>
+                        <i class="fas fa-gift card-watermark text-warning" aria-hidden="true"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card kpi-card dynamic-card py-2">
+                        <div>
+                            <div class="kpi-title mb-0">Qtd. Itens</div>
+                            <div class="kpi-value" id="dyn-qtd-itens">0</div>
+                        </div>
+                        <i class="fas fa-list-ol card-watermark text-info" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TABELA -->
+            <section class="row mb-5">
+                <div class="col-12">
+                    <div class="table-container app-table-shell">
+                        <div class="section-header compact app-section-header">
+                            <div>
+                                <p class="section-eyebrow mb-1">Itens financeiros</p>
+                                <h2 class="app-section-title">Base consolidada</h2>
+                            </div>
+                        </div>
+                        <table id="tabelaItens" class="table table-striped table-hover w-100 app-data-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Inst.</th>
+                                    <th>UF</th>
+                                    <th>Objeto</th>
+                                    <th class="text-center">Qtd.</th>
+                                    <th class="text-end">Valor Unit. (R$)</th>
+                                    <th class="text-end">Valor Total (R$)</th>
+                                    <th class="text-end">Executado (R$)</th>
+                                    <th class="text-center">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS popula aqui -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- VIEW 2: DETALHAMENTO POR ESTADOS -->
+        <main id="view-detalhamento" class="container app-view">
+            <section class="view-heading">
+                <button type="button" class="btn btn-outline-secondary btn-icon-text pdf-hidden" onclick="toggleView('dashboard')">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    <span>Voltar ao Painel Geral</span>
+                </button>
+                <div>
+                    <p class="section-eyebrow mb-1">Estados e regiões</p>
+                    <h2>Detalhamento dos Recursos por Estado</h2>
+                </div>
+                <button type="button" class="btn btn-export btn-icon-text pdf-hidden" id="btn-detail-export-state-pdf" onclick="abrirSelecaoUfExportacao()" aria-expanded="false" aria-controls="detail-uf-export-panel">
+                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                    <span>Exportar Relatório Estadual</span>
+                </button>
+            </section>
+            <section class="detail-uf-export-panel d-none pdf-hidden" id="detail-uf-export-panel" aria-label="Exportação de relatório estadual">
+                <div>
+                    <p class="section-eyebrow mb-1">Exportação</p>
+                    <h3>Escolha a UF para gerar o relatório detalhado</h3>
+                </div>
+                <div class="detail-uf-grid" id="detail-uf-export-list"></div>
+            </section>
+            <div id="container-estados"></div>
+        </main>
+
+        <!-- VIEW 3: RELATÓRIO DO ESTADO -->
+        <main id="view-estado-detalhe" class="container app-view">
+            <div class="report-actions pdf-hidden" id="botoes-acao-relatorio">
+                <button type="button" class="btn btn-outline-secondary btn-icon-text" onclick="toggleView('detalhamento')">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    <span>Voltar para Visão por Região</span>
+                </button>
+                <button id="btn-export-pdf" type="button" class="btn btn-export btn-icon-text" onclick="exportarRelatorioPDF()">
+                    <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                    <span>Exportar PDF</span>
+                </button>
+            </div>
+
+            <div id="conteudo-relatorio-pdf" class="report-content">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div id="estado-detalhe-header"></div>
+                    </div>
+                </div>
+
+                <div id="estado-detalhe-kpis" class="row mb-4"></div>
+
+                <div id="estado-detalhe-listas"></div>
+            </div>
+        </main>
+
+        <!-- VIEW 4: PROFOR 2022
+             Conteúdo renderizado a partir da aba Geral e das abas de UF da
+             planilha de gestão financeira. -->
+        <main id="view-profor-2022" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 5: DETALHE DE CONVÊNIO PROFOR 2022 -->
+        <main id="view-profor-convenio-detalhe" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 6: FAF 2021 -->
+        <main id="view-faf-2021" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 7: DETALHE FAF 2021 -->
+        <main id="view-faf-2021-detalhe" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 8: DOAÇÕES 2023 -->
+        <main id="view-doacoes-2023" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 9: DETALHE DOAÇÕES 2023 -->
+        <main id="view-doacoes-2023-detalhe" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 10: ORÇAMENTO 2026
+             O conteúdo é renderizado dinamicamente a partir de
+             Planilhas/orcamento_onasp.xlsx. -->
+        <main id="view-orcamento" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 11: FORMALIZAÇÃO PROFOR/ONASP 2026
+             O conteúdo é renderizado dinamicamente a partir de
+             Planilhas/Planilha_Formalizacao_PROFOR_2026.xlsx. -->
+        <main id="view-formalizacao-profor" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 12: DETALHE DA FORMALIZAÇÃO POR UF -->
+        <main id="view-formalizacao-profor-detalhe" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 13: CONTATOS UFS -->
+        <main id="view-contatos" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 14: DIAGNÓSTICO E CONFORMIDADE DAS OUVIDORIAS -->
+        <main id="view-diagnostico-ouvidorias" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 15: STATUS DO SISTEMA -->
+        <main id="view-status-sistema" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- VIEW 16: REVISÃO DE DIVERGÊNCIAS PAD X MEMÓRIA -->
+        <main id="view-revisao-divergencias" class="container app-view" style="display:none;">
+        </main>
+
+        <!-- RODAPÉ -->
+        <div class="container">
+            <footer class="app-footer">
+                Painel de Dados - <span id="footer-ultima-atualizacao">Atualização não registrada</span>
+            </footer>
+        </div>
+
+    </div>
+
+    <!-- SCRIPTS
+         Ordem importante: XLSX precisa estar disponível antes do módulo app.js,
+         pois data-service.js usa window.XLSX para ler planilhas. -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <!-- DataTables Buttons (Excel/CSV) -->
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script type="module" src="./frontend/js/app.js?v=20260612-17-orcamento-executado-resumo-v2"></script>
+</body>
+</html>

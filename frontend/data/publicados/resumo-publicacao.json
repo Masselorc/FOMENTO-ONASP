@@ -1,0 +1,43 @@
+{
+  "publicadoEm": "2026-08-06T12:26:09.122Z",
+  "fonte": "Dados locais ONASP",
+  "arquivos": [
+    "aplicacao.json",
+    "dashboard-geral.json",
+    "parametros-minimos.json",
+    "formalizacao-profor.json",
+    "orcamento-2026.json"
+  ],
+  "totais": {
+    "aplicacaoDadosBase": 180,
+    "dashboard": {
+      "totalFomento": 15022372.24,
+      "totalConvenios": 10664015.24,
+      "totalFaf": 1757357,
+      "totalDoacoes": 2601000,
+      "ufsConvenios": [
+        "AC",
+        "AL",
+        "AM",
+        "GO",
+        "MA",
+        "MS",
+        "MT",
+        "PB",
+        "PI",
+        "PR",
+        "RJ",
+        "RO",
+        "SC",
+        "SP",
+        "TO"
+      ],
+      "quantidadeUfsConvenios": 15
+    },
+    "itensConvenio": 15,
+    "conveniosProfor2022": 15,
+    "parametrosMinimos": 28,
+    "formalizacaoProfor": 14,
+    "orcamento2026": 9
+  }
+}

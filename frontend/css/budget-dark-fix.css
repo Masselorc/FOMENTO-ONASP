@@ -1,0 +1,82 @@
+/* ===========================================================================
+   Correção pontual — Orçamento 2026 / andamento processual
+   --------------------------------------------------------------------------
+   Remove resíduo de fundo claro da linha expandida de rastreamento processual
+   na página de orçamento. Mantém o HTML, dados, JS, listeners e cálculo.
+   ========================================================================== */
+
+#view-orcamento .budget-tracking-row > td {
+    background: transparent !important;
+    border-bottom-color: rgba(148, 163, 184, 0.12) !important;
+    color: var(--color-text) !important;
+}
+
+#view-orcamento .budget-tracking-panel {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+        rgba(17, 24, 34, 0.96) !important;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius);
+    box-shadow: none;
+    color: var(--color-text) !important;
+    margin: 0.75rem;
+}
+
+#view-orcamento .budget-tracking-eyebrow,
+#view-orcamento .budget-tracking-status span {
+    color: var(--color-muted) !important;
+}
+
+#view-orcamento .budget-tracking-header strong,
+#view-orcamento .budget-tracking-label,
+#view-orcamento .budget-tracking-status strong {
+    color: var(--color-text) !important;
+}
+
+#view-orcamento .budget-tracking-step-pendente .budget-tracking-label {
+    color: rgba(230, 237, 243, 0.52) !important;
+}
+
+#view-orcamento .budget-tracking-timeline::before {
+    background: rgba(148, 163, 184, 0.22) !important;
+}
+
+#view-orcamento .budget-tracking-marker {
+    background: var(--color-surface-elevated) !important;
+    border-color: rgba(148, 163, 184, 0.36) !important;
+    box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.10);
+    color: var(--color-muted) !important;
+}
+
+#view-orcamento .budget-tracking-step-concluida .budget-tracking-marker {
+    background: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+    box-shadow: 0 0 0 3px rgba(21, 197, 141, 0.16);
+    color: #ffffff !important;
+}
+
+#view-orcamento .budget-tracking-step-atual .budget-tracking-marker {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 6px rgba(75, 143, 255, 0.14) !important;
+    color: #ffffff !important;
+}
+
+#view-orcamento .budget-tracking-date {
+    color: var(--color-success) !important;
+}
+
+#view-orcamento .budget-tracking-ref {
+    color: var(--color-muted) !important;
+}
+
+#view-orcamento .budget-tracking-link {
+    color: var(--color-primary-strong) !important;
+}
+
+#view-orcamento .budget-tracking-status {
+    background: var(--color-surface-elevated) !important;
+    border-color: rgba(148, 163, 184, 0.18) !important;
+    color: var(--color-text) !important;
+}
