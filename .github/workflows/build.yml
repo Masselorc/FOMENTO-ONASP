@@ -18,6 +18,7 @@ concurrency:
 jobs:
   build:
     name: Build static site
+    if: ${{ github.event_name != 'push' || !contains(github.event.head_commit.message, '[skip pages]') }}
     runs-on: ubuntu-latest
     outputs:
       artifact_id: ${{ steps.pages-artifact.outputs.artifact_id }}
