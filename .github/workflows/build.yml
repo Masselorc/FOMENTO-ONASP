@@ -60,3 +60,6 @@ jobs:
       - name: Deploy Pages artifact
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          # O Pages pode manter deployments válidos em fila por mais de 10 minutos.
+          timeout: 3600000
