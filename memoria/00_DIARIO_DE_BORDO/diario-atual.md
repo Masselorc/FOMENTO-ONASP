@@ -7996,3 +7996,13 @@ Logs operacionais gravados:
 - Validação: `git status --short` sem alterações rastreadas e sem os artefatos na fila.
 - Risco de regressão: baixo; os diretórios não possuíam arquivos versionados.
 - Rollback: remover as duas entradas do `.gitignore` caso algum dia o repositório passe a exigir artefatos de QA versionados.
+
+## 10/08/2026 - Recuperação da publicação online e validação do Supabase
+
+- Problema encontrado: a URL pública do FOMENTO-ONASP e os JSONs publicados respondiam HTTP 404, embora o artefato estático tivesse sido montado corretamente nas execuções anteriores.
+- Evidência remota: o GitHub Pages estava configurado para `GitHub Actions`, mas sem deploy concluído. O deploy oficial de 06/08 foi cancelado pelo serviço e a tentativa posterior ficou uma hora em `deployment_in_progress`; o workflow local mantinha um monitoramento experimental de 60 minutos e ignorava commits com `[skip pages]`.
+- Correção aplicada: restaurado o fluxo oficial recomendado pelo GitHub com `actions/configure-pages@v5`, `actions/upload-pages-artifact@v4` e `actions/deploy-pages@v4`. Foi preservada a montagem restrita de `_site` e a barreira que reprova qualquer arquivo `*.sqlite*` no artefato.
+- Supabase: o projeto `fomento-onasp-homologacao` (`utfezwbahchwupuncvna`) já foi encontrado em `ACTIVE_HEALTHY`; consulta SQL somente de leitura confirmou PostgreSQL 17.6, a tabela `public.parametros_minimos` e 420 registros. Nenhuma migration, credencial ou dado foi alterado.
+- Testes locais antes do envio: validação sintática do YAML, montagem equivalente do diretório `_site`, ausência de arquivos SQLite no pacote, validação dos JSONs publicados e `git diff --check`.
+- Risco de regressão: baixo; a alteração restringe-se ao mecanismo de deploy e mantém inalterados o conteúdo público, o banco e as regras de negócio.
+- Rollback: reverter este commit para restaurar o workflow anterior; isso não desfaz dados nem configurações do Supabase.
