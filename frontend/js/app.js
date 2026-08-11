@@ -65,6 +65,7 @@ let diagnosticoUfAtual = '';
 let parametrosMinimosModoEdicao = false;
 let parametrosMinimosAlteracoesPendentes = {};
 let parametrosMinimosEditorAtivo = null;
+let parametrosMinimosInstitucionalizacaoItens = [];
 let formalizacaoEditoresAbertos = new Set();
 let formalizacaoAlteracoesPendentes = {};
 let contatosMapaIndiceUf = {};
@@ -14192,8 +14193,11 @@ async function carregarLogoParaPDF() {
             'Fluxo',
         ];
         const STATUS_PARAMETROS_MINIMOS_EDICAO = [
-            { valor: 'TEM', rotulo: 'Em conformidade' },
-            { valor: 'NÃO TEM', rotulo: 'Pendente' }
+            { valor: 'TEM', rotulo: 'Em conformidade', icone: 'fa-check' },
+            { valor: 'NÃO TEM', rotulo: 'Pendente', icone: 'fa-xmark' },
+            { valor: 'PARCIAL', rotulo: 'Parcial', icone: 'fa-triangle-exclamation' },
+            { valor: 'VALIDAR', rotulo: 'Validar', icone: 'fa-question-circle' },
+            { valor: 'NÃO INFORMADO', rotulo: 'Não informado', icone: 'fa-minus' }
         ];
 
         function normalizarStatusParametroMinimoFrontend(status) {
@@ -14203,7 +14207,9 @@ async function carregarLogoParaPDF() {
 
             const mapa = {
                 tem: 'TEM',
+                'em conformidade': 'TEM',
                 'nao tem': 'NÃO TEM',
+                pendente: 'NÃO TEM',
                 parcial: 'PARCIAL',
                 validar: 'VALIDAR',
                 'nao informado': 'NÃO INFORMADO',
@@ -14353,6 +14359,24 @@ async function carregarLogoParaPDF() {
         function renderizarEditorParametroMinimo(resposta, item, statusAtual) {
             const editorId = `${resposta.idResposta}::${item.idParametro}`;
             if (parametrosMinimosEditorAtivo !== editorId) return '';
+            const alteracaoPendente = Object.prototype.hasOwnProperty.call(
+                parametrosMinimosAlteracoesPendentes[resposta.idResposta] || {},
+                item.idParametro
+            );
+            const rodapeEditor = `
+                <div class="diagnostico-inline-editor-footer">
+                    <span class="${alteracaoPendente ? 'is-pending' : ''}">
+                        <i class="fas ${alteracaoPendente ? 'fa-circle-exclamation' : 'fa-circle-info'}" aria-hidden="true"></i>
+                        ${alteracaoPendente ? 'Alteração pronta para salvar' : 'Escolha a nova situação para continuar'}
+                    </span>
+                    ${alteracaoPendente ? `
+                        <button type="button" class="btn btn-sm btn-primary btn-icon-text" data-parametros-salvar-item>
+                            <i class="fas fa-floppy-disk" aria-hidden="true"></i>
+                            <span>Salvar agora</span>
+                        </button>
+                    ` : ''}
+                </div>
+            `;
 
             if (item.tipo === 'quantitativo') {
                 const ideal = Number(item.idealDeclarado ?? item.idealMinimo) || 0;
@@ -14365,6 +14389,16 @@ async function carregarLogoParaPDF() {
                 // Itens quantitativos sao editados por quantidade existente; o deficit e calculado pela interface.
                 return `
                     <div class="diagnostico-inline-editor" data-parametros-editor="${escapeHtml(editorId)}">
+                        <div class="diagnostico-inline-editor-header">
+                            <div>
+                                <strong>Atualizar quantidade existente</strong>
+                                <small>A pendência será recalculada automaticamente.</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-text" data-parametros-fechar-editor>
+                                <i class="fas fa-xmark" aria-hidden="true"></i>
+                                <span>Fechar</span>
+                            </button>
+                        </div>
                         <label>
                             <span>Quantidade existente</span>
                             <select
@@ -14381,27 +14415,41 @@ async function carregarLogoParaPDF() {
                             </select>
                         </label>
                         <small>Mínimo: ${ideal}. A situação é recalculada automaticamente.</small>
+                        ${rodapeEditor}
                     </div>
                 `;
             }
 
-            // Itens qualitativos usam apenas opcoes fechadas para evitar digitacao livre.
+            // Itens qualitativos usam opções fechadas e auditáveis para evitar digitação livre.
             return `
                 <div class="diagnostico-inline-editor" data-parametros-editor="${escapeHtml(editorId)}">
+                    <div class="diagnostico-inline-editor-header">
+                        <div>
+                            <strong>Alterar situação do parâmetro</strong>
+                            <small>Situação atual: ${escapeHtml(statusParametroMinimoParaTela(statusAtual))}</small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-icon-text" data-parametros-fechar-editor>
+                            <i class="fas fa-xmark" aria-hidden="true"></i>
+                            <span>Fechar</span>
+                        </button>
+                    </div>
                     <div class="diagnostico-status-choice-group" role="group" aria-label="Opções de status">
                         ${STATUS_PARAMETROS_MINIMOS_EDICAO.map((opcao) => `
                             <button
                                 type="button"
                                 class="diagnostico-status-choice ${normalizarStatusParametroMinimoFrontend(statusAtual) === opcao.valor ? 'active' : ''}"
+                                aria-pressed="${normalizarStatusParametroMinimoFrontend(statusAtual) === opcao.valor ? 'true' : 'false'}"
                                 data-parametros-opcao-registro="${escapeHtml(resposta.idResposta)}"
                                 data-parametros-opcao-campo="${escapeHtml(item.idParametro)}"
                                 data-parametros-opcao-original="${escapeHtml(item.status)}"
                                 data-parametros-opcao-valor="${escapeHtml(opcao.valor)}"
                             >
-                                ${escapeHtml(opcao.rotulo)}
+                                <i class="fas ${opcao.icone}" aria-hidden="true"></i>
+                                <span>${escapeHtml(opcao.rotulo)}</span>
                             </button>
                         `).join('')}
                     </div>
+                    ${rodapeEditor}
                 </div>
             `;
         }
@@ -14474,25 +14522,35 @@ async function carregarLogoParaPDF() {
                                             const statusAtualTela = statusParametroMinimoParaTela(statusAtualBanco);
                                             const editorId = `${resposta.idResposta}::${item.idParametro}`;
                                             const textoResumo = statusAtualTela;
+                                            const alteracaoPendente = Object.prototype.hasOwnProperty.call(
+                                                parametrosMinimosAlteracoesPendentes[resposta.idResposta] || {},
+                                                item.idParametro
+                                            );
+                                            const editorAberto = parametrosMinimosEditorAtivo === editorId;
 
                                             return `
-                                                <div class="diagnostico-trail-row diagnostico-trail-row-${obterClasseStatusDiagnostico(statusAtualTela)}">
+                                                <div class="diagnostico-trail-row diagnostico-trail-row-${obterClasseStatusDiagnostico(statusAtualTela)} ${alteracaoPendente ? 'is-pending-change' : ''}">
                                                     <span class="diagnostico-trail-marker" aria-hidden="true">
                                                         <i class="fas ${statusAtualTela.startsWith('Falta +') || statusAtualTela === 'Déficit' ? 'fa-box' : (icones[statusAtualTela] || 'fa-circle')}"></i>
                                                     </span>
                                                     <div class="diagnostico-trail-content">
                                                         <span class="diagnostico-trail-title-line">
-                                                            <strong>${escapeHtml(item.parametro)}</strong>
+                                                            <span>
+                                                                <strong>${escapeHtml(item.parametro)}</strong>
+                                                                ${alteracaoPendente ? '<small class="diagnostico-pending-label"><i class="fas fa-circle-exclamation" aria-hidden="true"></i> Alteração não salva</small>' : ''}
+                                                            </span>
                                                             ${renderActionButton({
                                                                 type: 'edit',
-                                                                label: `Editar ${item.parametro}`,
+                                                                label: editorAberto
+                                                                    ? 'Fechar edição'
+                                                                    : (item.tipo === 'quantitativo' ? 'Alterar quantidade' : 'Alterar status'),
                                                                 variant: 'outline-primary',
                                                                 size: 'sm',
                                                                 backend: true,
-                                                                iconOnly: true,
-                                                                title: 'Editar',
-                                                                extraClass: `diagnostico-item-edit-button ${parametrosMinimosEditorAtivo === editorId ? 'active' : ''}`,
-                                                                attributes: `data-parametros-toggle-editor="${escapeHtml(editorId)}" aria-label="Editar ${escapeHtml(item.parametro)}"`
+                                                                iconOnly: false,
+                                                                title: item.tipo === 'quantitativo' ? 'Alterar quantidade existente' : 'Alterar situação do parâmetro',
+                                                                extraClass: `diagnostico-item-edit-button ${editorAberto ? 'active' : ''}`,
+                                                                attributes: `data-parametros-toggle-editor="${escapeHtml(editorId)}" aria-expanded="${editorAberto ? 'true' : 'false'}" aria-label="${editorAberto ? 'Fechar edição de' : 'Alterar'} ${escapeHtml(item.parametro)}"`
                                                             })}
                                                         </span>
                                                         ${renderizarBadgeDiagnostico(textoResumo)}
@@ -14518,16 +14576,38 @@ async function carregarLogoParaPDF() {
                 parametrosMinimosEditorAtivo = null;
             }
 
+            if (modoEstatico) {
+                return `
+                    <section class="diagnostico-edit-state diagnostico-edit-state-readonly" role="status" aria-label="Modo de consulta pública">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                        <div>
+                            <p class="section-eyebrow mb-1">Consulta pública</p>
+                            <h2>Edição protegida</h2>
+                            <p>Para alterar status ou pendências, abra esta tela na aplicação local autenticada. A publicação permanece somente leitura.</p>
+                        </div>
+                    </section>
+                `;
+            }
+
             if (!parametrosMinimosEditorAtivo && !totalAlteracoes) {
-                return '';
+                return `
+                    <section class="diagnostico-edit-state" role="status" aria-label="Orientação para atualização dos parâmetros">
+                        <i class="fas fa-sliders" aria-hidden="true"></i>
+                        <div>
+                            <p class="section-eyebrow mb-1">Atualização operacional</p>
+                            <h2>Altere cada situação diretamente no checklist</h2>
+                            <p>Use “Alterar status” ou “Alterar quantidade” no item desejado. As pendências e o resumo da UF são recalculados após o salvamento.</p>
+                        </div>
+                    </section>
+                `;
             }
 
             return `
-                <section class="diagnostico-action-bar diagnostico-block mb-3" aria-label="Ações dos parâmetros mínimos">
+                <section class="diagnostico-action-bar diagnostico-block mb-3 ${totalAlteracoes ? 'has-pending-changes' : ''}" aria-label="Ações dos parâmetros mínimos" aria-live="polite">
                     <div>
-                        <p class="section-eyebrow mb-1">Alterações Pendentes</p>
-                        <h2>Modo Edição Ativo</h2>
-                        ${modoEstatico ? renderizarAvisoModoPublicacao() : ''}
+                        <p class="section-eyebrow mb-1">${totalAlteracoes ? 'Alterações pendentes' : 'Editor aberto'}</p>
+                        <h2>${totalAlteracoes ? `${totalAlteracoes} alteração(ões) pronta(s) para salvar` : 'Escolha a nova situação do item'}</h2>
+                        <small>${totalAlteracoes ? 'Revise e confirme para atualizar a base com registro no histórico.' : 'Nenhuma alteração foi registrada ainda.'}</small>
                     </div>
                     <div class="diagnostico-action-buttons">
                         ${renderActionButton({
@@ -14544,10 +14624,9 @@ async function carregarLogoParaPDF() {
                             label: 'Cancelar',
                             variant: 'danger',
                             backend: true,
-                            disabled: modoEstatico
+                            disabled: false
                         })}
                     </div>
-                    <small class="text-muted">${totalAlteracoes} alteração(ões) pendente(s)</small>
                 </section>
             `;
         }
@@ -14879,12 +14958,16 @@ async function carregarLogoParaPDF() {
                     const complementoQuantidade = novoValor && typeof novoValor === 'object'
                         ? ` | atual: ${novoValor.quantidadeAtual} | ideal: ${novoValor.quantidadeIdeal}`
                         : '';
+                    const statusAnterior = parametro?.statusNormalizado
+                        || parametro?.statusOperacional
+                        || parametro?.respostaUf
+                        || '';
                     return {
                         registro,
                         campo,
                         label: parametro?.parametro || campo,
-                        anterior: normalizarStatusParametroMinimoFrontend(parametro?.respostaUf || parametro?.statusNormalizado || ''),
-                        novo: `${statusNovo}${complementoQuantidade}`
+                        anterior: statusParametroMinimoParaTela(statusAnterior),
+                        novo: `${statusParametroMinimoParaTela(statusNovo)}${complementoQuantidade}`
                     };
                 });
             });
@@ -15736,7 +15819,9 @@ async function carregarLogoParaPDF() {
                                     `).join('')}
                                 </ul>
                                 <label class="form-label" for="senhaParametrosMinimos">Senha de confirmação</label>
-                                <input type="password" class="form-control" id="senhaParametrosMinimos" autocomplete="current-password">
+                                <input type="password" class="form-control" id="senhaParametrosMinimos" autocomplete="current-password" aria-describedby="senhaParametrosMinimosAjuda senhaParametrosMinimosErro" required>
+                                <small id="senhaParametrosMinimosAjuda" class="form-text">A senha protege alterações operacionais e não será armazenada pela interface.</small>
+                                <div id="senhaParametrosMinimosErro" class="invalid-feedback" role="alert"></div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -15757,9 +15842,26 @@ async function carregarLogoParaPDF() {
             const modal = new window.bootstrap.Modal(modalElement);
             modal.show();
 
-            document.getElementById('confirmarSalvarParametrosMinimos')?.addEventListener('click', async () => {
+            const confirmarSalvamento = async () => {
                 const senha = document.getElementById('senhaParametrosMinimos')?.value || '';
+                const campoSenha = document.getElementById('senhaParametrosMinimos');
+                const erroSenha = document.getElementById('senhaParametrosMinimosErro');
+                if (!senha) {
+                    campoSenha?.classList.add('is-invalid');
+                    if (erroSenha) erroSenha.textContent = 'Informe a senha de confirmação para salvar.';
+                    campoSenha?.focus();
+                    return;
+                }
+                campoSenha?.classList.remove('is-invalid');
+                if (erroSenha) erroSenha.textContent = '';
                 await salvarParametrosMinimosComSenha(senha, modal);
+            };
+
+            document.getElementById('confirmarSalvarParametrosMinimos')?.addEventListener('click', confirmarSalvamento);
+            document.getElementById('senhaParametrosMinimos')?.addEventListener('keydown', (event) => {
+                if (event.key !== 'Enter') return;
+                event.preventDefault();
+                confirmarSalvamento();
             });
         }
 
@@ -15866,6 +15968,11 @@ async function carregarLogoParaPDF() {
         }
 
         function registrarEventosDiagnosticoOuvidorias(dados) {
+            document.getElementById('btnParametrosInstitucionalizacaoLista')?.addEventListener(
+                'click',
+                abrirModalInstitucionalizacaoParametrosMinimos
+            );
+
             document.querySelectorAll('[data-diagnostico-uf]').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     const uf = botao.dataset.diagnosticoUf || '';
@@ -15914,9 +16021,21 @@ async function carregarLogoParaPDF() {
             document.querySelectorAll('[data-parametros-toggle-editor]').forEach((botao) => {
                 botao.addEventListener('click', () => {
                     const editorId = botao.dataset.parametrosToggleEditor;
+                    parametrosMinimosModoEdicao = true;
                     parametrosMinimosEditorAtivo = parametrosMinimosEditorAtivo === editorId ? null : editorId;
                     renderDiagnosticoOuvidoriasView();
                 });
+            });
+
+            document.querySelectorAll('[data-parametros-fechar-editor]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    parametrosMinimosEditorAtivo = null;
+                    renderDiagnosticoOuvidoriasView();
+                });
+            });
+
+            document.querySelectorAll('[data-parametros-salvar-item]').forEach((botao) => {
+                botao.addEventListener('click', () => abrirModalSenhaParametrosMinimos(dados));
             });
 
             document.querySelectorAll('[data-parametros-opcao-registro]').forEach((botao) => {
@@ -16030,9 +16149,9 @@ async function carregarLogoParaPDF() {
                         <h2>Parâmetros Mínimos</h2>
                     </div>
                     <div class="intro-badges" aria-label="Resumo do diagnóstico">
-                        <span><i class="fas fa-file-excel" aria-hidden="true"></i> Parametros_Minimos.xlsx</span>
-                        <span><i class="fas fa-clipboard-check" aria-hidden="true"></i> ${dados.resumo.totalRespostas} registro(s)</span>
-                        <span><i class="fas fa-scale-balanced" aria-hidden="true"></i> Validação ONASP</span>
+                        <span><i class="fas fa-database" aria-hidden="true"></i> Fonte: Parâmetros Mínimos</span>
+                        <span><i class="fas fa-clipboard-check" aria-hidden="true"></i> ${dados.resumo.totalRespostas} unidades diagnosticadas</span>
+                        <span><i class="fas fa-scale-balanced" aria-hidden="true"></i> Acompanhamento ONASP</span>
                     </div>
                     <div class="intro-actions" aria-label="Ações">
                         ${renderActionButton({
@@ -16054,6 +16173,7 @@ async function carregarLogoParaPDF() {
                     </div>
                 </section>
 
+                ${renderizarResumoInstitucionalizacaoParametrosMinimos(dados)}
                 ${renderizarAcoesParametrosMinimos()}
                 ${renderizarAtalhosUfDiagnostico(dados, filtrosAtuais)}
                 ${avisoBase}
@@ -17218,6 +17338,217 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
             }
 
             if (label) label.textContent = texto;
+        }
+
+        function montarResumoInstitucionalizacaoParametrosMinimos(dados) {
+            const respostas = Array.isArray(dados?.respostas) ? dados.respostas : [];
+            const itens = respostas.map((resposta) => {
+                const parametro = (resposta.parametrosMinimos || []).find((item) => (
+                    item.idParametro === 'atoNormativoEspecifico'
+                    || normalizarBusca(item.parametroCurto || item.parametro).includes('ato normativo especifico')
+                ));
+                const statusOriginal = parametro?.statusNormalizado || parametro?.statusOperacional || 'Não informado';
+                const statusNormalizado = normalizarStatusParametroMinimoFrontend(statusOriginal);
+
+                return {
+                    idResposta: resposta.idResposta || resposta.uf,
+                    uf: resposta.uf || resposta.idResposta || '—',
+                    unidade: resposta.unidadeDiagnosticada || `Ouvidoria de Serviços Penais - ${resposta.uf || 'UF não informada'}`,
+                    status: statusParametroMinimoParaTela(statusNormalizado),
+                    validacao: parametro?.validacaoOnasp || 'Não informado',
+                    institucionalizada: statusNormalizado === 'TEM'
+                };
+            }).filter((item) => item.uf !== '—');
+
+            itens.sort((a, b) => String(a.uf).localeCompare(String(b.uf), 'pt-BR', { numeric: true }));
+            const institucionalizadas = itens.filter((item) => item.institucionalizada).length;
+            const total = itens.length;
+
+            return {
+                itens,
+                institucionalizadas,
+                pendentes: Math.max(0, total - institucionalizadas),
+                total,
+                percentual: total ? Math.round((institucionalizadas / total) * 100) : 0
+            };
+        }
+
+        function renderizarResumoInstitucionalizacaoParametrosMinimos(dados) {
+            const resumo = montarResumoInstitucionalizacaoParametrosMinimos(dados);
+            parametrosMinimosInstitucionalizacaoItens = resumo.itens;
+
+            return `
+                <section
+                    class="parametros-institutionalization-overview diagnostico-block"
+                    aria-labelledby="parametros-institutionalization-title"
+                >
+                    <div class="parametros-institutionalization-header">
+                        <div class="parametros-institutionalization-lead">
+                            <span class="parametros-institutionalization-icon" aria-hidden="true">
+                                <i class="fas fa-building"></i>
+                            </span>
+                            <div>
+                                <p class="section-eyebrow mb-1">Visão nacional</p>
+                                <h2 id="parametros-institutionalization-title">Institucionalização das ouvidorias</h2>
+                                <p>Unidades com ato normativo específico registrado neste diagnóstico.</p>
+                            </div>
+                        </div>
+                        <button
+                            id="btnParametrosInstitucionalizacaoLista"
+                            type="button"
+                            class="btn btn-outline-primary btn-icon-text"
+                            ${resumo.total ? '' : 'disabled aria-disabled="true"'}
+                        >
+                            <i class="fas fa-list-check" aria-hidden="true"></i>
+                            <span>Ver unidades</span>
+                        </button>
+                    </div>
+                    <div class="parametros-institutionalization-body" aria-label="Resumo nacional da institucionalização">
+                        <div class="parametros-institutionalization-primary-metric">
+                            <strong>${resumo.institucionalizadas}</strong>
+                            <div>
+                                <span>ouvidorias institucionalizadas</span>
+                                <small>de ${resumo.total} unidades diagnosticadas</small>
+                            </div>
+                        </div>
+                        <div class="parametros-institutionalization-progress-block">
+                            <div>
+                                <span>Cobertura nacional</span>
+                                <strong>${resumo.percentual}%</strong>
+                            </div>
+                            <div
+                                class="parametros-institutionalization-progress"
+                                role="progressbar"
+                                aria-label="Percentual de ouvidorias institucionalizadas"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="${resumo.percentual}"
+                            >
+                                <span style="width: ${resumo.percentual}%"></span>
+                            </div>
+                        </div>
+                        <div class="parametros-institutionalization-pending">
+                            <strong>${resumo.pendentes}</strong>
+                            <span>unidades pendentes</span>
+                        </div>
+                    </div>
+                    <p class="parametros-institutionalization-note">
+                        <i class="fas fa-circle-info" aria-hidden="true"></i>
+                        <span>A contagem é atualizada a partir do status do item “Ato normativo específico”.</span>
+                    </p>
+                </section>
+            `;
+        }
+
+        function abrirModalInstitucionalizacaoParametrosMinimos() {
+            const modalAnterior = document.getElementById('modalInstitucionalizacaoParametrosMinimos');
+            if (modalAnterior) {
+                window.bootstrap?.Modal?.getInstance(modalAnterior)?.dispose();
+                modalAnterior.remove();
+            }
+
+            const totalInstitucionalizadas = parametrosMinimosInstitucionalizacaoItens.filter((item) => item.institucionalizada).length;
+            const totalPendentes = parametrosMinimosInstitucionalizacaoItens.length - totalInstitucionalizadas;
+            document.body.insertAdjacentHTML('beforeend', `
+                <div class="modal fade" id="modalInstitucionalizacaoParametrosMinimos" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content parametros-institutionalization-modal">
+                            <div class="modal-header">
+                                <div>
+                                    <p class="section-eyebrow mb-1">Parâmetros Mínimos · visão nacional</p>
+                                    <h2 class="modal-title">Institucionalização das ouvidorias</h2>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="parametros-institutionalization-modal-summary" aria-label="Resumo da institucionalização">
+                                    <div><span>Institucionalizadas</span><strong>${totalInstitucionalizadas}</strong></div>
+                                    <div><span>Pendentes</span><strong>${totalPendentes}</strong></div>
+                                    <div><span>Total analisado</span><strong>${parametrosMinimosInstitucionalizacaoItens.length}</strong></div>
+                                </div>
+                                <div class="parametros-institutionalization-filters">
+                                    <label for="parametros-institutionalization-search">
+                                        <span>Buscar por UF ou unidade</span>
+                                        <input id="parametros-institutionalization-search" class="form-control" type="search" placeholder="Ex.: SE ou Sergipe">
+                                    </label>
+                                    <label for="parametros-institutionalization-filter">
+                                        <span>Situação</span>
+                                        <select id="parametros-institutionalization-filter" class="form-select">
+                                            <option value="">Todas</option>
+                                            <option value="institucionalizada">Institucionalizadas</option>
+                                            <option value="pendente">Pendentes</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <div class="parametros-institutionalization-list" id="parametros-institutionalization-list">
+                                    ${parametrosMinimosInstitucionalizacaoItens.map((item) => `
+                                        <article
+                                            class="parametros-institutionalization-row"
+                                            data-parametros-institutionalization-state="${item.institucionalizada ? 'institucionalizada' : 'pendente'}"
+                                            data-parametros-institutionalization-search="${escapeHtml(normalizarBusca(`${item.uf} ${item.unidade}`))}"
+                                        >
+                                            <strong class="parametros-institutionalization-uf">${escapeHtml(item.uf)}</strong>
+                                            <div>
+                                                <strong>${escapeHtml(item.unidade)}</strong>
+                                                <small>${escapeHtml(item.validacao)}</small>
+                                            </div>
+                                            ${renderizarBadgeDiagnostico(item.status)}
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-primary btn-icon-text"
+                                                data-parametros-institutionalization-uf="${escapeHtml(item.uf)}"
+                                                data-parametros-institutionalization-resposta="${escapeHtml(item.idResposta)}"
+                                            >
+                                                <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                                                <span>Abrir ficha</span>
+                                            </button>
+                                        </article>
+                                    `).join('')}
+                                </div>
+                                <div id="parametros-institutionalization-empty" class="diagnostico-empty-state d-none">
+                                    Nenhuma unidade corresponde aos filtros informados.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            const modalElement = document.getElementById('modalInstitucionalizacaoParametrosMinimos');
+            const modal = new window.bootstrap.Modal(modalElement);
+            const campoBusca = document.getElementById('parametros-institutionalization-search');
+            const filtro = document.getElementById('parametros-institutionalization-filter');
+            const aplicarFiltros = () => {
+                const termo = normalizarBusca(campoBusca?.value || '');
+                const situacao = filtro?.value || '';
+                let visiveis = 0;
+
+                document.querySelectorAll('.parametros-institutionalization-row').forEach((linha) => {
+                    const correspondeBusca = !termo || String(linha.dataset.parametrosInstitutionalizationSearch || '').includes(termo);
+                    const correspondeSituacao = !situacao || linha.dataset.parametrosInstitutionalizationState === situacao;
+                    const visivel = correspondeBusca && correspondeSituacao;
+                    linha.classList.toggle('d-none', !visivel);
+                    if (visivel) visiveis += 1;
+                });
+
+                document.getElementById('parametros-institutionalization-empty')?.classList.toggle('d-none', visiveis > 0);
+            };
+
+            campoBusca?.addEventListener('input', aplicarFiltros);
+            filtro?.addEventListener('change', aplicarFiltros);
+            document.querySelectorAll('[data-parametros-institutionalization-uf]').forEach((botao) => {
+                botao.addEventListener('click', () => {
+                    diagnosticoUfAtual = botao.dataset.parametrosInstitutionalizationUf || '';
+                    diagnosticoOuvidoriaAtual = botao.dataset.parametrosInstitutionalizationResposta || null;
+                    modalElement?.addEventListener('hidden.bs.modal', () => {
+                        renderDiagnosticoOuvidoriasView();
+                        window.scrollTo({ top: 0, behavior: 'instant' });
+                    }, { once: true });
+                    modal.hide();
+                });
+            });
+            modalElement?.addEventListener('shown.bs.modal', () => campoBusca?.focus(), { once: true });
+            modal.show();
         }
 
         function renderKPIs(global, ufsList, resumoInstrumentos) {
