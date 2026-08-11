@@ -12,8 +12,10 @@ const escapeHtml = (valor) => String(valor ?? '').replace(/[&<>"']/g, (char) => 
 
 export const UI_ICONS = {
     edit: 'fa-pen-to-square',
+    split: 'fa-code-branch',
     save: 'fa-floppy-disk',
     cancel: 'fa-xmark',
+    delete: 'fa-trash-can',
     history: 'fa-clock-rotate-left',
     exportExcel: 'fa-file-excel',
     exportPdf: 'fa-file-pdf',
@@ -25,7 +27,9 @@ export const UI_ICONS = {
     lock: 'fa-lock',
     search: 'fa-magnifying-glass',
     filter: 'fa-filter',
-    refresh: 'fa-rotate-right'
+    refresh: 'fa-rotate-right',
+    allocate: 'fa-right-left',
+    share: 'fa-share-nodes'
 };
 
 // ----------------------------------------------------------------------------
@@ -74,6 +78,71 @@ export function renderBotaoUi({
         <button type="${escapeHtml(type)}"${idAttr} class="${classes.join(' ')}"${titleAttr}${disabledAttr}${datasets}>
             ${iconeHtml}<span>${escapeHtml(label)}</span>
         </button>
+    `;
+}
+
+export function renderActionButton({
+    id = '',
+    type,
+    label,
+    onClick,
+    variant = 'outline-primary',
+    size = 'sm',
+    backend = false,
+    disabled = false,
+    title = '',
+    extraClass = '',
+    iconOnly = false,
+    attributes = ''
+}) {
+    const icon = UI_ICONS[type] || 'fa-circle';
+    const backendAttr = backend ? 'data-requer-backend="true"' : '';
+    const disabledAttr = disabled ? 'disabled aria-disabled="true"' : '';
+    const titleAttr = title ? `title="${escapeHtml(title)}"` : '';
+    const onClickAttr = onClick ? `onclick="${onClick}"` : '';
+    const idAttr = id ? `id="${escapeHtml(id)}"` : '';
+    const labelHtml = iconOnly
+        ? `<span class="visually-hidden">${escapeHtml(label)}</span>`
+        : `<span>${escapeHtml(label)}</span>`;
+
+    let finalVariant = variant;
+    if (type === 'cancel' && (variant === 'outline-secondary' || variant === 'secondary' || variant === 'outline-primary')) {
+        finalVariant = 'danger';
+    }
+
+    return `
+        <button type="button"
+            class="btn btn-${size} btn-${finalVariant} ${iconOnly ? 'btn-icon-only' : 'btn-icon-text'} ${extraClass}"
+            ${idAttr}
+            ${onClickAttr}
+            ${backendAttr}
+            ${disabledAttr}
+            ${titleAttr}
+            ${attributes}>
+            <i class="fas ${icon}" aria-hidden="true"></i>
+            ${labelHtml}
+        </button>
+    `;
+}
+
+export function renderKpiCard({
+    titulo,
+    valor,
+    descricao = '',
+    icon = 'fa-chart-simple',
+    variant = '',
+    valueClass = '',
+    extraClass = ''
+}) {
+    return `
+        <div class="card kpi-card ${variant ? `kpi-card-${variant}` : ''} ${extraClass}">
+            <div class="kpi-title">
+                <i class="fas ${icon}" aria-hidden="true"></i>
+                ${escapeHtml(titulo)}
+            </div>
+            <div class="kpi-value ${valueClass}">${valor}</div>
+            ${descricao ? `<div class="kpi-desc">${escapeHtml(descricao)}</div>` : ''}
+        </div>
     `;
 }
 

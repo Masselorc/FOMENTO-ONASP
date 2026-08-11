@@ -25,6 +25,8 @@
     <link href="./frontend/css/ui-fixes.css?v=20260525-02-menu-responsivo" rel="stylesheet">
 </head>
 <body>
+    <a class="skip-link" href="#view-dashboard">Pular para o conteúdo</a>
+    <div id="view-change-announcer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
 
     <!-- LOADING OVERLAY
          Usado por operações assíncronas: carregamento de planilhas e geração
@@ -158,7 +160,7 @@
             </section>
 
             <!-- KPIs (6 cards em barra compacta) -->
-            <section class="app-summary-grid metric-strip -cols-6 mb-3" aria-label="Indicadores principais">
+            <section id="dashboard-primary-metrics" class="app-summary-grid metric-strip mobile-collapsible-metrics -cols-6 mb-3" aria-label="Indicadores principais">
                 <div class="card kpi-card app-summary-card metric-tile -success">
                     <div class="kpi-title app-summary-card-title"><i class="fas fa-briefcase" aria-hidden="true"></i>Total de Fomento</div>
                     <div class="kpi-value app-summary-card-value text-money" id="kpi-total-fomento-ouvidoria">R$ 0,00</div>
@@ -190,6 +192,16 @@
                     <div class="kpi-desc app-summary-card-desc">Veículos e Equipamentos</div>
                 </div>
             </section>
+            <button
+                id="btn-toggle-dashboard-metrics"
+                type="button"
+                class="btn btn-outline-secondary btn-icon-text mobile-metrics-toggle mb-3"
+                aria-controls="dashboard-primary-metrics"
+                aria-expanded="false"
+            >
+                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                <span>Ver todos os indicadores</span>
+            </button>
 
             <section class="app-section mb-2" id="cards-instrumentos-section-wrapper" aria-label="Por instrumento">
                 <div class="app-section-header">

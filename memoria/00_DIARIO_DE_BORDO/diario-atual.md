@@ -8006,3 +8006,26 @@ Logs operacionais gravados:
 - Testes locais antes do envio: validação sintática do YAML, montagem equivalente do diretório `_site`, ausência de arquivos SQLite no pacote, validação dos JSONs publicados e `git diff --check`.
 - Risco de regressão: baixo; a alteração restringe-se ao mecanismo de deploy e mantém inalterados o conteúdo público, o banco e as regras de negócio.
 - Rollback: reverter este commit para restaurar o workflow anterior; isso não desfaz dados nem configurações do Supabase.
+
+## 11/08/2026 - Revisão e correções de interface, responsividade e acessibilidade
+
+- Branch: `main`.
+- Problemas encontrados: título truncado e controles menores que a área mínima de toque no cabeçalho móvel; contraste insuficiente em textos auxiliares; foco visual removido da paginação; navegação SPA sem transferência de foco nem anúncio da tela; excesso de indicadores e ações simultâneas no Dashboard e no Orçamento; paginação inicial extensa; e helpers de cards/ações duplicados no arquivo principal.
+- Evidências: auditoria em navegador real nas larguras de `390`, `768` e `1440` px; no estado inicial, o cabeçalho móvel usava truncamento, havia controles de `36` e `38` px, o foco permanecia no menu após trocar de tela e as métricas ocupavam uma sequência vertical extensa.
+- Correções aplicadas: link de salto, região viva, título de documento e foco inicial por tela; token semântico de texto secundário; foco visível na paginação; alvos interativos mínimos de `44 × 44` px; quebra natural do título; revelação progressiva dos indicadores no celular; menu nativo de ações secundárias do Orçamento; paginação inicial de `10` registros; e centralização dos renderizadores de KPI e ações em `frontend/js/core/ui-components.js`.
+- Arquivos alterados: `index.html`; `frontend/css/app.css`; `frontend/css/ui-fixes.css`; `frontend/js/app.js`; `frontend/js/core/ui-components.js`; `frontend/js/core/static-mode.js`; e este diário.
+- Validação automatizada: `npm run validar:syntax` (`110` arquivos); `npm run validar:json`; `npm run validar:services` (`545` testes, `525` aprovados, `20` ignorados e `0` falhas); verificações `node --check` nos módulos alterados; e `git diff --check`.
+- Validação visual: Dashboard, Orçamento e Parâmetros Mínimos inspecionados em `390`, `768` e `1440` px, sem overflow horizontal; nenhum controle visível menor que `44 × 44` px no recorte móvel; expansão dos indicadores e das ações secundárias verificada; transferência de foco entre telas confirmada; e console do navegador sem erros.
+- Preservações: nenhuma regra de negócio, rota, serviço de backend, banco de dados, integração Supabase, dependência ou JSON publicado foi alterado.
+- Risco de regressão: baixo a moderado e restrito à apresentação e aos helpers compartilhados de interface; as assinaturas já usadas pelo frontend foram preservadas.
+- Rollback: reverter os sete arquivos de interface listados e esta entrada do diário; não há rollback de dados.
+- Pendência técnica não bloqueante: a separação integral do arquivo `frontend/js/app.js` e a consolidação completa das camadas de CSS devem ser tratadas em refatoração incremental própria, com cobertura específica, para não ampliar o risco deste lote visual.
+
+### Complemento - preparação da publicação estática e sincronização
+
+- Escopo Git confirmado: sete arquivos modificados, todos pertencentes ao lote de frontend e ao diário; branch `main` sincronizada inicialmente com `origin/main` no commit `dc77ed7`.
+- Pacote estático: reproduzida localmente a montagem de `.github/workflows/build.yml`, resultando em 46 arquivos, sem banco `*.sqlite*`, sem arquivos obrigatórios ausentes e com as versões atualizadas de `index.html`, CSS e módulos JavaScript.
+- Smoke test do artefato: `index.html`, folhas de estilo, módulo principal, helpers compartilhados, modo estático, serviços públicos e `resumo-publicacao.json` responderam HTTP `200`; o navegador carregou o Dashboard com o título acessível atualizado e o link de salto funcional.
+- Dados publicados: o bundle oficial permanece com `publicadoEm=2026-08-06T12:26:09.122Z`; como o lote não altera dados e a sessão não contém `DATABASE_URL`, não foi executada uma regeneração artificial dos mesmos JSONs. O conteúdo existente foi preservado e aprovado por `npm run validar:json`.
+- Validação antes do envio: `npm run validar:syntax` (`110` arquivos); `npm run validar:json`; `npm run validar:services` (`545` testes, `525` aprovados, `20` ignorados e `0` falhas); e `git diff --check`.
+- Publicação autorizada: commit e push diretos na branch `main`, conforme solicitação expressa do usuário; o workflow oficial do GitHub Pages será acompanhado até a confirmação remota.

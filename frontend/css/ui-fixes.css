@@ -67,8 +67,10 @@
     #header-actions .btn-icon-text,
     #header-actions .btn-square {
         flex: 0 0 auto;
-        width: 2.5rem;
-        min-width: 2.5rem;
+        height: 2.75rem;
+        min-height: 2.75rem;
+        min-width: 2.75rem;
+        width: 2.75rem;
         padding-left: 0;
         padding-right: 0;
         justify-content: center;
@@ -82,7 +84,7 @@
 
     #header-actions .btn-icon-text,
     #header-actions .btn-square {
-        width: 2.25rem;
-        min-width: 2.25rem;
+        min-width: 2.75rem;
+        width: 2.75rem;
     }
 }

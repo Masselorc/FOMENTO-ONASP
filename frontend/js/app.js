@@ -38,6 +38,12 @@ import {
     aplicarModoSomenteLeitura,
     dadosPaginaEmModoEstatico
 } from './core/static-mode.js?v=20260518-01';
+import {
+    UI_ICONS,
+    renderActionButton,
+    renderKpiCard,
+    renderPublicationNotice as renderPublicationNoticeUi
+} from './core/ui-components.js?v=20260811-01';
 
 // ========================================================================
 // CONFIGURACOES E ESTADO
@@ -244,6 +250,24 @@ const VIEWS_REPASSES_FUNPEN = new Set([
     'formalizacao-detalhe',
     'diagnostico-ouvidorias'
 ]);
+const VIEW_ACCESSIBLE_NAMES = {
+    dashboard: 'Visão geral do fomento',
+    detalhamento: 'Detalhamento dos repasses',
+    'estado-detalhe': 'Detalhe da unidade federativa',
+    profor2022: 'PROFOR 2022',
+    'profor-convenio-detalhe': 'Detalhe do convênio PROFOR 2022',
+    faf2021: 'FAF 2021',
+    'faf2021-detalhe': 'Detalhe do FAF 2021',
+    doacoes2023: 'Doações 2023',
+    'doacoes2023-detalhe': 'Detalhe de Doações 2023',
+    orcamento: 'Planejamento Orçamentário 2026',
+    formalizacao: 'Formalização PROFOR',
+    'formalizacao-detalhe': 'Detalhe da Formalização PROFOR',
+    contatos: 'Contatos das unidades federativas',
+    'diagnostico-ouvidorias': 'Parâmetros Mínimos',
+    'status-sistema': 'Status do Sistema',
+    'revisao-divergencias': 'Revisão de divergências'
+};
 const TODAS_UFS_BRASIL = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
     "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
@@ -262,28 +286,6 @@ let catalogoAplicacao = {
 // ========================================================================
 // UI HELPERS
 // ========================================================================
-
-const UI_ICONS = {
-    edit: 'fa-pen-to-square',
-    split: 'fa-code-branch',
-    save: 'fa-floppy-disk',
-    cancel: 'fa-xmark',
-    delete: 'fa-trash-can',
-    history: 'fa-clock-rotate-left',
-    exportExcel: 'fa-file-excel',
-    exportPdf: 'fa-file-pdf',
-    add: 'fa-circle-plus',
-    back: 'fa-arrow-left',
-    warning: 'fa-triangle-exclamation',
-    success: 'fa-check-circle',
-    info: 'fa-circle-info',
-    lock: 'fa-lock',
-    search: 'fa-magnifying-glass',
-    filter: 'fa-filter',
-    refresh: 'fa-rotate-right',
-    allocate: 'fa-right-left',
-    share: 'fa-share-nodes'
-};
 
 const STATUS_UI = {
     CONCLUIDO: { label: 'Concluído', classe: 'success', icon: 'fa-check-circle' },
@@ -360,78 +362,8 @@ function renderStatusBadge(status, options = {}) {
     `;
 }
 
-function renderActionButton({
-    id = '',
-    type,
-    label,
-    onClick,
-    variant = 'outline-primary',
-    size = 'sm',
-    backend = false,
-    disabled = false,
-    title = '',
-    extraClass = '',
-    iconOnly = false,
-    attributes = ''
-}) {
-    const icon = UI_ICONS[type] || 'fa-circle';
-    const backendAttr = backend ? 'data-requer-backend="true"' : '';
-    const disabledAttr = disabled ? 'disabled aria-disabled="true"' : '';
-    const titleAttr = title ? `title="${escapeHtml(title)}"` : '';
-    const onClickAttr = onClick ? `onclick="${onClick}"` : '';
-    const idAttr = id ? `id="${escapeHtml(id)}"` : '';
-    const labelHtml = iconOnly
-        ? `<span class="visually-hidden">${escapeHtml(label)}</span>`
-        : `<span>${escapeHtml(label)}</span>`;
-
-    let finalVariant = variant;
-    if (type === 'cancel' && (variant === 'outline-secondary' || variant === 'secondary' || variant === 'outline-primary')) {
-        finalVariant = 'danger';
-    }
-
-    return `
-        <button type="button"
-            class="btn btn-${size} btn-${finalVariant} ${iconOnly ? 'btn-icon-only' : 'btn-icon-text'} ${extraClass}"
-            ${idAttr}
-            ${onClickAttr}
-            ${backendAttr}
-            ${disabledAttr}
-            ${titleAttr}
-            ${attributes}>
-            <i class="fas ${icon}" aria-hidden="true"></i>
-            ${labelHtml}
-        </button>
-    `;
-}
-
-function renderKpiCard({
-    titulo,
-    valor,
-    descricao = '',
-    icon = 'fa-chart-simple',
-    variant = '',
-    valueClass = '',
-    extraClass = ''
-}) {
-    return `
-        <div class="card kpi-card ${variant ? `kpi-card-${variant}` : ''} ${extraClass}">
-            <div class="kpi-title">
-                <i class="fas ${icon}" aria-hidden="true"></i>
-                ${escapeHtml(titulo)}
-            </div>
-            <div class="kpi-value ${valueClass}">${valor}</div>
-            ${descricao ? `<div class="kpi-desc">${escapeHtml(descricao)}</div>` : ''}
-        </div>
-    `;
-}
-
         function renderPublicationNotice() {
-            return `
-                <div class="publication-mode-notice" role="status">
-                    <i class="fas ${UI_ICONS.lock}" aria-hidden="true"></i>
-                    <span>${escapeHtml(MENSAGEM_MODO_PUBLICACAO)}</span>
-                </div>
-            `;
+            return renderPublicationNoticeUi(MENSAGEM_MODO_PUBLICACAO);
         }
 
         function formatarResumoUltimaAtualizacaoDetruProfor2022(ultimaAtualizacao) {
@@ -1262,6 +1194,71 @@ function atualizarVisibilidadeBotaoStatusSistema() {
     });
 }
 
+function atualizarAcessibilidadeViews(viewName = 'dashboard', { moverFoco = false } = {}) {
+    const views = Array.from(document.querySelectorAll('.app-view'));
+    const viewAtiva = views.find((view) => window.getComputedStyle(view).display !== 'none');
+
+    views.forEach((view) => {
+        view.setAttribute('aria-hidden', view === viewAtiva ? 'false' : 'true');
+    });
+
+    if (!viewAtiva) return;
+
+    const skipLink = document.querySelector('.skip-link');
+    if (skipLink && viewAtiva.id) skipLink.setAttribute('href', `#${viewAtiva.id}`);
+
+    const tituloView = viewAtiva.querySelector('h1, h2');
+    const nomeView = VIEW_ACCESSIBLE_NAMES[viewName]
+        || tituloView?.textContent?.trim()
+        || 'Painel de Acompanhamento';
+    document.title = `${nomeView} | Fomento ONASP`;
+
+    const anunciador = document.getElementById('view-change-announcer');
+    if (anunciador) anunciador.textContent = `${nomeView} carregada.`;
+    if (!moverFoco) return;
+
+    let focoAplicado = false;
+    const aplicarFoco = () => {
+        if (focoAplicado) return;
+        focoAplicado = true;
+        document.querySelectorAll('[data-view-focus-target="true"]').forEach((elemento) => {
+            elemento.removeAttribute('data-view-focus-target');
+            elemento.removeAttribute('tabindex');
+        });
+
+        const alvo = tituloView || viewAtiva;
+        alvo.setAttribute('tabindex', '-1');
+        alvo.setAttribute('data-view-focus-target', 'true');
+        alvo.focus({ preventScroll: true });
+    };
+
+    const sidebar = document.getElementById('app-sidebar');
+    if (sidebar?.classList.contains('show')) {
+        sidebar.addEventListener('hidden.bs.offcanvas', aplicarFoco, { once: true });
+        window.setTimeout(aplicarFoco, 450);
+        return;
+    }
+
+    window.requestAnimationFrame(aplicarFoco);
+}
+
+function configurarAlternanciaMetricasMobile(buttonId, sectionId) {
+    const botao = document.getElementById(buttonId);
+    const secao = document.getElementById(sectionId);
+    if (!botao || !secao || botao.dataset.metricsToggleReady === 'true') return;
+
+    botao.dataset.metricsToggleReady = 'true';
+    botao.addEventListener('click', () => {
+        const expandido = secao.classList.toggle('is-expanded-mobile');
+        botao.setAttribute('aria-expanded', String(expandido));
+        const rotulo = botao.querySelector('span');
+        const icone = botao.querySelector('i');
+        if (rotulo) rotulo.textContent = expandido ? 'Mostrar menos indicadores' : 'Ver todos os indicadores';
+        icone?.classList.toggle('fa-chevron-up', expandido);
+        icone?.classList.toggle('fa-chevron-down', !expandido);
+    });
+}
+
 function aplicarModoSomenteLeituraControlada() {
     aplicarModoSomenteLeitura();
     atualizarVisibilidadeBotaoStatusSistema();
@@ -1468,6 +1465,16 @@ async function carregarLogoParaPDF() {
         document.addEventListener('DOMContentLoaded', async () => {
             carregarLogoLocalParaPDF();
 
+            const skipLink = document.querySelector('.skip-link');
+            skipLink?.addEventListener('click', (event) => {
+                const alvo = document.querySelector(skipLink.getAttribute('href'));
+                if (!alvo) return;
+                event.preventDefault();
+                alvo.setAttribute('tabindex', '-1');
+                alvo.focus({ preventScroll: true });
+                alvo.scrollIntoView({ block: 'start' });
+            });
+
             const inputPlanilha = document.getElementById('input-planilha-convenios');
             if (inputPlanilha) {
                 inputPlanilha.addEventListener('change', processarSelecaoManualPlanilha);
@@ -1495,6 +1502,8 @@ async function carregarLogoParaPDF() {
 
             atualizarNavegacao('dashboard');
             document.getElementById('view-dashboard').style.display = 'block';
+            atualizarAcessibilidadeViews('dashboard');
+            configurarAlternanciaMetricasMobile('btn-toggle-dashboard-metrics', 'dashboard-primary-metrics');
             const inicioBootstrapMinimo = DEBUG_PERF_ONASP ? performance.now() : 0;
             registrarPerfOrcamento('bootstrap:minimo', inicioBootstrapMinimo, {
                 viewInicial: document.body.dataset.currentView || 'dashboard'
@@ -5457,6 +5466,8 @@ async function carregarLogoParaPDF() {
                     renderizarErroView(viewName, error);
                 } finally {
                     aplicarModoSomenteLeituraControlada();
+                    window.scrollTo(0, 0);
+                    atualizarAcessibilidadeViews(viewName, { moverFoco: true });
                 }
                 return;
             }
@@ -5581,6 +5592,7 @@ async function carregarLogoParaPDF() {
             fecharMenuLateral();
             aplicarModoSomenteLeituraControlada();
             window.scrollTo(0, 0);
+            atualizarAcessibilidadeViews(viewName, { moverFoco: true });
         }
 
         // ========================================================================
@@ -12631,7 +12643,7 @@ async function carregarLogoParaPDF() {
 
                 ${renderizarAcoesOrcamento()}
 
-                <section class="row mb-2 row-cols-1 row-cols-md-2 row-cols-xl-6 g-3" aria-label="Indicadores orçamentários">
+                <section id="budget-primary-metrics" class="row mb-2 row-cols-1 row-cols-md-2 row-cols-xl-6 g-3 mobile-collapsible-metrics" aria-label="Indicadores orçamentários">
                     <div class="col">
                         ${renderKpiCard({
                             titulo: 'Total do orçamento',
@@ -12686,6 +12698,16 @@ async function carregarLogoParaPDF() {
                         })}
                     </div>
                 </section>
+                <button
+                    id="btn-toggle-budget-metrics"
+                    type="button"
+                    class="btn btn-outline-secondary btn-icon-text mobile-metrics-toggle mb-2"
+                    aria-controls="budget-primary-metrics"
+                    aria-expanded="false"
+                >
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    <span>Ver todos os indicadores</span>
+                </button>
                 <div class="mt-2"></div>
 
                 ${renderizarCardsPenaJustaOrcamento(resumoPenaJusta)}
@@ -12836,6 +12858,12 @@ async function carregarLogoParaPDF() {
                     controle.value = '';
                 });
                 atualizar();
+            });
+            configurarAlternanciaMetricasMobile('btn-toggle-budget-metrics', 'budget-primary-metrics');
+            const menuMaisAcoes = document.querySelector('.budget-more-actions');
+            const resumoMaisAcoes = menuMaisAcoes?.querySelector('summary');
+            menuMaisAcoes?.addEventListener('toggle', () => {
+                resumoMaisAcoes?.setAttribute('aria-expanded', String(menuMaisAcoes.open));
             });
 
             container.style.display = 'block';
@@ -14811,7 +14839,7 @@ async function carregarLogoParaPDF() {
                             <p class="section-eyebrow mb-1">Acesso rápido</p>
                             <h2>Selecionar UF</h2>
                         </div>
-                        <small class="text-muted">Abra a visão geral ou vá direto para a unidade desejada</small>
+                        <small class="diagnostico-helper-text">Abra a visão geral ou vá direto para a unidade desejada</small>
                     </div>
                     <div class="contact-uf-chip-list diagnostico-uf-chip-list">
                         <button
@@ -15085,33 +15113,41 @@ async function carregarLogoParaPDF() {
                         disabled: modoEstatico
                     })}
                     ${renderActionButton({
-                        id: 'btnHistoricoOrcamento',
-                        type: 'history',
-                        label: 'Histórico',
-                        variant: 'admin',
-                        backend: true,
-                        disabled: modoEstatico
-                    })}
-                    ${renderActionButton({
                         id: 'btn-export-budget-pdf',
                         type: 'exportPdf',
                         label: 'PDF',
                         variant: 'export',
                         onClick: 'exportarOrcamentoPDF()'
                     })}
-                    ${renderActionButton({
-                        id: 'btn-export-budget-resumo-pdf',
-                        type: 'exportPdf',
-                        label: 'Relatório resumido (PDF)',
-                        variant: 'export',
-                        onClick: 'exportarResumoOrcamentoPDF()'
-                    })}
-                    ${renderActionButton({
-                        id: 'btnExportarResumoOrcamentoTexto',
-                        type: 'share',
-                        label: 'Exportar resumo',
-                        variant: 'outline-primary'
-                    })}
+                    <details class="budget-more-actions">
+                        <summary class="btn btn-outline-secondary btn-icon-text" role="button" aria-label="Mostrar mais ações do orçamento" aria-expanded="false">
+                            <i class="fas fa-ellipsis" aria-hidden="true"></i>
+                            <span>Mais ações</span>
+                        </summary>
+                        <div class="budget-more-actions-menu">
+                            ${renderActionButton({
+                                id: 'btnHistoricoOrcamento',
+                                type: 'history',
+                                label: 'Histórico',
+                                variant: 'admin',
+                                backend: true,
+                                disabled: modoEstatico
+                            })}
+                            ${renderActionButton({
+                                id: 'btn-export-budget-resumo-pdf',
+                                type: 'exportPdf',
+                                label: 'Relatório resumido (PDF)',
+                                variant: 'export',
+                                onClick: 'exportarResumoOrcamentoPDF()'
+                            })}
+                            ${renderActionButton({
+                                id: 'btnExportarResumoOrcamentoTexto',
+                                type: 'share',
+                                label: 'Exportar resumo',
+                                variant: 'outline-primary'
+                            })}
+                        </div>
+                    </details>
                 </div>
             `;
         }
@@ -17323,8 +17359,8 @@ ${linhas.map((linha, index) => `    ${linha}${index < linhas.length - 1 ? '<br>'
                 destroy: true, 
             autoWidth: false,
             paging: true, 
-            pageLength: 15,
-            lengthMenu: [15, 50, 100, 500],
+            pageLength: 10,
+            lengthMenu: [10, 25, 50, 100, 500],
             info: true, 
             dom: '<"row align-items-center mb-3"<"col-md-6"l><"col-md-6 text-end"B>>rt<"row align-items-center mt-3"<"col-md-6"i><"col-md-6"p>>',
             buttons: [

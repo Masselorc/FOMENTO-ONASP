@@ -24,6 +24,7 @@
     /* Texto */
     --color-text: #e6edf3;
     --color-muted: #8d9bb0;
+    --color-text-secondary: #aab6c7;
 
     /* Cor institucional de ação (azul vibrante) */
     --color-primary: #4b8fff;
@@ -522,6 +523,27 @@ body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 0.95rem;
     padding-bottom: 40px;
+}
+
+.skip-link {
+    background: var(--color-primary-strong);
+    border-radius: 0 0 var(--radius) var(--radius);
+    color: var(--color-bg);
+    font-weight: 700;
+    inset-block-start: 0;
+    inset-inline-start: 1rem;
+    padding: 0.75rem 1rem;
+    position: fixed;
+    transform: translateY(-120%);
+    transition: transform 160ms ease-out;
+    z-index: 1200;
+}
+
+.skip-link:focus-visible {
+    color: var(--color-bg);
+    outline: 3px solid var(--color-text);
+    outline-offset: 2px;
+    transform: translateY(0);
 }
 
 body,
@@ -5052,9 +5074,10 @@ body.dark-mode .budget-tracking-management strong,
 
     .header-title {
         font-size: 0.98rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        max-width: 14rem;
+        overflow-wrap: anywhere;
+        text-wrap: balance;
+        white-space: normal;
     }
 
     .header-actions {
@@ -5612,15 +5635,17 @@ body.dark-mode .budget-tracking-management strong,
 
 @media (max-width: 430px) {
     .header-title {
-        max-width: 120px;
+        font-size: 0.92rem;
+        line-height: 1.15;
+        max-width: none;
     }
 
     .btn-square,
     .header-actions .btn-icon-text {
-        height: 38px;
-        min-height: 38px;
-        min-width: 38px;
-        width: 38px;
+        height: 44px;
+        min-height: 44px;
+        min-width: 44px;
+        width: 44px;
     }
 
     .chart-container {
@@ -9285,7 +9310,7 @@ body {
 
 @media (max-width: 479.98px) {
     .app-summary-grid.metric-strip {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -9539,13 +9564,17 @@ table.dataTable tbody tr:hover td {
 }
 
 .pagination .page-link:focus,
-.pagination .page-link:active,
-.pagination .page-link:focus-visible,
-.dataTables_wrapper .dataTables_paginate .paginate_button:focus,
 .dataTables_wrapper .dataTables_paginate .paginate_button:active {
     box-shadow: none !important;
-    outline: 0 !important;
     border-radius: 8px !important;
+}
+
+.pagination .page-link:focus-visible,
+.dataTables_wrapper .dataTables_paginate .paginate_button:focus-visible {
+    border-color: var(--color-primary-strong) !important;
+    box-shadow: var(--focus-ring) !important;
+    outline: 2px solid var(--color-primary-strong) !important;
+    outline-offset: 2px !important;
 }
 
 .pagination .page-item {
@@ -9811,7 +9840,8 @@ table.dataTable thead .sorting_desc::after {
 .diagnostico-uf-filter-chip {
     padding: 0.2rem 0.6rem !important;
     font-size: 0.72rem !important;
-    min-height: 28px;
+    min-height: 44px;
+    min-width: 44px;
     line-height: 1.2;
     border-radius: 6px;
 }
@@ -12617,4 +12647,128 @@ table.dataTable thead th {
     flex: 0 0 auto;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+}
+
+/* ==========================================================================
+   Acessibilidade e densidade responsiva
+   ========================================================================== */
+.brand-block,
+.brand-copy {
+    flex: 1 1 auto;
+}
+
+.diagnostico-helper-text,
+.action-buttons-floating .action-buttons-status {
+    color: var(--color-text-secondary);
+}
+
+[data-view-focus-target="true"] {
+    scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+
+[data-view-focus-target="true"]:focus {
+    outline: none;
+}
+
+.mobile-metrics-toggle {
+    display: none;
+}
+
+.budget-more-actions {
+    position: relative;
+}
+
+.budget-more-actions > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.budget-more-actions > summary::-webkit-details-marker {
+    display: none;
+}
+
+.budget-more-actions[open] > summary {
+    background: var(--color-surface-hover);
+    border-color: var(--color-primary-strong);
+}
+
+.budget-more-actions-menu {
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-panel);
+    display: grid;
+    gap: 0.4rem;
+    inset-block-start: calc(100% + 0.45rem);
+    inset-inline-end: 0;
+    min-width: min(18rem, calc(100vw - 2rem));
+    padding: 0.55rem;
+    position: absolute;
+    z-index: 30;
+}
+
+.budget-more-actions-menu .btn {
+    justify-content: flex-start;
+    width: 100%;
+}
+
+@media (max-width: 767.98px) {
+    .mobile-collapsible-metrics:not(.is-expanded-mobile) > :nth-child(n + 4) {
+        display: none;
+    }
+
+    .app-summary-grid.mobile-collapsible-metrics:not(.is-expanded-mobile) > :nth-child(3) {
+        grid-column: 1 / -1;
+    }
+
+    .mobile-metrics-toggle {
+        align-items: center;
+        display: inline-flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .action-buttons-floating {
+        align-items: stretch;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .action-buttons-floating .action-buttons-status {
+        grid-column: 1 / -1;
+        margin: 0;
+    }
+
+    .action-buttons-floating > .btn,
+    .action-buttons-floating > .budget-more-actions,
+    .budget-more-actions > summary {
+        width: 100%;
+    }
+
+    .action-buttons-floating > .budget-more-actions {
+        grid-column: 1 / -1;
+    }
+
+    .budget-more-actions-menu {
+        inset-inline-end: 0;
+    }
+}
+
+@media (max-width: 767.98px), (pointer: coarse) {
+    .app-header button,
+    .app-view button,
+    .app-view .btn,
+    .app-view .page-link,
+    .app-view .uf-chip,
+    .app-view [role="button"] {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+
+    .app-view .table td .btn,
+    .app-view .app-data-table td .btn,
+    .app-view .budget-main-table td .btn {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
 }
