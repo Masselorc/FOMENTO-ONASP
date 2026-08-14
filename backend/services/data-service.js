@@ -12,7 +12,8 @@ const JSON_PUBLICADOS_URLS = {
     aplicacao: new URL('../../frontend/data/publicados/aplicacao.json', import.meta.url),
     parametrosMinimos: new URL('../../frontend/data/publicados/parametros-minimos.json', import.meta.url),
     formalizacaoProfor: new URL('../../frontend/data/publicados/formalizacao-profor.json', import.meta.url),
-    orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url)
+    orcamento2026: new URL('../../frontend/data/publicados/orcamento-2026.json', import.meta.url),
+    contatos: new URL('../../frontend/data/publicados/contatos.json', import.meta.url)
 };
 // Versão única dos dados: evita que HTML/JS atualizados leiam planilhas antigas em cache.
 const VERSAO_DADOS = '20260513-01';
@@ -397,7 +398,8 @@ const modosDadosOnasp = {
     profor2022: 'api',
     parametrosMinimos: 'api',
     formalizacaoProfor: 'api',
-    orcamento2026: 'api'
+    orcamento2026: 'api',
+    contatos: 'api'
 };
 
 function registrarModoDadosOnasp(chave, modo) {
@@ -3888,6 +3890,39 @@ function normalizarDadosFormalizacaoPublicado(dados) {
     };
 }
 
+function normalizarDadosContatosPublicado(dados) {
+    const cadastros = Array.isArray(dados?.cadastroPorUf) ? dados.cadastroPorUf : [];
+    const pessoas = Array.isArray(dados?.pessoasPorUf) ? dados.pessoasPorUf : [];
+    const cadastroPorUf = new Map();
+    const pessoasPorUf = new Map();
+
+    cadastros.forEach((cadastro) => {
+        const uf = normalizarTexto(cadastro?.uf);
+        if (ufContatoValida(uf)) cadastroPorUf.set(uf, { ...cadastro, uf });
+    });
+
+    pessoas.forEach((pessoa) => {
+        const uf = normalizarTexto(pessoa?.uf);
+        if (!ufContatoValida(uf)) return;
+        if (!pessoasPorUf.has(uf)) pessoasPorUf.set(uf, []);
+        pessoasPorUf.get(uf).push({ ...pessoa, uf });
+    });
+
+    if (cadastroPorUf.size === 0 && pessoasPorUf.size === 0) {
+        throw new Error('Dados de contatos carregados, mas nenhum registro válido foi encontrado.');
+    }
+
+    return {
+        cadastroPorUf,
+        pessoasPorUf,
+        diagnostico: dados?.diagnostico || {},
+        totais: dados?.totais || {},
+        publicadoEm: dados?.publicadoEm || '',
+        disponivel: true,
+        erro: ''
+    };
+}
+
 async function carregarWorkbookPorCaminho(caminhoPlanilha, nomeErro) {
     const planilhaUrl = aplicarVersaoDados(new URL(`../../${caminhoPlanilha}`, import.meta.url));
     const resposta = await fetch(planilhaUrl, { cache: 'no-store' });
@@ -4315,6 +4350,16 @@ export async function carregarDadosOrcamento(forcarRecarregamento = false) {
 
 export async function carregarDadosContatos() {
     if (dadosContatosCache && dadosContatosCache.disponivel) {
+        return dadosContatosCache;
+    }
+
+    if (estaRodandoNoGitHubPages()) {
+        const dados = await carregarJsonPublicadoPorChave(
+            'contatos',
+            'Falha ao carregar contatos publicados'
+        );
+        dadosContatosCache = normalizarDadosContatosPublicado(dados);
+        registrarModoDadosOnasp('contatos', 'estatico');
         return dadosContatosCache;
     }
 

@@ -308,6 +308,7 @@ test("Publicação estática explícita registra início/sucesso com mocks sem e
     listarParametrosMinimos: async () => ({ respostas: [{ uf: "DF" }] }),
     listarFormalizacaoProfor: async () => ({ propostas: [{ uf: "DF" }], registros: [{ segredo: "interno" }] }),
     listarOrcamento2026: async () => ({ itens: [{ id: 1 }], arquivo: "interno" }),
+    listarContatosPublicos: async () => ({ cadastroPorUf: [{ uf: "DF" }], pessoasPorUf: [], totais: { ufs: 1 } }),
     consolidarCatalogoDashboard: async (catalogoPublicado) => ({
       catalogoPublicado,
       dashboardGeral: { total: 1 },
@@ -322,7 +323,8 @@ test("Publicação estática explícita registra início/sucesso com mocks sem e
     "publicacao_estatica_inicio",
     "publicacao_estatica_sucesso",
   ]);
-  assert.equal(arquivosEscritos.length, 6);
+  assert.equal(arquivosEscritos.length, 7);
+  assert.ok(arquivosEscritos.includes("contatos.json"));
   assert.ok(arquivosEscritos.includes("resumo-publicacao.json"));
 });
 

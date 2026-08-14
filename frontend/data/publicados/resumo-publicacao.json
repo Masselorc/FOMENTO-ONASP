@@ -1,12 +1,13 @@
 {
-  "publicadoEm": "2026-08-06T12:26:09.122Z",
+  "publicadoEm": "2026-08-14T11:58:21.624Z",
   "fonte": "Dados locais ONASP",
   "arquivos": [
     "aplicacao.json",
     "dashboard-geral.json",
     "parametros-minimos.json",
     "formalizacao-profor.json",
-    "orcamento-2026.json"
+    "orcamento-2026.json",
+    "contatos.json"
   ],
   "totais": {
     "aplicacaoDadosBase": 180,
@@ -38,6 +39,11 @@
     "conveniosProfor2022": 15,
     "parametrosMinimos": 28,
     "formalizacaoProfor": 14,
-    "orcamento2026": 9
+    "orcamento2026": 9,
+    "contatos": {
+      "ufs": 27,
+      "cadastrosInstitucionais": 29,
+      "contatosNominais": 150
+    }
   }
 }

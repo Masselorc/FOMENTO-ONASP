@@ -4,6 +4,7 @@ const path = require("path");
 const { listarParametrosMinimos } = require("./parametros-minimos-service");
 const { listarFormalizacaoProfor } = require("./formalizacao-profor-service");
 const { listarOrcamento2026 } = require("./orcamento-2026-service");
+const { listarContatosPublicos } = require("./contatos-publication-service");
 const { consolidarCatalogoDashboard } = require("./dashboard-publication-service");
 const { registrarLogOperacional } = require("./logs-operacionais-service");
 
@@ -74,6 +75,7 @@ function arquivosPublicacaoEstatica() {
     "parametros-minimos.json",
     "formalizacao-profor.json",
     "orcamento-2026.json",
+    "contatos.json",
     "resumo-publicacao.json"
   ];
 }
@@ -97,6 +99,7 @@ async function publicarDadosEstaticos(opcoes = {}) {
     const listarParametros = opcoes.listarParametrosMinimos || listarParametrosMinimos;
     const listarFormalizacao = opcoes.listarFormalizacaoProfor || listarFormalizacaoProfor;
     const listarOrcamento = opcoes.listarOrcamento2026 || listarOrcamento2026;
+    const listarContatos = opcoes.listarContatosPublicos || listarContatosPublicos;
     const consolidarDashboard = opcoes.consolidarCatalogoDashboard || consolidarCatalogoDashboard;
     const escreverJson = opcoes.escreverJsonAtomico || escreverJsonAtomico;
 
@@ -104,6 +107,7 @@ async function publicarDadosEstaticos(opcoes = {}) {
     const parametrosMinimos = await listarParametros();
     const formalizacaoProfor = await listarFormalizacao();
     const orcamento2026 = await listarOrcamento();
+    const contatos = await listarContatos();
     const publicadoEm = new Date().toISOString();
     const dashboard = await consolidarDashboard(catalogoAplicacao, publicadoEm);
 
@@ -117,6 +121,7 @@ async function publicarDadosEstaticos(opcoes = {}) {
     escreverJson("parametros-minimos.json", parametrosMinimosPublicos);
     escreverJson("formalizacao-profor.json", formalizacaoProforPublico);
     escreverJson("orcamento-2026.json", orcamento2026Publico);
+    escreverJson("contatos.json", { ...contatos, publicadoEm });
     escreverJson("resumo-publicacao.json", {
       publicadoEm,
       fonte: "Dados locais ONASP",
@@ -128,7 +133,8 @@ async function publicarDadosEstaticos(opcoes = {}) {
         conveniosProfor2022: dashboard.totaisExtracao.conveniosProfor2022,
         parametrosMinimos: contarItensPublicados(parametrosMinimosPublicos, ["respostas", "ufs"]),
         formalizacaoProfor: contarItensPublicados(formalizacaoProforPublico, ["propostas", "ufs"]),
-        orcamento2026: contarItensPublicados(orcamento2026Publico, ["itens", "itensOficiais"])
+        orcamento2026: contarItensPublicados(orcamento2026Publico, ["itens", "itensOficiais"]),
+        contatos: contatos?.totais || null
       }
     });
 
@@ -149,6 +155,7 @@ async function publicarDadosEstaticos(opcoes = {}) {
             parametrosMinimos: contarItensPublicados(parametrosMinimosPublicos, ["respostas", "ufs"]),
             formalizacaoProfor: contarItensPublicados(formalizacaoProforPublico, ["propostas", "ufs"]),
             orcamento2026: contarItensPublicados(orcamento2026Publico, ["itens", "itensOficiais"]),
+            contatos: contatos?.totais || null,
           },
         },
         duracaoMs: calcularDuracaoMs(iniciadoEm, concluidoEm),

@@ -26,7 +26,7 @@ import {
     obterUrlApiOnasp,
     obterModoDadosOnasp,
     estaEmModoPublicacaoEstatica
-} from '../../backend/services/data-service.js?v=20260612-17-orcamento-executado-resumo-v2';
+} from '../../backend/services/data-service.js?v=20260814-01-contatos-publicos';
 import {
     calcularResumoFinanceiro,
     calcularResumoInstrumentos,

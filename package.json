@@ -3,6 +3,7 @@
     "start": "node backend/server.js",
     "import:parametros-minimos": "node backend/scripts/importar-parametros-minimos.js",
     "publicar:dados": "node backend/scripts/publicar-dados-estaticos.js",
+    "publicar:contatos": "node backend/scripts/publicar-contatos-estaticos.js",
     "publicar:profor-2022": "node backend/scripts/publicar-profor-2022-estatico.js",
     "atualizar:detru-profor": "node backend/scripts/atualizar-cache-detru-profor-2022.js",
     "atualizar:rendimentos-profor": "node backend/scripts/atualizar-rendimentos-transferegov-profor-2022.js",

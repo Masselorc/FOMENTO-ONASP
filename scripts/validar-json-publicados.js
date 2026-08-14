@@ -10,6 +10,7 @@ const arquivosEsperados = [
   "parametros-minimos.json",
   "formalizacao-profor.json",
   "orcamento-2026.json",
+  "contatos.json",
   "resumo-publicacao.json"
 ];
 
@@ -229,6 +230,34 @@ function validarOrcamento2026(dados, arquivo, erros) {
   });
 }
 
+function validarContatos(dados, arquivo, erros) {
+  const cadastros = validarArray(dados, "cadastroPorUf", arquivo, erros, { obrigatorio: true, naoVazio: true });
+  const pessoas = validarArray(dados, "pessoasPorUf", arquivo, erros, { obrigatorio: true });
+  const camposPermitidos = {
+    cadastroPorUf: new Set([
+      "uf", "estado", "regiao", "orgao", "sigla", "tipoOrgao", "endereco", "cep",
+      "cargoTitular", "nomeTitular", "emailInstitucional", "telefoneInstitucional"
+    ]),
+    pessoasPorUf: new Set(["uf", "estado", "orgao", "sigla", "papel", "cargo", "nome", "telefone", "email"])
+  };
+
+  for (const [chave, itens] of [["cadastroPorUf", cadastros], ["pessoasPorUf", pessoas]]) {
+    if (!Array.isArray(itens)) continue;
+    itens.forEach((item, index) => {
+      if (!ehObjetoPlano(item)) {
+        adicionarErro(erros, arquivo, `${chave}[${index}] deve ser objeto`);
+        return;
+      }
+      validarUfSeExistir(item.uf, arquivo, `${chave}[${index}].uf`, erros);
+      for (const campo of Object.keys(item)) {
+        if (!camposPermitidos[chave].has(campo)) {
+          adicionarErro(erros, arquivo, `${chave}[${index}] expoe campo nao autorizado ${campo}`);
+        }
+      }
+    });
+  }
+}
+
 function validarResumoPublicacao(dados, arquivo, erros) {
   const arquivos = validarArray(dados, "arquivos", arquivo, erros, { obrigatorio: true, naoVazio: true });
   if (!Array.isArray(arquivos)) return;
@@ -313,6 +342,11 @@ for (const nomeArquivo of arquivosEsperados) {
 
     if (nomeArquivo === "orcamento-2026.json") {
       validarOrcamento2026(dados, nomeArquivo, erros);
+      continue;
+    }
+
+    if (nomeArquivo === "contatos.json") {
+      validarContatos(dados, nomeArquivo, erros);
       continue;
     }
 
