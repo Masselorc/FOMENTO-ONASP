@@ -529,7 +529,7 @@ Regra de exibição da faixa técnica: a faixa administrativa de origem/diagnós
 
 ### 10.1.1. Rotina consolidada descontinuada (referência histórica)
 
-O fluxo consolidado abaixo não é orientação operacional atual. Atualizações devem usar as rotas dedicadas de DETRU, rendimentos e PAD; as cinco rotas administrativas sensíveis exigem `PROFOR_ADMIN_TOKEN`, conforme `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`, seção 11.
+O fluxo consolidado abaixo não é orientação operacional atual. Atualizações devem usar as rotas dedicadas de DETRU, rendimentos e PAD. Ações administrativas iniciadas pela interface local em loopback utilizam `ONASP_EDIT_PASSWORD` enviada no body via modal protegido. O `PROFOR_ADMIN_TOKEN` permanece destinado a chamadas administrativas controladas por header, integrações, scripts ou acessos fora do fluxo visual local, nunca devendo ser exposto, armazenado ou enviado pelo frontend. Os demais guards de ambiente e localidade continuam preservados, conforme `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`, seção 11.
 
 | Item | Detalhe |
 | --- | --- |

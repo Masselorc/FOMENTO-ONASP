@@ -465,7 +465,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Frontend consumidor:** botão "Atualizar DETRU" na Carteira Monitorada da página PROFOR 2022.
 
-**Observações de manutenção:** rota local/API בלבד. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador. Exige os guards de ambiente/localidade e `PROFOR_ADMIN_TOKEN`; ver a seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
+**Observações de manutenção:** rota local/API. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador. A interface local autentica via `ONASP_EDIT_PASSWORD` em loopback; chamadas externas exigem os guards de ambiente/localidade e `PROFOR_ADMIN_TOKEN`; ver a seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
 
 #### POST /api/profor-2022/atualizar — legada/descontinuada
 
@@ -483,7 +483,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Fluxos atuais separados:** `POST /api/profor-2022/detru/atualizar`, `POST /api/profor-2022/rendimentos/atualizar`, `POST /api/profor-2022/pad/atualizar-transferegov`, `POST /api/profor-2022/pad/recarregar` e `POST /api/profor-2022/pad/recarregar-operacional`. Para leitura, usar `GET /api/profor-2022/consolidado`.
 
-**Token administrativo:** as cinco rotas sensíveis de escrita listadas acima exigem `PROFOR_ADMIN_TOKEN`, além dos guards existentes. Os headers aceitos e o procedimento operacional estão documentados na seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
+**Autenticação administrativa:** as cinco rotas de escrita listadas acima utilizam `ONASP_EDIT_PASSWORD` quando acionadas pela interface local em loopback, ou `PROFOR_ADMIN_TOKEN` via cabeçalho para chamadas externas e automatizadas, além dos guards de governança existentes. O procedimento operacional está documentado na seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
 
 **Observações de manutenção:** chamadas antigas devem migrar para o fluxo dedicado correspondente; o retorno `410` é intencional.
 

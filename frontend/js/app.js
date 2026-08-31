@@ -452,7 +452,18 @@ function renderStatusBadge(status, options = {}) {
             }
         }
 
+        function ehHostnameLocal() {
+            if (typeof window === 'undefined' || !window.location) return false;
+            const host = String(window.location.hostname || '').toLowerCase();
+            return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
+        }
+
         function solicitarSenhaAdminProfor({ titulo, descricao, acaoBotao = 'Confirmar e executar', variante = 'primary' }) {
+            if (!ehHostnameLocal()) {
+                alert('Ações administrativas PROFOR 2022 só podem ser acionadas a partir de acesso local (localhost / 127.0.0.1).');
+                return Promise.resolve(null);
+            }
+
             return new Promise((resolve) => {
                 removerModalOnasp('modalSenhaAdminProfor');
                 document.body.insertAdjacentHTML('beforeend', `
@@ -533,6 +544,10 @@ function renderStatusBadge(status, options = {}) {
         async function atualizarCacheDetruProfor2022UI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
+                return { sucesso: false, cancelado: true };
+            }
+            if (!ehHostnameLocal()) {
+                alert('Ações administrativas PROFOR 2022 só podem ser acionadas a partir de acesso local (localhost / 127.0.0.1).');
                 return { sucesso: false, cancelado: true };
             }
 
@@ -1043,6 +1058,10 @@ function renderStatusBadge(status, options = {}) {
         async function atualizarRendimentosTransferegovProfor2022UI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
+                return { sucesso: false, cancelado: true };
+            }
+            if (!ehHostnameLocal()) {
+                alert('Ações administrativas PROFOR 2022 só podem ser acionadas a partir de acesso local (localhost / 127.0.0.1).');
                 return { sucesso: false, cancelado: true };
             }
 
@@ -4883,6 +4902,10 @@ async function carregarLogoParaPDF() {
                 alert(MENSAGEM_MODO_PUBLICACAO);
                 return;
             }
+            if (!ehHostnameLocal()) {
+                alert('Ações administrativas PROFOR 2022 só podem ser acionadas a partir de acesso local (localhost / 127.0.0.1).');
+                return;
+            }
 
             const password = await solicitarSenhaAdminProfor({
                 titulo: 'Atualizar PADs no Transferegov',
@@ -4985,6 +5008,10 @@ async function carregarLogoParaPDF() {
         async function executarRecargaPadsOperacionalUI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
+                return;
+            }
+            if (!ehHostnameLocal()) {
+                alert('Ações administrativas PROFOR 2022 só podem ser acionadas a partir de acesso local (localhost / 127.0.0.1).');
                 return;
             }
 

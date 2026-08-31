@@ -256,9 +256,9 @@ Pendências conhecidas registradas:
 - o campo não deve ser recriado sem fórmula segura;
 - o PAD detalhado automático pode ser tratado como evolução futura, se aplicável.
 
-## 11. Token administrativo das rotas sensíveis
+## 11. Autenticação e governança das rotas administrativas
 
-As rotas abaixo exigem, além dos guards de ambiente/localidade já existentes, um token administrativo explícito:
+As rotas administrativas abaixo possuem controle de segurança e governança:
 
 - `POST /api/profor-2022/detru/atualizar`;
 - `POST /api/profor-2022/rendimentos/atualizar`;
@@ -266,7 +266,16 @@ As rotas abaixo exigem, além dos guards de ambiente/localidade já existentes, 
 - `POST /api/profor-2022/pad/recarregar-operacional`;
 - `POST /api/profor-2022/pad/recarregar`.
 
-O operador deve definir um token forte somente no ambiente local/operacional do backend:
+### 11.1. Ações disparadas pela interface local (loopback)
+
+- A interface local coleta a senha operacional `ONASP_EDIT_PASSWORD` em modal seguro (`type="password"`) e a envia no corpo JSON da requisição (`{ password: "..." }`).
+- Apenas acessos originados estritamente em loopback (`127.0.0.1`, `::1`) são aceitos com senha.
+- Se uma senha for fornecida em loopback e for inválida, a resposta retorna `403` com indicação explícita de senha local inválida.
+- O frontend público e a aplicação nunca armazenam nem utilizam `PROFOR_ADMIN_TOKEN`.
+
+### 11.2. Chamadas administrativas externas e automatizadas
+
+- Chamadas externas ou automatizadas via script/API exigem a configuração da variável `PROFOR_ADMIN_TOKEN` no `.env` do backend:
 
 ```bash
 PROFOR_ADMIN_TOKEN=<token-forte>
@@ -274,7 +283,7 @@ PROFOR_ADMIN_TOKEN=<token-forte>
 
 Não inserir valor real na documentação, não versionar `.env`, não registrar o token em logs e não armazená-lo em arquivo público, no frontend ou em `frontend/data/publicados/`.
 
-Cada chamada controlada deve enviar uma destas formas:
+Cada chamada externa/controlada por token deve enviar uma destas formas de cabeçalho:
 
 ```http
 X-Profor-Admin-Token: <token>
@@ -286,7 +295,7 @@ ou:
 Authorization: Bearer <token>
 ```
 
-Exemplo seguro de chamada local, com placeholder:
+Exemplo seguro de chamada via script/PowerShell com placeholder:
 
 ```powershell
 Invoke-RestMethod `
@@ -297,9 +306,7 @@ Invoke-RestMethod `
   -Body "{}"
 ```
 
-Se `PROFOR_ADMIN_TOKEN` não estiver configurado, ou se o header estiver ausente ou incorreto, a resposta esperada é `403`. Chamadas antigas sem token deixam de funcionar; esse bloqueio é intencional.
-
-O frontend público não deve armazenar nem enviar `PROFOR_ADMIN_TOKEN`. Se um botão ou fluxo visual tentar chamar essas rotas sem token, o retorno `403` é esperado. As operações devem partir de chamada local ou operacional controlada, com header explícito. Um painel administrativo futuro deve adotar autenticação e autorização próprias, nunca token hardcoded no cliente.
+Se `PROFOR_ADMIN_TOKEN` não estiver configurado ou o header estiver ausente/incorreto em chamadas sem a senha local válida, a resposta esperada é `403`.
 
 ## 12. Rollback
 
