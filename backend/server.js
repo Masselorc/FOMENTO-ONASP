@@ -5,6 +5,7 @@ const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env"), quiet: true });
 
 const { prepararBanco } = require("./db/preparar-banco");
+const { validarSenhaEdicao } = require("./services/auth-service");
 const {
   listarParametrosMinimos,
   salvarParametrosMinimos,
@@ -152,6 +153,19 @@ function ehRequisicaoLocal(req) {
     if (ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1") return true;
     if (ip === "localhost") return true;
     return false;
+  } catch {
+    return false;
+  }
+}
+
+// Aceita ONASP_EDIT_PASSWORD somente quando ehRequisicaoLocal(req) for true.
+// Se a senha local for valida, autoriza a acao sem exigir PROFOR_ADMIN_TOKEN.
+function autorizarAcaoAdminProforLocal(req, body) {
+  if (!ehRequisicaoLocal(req)) return false;
+  const password = body?.password || body?.senha;
+  if (!password) return false;
+  try {
+    return Boolean(validarSenhaEdicao(password));
   } catch {
     return false;
   }
@@ -653,9 +667,11 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/detru/atualizar") {
       const requisicaoLocal = ehRequisicaoLocal(req);
       assertEndpointAdminPermitido("api_profor_2022_detru_atualizar", { requisicaoLocal });
-      assertTokenAdminProforValido("api_profor_2022_detru_atualizar", { headers: req.headers });
-      assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU", requisicaoLocal });
       const body = await lerJsonBody(req);
+      if (!autorizarAcaoAdminProforLocal(req, body)) {
+        assertTokenAdminProforValido("api_profor_2022_detru_atualizar", { headers: req.headers });
+      }
+      assertChamadaExternaPermitida("api_profor_2022_detru_atualizar", { tipo: "DETRU", requisicaoLocal });
       try {
         const resultado = await atualizarCacheDetruProfor2022(body || {});
         const ultimaAtualizacao = normalizarUltimaAtualizacaoDetru(await obterUltimaAtualizacaoDetru());
@@ -692,12 +708,14 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/rendimentos/atualizar") {
       const requisicaoLocal = ehRequisicaoLocal(req);
       assertEndpointAdminPermitido("api_profor_2022_rendimentos_atualizar", { requisicaoLocal });
-      assertTokenAdminProforValido("api_profor_2022_rendimentos_atualizar", { headers: req.headers });
+      const body = await lerJsonBody(req);
+      if (!autorizarAcaoAdminProforLocal(req, body)) {
+        assertTokenAdminProforValido("api_profor_2022_rendimentos_atualizar", { headers: req.headers });
+      }
       assertChamadaExternaPermitida("api_profor_2022_rendimentos_atualizar", {
         tipo: "Transferegov",
         requisicaoLocal,
       });
-      const body = await lerJsonBody(req);
       try {
         const resultado = await executarEtapaRendimentos({ ...(body || {}), requisicaoLocal });
         enviarJson(res, 200, {
@@ -743,7 +761,10 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar") {
       const requisicaoLocal = ehRequisicaoLocal(req);
       assertEndpointAdminPermitido("api_profor_2022_pad_recarregar", { requisicaoLocal });
-      assertTokenAdminProforValido("api_profor_2022_pad_recarregar", { headers: req.headers });
+      const body = await lerJsonBody(req);
+      if (!autorizarAcaoAdminProforLocal(req, body)) {
+        assertTokenAdminProforValido("api_profor_2022_pad_recarregar", { headers: req.headers });
+      }
       try {
         const resultado = await recarregarPadsOperacional();
         const primeiroImpedimento = Array.isArray(resultado?.impedimentos)
@@ -774,7 +795,10 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/recarregar-operacional") {
       const requisicaoLocal = ehRequisicaoLocal(req);
       assertEndpointAdminPermitido("api_profor_2022_pad_recarregar_operacional", { requisicaoLocal });
-      assertTokenAdminProforValido("api_profor_2022_pad_recarregar_operacional", { headers: req.headers });
+      const body = await lerJsonBody(req);
+      if (!autorizarAcaoAdminProforLocal(req, body)) {
+        assertTokenAdminProforValido("api_profor_2022_pad_recarregar_operacional", { headers: req.headers });
+      }
       try {
         const resultado = await carregarPadsOperacional();
         const primeiroImpedimento = Array.isArray(resultado?.impedimentos)
@@ -800,7 +824,10 @@ async function rotearApi(req, res, pathname) {
     if (req.method === "POST" && pathname === "/api/profor-2022/pad/atualizar-transferegov") {
       const requisicaoLocal = ehRequisicaoLocal(req);
       assertEndpointAdminPermitido("api_profor_2022_pad_atualizar_transferegov", { requisicaoLocal });
-      assertTokenAdminProforValido("api_profor_2022_pad_atualizar_transferegov", { headers: req.headers });
+      const body = await lerJsonBody(req);
+      if (!autorizarAcaoAdminProforLocal(req, body)) {
+        assertTokenAdminProforValido("api_profor_2022_pad_atualizar_transferegov", { headers: req.headers });
+      }
       assertChamadaExternaPermitida("api_profor_2022_pad_atualizar_transferegov", {
         tipo: "Transferegov",
         requisicaoLocal,

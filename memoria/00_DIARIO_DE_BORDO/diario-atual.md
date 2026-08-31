@@ -8043,3 +8043,9 @@ Logs operacionais gravados:
 - Validação visual e funcional: navegador real em `1440 × 1000` e `390 × 844`; painel nacional, modal, busca, filtro, abertura direta de Sergipe, cinco opções do editor, estado de alteração pendente, confirmação por senha e responsividade conferidos. A ausência do indicador no Dashboard também foi confirmada. A prévia de QA bloqueou deliberadamente qualquer `POST`, portanto não houve escrita de dados durante o teste.
 - Risco de regressão: baixo a moderado, restrito ao frontend; o contrato de API e a lógica de persistência do backend foram preservados. O novo teste cobre os estados, a proteção do modo público, a posição correta do indicador e os elementos essenciais da experiência.
 - Rollback: reverter os dois arquivos de frontend, remover o teste e restaurar esta documentação; não há rollback de dados.
+
+### Complemento - contexto automático do Codex
+
+- Criado `.codex/context.md`, resumo curto e não sensível de `AGENTS.md`, para carregar somente arquitetura, restrições e validações essenciais no início de sessões deste repositório.
+- Nenhum código, dado publicado, banco, credencial ou arquivo de configuração existente foi alterado.
+- Validação: contexto conferido contra `AGENTS.md`, `package.json` e a estrutura atual. Rollback: remover `.codex/context.md`.

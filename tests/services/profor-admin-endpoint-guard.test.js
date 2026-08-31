@@ -308,3 +308,25 @@ test("scripts externos e agendador DETRU carregam guards antes das dependencias 
     assert.ok(posDb === -1 || posGuard < posDb, `${arquivo} deve carregar guard antes do banco`);
   }
 });
+
+test(".env.example documenta PROFOR_ADMIN_TOKEN com valor vazio", () => {
+  const exemplo = ler(".env.example");
+  assert.match(exemplo, /^PROFOR_ADMIN_TOKEN=$/m);
+  assert.match(exemplo, /ONASP_EDIT_PASSWORD/);
+});
+
+test("server implementa autorizacao local com ONASP_EDIT_PASSWORD para rotas PROFOR", () => {
+  const server = ler("backend/server.js");
+  assert.match(server, /function autorizarAcaoAdminProforLocal\(req,\s*body\)/);
+  assert.match(server, /validarSenhaEdicao/);
+  // Garante que o guard verifica ehRequisicaoLocal antes de aceitar a senha
+  assert.match(server, /if \(!ehRequisicaoLocal\(req\)\) return false;/);
+});
+
+test("frontend implementa modal type=password para acoes administrativas e nao expoem PROFOR_ADMIN_TOKEN", () => {
+  const app = ler("frontend/js/app.js");
+  assert.match(app, /function solicitarSenhaAdminProfor/);
+  assert.match(app, /type="password"/);
+  assert.match(app, /modalSenhaAdminProfor/);
+  assert.doesNotMatch(app, /PROFOR_ADMIN_TOKEN/);
+});
