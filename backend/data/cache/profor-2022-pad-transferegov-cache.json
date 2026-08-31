@@ -1,16 +1,16 @@
 {
   "versao": 1,
   "origem": "transferegov",
-  "geradoEm": "2026-07-07T13:38:42.285Z",
+  "geradoEm": "2026-08-31T15:50:30.349Z",
   "totalConvenios": 15,
   "totalItens": 525,
-  "hashGlobal": "b07e3460e9e998466d12cad63a02fe4272ad83f9987701bb1579ec5a24b846eb",
+  "hashGlobal": "21b0e7f0ac967fbfed5c0cb668c13dd1a1b19655e8b45962541973733596ad3b",
   "convenios": [
     {
       "numeroConvenio": "937698",
       "uf": "MT",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 12,
       "totalizadores": {
         "concedente": "",
@@ -199,7 +199,7 @@
       "numeroConvenio": "937216",
       "uf": "GO",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 50,
       "totalizadores": {
         "concedente": "",
@@ -920,17 +920,17 @@
       "numeroConvenio": "937871",
       "uf": "PR",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 17,
       "totalizadores": {
         "concedente": "",
         "convenente": "",
         "situacao": "",
         "valorTotalPrevisto": 861700.16,
-        "valorTotalExecutado": 489143.8,
-        "saldoTotal": 372556.36
+        "valorTotalExecutado": 494543.8,
+        "saldoTotal": 367156.36
       },
-      "hashConteudo": "65ec81af0fef527ababfd70351dee3c1c6d51856231c67874c54872722e775a6",
+      "hashConteudo": "330bc62fe64d443f250b4798b19110a2043348fde3765d0fa58e8022911454e1",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -946,8 +946,8 @@
           "quantidade": 20,
           "valorUnitario": 2555.28,
           "valorTotalPrevisto": 51105.53,
-          "valorTotalExecutado": 0,
-          "saldo": 51105.53
+          "valorTotalExecutado": 5400,
+          "saldo": 45705.53
         },
         {
           "instrumento": "937871",
@@ -1098,10 +1098,10 @@
           "natureza": "CAPITAL",
           "unidade": "UN",
           "quantidade": 1,
-          "valorUnitario": 74366.42,
-          "valorTotalPrevisto": 74366.42,
+          "valorUnitario": 51133.66,
+          "valorTotalPrevisto": 51133.66,
           "valorTotalExecutado": 0,
-          "saldo": 74366.42
+          "saldo": 51133.66
         },
         {
           "instrumento": "937871",
@@ -1112,10 +1112,10 @@
           "natureza": "CAPITAL",
           "unidade": "UN",
           "quantidade": 1,
-          "valorUnitario": 51133.66,
-          "valorTotalPrevisto": 51133.66,
+          "valorUnitario": 74366.42,
+          "valorTotalPrevisto": 74366.42,
           "valorTotalExecutado": 0,
-          "saldo": 51133.66
+          "saldo": 74366.42
         },
         {
           "instrumento": "937871",
@@ -1179,7 +1179,7 @@
       "numeroConvenio": "937592",
       "uf": "AM",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 11,
       "totalizadores": {
         "concedente": "",
@@ -1354,7 +1354,7 @@
       "numeroConvenio": "937782",
       "uf": "AC",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 34,
       "totalizadores": {
         "concedente": "",
@@ -1364,7 +1364,7 @@
         "valorTotalExecutado": 105037.55,
         "saldoTotal": 291386.16
       },
-      "hashConteudo": "cbbda269aa699c5d5ee5f25288018214880ecd85aa535935b4566acab3ffbecf",
+      "hashConteudo": "40a6aab0a2b7b1b6a10d06cc75bd6bc948941216b0af840d82beb18fbc9763fd",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -1372,30 +1372,30 @@
         {
           "instrumento": "937782",
           "tipoDespesa": "SERVICO",
-          "descricao": "Contratação de 01 (um) Supervisor por 12",
-          "codigoNaturezaDespesa": "33903799",
-          "codigoNaturezaNormalizado": "33903799",
-          "natureza": "CUSTEIO",
-          "unidade": "MÊS",
-          "quantidade": 12,
-          "valorUnitario": 7461,
-          "valorTotalPrevisto": 89532,
-          "valorTotalExecutado": 0,
-          "saldo": 89532
-        },
-        {
-          "instrumento": "937782",
-          "tipoDespesa": "SERVICO",
-          "descricao": "Contratação de 02 (dois) Auxiliares Admi",
+          "descricao": "Contratação de 01 (um) Auxiliar Administ",
           "codigoNaturezaDespesa": "33903799",
           "codigoNaturezaNormalizado": "33903799",
           "natureza": "CUSTEIO",
           "unidade": "MES",
-          "quantidade": 12,
-          "valorUnitario": 8514,
-          "valorTotalPrevisto": 102168,
+          "quantidade": 15,
+          "valorUnitario": 4730,
+          "valorTotalPrevisto": 70950,
           "valorTotalExecutado": 0,
-          "saldo": 102168
+          "saldo": 70950
+        },
+        {
+          "instrumento": "937782",
+          "tipoDespesa": "SERVICO",
+          "descricao": "Contratação de 01 (um) Supervisor por 15",
+          "codigoNaturezaDespesa": "33903799",
+          "codigoNaturezaNormalizado": "33903799",
+          "natureza": "CUSTEIO",
+          "unidade": "MÊS",
+          "quantidade": 15,
+          "valorUnitario": 8050,
+          "valorTotalPrevisto": 120750,
+          "valorTotalExecutado": 0,
+          "saldo": 120750
         },
         {
           "instrumento": "937782",
@@ -1851,7 +1851,7 @@
       "numeroConvenio": "937265",
       "uf": "MS",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 72,
       "totalizadores": {
         "concedente": "",
@@ -2880,7 +2880,7 @@
       "numeroConvenio": "938277",
       "uf": "MA",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 45,
       "totalizadores": {
         "concedente": "",
@@ -3531,17 +3531,17 @@
       "numeroConvenio": "937818",
       "uf": "PB",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
-      "totalItens": 13,
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
+      "totalItens": 14,
       "totalizadores": {
         "concedente": "",
         "convenente": "",
         "situacao": "",
-        "valorTotalPrevisto": 317757.09,
+        "valorTotalPrevisto": 318158.19,
         "valorTotalExecutado": 31085,
-        "saldoTotal": 286672.09
+        "saldoTotal": 287073.19
       },
-      "hashConteudo": "4d87338f91eb59bb153de45335e54860caf274aec79b08e971a604446b38ce03",
+      "hashConteudo": "ab025092c805471f8f6fd7bd596f3ac5a2b85f979f5c5053f36b09d6c8b704bc",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -3582,11 +3582,11 @@
           "codigoNaturezaNormalizado": "44905235",
           "natureza": "CAPITAL",
           "unidade": "UN",
-          "quantidade": 16,
-          "valorUnitario": 2573.7,
-          "valorTotalPrevisto": 41179.2,
+          "quantidade": 19,
+          "valorUnitario": 2464,
+          "valorTotalPrevisto": 46816,
           "valorTotalExecutado": 0,
-          "saldo": 41179.2
+          "saldo": 46816
         },
         {
           "instrumento": "937818",
@@ -3596,11 +3596,11 @@
           "codigoNaturezaNormalizado": "44905235",
           "natureza": "CAPITAL",
           "unidade": "UN",
-          "quantidade": 19,
-          "valorUnitario": 2464,
-          "valorTotalPrevisto": 46816,
+          "quantidade": 16,
+          "valorUnitario": 2573.7,
+          "valorTotalPrevisto": 41179.2,
           "valorTotalExecutado": 0,
-          "saldo": 46816
+          "saldo": 41179.2
         },
         {
           "instrumento": "937818",
@@ -3638,10 +3638,10 @@
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
           "unidade": "UN",
-          "quantidade": 2,
+          "quantidade": 13,
           "valorUnitario": 1895,
-          "valorTotalPrevisto": 3790,
-          "valorTotalExecutado": 3790,
+          "valorTotalPrevisto": 24635,
+          "valorTotalExecutado": 24635,
           "saldo": 0
         },
         {
@@ -3666,10 +3666,10 @@
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
           "unidade": "UN",
-          "quantidade": 13,
+          "quantidade": 2,
           "valorUnitario": 1895,
-          "valorTotalPrevisto": 24635,
-          "valorTotalExecutado": 24635,
+          "valorTotalPrevisto": 3790,
+          "valorTotalExecutado": 3790,
           "saldo": 0
         },
         {
@@ -3727,6 +3727,20 @@
           "valorTotalPrevisto": 2660,
           "valorTotalExecutado": 2660,
           "saldo": 0
+        },
+        {
+          "instrumento": "937818",
+          "tipoDespesa": "BEM",
+          "descricao": "Utilização do Rendimento de Aplicação no",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 401.1,
+          "valorTotalPrevisto": 401.1,
+          "valorTotalExecutado": 0,
+          "saldo": 401.1
         }
       ]
     },
@@ -3734,17 +3748,17 @@
       "numeroConvenio": "938128",
       "uf": "SP",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 47,
       "totalizadores": {
         "concedente": "",
         "convenente": "",
         "situacao": "",
         "valorTotalPrevisto": 3846559.5,
-        "valorTotalExecutado": 1082780.78,
-        "saldoTotal": 2763778.72
+        "valorTotalExecutado": 1447190.46,
+        "saldoTotal": 2399369.04
       },
-      "hashConteudo": "39f5fda7134d2521e6046a00b4bc96c486fdd0bf716d12186e280cec459da850",
+      "hashConteudo": "37058c16980b538d53c2851f5a4d56ba87d163ef95c457e42f2f8acdc81204d5",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -3830,8 +3844,8 @@
           "quantidade": 250,
           "valorUnitario": 2181.34,
           "valorTotalPrevisto": 545334.9,
-          "valorTotalExecutado": 200379.08,
-          "saldo": 344955.82
+          "valorTotalExecutado": 554876.76,
+          "saldo": -9541.86
         },
         {
           "instrumento": "938128",
@@ -4138,8 +4152,8 @@
           "quantidade": 12,
           "valorUnitario": 2524.35,
           "valorTotalPrevisto": 30292.2,
-          "valorTotalExecutado": 0,
-          "saldo": 30292.2
+          "valorTotalExecutado": 9912,
+          "saldo": 20380.2
         },
         {
           "instrumento": "938128",
@@ -4413,7 +4427,7 @@
       "numeroConvenio": "937780",
       "uf": "PI",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 23,
       "totalizadores": {
         "concedente": "",
@@ -4756,7 +4770,7 @@
       "numeroConvenio": "937917",
       "uf": "RO",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 37,
       "totalizadores": {
         "concedente": "",
@@ -5295,7 +5309,7 @@
       "numeroConvenio": "937468",
       "uf": "TO",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 55,
       "totalizadores": {
         "concedente": "",
@@ -5305,7 +5319,7 @@
         "valorTotalExecutado": 38993.91,
         "saldoTotal": 248134.87
       },
-      "hashConteudo": "f722f8cf1dd5167514f1c68f66076745921dab87a2fed1370edc55b80c2698fb",
+      "hashConteudo": "90db8aba472ce1d05321e0f52a9db4df52fa3d0b6fd30b6d15d9ea1b4e3e3da0",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -5825,8 +5839,8 @@
           "quantidade": 3,
           "valorUnitario": 1179.99,
           "valorTotalPrevisto": 3539.97,
-          "valorTotalExecutado": 10619.91,
-          "saldo": -7079.94
+          "valorTotalExecutado": 0,
+          "saldo": 3539.97
         },
         {
           "instrumento": "937468",
@@ -5909,8 +5923,8 @@
           "quantidade": 6,
           "valorUnitario": 1179.99,
           "valorTotalPrevisto": 7079.94,
-          "valorTotalExecutado": 0,
-          "saldo": 7079.94
+          "valorTotalExecutado": 10619.91,
+          "saldo": -3539.97
         },
         {
           "instrumento": "937468",
@@ -6086,8 +6100,8 @@
       "numeroConvenio": "937221",
       "uf": "AL",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
-      "totalItens": 28,
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
+      "totalItens": 27,
       "totalizadores": {
         "concedente": "",
         "convenente": "",
@@ -6096,7 +6110,7 @@
         "valorTotalExecutado": 0,
         "saldoTotal": 171603.5
       },
-      "hashConteudo": "e24d22275512eb0c44c4b33d8da1e1c2ce2639940365f6d25c1ce5f14a4d115e",
+      "hashConteudo": "151587b9101a2ac385afd96b6f86c9d12270e06d82cf26dd4744b611a9abced3",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -6118,35 +6132,7 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Ar condicionado Split 18000 BTUs (ESCOLA)",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 2,
-          "valorUnitario": 2783.72,
-          "valorTotalPrevisto": 5567.44,
-          "valorTotalExecutado": 0,
-          "saldo": 5567.44
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Ar condicionado Split 60.000 BTUs (ESCOLA)",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 1,
-          "valorUnitario": 9501,
-          "valorTotalPrevisto": 9501,
-          "valorTotalExecutado": 0,
-          "saldo": 9501
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Ar condicionado split, capacidade de 12.",
+          "descricao": "Ar cond split, capacidade de 12.000 BTU/",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
@@ -6160,7 +6146,21 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Ar condicionado tipo split, capacidade 3",
+          "descricao": "Ar condicionado Split 60.000 BTU escola",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 9501,
+          "valorTotalPrevisto": 9501,
+          "valorTotalExecutado": 0,
+          "saldo": 9501
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Ar condicionado plit, capacidade 30.000",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
@@ -6174,30 +6174,100 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Ar-condicionado tipo Split, capacidade d",
+          "descricao": "Ar condicionado split inverter 18.000 bt",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
+          "unidade": "UN",
           "quantidade": 2,
-          "valorUnitario": 1349.62,
-          "valorTotalPrevisto": 2699.24,
+          "valorUnitario": 2970,
+          "valorTotalPrevisto": 5940,
           "valorTotalExecutado": 0,
-          "saldo": 2699.24
+          "saldo": 5940
         },
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Cafeteira elétrica 1,0 litros bivolt",
+          "descricao": "Arcondicionado Split InverterHi-Wall 9.0",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
+          "unidade": "UN",
           "quantidade": 2,
-          "valorUnitario": 300,
-          "valorTotalPrevisto": 600,
+          "valorUnitario": 1710,
+          "valorTotalPrevisto": 3420,
           "valorTotalExecutado": 0,
-          "saldo": 600
+          "saldo": 3420
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Armário arquivo com 4 gavetas - ouvidoria",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 4,
+          "valorUnitario": 2200,
+          "valorTotalPrevisto": 8800,
+          "valorTotalExecutado": 0,
+          "saldo": 8800
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Armário baixo com 2 portas - ouvidoria",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 1192.35,
+          "valorTotalPrevisto": 1192.35,
+          "valorTotalExecutado": 0,
+          "saldo": 1192.35
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Cadeira de escritório giratória com braç",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 4,
+          "valorUnitario": 1861.6,
+          "valorTotalPrevisto": 7446.4,
+          "valorTotalExecutado": 0,
+          "saldo": 7446.4
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Cadeira em polipropileno, espaldar baixo",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 10,
+          "valorUnitario": 490,
+          "valorTotalPrevisto": 4900,
+          "valorTotalExecutado": 0,
+          "saldo": 4900
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Cadeira polipropileno, espaldar baixo. e",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 10,
+          "valorUnitario": 490,
+          "valorTotalPrevisto": 4900,
+          "valorTotalExecutado": 0,
+          "saldo": 4900
         },
         {
           "instrumento": "937221",
@@ -6216,53 +6286,11 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Equipamentos de rede (switches e roteado",
+          "descricao": "Fragmentadora de papel - ouvidoria",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
           "unidade": "UN",
-          "quantidade": 3,
-          "valorUnitario": 350,
-          "valorTotalPrevisto": 1050,
-          "valorTotalExecutado": 0,
-          "saldo": 1050
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Forno de Micro-ondas a partir de- 32 lit",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 1,
-          "valorUnitario": 726,
-          "valorTotalPrevisto": 726,
-          "valorTotalExecutado": 0,
-          "saldo": 726
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Forno de Microondas - 20L - (OUVIDORIA)",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 1,
-          "valorUnitario": 500,
-          "valorTotalPrevisto": 500,
-          "valorTotalExecutado": 0,
-          "saldo": 500
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Fragmentadora de Papel 150 folhas (OUVI",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
           "quantidade": 2,
           "valorUnitario": 1710,
           "valorTotalPrevisto": 3420,
@@ -6286,44 +6314,16 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Frigobar 45L INVERTER BIVOLT (OUVIDORIA)",
+          "descricao": "Gaveteiro móvel com 3 gavetas - ouvidoria",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 1,
-          "valorUnitario": 800,
-          "valorTotalPrevisto": 800,
+          "unidade": "UN",
+          "quantidade": 4,
+          "valorUnitario": 999,
+          "valorTotalPrevisto": 3996,
           "valorTotalExecutado": 0,
-          "saldo": 800
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Impressora multifuncional (OUVIDORIA)",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 2,
-          "valorUnitario": 3050,
-          "valorTotalPrevisto": 6100,
-          "valorTotalExecutado": 0,
-          "saldo": 6100
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Impressora multifuncional laser colorida",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 1,
-          "valorUnitario": 3526.06,
-          "valorTotalPrevisto": 3526.06,
-          "valorTotalExecutado": 0,
-          "saldo": 3526.06
+          "saldo": 3996
         },
         {
           "instrumento": "937221",
@@ -6342,86 +6342,86 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Nobreak 1200 BIVOLT(OUVIDORIA)",
+          "descricao": "Mesa de escritório 800 x 600 x 740 mm -",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 6,
-          "valorUnitario": 700,
-          "valorTotalPrevisto": 4200,
+          "unidade": "UN",
+          "quantidade": 5,
+          "valorUnitario": 896,
+          "valorTotalPrevisto": 4480,
           "valorTotalExecutado": 0,
-          "saldo": 4200
+          "saldo": 4480
         },
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Notebook i7 16 gb, 1 TB SSD, Windows 11",
+          "descricao": "Mesa escritório 800x600x740mm escola",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 4,
-          "valorUnitario": 5500,
-          "valorTotalPrevisto": 22000,
-          "valorTotalExecutado": 0,
-          "saldo": 22000
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Quadro Lousa branca",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 3,
-          "valorUnitario": 1065.4,
-          "valorTotalPrevisto": 3196.2,
-          "valorTotalExecutado": 0,
-          "saldo": 3196.2
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Refrigerador frigobar, com capacidade no",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "un",
+          "unidade": "UN",
           "quantidade": 2,
-          "valorUnitario": 1422,
-          "valorTotalPrevisto": 2844,
+          "valorUnitario": 896,
+          "valorTotalPrevisto": 1792,
           "valorTotalExecutado": 0,
-          "saldo": 2844
+          "saldo": 1792
         },
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Saldo Residual",
+          "descricao": "Poltrona giratória, espaldar ouvidoria",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 1,
-          "valorUnitario": 9506.54,
-          "valorTotalPrevisto": 9506.54,
+          "unidade": "UN",
+          "quantidade": 2,
+          "valorUnitario": 2900,
+          "valorTotalPrevisto": 5800,
           "valorTotalExecutado": 0,
-          "saldo": 9506.54
+          "saldo": 5800
         },
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Sofá 3 lugares (CORREGEDORIA)",
+          "descricao": "Quadro branco 150 x 120 cm ouvidoria 1.8",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
-          "quantidade": 1,
-          "valorUnitario": 3650.84,
-          "valorTotalPrevisto": 3650.84,
+          "unidade": "UN",
+          "quantidade": 15,
+          "valorUnitario": 124.28,
+          "valorTotalPrevisto": 1864.2,
           "valorTotalExecutado": 0,
-          "saldo": 3650.84
+          "saldo": 1864.2
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Quadro branco 150x120 cm escola",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 25,
+          "valorUnitario": 124.28,
+          "valorTotalPrevisto": 3107,
+          "valorTotalExecutado": 0,
+          "saldo": 3107
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "Saldo residual",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 7677.53,
+          "valorTotalPrevisto": 7677.53,
+          "valorTotalExecutado": 0,
+          "saldo": 7677.53
         },
         {
           "instrumento": "937221",
@@ -6440,11 +6440,11 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Tapete (CORREGEDORIA)",
+          "descricao": "Tapetes",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
-          "unidade": "un",
+          "unidade": "UN",
           "quantidade": 1,
           "valorUnitario": 1690.82,
           "valorTotalPrevisto": 1690.82,
@@ -6454,21 +6454,7 @@
         {
           "instrumento": "937221",
           "tipoDespesa": "BEM",
-          "descricao": "Televisão Smart LED, mínimo de 50 polega",
-          "codigoNaturezaDespesa": "44905299",
-          "codigoNaturezaNormalizado": "44905299",
-          "natureza": "CAPITAL",
-          "unidade": "UN",
-          "quantidade": 1,
-          "valorUnitario": 2000,
-          "valorTotalPrevisto": 2000,
-          "valorTotalExecutado": 0,
-          "saldo": 2000
-        },
-        {
-          "instrumento": "937221",
-          "tipoDespesa": "BEM",
-          "descricao": "Televisão smart LED, minimo de 50 polegadas",
+          "descricao": "Televisão smart LED, minimo de 50 polega",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
@@ -6492,6 +6478,20 @@
           "valorTotalPrevisto": 1254.79,
           "valorTotalExecutado": 0,
           "saldo": 1254.79
+        },
+        {
+          "instrumento": "937221",
+          "tipoDespesa": "BEM",
+          "descricao": "sofá 3 lugares",
+          "codigoNaturezaDespesa": "44905299",
+          "codigoNaturezaNormalizado": "44905299",
+          "natureza": "CAPITAL",
+          "unidade": "UN",
+          "quantidade": 1,
+          "valorUnitario": 3650.84,
+          "valorTotalPrevisto": 3650.84,
+          "valorTotalExecutado": 0,
+          "saldo": 3650.84
         }
       ]
     },
@@ -6499,7 +6499,7 @@
       "numeroConvenio": "937817",
       "uf": "RJ",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 59,
       "totalizadores": {
         "concedente": "",
@@ -6509,7 +6509,7 @@
         "valorTotalExecutado": 163193.05,
         "saldoTotal": 1419825.87
       },
-      "hashConteudo": "3c9517507ebc0142db7757458448f1ee122ce3ba79fc1d4fcdb0478b60b65301",
+      "hashConteudo": "d94426bef696b27bf8a7c53da6d84f638f13bea2fe8d12418f6a2802f644c449",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -6637,8 +6637,8 @@
           "quantidade": 10,
           "valorUnitario": 94.67,
           "valorTotalPrevisto": 946.66,
-          "valorTotalExecutado": 3450,
-          "saldo": -2503.34
+          "valorTotalExecutado": 0,
+          "saldo": 946.66
         },
         {
           "instrumento": "937817",
@@ -7001,8 +7001,8 @@
           "quantidade": 30,
           "valorUnitario": 81.88,
           "valorTotalPrevisto": 2456.4,
-          "valorTotalExecutado": 5238.2,
-          "saldo": -2781.8
+          "valorTotalExecutado": 0,
+          "saldo": 2456.4
         },
         {
           "instrumento": "937817",
@@ -7239,8 +7239,8 @@
           "quantidade": 1,
           "valorUnitario": 101341.43,
           "valorTotalPrevisto": 101341.43,
-          "valorTotalExecutado": 40298.1,
-          "saldo": 61043.33
+          "valorTotalExecutado": 48986.3,
+          "saldo": 52355.13
         },
         {
           "instrumento": "937817",
@@ -7346,17 +7346,17 @@
       "numeroConvenio": "937783",
       "uf": "SC",
       "origemUsada": "http",
-      "extraidoEm": "2026-07-07T13:35:20.119Z",
+      "extraidoEm": "2026-08-31T15:47:51.717Z",
       "totalItens": 22,
       "totalizadores": {
         "concedente": "",
         "convenente": "",
         "situacao": "",
-        "valorTotalPrevisto": 581020.22,
+        "valorTotalPrevisto": 596020.22,
         "valorTotalExecutado": 44897.82,
-        "saldoTotal": 536122.4
+        "saldoTotal": 551122.4
       },
-      "hashConteudo": "99092e8e3b1ce1bd706a1ea4a8af99fcb7875eff5f4029cedf2b2dbe17eb2c4a",
+      "hashConteudo": "54fac70da1b4636761ea55a7365e36e4852a617664539df49d38ae23053ef0a1",
       "aptoParaImportacaoTecnica": true,
       "bloqueiosTecnicos": [],
       "avisos": [],
@@ -7426,10 +7426,10 @@
           "natureza": "CAPITAL",
           "unidade": "UN",
           "quantidade": 1,
-          "valorUnitario": 1795.67,
-          "valorTotalPrevisto": 1795.67,
+          "valorUnitario": 3191.11,
+          "valorTotalPrevisto": 3191.11,
           "valorTotalExecutado": 0,
-          "saldo": 1795.67
+          "saldo": 3191.11
         },
         {
           "instrumento": "937783",
@@ -7440,10 +7440,10 @@
           "natureza": "CAPITAL",
           "unidade": "UN",
           "quantidade": 1,
-          "valorUnitario": 97456.67,
-          "valorTotalPrevisto": 97456.67,
+          "valorUnitario": 109910.94,
+          "valorTotalPrevisto": 109910.94,
           "valorTotalExecutado": 0,
-          "saldo": 97456.67
+          "saldo": 109910.94
         },
         {
           "instrumento": "937783",
@@ -7580,10 +7580,10 @@
           "natureza": "CAPITAL",
           "unidade": "UN",
           "quantidade": 3,
-          "valorUnitario": 2075.67,
-          "valorTotalPrevisto": 6227.01,
+          "valorUnitario": 3611.47,
+          "valorTotalPrevisto": 10834.41,
           "valorTotalExecutado": 0,
-          "saldo": 6227.01
+          "saldo": 10834.41
         },
         {
           "instrumento": "937783",
@@ -7622,10 +7622,10 @@
           "natureza": "CAPITAL",
           "unidade": "UN",
           "quantidade": 2,
-          "valorUnitario": 368.32,
-          "valorTotalPrevisto": 736.64,
+          "valorUnitario": 383.84,
+          "valorTotalPrevisto": 767.68,
           "valorTotalExecutado": 0,
-          "saldo": 736.64
+          "saldo": 767.68
         },
         {
           "instrumento": "937783",
@@ -7658,16 +7658,16 @@
         {
           "instrumento": "937783",
           "tipoDespesa": "BEM",
-          "descricao": "Item 022 - Saldo remanescente Capital",
+          "descricao": "Item 023 - Rendimentos de aplicação para",
           "codigoNaturezaDespesa": "44905299",
           "codigoNaturezaNormalizado": "44905299",
           "natureza": "CAPITAL",
           "unidade": "UN",
           "quantidade": 1,
-          "valorUnitario": 18488.15,
-          "valorTotalPrevisto": 18488.15,
+          "valorUnitario": 15000,
+          "valorTotalPrevisto": 15000,
           "valorTotalExecutado": 0,
-          "saldo": 18488.15
+          "saldo": 15000
         }
       ]
     }
