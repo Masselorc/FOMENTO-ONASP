@@ -315,7 +315,6 @@ test("Publicação estática explícita registra início/sucesso com mocks sem e
       resumoDashboard: { total: 1 },
       totaisExtracao: { itensConvenio: 0, conveniosProfor2022: 0 },
     }),
-    lerRelatorioComparacaoPlano: () => ({ disponivel: true, relatorio: { aptoParaPublicacao: true } }),
     escreverJsonAtomico: (nomeArquivo) => { arquivosEscritos.push(nomeArquivo); },
   });
 
