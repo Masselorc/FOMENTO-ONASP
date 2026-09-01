@@ -264,14 +264,14 @@ test("carregarPlanoAplicacaoReconstrucaoPad usa recarga v2 atual nos itens alter
   assert.equal(tablet.percentualExecucao, 100);
 
   const monitorEtapa1 = porDescricao.get("ETAPA 1 - OUVIDORIA - Monitor");
-  assert.equal(monitorEtapa1.valorExecutado, 10619.91);
-  assert.equal(monitorEtapa1.saldo, -7079.94);
-  assert.equal(monitorEtapa1.percentualExecucao, 300);
+  assert.equal(monitorEtapa1.valorExecutado, 0);
+  assert.equal(monitorEtapa1.saldo, 3539.97);
+  assert.equal(monitorEtapa1.percentualExecucao, 0);
 
   const monitorEtapa2 = porDescricao.get("ETAPA 2 - CORREGEDORIA - Monitor");
-  assert.equal(monitorEtapa2.valorExecutado, 0);
-  assert.equal(monitorEtapa2.saldo, 7079.94);
-  assert.equal(monitorEtapa2.percentualExecucao, 0);
+  assert.equal(monitorEtapa2.valorExecutado, 10619.91);
+  assert.equal(monitorEtapa2.saldo, -3539.97);
+  assert.equal(monitorEtapa2.percentualExecucao, 150);
 });
 
 test("modulo de origem reconstrucao-pad NAO importa publicacao, SQLite, init-db ou Transferegov", () => {

@@ -7,6 +7,9 @@ const PUBLIC_DIR = path.join(ROOT_DIR, "frontend", "data", "publicados");
 const FLAG_PERMITIR_ALTERACOES = "--permitir-alteracoes-locais";
 
 const { registrarLogOperacional } = require("../services/logs-operacionais-service");
+const {
+  recarregarPadsOperacional,
+} = require("../services/profor-2022/profor-pad-recarga-operacional-service");
 
 const PADROES_PROIBIDOS = [
   { nome: "JSESSIONID", regex: /JSESSIONID/i },
@@ -200,75 +203,6 @@ function auditarArquivosPublicados() {
   };
 }
 
-function extrairResumoAtualizacao(stdout) {
-  const resumo = {
-    sucesso: false,
-    detru: null,
-    rendimentos: null,
-    consolidado: null,
-  };
-
-  // Formato real: "DETRU encontrados/total: 15/15"
-  const matchDetru = stdout.match(/DETRU encontrados\/total:\s+(\d+)\/(\d+)/);
-  if (matchDetru) {
-    const encontrados = Number(matchDetru[1]);
-    const total = Number(matchDetru[2]);
-    resumo.detru = {
-      sucesso: encontrados === total && total > 0,
-      encontrados,
-      total,
-    };
-  }
-
-  // Formato real: "rendimentos sucesso/total: 15/15 falhas=0"
-  const matchRendimentos = stdout.match(/rendimentos sucesso\/total:\s+(\d+)\/(\d+)\s+falhas=(\d+)/);
-  if (matchRendimentos) {
-    const sucessos = Number(matchRendimentos[1]);
-    const total = Number(matchRendimentos[2]);
-    const falhas = Number(matchRendimentos[3]);
-    resumo.rendimentos = {
-      sucesso: sucessos === total && total > 0 && falhas === 0,
-      sucessos,
-      total,
-      falhas,
-    };
-  }
-
-  // Formato real: "Consolidado total de convenios: 15 | totalComDetru=15 | totalComPlano=15 | totalComRendimentos=15"
-  const matchConsolidado = stdout.match(
-    /Consolidado total de convenios:\s+(\d+)\s+\|\s+totalComDetru=(\d+)\s+\|\s+totalComPlano=(\d+)\s+\|\s+totalComRendimentos=(\d+)/
-  );
-  if (matchConsolidado) {
-    resumo.consolidado = {
-      convenios: Number(matchConsolidado[1]),
-      detru: Number(matchConsolidado[2]),
-      plano: Number(matchConsolidado[3]),
-      rendimentos: Number(matchConsolidado[4]),
-    };
-  }
-
-  // Fallback: "sucessoGeral:  true" como critério direto
-  const matchSucessoGeral = stdout.match(/sucessoGeral:\s+(true|false)/);
-  const sucessoGeralFlag = matchSucessoGeral ? matchSucessoGeral[1] === "true" : null;
-
-  const sucessoCompleto =
-    resumo.detru?.sucesso &&
-    resumo.rendimentos?.sucesso &&
-    resumo.consolidado &&
-    resumo.detru.encontrados === 15 &&
-    resumo.detru.total === 15 &&
-    resumo.rendimentos.sucessos === 15 &&
-    resumo.rendimentos.total === 15 &&
-    resumo.rendimentos.falhas === 0 &&
-    resumo.consolidado.convenios === 15 &&
-    resumo.consolidado.detru === 15 &&
-    resumo.consolidado.plano === 15 &&
-    resumo.consolidado.rendimentos === 15;
-
-  resumo.sucesso = Boolean(sucessoCompleto) || (sucessoGeralFlag === true && resumo.consolidado !== null);
-  return resumo;
-}
-
 function lerJson(caminho) {
   return JSON.parse(fs.readFileSync(caminho, "utf8"));
 }
@@ -416,23 +350,36 @@ async function main() {
     return await finalizar(1);
   }
 
-  imprimirSecao("Atualização consolidada");
+  imprimirSecao("Recarga/reconstrução PAD operacional");
   estado.atualizacaoExecutada = true;
-  const resultadoAtualizacao = executarNpmScript("atualizar:profor-2022");
-  const resumoAtualizacao = extrairResumoAtualizacao(resultadoAtualizacao.stdout + "\n" + resultadoAtualizacao.stderr);
-  estado.atualizacaoOk = resultadoAtualizacao.code === 0 && resumoAtualizacao.sucesso;
+  const inicioRecarga = Date.now();
+  let recarga;
+  try {
+    recarga = await recarregarPadsOperacional({ repoRoot: ROOT_DIR });
+  } catch (erro) {
+    console.error(`[PROFOR 2022] Falha na recarga/reconstrução PAD operacional: ${erro?.message || erro}`);
+    estado.motivoBloqueio = `recarga/reconstrucao PAD falhou: ${erro?.message || erro}`;
+    return await finalizar(1);
+  }
+
+  const aptoParaPublicacao = recarga?.aptoParaPublicacao === true;
+  estado.atualizacaoOk = aptoParaPublicacao;
 
   console.log(
-    `[PROFOR 2022] atualizar:profor-2022 => code=${resultadoAtualizacao.code}` +
-      ` duração=${formatarDuracao(resultadoAtualizacao.duracaoMs)}` +
-      ` sucesso=${resumoAtualizacao.sucesso}`
+    `[PROFOR 2022] recarga operacional => sucesso=${recarga?.sucesso} ` +
+      `aptoParaUsoLocal=${recarga?.aptoParaUsoLocal} ` +
+      `aptoParaPublicacao=${recarga?.aptoParaPublicacao} ` +
+      `impedimentos=${recarga?.totalImpedimentos ?? "?"} ` +
+      `duração=${formatarDuracao(Date.now() - inicioRecarga)}`
   );
 
-  if (!estado.atualizacaoOk) {
-    console.error("[PROFOR 2022] Atualização consolidada não atingiu o critério 15/15/15. Publicação abortada.");
-    estado.motivoBloqueio = "atualizacao consolidada nao atingiu 15/15/15";
-    const fimFalha = Date.now();
-    console.log(`[PROFOR 2022] Fim: ${agoraIso()} | duração total: ${formatarDuracao(fimFalha - inicio)}`);
+  if (!aptoParaPublicacao) {
+    console.error("[PROFOR 2022] Reconstrução PAD não está apta para publicação. Publicação abortada.");
+    estado.motivoBloqueio = `reconstrucao PAD com aptoParaPublicacao=${String(recarga?.aptoParaPublicacao)}`;
+    if (Array.isArray(recarga?.impedimentos) && recarga.impedimentos.length > 0) {
+      estado.motivoBloqueio += ` (${recarga.impedimentos.length} impedimento(s))`;
+    }
+    console.log(`[PROFOR 2022] Fim: ${agoraIso()} | duração total: ${formatarDuracao(Date.now() - inicio)}`);
     return await finalizar(1);
   }
 
@@ -498,7 +445,7 @@ async function main() {
   console.log(`Início: ${inicioIso}`);
   console.log(`Fim: ${agoraIso()}`);
   console.log(`Duração total: ${formatarDuracao(Date.now() - inicio)}`);
-  console.log(`Atualização consolidada: ${resumoAtualizacao.sucesso ? "OK" : "FALHA"}`);
+  console.log(`Recarga/reconstrução PAD: ${aptoParaPublicacao ? "OK (aptoParaPublicacao=true)" : "FALHA"}`);
   console.log(`Publicação estática: ${publicacaoOk ? "OK" : "FALHA"}`);
   console.log(`Validação JSON: ${validarJsonOk ? "OK" : "FALHA"}`);
   console.log(`Validação syntax: ${validarSyntaxOk ? "OK" : "FALHA"}`);

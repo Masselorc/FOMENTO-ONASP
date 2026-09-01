@@ -10,6 +10,13 @@ const { registrarLogOperacional } = require("./logs-operacionais-service");
 
 const publicDir = path.join(__dirname, "..", "..", "frontend", "data", "publicados");
 const catalogoAplicacaoPath = path.join(__dirname, "..", "data", "aplicacao.json");
+const caminhoRelatorioComparacaoPlano = path.join(
+  __dirname,
+  "..",
+  "data",
+  "relatorios",
+  "profor-2022-pad-plano-comparacao-dry-run.json"
+);
 
 function escreverJsonAtomico(nomeArquivo, dados) {
   fs.mkdirSync(publicDir, { recursive: true });
@@ -80,6 +87,57 @@ function arquivosPublicacaoEstatica() {
   ];
 }
 
+function lerRelatorioComparacaoPlano(opcoes = {}) {
+  const caminho = opcoes.caminhoRelatorioComparacaoPlano || caminhoRelatorioComparacaoPlano;
+  if (!fs.existsSync(caminho)) {
+    return {
+      disponivel: false,
+      mensagem: `relatório do comparador PAD ausente em ${caminho}`,
+    };
+  }
+  try {
+    return {
+      disponivel: true,
+      relatorio: JSON.parse(fs.readFileSync(caminho, "utf8")),
+    };
+  } catch (erro) {
+    return {
+      disponivel: false,
+      mensagem: `falha ao ler relatório do comparador PAD em ${caminho}: ${erro?.message || erro}`,
+    };
+  }
+}
+
+function validarAptoParaPublicacaoProfor(opcoes = {}) {
+  if (opcoes.exigirAptoParaPublicacaoProfor === false) return;
+
+  const lerRelatorio = opcoes.lerRelatorioComparacaoPlano || lerRelatorioComparacaoPlano;
+  const leitura = lerRelatorio(opcoes);
+
+  if (!leitura.disponivel) {
+    throw new Error(`Publicação PROFOR 2022 bloqueada: ${leitura.mensagem}.`);
+  }
+
+  const relatorio = leitura.relatorio || {};
+  if (relatorio.aptoParaPublicacao === true) return;
+
+  const motivos = [];
+  const auditoria = relatorio.auditoriaRevisao;
+  if (auditoria && auditoria.publicacaoLiberada === false) {
+    const bloqueantes = auditoria.totalPendentesQueBloqueiamPublicacao
+      ?? auditoria.totalBloqueiamPublicacao;
+    motivos.push(`revisão com ${bloqueantes ?? "?"} divergência(s) bloqueante(s)`);
+  }
+  if (Array.isArray(relatorio.diferencasCriticas) && relatorio.diferencasCriticas.length > 0) {
+    motivos.push(`${relatorio.diferencasCriticas.length} diferença(s) crítica(s) no comparador`);
+  }
+  const motivo = motivos.length
+    ? motivos.join(" e ")
+    : `aptoParaPublicacao=${String(relatorio.aptoParaPublicacao)}`;
+
+  throw new Error(`Publicação PROFOR 2022 bloqueada: ${motivo}.`);
+}
+
 async function publicarDadosEstaticos(opcoes = {}) {
   const iniciadoEm = new Date().toISOString();
   await registrarLogPublicacaoSeguro({
@@ -115,6 +173,11 @@ async function publicarDadosEstaticos(opcoes = {}) {
     const parametrosMinimosPublicos = sanitizarParametrosMinimos(parametrosMinimos);
     const formalizacaoProforPublico = sanitizarFormalizacaoProfor(formalizacaoProfor);
     const orcamento2026Publico = sanitizarOrcamento2026(orcamento2026);
+
+    // Gate obrigatório PROFOR 2022: só publica se o comparador/auditoria
+    // autorizar (aptoParaPublicacao === true). Deve ocorrer ANTES da primeira
+    // escrita em frontend/data/publicados/ para preservar os arquivos atuais.
+    validarAptoParaPublicacaoProfor(opcoes);
 
     escreverJson("aplicacao.json", catalogoAplicacaoPublico);
     escreverJson("dashboard-geral.json", dashboard.dashboardGeral);
@@ -189,5 +252,7 @@ async function publicarDadosEstaticos(opcoes = {}) {
 module.exports = {
   publicarDadosEstaticos,
   sanitizarCatalogoAplicacaoPublico,
-  arquivosPublicacaoEstatica
+  arquivosPublicacaoEstatica,
+  validarAptoParaPublicacaoProfor,
+  lerRelatorioComparacaoPlano
 };
