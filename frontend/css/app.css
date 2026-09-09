@@ -3040,6 +3040,7 @@ body.dark-mode .budget-balance-detail-negative,
 }
 
 .budget-tracking-date {
+    white-space: nowrap;
     color: var(--color-success);
     font-weight: 800;
 }

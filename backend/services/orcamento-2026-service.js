@@ -915,8 +915,14 @@ async function executarBackfillOrcamento() {
         continue;
       }
 
+      // Um campo apagado pela interface deve permanecer vazio nas próximas cargas.
+      const { rows: historico } = await client.query(`
+        SELECT DISTINCT campo FROM historico_alteracoes
+        WHERE pagina = $1 AND registro = $2
+      `, [PAGINA, item.id]);
+      const camposEditados = new Set(historico.map(({ campo }) => ALIASES_CAMPOS_EDITAVEIS[campo] || campo));
       const updates = CAMPOS_BACKFILL_SE_NAO_PREENCHIDOS.filter((campo) => (
-        devePreencherBackfill(atual[campo], item[campo], campo)
+        !camposEditados.has(campo) && devePreencherBackfill(atual[campo], item[campo], campo)
       ));
       if (!updates.length) continue;
 

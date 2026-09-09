@@ -309,6 +309,9 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
   };
   postgresClient.withTransaction = async (callback) => callback({
     async query(sql, params = []) {
+      if (/SELECT DISTINCT campo FROM historico_alteracoes/i.test(sql)) {
+        return { rows: historicos.filter((h) => h.pagina === params[0] && h.registro === params[1]).map((h) => ({ campo: h.campo })) };
+      }
       if (/SELECT id, processo_sei FROM orcamento_2026 WHERE ativo = true/i.test(sql)) {
         return {
           rows: linhas

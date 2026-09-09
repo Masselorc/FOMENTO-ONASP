@@ -8097,3 +8097,16 @@ Logs operacionais gravados:
 - Risco administrativo: a classificação setorial está sustentada por vínculo nominal, valor exato e distribuição quantitativa; contudo, ela não substitui eventual saneamento do código de natureza nem a conclusão das providências de registro no Transferegov mencionadas na Nota Técnica.
 - Higiene documental: a extração e as imagens temporárias usadas para leitura e conferência visual foram removidas; o ZIP original permaneceu intacto em `Downloads`.
 - Rollback: reclassificar o item pelo mesmo fluxo de Revisões PAD, preservando o histórico e desativando o rateio vigente; não excluir diretamente os registros.
+
+## 2026-09-09 — Correção da edição e das datas do Orçamento 2026
+
+- Branch: main; base aa540a0700811283bc0831ae2174ad19effc076f.
+- Escopo: remover informações de campos existentes, padronizar datas e preservar o foco durante o preenchimento. Inspecionados prints e frame da gravação fornecida, fluxo SPA, endpoint de salvamento, serviço e histórico PostgreSQL.
+- Problema: executarBackfillOrcamento repunha campos vazios com a planilha de origem, inclusive após edição; datas ISO eram exibidas sem formatação; o evento change reconstruía todo o formulário.
+- Correção: backfill consulta o histórico por registro/campo e preserva campos já editados; todos os campos data_ usam calendário e normalização para YYYY-MM-DD, com exibição brasileira na consulta e linha do tempo. Eventos input/change registram alterações sem substituir os controles existentes; orientação explica como apagar informações e salvar.
+- Arquivos: backend/services/orcamento-2026-service.js; frontend/js/app.js; frontend/css/app.css; tests/services/orcamento-edicao.test.js; mock em tests/services/auditoria-logs-operacionais.test.js; este diário.
+- Validações: sintaxe dos JS alterados; suíte de serviços com 560 aprovados, 20 ignorados, zero falhas; teste focal de datas e limpeza, incluindo duas cargas consecutivas do backfill com executor simulado. Navegador local: campo pesquisa_precos vazio após Backspace, Salvar habilitado, Tab focando link_pesquisa_precos; calendário e linha do tempo conferidos visualmente (19/02/2026, 03/03/2026 e 12/03/2026). Cancelado o teste sem salvar dados reais.
+- Limite: não foi realizado salvamento no banco real nem reinício do backend. DATABASE_URL está ausente nesta sessão e no .env carregável; o processo ativo mantém sua própria configuração. A correção do backend depende de reinício pelo acionador habitual com autenticação do operador. O frontend atualizado já foi servido e conferido. Responsividade em tela estreita não validada nesta execução.
+- Preservação: cinco JSONs publicados já alterados no início foram mantidos; não houve publicação, commit, push ou nova dependência. Nenhuma credencial foi coletada.
+- Risco: registros com histórico passam a prevalecer sobre a planilha no backfill; isso é necessário para preservar a edição. Informações que já foram restauradas antes do patch devem ser apagadas novamente após o reinício, sem restauração retroativa automática.
+- Rollback: reverter apenas os patches desta tarefa nos arquivos de código e testes; preservar mudanças anteriores e dados locais.

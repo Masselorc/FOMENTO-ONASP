@@ -10830,7 +10830,7 @@ async function carregarLogoParaPDF() {
             const meta = [];
 
             if (possuiValorOrcamento(etapa.data)) {
-                meta.push(`<span class="budget-tracking-date">${escapeHtml(etapa.data)}</span>`);
+                meta.push(`<span class="budget-tracking-date">${escapeHtml(normalizarDataInputOrcamento(etapa.data))}</span>`);
             }
 
             if (possuiValorOrcamento(etapa.link)) {
@@ -11822,7 +11822,7 @@ async function carregarLogoParaPDF() {
                         <div class="budget-edit-panel">
                             <div class="budget-edit-panel-header">
                                 <strong>Editar acompanhamento</strong>
-                                <span>As alterações ficam pendentes até clicar em Salvar alterações.</span>
+                                <span>Apague o conteúdo para remover uma informação. As alterações ficam pendentes até clicar em Salvar.</span>
                             </div>
                             <div class="budget-edit-grid">
                                 <label>
@@ -12163,11 +12163,12 @@ async function carregarLogoParaPDF() {
                 }
             });
 
-            document.addEventListener('change', (event) => {
+            const registrarEdicaoCampoOrcamento = (event) => {
                 const campo = event.target.closest('.budget-edit-control, .budget-other-edit-control, .budget-new-control');
                 if (!campo || !resolverEscopoOrcamento(campo)) return;
 
                 if (campo.matches('.budget-new-control')) {
+                    if (event.type === 'input') return;
                     atualizarNovoProcessoOrcamento(
                         campo.dataset.orcamentoNovoId,
                         campo.dataset.orcamentoNovoCampo,
@@ -12187,8 +12188,13 @@ async function carregarLogoParaPDF() {
                         ? normalizarBooleanOrcamento(campo.type === 'checkbox' ? campo.checked : campo.value)
                         : campo.value
                 );
-                renderOrcamentoView();
-            });
+                // Não recriar os inputs ao sair de um campo: mantém foco, Tab e clique em Salvar.
+                document.querySelectorAll('[data-orcamento-salvar-linha]').forEach((botao) => {
+                    botao.disabled = !obterQuantidadeAlteracoesLinhaOrcamento(botao.dataset.orcamentoSalvarLinha);
+                });
+            };
+            document.addEventListener('input', registrarEdicaoCampoOrcamento);
+            document.addEventListener('change', registrarEdicaoCampoOrcamento);
         }
 
         function registrarEventosCamposOrcamento() {
@@ -15290,7 +15296,7 @@ async function carregarLogoParaPDF() {
                     ? normalizarBooleanOrcamento(valorOriginal)
                     : campo === 'classificacao_gerencial'
                         ? normalizarClassificacaoGerencialOrcamento(valorOriginal)
-                    : campo === 'data_entrada_setor'
+                    : campo.startsWith('data_')
                         ? normalizarDataBancoOrcamento(valorOriginal)
                     : String(valorOriginal ?? '');
             const novoNormalizado = campo.startsWith('valor_')
@@ -15299,7 +15305,7 @@ async function carregarLogoParaPDF() {
                     ? normalizarBooleanOrcamento(novoValor)
                     : campo === 'classificacao_gerencial'
                         ? normalizarClassificacaoGerencialOrcamento(novoValor)
-                    : campo === 'data_entrada_setor'
+                    : campo.startsWith('data_')
                         ? normalizarDataBancoOrcamento(novoValor)
                     : String(novoValor ?? '').trim();
 
@@ -15778,7 +15784,7 @@ async function carregarLogoParaPDF() {
                 if (campo.startsWith('valor_')) return formatMoney(Number(valor) || 0);
                 if (campo === 'status') return renderizarStatusOrcamento(valor);
                 if (campo === 'classificacao_gerencial') return renderizarClassificacaoGerencialOrcamento(valor, item.saldoAparelhamento || 0);
-                return escapeHtml(valor || '-');
+                return escapeHtml((campo.startsWith('data_') ? normalizarDataInputOrcamento(valor) : valor) || '-');
             }
 
             if (campo === 'pena_justa') {
@@ -15833,18 +15839,18 @@ async function carregarLogoParaPDF() {
                 `;
             }
 
-            if (campo === 'data_entrada_setor') {
-                const valorTexto = normalizarDataInputOrcamento(valor);
+            if (campo.startsWith('data_')) {
+                const valorTexto = normalizarDataBancoOrcamento(valor);
                 return `
                     <input
-                        type="text"
+                        type="date"
                         class="form-control form-control-sm budget-edit-control"
                         value="${escapeHtml(valorTexto)}"
                         data-orcamento-id="${escapeHtml(item.id)}"
                         data-orcamento-campo="${campo}"
                         data-orcamento-original="${escapeHtml(valorOriginal ?? '')}"
-                        inputmode="numeric"
-                        placeholder="DD/MM/AAAA"
+                        lang="pt-BR"
+                        max="9999-12-31"
                     >
                 `;
             }
