@@ -301,7 +301,7 @@ function instalarMockOrcamento({ linhas = [linhaOrcamento], falhaLog = false } =
     if (/SELECT valor_disponivel FROM orcamento_2026_frentes WHERE frente = \$1/i.test(sql)) {
       return { rows: params[0] === "Aparelhamento" ? [{ valor_disponivel: 1000 }] : [] };
     }
-    if (/SELECT \* FROM orcamento_2026_movimentacoes WHERE ativo = true/i.test(sql)) return { rows: [] };
+    if (/FROM orcamento_2026_movimentacoes/i.test(sql)) return { rows: [] };
     if (/SELECT\s+\*\s+FROM\s+orcamento_2026/i.test(sql)) return { rows: linhas };
     if (/SELECT id, status, processo_autuado/i.test(sql)) return { rows: [] };
     if (/SELECT id, classificacao_gerencial/i.test(sql)) return { rows: [] };
@@ -493,7 +493,7 @@ test("listarOrcamento2026 aplica ajustes operacionais do orçamento", async () =
     && /valor_estimado_pesquisa_preco/.test(update.sql)
   ));
   assert.ok(ajusteModeloLocal);
-  assert.deepEqual(ajusteModeloLocal.params.slice(0, 3), [420000, 14000, 696991.41]);
+  assert.deepEqual(ajusteModeloLocal.params.slice(0, 3), [420000, 14000, 678771.73]);
 
   const inativacaoPessoal = updates.find((update) => (
     update.params.includes("PESS-001")

@@ -26,7 +26,7 @@ const STATUS_ORCAMENTO = [
 const ITEM_MODELO_LOCAL_IA_ID = "APON-005";
 const VALOR_ORIGINAL_MODELO_LOCAL_IA = 420000;
 const VALOR_UNITARIO_MODELO_LOCAL_IA = 14000;
-const VALOR_ESTIMADO_MODELO_LOCAL_IA = 696991.41;
+const VALOR_ESTIMADO_MODELO_LOCAL_IA = 678771.73;
 const FRENTE_PESSOAL = "Pessoal";
 const PROCESSO_DIARIAS_ID = "PESS-001";
 const FRENTE_CAPACITACAO = "Capacitação para os Estados";
@@ -1011,6 +1011,44 @@ async function executarAjustesOperacionaisOrcamento2026() {
 
     await client.query(`
       UPDATE orcamento_2026
+      SET valor_previsto = 150000,
+          valor_estimado_pesquisa_preco = 73100,
+          atualizado_em = $1
+      WHERE id = 'APON-003'
+        AND (
+          valor_previsto IS DISTINCT FROM 150000
+          OR valor_estimado_pesquisa_preco IS DISTINCT FROM 73100
+        )
+    `, [updatedAt]);
+
+    await client.query(`
+      UPDATE orcamento_2026
+      SET descricao = 'Aquisição de Scanners/Impressoras',
+          valor_previsto = 130000,
+          valor_estimado_pesquisa_preco = 72000,
+          atualizado_em = $1
+      WHERE id = 'APON-002'
+        AND (
+          descricao IS DISTINCT FROM 'Aquisição de Scanners/Impressoras'
+          OR valor_previsto IS DISTINCT FROM 130000
+          OR valor_estimado_pesquisa_preco IS DISTINCT FROM 72000
+        )
+    `, [updatedAt]);
+
+    await client.query(`
+      UPDATE orcamento_2026_movimentacoes
+      SET valor = 76900
+      WHERE origem_id = 'APON-003' AND destino_id = 'APON-005' AND ativo = true AND valor IS DISTINCT FROM 76900
+    `);
+
+    await client.query(`
+      UPDATE orcamento_2026_movimentacoes
+      SET valor = 58000
+      WHERE origem_id = 'APON-002' AND destino_id = 'APON-005' AND ativo = true AND valor IS DISTINCT FROM 58000
+    `);
+
+    await client.query(`
+      UPDATE orcamento_2026
       SET ativo = false,
           compoe_orcamento = false,
           atualizado_em = $1
@@ -1362,6 +1400,7 @@ async function listarOrcamento2026() {
     resumo: montarResumo(itensOficiais, resumoFrentes),
     resumoFrentes,
     resumoAparelhamento: calcularResumoAparelhamento(itensOficiais),
+    movimentacoes: await listarMovimentacoesOrcamento2026(),
     filtros: {
       frentes: valoresUnicos(itensOficiais, "frente"),
       status: valoresUnicos(itensOficiais, "status"),

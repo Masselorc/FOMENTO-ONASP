@@ -1,5 +1,30 @@
 # Diário de bordo
 
+## 09/09/2026 - Orçamento 2026: ajuste de valores de Câmeras, Scanners/Impressoras e Modelo Local de IA e publicação estática
+
+- Objetivo: atualizar os valores de execução e previstos ajustados (envelopes) dos processos do Orçamento 2026 conforme instrução:
+  1. `APON-003` (Aquisição de câmeras fotográficas): valor de execução em R$ 73.100,00; valor cedido para `APON-005` ajustado de R$ 92.052,15 para R$ 76.900,00; envelope previsto ajustado em R$ 73.100,00 (150.000,00 - 76.900,00); dotação base de R$ 150.000,00 preservada.
+  2. `APON-002` (Aquisição de Scanners/Impressoras): descrição alterada para "Aquisição de Scanners/Impressoras"; valor de execução em R$ 72.000,00; valor cedido para `APON-005` ajustado de R$ 61.067,53 para R$ 58.000,00; envelope previsto ajustado em R$ 72.000,00 (130.000,00 - 58.000,00); dotação base de R$ 130.000,00 preservada.
+  3. `APON-005` (Implantação de Modelo Local de Inteligência Artificial): dotação base preservada em R$ 420.000,00; valor total recebido das movimentações atualizado para R$ 258.771,73 (R$ 123.871,73 de notebooks + R$ 76.900,00 de câmeras + R$ 58.000,00 de scanners/impressoras); envelope total previsto ajustado e valor em execução/estimado de pesquisa de preços atualizados de R$ 696.991,41 para R$ 678.771,73.
+- Invariantes preservadas:
+  - Dotação global das frentes: R$ 6.100.000,00.
+  - Total previsto dos 9 processos oficiais: R$ 6.054.600,00 (mais R$ 45.400,00 de saldo não autuado da frente Capacitação).
+  - Total em execução mantido em R$ 5.274.476,00.
+  - Saldo planejado mantido em R$ 825.524,00.
+- Backend e Banco de Dados:
+  - `backend/services/orcamento-2026-service.js`: atualizada a constante `VALOR_ESTIMADO_MODELO_LOCAL_IA = 678771.73`; incluídos ajustes operacionais idempotentes em `executarAjustesOperacionaisOrcamento2026` para garantir a integridade de `APON-002`, `APON-003`, `APON-005` e suas movimentações; retorno de `listarOrcamento2026` passa a incluir a chave `movimentacoes`.
+  - Tabela `orcamento_2026` e `orcamento_2026_movimentacoes` atualizadas no Postgres via transação.
+- Frontend e Publicação Estática:
+  - `frontend/js/app.js`: em modo publicação estático, `carregarMovimentacoesOrcamento2026` agora recupera as movimentações embutidas em `orcamento-2026.json`, garantindo que no GitHub Pages o envelope visual ajustado, badges de original/cedido/recebido e saldo transferível sejam calculados com perfeita paridade à aplicação local.
+  - Regeneração dos arquivos em `frontend/data/publicados/` via `npm run publicar:dados`.
+- Testes e Validações:
+  - `tests/services/auditoria-logs-operacionais.test.js` ajustado para conferir R$ 678.771,73 e suporte a consultas de movimentações no mock.
+  - `npm run validar:json` aprovado.
+  - `npm run validar:syntax` com 110 arquivos aprovados.
+  - `npm run validar:services` com 560 testes aprovados, 20 pulados e 0 falhas.
+- Segurança: nenhuma credencial foi exposta, versionada ou impressa em arquivos do repositório.
+- Rollback: `git revert <SHA_DO_COMMIT>`.
+
 ## 06/08/2026 - GitHub Pages: remoção de deploy concorrente e publicação segura
 
 - Problema: o push do commit `3523356` disparou simultaneamente o workflow controlado `.github/workflows/build.yml` e o pipeline automático `pages build and deployment`, ambos tentando publicar o mesmo SHA no ambiente `github-pages`.

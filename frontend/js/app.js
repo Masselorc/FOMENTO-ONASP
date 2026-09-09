@@ -11113,10 +11113,11 @@ async function carregarLogoParaPDF() {
         async function carregarMovimentacoesOrcamento2026() {
             const inicioMovimentacoes = DEBUG_PERF_ONASP ? performance.now() : 0;
             if (orcamentoEmModoPublicacaoEstatico()) {
-                orcamentoMovimentacoes = [];
+                const dados = typeof obterDadosOrcamento === 'function' ? obterDadosOrcamento() : null;
+                orcamentoMovimentacoes = Array.isArray(dados?.movimentacoes) ? dados.movimentacoes : [];
                 registrarPerfOrcamento('carregarMovimentacoesOrcamento2026', inicioMovimentacoes, {
                     modo: 'estatico',
-                    totalMovimentacoes: 0
+                    totalMovimentacoes: orcamentoMovimentacoes.length
                 });
                 return;
             }
