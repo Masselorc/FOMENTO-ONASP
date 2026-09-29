@@ -8,6 +8,8 @@ const orquestradorTransferegovService = require("./profor-pad-atualizacao-transf
 const TIPOS_PENDENCIA_MATERIAL = new Set([
   "item_novo_sem_rateio_memorizado",
   "item_pad_sem_rateio_memorizado",
+  "rateio_memorizado_sem_peso_operacional",
+  "distribuicao_igual_provisoria_bloqueada",
 ]);
 
 function montarPlanoCompletoParaHistorico(resultadoRecarga) {

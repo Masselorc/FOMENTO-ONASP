@@ -431,6 +431,7 @@ async function carregarPadsOperacional(opcoes = {}) {
           descricao: item.descricaoOriginal,
           chaveItem: item.chaveItem,
           detalhe: "Rateio memorizado sem percentual, quantidade ou valor de referência; distribuição igual provisória não é permitida.",
+          ...dadosOriginaisDoItemPad(item),
         }));
         continue;
       }
@@ -447,6 +448,7 @@ async function carregarPadsOperacional(opcoes = {}) {
           descricao: item.descricaoOriginal,
           chaveItem: item.chaveItem,
           detalhe: "Reconstrução tentou usar distribuição igual provisória; item bloqueado.",
+          ...dadosOriginaisDoItemPad(item),
         }));
         continue;
       }

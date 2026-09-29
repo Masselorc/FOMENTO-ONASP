@@ -585,3 +585,80 @@ test("resultado DEPOIS ausente marca FALHOU sem gerar snapshot", async () => {
   assert.deepEqual(mock.eventos, ["BEGIN", "CRIAR", "ANTES", "COMMIT", "FALHOU"]);
   assert.deepEqual(mock.snapshots.map((s) => s.momento), ["ANTES"]);
 });
+
+
+for (const tipo of ["rateio_memorizado_sem_peso_operacional", "distribuicao_igual_provisoria_bloqueada"]) {
+  test("A13-01: " + tipo + " preserva material, identidade e saldo canônico", () => {
+    const item = pendencia({ tipo, codigoNaturezaDespesa: "44905200", itemConhecidoId: 77,
+      quantidade: 3, valorUnitario: 75.5, valorTotalPrevisto: 226.5, valorTotalExecutado: 76.25,
+      area: "OUVIDORIA" });
+    const origem = recarga([], [item]);
+    const copia = structuredClone(origem);
+    const plano = historico.montarPlanoCompletoParaHistorico(origem);
+    assert.equal(plano.length, 1);
+    const esperado = { numero: item.numeroConvenio, uf: item.uf, descricao: item.descricao,
+      chaveItem: item.chaveItem, codigoNaturezaDespesa: item.codigoNaturezaDespesa,
+      itemConhecidoId: item.itemConhecidoId, area: "NAO_CLASSIFICADO", natureza: item.natureza,
+      quantidade: item.quantidade, valorUnitario: item.valorUnitario,
+      valorPrevisto: item.valorTotalPrevisto, valorExecutado: item.valorTotalExecutado };
+    for (const [campo, valor] of Object.entries(esperado)) assert.equal(plano[0][campo], valor, campo);
+    const snapshot = historico.gerarSnapshotHistorico(origem);
+    assert.equal(snapshot.planoAplicacao.length, 1);
+    assert.equal(snapshot.planoAplicacao[0].area, "NAO_CLASSIFICADO");
+    assert.equal(snapshot.planoAplicacao[0].saldo, 150.25);
+    assert.equal(snapshot.resumo.totalValorPrevisto, 226.5);
+    assert.equal(snapshot.resumo.totalValorExecutado, 76.25);
+    assert.equal(snapshot.resumo.totalSaldo, 150.25);
+    assert.deepEqual(origem, copia);
+  });
+
+  test("A13-01: " + tipo + " permanece no DEPOIS e nos totais ao perder rateio", async () => {
+    const mock = simularPersistencia();
+    const item = pendencia({ tipo, descricao: "Notebook", chaveItem: "pad-notebook",
+      quantidade: 1, valorUnitario: 100, valorTotalPrevisto: 100, valorTotalExecutado: 20 });
+    const { snapshotAntes } = await historico.iniciarHistoricoPad({ resultadoRecargaAntes: recarga() });
+    const depois = recarga([], [item]);
+    const retorno = await historico.finalizarHistoricoPad({ atualizacaoId: 41, snapshotAntes,
+      resultadoRecargaDepois: depois });
+    assert.equal(retorno.snapshotDepois.planoAplicacao.length, 1);
+    assert.equal(retorno.snapshotDepois.planoAplicacao[0].descricaoOriginal, "Notebook");
+    assert.equal(retorno.snapshotDepois.planoAplicacao[0].area, "NAO_CLASSIFICADO");
+    assert.equal(retorno.snapshotDepois.planoAplicacao[0].saldo, 80);
+    assert.equal(mock.resumoFinal.totalItensAntes, 1);
+    assert.equal(mock.resumoFinal.totalItensDepois, 1);
+    assert.equal(mock.resumoFinal.totalValorPrevistoDepois, 100);
+    assert.equal(mock.resumoFinal.totalValorExecutadoDepois, 20);
+    assert.equal(mock.resumoFinal.totalSaldoDepois, 80);
+    assert.equal(mock.resumoFinal.deltaValorPrevisto, 0);
+    assert.equal(mock.resumoFinal.deltaValorExecutado, 0);
+    assert.equal(mock.resumoFinal.deltaSaldo, 0);
+    assert.equal(mock.resumoFinal.temPendenciasRevisao, true);
+    assert.equal(mock.resumoFinal.totalPendenciasRevisao, 1);
+    assert.deepEqual(mock.snapshots.map((s) => s.momento), ["ANTES", "DEPOIS"]);
+    // O pareamento da mudança de área continua sendo responsabilidade do comparador existente.
+    assert.deepEqual(retorno.comparacao.itensAlterados,
+      comparador.compararSnapshotsPad(snapshotAntes, retorno.snapshotDepois, { modo: "historico" }).itensAlterados);
+    assert.equal(depois.pendenciasRevisao[0], item);
+  });
+
+  test("A13-01: " + tipo + " não duplica chave já reconstruída nem elimina rateios", () => {
+    const linhas = [notebook(), notebook({ area: "CORREGEDORIA" })];
+    const origem = recarga(linhas, [pendencia({ tipo, chaveItem: "pad-notebook" })]);
+    assert.deepEqual(historico.montarPlanoCompletoParaHistorico(origem), linhas);
+  });
+
+  test("A13-01: " + tipo + " deduplica pendências iguais e de tipos diferentes", () => {
+    const item = pendencia({ tipo });
+    const outroTipo = tipo === "rateio_memorizado_sem_peso_operacional"
+      ? "distribuicao_igual_provisoria_bloqueada" : "rateio_memorizado_sem_peso_operacional";
+    for (const repetida of [{ ...item }, { ...item, tipo: outroTipo }]) {
+      const origem = recarga([], [item, repetida]);
+      const copia = structuredClone(origem);
+      const plano = historico.montarPlanoCompletoParaHistorico(origem);
+      assert.equal(plano.length, 1);
+      assert.equal(plano[0].chaveItem, item.chaveItem);
+      assert.equal(historico.gerarSnapshotHistorico(origem).resumo.totalValorPrevisto, 100);
+      assert.deepEqual(origem, copia);
+    }
+  });
+}

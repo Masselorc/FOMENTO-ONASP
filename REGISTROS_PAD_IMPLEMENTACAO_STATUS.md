@@ -54,13 +54,13 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: BLOQUEADA — Etapa 13 (A13-01).
+- Etapa atual: correção A13-01 concluída; Etapa 13 aberta, aguardando auditoria externa.
 - Última etapa concluída: Etapa 12 — Testes integrados e regressão.
-- Próxima ação: correção dirigida da Etapa 5 (A13-01), regressão focada e retomada da Etapa 13; não iniciar Etapa 14.
-- Atualizado em: 2026-09-29 20:22:23 -03:00.
-- Branch: `main` (HEAD de entrada da Etapa 13: `661dd5a341f2e0fe3bc053537820c77a85b60162`).
+- Próxima ação: auditoria externa do commit A13-01; depois regressão focada e retomada da Etapa 13. Etapa 14 não é a próxima ação.
+- Atualizado em: 2026-09-29 20:34:00 -03:00.
+- Branch: `main` (HEAD de entrada da correção A13-01: `b7298e066e2b584f6a44600e3c38d43499552b45`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
-- Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; preservadas e não incluídas na Etapa 13.
+- Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; preservadas e não incluídas na correção A13-01.
 - Plano original presente na raiz; não alterado.
 
 ### 6.1. Mapa confirmado na Etapa 1
@@ -144,7 +144,19 @@ Não reimplementar essas responsabilidades.
 - `npm run validar:syntax`: sucesso (110 arquivos); `git diff --check`: sucesso. Alterações preexistentes preservadas, com hashes iguais após os testes.
 - Playwright: não executado. Banco remoto: não acessado. Migration aplicada: não. Persistência real após restart: não validada.
 
-### 6.9. Auditoria final — Etapa 13 BLOQUEADA
+### 6.9. Auditoria final — Etapa 13 aberta
+
+**A13-01 — CORRIGIDO, AGUARDANDO AUDITORIA EXTERNA**
+
+- Correção dirigida: loader reutiliza `dadosOriginaisDoItemPad` em `rateio_memorizado_sem_peso_operacional` e `distribuicao_igual_provisoria_bloqueada`; mantém as duas ocorrências como pendências não impeditivas. Distribuição igual continua não aplicada; sem alteração de sucesso/aptidão.
+- Histórico inclui os dois tipos como material `NAO_CLASSIFICADO`, preservando natureza, identidade e valores originais; saldo derivado pela fotografia existente. Nenhuma inferência de área; deduplicação por chaveItem e linhas legítimas de rateio preservadas.
+- Acrescentados 11 testes: loader→snapshot, bloqueio por valor e quantidade, identidade/valores/saldo, ANTES/DEPOIS com totais preservados e deduplicação. Fixture do loader injeta logger sem efeito para isolar os testes.
+- Testes focados (pass/fail/skip): carregador operacional **18/0/0**; histórico **45/0/0**; comparador **16/0/0**; job/orquestrador **14/0/0**. `node --check` aprovado nos quatro JS alterados.
+- `npm run validar:syntax`: sucesso, 110 arquivos. `npm run validar:services`: **628 pass / 6 fail / 20 skip**; mesmas seis falhas de 6.8 (três ABI 147 versus 137; três expectativa 568 versus 564), mais 11 aprovações. Nenhuma nova regressão encontrada; DATABASE_URL ausente no processo. `git diff --check`: sucesso.
+- Dados/cache/relatório 564/plano e staged preexistentes preservados por comparação de hashes; banco remoto não acessado. Sem publicação, migration, Playwright, Transferegov real ou alteração de dependências.
+- Risco residual: cobertura com fixtures/mocks; aprovação externa pendente. Rollback, se autorizado: reversão exclusiva deste patch, que reintroduziria A13-01; não restaurar dados nem snapshots. Próxima ação: auditoria externa do commit, depois regressão focada e retomada da Etapa 13. Etapas 13 e 14 permanecem abertas e não foram executadas nesta correção.
+
+**Registro histórico da auditoria anterior (antes desta correção):**
 
 - Base funcional auditada: `9720424fac9fc347862828615a5a4c3784bb4042..661dd5a341f2e0fe3bc053537820c77a85b60162`; arquivos funcionais locais iguais ao HEAD. Dados preexistentes considerados somente na subetapa 13.1.
 - **13.1: LEGÍTIMO — ALTERAÇÃO DE PAD/RATEIO.** A diferença é líquida: 24 representações somente no HEAD e 20 somente no working tree, todas RO/937917; não existem quatro linhas isoladas cuja simples exclusão descreva a mudança. Há ainda 12 representações comuns com valores alterados (RO: 6; TO: 4; RJ: 2).
@@ -219,6 +231,10 @@ Todas as linhas abaixo são do convênio **937917 / RO**. A chave está completa
 
 ## 7. Arquivos alterados pela última etapa
 
+- `backend/services/profor-2022/profor-pad-carregador-operacional-service.js`
+- `backend/services/profor-2022/profor-pad-historico-service.js`
+- `tests/services/profor-pad-carregador-operacional.test.js`
+- `tests/services/profor-pad-historico.test.js`
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
 
 ## 8. Decisões que não devem ser rediscutidas
@@ -234,7 +250,7 @@ Todas as linhas abaixo são do convênio **937917 / RO**. A chave está completa
 
 ## 9. Pendências/bloqueios
 
-- A13-01 bloqueia a aprovação da Etapa 13: pendências materiais omitidas do snapshot (6.9). A diferença 568 × 564 foi explicada; falhas de ABI e limitações de banco da Etapa 12 continuam registradas em 6.8.
+- A13-01 corrigido, aguardando auditoria externa do commit; Etapa 13 ainda não aprovada. Permanecem as limitações ambientais/dados de 6.8, sem nova regressão.
 
 ## 10. Instruções para o próximo agente
 
@@ -243,8 +259,8 @@ O próximo agente deve:
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
 4. ler a seção da Etapa 5 em `PLANO_REGISTROS_PAD_PROFOR_2022.md` e o achado A13-01 em 6.9;
-5. executar somente a correção dirigida autorizada em tarefa própria, com os testes indicados;
-6. preservar dados preexistentes e as limitações de 6.8; retomar a auditoria após a correção;
+5. auditar externamente o commit da correção A13-01 em tarefa própria autorizada;
+6. preservar dados preexistentes e as limitações de 6.8; depois da auditoria externa, executar regressão focada e retomar Etapa 13 em tarefa autorizada;
 7. manter Etapas 13/14 abertas e não executar a Etapa 14;
 8. atualizar este arquivo ao terminar.
 

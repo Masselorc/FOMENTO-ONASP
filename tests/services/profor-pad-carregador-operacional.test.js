@@ -59,6 +59,7 @@ async function executar(opcoes = {}) {
   return await carregarPadsOperacional({
     repoRoot: path.resolve(__dirname, "../.."),
     salvarRelatorio: false,
+    registrarLogOperacional: async () => {},
     lerRelatoriosPad: () => opcoes.leitura || leitura(),
     conferirItensPadComRateios: () => opcoes.conferencia || conferencia(),
     carregarMemoriaRateios: () => opcoes.rateios || rateiosMemoria(),
@@ -348,3 +349,65 @@ test("origem antiga, comparacao antiga e snapshot nao sao chamados pelo servico"
   assert.equal(source.includes("profor-pad-plano-comparador-service"), false);
   assert.equal(source.includes("profor-pad-comparador-snapshots-service"), false);
 });
+
+
+function conferirPendenciaMaterialA13(resultado, tipo, original) {
+  assert.equal(resultado.pendenciasRevisao.length, 1);
+  const pendencia = resultado.pendenciasRevisao[0];
+  const esperado = {
+    tipo, numeroConvenio: original.numeroConvenio, uf: original.uf,
+    descricao: original.descricaoOriginal, chaveItem: original.chaveItem,
+    natureza: original.natureza, codigoNaturezaDespesa: original.codigoNaturezaDespesa,
+    quantidade: original.quantidade, valorUnitario: original.valorUnitario,
+    valorTotalPrevisto: original.valorTotalPrevisto,
+    valorTotalExecutado: original.valorTotalExecutado, itemConhecidoId: original.itemConhecidoId,
+  };
+  for (const [campo, valor] of Object.entries(esperado)) assert.equal(pendencia[campo], valor, campo);
+  assert.deepEqual(resultado.planoAplicacaoReconstruido, []);
+  assert.deepEqual(resultado.impedimentos, []);
+  assert.equal(resultado.totalPendenciasRevisao, 1);
+  assert.equal(resultado.rateiosAplicados, 0);
+  assert.equal(resultado.sucesso, true);
+  assert.equal(resultado.aptoParaUsoLocal, false);
+  assert.equal(resultado.aptoParaPublicacao, false);
+  const historico = require("../../backend/services/profor-2022/profor-pad-historico-service");
+  const snapshot = historico.gerarSnapshotHistorico(resultado);
+  assert.equal(snapshot.planoAplicacao.length, 1);
+  assert.equal(snapshot.planoAplicacao[0].area, "NAO_CLASSIFICADO");
+  assert.equal(snapshot.resumo.totalValorPrevisto, original.valorTotalPrevisto);
+  assert.equal(snapshot.resumo.totalValorExecutado, original.valorTotalExecutado);
+  assert.equal(snapshot.resumo.totalSaldo, 150.25);
+}
+
+test("A13-01: rateio sem peso preserva material original sem chamar gerador", async () => {
+  const original = itemPad({ quantidade: 3, valorUnitario: 75.5, valorTotalPrevisto: 226.5,
+    valorTotalExecutado: 76.25, natureza: "CAPITAL", codigoNaturezaDespesa: "44905200" });
+  let chamadas = 0;
+  const resultado = await executar({
+    conferencia: conferencia({ itensPadReconhecidos: [original] }),
+    rateios: rateiosMemoria([{ area: "OUVIDORIA", natureza: "CUSTEIO" }]),
+    gerarLinhasItem: () => { chamadas++; throw new Error("Não deve distribuir sem peso"); },
+  });
+  assert.equal(chamadas, 0);
+  conferirPendenciaMaterialA13(resultado, "rateio_memorizado_sem_peso_operacional", original);
+});
+
+for (const campo of ["baseRateioValor", "baseRateioQuantidade"]) {
+  test("A13-01: bloqueia linha provisória por " + campo + " e preserva PAD original", async () => {
+    const original = itemPad({ quantidade: 3, valorUnitario: 75.5, valorTotalPrevisto: 226.5,
+      valorTotalExecutado: 76.25, natureza: "CAPITAL", codigoNaturezaDespesa: "44905200" });
+    let chamadas = 0;
+    const resultado = await executar({
+      conferencia: conferencia({ itensPadReconhecidos: [original] }),
+      gerarLinhasItem: () => {
+        chamadas++;
+        return { linhas: [{ area: "OUVIDORIA", natureza: "CUSTEIO", quantidade: 99,
+          valorPrevisto: 9999, valorExecutado: 999, baseRateioValor: "percentual",
+          baseRateioQuantidade: "percentual", [campo]: "distribuicao_igual" }],
+          alertasItem: [], impedimentosItem: [] };
+      },
+    });
+    assert.equal(chamadas, 1);
+    conferirPendenciaMaterialA13(resultado, "distribuicao_igual_provisoria_bloqueada", original);
+  });
+}
