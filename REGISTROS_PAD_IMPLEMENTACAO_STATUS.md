@@ -44,8 +44,8 @@ Não reimplementar essas responsabilidades.
 - [x] Etapa 5 — Estado completo do snapshot
 - [x] Etapa 6 — Memória de classificação e substitutos
 - [x] Etapa 7 — Integração com o job Transferegov e atomicidade
-- [ ] Etapa 8 — Remoção da senha local do PROFOR 2022
-- [ ] Etapa 9 — APIs de leitura do histórico
+- [x] Etapa 8 — Remoção da senha local do PROFOR 2022
+- [x] Etapa 9 — APIs de leitura do histórico
 - [ ] Etapa 10 — Tela Registros do PAD
 - [ ] Etapa 11 — Botão Ver alterações e deep-link
 - [ ] Etapa 12 — Testes integrados e regressão
@@ -54,10 +54,10 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — correção dirigida da Etapa 7.
-- Últimas etapas concluídas: Etapa 6 — Memória de classificação e substitutos; Etapa 7 — Integração com o job Transferegov e atomicidade, corrigida.
-- Próxima etapa: Etapa 8 — Remoção da senha local do PROFOR 2022.
-- Atualizado em: 2026-09-29 17:52:05 -03:00.
+- Etapa atual: concluída — Etapas 8 e 9.
+- Últimas etapas concluídas: Etapa 8 — Remoção da senha local do PROFOR 2022; Etapa 9 — APIs de leitura do histórico.
+- Próxima etapa: Etapa 10 — Tela Registros do PAD.
+- Atualizado em: 2026-09-29 18:10:29 -03:00.
 - Branch: `main` (HEAD inicial destas etapas: `30dccc63ce542b3111ecffac757dbe150657cf4b`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nestas etapas.
@@ -114,11 +114,23 @@ Não reimplementar essas responsabilidades.
 - Correção dirigida da Etapa 7: recarga operacional DEPOIS validada antes da finalização; `sucesso=false`, impedimentos ou resultado ausente geram FALHOU. Estado inválido nunca vira snapshot DEPOIS.
 - Regressão da correção: 80 testes direcionados aprovados, inclusive recarga falha/ausente e classificação inequívoca; `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
 
+### 6.6. Operação local e APIs do histórico — Etapas 8 e 9
+
+- Ações administrativas PROFOR em loopback não exigem senha; a decisão usa somente o endereço remoto do socket. Guards, flags e token para requisições remotas foram preservados.
+- `ONASP_EDIT_PASSWORD` permanece documentada para módulos que ainda exigem senha. As ações do frontend PROFOR mantêm bloqueio em modo estático e verificação de hostname local; não enviam senha.
+- Criadas as rotas GET backend-only `/api/profor-2022/pad/historico` (consulta mensal ou por data) e `/api/profor-2022/pad/historico/:id` (detalhe 404 quando ausente).
+- Filtros por data: UF, convênio, tipo e área. Detalhe retorna atualização, alterações e metadados dos snapshots; snapshot integral não é exposto. Nenhuma publicação estática foi criada.
+- Validação: guard 27/27; API 10/10; repository 19/19; recarga operacional 2 aprovados e 4 ignorados pelo teste. `npm run validar:syntax` e `git diff --check` aprovados. Banco remoto acessado: não.
+
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
-- `backend/services/profor-2022/profor-pad-historico-service.js`
-- `tests/services/profor-pad-historico.test.js`
+- `backend/server.js`
+- `frontend/js/app.js`
+- `.env.example`
+- `backend/services/profor-2022/profor-pad-historico-consulta-service.js`
+- `tests/services/profor-admin-endpoint-guard.test.js`
+- `tests/services/profor-pad-historico-api.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas
 
@@ -141,9 +153,9 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 8 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar somente a Etapa 8;
-6. não avançar para a Etapa 9;
+4. ler somente a seção da Etapa 10 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar somente a Etapa 10;
+6. não avançar para a Etapa 11;
 7. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa

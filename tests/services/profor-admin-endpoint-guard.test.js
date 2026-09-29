@@ -315,24 +315,57 @@ test(".env.example documenta PROFOR_ADMIN_TOKEN com valor vazio", () => {
   assert.match(exemplo, /ONASP_EDIT_PASSWORD/);
 });
 
-test("server implementa autorizacao local com ONASP_EDIT_PASSWORD e sanitizacao de body", () => {
+test("server autoriza somente loopback real sem senha local e sanitiza payload legado", () => {
   const server = ler("backend/server.js");
-  assert.match(server, /function autorizarAcaoAdminProforLocal\(req,\s*body/);
-  assert.match(server, /validarSenhaEdicao/);
-  assert.match(server, /if \(!ehRequisicaoLocal\(req\)\) return false;/);
-  // Garante que senha invalida em loopback lanca erro 403 de senha invalida em vez de cair no guard de token
-  assert.match(server, /Acesso administrativo PROFOR 2022 negado: senha local inválida/);
+  const inicio = server.indexOf("function autorizarAcaoAdminProforLocal(req)");
+  const fim = server.indexOf("function sanitizarOpcoesAdminProfor", inicio);
+  const helper = server.slice(inicio, fim);
+  assert.match(helper, /return ehRequisicaoLocal\(req\);/);
+  assert.doesNotMatch(helper, /body|password|senha|validarSenhaEdicao|ONASP_EDIT_PASSWORD/);
+  assert.doesNotMatch(server, /require\("\.\/services\/auth-service"\)/);
+  // Loopback vem do socket; cabecalhos encaminhados não participam da decisão.
+  const inicioLocal = server.indexOf("function ehRequisicaoLocal(req)");
+  const fimLocal = server.indexOf("function autorizarAcaoAdminProforLocal", inicioLocal);
+  assert.doesNotMatch(server.slice(inicioLocal, fimLocal), /x-forwarded-for|forwarded|headers\.host|headers\.origin/i);
   // Garante que helper de sanitizacao remove password e senha
   assert.match(server, /function sanitizarOpcoesAdminProfor\(body\)/);
   assert.match(server, /const \{ password, senha, \.\.\.resto \} = body;/);
 });
 
-test("frontend implementa modal type=password, restringe a loopback e nao expoe PROFOR_ADMIN_TOKEN", () => {
+test("frontend não pede nem envia senha nas ações locais do PROFOR 2022", () => {
   const app = ler("frontend/js/app.js");
   assert.match(app, /function ehHostnameLocal\(\)/);
-  assert.match(app, /function solicitarSenhaAdminProfor/);
-  assert.match(app, /if \(!ehHostnameLocal\(\)\)/);
-  assert.match(app, /type="password"/);
-  assert.match(app, /modalSenhaAdminProfor/);
+  assert.doesNotMatch(app, /solicitarSenhaAdminProfor|modalSenhaAdminProfor/);
+  for (const nome of [
+    "atualizarCacheDetruProfor2022UI",
+    "atualizarRendimentosTransferegovProfor2022UI",
+    "executarAtualizacaoPadsTransferegovUI",
+    "executarRecargaPadsOperacionalUI",
+  ]) {
+    const inicio = app.indexOf(`async function ${nome}()`);
+    const proxima = app.indexOf("\n        async function ", inicio + 1);
+    const funcao = app.slice(inicio, proxima < 0 ? app.length : proxima);
+    assert.ok(inicio >= 0, `${nome} deve existir`);
+    assert.match(funcao, /if \(!ehHostnameLocal\(\)\)/, `${nome} deve permanecer restrita ao loopback do navegador`);
+    assert.doesNotMatch(funcao, /password|senha|solicitarSenhaAdminProfor/);
+  }
   assert.doesNotMatch(app, /PROFOR_ADMIN_TOKEN/);
+});
+
+test(".env.example mantém a senha para outros módulos e documenta a exceção PROFOR local", () => {
+  const exemplo = ler(".env.example");
+  assert.match(exemplo, /^ONASP_EDIT_PASSWORD=troque_esta_senha$/m);
+  assert.match(exemplo, /PROFOR 2022[\s\S]*?não dependem mais desta variável/);
+  assert.match(exemplo, /^PROFOR_ADMIN_TOKEN=$/m);
+});
+
+test("outros módulos continuam protegidos por validarSenhaEdicao", () => {
+  for (const arquivo of [
+    "backend/services/parametros-minimos-service.js",
+    "backend/services/formalizacao-profor-service.js",
+    "backend/services/orcamento-2026-service.js",
+    "backend/services/faf-2021-service.js",
+  ]) {
+    assert.match(ler(arquivo), /validarSenhaEdicao/);
+  }
 });

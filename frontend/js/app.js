@@ -458,89 +458,6 @@ function renderStatusBadge(status, options = {}) {
             return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
         }
 
-        function solicitarSenhaAdminProfor({ titulo, descricao, acaoBotao = 'Confirmar e executar', variante = 'primary' }) {
-            if (!ehHostnameLocal()) {
-                alert('Ações administrativas PROFOR 2022 só podem ser acionadas a partir de acesso local (localhost / 127.0.0.1).');
-                return Promise.resolve(null);
-            }
-
-            return new Promise((resolve) => {
-                removerModalOnasp('modalSenhaAdminProfor');
-                document.body.insertAdjacentHTML('beforeend', `
-                    <div class="modal fade" id="modalSenhaAdminProfor" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">${escapeHtml(titulo)}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>${escapeHtml(descricao)}</p>
-                                    <label class="form-label" for="senhaAdminProfor">Senha de confirmação</label>
-                                    <input type="password" class="form-control" id="senhaAdminProfor" autocomplete="current-password" aria-describedby="senhaAdminProforAjuda senhaAdminProforErro" required>
-                                    <small id="senhaAdminProforAjuda" class="form-text">A senha protege ações operacionais sensíveis e não será armazenada pela interface.</small>
-                                    <div id="senhaAdminProforErro" class="invalid-feedback" role="alert"></div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    ${renderActionButton({
-                                        id: 'confirmarAcaoAdminProfor',
-                                        type: 'save',
-                                        label: acaoBotao,
-                                        variant: variante,
-                                        backend: true
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `);
-
-                const modalElement = document.getElementById('modalSenhaAdminProfor');
-                const modal = new window.bootstrap.Modal(modalElement);
-                let resolvido = false;
-
-                const confirmar = () => {
-                    const campoSenha = document.getElementById('senhaAdminProfor');
-                    const erroSenha = document.getElementById('senhaAdminProforErro');
-                    const senha = String(campoSenha?.value || '').trim();
-
-                    if (!senha) {
-                        campoSenha?.classList.add('is-invalid');
-                        if (erroSenha) erroSenha.textContent = 'Informe a senha de confirmação.';
-                        campoSenha?.focus();
-                        return;
-                    }
-
-                    campoSenha?.classList.remove('is-invalid');
-                    if (erroSenha) erroSenha.textContent = '';
-                    resolvido = true;
-                    modal.hide();
-                    resolve(senha);
-                };
-
-                document.getElementById('confirmarAcaoAdminProfor')?.addEventListener('click', confirmar);
-                document.getElementById('senhaAdminProfor')?.addEventListener('keydown', (event) => {
-                    if (event.key !== 'Enter') return;
-                    event.preventDefault();
-                    confirmar();
-                });
-
-                modalElement.addEventListener('hidden.bs.modal', () => {
-                    if (!resolvido) {
-                        resolve(null);
-                    }
-                    removerModalOnasp('modalSenhaAdminProfor');
-                });
-
-                modalElement.addEventListener('shown.bs.modal', () => {
-                    document.getElementById('senhaAdminProfor')?.focus();
-                });
-
-                modal.show();
-            });
-        }
-
         async function atualizarCacheDetruProfor2022UI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
@@ -551,14 +468,6 @@ function renderStatusBadge(status, options = {}) {
                 return { sucesso: false, cancelado: true };
             }
 
-            const password = await solicitarSenhaAdminProfor({
-                titulo: 'Atualizar cache DETRU',
-                descricao: 'Esta ação atualizará o cache DETRU a partir do arquivo configurado. Informe a senha de confirmação para prosseguir.',
-                acaoBotao: 'Confirmar e atualizar DETRU',
-                variante: 'primary'
-            });
-            if (!password) return { sucesso: false, cancelado: true };
-
             const botao = document.getElementById('btnAtualizarDetruProfor');
             if (botao) botao.disabled = true;
             mostrarMensagemDetruProfor2022('warning', 'Atualizando cache DETRU...');
@@ -567,7 +476,7 @@ function renderStatusBadge(status, options = {}) {
                 const { payload } = await fetchJsonApiOnasp('/api/profor-2022/detru/atualizar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
+                    body: JSON.stringify({})
                 });
 
                 if (!payload.success) {
@@ -1065,16 +974,6 @@ function renderStatusBadge(status, options = {}) {
                 return { sucesso: false, cancelado: true };
             }
 
-            const password = await solicitarSenhaAdminProfor({
-                titulo: 'Atualizar rendimentos Transferegov',
-                descricao: 'Esta ação consultará os rendimentos no Transferegov para os convênios monitorados. Informe a senha de confirmação para prosseguir.',
-                acaoBotao: 'Confirmar e atualizar rendimentos',
-                variante: 'primary'
-            });
-            if (!password) {
-                return { sucesso: false, cancelado: true };
-            }
-
             const botao = document.getElementById('btnAtualizarRendimentosProfor');
             if (botao) botao.disabled = true;
             mostrarMensagemConsolidadoProfor2022('warning', 'Atualizando rendimentos Transferegov...');
@@ -1083,7 +982,7 @@ function renderStatusBadge(status, options = {}) {
                 const { payload } = await fetchJsonApiOnasp('/api/profor-2022/rendimentos/atualizar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
+                    body: JSON.stringify({})
                 });
 
                 if (!payload.success) {
@@ -4907,14 +4806,6 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
-            const password = await solicitarSenhaAdminProfor({
-                titulo: 'Atualizar PADs no Transferegov',
-                descricao: 'A aplicação irá consultar o Transferegov, atualizar o cache local e reconstruir a visão operacional. Essa operação pode demorar alguns minutos. Informe a senha de confirmação para continuar.',
-                acaoBotao: 'Confirmar e atualizar PADs',
-                variante: 'primary'
-            });
-            if (!password) return;
-
             const btnPrincipal = document.getElementById('btn-atualizar-pads-transferegov');
             const btnRecarregar = document.getElementById('btn-recarregar-pads');
             const resultadoContainer = document.getElementById('recarga-pad-resultado');
@@ -4928,7 +4819,7 @@ async function carregarLogoParaPDF() {
                     {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ password })
+                        body: JSON.stringify({})
                     }
                 );
                 if (!resposta.ok && resposta.status !== 409) {
@@ -5015,14 +4906,6 @@ async function carregarLogoParaPDF() {
                 return;
             }
 
-            const password = await solicitarSenhaAdminProfor({
-                titulo: 'Recarregar visão operacional dos PADs',
-                descricao: 'Deseja recarregar a visão operacional dos PADs a partir do cache Transferegov validado? Esta ação não acessa o Transferegov em tempo real, não lê os Excel antigos e não publica dados. Informe a senha de confirmação para continuar.',
-                acaoBotao: 'Confirmar e recarregar',
-                variante: 'secondary'
-            });
-            if (!password) return;
-
             const btnRecarregar = document.getElementById('btn-recarregar-pads');
             const progresso = document.getElementById('recarga-pad-progresso');
             const resultadoContainer = document.getElementById('recarga-pad-resultado');
@@ -5035,7 +4918,7 @@ async function carregarLogoParaPDF() {
                 const { resposta, payload: responseBody } = await fetchJsonApiOnasp('/api/profor-2022/pad/recarregar-operacional', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password })
+                    body: JSON.stringify({})
                 });
 
                 const recarga = responseBody?.payload;
