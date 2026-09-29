@@ -48,17 +48,17 @@ Não reimplementar essas responsabilidades.
 - [x] Etapa 9 — APIs de leitura do histórico
 - [x] Etapa 10 — Tela Registros do PAD
 - [x] Etapa 11 — Botão Ver alterações e deep-link
-- [ ] Etapa 12 — Testes integrados e regressão
+- [x] Etapa 12 — Testes integrados e regressão
 - [ ] Etapa 13 — Auditoria final de arquitetura e diff
 - [ ] Etapa 14 — Documentação, handoff final e commit
 
 ## 6. Estado atual
 
-- Etapa atual: aguardando retomada da Etapa 12 após correção auditada.
-- Última etapa concluída: Etapa 11 — Botão Ver alterações e deep-link.
-- Próxima ação: auditoria externa deste commit; depois retomar a Etapa 12. Etapa 13 não iniciada.
-- Atualizado em: 2026-09-29 19:45:14 -03:00.
-- Branch: `main` (HEAD de entrada desta correção: `662643f92d2e77eecd730a1ca280988a1034dc39`).
+- Etapa atual: concluída — Etapa 12.
+- Última etapa concluída: Etapa 12 — Testes integrados e regressão.
+- Próxima etapa: Etapa 13 — Auditoria final de arquitetura e diff; não iniciada nesta execução.
+- Atualizado em: 2026-09-29 19:56:42 -03:00.
+- Branch: `main` (HEAD de entrada da Etapa 12: `61d6456edc5bfb8baaec4315f8ec5551329407a9`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; preservadas e não incluídas na Etapa 12.
 - Plano original presente na raiz; não alterado.
@@ -134,26 +134,18 @@ Não reimplementar essas responsabilidades.
 - Testes de regressão: frontend 13/13; API 10/10; job/orquestrador 14/14. `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
 - Backend alterado: não. Banco remoto acessado: não.
 
-### 6.8. Regressão integrada — Etapa 12 aberta
+### 6.8. Regressão integrada — Etapa 12 concluída
 
-- **Correção dirigida da Etapa 5:** o Set incorpora cada pendência material representada por `chaveItem`; repetidas não geram outra linha, e rateios reconstruídos legítimos permanecem.
-- **Correção dirigida das Etapas 3/4/7:** retry sequencial de `CONCLUIDA` retorna o resultado existente sem nova escrita. O repository limita conclusão e falha a `EM_EXECUCAO`; `CONCLUIDA` não vira `FALHOU` e `FALHOU` não vira `CONCLUIDA`.
-- Constraint única `(atualizacao_id, momento)` preservada; migration não alterada. Banco remoto não acessado.
-- Testes direcionados desta correção: histórico 37/37, repository 19/19, comparador 16/16, job/orquestrador 14/14. `node --check` (4 arquivos), `npm run validar:syntax` e `git diff --check` aprovados.
-- Etapa 12 permanece `[ ]`; retomada somente após auditoria externa do commit desta correção.
-- Os dois blocos temporários que reproduziram os defeitos foram removidos; nenhum teste deliberadamente vermelho ficou no diff.
-- Testes focados existentes: **257 pass / 5 fail / 6 skip**. Duas falhas de carregamento (classificação operacional e identidade material) decorrem de `better-sqlite3` compilado com ABI 147 versus Node v24.21.0/ABI 137. Três falhas não relacionadas à feature, em `profor-pad-origem-reconstrucao.test.js`, esperam 568 linhas e recebem 564 do relatório `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json`, já modificado antes desta etapa. Os 6 skips são testes de integração que exigem `DATABASE_URL`, mantida vazia para não acessar banco remoto.
-- `profor-pad-historico.test.js` após remover os blocos temporários: 31/31 aprovados. `npm run validar:syntax`: sucesso (110 arquivos). `git diff --check`: sucesso.
-- `npm run validar:services`: não executado porque os testes focados não ficaram verdes.
-- Inspeção estática de imutabilidade: sem `DELETE` automático; atualizações SQL identificadas limitam-se à tabela de execuções; snapshot usa constraint única por atualização/momento, que expõe o defeito de retry acima; alteração histórica usa `ON CONFLICT DO NOTHING`.
-- Playwright executado: não. Banco remoto acessado: não. Migration aplicada: não. Persistência real após restart: não validada nesta etapa.
+- Deduplicação por `chaveItem`, preservação dos rateios reconstruídos, retry sem novas escritas e transições terminais revalidados; os dois bloqueios corrigidos não reapareceram.
+- Suíte central (pass/fail/skip): histórico 37/0/0; repository 19/0/0; comparador 16/0/0; job/orquestrador 14/0/0; guard 27/0/0; API 10/0/0; frontend 13/0/0; fotografia 10/0/0.
+- Regressões PAD relacionadas: 117 pass / 5 fail / 6 skip. Duas falhas são do ABI `better-sqlite3` 147 versus Node 137; três são do relatório local preexistente com 564 linhas versus 568 esperadas. Os seis skips exigem `DATABASE_URL`.
+- `npm run validar:services` executado: 617 pass / 6 fail / 20 skip. As seis falhas são as mesmas cinco acima mais um terceiro teste afetado pelo mesmo ABI (`profor-saldo-residual-pareamento-44.test.js`); os skips dependem de `DATABASE_URL` ausente.
+- Nenhuma regressão da feature encontrada nas áreas cobertas. Inspeção dirigida: sem `DELETE` automático ou `UPDATE` de snapshot/alteração no repository; constraint única `(atualizacao_id, momento)` preservada; checksum não é chave única global.
+- `npm run validar:syntax`: sucesso (110 arquivos); `git diff --check`: sucesso. Alterações preexistentes preservadas, com hashes iguais após os testes.
+- Playwright: não executado. Banco remoto: não acessado. Migration aplicada: não. Persistência real após restart: não validada.
 
 ## 7. Arquivos alterados pela última etapa
 
-- `backend/services/profor-2022/profor-pad-historico-service.js`
-- `backend/services/profor-2022/profor-pad-historico-repository.js`
-- `tests/services/profor-pad-historico.test.js`
-- `tests/services/profor-pad-historico-repository.test.js`
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
 
 ## 8. Decisões que não devem ser rediscutidas
@@ -169,7 +161,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Aguardar auditoria externa do commit desta correção antes de retomar a Etapa 12.
+- Nenhum bloqueio da feature identificado na Etapa 12. As falhas ambientais e do relatório local preexistente permanecem fora do escopo desta etapa.
 
 ## 10. Instruções para o próximo agente
 
@@ -177,10 +169,10 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. auditar externamente o commit da correção dirigida das Etapas 5 e 3/4/7;
-5. ler somente a seção da Etapa 12 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-6. retomar a Etapa 12 somente após essa auditoria;
-7. não avançar para a Etapa 13 enquanto a Etapa 12 estiver aberta;
+4. ler somente a seção da Etapa 13 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar a auditoria final de arquitetura e diff em tarefa própria;
+6. considerar as limitações ambientais e de dados registradas em 6.8;
+7. não iniciar a Etapa 14 antes de concluir a Etapa 13;
 8. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
