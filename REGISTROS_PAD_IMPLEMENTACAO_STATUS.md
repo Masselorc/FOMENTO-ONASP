@@ -39,7 +39,7 @@ Não reimplementar essas responsabilidades.
 - [x] Etapa 0 — Preparação da execução
 - [x] Etapa 1 — Inspeção dirigida e confirmação da arquitetura
 - [x] Etapa 2 — Migration das tabelas de histórico
-- [ ] Etapa 3 — Repository de histórico
+- [x] Etapa 3 — Repository de histórico
 - [ ] Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS
 - [ ] Etapa 5 — Estado completo do snapshot
 - [ ] Etapa 6 — Memória de classificação e substitutos
@@ -54,11 +54,11 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapa 2.
-- Última etapa concluída: Etapa 2 — Migration das tabelas de histórico.
-- Próxima etapa: Etapa 3 — Repository de histórico.
-- Atualizado em: 2026-09-29 16:38:09 -03:00.
-- Branch: `main` (HEAD inicial da etapa: `9720424fac9fc347862828615a5a4c3784bb4042`).
+- Etapa atual: concluída — Etapa 3.
+- Última etapa concluída: Etapa 3 — Repository de histórico.
+- Próxima etapa: Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS.
+- Atualizado em: 2026-09-29 16:58:08 -03:00.
+- Branch: `main` (HEAD inicial da etapa: `a8cbe7deb542448393c9129156b9683a64d29537`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nesta etapa.
 - Plano original presente na raiz; não alterado.
@@ -88,10 +88,19 @@ Não reimplementar essas responsabilidades.
 - Validação: inspeção integral do SQL e checagem estrutural estática aprovada; `git diff --check` e `git diff --cached --check` sem erros. CLI Supabase indisponível; nenhum banco foi acessado.
 - Diferença operacional: `.gitignore` ignora `supabase/`; esta migration exigiu `git add -f` por pathspec, sem alterar o ignore.
 
+### 6.3. Repository criado na Etapa 3
+
+- `backend/services/profor-2022/profor-pad-historico-repository.js`: `criarAtualizacao`, `concluirAtualizacao`, `falharAtualizacao`, `inserirSnapshot`, `inserirAlteracoes`, `buscarAtualizacaoPorId`, `buscarAtualizacaoPorJobId`, `listarAtualizacoesPorMes`, `listarAtualizacoesPorData` e `buscarDetalheAtualizacao`.
+- Aceita executor/client transacional externo ou `postgresClient.query`; não abre transação nem conexão. Escritas usam parâmetros e alterações em lote, com conflito ignorado sem UPDATE.
+- Consultas mensal e por data usam `America/Sao_Paulo`; filtros de alteração usam `EXISTS`. Detalhe retorna metadados dos snapshots sem selecionar `snapshot_json`.
+- `tests/services/profor-pad-historico-repository.test.js`: 17 testes unitários aprovados com executor falso.
+- Validações: `node --check` nos dois arquivos, `node --test` direcionado e `npm run validar:syntax` aprovados; `git diff --check` sem erros. Banco remoto acessado: não.
+
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
-- `supabase/migrations/20260929163637_create_profor_2022_pad_historico.sql`
+- `backend/services/profor-2022/profor-pad-historico-repository.js`
+- `tests/services/profor-pad-historico-repository.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas
 
@@ -106,7 +115,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Nenhum bloqueio conhecido para iniciar a Etapa 3.
+- Nenhum bloqueio conhecido para iniciar a Etapa 4.
 
 ## 10. Instruções para o próximo agente
 
@@ -114,9 +123,9 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 3 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar somente a Etapa 3;
-6. não avançar para a Etapa 4;
+4. ler somente a seção da Etapa 4 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar somente a Etapa 4;
+6. não avançar para a Etapa 5;
 7. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
