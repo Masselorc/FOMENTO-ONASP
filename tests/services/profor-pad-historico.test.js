@@ -6,6 +6,8 @@ const repository = require("../../backend/services/profor-2022/profor-pad-histor
 const fotografia = require("../../backend/services/profor-2022/profor-pad-fotografia-service");
 const comparador = require("../../backend/services/profor-2022/profor-pad-comparador-snapshots-service");
 const historico = require("../../backend/services/profor-2022/profor-pad-historico-service");
+const carregador = require("../../backend/services/profor-2022/profor-pad-carregador-operacional-service");
+const orquestrador = require("../../backend/services/profor-2022/profor-pad-atualizacao-transferegov-orquestrador-service");
 
 const originais = {
   withTransaction: postgresClient.withTransaction,
@@ -14,11 +16,18 @@ const originais = {
   inserirAlteracoes: repository.inserirAlteracoes,
   concluirAtualizacao: repository.concluirAtualizacao,
   falharAtualizacao: repository.falharAtualizacao,
+  listarRateiosAtivosPorChavesItem: repository.listarRateiosAtivosPorChavesItem,
+  listarDivergenciasPorChavesItem: repository.listarDivergenciasPorChavesItem,
+  listarVinculosSubstitutoPorDivergenciasSubstitutas: repository.listarVinculosSubstitutoPorDivergenciasSubstitutas,
+  carregarPadsOperacional: carregador.carregarPadsOperacional,
+  atualizarPadsTransferegovEOperacional: orquestrador.atualizarPadsTransferegovEOperacional,
 };
 
 afterEach(() => {
   for (const [nome, funcao] of Object.entries(originais)) {
     if (nome === "withTransaction") postgresClient[nome] = funcao;
+    else if (nome === "carregarPadsOperacional") carregador[nome] = funcao;
+    else if (nome === "atualizarPadsTransferegovEOperacional") orquestrador[nome] = funcao;
     else repository[nome] = funcao;
   }
 });
@@ -58,6 +67,9 @@ function simularPersistencia({ falhaEm, falhaAoMarcar = false } = {}) {
   const alteracoes = [];
   let resumoFinal;
   const erroTransacao = new Error("Falha simulada na transação");
+  repository.listarRateiosAtivosPorChavesItem = async () => [];
+  repository.listarDivergenciasPorChavesItem = async () => [];
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [];
   postgresClient.withTransaction = async (callback) => {
     const client = { numero: clients.length + 1 };
     clients.push(client);
@@ -309,4 +321,111 @@ test("mensagem de falha remove segredos conhecidos e limita comprimento", async 
     if (anterior === undefined) delete process.env.PROFOR_ADMIN_TOKEN;
     else process.env.PROFOR_ADMIN_TOKEN = anterior;
   }
+});
+
+test("memória preserva classificação existente, inclusive grafia legada, e remoção", async () => {
+  const linha = notebook({ area: "ESCOLA PENAL" });
+  const material = fotografia.normalizarLinhaPadCanonica(linha).chaveMaterial;
+  repository.listarRateiosAtivosPorChavesItem = async () => [{ chaveItem: "pad-notebook", area: "ESCOLA PENAL", natureza: "CAPITAL" }];
+  repository.listarDivergenciasPorChavesItem = async () => [];
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [];
+  const original = [
+    { tipo: "NOVO", chaveItemNova: material, areaNova: "ESCOLA PENAL", naturezaNova: "CAPITAL", classificacaoEstado: "NAO_APLICAVEL" },
+    { tipo: "ALTERADO", chaveItemNova: material, areaAnterior: "ESCOLA PENAL", areaNova: "ESCOLA PENAL", classificacaoEstado: "NAO_APLICAVEL" },
+    { tipo: "REMOVIDO", areaAnterior: "ESCOLA PENAL", classificacaoEstado: "NAO_APLICAVEL" },
+  ];
+  const saida = await historico.enriquecerAlteracoesComClassificacao({ alteracoes: original, resultadoRecargaDepois: recarga([linha]) });
+  assert.deepEqual(saida.map((a) => a.classificacaoEstado), ["PRESERVADA", "PRESERVADA", "PRESERVADA"]);
+  assert.deepEqual(saida.map((a) => a.areaNova), ["ESCOLA_PENAL", "ESCOLA_PENAL", undefined]);
+  assert.equal(original[0].areaNova, "ESCOLA PENAL");
+});
+
+test("item sem classificação mantém revisão e herda somente vínculo inequívoco efetivo", async () => {
+  const linha = pendencia();
+  const plano = historico.montarPlanoCompletoParaHistorico(recarga([], [linha]));
+  const material = fotografia.normalizarLinhaPadCanonica(plano[0]).chaveMaterial;
+  const original = [{ tipo: "NOVO", chaveItemNova: material, areaNova: "NAO_CLASSIFICADO", naturezaNova: "CAPITAL", itemNovo: { area: "NAO_CLASSIFICADO" } }];
+  repository.listarRateiosAtivosPorChavesItem = async (chaves) => chaves.includes("pad-antigo")
+    ? [{ chaveItem: "pad-antigo", area: "OUVIDORIA", natureza: "CAPITAL" }] : [];
+  repository.listarDivergenciasPorChavesItem = async () => [{ id: 8, chaveItem: "pad-camera" }];
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [{
+    decisaoId: 9, divergenciaAusenteId: 7, divergenciaSubstitutaId: 8,
+    chaveItemAusente: "pad-antigo", decisao: "CORRIGIDO", statusDivergenciaAusente: "CORRIGIDO",
+    payload: { tipoSaneamento: "vinculo_item_substituto", divergenciaAusenteId: 7, divergenciaSubstitutaId: 8 },
+  }];
+  const entrada = { alteracoes: original, resultadoRecargaDepois: recarga([], [linha]) };
+  const [herdada] = await historico.enriquecerAlteracoesComClassificacao(entrada);
+  assert.equal(herdada.classificacaoEstado, "HERDADA_SUBSTITUTO");
+  assert.equal(herdada.areaNova, "OUVIDORIA");
+  assert.equal(herdada.revisaoDivergenciaId, 8);
+  assert.equal(herdada.decisaoSubstitutoId, 9);
+  assert.equal(herdada.itemNovo.area, "NAO_CLASSIFICADO");
+  assert.equal(original[0].areaNova, "NAO_CLASSIFICADO");
+
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [];
+  const [pendente] = await historico.enriquecerAlteracoesComClassificacao(entrada);
+  assert.equal(pendente.classificacaoEstado, "PENDENTE_REVISAO");
+  assert.equal(pendente.revisaoDivergenciaId, 8);
+  assert.equal(pendente.areaNova, "NAO_CLASSIFICADO");
+});
+
+test("vínculo revertido ou múltiplas áreas não herda classificação", async () => {
+  const linha = pendencia();
+  const material = fotografia.normalizarLinhaPadCanonica(
+    historico.montarPlanoCompletoParaHistorico(recarga([], [linha]))[0]
+  ).chaveMaterial;
+  repository.listarDivergenciasPorChavesItem = async () => [{ id: 8, chaveItem: "pad-camera" }];
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [{
+    decisaoId: 9, divergenciaAusenteId: 7, divergenciaSubstitutaId: 8,
+    chaveItemAusente: "pad-antigo", decisao: "CORRIGIDO", statusDivergenciaAusente: "REVERTIDO",
+    payload: { tipoSaneamento: "vinculo_item_substituto", divergenciaAusenteId: 7, divergenciaSubstitutaId: 8 },
+  }];
+  repository.listarRateiosAtivosPorChavesItem = async () => [{ chaveItem: "pad-antigo", area: "OUVIDORIA", natureza: "CAPITAL" }];
+  const entrada = { alteracoes: [{ tipo: "NOVO", chaveItemNova: material, areaNova: "NAO_CLASSIFICADO", naturezaNova: "CAPITAL" }], resultadoRecargaDepois: recarga([], [linha]) };
+  assert.equal((await historico.enriquecerAlteracoesComClassificacao(entrada))[0].classificacaoEstado, "PENDENTE_REVISAO");
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [{
+    decisaoId: 9, divergenciaAusenteId: 7, divergenciaSubstitutaId: 8,
+    chaveItemAusente: "pad-antigo", decisao: "CORRIGIDO", statusDivergenciaAusente: "CORRIGIDO",
+    payload: { tipoSaneamento: "vinculo_item_substituto", divergenciaAusenteId: 7, divergenciaSubstitutaId: 8 },
+  }];
+  repository.listarRateiosAtivosPorChavesItem = async () => [
+    { chaveItem: "pad-antigo", area: "OUVIDORIA", natureza: "CAPITAL" },
+    { chaveItem: "pad-antigo", area: "CORREGEDORIA", natureza: "CAPITAL" },
+  ];
+  assert.equal((await historico.enriquecerAlteracoesComClassificacao(entrada))[0].classificacaoEstado, "PENDENTE_REVISAO");
+});
+
+test("integração captura ANTES, usa a única recarga do orquestrador e conclui histórico", async () => {
+  const mock = simularPersistencia();
+  const eventos = [];
+  carregador.carregarPadsOperacional = async (opcoes) => {
+    assert.equal(opcoes.salvarRelatorio, false);
+    eventos.push("ANTES");
+    return { ...recarga(), sucesso: true };
+  };
+  orquestrador.atualizarPadsTransferegovEOperacional = async (opcoes) => {
+    eventos.push("ORQUESTRADOR");
+    assert.equal(opcoes.jobId, "job-1");
+    return { resultadoRecarga: recarga(), totalConveniosAtualizados: 1 };
+  };
+  const retorno = await historico.atualizarPadsTransferegovComHistorico({ jobId: "job-1", onProgress: (e) => eventos.push(e.etapa) });
+  assert.deepEqual(eventos, ["ANTES", "historico_antes_persistido", "ORQUESTRADOR", "historico_concluido"]);
+  assert.equal(retorno.registroPadId, 41);
+  assert.equal(retorno.resultadoHistorico, "SEM_ALTERACOES");
+  assert.equal(mock.snapshots.length, 2);
+});
+
+test("captura anterior insegura aborta sem histórico e sem Transferegov", async () => {
+  carregador.carregarPadsOperacional = async () => ({ ...recarga(), sucesso: false, totalImpedimentos: 1 });
+  orquestrador.atualizarPadsTransferegovEOperacional = async () => { throw new Error("não deveria executar"); };
+  await assert.rejects(historico.atualizarPadsTransferegovComHistorico(), /estado anterior/);
+});
+
+test("falha do orquestrador marca histórico FALHOU e relança erro", async () => {
+  const mock = simularPersistencia();
+  carregador.carregarPadsOperacional = async () => ({ ...recarga(), sucesso: true });
+  const erro = new Error("falha operacional");
+  orquestrador.atualizarPadsTransferegovEOperacional = async () => { throw erro; };
+  await assert.rejects(historico.atualizarPadsTransferegovComHistorico(), erro);
+  assert.deepEqual(mock.eventos, ["BEGIN", "CRIAR", "ANTES", "COMMIT", "FALHOU"]);
 });

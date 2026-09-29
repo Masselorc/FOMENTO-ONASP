@@ -42,8 +42,8 @@ Não reimplementar essas responsabilidades.
 - [x] Etapa 3 — Repository de histórico
 - [x] Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS
 - [x] Etapa 5 — Estado completo do snapshot
-- [ ] Etapa 6 — Memória de classificação e substitutos
-- [ ] Etapa 7 — Integração com o job Transferegov e atomicidade
+- [x] Etapa 6 — Memória de classificação e substitutos
+- [x] Etapa 7 — Integração com o job Transferegov e atomicidade
 - [ ] Etapa 8 — Remoção da senha local do PROFOR 2022
 - [ ] Etapa 9 — APIs de leitura do histórico
 - [ ] Etapa 10 — Tela Registros do PAD
@@ -54,11 +54,11 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapas 4 e 5.
-- Últimas etapas concluídas: Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS; Etapa 5 — Estado completo do snapshot.
-- Próxima etapa: Etapa 6 — Memória de classificação e substitutos.
-- Atualizado em: 2026-09-29 17:16:09 -03:00.
-- Branch: `main` (HEAD inicial destas etapas: `2c55fb02216f6d4b11dfc45cde783011f7740f94`).
+- Etapa atual: concluída — Etapas 6 e 7.
+- Últimas etapas concluídas: Etapa 6 — Memória de classificação e substitutos; Etapa 7 — Integração com o job Transferegov e atomicidade.
+- Próxima etapa: Etapa 8 — Remoção da senha local do PROFOR 2022.
+- Atualizado em: 2026-09-29 17:40:21 -03:00.
+- Branch: `main` (HEAD inicial destas etapas: `30dccc63ce542b3111ecffac757dbe150657cf4b`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nestas etapas.
 - Plano original presente na raiz; não alterado.
@@ -104,12 +104,23 @@ Não reimplementar essas responsabilidades.
 - Início transacional: execução + ANTES. Finalização transacional: DEPOIS + alterações + conclusão. Sem mudanças: execução e ambos os snapshots registrados com `SEM_ALTERACOES`.
 - Testes: histórico 21/21, comparador 16/16, repository 17/17; `node --check` e `npm run validar:syntax` aprovados. Banco remoto acessado: não.
 
+### 6.5. Memória de classificação e integração — Etapas 6 e 7
+
+- Consultas em lote e somente leitura recuperam rateios ativos, divergências e decisão efetiva de `vinculo_item_substituto`.
+- Alterações normalizadas recebem `PRESERVADA`, `PENDENTE_REVISAO` ou `HERDADA_SUBSTITUTO` por correspondência inequívoca; `ESCOLA PENAL` legada é normalizada. Snapshots e memória operacional não são reescritos.
+- Captura ANTES obrigatória precede o orquestrador original; a recarga já produzida por ele alimenta DEPOIS. Falha de finalização marca o registro FALHOU separadamente.
+- Job passa `jobId`, expõe `registroPadId` e `resultadoHistorico` no polling e mantém exclusividade e publicação estática posterior.
+- Validação local: 76 testes direcionados aprovados; `node --check` nos seis arquivos JS, `npm run validar:syntax` e `git diff --check` aprovados. Banco remoto e Transferegov real não acessados.
+
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
 - `backend/services/profor-2022/profor-pad-historico-service.js`
-- `backend/services/profor-2022/profor-pad-comparador-snapshots-service.js`
+- `backend/services/profor-2022/profor-pad-historico-repository.js`
+- `backend/services/profor-2022/profor-pad-atualizacao-transferegov-job-service.js`
 - `tests/services/profor-pad-historico.test.js`
+- `tests/services/profor-pad-historico-repository.test.js`
+- `tests/services/profor-pad-atualizacao-transferegov-orquestrador.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas
 
@@ -124,7 +135,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Nenhum bloqueio conhecido para iniciar a Etapa 6.
+- Nenhum bloqueio conhecido para iniciar a Etapa 8.
 
 ## 10. Instruções para o próximo agente
 
@@ -132,9 +143,9 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 6 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar somente a Etapa 6;
-6. não avançar para a Etapa 7;
+4. ler somente a seção da Etapa 8 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar somente a Etapa 8;
+6. não avançar para a Etapa 9;
 7. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa

@@ -2,6 +2,8 @@ const postgresClient = require("../../db/postgres-client");
 const historicoRepository = require("./profor-pad-historico-repository");
 const fotografiaService = require("./profor-pad-fotografia-service");
 const comparadorService = require("./profor-pad-comparador-snapshots-service");
+const carregadorOperacionalService = require("./profor-pad-carregador-operacional-service");
+const orquestradorTransferegovService = require("./profor-pad-atualizacao-transferegov-orquestrador-service");
 
 const TIPOS_PENDENCIA_MATERIAL = new Set([
   "item_novo_sem_rateio_memorizado",
@@ -178,6 +180,119 @@ function dadosSnapshot(atualizacaoId, momento, snapshot) {
   };
 }
 
+function areaOperacional(valor) {
+  const area = fotografiaService.normalizarTextoCanonico(valor);
+  const normalizada = area === "ESCOLA PENAL" ? "ESCOLA_PENAL" : area;
+  return ["OUVIDORIA", "CORREGEDORIA", "ESCOLA_PENAL"].includes(normalizada)
+    ? normalizada : null;
+}
+
+function naturezaCanonica(valor) {
+  return fotografiaService.normalizarTextoCanonico(valor);
+}
+
+function agruparPor(lista, chave) {
+  const grupos = new Map();
+  for (const item of lista) {
+    const id = item[chave];
+    if (!grupos.has(id)) grupos.set(id, []);
+    grupos.get(id).push(item);
+  }
+  return grupos;
+}
+
+async function enriquecerAlteracoesComClassificacao({ alteracoes, resultadoRecargaDepois }) {
+  if (!Array.isArray(alteracoes)) throw new TypeError("alteracoes deve ser um array.");
+  const linhas = montarPlanoCompletoParaHistorico(resultadoRecargaDepois);
+  const chavesPorMaterial = new Map();
+  for (const linha of linhas) {
+    if (!linha.chaveItem) continue;
+    const chaveMaterial = fotografiaService.normalizarLinhaPadCanonica(linha).chaveMaterial;
+    if (!chavesPorMaterial.has(chaveMaterial)) chavesPorMaterial.set(chaveMaterial, new Set());
+    chavesPorMaterial.get(chaveMaterial).add(linha.chaveItem);
+  }
+  const chaveOperacional = (chaveMaterial) => {
+    const candidatas = chavesPorMaterial.get(chaveMaterial);
+    return candidatas?.size === 1 ? [...candidatas][0] : null;
+  };
+
+  const chavesAtuais = [...new Set(alteracoes.map((alteracao) =>
+    chaveOperacional(alteracao.chaveItemNova)
+  ).filter(Boolean))];
+  const rateiosAtuais = agruparPor(
+    await historicoRepository.listarRateiosAtivosPorChavesItem(chavesAtuais), "chaveItem"
+  );
+  const chavesPendentes = [...new Set(alteracoes.filter((alteracao) =>
+    alteracao.areaNova === "NAO_CLASSIFICADO"
+  ).map((alteracao) => chaveOperacional(alteracao.chaveItemNova)).filter(Boolean))];
+  const divergencias = agruparPor(
+    await historicoRepository.listarDivergenciasPorChavesItem(chavesPendentes), "chaveItem"
+  );
+  const idsDivergencias = [...new Set([...divergencias.values()].flat().map((item) => item.id))];
+  const vinculos = agruparPor(
+    await historicoRepository.listarVinculosSubstitutoPorDivergenciasSubstitutas(idsDivergencias),
+    "divergenciaSubstitutaId"
+  );
+  const chavesAntigas = [...new Set([...vinculos.values()].flat().map((vinculo) =>
+    vinculo.chaveItemAusente
+  ).filter(Boolean))];
+  const rateiosAntigos = agruparPor(
+    await historicoRepository.listarRateiosAtivosPorChavesItem(chavesAntigas), "chaveItem"
+  );
+
+  return alteracoes.map((original) => {
+    const alteracao = { ...original };
+    const areaAnterior = areaOperacional(alteracao.areaAnterior);
+    const areaNova = areaOperacional(alteracao.areaNova);
+    if (areaAnterior) alteracao.areaAnterior = areaAnterior;
+    if (areaNova) alteracao.areaNova = areaNova;
+
+    if (alteracao.tipo === "REMOVIDO") {
+      if (areaAnterior) alteracao.classificacaoEstado = "PRESERVADA";
+      return alteracao;
+    }
+    if (alteracao.tipo === "ALTERADO" && areaAnterior && areaAnterior === areaNova) {
+      alteracao.classificacaoEstado = "PRESERVADA";
+      return alteracao;
+    }
+
+    const chaveAtual = chaveOperacional(alteracao.chaveItemNova);
+    if (areaNova && chaveAtual) {
+      const confirmou = (rateiosAtuais.get(chaveAtual) || []).some((rateio) =>
+        areaOperacional(rateio.area) === areaNova
+        && naturezaCanonica(rateio.natureza) === naturezaCanonica(alteracao.naturezaNova)
+      );
+      if (confirmou) alteracao.classificacaoEstado = "PRESERVADA";
+      return alteracao;
+    }
+    if (alteracao.areaNova !== "NAO_CLASSIFICADO") return alteracao;
+    alteracao.classificacaoEstado = "PENDENTE_REVISAO";
+    if (!chaveAtual) return alteracao;
+
+    const candidatas = divergencias.get(chaveAtual) || [];
+    if (candidatas.length !== 1) return alteracao;
+    const divergencia = candidatas[0];
+    alteracao.revisaoDivergenciaId = divergencia.id;
+    const vinculosEfetivos = (vinculos.get(divergencia.id) || []).filter((vinculo) =>
+      ["ACEITO", "CORRIGIDO", "APLICADO"].includes(vinculo.decisao)
+      && !["REJEITADO", "REVERTIDO"].includes(vinculo.statusDivergenciaAusente)
+      && vinculo.payload?.tipoSaneamento === "vinculo_item_substituto"
+      && Number(vinculo.divergenciaAusenteId) === Number(vinculo.payload.divergenciaAusenteId)
+      && Number(divergencia.id) === Number(vinculo.payload.divergenciaSubstitutaId)
+    );
+    if (vinculosEfetivos.length !== 1) return alteracao;
+    const vinculo = vinculosEfetivos[0];
+    const areas = new Set((rateiosAntigos.get(vinculo.chaveItemAusente) || [])
+      .filter((rateio) => naturezaCanonica(rateio.natureza) === naturezaCanonica(alteracao.naturezaNova))
+      .map((rateio) => areaOperacional(rateio.area)).filter(Boolean));
+    if (areas.size !== 1) return alteracao;
+    alteracao.areaNova = [...areas][0];
+    alteracao.classificacaoEstado = "HERDADA_SUBSTITUTO";
+    alteracao.decisaoSubstitutoId = vinculo.decisaoId;
+    return alteracao;
+  });
+}
+
 async function iniciarHistoricoPad({ jobId = null, resultadoRecargaAntes, origem = "TRANSFEREGOV", metadados = {} }) {
   if (!resultadoRecargaAntes) throw new TypeError("resultadoRecargaAntes é obrigatório.");
   const snapshotAntes = gerarSnapshotHistorico(resultadoRecargaAntes);
@@ -197,25 +312,27 @@ async function iniciarHistoricoPad({ jobId = null, resultadoRecargaAntes, origem
 
 async function finalizarHistoricoPad({ atualizacaoId, snapshotAntes, resultadoRecargaDepois, metadados = {} }) {
   if (!atualizacaoId) throw new TypeError("atualizacaoId é obrigatório.");
-  if (!snapshotAntes) throw new TypeError("snapshotAntes é obrigatório.");
-  if (!resultadoRecargaDepois) throw new TypeError("resultadoRecargaDepois é obrigatório.");
-  const snapshotDepois = gerarSnapshotHistorico(resultadoRecargaDepois);
-  const comparacao = comparadorService.compararSnapshotsPad(snapshotAntes, snapshotDepois, { modo: "historico" });
-  const alteracoes = normalizarAlteracoesComparador(comparacao, atualizacaoId);
-  const resumoFinal = montarResumoAtualizacaoHistorico({
-    snapshotAntes, snapshotDepois, comparacao, resultadoRecargaDepois,
-  });
-  resumoFinal.metadados = {
-    ...metadados,
-    checksumAntes: snapshotAntes.checksum,
-    checksumDepois: snapshotDepois.checksum,
-    checksumsValidos: comparacao.checksumsValidos,
-    modoComparador: comparacao.modo,
-    totalBloqueiosTecnicos: comparacao.bloqueiosTecnicos.length,
-    totalRuidosTecnicosControlados: comparacao.ruidosTecnicosControlados.length,
-  };
-
   try {
+    if (!snapshotAntes) throw new TypeError("snapshotAntes é obrigatório.");
+    if (!resultadoRecargaDepois) throw new TypeError("resultadoRecargaDepois é obrigatório.");
+    const snapshotDepois = gerarSnapshotHistorico(resultadoRecargaDepois);
+    const comparacao = comparadorService.compararSnapshotsPad(snapshotAntes, snapshotDepois, { modo: "historico" });
+    const alteracoesBase = normalizarAlteracoesComparador(comparacao, atualizacaoId);
+    const alteracoes = await enriquecerAlteracoesComClassificacao({
+      alteracoes: alteracoesBase, resultadoRecargaDepois,
+    });
+    const resumoFinal = montarResumoAtualizacaoHistorico({
+      snapshotAntes, snapshotDepois, comparacao, resultadoRecargaDepois,
+    });
+    resumoFinal.metadados = {
+      ...metadados,
+      checksumAntes: snapshotAntes.checksum,
+      checksumDepois: snapshotDepois.checksum,
+      checksumsValidos: comparacao.checksumsValidos,
+      modoComparador: comparacao.modo,
+      totalBloqueiosTecnicos: comparacao.bloqueiosTecnicos.length,
+      totalRuidosTecnicosControlados: comparacao.ruidosTecnicosControlados.length,
+    };
     const atualizacao = await postgresClient.withTransaction(async (client) => {
       await historicoRepository.inserirSnapshot(client, dadosSnapshot(atualizacaoId, "DEPOIS", snapshotDepois));
       await historicoRepository.inserirAlteracoes(client, alteracoes);
@@ -234,6 +351,59 @@ async function finalizarHistoricoPad({ atualizacaoId, snapshotAntes, resultadoRe
   }
 }
 
+async function atualizarPadsTransferegovComHistorico(opcoes = {}) {
+  const onProgress = typeof opcoes.onProgress === "function" ? opcoes.onProgress : () => {};
+  const emitir = (evento) => {
+    try { onProgress(evento); } catch (_) { /* progresso não interrompe a atualização */ }
+  };
+  const erroAntes = "Não foi possível capturar o estado anterior do PAD com segurança. A atualização foi interrompida antes de alterar a base operacional.";
+  let resultadoRecargaAntes;
+  try {
+    resultadoRecargaAntes = await carregadorOperacionalService.carregarPadsOperacional({
+      repoRoot: opcoes.repoRoot,
+      salvarRelatorio: false,
+      registrarLogOperacional: async () => {},
+    });
+    if (resultadoRecargaAntes?.sucesso !== true
+      || Number(resultadoRecargaAntes.totalImpedimentos || 0) > 0
+      || (resultadoRecargaAntes.impedimentos || []).length > 0) {
+      throw new Error(erroAntes);
+    }
+  } catch (_) {
+    throw new Error(erroAntes);
+  }
+
+  const { atualizacao, snapshotAntes } = await iniciarHistoricoPad({
+    jobId: opcoes.jobId ?? null,
+    resultadoRecargaAntes,
+    origem: "TRANSFEREGOV",
+    metadados: { jobId: opcoes.jobId ?? null },
+  });
+  emitir({ etapa: "historico_antes_persistido", fase: "historico", registroPadId: atualizacao.id });
+
+  let resumo;
+  try {
+    resumo = await orquestradorTransferegovService.atualizarPadsTransferegovEOperacional(opcoes);
+  } catch (erro) {
+    try {
+      await falharHistoricoPad({ atualizacaoId: atualizacao.id, erro, metadados: { jobId: opcoes.jobId ?? null } });
+    } catch (_) {
+      // Não substituir a falha operacional pelo erro do registro de falha.
+    }
+    throw erro;
+  }
+
+  const finalizacao = await finalizarHistoricoPad({
+    atualizacaoId: atualizacao.id,
+    snapshotAntes,
+    resultadoRecargaDepois: resumo.resultadoRecarga,
+    metadados: { jobId: opcoes.jobId ?? null },
+  });
+  const resultadoHistorico = finalizacao.atualizacao.resultado;
+  emitir({ etapa: "historico_concluido", fase: "historico", registroPadId: atualizacao.id, resultadoHistorico });
+  return { ...resumo, registroPadId: atualizacao.id, resultadoHistorico };
+}
+
 async function falharHistoricoPad({ atualizacaoId, erro, metadados = {} }) {
   if (!atualizacaoId) throw new TypeError("atualizacaoId é obrigatório.");
   let mensagemErro = erro?.message || String(erro || "Falha não especificada.");
@@ -250,7 +420,9 @@ module.exports = {
   gerarSnapshotHistorico,
   normalizarAlteracoesComparador,
   montarResumoAtualizacaoHistorico,
+  enriquecerAlteracoesComClassificacao,
   iniciarHistoricoPad,
   finalizarHistoricoPad,
   falharHistoricoPad,
+  atualizarPadsTransferegovComHistorico,
 };

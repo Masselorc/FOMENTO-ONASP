@@ -348,6 +348,96 @@ async function buscarDetalheAtualizacao(id, executor = null) {
   };
 }
 
+async function listarRateiosAtivosPorChavesItem(chavesItem, executor = null) {
+  if (!Array.isArray(chavesItem)) throw new TypeError("chavesItem deve ser um array.");
+  const chaves = [...new Set(chavesItem.filter(Boolean))];
+  if (!chaves.length) return [];
+  const exec = resolverExecutor(executor);
+  const result = await exec(
+    `SELECT id, item_conhecido_id, chave_item, area, natureza,
+       quantidade_referencia, valor_previsto_referencia, valor_executado_referencia,
+       percentual_quantidade, percentual_valor
+     FROM public.profor_2022_item_rateios
+     WHERE ativo = true AND chave_item = ANY($1::text[])
+     ORDER BY chave_item, id`,
+    [chaves]
+  );
+  return result.rows.map((linha) => ({
+    id: idNumero(linha.id),
+    itemConhecidoId: idNumero(linha.item_conhecido_id),
+    chaveItem: linha.chave_item,
+    area: linha.area,
+    natureza: linha.natureza,
+    quantidadeReferencia: linha.quantidade_referencia,
+    valorPrevistoReferencia: linha.valor_previsto_referencia,
+    valorExecutadoReferencia: linha.valor_executado_referencia,
+    percentualQuantidade: linha.percentual_quantidade,
+    percentualValor: linha.percentual_valor,
+  }));
+}
+
+async function listarDivergenciasPorChavesItem(chavesItem, executor = null) {
+  if (!Array.isArray(chavesItem)) throw new TypeError("chavesItem deve ser um array.");
+  const chaves = [...new Set(chavesItem.filter(Boolean))];
+  if (!chaves.length) return [];
+  const exec = resolverExecutor(executor);
+  const result = await exec(
+    `SELECT id, chave_divergencia, numero_convenio, uf, chave_item,
+       tipo_alerta, status, payload_json
+     FROM public.profor_2022_revisao_divergencias
+     WHERE chave_item = ANY($1::text[])
+     ORDER BY chave_item, id`,
+    [chaves]
+  );
+  return result.rows.map((linha) => ({
+    id: idNumero(linha.id),
+    chaveDivergencia: linha.chave_divergencia,
+    numeroConvenio: linha.numero_convenio,
+    uf: linha.uf,
+    chaveItem: linha.chave_item,
+    tipoAlerta: linha.tipo_alerta,
+    status: linha.status,
+    payload: lerJsonb(linha.payload_json),
+  }));
+}
+
+async function listarVinculosSubstitutoPorDivergenciasSubstitutas(ids, executor = null) {
+  if (!Array.isArray(ids)) throw new TypeError("ids deve ser um array.");
+  const idsTexto = [...new Set(ids.filter((id) => id != null).map(String))];
+  if (!idsTexto.length) return [];
+  const exec = resolverExecutor(executor);
+  const result = await exec(
+    `SELECT d.id AS decisao_id, d.divergencia_id AS divergencia_ausente_id,
+       d.decisao, d.payload_decisao_json, aus.chave_item AS chave_item_ausente,
+       aus.status AS status_divergencia_ausente
+     FROM public.profor_2022_revisao_decisoes d
+     JOIN public.profor_2022_revisao_divergencias aus ON aus.id = d.divergencia_id
+     WHERE d.id = (
+       SELECT MAX(ultima.id) FROM public.profor_2022_revisao_decisoes ultima
+       WHERE ultima.divergencia_id = d.divergencia_id
+     )
+       AND d.decisao IN ('ACEITO', 'CORRIGIDO', 'APLICADO')
+       AND aus.status IN ('ACEITO', 'CORRIGIDO', 'APLICADO')
+       AND d.payload_decisao_json->>'tipoSaneamento' = 'vinculo_item_substituto'
+       AND d.payload_decisao_json->>'divergenciaAusenteId' = d.divergencia_id::text
+       AND d.payload_decisao_json->>'divergenciaSubstitutaId' = ANY($1::text[])
+     ORDER BY d.id DESC`,
+    [idsTexto]
+  );
+  return result.rows.map((linha) => {
+    const payload = lerJsonb(linha.payload_decisao_json);
+    return {
+      decisaoId: idNumero(linha.decisao_id),
+      divergenciaAusenteId: idNumero(linha.divergencia_ausente_id),
+      divergenciaSubstitutaId: idNumero(payload.divergenciaSubstitutaId),
+      chaveItemAusente: linha.chave_item_ausente,
+      decisao: linha.decisao,
+      statusDivergenciaAusente: linha.status_divergencia_ausente,
+      payload,
+    };
+  });
+}
+
 module.exports = {
   criarAtualizacao,
   concluirAtualizacao,
@@ -359,4 +449,7 @@ module.exports = {
   listarAtualizacoesPorMes,
   listarAtualizacoesPorData,
   buscarDetalheAtualizacao,
+  listarRateiosAtivosPorChavesItem,
+  listarDivergenciasPorChavesItem,
+  listarVinculosSubstitutoPorDivergenciasSubstitutas,
 };

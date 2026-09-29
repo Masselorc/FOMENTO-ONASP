@@ -1,8 +1,8 @@
 const crypto = require("node:crypto");
 
 const {
-  atualizarPadsTransferegovEOperacional,
-} = require("./profor-pad-atualizacao-transferegov-orquestrador-service");
+  atualizarPadsTransferegovComHistorico,
+} = require("./profor-pad-historico-service");
 const {
   registrarLogOperacional,
 } = require("../logs-operacionais-service");
@@ -62,6 +62,8 @@ class GerenciadorAtualizacaoTransferegov {
       mensagemAtual: "Iniciando atualização dos PADs no Transferegov.",
       eventos: [],
       resultadoRecarga: null,
+      registroPadId: null,
+      resultadoHistorico: null,
       resultadoPublicacao: null,
       resumo: null,
       erro: null,
@@ -69,7 +71,7 @@ class GerenciadorAtualizacaoTransferegov {
     this.jobs.set(jobId, job);
     this.atualPorChave.set(chave, jobId);
 
-    const orquestrador = opcoes.orquestrador || atualizarPadsTransferegovEOperacional;
+    const orquestrador = opcoes.orquestrador || atualizarPadsTransferegovComHistorico;
     this._registrarLogSeguro({
       modulo: "profor-2022",
       tipoEvento: "profor_pad_transferegov_atualizacao_inicio",
@@ -87,6 +89,7 @@ class GerenciadorAtualizacaoTransferegov {
     Promise.resolve()
       .then(() => orquestrador({
         repoRoot: opcoes.repoRoot,
+        jobId,
         onProgress: (evento) => this._registrarEvento(jobId, evento),
         ...(opcoes.opcoesOrquestrador || {}),
       }))
@@ -104,6 +107,8 @@ class GerenciadorAtualizacaoTransferegov {
   _registrarEvento(jobId, evento) {
     const job = this.jobs.get(jobId);
     if (!job) return;
+    if (evento.registroPadId != null) job.registroPadId = evento.registroPadId;
+    if (evento.resultadoHistorico != null) job.resultadoHistorico = evento.resultadoHistorico;
     if (evento.fase) job.fase = evento.fase;
     if (Number.isFinite(evento.indice)) job.indiceAtual = evento.indice;
     if (Number.isFinite(evento.total)) job.totalConvenios = evento.total;
@@ -135,6 +140,8 @@ class GerenciadorAtualizacaoTransferegov {
     if (!job) return;
     job.resumo = resumo || null;
     job.resultadoRecarga = (resumo && resumo.resultadoRecarga) || null;
+    if (resumo?.registroPadId != null) job.registroPadId = resumo.registroPadId;
+    if (resumo?.resultadoHistorico != null) job.resultadoHistorico = resumo.resultadoHistorico;
   }
 
   async _publicarDadosEstaticos(jobId) {
@@ -164,6 +171,8 @@ class GerenciadorAtualizacaoTransferegov {
     job.atualizadoEm = job.concluidoEm;
     job.resumo = resumo || null;
     job.resultadoRecarga = (resumo && resumo.resultadoRecarga) || null;
+    if (resumo?.registroPadId != null) job.registroPadId = resumo.registroPadId;
+    if (resumo?.resultadoHistorico != null) job.resultadoHistorico = resumo.resultadoHistorico;
     job.resultadoPublicacao = (resumo && resumo.resultadoPublicacao) || null;
     this._registrarLogSeguro({
       modulo: "profor-2022",
@@ -216,6 +225,8 @@ class GerenciadorAtualizacaoTransferegov {
   _montarPayloadResumo(job, resumo = null, extras = {}) {
     return {
       jobId: job.jobId,
+      registroPadId: job.registroPadId,
+      resultadoHistorico: job.resultadoHistorico,
       totalConvenios: Number(job.totalConvenios || resumo?.totalConveniosAtualizados || 0),
       totalConveniosAtualizados: Number(resumo?.totalConveniosAtualizados || 0),
       totalAptosTecnicos: Number(resumo?.totalAptosTecnicos || 0),
@@ -242,6 +253,8 @@ class GerenciadorAtualizacaoTransferegov {
     if (!job) return null;
     return {
       jobId: job.jobId,
+      registroPadId: job.registroPadId,
+      resultadoHistorico: job.resultadoHistorico,
       status: job.status,
       fase: job.fase,
       indiceAtual: job.indiceAtual,

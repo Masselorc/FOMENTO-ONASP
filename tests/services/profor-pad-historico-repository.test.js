@@ -278,3 +278,33 @@ test("sem executor usa postgresClient.query sem exigir DATABASE_URL no teste", a
     postgresClient.query = original;
   }
 });
+
+test("memória consulta rateios ativos e divergências em lote por chave exata", async () => {
+  const executor = executorFake([
+    [{ id: "3", chave_item: "pad-1", area: "OUVIDORIA", natureza: "CAPITAL" }],
+    [{ id: "4", chave_item: "pad-2", status: "PENDENTE", payload_json: '{"a":1}' }],
+  ]);
+  const rateios = await repository.listarRateiosAtivosPorChavesItem(["pad-1", "pad-1"], executor);
+  const divergencias = await repository.listarDivergenciasPorChavesItem(["pad-2"], executor);
+  assert.deepEqual(executor.chamadas.map((c) => c.params), [[["pad-1"]], [["pad-2"]]]);
+  assert.match(executor.chamadas[0].sql, /ativo = true AND chave_item = ANY\(\$1::text\[\]\)/);
+  assert.match(executor.chamadas[1].sql, /chave_item = ANY\(\$1::text\[\]\)/);
+  assert.equal(rateios[0].area, "OUVIDORIA");
+  assert.equal(divergencias[0].id, 4);
+  assert.deepEqual(divergencias[0].payload, { a: 1 });
+});
+
+test("vínculos consultam apenas decisão mais recente, efetiva e explícita", async () => {
+  const executor = executorFake([[{
+    decisao_id: "9", divergencia_ausente_id: "7", decisao: "CORRIGIDO",
+    chave_item_ausente: "pad-antigo", status_divergencia_ausente: "CORRIGIDO",
+    payload_decisao_json: { tipoSaneamento: "vinculo_item_substituto", divergenciaAusenteId: 7, divergenciaSubstitutaId: 8 },
+  }]]);
+  const vinculos = await repository.listarVinculosSubstitutoPorDivergenciasSubstitutas([8, 8], executor);
+  assert.deepEqual(executor.chamadas[0].params, [["8"]]);
+  assert.match(executor.chamadas[0].sql, /SELECT MAX\(ultima\.id\)/);
+  assert.match(executor.chamadas[0].sql, /aus\.status IN \('ACEITO', 'CORRIGIDO', 'APLICADO'\)/);
+  assert.match(executor.chamadas[0].sql, /tipoSaneamento.*vinculo_item_substituto/);
+  assert.equal(vinculos[0].divergenciaSubstitutaId, 8);
+  assert.equal(vinculos[0].chaveItemAusente, "pad-antigo");
+});

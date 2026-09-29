@@ -271,6 +271,50 @@ test("gerenciador acumula eventos com fase, indice, total, convenio, status", as
   assert.equal(final.totalConvenios, 3);
 });
 
+test("job expõe registro e resultado do histórico sem alterar polling anterior", async () => {
+  const gerenciador = criarGerenciadorTeste();
+  const orquestrador = async ({ jobId, onProgress }) => {
+    assert.ok(jobId);
+    onProgress({ etapa: "historico_antes_persistido", fase: "historico", registroPadId: 45 });
+    assert.equal(gerenciador.publico(gerenciador.obter(jobId)).registroPadId, 45);
+    onProgress({ etapa: "historico_concluido", fase: "historico", registroPadId: 45, resultadoHistorico: "SEM_ALTERACOES" });
+    return { registroPadId: 45, resultadoHistorico: "SEM_ALTERACOES", resultadoRecarga: { origem: "cache_transferegov" } };
+  };
+  const { jobId, job } = gerenciador.iniciar({ orquestrador });
+  assert.equal(job.registroPadId, null);
+  assert.equal(job.resultadoHistorico, null);
+  await new Promise((r) => setTimeout(r, 30));
+  const final = gerenciador.publico(gerenciador.obter(jobId));
+  assert.equal(final.status, "concluido");
+  assert.equal(final.registroPadId, 45);
+  assert.equal(final.resultadoHistorico, "SEM_ALTERACOES");
+  assert.ok(final.resultadoRecarga);
+});
+
+test("falha de publicação preserva referência do histórico e permite novo job", async () => {
+  let publicacoes = 0;
+  const gerenciador = criarGerenciadorTeste({ publicarDadosEstaticos: async () => {
+    publicacoes += 1;
+    if (publicacoes === 1) throw new Error("publicação falhou");
+    return { success: true };
+  } });
+  const orquestrador = async ({ onProgress }) => {
+    onProgress({ etapa: "historico_antes_persistido", registroPadId: 46 });
+    return { registroPadId: 46, resultadoHistorico: "COM_ALTERACOES", resultadoRecarga: { origem: "cache_transferegov" } };
+  };
+  const primeiro = gerenciador.iniciar({ orquestrador });
+  await new Promise((r) => setTimeout(r, 30));
+  const falha = gerenciador.publico(gerenciador.obter(primeiro.jobId));
+  assert.equal(falha.status, "erro");
+  assert.equal(falha.registroPadId, 46);
+  assert.equal(falha.resultadoHistorico, "COM_ALTERACOES");
+  const segundo = gerenciador.iniciar({ orquestrador });
+  assert.equal(segundo.jaEstavaEmAndamento, false);
+  assert.notEqual(segundo.jobId, primeiro.jobId);
+  await new Promise((r) => setTimeout(r, 30));
+  assert.equal(gerenciador.obter(segundo.jobId).status, "concluido");
+});
+
 test("orquestrador nao altera frontend/data/publicados (smoke test de path)", async () => {
   const repoRoot = criarRepoRootTemporario();
   const dirPub = path.join(repoRoot, "frontend", "data", "publicados");
