@@ -358,7 +358,8 @@ function validarChecksum(snapshot, nome) {
   };
 }
 
-function compararSnapshotsPad(anterior, novo) {
+function compararSnapshotsPad(anterior, novo, opcoes = {}) {
+  const modo = opcoes.modo || "dry-run";
   const snapAnterior = obterSnapshot(anterior);
   const snapNovo = obterSnapshot(novo);
 
@@ -439,6 +440,8 @@ function compararSnapshotsPad(anterior, novo) {
       descricaoAnterior: par.anterior.descricaoOriginal ?? par.anterior.descricao,
       descricaoNova: par.novo.descricaoOriginal ?? par.novo.descricao,
       valores: diff.valores,
+      itemAnterior: par.anterior,
+      itemNovo: par.novo,
     };
     itensAlterados.push(divergencia);
     divergencias.push(divergencia);
@@ -459,6 +462,8 @@ function compararSnapshotsPad(anterior, novo) {
       natureza: item.natureza,
       descricaoNova: item.descricaoOriginal ?? item.descricao,
       item,
+      itemAnterior: null,
+      itemNovo: item,
     };
     divergencias.push(divergencia);
     registrarResumoDivergencia(resumo, divergencia);
@@ -479,6 +484,8 @@ function compararSnapshotsPad(anterior, novo) {
       natureza: item.natureza,
       descricaoAnterior: item.descricaoOriginal ?? item.descricao,
       item,
+      itemAnterior: item,
+      itemNovo: null,
     };
     divergencias.push(divergencia);
     registrarResumoDivergencia(resumo, divergencia);
@@ -514,7 +521,7 @@ function compararSnapshotsPad(anterior, novo) {
 
   return {
     geradoEm: new Date().toISOString(),
-    modo: "dry-run",
+    modo,
     versaoComparador: VERSAO_COMPARADOR,
     checksumAnterior: checksumAnterior.informado,
     checksumNovo: checksumNovo.informado,

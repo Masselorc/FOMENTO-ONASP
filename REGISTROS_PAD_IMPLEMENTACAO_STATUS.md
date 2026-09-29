@@ -40,8 +40,8 @@ Não reimplementar essas responsabilidades.
 - [x] Etapa 1 — Inspeção dirigida e confirmação da arquitetura
 - [x] Etapa 2 — Migration das tabelas de histórico
 - [x] Etapa 3 — Repository de histórico
-- [ ] Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS
-- [ ] Etapa 5 — Estado completo do snapshot
+- [x] Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS
+- [x] Etapa 5 — Estado completo do snapshot
 - [ ] Etapa 6 — Memória de classificação e substitutos
 - [ ] Etapa 7 — Integração com o job Transferegov e atomicidade
 - [ ] Etapa 8 — Remoção da senha local do PROFOR 2022
@@ -54,13 +54,13 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapa 3.
-- Última etapa concluída: Etapa 3 — Repository de histórico.
-- Próxima etapa: Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS.
-- Atualizado em: 2026-09-29 16:58:08 -03:00.
-- Branch: `main` (HEAD inicial da etapa: `a8cbe7deb542448393c9129156b9683a64d29537`).
+- Etapa atual: concluída — Etapas 4 e 5.
+- Últimas etapas concluídas: Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS; Etapa 5 — Estado completo do snapshot.
+- Próxima etapa: Etapa 6 — Memória de classificação e substitutos.
+- Atualizado em: 2026-09-29 17:16:09 -03:00.
+- Branch: `main` (HEAD inicial destas etapas: `2c55fb02216f6d4b11dfc45cde783011f7740f94`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
-- Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nesta etapa.
+- Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nestas etapas.
 - Plano original presente na raiz; não alterado.
 
 ### 6.1. Mapa confirmado na Etapa 1
@@ -96,11 +96,20 @@ Não reimplementar essas responsabilidades.
 - `tests/services/profor-pad-historico-repository.test.js`: 17 testes unitários aprovados com executor falso.
 - Validações: `node --check` nos dois arquivos, `node --test` direcionado e `npm run validar:syntax` aprovados; `git diff --check` sem erros. Banco remoto acessado: não.
 
+### 6.4. Serviço e snapshots completos — Etapas 4 e 5
+
+- `profor-pad-historico-service.js`: `montarPlanoCompletoParaHistorico`, `gerarSnapshotHistorico`, `normalizarAlteracoesComparador`, `montarResumoAtualizacaoHistorico`, `iniciarHistoricoPad`, `finalizarHistoricoPad`, `falharHistoricoPad`.
+- Comparador existente mantido: padrão `dry-run`, opção `historico`, `itemAnterior`/`itemNovo` aditivos; pareamento intacto.
+- Snapshot completo: linhas reconstruídas + `item_novo_sem_rateio_memorizado` e `item_pad_sem_rateio_memorizado`; área pendente `NAO_CLASSIFICADO`; deduplicação por `chaveItem`.
+- Início transacional: execução + ANTES. Finalização transacional: DEPOIS + alterações + conclusão. Sem mudanças: execução e ambos os snapshots registrados com `SEM_ALTERACOES`.
+- Testes: histórico 21/21, comparador 16/16, repository 17/17; `node --check` e `npm run validar:syntax` aprovados. Banco remoto acessado: não.
+
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
-- `backend/services/profor-2022/profor-pad-historico-repository.js`
-- `tests/services/profor-pad-historico-repository.test.js`
+- `backend/services/profor-2022/profor-pad-historico-service.js`
+- `backend/services/profor-2022/profor-pad-comparador-snapshots-service.js`
+- `tests/services/profor-pad-historico.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas
 
@@ -115,7 +124,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Nenhum bloqueio conhecido para iniciar a Etapa 4.
+- Nenhum bloqueio conhecido para iniciar a Etapa 6.
 
 ## 10. Instruções para o próximo agente
 
@@ -123,9 +132,9 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 4 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar somente a Etapa 4;
-6. não avançar para a Etapa 5;
+4. ler somente a seção da Etapa 6 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar somente a Etapa 6;
+6. não avançar para a Etapa 7;
 7. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
