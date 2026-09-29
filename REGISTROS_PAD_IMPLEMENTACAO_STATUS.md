@@ -49,18 +49,18 @@ Não reimplementar essas responsabilidades.
 - [x] Etapa 10 — Tela Registros do PAD
 - [x] Etapa 11 — Botão Ver alterações e deep-link
 - [x] Etapa 12 — Testes integrados e regressão
-- [ ] Etapa 13 — Auditoria final de arquitetura e diff
+- [x] Etapa 13 — Auditoria final de arquitetura e diff
 - [ ] Etapa 14 — Documentação, handoff final e commit
 
 ## 6. Estado atual
 
-- Etapa atual: correção A13-01 concluída; Etapa 13 aberta, aguardando auditoria externa.
-- Última etapa concluída: Etapa 12 — Testes integrados e regressão.
-- Próxima ação: auditoria externa do commit A13-01; depois regressão focada e retomada da Etapa 13. Etapa 14 não é a próxima ação.
-- Atualizado em: 2026-09-29 20:34:00 -03:00.
-- Branch: `main` (HEAD de entrada da correção A13-01: `b7298e066e2b584f6a44600e3c38d43499552b45`).
+- Etapa atual: concluída — Etapa 13.
+- Última etapa concluída: Etapa 13 — Auditoria final de arquitetura e diff.
+- Próxima etapa: Etapa 14 — Documentação, handoff final e commit; não executada nesta auditoria.
+- Atualizado em: 2026-09-29 20:44:37 -03:00.
+- Branch: `main` (HEAD de entrada da retomada: `690f19252c86369378c249eb281899af75a7cfd7`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
-- Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; preservadas e não incluídas na correção A13-01.
+- Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; preservadas e excluídas do commit desta auditoria.
 - Plano original presente na raiz; não alterado.
 
 ### 6.1. Mapa confirmado na Etapa 1
@@ -144,7 +144,24 @@ Não reimplementar essas responsabilidades.
 - `npm run validar:syntax`: sucesso (110 arquivos); `git diff --check`: sucesso. Alterações preexistentes preservadas, com hashes iguais após os testes.
 - Playwright: não executado. Banco remoto: não acessado. Migration aplicada: não. Persistência real após restart: não validada.
 
-### 6.9. Auditoria final — Etapa 13 aberta
+### 6.9. Auditoria final — Etapa 13 concluída
+
+**A13-01 — FECHADO**
+
+- Commit corretivo: `690f19252c86369378c249eb281899af75a7cfd7`; diff contra `b7298e066e2b584f6a44600e3c38d43499552b45` conferido após a regressão focada.
+- Regressão focada reexecutada (pass/fail/skip): carregador **18/0/0**; histórico **45/0/0**; comparador **16/0/0**; job/orquestrador **14/0/0**. Total: **93/0/0**.
+- Loader preserva os dados materiais originais dos dois tipos corrigidos; snapshot os representa como `NAO_CLASSIFICADO`, com natureza, quantidade, valores e saldo preservados. Deduplicação por chaveItem e rateios legítimos mantidos; nenhuma inferência de área ou aplicação de distribuição igual.
+- Arquitetura final: **APROVADA** no intervalo `9720424fac9fc347862828615a5a4c3784bb4042..690f19252c86369378c249eb281899af75a7cfd7`. Nenhum novo erro real ou caminho concreto de atualização sem registro histórico auditável identificado no fluxo inspecionado.
+- ANTES é gerado e persistido antes da mutação; falha nessa captura impede o orquestrador. DEPOIS inclui linhas reconstruídas e os quatro tipos de pendência material; snapshot, alterações e conclusão são gravados na mesma transação.
+- Comparador existente reutilizado; classificação enriquecida não modifica snapshots. Herança exige vínculo efetivo inequívoco; reversões e ambiguidades não atribuem área automaticamente.
+- Snapshots/alterações permanecem append-only, sem purge ou sobrescrita; unicidade por execução/momento, não por checksum. Estados terminais protegidos; retry de CONCLUIDA não abre transação nem grava. Exclusividade do job e referências jobId/registroPadId coerentes; falha posterior de publicação conserva o histórico.
+- Loopback usa socket; token e governança remotos preservados. APIs somente GET, com metadados/alterações sem snapshot integral e erros internos genéricos. Modo estático bloqueia entrada/consulta/deep-link; histórico e token não foram incluídos na publicação estática pelo diff auditado.
+- **568 × 564: LEGÍTIMO — ALTERAÇÃO DE PAD/RATEIO**, conclusão mantida sem repetir a auditoria 13.1.
+- Validações: `npm run validar:syntax` aprovado (110 arquivos); `git diff --check` sem erros. Suíte ampla não reexecutada; resultado anterior de 628 pass / 6 fail / 20 skip preservado com suas limitações.
+- Banco remoto: não acessado. Persistência real após restart: ainda não validada nesta auditoria. Nenhuma execução de migration, publicação, Transferegov ou Playwright.
+- Única alteração desta retomada: este status; código, testes, dados, plano e staged preexistentes preservados. Risco residual: validação de persistência limitada a fixtures/mocks e inspeção. Rollback documental, se autorizado: reverter somente o registro desta retomada; não alterar dados ou a correção A13-01. Etapa 14 não executada.
+
+**Registro histórico da correção (antes desta retomada):**
 
 **A13-01 — CORRIGIDO, AGUARDANDO AUDITORIA EXTERNA**
 
@@ -231,10 +248,6 @@ Todas as linhas abaixo são do convênio **937917 / RO**. A chave está completa
 
 ## 7. Arquivos alterados pela última etapa
 
-- `backend/services/profor-2022/profor-pad-carregador-operacional-service.js`
-- `backend/services/profor-2022/profor-pad-historico-service.js`
-- `tests/services/profor-pad-carregador-operacional.test.js`
-- `tests/services/profor-pad-historico.test.js`
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
 
 ## 8. Decisões que não devem ser rediscutidas
@@ -250,7 +263,7 @@ Todas as linhas abaixo são do convênio **937917 / RO**. A chave está completa
 
 ## 9. Pendências/bloqueios
 
-- A13-01 corrigido, aguardando auditoria externa do commit; Etapa 13 ainda não aprovada. Permanecem as limitações ambientais/dados de 6.8, sem nova regressão.
+- Nenhum bloqueio arquitetural identificado para a Etapa 14; A13-01 fechado. Permanecem as limitações ambientais/dados de 6.8 e a ausência de validação real após restart, sem nova regressão.
 
 ## 10. Instruções para o próximo agente
 
@@ -258,10 +271,10 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler a seção da Etapa 5 em `PLANO_REGISTROS_PAD_PROFOR_2022.md` e o achado A13-01 em 6.9;
-5. auditar externamente o commit da correção A13-01 em tarefa própria autorizada;
-6. preservar dados preexistentes e as limitações de 6.8; depois da auditoria externa, executar regressão focada e retomar Etapa 13 em tarefa autorizada;
-7. manter Etapas 13/14 abertas e não executar a Etapa 14;
+4. ler somente a seção da Etapa 14 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`, quando essa etapa for autorizada;
+5. considerar a Etapa 13 aprovada e A13-01 fechado conforme 6.9;
+6. preservar dados preexistentes, a conclusão legítima 568 × 564 e as limitações de validação registradas;
+7. executar a Etapa 14 somente em tarefa própria autorizada; não reabrir decisões encerradas;
 8. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
