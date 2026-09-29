@@ -38,7 +38,7 @@ Não reimplementar essas responsabilidades.
 
 - [x] Etapa 0 — Preparação da execução
 - [x] Etapa 1 — Inspeção dirigida e confirmação da arquitetura
-- [ ] Etapa 2 — Migration das tabelas de histórico
+- [x] Etapa 2 — Migration das tabelas de histórico
 - [ ] Etapa 3 — Repository de histórico
 - [ ] Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS
 - [ ] Etapa 5 — Estado completo do snapshot
@@ -54,11 +54,11 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapa 1.
-- Última etapa concluída: Etapa 1 — Inspeção dirigida e confirmação da arquitetura.
-- Próxima etapa: Etapa 2 — Migration das tabelas de histórico.
-- Atualizado em: 2026-09-29 16:15:31 -03:00.
-- Branch: `main` (HEAD inicial da etapa: `c67fb67515579f6105dfce0ed7bfc42555fd7244`).
+- Etapa atual: concluída — Etapa 2.
+- Última etapa concluída: Etapa 2 — Migration das tabelas de histórico.
+- Próxima etapa: Etapa 3 — Repository de histórico.
+- Atualizado em: 2026-09-29 16:38:09 -03:00.
+- Branch: `main` (HEAD inicial da etapa: `9720424fac9fc347862828615a5a4c3784bb4042`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nesta etapa.
 - Plano original presente na raiz; não alterado.
@@ -79,9 +79,19 @@ Não reimplementar essas responsabilidades.
 - Diferenças documentais: `AGENTS.md` e trechos históricos da memória ainda citam SQLite para PROFOR; o item 2.2 do plano e os módulos operacionais conferidos apontam PostgreSQL/Supabase via `DATABASE_URL`. A geração de snapshot atual recebe apenas o plano reconstruído com rateios; incluir itens pendentes/sem classificação continua sendo requisito da Etapa 5.
 - Resultado: mapa atual compatível com o plano; sem decisão arquitetural nova e sem bloqueio conhecido para iniciar a Etapa 2.
 
+### 6.2. Migration criada na Etapa 2
+
+- `supabase/migrations/20260929163637_create_profor_2022_pad_historico.sql`: define `public.profor_2022_pad_atualizacoes`, `public.profor_2022_pad_snapshots` e `public.profor_2022_pad_alteracoes`.
+- FKs incluídas: snapshots→atualizações e alterações→atualizações (`ON DELETE RESTRICT`); alterações→divergências e alterações→decisões (`ON DELETE SET NULL`). IDs das tabelas de revisão confirmados como `bigint` na migration vigente.
+- Índices: 10 explícitos (3 atualizações, 2 snapshots, 5 alterações); unicidade por `(atualizacao_id, momento)` e `(atualizacao_id, chave_alteracao)`, sem `UNIQUE(checksum)`.
+- RLS: habilitado nas três tabelas; nenhuma policy ou GRANT criada; `REVOKE ALL PRIVILEGES` de `anon` e `authenticated` incluído para cada tabela. Migration aplicada ao banco remoto: não.
+- Validação: inspeção integral do SQL e checagem estrutural estática aprovada; `git diff --check` e `git diff --cached --check` sem erros. CLI Supabase indisponível; nenhum banco foi acessado.
+- Diferença operacional: `.gitignore` ignora `supabase/`; esta migration exigiu `git add -f` por pathspec, sem alterar o ignore.
+
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
+- `supabase/migrations/20260929163637_create_profor_2022_pad_historico.sql`
 
 ## 8. Decisões que não devem ser rediscutidas
 
@@ -96,8 +106,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Nenhum bloqueio conhecido para iniciar a Etapa 2.
-- Na Etapa 2, conferir grants/RLS efetivos antes de definir acesso às novas tabelas.
+- Nenhum bloqueio conhecido para iniciar a Etapa 3.
 
 ## 10. Instruções para o próximo agente
 
@@ -105,9 +114,9 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 2 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar somente a Etapa 2;
-6. não avançar para a Etapa 3;
+4. ler somente a seção da Etapa 3 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar somente a Etapa 3;
+6. não avançar para a Etapa 4;
 7. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
