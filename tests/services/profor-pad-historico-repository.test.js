@@ -70,14 +70,16 @@ test("concluirAtualizacao força status, persiste resumo e limpa mensagem de err
   assert.equal(valorUpdate(chamada, "mensagem_erro"), null);
   assert.equal(valorUpdate(chamada, "metadados_json"), '{"origem":"teste"}');
   assert.match(chamada.sql, /atualizado_em = \$\d+/);
+  assert.match(chamada.sql, /WHERE id = \$\d+ AND status = 'EM_EXECUCAO' RETURNING \*/);
   assert.equal(chamada.params.at(-1), 9);
   assert.equal(resultado.id, 9);
   assert.equal(resultado.totalNovos, 2);
 });
 
-test("concluirAtualizacao retorna null quando o ID não existe", async () => {
+test("concluirAtualizacao não altera FALHOU: UPDATE guardado retorna null sem linha elegível", async () => {
   const executor = executorFake([[]]);
-  assert.equal(await repository.concluirAtualizacao(executor, 999, {}), null);
+  assert.equal(await repository.concluirAtualizacao(executor, 9, {}), null);
+  assert.match(executor.chamadas[0].sql, /WHERE id = \$\d+ AND status = 'EM_EXECUCAO' RETURNING \*/);
 });
 
 test("falharAtualizacao força FALHOU, resultado nulo e usa mensagem recebida", async () => {
@@ -93,12 +95,14 @@ test("falharAtualizacao força FALHOU, resultado nulo e usa mensagem recebida", 
   assert.equal(valorUpdate(chamada, "mensagem_erro"), "Falha segura.");
   assert.equal(valorUpdate(chamada, "metadados_json"), '{"fase":"extracao"}');
   assert.doesNotMatch(chamada.sql, /Falha segura|stack/);
+  assert.match(chamada.sql, /WHERE id = \$\d+ AND status = 'EM_EXECUCAO' RETURNING \*/);
   assert.equal(falha.mensagemErro, "Falha segura.");
 });
 
-test("falharAtualizacao retorna null quando o ID não existe", async () => {
+test("falharAtualizacao não altera CONCLUIDA: UPDATE guardado retorna null sem linha elegível", async () => {
   const executor = executorFake([[]]);
-  assert.equal(await repository.falharAtualizacao(executor, 999, { mensagemErro: "Falha segura." }), null);
+  assert.equal(await repository.falharAtualizacao(executor, 8, { mensagemErro: "Falha segura." }), null);
+  assert.match(executor.chamadas[0].sql, /WHERE id = \$\d+ AND status = 'EM_EXECUCAO' RETURNING \*/);
 });
 
 test("inserirSnapshot mantém checksum e envia JSONB sem upsert", async () => {

@@ -155,7 +155,7 @@ async function concluirAtualizacao(executor, id, dados = {}) {
   params.push(id);
   const sql = `UPDATE public.profor_2022_pad_atualizacoes
     SET ${campos.map(([coluna], indice) => `${coluna} = $${indice + 1}`).join(", ")}
-    WHERE id = $${params.length} RETURNING *`;
+    WHERE id = $${params.length} AND status = 'EM_EXECUCAO' RETURNING *`;
   const result = await exec(sql, params);
   return normalizarAtualizacao(result.rows[0]);
 }
@@ -174,7 +174,7 @@ async function falharAtualizacao(executor, id, dados = {}) {
   params.push(id);
   const sql = `UPDATE public.profor_2022_pad_atualizacoes
     SET ${campos.map(([coluna], indice) => `${coluna} = $${indice + 1}`).join(", ")}
-    WHERE id = $${params.length} RETURNING *`;
+    WHERE id = $${params.length} AND status = 'EM_EXECUCAO' RETURNING *`;
   const result = await exec(sql, params);
   return normalizarAtualizacao(result.rows[0]);
 }

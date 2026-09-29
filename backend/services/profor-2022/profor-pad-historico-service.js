@@ -50,6 +50,7 @@ function montarPlanoCompletoParaHistorico(resultadoRecarga) {
       valorPrevisto: pendencia.valorTotalPrevisto,
       valorExecutado: pendencia.valorTotalExecutado,
     });
+    chavesReconstruidas.add(pendencia.chaveItem);
   }
   return plano;
 }
@@ -312,6 +313,19 @@ async function iniciarHistoricoPad({ jobId = null, resultadoRecargaAntes, origem
 
 async function finalizarHistoricoPad({ atualizacaoId, snapshotAntes, resultadoRecargaDepois, metadados = {} }) {
   if (!atualizacaoId) throw new TypeError("atualizacaoId é obrigatório.");
+  const existente = await historicoRepository.buscarAtualizacaoPorId(atualizacaoId);
+  if (!existente) throw new Error("Atualização histórica não encontrada na finalização.");
+  if (existente.status === "CONCLUIDA") {
+    return { atualizacao: existente, snapshotDepois: null, comparacao: null, alteracoes: [], idempotente: true };
+  }
+  if (existente.status === "FALHOU") {
+    const erro = new Error("Atualização histórica já finalizada como FALHOU.");
+    erro.codigo = "historico_atualizacao_ja_falhou";
+    throw erro;
+  }
+  if (existente.status !== "EM_EXECUCAO") {
+    throw new Error(`Status inválido da atualização histórica: ${existente.status}.`);
+  }
   try {
     if (!snapshotAntes) throw new TypeError("snapshotAntes é obrigatório.");
     if (!resultadoRecargaDepois) throw new TypeError("resultadoRecargaDepois é obrigatório.");

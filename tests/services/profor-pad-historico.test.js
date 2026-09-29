@@ -16,6 +16,7 @@ const originais = {
   inserirAlteracoes: repository.inserirAlteracoes,
   concluirAtualizacao: repository.concluirAtualizacao,
   falharAtualizacao: repository.falharAtualizacao,
+  buscarAtualizacaoPorId: repository.buscarAtualizacaoPorId,
   listarRateiosAtivosPorChavesItem: repository.listarRateiosAtivosPorChavesItem,
   listarDivergenciasPorChavesItem: repository.listarDivergenciasPorChavesItem,
   listarVinculosSubstitutoPorDivergenciasSubstitutas: repository.listarVinculosSubstitutoPorDivergenciasSubstitutas,
@@ -60,16 +61,18 @@ function recarga(linhas = [notebook()], pendencias = []) {
   };
 }
 
-function simularPersistencia({ falhaEm, falhaAoMarcar = false } = {}) {
+function simularPersistencia({ falhaEm, falhaAoMarcar = false, statusInicial = "EM_EXECUCAO", resultadoInicial = null } = {}) {
   const eventos = [];
   const clients = [];
   const snapshots = [];
   const alteracoes = [];
   let resumoFinal;
+  let estado = { id: 41, status: statusInicial, resultado: resultadoInicial };
   const erroTransacao = new Error("Falha simulada na transação");
   repository.listarRateiosAtivosPorChavesItem = async () => [];
   repository.listarDivergenciasPorChavesItem = async () => [];
   repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [];
+  repository.buscarAtualizacaoPorId = async (id) => id === 41 ? { ...estado } : null;
   postgresClient.withTransaction = async (callback) => {
     const client = { numero: clients.length + 1 };
     clients.push(client);
@@ -87,7 +90,8 @@ function simularPersistencia({ falhaEm, falhaAoMarcar = false } = {}) {
     eventos.push("CRIAR");
     assert.equal(client, clients.at(-1));
     assert.equal(dados.status, "EM_EXECUCAO");
-    return { id: 41, ...dados };
+    estado = { id: 41, ...dados };
+    return { ...estado };
   };
   repository.inserirSnapshot = async (client, dados) => {
     eventos.push(dados.momento);
@@ -109,16 +113,19 @@ function simularPersistencia({ falhaEm, falhaAoMarcar = false } = {}) {
     assert.equal(id, 41);
     resumoFinal = dados;
     if (falhaEm === "CONCLUIR") throw erroTransacao;
-    return { id, ...dados };
+    estado = { ...estado, ...dados, status: "CONCLUIDA" };
+    return { ...estado };
   };
   repository.falharAtualizacao = async (executor, id, dados) => {
     eventos.push("FALHOU");
     assert.equal(executor, null);
     assert.equal(id, 41);
     if (falhaAoMarcar) throw new Error("Falha secundária");
-    return { id, ...dados, status: "FALHOU" };
+    if (estado.status !== "EM_EXECUCAO") return null;
+    estado = { ...estado, ...dados, status: "FALHOU", resultado: null };
+    return { ...estado };
   };
-  return { eventos, clients, snapshots, alteracoes, erroTransacao, get resumoFinal() { return resumoFinal; } };
+  return { eventos, clients, snapshots, alteracoes, erroTransacao, get resumoFinal() { return resumoFinal; }, get estado() { return estado; } };
 }
 
 test("estado completo inclui linhas reconstruídas e mantém novo array", () => {
@@ -153,6 +160,25 @@ test("deduplica pendência por chaveItem sem eliminar linhas de rateio", () => {
   const plano = historico.montarPlanoCompletoParaHistorico(recarga([
     notebook(), notebook({ area: "CORREGEDORIA" }),
   ], [pendencia({ chaveItem: "pad-notebook" })]));
+  assert.equal(plano.length, 2);
+});
+
+test("deduplica duas pendências materiais com a mesma chaveItem sem mutar a recarga", () => {
+  const origem = recarga([], [pendencia(), pendencia({ descricao: "Câmera repetida", valorTotalPrevisto: 200 })]);
+  const copia = structuredClone(origem);
+  const plano = historico.montarPlanoCompletoParaHistorico(origem);
+  assert.equal(plano.length, 1);
+  assert.equal(plano[0].chaveItem, "pad-camera");
+  assert.equal(plano[0].descricao, "Câmera nova");
+  assert.equal(plano[0].valorPrevisto, 100);
+  assert.equal(plano[0].area, "NAO_CLASSIFICADO");
+  assert.deepEqual(origem, copia);
+});
+
+test("pendência pad-camera não substitui linha reconstruída de mesma chave", () => {
+  const linhas = [notebook({ chaveItem: "pad-camera" }), notebook({ chaveItem: "pad-camera", area: "CORREGEDORIA" })];
+  const plano = historico.montarPlanoCompletoParaHistorico(recarga(linhas, [pendencia()]));
+  assert.deepEqual(plano, linhas);
   assert.equal(plano.length, 2);
 });
 
@@ -284,6 +310,56 @@ test("finalização usa um client para DEPOIS, alterações e conclusão em orde
   assert.equal(mock.alteracoes[0].tipo, "NOVO");
   assert.equal(retorno.atualizacao.resultado, "COM_ALTERACOES");
   assert.equal(mock.resumoFinal.metadados.modoComparador, "historico");
+});
+
+test("segunda finalização da mesma atualização é idempotente e não grava novamente", async () => {
+  const mock = simularPersistencia();
+  const entrada = {
+    atualizacaoId: 41,
+    snapshotAntes: historico.gerarSnapshotHistorico(recarga()),
+    resultadoRecargaDepois: recarga([notebook()], [pendencia()]),
+  };
+  const primeira = await historico.finalizarHistoricoPad(entrada);
+  const eventosPrimeira = [...mock.eventos];
+  const segunda = await historico.finalizarHistoricoPad(entrada);
+  assert.equal(primeira.atualizacao.status, "CONCLUIDA");
+  assert.equal(segunda.idempotente, true);
+  assert.equal(segunda.atualizacao.resultado, primeira.atualizacao.resultado);
+  assert.equal(segunda.snapshotDepois, null);
+  assert.equal(segunda.comparacao, null);
+  assert.deepEqual(segunda.alteracoes, []);
+  assert.deepEqual(mock.eventos, eventosPrimeira);
+  assert.equal(mock.clients.length, 1);
+  assert.equal(mock.snapshots.filter((snapshot) => snapshot.momento === "DEPOIS").length, 1);
+  assert.equal(mock.eventos.filter((evento) => evento === "ALTERACOES").length, 1);
+  assert.equal(mock.eventos.filter((evento) => evento === "CONCLUIR").length, 1);
+  assert.equal(mock.eventos.includes("FALHOU"), false);
+  assert.equal(mock.estado.status, "CONCLUIDA");
+});
+
+test("CONCLUIDA retorna o resultado existente sem escrita ou marcação de falha", async () => {
+  const mock = simularPersistencia({ statusInicial: "CONCLUIDA", resultadoInicial: "COM_ALTERACOES" });
+  const retorno = await historico.finalizarHistoricoPad({ atualizacaoId: 41 });
+  assert.equal(retorno.idempotente, true);
+  assert.equal(retorno.atualizacao.resultado, "COM_ALTERACOES");
+  assert.deepEqual(mock.eventos, []);
+  assert.equal(mock.estado.status, "CONCLUIDA");
+});
+
+test("FALHOU rejeita finalização sem nova transação ou mudança de estado", async () => {
+  const mock = simularPersistencia({ statusInicial: "FALHOU" });
+  await assert.rejects(historico.finalizarHistoricoPad({ atualizacaoId: 41 }),
+    (erro) => erro.codigo === "historico_atualizacao_ja_falhou");
+  assert.deepEqual(mock.eventos, []);
+  assert.equal(mock.estado.status, "FALHOU");
+});
+
+test("ID inexistente e status desconhecido rejeitam sem marcar FALHOU", async () => {
+  const mock = simularPersistencia({ statusInicial: "DESCONHECIDO" });
+  await assert.rejects(historico.finalizarHistoricoPad({ atualizacaoId: 42 }), /não encontrada/);
+  await assert.rejects(historico.finalizarHistoricoPad({ atualizacaoId: 41 }), /Status inválido/);
+  assert.deepEqual(mock.eventos, []);
+  assert.equal(mock.estado.status, "DESCONHECIDO");
 });
 
 test("falha final aciona rollback, marca FALHOU separadamente e relança erro original", async () => {

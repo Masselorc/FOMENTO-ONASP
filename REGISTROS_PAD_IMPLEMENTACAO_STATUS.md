@@ -54,11 +54,11 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: bloqueada — Etapa 12, por defeitos reais reproduzidos.
+- Etapa atual: aguardando retomada da Etapa 12 após correção auditada.
 - Última etapa concluída: Etapa 11 — Botão Ver alterações e deep-link.
-- Próxima ação: correção dirigida das Etapas 5 e 3/4/7; depois retomar a Etapa 12. Etapa 13 não iniciada.
-- Atualizado em: 2026-09-29 19:34:22 -03:00.
-- Branch: `main` (HEAD de entrada: `8959c6e1c7cd51115f8ad632f67b64394c1b815b`).
+- Próxima ação: auditoria externa deste commit; depois retomar a Etapa 12. Etapa 13 não iniciada.
+- Atualizado em: 2026-09-29 19:45:14 -03:00.
+- Branch: `main` (HEAD de entrada desta correção: `662643f92d2e77eecd730a1ca280988a1034dc39`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; preservadas e não incluídas na Etapa 12.
 - Plano original presente na raiz; não alterado.
@@ -134,10 +134,13 @@ Não reimplementar essas responsabilidades.
 - Testes de regressão: frontend 13/13; API 10/10; job/orquestrador 14/14. `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
 - Backend alterado: não. Banco remoto acessado: não.
 
-### 6.8. Regressão integrada — Etapa 12 BLOQUEADA
+### 6.8. Regressão integrada — Etapa 12 aberta
 
-- **Erro real — snapshot completo (Etapa 5):** duas pendências materiais com a mesma `chaveItem` geraram duas linhas (esperado: uma). Evidência: teste defensivo temporário falhou com `2 !== 1`. Correção futura provável: `backend/services/profor-2022/profor-pad-historico-service.js`.
-- **Erro real — retry/idempotência (Etapas 3/4/7):** repetir a finalização da mesma atualização atingiu a constraint `uq_profor_2022_pad_snapshot_momento` ao inserir `DEPOIS`; o tratamento subsequente atualizou a execução concluída para `FALHOU`. Evidência: teste temporário de finalização repetida observou violação única, `FALHOU` e somente um snapshot `DEPOIS`. Correção futura provável: `backend/services/profor-2022/profor-pad-historico-repository.js` e `backend/services/profor-2022/profor-pad-historico-service.js`.
+- **Correção dirigida da Etapa 5:** o Set incorpora cada pendência material representada por `chaveItem`; repetidas não geram outra linha, e rateios reconstruídos legítimos permanecem.
+- **Correção dirigida das Etapas 3/4/7:** retry sequencial de `CONCLUIDA` retorna o resultado existente sem nova escrita. O repository limita conclusão e falha a `EM_EXECUCAO`; `CONCLUIDA` não vira `FALHOU` e `FALHOU` não vira `CONCLUIDA`.
+- Constraint única `(atualizacao_id, momento)` preservada; migration não alterada. Banco remoto não acessado.
+- Testes direcionados desta correção: histórico 37/37, repository 19/19, comparador 16/16, job/orquestrador 14/14. `node --check` (4 arquivos), `npm run validar:syntax` e `git diff --check` aprovados.
+- Etapa 12 permanece `[ ]`; retomada somente após auditoria externa do commit desta correção.
 - Os dois blocos temporários que reproduziram os defeitos foram removidos; nenhum teste deliberadamente vermelho ficou no diff.
 - Testes focados existentes: **257 pass / 5 fail / 6 skip**. Duas falhas de carregamento (classificação operacional e identidade material) decorrem de `better-sqlite3` compilado com ABI 147 versus Node v24.21.0/ABI 137. Três falhas não relacionadas à feature, em `profor-pad-origem-reconstrucao.test.js`, esperam 568 linhas e recebem 564 do relatório `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json`, já modificado antes desta etapa. Os 6 skips são testes de integração que exigem `DATABASE_URL`, mantida vazia para não acessar banco remoto.
 - `profor-pad-historico.test.js` após remover os blocos temporários: 31/31 aprovados. `npm run validar:syntax`: sucesso (110 arquivos). `git diff --check`: sucesso.
@@ -147,6 +150,10 @@ Não reimplementar essas responsabilidades.
 
 ## 7. Arquivos alterados pela última etapa
 
+- `backend/services/profor-2022/profor-pad-historico-service.js`
+- `backend/services/profor-2022/profor-pad-historico-repository.js`
+- `tests/services/profor-pad-historico.test.js`
+- `tests/services/profor-pad-historico-repository.test.js`
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
 
 ## 8. Decisões que não devem ser rediscutidas
@@ -162,7 +169,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Etapa 12 bloqueada pelos dois erros reais descritos em 6.8. Corrigir os módulos de origem antes de retomar a validação integrada.
+- Aguardar auditoria externa do commit desta correção antes de retomar a Etapa 12.
 
 ## 10. Instruções para o próximo agente
 
@@ -170,10 +177,10 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. corrigir de forma dirigida a deduplicação de pendências da Etapa 5 e a idempotência das Etapas 3/4/7;
-5. ler somente as seções necessárias das etapas responsáveis e da Etapa 12 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-6. retomar e concluir a Etapa 12 após as correções;
-7. não avançar para a Etapa 13 enquanto a Etapa 12 estiver bloqueada;
+4. auditar externamente o commit da correção dirigida das Etapas 5 e 3/4/7;
+5. ler somente a seção da Etapa 12 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+6. retomar a Etapa 12 somente após essa auditoria;
+7. não avançar para a Etapa 13 enquanto a Etapa 12 estiver aberta;
 8. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
