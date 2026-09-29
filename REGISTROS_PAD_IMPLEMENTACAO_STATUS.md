@@ -8,14 +8,14 @@ da memória de classificação e nova tela “Registros do PAD”.
 
 ## 2. Fonte de verdade
 
-Especificação completa: `PLANO_REGISTROS_PAD_PROFOR_2022.md` localizado na raiz do repositório.
+Especificação completa: `PLANO_REGISTROS_PAD_PROFOR_2022.md` na raiz.
 
 > Em caso de dúvida, consultar o plano. Este arquivo de status não substitui a especificação completa.
 
 ## 3. Escopo fixado
 
 - Recurso exclusivo do PAD do PROFOR 2022, em tela própria dentro do módulo.
-- Histórico permanente e imutável, inclusive para atualizações sem mudanças.
+- Histórico permanente e imutável, inclusive para atualização sem mudanças.
 - Comparação ANTES × DEPOIS.
 - Preservar classificação Ouvidoria / Corregedoria / Escola.
 - Correspondências inequívocas podem herdar classificação; ambiguidades seguem para revisão humana.
@@ -37,7 +37,7 @@ Não reimplementar essas responsabilidades.
 ## 5. Etapas
 
 - [x] Etapa 0 — Preparação da execução
-- [ ] Etapa 1 — Inspeção dirigida e confirmação da arquitetura
+- [x] Etapa 1 — Inspeção dirigida e confirmação da arquitetura
 - [ ] Etapa 2 — Migration das tabelas de histórico
 - [ ] Etapa 3 — Repository de histórico
 - [ ] Etapa 4 — Serviço de histórico e snapshots ANTES/DEPOIS
@@ -54,14 +54,30 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapa 0.
-- Última etapa concluída: Etapa 0 — Preparação da execução.
-- Próxima etapa: Etapa 1 — Inspeção dirigida e confirmação da arquitetura.
-- Atualizado em: 2026-09-29 16:00:02 -03:00.
-- Branch: `main`.
-- Working tree: com alterações preexistentes staged e unstaged, preservadas.
-- Há alterações preexistentes em dados/cache, relatórios e JSONs publicados, além de um script staged; nenhum desses arquivos foi alterado nesta etapa.
-- O plano original permanece intacto na raiz do repositório.
+- Etapa atual: concluída — Etapa 1.
+- Última etapa concluída: Etapa 1 — Inspeção dirigida e confirmação da arquitetura.
+- Próxima etapa: Etapa 2 — Migration das tabelas de histórico.
+- Atualizado em: 2026-09-29 16:15:31 -03:00.
+- Branch: `main` (HEAD inicial da etapa: `c67fb67515579f6105dfce0ed7bfc42555fd7244`).
+- Working tree: com alterações preexistentes staged e unstaged; preservadas.
+- Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nesta etapa.
+- Plano original presente na raiz; não alterado.
+
+### 6.1. Mapa confirmado na Etapa 1
+
+- Migrations: `supabase/migrations/`, nomes com timestamp `YYYYMMDDHHMMSS_descricao.sql`; schema `public`, IDs identity, timestamps `timestamptz`, FKs e índices. RLS está habilitado nas tabelas PROFOR; nenhuma `CREATE POLICY` apareceu nas migrations inspecionadas. A próxima etapa deve manter acesso pelo backend/Postgres e conferir os grants efetivos.
+- Banco: `backend/db/postgres-client.js` expõe `query(text, params)` e `withTransaction(callback)` (BEGIN/COMMIT; ROLLBACK em erro); `preparar-banco.js` exige `DATABASE_URL`, verifica `parametros_minimos` e não cria schema.
+- Snapshot: reutilizar `gerarFotografiaCanonica`, `calcularHashItem` e `calcularChecksumSnapshot`; versões atuais `0.2` e parser `profor-pad-fotografia-service@0.2`.
+- Comparador: reutilizar `compararSnapshotsPad`; versão `0.3`; retorna `itensIguais`, `itensNovos`, `itensAusentes`/`itensRemovidos`, `itensAlterados`, divergências e `modo: "dry-run"`.
+- Memória/revisão: loader `carregarPadsOperacional` usa itens conhecidos e `profor_2022_item_rateios`; sem rateio, itens vão a `pendenciasRevisao`; decisões usam `profor_2022_revisao_decisoes.payload_decisao_json` via repository existente.
+- Áreas normalizadas: `OUVIDORIA`, `CORREGEDORIA`, `ESCOLA_PENAL`, `N/A`, `NAO_CLASSIFICADO`. Compatibilidade legada/UI também usa `ESCOLA PENAL` e rótulo “Não classificado”.
+- Substitutos: `vinculo_item_substituto` é registrado no payload da decisão, com `aplicadaAoPlano: false`; é referência de auditoria/revisão, não alteração automática do plano.
+- Job/orquestrador: `GerenciadorAtualizacaoTransferegov.iniciar()` cria `jobId` e mantém exclusividade global. O orquestrador valida e salva o cache antes de chamar `carregarPadsOperacional`; o job publica dados estáticos após o orquestrador. `jobId` ainda não é passado ao orquestrador.
+- Integração futura: ANTES precisa ser capturado antes de `salvar(cache)`; DEPOIS após a recarga operacional. Considerar que falha na publicação pode ocorrer após cache/recarga bem-sucedidos.
+- Rotas/UI: POST `/api/profor-2022/pad/atualizar-transferegov`; status GET `/api/profor-2022/pad/atualizar-transferegov/status/:jobId`; blocos relacionados ficam no PROFOR de `backend/server.js` e `renderProfor2022View` em `frontend/js/app.js`. Fluxo atual tem senha local e proteção de chamada remota; preservar modo estático somente leitura.
+- Testes relacionados existentes: fotografia, comparador de snapshots, orquestrador, loader operacional, matching, revisão e auditoria de substituto em `tests/services/`. Nenhum teste foi executado nesta etapa.
+- Diferenças documentais: `AGENTS.md` e trechos históricos da memória ainda citam SQLite para PROFOR; o item 2.2 do plano e os módulos operacionais conferidos apontam PostgreSQL/Supabase via `DATABASE_URL`. A geração de snapshot atual recebe apenas o plano reconstruído com rateios; incluir itens pendentes/sem classificação continua sendo requisito da Etapa 5.
+- Resultado: mapa atual compatível com o plano; sem decisão arquitetural nova e sem bloqueio conhecido para iniciar a Etapa 2.
 
 ## 7. Arquivos alterados pela última etapa
 
@@ -80,7 +96,8 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Nenhum bloqueio conhecido para iniciar a Etapa 1.
+- Nenhum bloqueio conhecido para iniciar a Etapa 2.
+- Na Etapa 2, conferir grants/RLS efetivos antes de definir acesso às novas tabelas.
 
 ## 10. Instruções para o próximo agente
 
@@ -88,13 +105,11 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 1 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar a inspeção dirigida prevista;
-6. não avançar para a Etapa 2;
+4. ler somente a seção da Etapa 2 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar somente a Etapa 2;
+6. não avançar para a Etapa 3;
 7. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
 
-Uma etapa somente é considerada concluída após validação local, commit exclusivo da etapa e push para o repositório remoto. O SHA do commit deve ser informado para auditoria externa antes do início da etapa seguinte.
-
-
+Uma etapa somente é considerada concluída após validação local, commit exclusivo da etapa e push para o repositório remoto. O SHA do commit deve ser informado para auditoria antes da etapa seguinte.
