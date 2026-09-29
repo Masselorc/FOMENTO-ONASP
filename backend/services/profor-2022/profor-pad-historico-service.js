@@ -384,6 +384,14 @@ async function atualizarPadsTransferegovComHistorico(opcoes = {}) {
   let resumo;
   try {
     resumo = await orquestradorTransferegovService.atualizarPadsTransferegovEOperacional(opcoes);
+    const resultadoRecargaDepois = resumo?.resultadoRecarga;
+    if (!resultadoRecargaDepois
+      || resultadoRecargaDepois.sucesso !== true
+      || Number(resultadoRecargaDepois.totalImpedimentos || 0) !== 0
+      || (resultadoRecargaDepois.impedimentos || []).length !== 0
+      || !Array.isArray(resultadoRecargaDepois.planoAplicacaoReconstruido)) {
+      throw new Error("Recarga operacional posterior à atualização do Transferegov falhou. O histórico foi marcado como falho e o estado retornado não foi utilizado como snapshot DEPOIS.");
+    }
   } catch (erro) {
     try {
       await falharHistoricoPad({ atualizacaoId: atualizacao.id, erro, metadados: { jobId: opcoes.jobId ?? null } });

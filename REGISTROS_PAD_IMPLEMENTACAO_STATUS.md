@@ -54,10 +54,10 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapas 6 e 7.
-- Últimas etapas concluídas: Etapa 6 — Memória de classificação e substitutos; Etapa 7 — Integração com o job Transferegov e atomicidade.
+- Etapa atual: concluída — correção dirigida da Etapa 7.
+- Últimas etapas concluídas: Etapa 6 — Memória de classificação e substitutos; Etapa 7 — Integração com o job Transferegov e atomicidade, corrigida.
 - Próxima etapa: Etapa 8 — Remoção da senha local do PROFOR 2022.
-- Atualizado em: 2026-09-29 17:40:21 -03:00.
+- Atualizado em: 2026-09-29 17:52:05 -03:00.
 - Branch: `main` (HEAD inicial destas etapas: `30dccc63ce542b3111ecffac757dbe150657cf4b`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nestas etapas.
@@ -111,16 +111,14 @@ Não reimplementar essas responsabilidades.
 - Captura ANTES obrigatória precede o orquestrador original; a recarga já produzida por ele alimenta DEPOIS. Falha de finalização marca o registro FALHOU separadamente.
 - Job passa `jobId`, expõe `registroPadId` e `resultadoHistorico` no polling e mantém exclusividade e publicação estática posterior.
 - Validação local: 76 testes direcionados aprovados; `node --check` nos seis arquivos JS, `npm run validar:syntax` e `git diff --check` aprovados. Banco remoto e Transferegov real não acessados.
+- Correção dirigida da Etapa 7: recarga operacional DEPOIS validada antes da finalização; `sucesso=false`, impedimentos ou resultado ausente geram FALHOU. Estado inválido nunca vira snapshot DEPOIS.
+- Regressão da correção: 80 testes direcionados aprovados, inclusive recarga falha/ausente e classificação inequívoca; `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
 
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
 - `backend/services/profor-2022/profor-pad-historico-service.js`
-- `backend/services/profor-2022/profor-pad-historico-repository.js`
-- `backend/services/profor-2022/profor-pad-atualizacao-transferegov-job-service.js`
 - `tests/services/profor-pad-historico.test.js`
-- `tests/services/profor-pad-historico-repository.test.js`
-- `tests/services/profor-pad-atualizacao-transferegov-orquestrador.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas
 

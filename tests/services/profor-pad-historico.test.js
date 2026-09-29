@@ -340,6 +340,26 @@ test("memória preserva classificação existente, inclusive grafia legada, e re
   assert.equal(original[0].areaNova, "ESCOLA PENAL");
 });
 
+test("memória preserva OUVIDORIA e CORREGEDORIA com rateio ativo exato", async () => {
+  const linhas = [notebook({ area: "OUVIDORIA" }), notebook({ area: "CORREGEDORIA" })];
+  const material = fotografia.normalizarLinhaPadCanonica(linhas[0]).chaveMaterial;
+  repository.listarRateiosAtivosPorChavesItem = async () => [
+    { chaveItem: "pad-notebook", area: "OUVIDORIA", natureza: "CAPITAL" },
+    { chaveItem: "pad-notebook", area: "CORREGEDORIA", natureza: "CAPITAL" },
+  ];
+  repository.listarDivergenciasPorChavesItem = async () => [];
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [];
+  const alteracoes = ["OUVIDORIA", "CORREGEDORIA"].map((area) => ({
+    tipo: "NOVO", chaveItemNova: material, areaNova: area, naturezaNova: "CAPITAL",
+    classificacaoEstado: "NAO_APLICAVEL",
+  }));
+  const saida = await historico.enriquecerAlteracoesComClassificacao({
+    alteracoes, resultadoRecargaDepois: recarga(linhas),
+  });
+  assert.deepEqual(saida.map((a) => a.classificacaoEstado), ["PRESERVADA", "PRESERVADA"]);
+  assert.deepEqual(saida.map((a) => a.areaNova), ["OUVIDORIA", "CORREGEDORIA"]);
+});
+
 test("item sem classificação mantém revisão e herda somente vínculo inequívoco efetivo", async () => {
   const linha = pendencia();
   const plano = historico.montarPlanoCompletoParaHistorico(recarga([], [linha]));
@@ -395,6 +415,32 @@ test("vínculo revertido ou múltiplas áreas não herda classificação", async
   assert.equal((await historico.enriquecerAlteracoesComClassificacao(entrada))[0].classificacaoEstado, "PENDENTE_REVISAO");
 });
 
+test("duas divergências da mesma chave pendente não escolhem substituto", async () => {
+  const linha = pendencia();
+  const material = fotografia.normalizarLinhaPadCanonica(
+    historico.montarPlanoCompletoParaHistorico(recarga([], [linha]))[0]
+  ).chaveMaterial;
+  repository.listarRateiosAtivosPorChavesItem = async () => [{
+    chaveItem: "pad-antigo", area: "OUVIDORIA", natureza: "CAPITAL",
+  }];
+  repository.listarDivergenciasPorChavesItem = async () => [
+    { id: 8, chaveItem: "pad-camera" }, { id: 9, chaveItem: "pad-camera" },
+  ];
+  repository.listarVinculosSubstitutoPorDivergenciasSubstitutas = async () => [{
+    decisaoId: 10, divergenciaAusenteId: 7, divergenciaSubstitutaId: 8,
+    chaveItemAusente: "pad-antigo", decisao: "CORRIGIDO", statusDivergenciaAusente: "CORRIGIDO",
+    payload: { tipoSaneamento: "vinculo_item_substituto", divergenciaAusenteId: 7, divergenciaSubstitutaId: 8 },
+  }];
+  const [saida] = await historico.enriquecerAlteracoesComClassificacao({
+    alteracoes: [{ tipo: "NOVO", chaveItemNova: material, areaNova: "NAO_CLASSIFICADO", naturezaNova: "CAPITAL" }],
+    resultadoRecargaDepois: recarga([], [linha]),
+  });
+  assert.equal(saida.classificacaoEstado, "PENDENTE_REVISAO");
+  assert.equal(saida.areaNova, "NAO_CLASSIFICADO");
+  assert.equal(saida.revisaoDivergenciaId, undefined);
+  assert.equal(saida.decisaoSubstitutoId, undefined);
+});
+
 test("integração captura ANTES, usa a única recarga do orquestrador e conclui histórico", async () => {
   const mock = simularPersistencia();
   const eventos = [];
@@ -406,7 +452,7 @@ test("integração captura ANTES, usa a única recarga do orquestrador e conclui
   orquestrador.atualizarPadsTransferegovEOperacional = async (opcoes) => {
     eventos.push("ORQUESTRADOR");
     assert.equal(opcoes.jobId, "job-1");
-    return { resultadoRecarga: recarga(), totalConveniosAtualizados: 1 };
+    return { resultadoRecarga: { ...recarga(), sucesso: true, totalImpedimentos: 0, impedimentos: [] }, totalConveniosAtualizados: 1 };
   };
   const retorno = await historico.atualizarPadsTransferegovComHistorico({ jobId: "job-1", onProgress: (e) => eventos.push(e.etapa) });
   assert.deepEqual(eventos, ["ANTES", "historico_antes_persistido", "ORQUESTRADOR", "historico_concluido"]);
@@ -428,4 +474,38 @@ test("falha do orquestrador marca histórico FALHOU e relança erro", async () =
   orquestrador.atualizarPadsTransferegovEOperacional = async () => { throw erro; };
   await assert.rejects(historico.atualizarPadsTransferegovComHistorico(), erro);
   assert.deepEqual(mock.eventos, ["BEGIN", "CRIAR", "ANTES", "COMMIT", "FALHOU"]);
+});
+
+test("recarga DEPOIS falha não gera snapshot nem alterações e marca FALHOU", async () => {
+  const mock = simularPersistencia();
+  let orquestradorChamado = false;
+  const eventos = [];
+  carregador.carregarPadsOperacional = async () => ({ ...recarga(), sucesso: true, totalImpedimentos: 0, impedimentos: [] });
+  orquestrador.atualizarPadsTransferegovEOperacional = async () => {
+    orquestradorChamado = true;
+    return {
+      resultadoRecarga: {
+        ...recarga([]), sucesso: false, totalImpedimentos: 1,
+        impedimentos: [{ tipo: "erro_execucao_recarga" }],
+      },
+    };
+  };
+  await assert.rejects(historico.atualizarPadsTransferegovComHistorico({
+    onProgress: (evento) => eventos.push(evento),
+  }), /Recarga operacional posterior/);
+  assert.equal(orquestradorChamado, true);
+  assert.deepEqual(mock.eventos, ["BEGIN", "CRIAR", "ANTES", "COMMIT", "FALHOU"]);
+  assert.deepEqual(mock.snapshots.map((s) => s.momento), ["ANTES"]);
+  assert.deepEqual(mock.alteracoes, []);
+  assert.equal(mock.resumoFinal, undefined);
+  assert.equal(eventos[0].registroPadId, 41);
+});
+
+test("resultado DEPOIS ausente marca FALHOU sem gerar snapshot", async () => {
+  const mock = simularPersistencia();
+  carregador.carregarPadsOperacional = async () => ({ ...recarga(), sucesso: true });
+  orquestrador.atualizarPadsTransferegovEOperacional = async () => ({ totalConveniosAtualizados: 1 });
+  await assert.rejects(historico.atualizarPadsTransferegovComHistorico(), /Recarga operacional posterior/);
+  assert.deepEqual(mock.eventos, ["BEGIN", "CRIAR", "ANTES", "COMMIT", "FALHOU"]);
+  assert.deepEqual(mock.snapshots.map((s) => s.momento), ["ANTES"]);
 });
