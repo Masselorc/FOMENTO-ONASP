@@ -54,13 +54,13 @@ Não reimplementar essas responsabilidades.
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapas 10 e 11.
-- Últimas etapas concluídas: Etapa 10 — Tela Registros do PAD; Etapa 11 — Botão Ver alterações e deep-link.
-- Próxima etapa: Etapa 12 — Testes integrados e regressão.
-- Atualizado em: 2026-09-29 19:10:43 -03:00.
-- Branch: `main` (HEAD inicial da correção: `d36087ee72ef71b7a61542ea7a15baaee433eb8d`).
+- Etapa atual: bloqueada — Etapa 12, por defeitos reais reproduzidos.
+- Última etapa concluída: Etapa 11 — Botão Ver alterações e deep-link.
+- Próxima ação: correção dirigida das Etapas 5 e 3/4/7; depois retomar a Etapa 12. Etapa 13 não iniciada.
+- Atualizado em: 2026-09-29 19:34:22 -03:00.
+- Branch: `main` (HEAD de entrada: `8959c6e1c7cd51115f8ad632f67b64394c1b815b`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
-- Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; não incluídas nestas etapas.
+- Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; preservadas e não incluídas na Etapa 12.
 - Plano original presente na raiz; não alterado.
 
 ### 6.1. Mapa confirmado na Etapa 1
@@ -134,11 +134,20 @@ Não reimplementar essas responsabilidades.
 - Testes de regressão: frontend 13/13; API 10/10; job/orquestrador 14/14. `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
 - Backend alterado: não. Banco remoto acessado: não.
 
+### 6.8. Regressão integrada — Etapa 12 BLOQUEADA
+
+- **Erro real — snapshot completo (Etapa 5):** duas pendências materiais com a mesma `chaveItem` geraram duas linhas (esperado: uma). Evidência: teste defensivo temporário falhou com `2 !== 1`. Correção futura provável: `backend/services/profor-2022/profor-pad-historico-service.js`.
+- **Erro real — retry/idempotência (Etapas 3/4/7):** repetir a finalização da mesma atualização atingiu a constraint `uq_profor_2022_pad_snapshot_momento` ao inserir `DEPOIS`; o tratamento subsequente atualizou a execução concluída para `FALHOU`. Evidência: teste temporário de finalização repetida observou violação única, `FALHOU` e somente um snapshot `DEPOIS`. Correção futura provável: `backend/services/profor-2022/profor-pad-historico-repository.js` e `backend/services/profor-2022/profor-pad-historico-service.js`.
+- Os dois blocos temporários que reproduziram os defeitos foram removidos; nenhum teste deliberadamente vermelho ficou no diff.
+- Testes focados existentes: **257 pass / 5 fail / 6 skip**. Duas falhas de carregamento (classificação operacional e identidade material) decorrem de `better-sqlite3` compilado com ABI 147 versus Node v24.21.0/ABI 137. Três falhas não relacionadas à feature, em `profor-pad-origem-reconstrucao.test.js`, esperam 568 linhas e recebem 564 do relatório `backend/data/relatorios/profor-2022-pad-recarga-operacional-v2.json`, já modificado antes desta etapa. Os 6 skips são testes de integração que exigem `DATABASE_URL`, mantida vazia para não acessar banco remoto.
+- `profor-pad-historico.test.js` após remover os blocos temporários: 31/31 aprovados. `npm run validar:syntax`: sucesso (110 arquivos). `git diff --check`: sucesso.
+- `npm run validar:services`: não executado porque os testes focados não ficaram verdes.
+- Inspeção estática de imutabilidade: sem `DELETE` automático; atualizações SQL identificadas limitam-se à tabela de execuções; snapshot usa constraint única por atualização/momento, que expõe o defeito de retry acima; alteração histórica usa `ON CONFLICT DO NOTHING`.
+- Playwright executado: não. Banco remoto acessado: não. Migration aplicada: não. Persistência real após restart: não validada nesta etapa.
+
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
-- `frontend/js/app.js`
-- `tests/services/profor-pad-historico-frontend.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas
 
@@ -153,7 +162,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Nenhum bloqueio conhecido para iniciar a Etapa 12.
+- Etapa 12 bloqueada pelos dois erros reais descritos em 6.8. Corrigir os módulos de origem antes de retomar a validação integrada.
 
 ## 10. Instruções para o próximo agente
 
@@ -161,10 +170,11 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 12 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar somente a Etapa 12;
-6. não avançar para a Etapa 13;
-7. atualizar este arquivo ao terminar.
+4. corrigir de forma dirigida a deduplicação de pendências da Etapa 5 e a idempotência das Etapas 3/4/7;
+5. ler somente as seções necessárias das etapas responsáveis e da Etapa 12 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+6. retomar e concluir a Etapa 12 após as correções;
+7. não avançar para a Etapa 13 enquanto a Etapa 12 estiver bloqueada;
+8. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa
 
