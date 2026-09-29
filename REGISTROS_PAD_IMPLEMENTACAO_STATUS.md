@@ -57,8 +57,8 @@ Não reimplementar essas responsabilidades.
 - Etapa atual: concluída — Etapas 10 e 11.
 - Últimas etapas concluídas: Etapa 10 — Tela Registros do PAD; Etapa 11 — Botão Ver alterações e deep-link.
 - Próxima etapa: Etapa 12 — Testes integrados e regressão.
-- Atualizado em: 2026-09-29 18:58:46 -03:00.
-- Branch: `main` (HEAD inicial destas etapas: `52010fd7b179a15d6e126271d4e8f6358a315b51`).
+- Atualizado em: 2026-09-29 19:10:43 -03:00.
+- Branch: `main` (HEAD inicial da correção: `d36087ee72ef71b7a61542ea7a15baaee433eb8d`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
 - Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; não incluídas nestas etapas.
 - Plano original presente na raiz; não alterado.
@@ -129,14 +129,15 @@ Não reimplementar essas responsabilidades.
 - Detalhe Antes/Depois usa alterações e metadados da API; suporta COM_ALTERACOES, SEM_ALTERACOES e FALHOU.
 - Modo estático não chama a API do histórico. CTA pós-job usa `registroPadId` e `resultadoHistorico` somente em conclusão.
 - Deep-link usa `proforSubview`/`registroPadId`; refresh e `popstate` restauram a subview e o detalhe.
-- Testes: frontend 11/11; API 10/10; job/orquestrador 14/14. `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
+- Correção dirigida: Antes/Depois prioriza `areaAnterior/areaNova` e `naturezaAnterior/naturezaNova`; `HERDADA_SUBSTITUTO` mostra a área herdada, sem reescrever o snapshot.
+- Retorno de deep-link carrega a base principal sob demanda; aria-label do calendário usa “execução”/“execuções”.
+- Testes de regressão: frontend 13/13; API 10/10; job/orquestrador 14/14. `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
 - Backend alterado: não. Banco remoto acessado: não.
 
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
 - `frontend/js/app.js`
-- `frontend/css/app.css`
 - `tests/services/profor-pad-historico-frontend.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas

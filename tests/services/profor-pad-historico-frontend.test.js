@@ -10,7 +10,10 @@ const css = fs.readFileSync(path.join(raiz, 'frontend/css/app.css'), 'utf8');
 const html = fs.readFileSync(path.join(raiz, 'index.html'), 'utf8');
 
 function obterFuncao(nome) {
-  const inicio = app.indexOf(`        function ${nome}(`);
+  const inicio = Math.max(
+    app.indexOf(`        function ${nome}(`),
+    app.indexOf(`        async function ${nome}(`),
+  );
   assert.notEqual(inicio, -1, `Função ${nome} não encontrada`);
   const fim = app.indexOf('\n        }', inicio);
   assert.notEqual(fim, -1, `Fim da função ${nome} não encontrado`);
@@ -76,8 +79,12 @@ test('calendário marca execuções e falhas sem marcar dias vazios', () => {
   const comExecucao = renderizar();
   assert.equal((comExecucao.match(/data-historico-acao="dia"/g) || []).length, 30);
   assert.equal((comExecucao.match(/profor-pad-historico-calendar-dot/g) || []).length, 1);
+  assert.match(comExecucao, /2 execuções/);
+  assert.doesNotMatch(comExecucao, /execuçãoões/);
   assert.match(comExecucao, /data-data="2026-09-29"[^>]*aria-current="date"/);
   assert.match(comExecucao, /profor-pad-historico-calendar-failure/);
+  contexto.proforPadHistoricoDias = [{ data: '2026-09-29', totalExecucoes: 1, falhas: 1 }];
+  assert.match(renderizar(), /1 execução;/);
   contexto.proforPadHistoricoDias = [];
   const vazio = renderizar();
   assert.match(vazio, /Nenhuma atualização registrada neste mês/);
@@ -104,6 +111,97 @@ test('cards Antes/Depois exibem alteração, novo pendente e removido', () => {
   assert.match(novo, /Classificação pendente/);
   const removido = renderizar({ ...base, tipo: 'REMOVIDO', itemAnterior: { quantidade: 2 } }, 2);
   assert.match(removido, /Item não consta mais no PAD atual/);
+});
+
+test('área e natureza históricas usam a alteração enriquecida sem mutar o snapshot', () => {
+  const renderizar = vm.runInNewContext([
+    obterFuncao('campoAlteradoHistoricoPad'),
+    obterFuncao('montarCardAlteracaoHistoricoPad'),
+    'montarCardAlteracaoHistoricoPad',
+  ].join('\n'), {
+    Object,
+    escapeHtml: (valor) => String(valor),
+    textoHistoricoPad: (valor) => String(valor ?? '—'),
+    dinheiroHistoricoPad: () => '—',
+  });
+  const itemNovo = { area: 'NAO_CLASSIFICADO', natureza: 'CAPITAL', quantidade: 1 };
+  const alteracaoHerdada = {
+    tipo: 'NOVO', numeroConvenio: '123/2022', uf: 'GO', descricaoNova: 'Notebook',
+    classificacaoEstado: 'HERDADA_SUBSTITUTO', areaNova: 'OUVIDORIA', naturezaNova: 'CAPITAL', itemNovo,
+  };
+  const htmlHerdada = renderizar(alteracaoHerdada, 0);
+  assert.match(htmlHerdada, /Classificação herdada de substituto vinculado/);
+  assert.match(htmlHerdada, /<span>Área<\/span><span>—<\/span><span>Ouvidoria<\/span>/);
+  assert.match(htmlHerdada, /<span>Natureza<\/span><span>—<\/span><span>CAPITAL<\/span>/);
+  assert.doesNotMatch(htmlHerdada, /NAO_CLASSIFICADO/);
+  assert.deepEqual(itemNovo, { area: 'NAO_CLASSIFICADO', natureza: 'CAPITAL', quantidade: 1 });
+
+  const preservada = renderizar({
+    tipo: 'ALTERADO', numeroConvenio: '456/2022', uf: 'DF', classificacaoEstado: 'PRESERVADA',
+    areaAnterior: 'CORREGEDORIA', areaNova: 'CORREGEDORIA', naturezaAnterior: 'CUSTEIO', naturezaNova: 'CAPITAL',
+    itemAnterior: { area: 'OUVIDORIA', natureza: 'CUSTEIO' },
+    itemNovo: { area: 'NAO_CLASSIFICADO', natureza: 'CUSTEIO' },
+  }, 1);
+  assert.match(preservada, /Classificação preservada/);
+  assert.match(preservada, /<span>Área<\/span><span>Corregedoria<\/span><span>Corregedoria<\/span>/);
+  assert.match(preservada, /<span>Natureza<\/span><span>CUSTEIO<\/span><span>CAPITAL<\/span>/);
+  assert.doesNotMatch(preservada, /NAO_CLASSIFICADO/);
+  const fallback = renderizar({
+    tipo: 'NOVO', itemNovo: { area: 'ESCOLA_PENAL', natureza: 'CUSTEIO' },
+    areaNova: null, naturezaNova: null,
+  }, 2);
+  assert.match(fallback, /<span>Área<\/span><span>—<\/span><span>Escola de Serviços Penais<\/span>/);
+  assert.match(fallback, /<span>Natureza<\/span><span>—<\/span><span>CUSTEIO<\/span>/);
+});
+
+test('voltar de deep-link carrega base ausente antes da tela principal e preserva outros parâmetros', async () => {
+  const eventos = [];
+  const window = {
+    location: { href: 'http://localhost:3000/index.html?debugPerf=1&proforSubview=registros-pad&registroPadId=123' },
+    history: { state: null },
+  };
+  window.history.pushState = (_estado, _titulo, url) => { window.location.href = String(url); eventos.push('url'); };
+  window.history.replaceState = window.history.pushState;
+  let layoutHistorico = true;
+  const contexto = {
+    window, URL,
+    document: {
+      body: { dataset: { currentView: 'profor2022' } },
+      getElementById: () => ({ querySelector: () => layoutHistorico ? {} : null }),
+    },
+    proforPadHistoricoCarregamentoSequencia: 0,
+    profor2022Subview: 'registros-pad',
+    proforPadHistoricoAtualizacaoSelecionada: { atualizacao: { id: 123 } },
+    proforPadHistoricoCarregando: { mes: true },
+    dadosFinanceirosValidados: false,
+    obterDadosProfor2022: () => null,
+    garantirDadosBaseAplicacao: async () => { eventos.push('base'); layoutHistorico = false; eventos.push('render'); },
+    renderProfor2022View: () => { eventos.push('render'); layoutHistorico = false; },
+    toggleView: () => { throw new Error('Não deve trocar a view global'); },
+  };
+  const fechar = vm.runInNewContext([
+    obterFuncao('limparUrlRegistrosPadProfor2022'),
+    obterFuncao('fecharRegistrosPadProfor2022'),
+    'fecharRegistrosPadProfor2022',
+  ].join('\n'), contexto);
+  await fechar();
+  assert.deepEqual(eventos, ['url', 'base', 'render']);
+  const parametros = new URL(window.location.href).searchParams;
+  assert.equal(parametros.has('proforSubview'), false);
+  assert.equal(parametros.has('registroPadId'), false);
+  assert.equal(parametros.get('debugPerf'), '1');
+  assert.equal(contexto.profor2022Subview, 'principal');
+  assert.equal(contexto.document.body.dataset.currentView, 'profor2022');
+
+  layoutHistorico = true;
+  eventos.length = 0;
+  contexto.garantirDadosBaseAplicacao = async () => { eventos.push('base'); };
+  await fechar({ sincronizarUrl: false });
+  assert.deepEqual(eventos, ['base', 'render']);
+  assert.doesNotMatch(obterFuncao('abrirRegistrosPadProfor2022'), /garantirDadosBaseAplicacao/);
+  for (const nome of ['carregarMesHistoricoPadProfor2022', 'selecionarDataHistoricoPadProfor2022', 'carregarExecucoesDataHistoricoPadProfor2022', 'abrirDetalheHistoricoPadProfor2022']) {
+    assert.doesNotMatch(obterFuncao(nome), /garantirDadosBaseAplicacao/, nome);
+  }
 });
 
 test('cards da data distinguem COM_ALTERACOES, SEM_ALTERACOES e FALHOU', () => {

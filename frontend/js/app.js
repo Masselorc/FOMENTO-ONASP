@@ -6790,8 +6790,9 @@ async function carregarLogoParaPDF() {
                 const selecionado = data === proforPadHistoricoDataSelecionada;
                 const total = Number(registro?.totalExecucoes) || 0;
                 const falhas = Number(registro?.falhas) || 0;
+                const rotuloExecucoes = total === 1 ? '1 execução' : `${total} execuções`;
                 celulas.push(`<button type="button" class="profor-pad-historico-calendar-day${selecionado ? ' is-selected' : ''}"
-                    data-historico-acao="dia" data-data="${data}" aria-label="${dia} de ${escapeHtml(titulo)}; ${total} execução${total === 1 ? '' : 'ões'}${falhas ? `; ${falhas} falha${falhas === 1 ? '' : 's'}` : ''}"
+                    data-historico-acao="dia" data-data="${data}" aria-label="${dia} de ${escapeHtml(titulo)}; ${rotuloExecucoes}${falhas ? `; ${falhas} falha${falhas === 1 ? '' : 's'}` : ''}"
                     ${selecionado ? 'aria-current="date"' : ''}>
                     <span>${dia}</span>${total ? `<span class="profor-pad-historico-calendar-dot" aria-hidden="true"></span>` : ''}
                     ${falhas ? '<span class="profor-pad-historico-calendar-failure" aria-hidden="true"></span>' : ''}
@@ -6860,10 +6861,20 @@ async function carregarLogoParaPDF() {
                 ['valorUnitario', 'Valor unitário'], ['valorPrevisto', 'Previsto'], ['valorExecutado', 'Executado'],
                 ['saldo', 'Saldo'], ['area', 'Área'], ['natureza', 'Natureza']
             ];
-            const valorCampo = (item, campo) => campo.startsWith('valor') || campo === 'saldo'
-                ? dinheiroHistoricoPad(item?.[campo]) : textoHistoricoPad(item?.[campo]);
+            const rotulosArea = {
+                OUVIDORIA: 'Ouvidoria', CORREGEDORIA: 'Corregedoria',
+                ESCOLA_PENAL: 'Escola de Serviços Penais', NAO_CLASSIFICADO: 'Classificação pendente', 'N/A': 'N/A'
+            };
+            const valorCampo = (item, campo, momento) => {
+                if (campo === 'area' || campo === 'natureza') {
+                    const valor = alteracao[`${campo}${momento}`] ?? item?.[campo];
+                    return textoHistoricoPad(campo === 'area' && Object.hasOwn(rotulosArea, valor) ? rotulosArea[valor] : valor);
+                }
+                return campo.startsWith('valor') || campo === 'saldo'
+                    ? dinheiroHistoricoPad(item?.[campo]) : textoHistoricoPad(item?.[campo]);
+            };
             const linhas = campos.map(([campo, rotulo]) => `<div class="profor-pad-historico-compare-row${campoAlteradoHistoricoPad(alteracao, campo) ? ' is-changed' : ''}">
-                <span>${rotulo}</span><span>${tipo === 'NOVO' ? '—' : valorCampo(antes, campo)}</span><span>${tipo === 'REMOVIDO' ? '—' : valorCampo(depois, campo)}</span>
+                <span>${rotulo}</span><span>${tipo === 'NOVO' ? '—' : valorCampo(antes, campo, 'Anterior')}</span><span>${tipo === 'REMOVIDO' ? '—' : valorCampo(depois, campo, 'Nova')}</span>
             </div>`).join('');
             return `<article class="profor-pad-historico-change-card">
                 <button type="button" class="profor-pad-historico-change-toggle" data-historico-acao="alternar-alteracao" aria-expanded="false" aria-controls="profor-pad-historico-alteracao-${indice}">
@@ -7115,8 +7126,17 @@ async function carregarLogoParaPDF() {
             proforPadHistoricoAtualizacaoSelecionada = null;
             proforPadHistoricoCarregando = { mes: false, data: false, detalhe: false };
             if (sincronizarUrl) limparUrlRegistrosPadProfor2022();
-            if (document.body.dataset.currentView === 'profor2022') renderProfor2022View();
-            else await toggleView('profor2022');
+            if (document.body.dataset.currentView !== 'profor2022') {
+                await toggleView('profor2022');
+                return;
+            }
+            if (!dadosFinanceirosValidados || !obterDadosProfor2022()) {
+                await garantirDadosBaseAplicacao();
+                if (profor2022Subview === 'principal' && document.getElementById('view-profor-2022')
+                    ?.querySelector('.profor-pad-historico-layout')) renderProfor2022View();
+                return;
+            }
+            renderProfor2022View();
         }
 
         async function restaurarDeepLinkHistoricoPadProfor2022() {
