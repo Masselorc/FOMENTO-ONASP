@@ -465,7 +465,7 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Frontend consumidor:** botão "Atualizar DETRU" na Carteira Monitorada da página PROFOR 2022.
 
-**Observações de manutenção:** rota local/API. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador. A interface local autentica via `ONASP_EDIT_PASSWORD` em loopback; chamadas externas exigem os guards de ambiente/localidade e `PROFOR_ADMIN_TOKEN`; ver a seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
+**Observações de manutenção:** rota local/API. Não existe no modo estático/GitHub Pages. Não processa ZIP no frontend e não deve ser usada para download direto pelo navegador. Em loopback, a ação PROFOR dispensa senha; requisições não locais mantêm os guards e o token administrativo; ver a seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
 
 #### POST /api/profor-2022/atualizar — legada/descontinuada
 
@@ -483,9 +483,27 @@ No modo estático/GitHub Pages, a aplicação não usa essas rotas locais. A SPA
 
 **Fluxos atuais separados:** `POST /api/profor-2022/detru/atualizar`, `POST /api/profor-2022/rendimentos/atualizar`, `POST /api/profor-2022/pad/atualizar-transferegov`, `POST /api/profor-2022/pad/recarregar` e `POST /api/profor-2022/pad/recarregar-operacional`. Para leitura, usar `GET /api/profor-2022/consolidado`.
 
-**Autenticação administrativa:** as cinco rotas de escrita listadas acima utilizam `ONASP_EDIT_PASSWORD` quando acionadas pela interface local em loopback, ou `PROFOR_ADMIN_TOKEN` via cabeçalho para chamadas externas e automatizadas, além dos guards de governança existentes. O procedimento operacional está documentado na seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
+**Autenticação administrativa:** as cinco rotas de escrita PROFOR listadas acima dispensam senha quando originadas de loopback real; requisições não locais exigem `PROFOR_ADMIN_TOKEN` via cabeçalho e permanecem sujeitas aos guards e flags de governança. A origem local é verificada por `req.socket.remoteAddress`, sem confiar em `X-Forwarded-For`. O procedimento está na seção 11 de `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022-operacao.md`.
 
 **Observações de manutenção:** chamadas antigas devem migrar para o fluxo dedicado correspondente; o retorno `410` é intencional.
+
+#### GET /api/profor-2022/pad/historico
+
+**Finalidade:** consultar o histórico persistente das atualizações do PAD do PROFOR 2022. É separado de `historico_alteracoes`.
+
+**Serviço:** `profor-pad-historico-consulta-service.js`, com leitura no repository Postgres.
+
+**Consulta mensal:** `?mes=YYYY-MM` retorna `{ success: true, mes, dias }`, com dias e contagens de execuções. **Consulta diária:** `?data=YYYY-MM-DD` aceita filtros `uf`, `convenio`, `tipo` (`NOVO`, `REMOVIDO`, `ALTERADO`) e `area` (áreas operacionais `OUVIDORIA`, `CORREGEDORIA`, `ESCOLA_PENAL`, `NAO_CLASSIFICADO`). Retorna `{ success: true, data, filtros, execucoes }`. Informe exatamente mês ou data; valores inválidos recebem HTTP 400. Os filtros são aplicados no backend; os dias civis usam `America/Sao_Paulo`.
+
+**Efeito colateral/publicação:** somente leitura; não publica histórico em JSONs estáticos. A tela só chama esta API no modo local.
+
+#### GET /api/profor-2022/pad/historico/:id
+
+**Finalidade:** consultar uma execução com alterações e metadados dos snapshots.
+
+**Resposta:** `{ success: true, atualizacao, alteracoes, snapshots }`; `snapshots` contém metadados e resumo de ANTES/DEPOIS, **sem `snapshot_json` integral**. ID inválido recebe HTTP 400; registro inexistente, HTTP 404.
+
+**Efeito colateral/publicação:** somente leitura, sem endpoint de escrita histórica exposto ao frontend e sem publicação estática.
 
 #### GET /api/profor-2022/atualizacao/status
 

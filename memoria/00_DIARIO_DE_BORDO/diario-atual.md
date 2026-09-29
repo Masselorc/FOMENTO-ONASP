@@ -1,5 +1,14 @@
 # Diário de bordo
 
+## 29/09/2026 — PROFOR 2022: Registros do PAD concluído e auditado
+
+- Objetivo: histórico persistente do PAD com snapshots ANTES/DEPOIS e tela interna de consulta. Foram implementados migration, repository/service, integração com o job Transferegov, APIs e frontend; esta etapa alterou somente documentação e handoff.
+- Auditoria final aprovada no commit `d7d49eaa42afe5f326d22850dd186826b16ce1d6`; A13-01 fechado. A diferença 568 × 564 foi classificada como alteração legítima de PAD/rateio.
+- Validações registradas: regressão focada A13-01 93/0/0, sintaxe 110 arquivos, `git diff --check` aprovado. Última suíte ampla: 628 pass / 6 fail conhecidas (3 ABI `better-sqlite3`, 3 expectativa antiga 568) / 20 skip por ausência de `DATABASE_URL`.
+- Migration versionada e não aplicada ao remoto. Banco remoto não acessado nas validações finais; persistência real após restart ainda não validada. Ativação requer aplicação controlada da migration, conferência de grants/RLS e validação de integração.
+- Arquivos desta etapa: `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`, `schema-banco.md`, `rotas.md`, `profor-2022.md`, `profor-2022-operacao.md` e este diário. Nenhum código, teste, dado, cache ou migration foi alterado; nenhuma publicação foi executada. Alterações preexistentes preservadas.
+- Rollback documental, se autorizado: reverter apenas o commit desta etapa; não apagar registros nem reverter a correção A13-01.
+
 ## 09/09/2026 - Orçamento 2026: ajuste de valores de Câmeras, Scanners/Impressoras e Modelo Local de IA e publicação estática
 
 - Objetivo: atualizar os valores de execução e previstos ajustados (envelopes) dos processos do Orçamento 2026 conforme instrução:

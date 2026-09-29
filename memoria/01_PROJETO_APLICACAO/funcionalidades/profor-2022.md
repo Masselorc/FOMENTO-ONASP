@@ -881,3 +881,11 @@ Fonte operacional:
 
 - a aba `Geral` permanece fora da operação e sem fallback silencioso;
 - a coluna Z não é lida como fonte; apenas sua fórmula histórica foi reinterpretada para nomear corretamente o indicador gerencial.
+
+## 17. Registros do PAD — estado final da implementação
+
+`Registros do PAD` é uma subview interna do PROFOR 2022, exclusiva do PAD e sem item global de menu. Cada execução de atualização pelo Transferegov gera histórico permanente, inclusive `SEM_ALTERACOES`. A tela local oferece calendário, listagem por dia, filtros por UF, convênio, tipo e área, e detalhe ANTES × DEPOIS. Ao concluir uma atualização, o botão **Ver alterações** abre o registro; o deep-link usa `?proforSubview=registros-pad&registroPadId=<id>`. O modo estático/GitHub Pages não consulta a API histórica.
+
+Os snapshots combinam linhas reconstruídas com rateio e itens materiais pendentes dos tipos `item_novo_sem_rateio_memorizado`, `item_pad_sem_rateio_memorizado`, `rateio_memorizado_sem_peso_operacional` e `distribuicao_igual_provisoria_bloqueada`. Sem área segura, usam `NAO_CLASSIFICADO`; distribuição igual provisória não é aplicada. O comparador existente gera as diferenças. A classificação enriquecida pertence às alterações e não reescreve o snapshot. Herança por substituto exige vínculo efetivo inequívoco; ambiguidades seguem para revisão humana.
+
+Persistência: três tabelas em Postgres/Supabase, descritas em `memoria/08_ROTAS_BANCO_API/schema-banco.md`. A migration está versionada, ainda não aplicada ao remoto nesta trilha; persistência real após reinício não foi validada. A sequência de ativação controlada está no handoff `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`.

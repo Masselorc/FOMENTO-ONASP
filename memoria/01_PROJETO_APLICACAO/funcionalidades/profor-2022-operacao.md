@@ -268,9 +268,8 @@ As rotas administrativas abaixo possuem controle de segurança e governança:
 
 ### 11.1. Ações disparadas pela interface local (loopback)
 
-- A interface local coleta a senha operacional `ONASP_EDIT_PASSWORD` em modal seguro (`type="password"`) e a envia no corpo JSON da requisição (`{ password: "..." }`).
-- Apenas acessos originados estritamente em loopback (`127.0.0.1`, `::1`) são aceitos com senha.
-- Se uma senha for fornecida em loopback e for inválida, a resposta retorna `403` com indicação explícita de senha local inválida.
+- As ações administrativas PROFOR originadas de loopback real dispensam senha operacional; a interface local não solicita nem envia `ONASP_EDIT_PASSWORD` nessas ações.
+- O servidor reconhece loopback por `req.socket.remoteAddress` (`127.0.0.1`, `::1` ou forma IPv4 mapeada), sem usar `X-Forwarded-For` como prova de origem local.
 - O frontend público e a aplicação nunca armazenam nem utilizam `PROFOR_ADMIN_TOKEN`.
 
 ### 11.2. Chamadas administrativas externas e automatizadas
@@ -306,7 +305,15 @@ Invoke-RestMethod `
   -Body "{}"
 ```
 
-Se `PROFOR_ADMIN_TOKEN` não estiver configurado ou o header estiver ausente/incorreto em chamadas sem a senha local válida, a resposta esperada é `403`.
+Se `PROFOR_ADMIN_TOKEN` não estiver configurado ou o header estiver ausente/incorreto em chamadas não locais, a resposta esperada é `403`.
+
+### 11.3. Atualização PAD/Transferegov e histórico
+
+O job mantém exclusividade por chave e associa `jobId` ao registro histórico. O serviço captura o estado operacional atual e persiste a atualização com snapshot **ANTES** antes de permitir a mutação do cache pelo orquestrador Transferegov. Se essa captura falhar, a atualização não prossegue. Após a extração e a recarga operacional, valida o resultado; estado posterior inválido marca a execução como `FALHOU` e não é gravado como DEPOIS.
+
+Com recarga válida, gera snapshot **DEPOIS**, usa o comparador existente e persiste DEPOIS, alterações e conclusão em uma transação. A atualização sem diferenças também é registrada como `SEM_ALTERACOES`. Finalizar novamente uma execução `CONCLUIDA` preserva o resultado sem nova escrita. O polling do job expõe `registroPadId` e `resultadoHistorico`; a publicação estática ocorre depois, fora da transação histórica. Uma falha posterior de publicação conserva o registro já concluído.
+
+**Ativação pendente:** a migration do histórico está versionada, ainda não aplicada ao banco remoto nesta trilha. Persistência real após reinício do backend não foi validada em Postgres. Aplicação controlada da migration, conferência de grants/RLS e teste integrado no ambiente alvo precedem a operação plenamente validada.
 
 ## 12. Rollback
 

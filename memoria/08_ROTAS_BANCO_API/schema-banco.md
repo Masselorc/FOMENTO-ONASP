@@ -70,6 +70,16 @@ Qualquer acesso futuro de leitura ou escrita pelo frontend via Supabase Client
 deve receber grants e policies explícitas, mínimas e revisadas para o caso de
 uso. Não criar policy genérica do tipo `allow all`.
 
+## Histórico do PAD — PROFOR 2022
+
+Fonte de verdade: `supabase/migrations/20260929163637_create_profor_2022_pad_historico.sql`. A migration está versionada, mas **não foi aplicada ao banco remoto nesta implementação**.
+
+- `public.profor_2022_pad_atualizacoes`: uma execução de atualização. Identifica `id`, `job_id` e `origem`; estados `EM_EXECUCAO`, `CONCLUIDA` ou `FALHOU`; resultado `SEM_ALTERACOES` ou `COM_ALTERACOES` quando concluída. Guarda início/conclusão, contagens de itens e mudanças, totais financeiros ANTES/DEPOIS e deltas, pendências de revisão, versões, erro e metadados. O serviço só finaliza `EM_EXECUCAO`.
+- `public.profor_2022_pad_snapshots`: estado canônico ANTES ou DEPOIS da execução. FK `atualizacao_id` com `ON DELETE RESTRICT`; `UNIQUE (atualizacao_id, momento)`. Guarda checksum, versões do snapshot/parser, origem, geração, `snapshot_json` e `resumo_json`. O checksum tem índice, **sem unicidade global**. O conteúdo é inserido sem atualização posterior. `snapshot_json` permanece no banco; a API de consulta retorna apenas metadados e resumo, sem expô-lo integralmente.
+- `public.profor_2022_pad_alteracoes`: diferenças `NOVO`, `REMOVIDO` ou `ALTERADO` entre os snapshots. Guarda `chave_alteracao`, convênio/UF, chaves, descrições, áreas e naturezas anterior/nova, origem de pareamento, estado da classificação, campos alterados e itens anterior/novo. `UNIQUE (atualizacao_id, chave_alteracao)`; FK da atualização com `ON DELETE RESTRICT`; referências opcionais a divergência e decisão com `ON DELETE SET NULL`. O conteúdo é inserido sem atualização posterior.
+
+As três tabelas têm RLS habilitado, sem policy pública na migration, e `REVOKE ALL PRIVILEGES` de `anon` e `authenticated`. O fluxo previsto é exclusivo do backend por Postgres/`DATABASE_URL`; o frontend não lê as tabelas diretamente. Os grants efetivos do ambiente remoto não foram conferidos nesta trilha.
+
 ## SQLite legado/local — não operacional no boot atual
 
 **Caminho legado confirmado:** `backend/data/onasp.sqlite`.
