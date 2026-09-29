@@ -3182,6 +3182,241 @@ body.dark-mode .budget-tracking-management strong,
     margin-top: 0.25rem;
 }
 
+.profor-pad-historico-header {
+    gap: 1rem;
+}
+
+.profor-pad-historico-header .btn {
+    align-self: center;
+}
+
+.profor-pad-historico-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    align-items: start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.profor-pad-historico-main {
+    min-width: 0;
+    display: grid;
+    gap: 1rem;
+}
+
+.profor-pad-historico-panel,
+.profor-pad-historico-detail {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+}
+
+.profor-pad-historico-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.profor-pad-historico-filters label {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+    font-size: 0.875rem;
+}
+
+.profor-pad-historico-filters button {
+    justify-self: start;
+}
+
+.profor-pad-historico-calendar-nav,
+.profor-pad-historico-execution-heading,
+.profor-pad-historico-post-job {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.profor-pad-historico-calendar-nav h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.profor-pad-historico-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.2rem;
+}
+
+.profor-pad-historico-weekdays {
+    margin: 1rem 0 0.35rem;
+    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    text-align: center;
+}
+
+.profor-pad-historico-calendar-day {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    min-height: 2.7rem;
+    padding: 0.25rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--color-text);
+}
+
+.profor-pad-historico-calendar-day:hover,
+.profor-pad-historico-calendar-day.is-selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+.profor-pad-historico-calendar-day:focus-visible,
+.profor-pad-historico-change-toggle:focus-visible {
+    outline: 2px solid var(--color-primary-strong);
+    outline-offset: 2px;
+}
+
+.profor-pad-historico-calendar-dot,
+.profor-pad-historico-calendar-failure {
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+}
+
+.profor-pad-historico-calendar-failure {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    background: var(--color-warning);
+}
+
+.profor-pad-historico-execution-card,
+.profor-pad-historico-change-card {
+    margin-top: 0.75rem;
+    padding: 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface-muted);
+}
+
+.profor-pad-historico-execution-card.is-selected {
+    border-color: var(--color-primary);
+}
+
+.profor-pad-historico-execution-card.is-failure {
+    border-inline-start: 3px solid var(--color-warning);
+}
+
+.profor-pad-historico-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.profor-pad-historico-summary > div {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+    padding: 0.5rem;
+    border-radius: var(--radius);
+    background: var(--color-surface-muted);
+    overflow-wrap: anywhere;
+}
+
+.profor-pad-historico-summary span,
+.profor-pad-historico-snapshots {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+}
+
+.profor-pad-historico-snapshots {
+    margin: 1rem 0;
+    overflow-wrap: anywhere;
+}
+
+.profor-pad-historico-change-toggle {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-text);
+    text-align: start;
+    overflow-wrap: anywhere;
+}
+
+.profor-pad-historico-change-toggle[aria-expanded="true"] {
+    margin-bottom: 0.75rem;
+}
+
+.profor-pad-historico-classification {
+    color: var(--color-warning);
+    font-weight: 600;
+}
+
+.profor-pad-historico-compare-row {
+    display: grid;
+    grid-template-columns: minmax(100px, 0.7fr) repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--color-border);
+    overflow-wrap: anywhere;
+}
+
+.profor-pad-historico-compare-row.is-heading {
+    font-weight: 700;
+}
+
+.profor-pad-historico-compare-row.is-changed {
+    background: var(--color-primary-soft);
+}
+
+.profor-pad-historico-post-job {
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+@media (max-width: 900px) {
+    .profor-pad-historico-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profor-pad-historico-calendar {
+        grid-row: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .profor-pad-historico-filters,
+    .profor-pad-historico-summary {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profor-pad-historico-compare-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .profor-pad-historico-compare-row > span:first-child {
+        grid-column: 1 / -1;
+        font-weight: 600;
+    }
+
+    .profor-pad-historico-header .btn {
+        align-self: stretch;
+    }
+}
+
 .profor-filter-grid {
     grid-template-columns: repeat(3, minmax(220px, 1fr));
 }

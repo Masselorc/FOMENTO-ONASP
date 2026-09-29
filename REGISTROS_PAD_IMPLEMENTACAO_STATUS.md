@@ -20,7 +20,7 @@ Especificação completa: `PLANO_REGISTROS_PAD_PROFOR_2022.md` na raiz.
 - Preservar classificação Ouvidoria / Corregedoria / Escola.
 - Correspondências inequívocas podem herdar classificação; ambiguidades seguem para revisão humana.
 - Reutilizar comparador e snapshots existentes; não criar mecanismo paralelo.
-- Ações locais do PROFOR 2022 deixarão de exigir senha em etapa posterior; chamadas remotas continuarão protegidas.
+- Ações locais do PROFOR 2022 dispensam senha; chamadas remotas continuam protegidas.
 
 ## 4. Componentes existentes que DEVEM ser reutilizados
 
@@ -46,21 +46,21 @@ Não reimplementar essas responsabilidades.
 - [x] Etapa 7 — Integração com o job Transferegov e atomicidade
 - [x] Etapa 8 — Remoção da senha local do PROFOR 2022
 - [x] Etapa 9 — APIs de leitura do histórico
-- [ ] Etapa 10 — Tela Registros do PAD
-- [ ] Etapa 11 — Botão Ver alterações e deep-link
+- [x] Etapa 10 — Tela Registros do PAD
+- [x] Etapa 11 — Botão Ver alterações e deep-link
 - [ ] Etapa 12 — Testes integrados e regressão
 - [ ] Etapa 13 — Auditoria final de arquitetura e diff
 - [ ] Etapa 14 — Documentação, handoff final e commit
 
 ## 6. Estado atual
 
-- Etapa atual: concluída — Etapas 8 e 9.
-- Últimas etapas concluídas: Etapa 8 — Remoção da senha local do PROFOR 2022; Etapa 9 — APIs de leitura do histórico.
-- Próxima etapa: Etapa 10 — Tela Registros do PAD.
-- Atualizado em: 2026-09-29 18:10:29 -03:00.
-- Branch: `main` (HEAD inicial destas etapas: `30dccc63ce542b3111ecffac757dbe150657cf4b`).
+- Etapa atual: concluída — Etapas 10 e 11.
+- Últimas etapas concluídas: Etapa 10 — Tela Registros do PAD; Etapa 11 — Botão Ver alterações e deep-link.
+- Próxima etapa: Etapa 12 — Testes integrados e regressão.
+- Atualizado em: 2026-09-29 18:58:46 -03:00.
+- Branch: `main` (HEAD inicial destas etapas: `52010fd7b179a15d6e126271d4e8f6358a315b51`).
 - Working tree: com alterações preexistentes staged e unstaged; preservadas.
-- Alterações preexistentes: cache/relatórios PAD, JSONs publicados e um script staged; não incluídas nestas etapas.
+- Alterações preexistentes: cache/relatórios PAD, JSONs publicados, um script staged e `tmp-scan.js` não rastreado; não incluídas nestas etapas.
 - Plano original presente na raiz; não alterado.
 
 ### 6.1. Mapa confirmado na Etapa 1
@@ -122,15 +122,22 @@ Não reimplementar essas responsabilidades.
 - Filtros por data: UF, convênio, tipo e área. Detalhe retorna atualização, alterações e metadados dos snapshots; snapshot integral não é exposto. Nenhuma publicação estática foi criada.
 - Validação: guard 27/27; API 10/10; repository 19/19; recarga operacional 2 aprovados e 4 ignorados pelo teste. `npm run validar:syntax` e `git diff --check` aprovados. Banco remoto acessado: não.
 
+### 6.7. Tela e deep-link do histórico — Etapas 10 e 11
+
+- Subview interna `Registros do PAD` criada em `#view-profor-2022`, sem item global de menu.
+- Calendário mensal, lista por data e filtros UF/convênio/tipo/área consomem as APIs existentes.
+- Detalhe Antes/Depois usa alterações e metadados da API; suporta COM_ALTERACOES, SEM_ALTERACOES e FALHOU.
+- Modo estático não chama a API do histórico. CTA pós-job usa `registroPadId` e `resultadoHistorico` somente em conclusão.
+- Deep-link usa `proforSubview`/`registroPadId`; refresh e `popstate` restauram a subview e o detalhe.
+- Testes: frontend 11/11; API 10/10; job/orquestrador 14/14. `node --check`, `npm run validar:syntax` e `git diff --check` aprovados.
+- Backend alterado: não. Banco remoto acessado: não.
+
 ## 7. Arquivos alterados pela última etapa
 
 - `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`
-- `backend/server.js`
 - `frontend/js/app.js`
-- `.env.example`
-- `backend/services/profor-2022/profor-pad-historico-consulta-service.js`
-- `tests/services/profor-admin-endpoint-guard.test.js`
-- `tests/services/profor-pad-historico-api.test.js`
+- `frontend/css/app.css`
+- `tests/services/profor-pad-historico-frontend.test.js`
 
 ## 8. Decisões que não devem ser rediscutidas
 
@@ -145,7 +152,7 @@ Não reimplementar essas responsabilidades.
 
 ## 9. Pendências/bloqueios
 
-- Nenhum bloqueio conhecido para iniciar a Etapa 8.
+- Nenhum bloqueio conhecido para iniciar a Etapa 12.
 
 ## 10. Instruções para o próximo agente
 
@@ -153,9 +160,9 @@ O próximo agente deve:
 1. ler `AGENTS.md`;
 2. ler `memoria/INDEX.md`;
 3. ler este `REGISTROS_PAD_IMPLEMENTACAO_STATUS.md`;
-4. ler somente a seção da Etapa 10 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
-5. executar somente a Etapa 10;
-6. não avançar para a Etapa 11;
+4. ler somente a seção da Etapa 12 em `PLANO_REGISTROS_PAD_PROFOR_2022.md`;
+5. executar somente a Etapa 12;
+6. não avançar para a Etapa 13;
 7. atualizar este arquivo ao terminar.
 
 ## 11. Protocolo de fechamento por etapa

@@ -83,6 +83,17 @@ let orcamentoEventosDelegadosConfigurados = false;
 let erroCarregamentoOrcamento = null;
 let baseAplicacaoCarregamentoPromise = null;
 let avisoFallbackProfor2022 = null;
+let profor2022Subview = 'principal';
+let proforPadHistoricoMes = null;
+let proforPadHistoricoDataSelecionada = null;
+let proforPadHistoricoDias = [];
+let proforPadHistoricoAtualizacoes = [];
+let proforPadHistoricoAtualizacaoSelecionada = null;
+let proforPadHistoricoFiltros = { uf: '', convenio: '', tipo: '', area: '' };
+let proforPadHistoricoCarregamentoSequencia = 0;
+let proforPadHistoricoCarregando = { mes: false, data: false, detalhe: false };
+let proforPadHistoricoErros = { mes: '', data: '', detalhe: '' };
+let proforPadHistoricoEventosConfigurados = false;
 const errosCarregamentoView = {};
 const DEBUG_PERF_ONASP = (() => {
     if (typeof window === 'undefined' || typeof URLSearchParams === 'undefined') {
@@ -1512,10 +1523,18 @@ async function carregarLogoParaPDF() {
                 });
             }
 
+            const deepLinkHistoricoPad = new URL(window.location.href).searchParams.get('proforSubview') === 'registros-pad';
+            const abrirHistoricoPadInicial = deepLinkHistoricoPad && !estaEmModoPublicacaoEstatica();
+            if (deepLinkHistoricoPad && !abrirHistoricoPadInicial) limparUrlRegistrosPadProfor2022({ replace: true });
             atualizarNavegacao('dashboard');
-            document.getElementById('view-dashboard').style.display = 'block';
-            atualizarAcessibilidadeViews('dashboard');
+            document.getElementById('view-dashboard').style.display = abrirHistoricoPadInicial ? 'none' : 'block';
+            atualizarAcessibilidadeViews(abrirHistoricoPadInicial ? 'profor2022' : 'dashboard');
             configurarAlternanciaMetricasMobile('btn-toggle-dashboard-metrics', 'dashboard-primary-metrics');
+            window.addEventListener('popstate', () => { restaurarDeepLinkHistoricoPadProfor2022(); });
+            if (abrirHistoricoPadInicial) {
+                await restaurarDeepLinkHistoricoPadProfor2022();
+                return;
+            }
             const inicioBootstrapMinimo = DEBUG_PERF_ONASP ? performance.now() : 0;
             registrarPerfOrcamento('bootstrap:minimo', inicioBootstrapMinimo, {
                 viewInicial: document.body.dataset.currentView || 'dashboard'
@@ -1549,6 +1568,7 @@ async function carregarLogoParaPDF() {
         }
 
         async function garantirDadosDaView(viewName) {
+            if (viewName === 'profor2022' && profor2022Subview === 'registros-pad') return;
             if (['dashboard', 'detalhamento', 'estado-detalhe', 'profor2022', 'profor-convenio-detalhe', 'faf2021', 'faf2021-detalhe', 'doacoes2023', 'doacoes2023-detalhe'].includes(viewName)) {
                 await garantirDadosBaseAplicacao();
             }
@@ -4796,6 +4816,26 @@ async function carregarLogoParaPDF() {
             }
         }
 
+        function renderizarCtaHistoricoPadAtualizacao(statusFinal) {
+            const id = idHistoricoPadValido(statusFinal?.registroPadId);
+            if (statusFinal?.status !== 'concluido' || !id || estaEmModoPublicacaoEstatica()) return;
+            const container = document.getElementById('recarga-pad-resultado');
+            if (!container) return;
+            container.querySelector('.profor-pad-historico-post-job')?.remove();
+            const bloco = document.createElement('div');
+            bloco.className = 'profor-pad-historico-post-job';
+            const semAlteracoes = statusFinal.resultadoHistorico === 'SEM_ALTERACOES';
+            const resumo = document.createElement('span');
+            resumo.textContent = semAlteracoes ? 'Nenhuma alteração identificada nesta execução.' : 'Registro desta atualização disponível.';
+            const botao = document.createElement('button');
+            botao.type = 'button';
+            botao.className = 'btn btn-sm btn-outline-primary';
+            botao.textContent = 'Ver alterações';
+            botao.addEventListener('click', () => abrirRegistrosPadProfor2022({ atualizacaoId: id }));
+            bloco.append(resumo, botao);
+            container.append(bloco);
+        }
+
         async function executarAtualizacaoPadsTransferegovUI() {
             if (estaEmModoPublicacaoEstatica()) {
                 alert(MENSAGEM_MODO_PUBLICACAO);
@@ -4881,6 +4921,10 @@ async function carregarLogoParaPDF() {
                 } catch (errorAtualizacaoUi) {
                     console.warn('Falha ao atualizar interface após atualização PADs:', errorAtualizacaoUi);
                 }
+                if (recarga && document.getElementById('recarga-pad-resultado') !== resultadoContainer) {
+                    renderResultadoRecargaPad(recarga);
+                }
+                renderizarCtaHistoricoPadAtualizacao(statusFinal);
             } catch (error) {
                 console.error('Falha ao atualizar PADs no Transferegov:', error);
                 if (resultadoContainer) {
@@ -5435,6 +5479,11 @@ async function carregarLogoParaPDF() {
         }
 
         async function toggleView(viewName) {
+            if (viewName !== 'profor2022' && profor2022Subview === 'registros-pad') {
+                ++proforPadHistoricoCarregamentoSequencia;
+                profor2022Subview = 'principal';
+                limparUrlRegistrosPadProfor2022({ replace: true });
+            }
             if (viewName === 'orcamento') {
                 const inicioToggleOrcamento = DEBUG_PERF_ONASP ? performance.now() : 0;
                 document.getElementById('view-dashboard').style.display = 'none';
@@ -5521,7 +5570,7 @@ async function carregarLogoParaPDF() {
             const podeAbrirRevisaoDivergencias = viewName === 'revisao-divergencias';
             const podeAbrirComDadosEstaticos = ['faf2021', 'faf2021-detalhe', 'doacoes2023', 'doacoes2023-detalhe'].includes(viewName);
 
-            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !podeAbrirOrcamento && !podeAbrirContatos && !podeAbrirDiagnosticoOuvidorias && !podeAbrirFormalizacao && !podeAbrirStatusSistema && !podeAbrirRevisaoDivergencias && !podeAbrirComDadosEstaticos) {
+            if (!dadosFinanceirosValidados && viewName !== 'dashboard' && !(viewName === 'profor2022' && profor2022Subview === 'registros-pad') && !podeAbrirOrcamento && !podeAbrirContatos && !podeAbrirDiagnosticoOuvidorias && !podeAbrirFormalizacao && !podeAbrirStatusSistema && !podeAbrirRevisaoDivergencias && !podeAbrirComDadosEstaticos) {
                 mostrarAlertaCarregamentoPlanilha(
                     'Dados financeiros indisponiveis: carregue uma planilha valida antes de acessar detalhes ou exportacoes.',
                     true,
@@ -6640,11 +6689,465 @@ async function carregarLogoParaPDF() {
             return '';
         }
 
+        const CAMINHO_HISTORICO_PAD_PROFOR = '/api/profor-2022/pad/historico';
+
+        function dataSaoPauloHistoricoPad(valor = new Date()) {
+            const data = valor instanceof Date ? valor : new Date(valor);
+            if (Number.isNaN(data.getTime())) return null;
+            const partes = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit'
+            }).formatToParts(data);
+            const obter = (tipo) => partes.find((parte) => parte.type === tipo)?.value;
+            return `${obter('year')}-${obter('month')}-${obter('day')}`;
+        }
+
+        function idHistoricoPadValido(valor) {
+            const texto = String(valor ?? '');
+            if (!/^[1-9]\d*$/.test(texto)) return null;
+            const numero = Number(texto);
+            return Number.isSafeInteger(numero) ? numero : null;
+        }
+
+        function sincronizarUrlRegistrosPadProfor2022({ atualizacaoId = null, replace = false } = {}) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('proforSubview', 'registros-pad');
+            const id = idHistoricoPadValido(atualizacaoId);
+            if (id) url.searchParams.set('registroPadId', String(id));
+            else url.searchParams.delete('registroPadId');
+            window.history[replace ? 'replaceState' : 'pushState'](window.history.state, '', url);
+        }
+
+        function limparUrlRegistrosPadProfor2022({ replace = false } = {}) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('proforSubview');
+            url.searchParams.delete('registroPadId');
+            window.history[replace ? 'replaceState' : 'pushState'](window.history.state, '', url);
+        }
+
+        async function buscarHistoricoPadProfor2022(caminho) {
+            if (estaEmModoPublicacaoEstatica()) return null;
+            const { resposta, payload } = await fetchJsonApiOnasp(caminho);
+            if (!resposta.ok || payload?.success !== true) {
+                const erro = new Error(payload?.message || `Falha ao consultar histórico (HTTP ${resposta.status}).`);
+                erro.status = resposta.status;
+                throw erro;
+            }
+            return payload;
+        }
+
+        function formatarMomentoHistoricoPad(valor, opcoes = {}) {
+            if (!valor) return '—';
+            const data = new Date(valor);
+            if (Number.isNaN(data.getTime())) return '—';
+            return new Intl.DateTimeFormat('pt-BR', {
+                timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', ...opcoes
+            }).format(data);
+        }
+
+        function formatarHoraHistoricoPad(valor) {
+            if (!valor) return '—';
+            const data = new Date(valor);
+            return Number.isNaN(data.getTime()) ? '—' : new Intl.DateTimeFormat('pt-BR', {
+                timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit'
+            }).format(data);
+        }
+
+        function duracaoHistoricoPad(atualizacao) {
+            if (!atualizacao?.iniciadoEm || !atualizacao?.concluidoEm) return '—';
+            const ms = new Date(atualizacao.concluidoEm).getTime() - new Date(atualizacao.iniciadoEm).getTime();
+            if (!Number.isFinite(ms) || ms < 0) return '—';
+            const segundos = Math.floor(ms / 1000);
+            return segundos < 60 ? `${segundos} s` : `${Math.floor(segundos / 60)} min ${segundos % 60} s`;
+        }
+
+        function dinheiroHistoricoPad(valor) {
+            return valor == null || !Number.isFinite(Number(valor)) ? '—' : formatMoney(Number(valor));
+        }
+
+        function textoHistoricoPad(valor) {
+            return escapeHtml(valor == null || valor === '' ? '—' : valor);
+        }
+
+        function mesVizinhoHistoricoPad(mes, deslocamento) {
+            const [ano, numeroMes] = mes.split('-').map(Number);
+            const data = new Date(Date.UTC(ano, numeroMes - 1 + deslocamento, 1));
+            return `${data.getUTCFullYear()}-${String(data.getUTCMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function montarCalendarioHistoricoPad() {
+            const mes = proforPadHistoricoMes;
+            const [ano, numeroMes] = mes.split('-').map(Number);
+            const primeiroDia = new Date(Date.UTC(ano, numeroMes - 1, 1)).getUTCDay();
+            const totalDias = new Date(Date.UTC(ano, numeroMes, 0)).getUTCDate();
+            const titulo = new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC', month: 'long', year: 'numeric' })
+                .format(new Date(Date.UTC(ano, numeroMes - 1, 1)));
+            const diasComExecucao = new Map(proforPadHistoricoDias.map((dia) => [dia.data, dia]));
+            const celulas = Array.from({ length: primeiroDia }, () => '<span class="profor-pad-historico-calendar-empty" aria-hidden="true"></span>');
+            for (let dia = 1; dia <= totalDias; dia += 1) {
+                const data = `${mes}-${String(dia).padStart(2, '0')}`;
+                const registro = diasComExecucao.get(data);
+                const selecionado = data === proforPadHistoricoDataSelecionada;
+                const total = Number(registro?.totalExecucoes) || 0;
+                const falhas = Number(registro?.falhas) || 0;
+                celulas.push(`<button type="button" class="profor-pad-historico-calendar-day${selecionado ? ' is-selected' : ''}"
+                    data-historico-acao="dia" data-data="${data}" aria-label="${dia} de ${escapeHtml(titulo)}; ${total} execução${total === 1 ? '' : 'ões'}${falhas ? `; ${falhas} falha${falhas === 1 ? '' : 's'}` : ''}"
+                    ${selecionado ? 'aria-current="date"' : ''}>
+                    <span>${dia}</span>${total ? `<span class="profor-pad-historico-calendar-dot" aria-hidden="true"></span>` : ''}
+                    ${falhas ? '<span class="profor-pad-historico-calendar-failure" aria-hidden="true"></span>' : ''}
+                </button>`);
+            }
+            return `<section class="profor-pad-historico-panel profor-pad-historico-calendar" aria-label="Calendário do histórico">
+                <div class="profor-pad-historico-calendar-nav">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-historico-acao="mes-anterior" aria-label="Mês anterior"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+                    <h3>${escapeHtml(titulo.charAt(0).toUpperCase() + titulo.slice(1))}</h3>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-historico-acao="mes-seguinte" aria-label="Mês seguinte"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+                </div>
+                <div class="profor-pad-historico-calendar-grid profor-pad-historico-weekdays" aria-hidden="true">${['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((nome) => `<span>${nome}</span>`).join('')}</div>
+                <div class="profor-pad-historico-calendar-grid">${celulas.join('')}</div>
+                ${proforPadHistoricoCarregando.mes ? '<p role="status">Carregando mês...</p>' : ''}
+                ${proforPadHistoricoErros.mes ? `<p role="alert">${textoHistoricoPad(proforPadHistoricoErros.mes)}</p>` : ''}
+                ${!proforPadHistoricoCarregando.mes && !proforPadHistoricoErros.mes && !proforPadHistoricoDias.length ? '<p class="text-muted small mt-3">Nenhuma atualização registrada neste mês.</p>' : ''}
+            </section>`;
+        }
+
+        function montarFiltrosHistoricoPad() {
+            const filtros = proforPadHistoricoFiltros;
+            const opcoes = (valores, selecionado) => valores.map(([valor, rotulo]) =>
+                `<option value="${escapeHtml(valor)}"${valor === selecionado ? ' selected' : ''}>${escapeHtml(rotulo)}</option>`).join('');
+            return `<form class="profor-pad-historico-filters" id="profor-pad-historico-filtros" aria-label="Filtrar execuções">
+                <label>UF<select name="uf" class="form-select form-select-sm">${opcoes([['', 'Todas'], ...TODAS_UFS_BRASIL.map((uf) => [uf, uf])], filtros.uf)}</select></label>
+                <label>Convênio<input name="convenio" class="form-control form-control-sm" type="text" value="${escapeHtml(filtros.convenio)}" placeholder="Número do convênio"></label>
+                <label>Tipo<select name="tipo" class="form-select form-select-sm">${opcoes([['', 'Todos'], ['NOVO', 'Novo'], ['REMOVIDO', 'Removido'], ['ALTERADO', 'Alterado']], filtros.tipo)}</select></label>
+                <label>Área<select name="area" class="form-select form-select-sm">${opcoes([['', 'Todas'], ['OUVIDORIA', 'Ouvidoria'], ['CORREGEDORIA', 'Corregedoria'], ['ESCOLA_PENAL', 'Escola de Serviços Penais'], ['NAO_CLASSIFICADO', 'Classificação pendente']], filtros.area)}</select></label>
+                <button type="submit" class="btn btn-sm btn-outline-primary">Aplicar filtros</button>
+            </form>`;
+        }
+
+        function montarCardExecucaoHistoricoPad(atualizacao) {
+            const falhou = atualizacao.status === 'FALHOU';
+            const semAlteracoes = atualizacao.resultado === 'SEM_ALTERACOES';
+            const selecionado = atualizacao.id === proforPadHistoricoAtualizacaoSelecionada?.atualizacao?.id;
+            return `<article class="profor-pad-historico-execution-card${falhou ? ' is-failure' : ''}${selecionado ? ' is-selected' : ''}">
+                <div class="profor-pad-historico-execution-heading"><strong>${falhou ? 'Atualização não concluída' : 'Atualização via Transferegov'}</strong><span>${textoHistoricoPad(formatarHoraHistoricoPad(atualizacao.iniciadoEm))}</span></div>
+                <p class="small text-muted mb-2">${textoHistoricoPad(atualizacao.origem)} · ${textoHistoricoPad(atualizacao.status)} · duração ${textoHistoricoPad(duracaoHistoricoPad(atualizacao))}</p>
+                ${falhou ? `<p>${textoHistoricoPad(atualizacao.mensagemErro || 'A operação falhou antes da consolidação do estado posterior.')}</p>`
+                    : semAlteracoes ? '<p>Nenhuma alteração identificada.</p>'
+                        : `<p>+${Number(atualizacao.totalNovos) || 0} novos · -${Number(atualizacao.totalRemovidos) || 0} removidos · ${Number(atualizacao.totalAlterados) || 0} alterados</p>`}
+                <p class="small mb-2">Itens: ${textoHistoricoPad(atualizacao.totalItensAntes)} antes / ${textoHistoricoPad(atualizacao.totalItensDepois)} depois · Pendências: ${textoHistoricoPad(atualizacao.totalPendenciasRevisao)} · Δ previsto: ${textoHistoricoPad(dinheiroHistoricoPad(atualizacao.deltaValorPrevisto))}</p>
+                <button type="button" class="btn btn-sm btn-outline-primary" data-historico-acao="detalhe" data-id="${idHistoricoPadValido(atualizacao.id) || ''}">${semAlteracoes ? 'Ver registro' : 'Ver detalhes'}</button>
+            </article>`;
+        }
+
+        function campoAlteradoHistoricoPad(alteracao, campo) {
+            const campos = alteracao.camposAlterados;
+            return Array.isArray(campos) ? campos.includes(campo) : Boolean(campos && Object.hasOwn(campos, campo));
+        }
+
+        function montarCardAlteracaoHistoricoPad(alteracao, indice) {
+            const antes = alteracao.itemAnterior || {};
+            const depois = alteracao.itemNovo || {};
+            const tipo = alteracao.tipo;
+            const rotulos = {
+                PRESERVADA: 'Classificação preservada',
+                HERDADA_SUBSTITUTO: 'Classificação herdada de substituto vinculado',
+                PENDENTE_REVISAO: 'Classificação pendente'
+            };
+            const pendente = alteracao.classificacaoEstado === 'PENDENTE_REVISAO' || alteracao.areaNova === 'NAO_CLASSIFICADO';
+            const rotuloClassificacao = pendente ? 'Classificação pendente' : rotulos[alteracao.classificacaoEstado];
+            const campos = [
+                ['descricaoOriginal', 'Descrição original'], ['descricao', 'Descrição'], ['quantidade', 'Quantidade'],
+                ['valorUnitario', 'Valor unitário'], ['valorPrevisto', 'Previsto'], ['valorExecutado', 'Executado'],
+                ['saldo', 'Saldo'], ['area', 'Área'], ['natureza', 'Natureza']
+            ];
+            const valorCampo = (item, campo) => campo.startsWith('valor') || campo === 'saldo'
+                ? dinheiroHistoricoPad(item?.[campo]) : textoHistoricoPad(item?.[campo]);
+            const linhas = campos.map(([campo, rotulo]) => `<div class="profor-pad-historico-compare-row${campoAlteradoHistoricoPad(alteracao, campo) ? ' is-changed' : ''}">
+                <span>${rotulo}</span><span>${tipo === 'NOVO' ? '—' : valorCampo(antes, campo)}</span><span>${tipo === 'REMOVIDO' ? '—' : valorCampo(depois, campo)}</span>
+            </div>`).join('');
+            return `<article class="profor-pad-historico-change-card">
+                <button type="button" class="profor-pad-historico-change-toggle" data-historico-acao="alternar-alteracao" aria-expanded="false" aria-controls="profor-pad-historico-alteracao-${indice}">
+                    <strong>${textoHistoricoPad(tipo)}</strong> · Convênio ${textoHistoricoPad(alteracao.numeroConvenio)} · ${textoHistoricoPad(alteracao.uf)} · ${textoHistoricoPad(alteracao.descricaoNova || alteracao.descricaoAnterior)}
+                </button>
+                <div id="profor-pad-historico-alteracao-${indice}" hidden>
+                    ${rotuloClassificacao ? `<p class="profor-pad-historico-classification">${escapeHtml(rotuloClassificacao)}</p>` : ''}
+                    ${tipo === 'NOVO' ? '<p class="small">ANTES: Item inexistente no snapshot anterior.</p>' : ''}
+                    ${tipo === 'REMOVIDO' ? '<p class="small">DEPOIS: Item não consta mais no PAD atual.</p>' : ''}
+                    <div class="profor-pad-historico-compare"><div class="profor-pad-historico-compare-row is-heading"><span>Campo</span><span>ANTES</span><span>DEPOIS</span></div>${linhas}</div>
+                </div>
+            </article>`;
+        }
+
+        function montarDetalheHistoricoPad() {
+            if (proforPadHistoricoCarregando.detalhe) return '<p role="status">Carregando detalhe...</p>';
+            if (proforPadHistoricoErros.detalhe) return `<p role="alert">${textoHistoricoPad(proforPadHistoricoErros.detalhe)}</p>`;
+            const detalhe = proforPadHistoricoAtualizacaoSelecionada;
+            if (!detalhe) return '';
+            const atualizacao = detalhe.atualizacao;
+            const resumo = [
+                ['Status', atualizacao.status], ['Resultado', atualizacao.resultado], ['Origem', atualizacao.origem],
+                ['Início', formatarMomentoHistoricoPad(atualizacao.iniciadoEm)], ['Conclusão', formatarMomentoHistoricoPad(atualizacao.concluidoEm)],
+                ['Duração', duracaoHistoricoPad(atualizacao)], ['Itens ANTES', atualizacao.totalItensAntes], ['Itens DEPOIS', atualizacao.totalItensDepois],
+                ['Novos', atualizacao.totalNovos], ['Removidos', atualizacao.totalRemovidos], ['Alterados', atualizacao.totalAlterados],
+                ['Pendências', atualizacao.totalPendenciasRevisao], ['Previsto ANTES', dinheiroHistoricoPad(atualizacao.totalValorPrevistoAntes)],
+                ['Previsto DEPOIS', dinheiroHistoricoPad(atualizacao.totalValorPrevistoDepois)], ['Δ previsto', dinheiroHistoricoPad(atualizacao.deltaValorPrevisto)],
+                ['Executado ANTES', dinheiroHistoricoPad(atualizacao.totalValorExecutadoAntes)], ['Executado DEPOIS', dinheiroHistoricoPad(atualizacao.totalValorExecutadoDepois)],
+                ['Δ executado', dinheiroHistoricoPad(atualizacao.deltaValorExecutado)], ['Saldo ANTES', dinheiroHistoricoPad(atualizacao.totalSaldoAntes)],
+                ['Saldo DEPOIS', dinheiroHistoricoPad(atualizacao.totalSaldoDepois)], ['Δ saldo', dinheiroHistoricoPad(atualizacao.deltaSaldo)]
+            ];
+            const metadados = ['antes', 'depois'].map((momento) => {
+                const snapshot = detalhe.snapshots?.[momento];
+                return `<div><strong>${momento.toUpperCase()}</strong>: ${snapshot
+                    ? `versão ${textoHistoricoPad(snapshot.versaoSnapshot)} · ${textoHistoricoPad(formatarMomentoHistoricoPad(snapshot.geradoEm))} · checksum ${textoHistoricoPad(snapshot.checksum?.slice(0, 12))}`
+                    : 'não disponível'}</div>`;
+            }).join('');
+            return `<section class="profor-pad-historico-detail" aria-label="Detalhe da execução">
+                <h4>Registro #${atualizacao.id}</h4>
+                ${atualizacao.status === 'FALHOU' ? `<p role="status">Atualização não concluída. ${textoHistoricoPad(atualizacao.mensagemErro)}</p>` : ''}
+                ${atualizacao.resultado === 'SEM_ALTERACOES' ? '<p>Nenhuma alteração identificada.</p>' : ''}
+                <div class="profor-pad-historico-summary">${resumo.map(([rotulo, valor]) => `<div><span>${rotulo}</span><strong>${textoHistoricoPad(valor)}</strong></div>`).join('')}</div>
+                <div class="profor-pad-historico-snapshots" aria-label="Metadados dos snapshots">${metadados}</div>
+                <h5>Alterações</h5>
+                ${detalhe.alteracoes?.length ? detalhe.alteracoes.map(montarCardAlteracaoHistoricoPad).join('') : '<p>Nenhuma alteração registrada nesta execução.</p>'}
+            </section>`;
+        }
+
+        function renderRegistrosPadProfor2022() {
+            const container = document.getElementById('view-profor-2022');
+            if (!container || profor2022Subview !== 'registros-pad' || estaEmModoPublicacaoEstatica()) return;
+            container.style.display = 'block';
+            container.innerHTML = `<section class="dashboard-intro profor-intro profor-pad-historico-header">
+                <div><p class="section-eyebrow mb-1">PROFOR 2022</p><h2>Registros do PAD</h2><p>Histórico das atualizações do Plano de Aplicação do PROFOR 2022.</p></div>
+                <button type="button" class="btn btn-outline-secondary" data-historico-acao="voltar">Voltar ao PROFOR 2022</button>
+            </section><div class="profor-pad-historico-layout">
+                <div class="profor-pad-historico-main"><section class="profor-pad-historico-panel" aria-label="Execuções do dia">
+                    <h3>Execuções do dia</h3>${montarFiltrosHistoricoPad()}
+                    ${proforPadHistoricoDataSelecionada ? `<p class="small">Data: ${textoHistoricoPad(proforPadHistoricoDataSelecionada)}</p>` : '<p class="small text-muted">Selecione uma data no calendário.</p>'}
+                    ${proforPadHistoricoCarregando.data ? '<p role="status">Carregando execuções...</p>' : ''}
+                    ${proforPadHistoricoErros.data ? `<p role="alert">${textoHistoricoPad(proforPadHistoricoErros.data)}</p>` : ''}
+                    ${proforPadHistoricoDataSelecionada && !proforPadHistoricoCarregando.data && !proforPadHistoricoErros.data
+                        ? (proforPadHistoricoAtualizacoes.length ? proforPadHistoricoAtualizacoes.map(montarCardExecucaoHistoricoPad).join('') : '<p>Nenhuma atualização registrada nesta data.</p>') : ''}
+                </section>${montarDetalheHistoricoPad()}</div>${montarCalendarioHistoricoPad()}
+            </div>`;
+            configurarEventosHistoricoPadProfor2022();
+        }
+
+        function configurarEventosHistoricoPadProfor2022() {
+            if (proforPadHistoricoEventosConfigurados) return;
+            const container = document.getElementById('view-profor-2022');
+            container.addEventListener('click', (event) => {
+                const botao = event.target.closest('[data-historico-acao]');
+                if (!botao || !container.contains(botao)) return;
+                const acao = botao.dataset.historicoAcao;
+                if (acao === 'abrir') abrirRegistrosPadProfor2022();
+                if (acao === 'voltar') fecharRegistrosPadProfor2022();
+                if (acao === 'mes-anterior' || acao === 'mes-seguinte') carregarMesHistoricoPadProfor2022(mesVizinhoHistoricoPad(proforPadHistoricoMes, acao === 'mes-anterior' ? -1 : 1));
+                if (acao === 'dia') selecionarDataHistoricoPadProfor2022(botao.dataset.data);
+                if (acao === 'detalhe') abrirDetalheHistoricoPadProfor2022(botao.dataset.id);
+                if (acao === 'alternar-alteracao') {
+                    const painel = document.getElementById(botao.getAttribute('aria-controls'));
+                    if (painel) {
+                        painel.hidden = !painel.hidden;
+                        botao.setAttribute('aria-expanded', String(!painel.hidden));
+                    }
+                }
+            });
+            container.addEventListener('change', (event) => {
+                const form = event.target.closest('#profor-pad-historico-filtros');
+                if (form && event.target.name !== 'convenio') aplicarFiltrosHistoricoPadProfor2022(form);
+            });
+            container.addEventListener('submit', (event) => {
+                if (event.target.id !== 'profor-pad-historico-filtros') return;
+                event.preventDefault();
+                aplicarFiltrosHistoricoPadProfor2022(event.target);
+            });
+            proforPadHistoricoEventosConfigurados = true;
+        }
+
+        function aplicarFiltrosHistoricoPadProfor2022(form) {
+            proforPadHistoricoFiltros = {
+                uf: form.elements.uf.value,
+                convenio: form.elements.convenio.value.trim(),
+                tipo: form.elements.tipo.value,
+                area: form.elements.area.value
+            };
+            proforPadHistoricoAtualizacaoSelecionada = null;
+            proforPadHistoricoCarregando.detalhe = false;
+            proforPadHistoricoErros.detalhe = '';
+            sincronizarUrlRegistrosPadProfor2022({ replace: true });
+            if (proforPadHistoricoDataSelecionada) carregarExecucoesDataHistoricoPadProfor2022();
+            else renderRegistrosPadProfor2022();
+        }
+
+        async function carregarExecucoesDataHistoricoPadProfor2022(sequencia = ++proforPadHistoricoCarregamentoSequencia) {
+            if (estaEmModoPublicacaoEstatica() || !proforPadHistoricoDataSelecionada) return;
+            const parametros = new URLSearchParams({ data: proforPadHistoricoDataSelecionada });
+            for (const [chave, valor] of Object.entries(proforPadHistoricoFiltros)) {
+                if (valor) parametros.set(chave, valor);
+            }
+            proforPadHistoricoCarregando.data = true;
+            proforPadHistoricoErros.data = '';
+            renderRegistrosPadProfor2022();
+            try {
+                const resposta = await buscarHistoricoPadProfor2022(`${CAMINHO_HISTORICO_PAD_PROFOR}?${parametros}`);
+                if (sequencia !== proforPadHistoricoCarregamentoSequencia) return;
+                proforPadHistoricoAtualizacoes = Array.isArray(resposta.execucoes) ? resposta.execucoes : [];
+            } catch (error) {
+                if (sequencia !== proforPadHistoricoCarregamentoSequencia) return;
+                proforPadHistoricoAtualizacoes = [];
+                proforPadHistoricoErros.data = error.message || 'Falha ao carregar execuções.';
+            } finally {
+                if (sequencia === proforPadHistoricoCarregamentoSequencia) {
+                    proforPadHistoricoCarregando.data = false;
+                    renderRegistrosPadProfor2022();
+                }
+            }
+        }
+
+        async function carregarMesHistoricoPadProfor2022(mes, { sequencia = ++proforPadHistoricoCarregamentoSequencia, selecionarData = null } = {}) {
+            if (estaEmModoPublicacaoEstatica()) return;
+            if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) return;
+            proforPadHistoricoMes = mes;
+            proforPadHistoricoCarregando.data = false;
+            proforPadHistoricoCarregando.detalhe = false;
+            if (!selecionarData && !proforPadHistoricoDataSelecionada?.startsWith(`${mes}-`)) {
+                proforPadHistoricoDataSelecionada = null;
+                proforPadHistoricoAtualizacaoSelecionada = null;
+                proforPadHistoricoAtualizacoes = [];
+                sincronizarUrlRegistrosPadProfor2022({ replace: true });
+            }
+            proforPadHistoricoDias = [];
+            proforPadHistoricoCarregando.mes = true;
+            proforPadHistoricoErros.mes = '';
+            renderRegistrosPadProfor2022();
+            try {
+                const parametros = new URLSearchParams({ mes });
+                const resposta = await buscarHistoricoPadProfor2022(`${CAMINHO_HISTORICO_PAD_PROFOR}?${parametros}`);
+                if (sequencia !== proforPadHistoricoCarregamentoSequencia) return;
+                proforPadHistoricoDias = Array.isArray(resposta.dias) ? resposta.dias : [];
+            } catch (error) {
+                if (sequencia !== proforPadHistoricoCarregamentoSequencia) return;
+                proforPadHistoricoErros.mes = error.message || 'Falha ao carregar mês.';
+            } finally {
+                if (sequencia === proforPadHistoricoCarregamentoSequencia) {
+                    proforPadHistoricoCarregando.mes = false;
+                    if (selecionarData) {
+                        proforPadHistoricoDataSelecionada = selecionarData;
+                        await carregarExecucoesDataHistoricoPadProfor2022(sequencia);
+                    }
+                    renderRegistrosPadProfor2022();
+                }
+            }
+        }
+
+        function selecionarDataHistoricoPadProfor2022(data) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(data) || !data.startsWith(`${proforPadHistoricoMes}-`)) return;
+            proforPadHistoricoDataSelecionada = data;
+            proforPadHistoricoAtualizacaoSelecionada = null;
+            proforPadHistoricoAtualizacoes = [];
+            proforPadHistoricoCarregando.detalhe = false;
+            proforPadHistoricoErros.detalhe = '';
+            sincronizarUrlRegistrosPadProfor2022({ replace: true });
+            carregarExecucoesDataHistoricoPadProfor2022();
+        }
+
+        async function abrirDetalheHistoricoPadProfor2022(atualizacaoId, { sincronizarUrl = true } = {}) {
+            if (estaEmModoPublicacaoEstatica()) return;
+            const id = idHistoricoPadValido(atualizacaoId);
+            if (!id) {
+                proforPadHistoricoErros.detalhe = 'ID de registro histórico inválido.';
+                sincronizarUrlRegistrosPadProfor2022({ replace: true });
+                renderRegistrosPadProfor2022();
+                return;
+            }
+            const sequencia = ++proforPadHistoricoCarregamentoSequencia;
+            proforPadHistoricoCarregando.detalhe = true;
+            proforPadHistoricoErros.detalhe = '';
+            renderRegistrosPadProfor2022();
+            try {
+                const resposta = await buscarHistoricoPadProfor2022(`${CAMINHO_HISTORICO_PAD_PROFOR}/${id}`);
+                if (sequencia !== proforPadHistoricoCarregamentoSequencia) return;
+                const data = dataSaoPauloHistoricoPad(resposta.atualizacao?.iniciadoEm);
+                if (!data) throw new Error('Registro sem data de início válida.');
+                proforPadHistoricoAtualizacaoSelecionada = resposta;
+                proforPadHistoricoDataSelecionada = data;
+                if (sincronizarUrl) sincronizarUrlRegistrosPadProfor2022({ atualizacaoId: id });
+                if (proforPadHistoricoMes !== data.slice(0, 7) || !proforPadHistoricoDias.length) {
+                    await carregarMesHistoricoPadProfor2022(data.slice(0, 7), { sequencia, selecionarData: data });
+                } else {
+                    await carregarExecucoesDataHistoricoPadProfor2022(sequencia);
+                }
+            } catch (error) {
+                if (sequencia !== proforPadHistoricoCarregamentoSequencia) return;
+                proforPadHistoricoAtualizacaoSelecionada = null;
+                proforPadHistoricoErros.detalhe = error.status === 404 ? 'Registro histórico não encontrado.' : (error.message || 'Falha ao carregar detalhe.');
+                sincronizarUrlRegistrosPadProfor2022({ replace: true });
+                if (!proforPadHistoricoDias.length) await carregarMesHistoricoPadProfor2022(proforPadHistoricoMes, { sequencia });
+            } finally {
+                if (sequencia === proforPadHistoricoCarregamentoSequencia) {
+                    proforPadHistoricoCarregando.detalhe = false;
+                    renderRegistrosPadProfor2022();
+                }
+            }
+        }
+
+        async function abrirRegistrosPadProfor2022({ atualizacaoId = null, sincronizarUrl = true } = {}) {
+            if (estaEmModoPublicacaoEstatica()) return;
+            ++proforPadHistoricoCarregamentoSequencia;
+            profor2022Subview = 'registros-pad';
+            proforPadHistoricoMes = dataSaoPauloHistoricoPad().slice(0, 7);
+            proforPadHistoricoDataSelecionada = null;
+            proforPadHistoricoDias = [];
+            proforPadHistoricoAtualizacoes = [];
+            proforPadHistoricoAtualizacaoSelecionada = null;
+            proforPadHistoricoCarregando = { mes: false, data: false, detalhe: false };
+            proforPadHistoricoErros = { mes: '', data: '', detalhe: '' };
+            if (sincronizarUrl) sincronizarUrlRegistrosPadProfor2022({ atualizacaoId });
+            if (document.body.dataset.currentView !== 'profor2022') await toggleView('profor2022');
+            else renderRegistrosPadProfor2022();
+            if (idHistoricoPadValido(atualizacaoId)) await abrirDetalheHistoricoPadProfor2022(atualizacaoId, { sincronizarUrl: false });
+            else await carregarMesHistoricoPadProfor2022(proforPadHistoricoMes);
+        }
+
+        async function fecharRegistrosPadProfor2022({ sincronizarUrl = true } = {}) {
+            ++proforPadHistoricoCarregamentoSequencia;
+            profor2022Subview = 'principal';
+            proforPadHistoricoAtualizacaoSelecionada = null;
+            proforPadHistoricoCarregando = { mes: false, data: false, detalhe: false };
+            if (sincronizarUrl) limparUrlRegistrosPadProfor2022();
+            if (document.body.dataset.currentView === 'profor2022') renderProfor2022View();
+            else await toggleView('profor2022');
+        }
+
+        async function restaurarDeepLinkHistoricoPadProfor2022() {
+            const parametros = new URL(window.location.href).searchParams;
+            if (parametros.get('proforSubview') !== 'registros-pad') {
+                if (profor2022Subview === 'registros-pad') await fecharRegistrosPadProfor2022({ sincronizarUrl: false });
+                return;
+            }
+            if (estaEmModoPublicacaoEstatica()) {
+                limparUrlRegistrosPadProfor2022({ replace: true });
+                return;
+            }
+            const idBruto = parametros.get('registroPadId');
+            const id = idHistoricoPadValido(idBruto);
+            if (idBruto != null && !id) sincronizarUrlRegistrosPadProfor2022({ replace: true });
+            await abrirRegistrosPadProfor2022({ atualizacaoId: id, sincronizarUrl: false });
+        }
+
         function renderProfor2022View() {
             const container = document.getElementById('view-profor-2022');
             if (!container) return;
 
             container.style.display = 'block';
+            if (profor2022Subview === 'registros-pad') {
+                if (!estaEmModoPublicacaoEstatica()) {
+                    renderRegistrosPadProfor2022();
+                    return;
+                }
+                profor2022Subview = 'principal';
+                limparUrlRegistrosPadProfor2022({ replace: true });
+            }
             const dadosProfor = obterDadosProfor2022();
             if (!dadosFinanceirosValidados || !dadosProfor) {
                 container.innerHTML = '<div class="alert alert-warning m-4"><i class="fas fa-exclamation-triangle me-2"></i> Dados do PROFOR 2022 indisponíveis. Carregue uma planilha financeira válida para visualizar os convênios.</div>';
@@ -6673,6 +7176,7 @@ async function carregarLogoParaPDF() {
                         <h2>PROFOR 2022</h2>
                         <p>Convênios vigentes e plano de aplicação por UF</p>
                     </div>
+                    ${!estaEmModoPublicacaoEstatica() ? `<button type="button" class="btn btn-outline-primary" data-historico-acao="abrir" data-requer-backend="true"><i class="fas fa-clock-rotate-left me-2" aria-hidden="true"></i>Registros do PAD</button>` : ''}
                     <div class="intro-badges" aria-label="Resumo PROFOR 2022">
                         <span><i class="fas fa-file-contract" aria-hidden="true"></i> ${resumo.totalConvenios} convênios</span>
                         <span><i class="fas fa-calendar-check" aria-hidden="true"></i> 2022</span>
@@ -6865,6 +7369,7 @@ async function carregarLogoParaPDF() {
             `;
 
             registrarEventosProfor2022(dadosProfor);
+            configurarEventosHistoricoPadProfor2022();
             atualizarTabelaProfor2022(dadosProfor);
         }
 
