@@ -1,6 +1,6 @@
 # PROFOR 2022 — Documentação técnica da funcionalidade
 
-> Estado vigente (29/09/2026): a origem operacional do PROFOR 2022 é PAD/reconstrução. A planilha antiga por abas/UF (`Planilhas/gestao_financeira_ouvidoria.xlsx`) foi removida como origem, fallback, auditoria, comparação e rota dev. As seções iniciais Spec, Plan e Research, bem como propostas antigas de próximas etapas, registram fases históricas da migração: expressões como “atualmente”, “futura”, “deverá” e “ainda não implementada” nelas não descrevem o estado vigente nem autorizam retomar SQLite, aba `Geral` ou fluxos antigos. Para o estado atual, consultar as seções finais deste documento, `profor-2022-operacao.md`, `schema-banco.md`, `rotas-api.md` e o handoff final.
+> Estado vigente (29/09/2026): a origem operacional do PROFOR 2022 é PAD/reconstrução. A planilha antiga por abas/UF (`Planilhas/gestao_financeira_ouvidoria.xlsx`) foi removida como origem, fallback, auditoria, comparação e rota dev. As seções iniciais Spec, Plan e Research, bem como propostas antigas de próximas etapas, registram fases históricas da migração: expressões como “atualmente”, “futura”, “deverá” e “ainda não implementada” nelas não descrevem o estado vigente nem autorizam retomar SQLite, aba `Geral` ou fluxos antigos. Para o estado atual, consultar as seções finais deste documento, `profor-2022-operacao.md`, `schema-banco.md`, `memoria/08_ROTAS_BANCO_API/rotas.md` e o handoff final.
 
 ## Identificação da funcionalidade
 
