@@ -254,7 +254,7 @@ Pendências conhecidas registradas:
 - o campo permanece fora da interface;
 - a pendência fica registrada em `pendenciasConhecidas`;
 - o campo não deve ser recriado sem fórmula segura;
-- o PAD detalhado automático pode ser tratado como evolução futura, se aplicável.
+- a atualização PAD/Transferegov e o histórico com snapshots ANTES/DEPOIS estão implementados no repositório; a ativação operacional depende da aplicação da migration, da conferência de grants/RLS e da validação integrada com PostgreSQL (ver §11.3).
 
 ## 11. Autenticação e governança das rotas administrativas
 

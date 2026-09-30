@@ -122,3 +122,5 @@ Sequência conceitual para o ambiente alvo, ainda não executada:
 
 **ATIVAÇÃO/PERSISTÊNCIA EM BANCO REAL AINDA DEPENDE DAS VALIDAÇÕES
 OPERACIONAIS LISTADAS.** Nenhuma alegação de produção validada.
+
+Correção documental pós-fechamento: referências históricas de `profor-2022.md` e `profor-2022-operacao.md` foram distinguidas do estado vigente; nenhuma alteração funcional.

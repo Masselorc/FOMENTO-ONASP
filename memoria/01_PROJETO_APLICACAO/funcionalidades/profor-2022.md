@@ -1,6 +1,6 @@
 # PROFOR 2022 — Documentação técnica da funcionalidade
 
-> Estado vigente (24/05/2026): a origem operacional do PROFOR 2022 é PAD/reconstrução. A planilha antiga por abas/UF (`Planilhas/gestao_financeira_ouvidoria.xlsx`) foi removida como origem, fallback, auditoria, comparação e rota dev. Trechos abaixo que descrevem `planilha`, `banco-cache`, comparadores antigos ou importações da aba `Geral` são histórico da migração, não orientação operacional atual.
+> Estado vigente (29/09/2026): a origem operacional do PROFOR 2022 é PAD/reconstrução. A planilha antiga por abas/UF (`Planilhas/gestao_financeira_ouvidoria.xlsx`) foi removida como origem, fallback, auditoria, comparação e rota dev. As seções iniciais Spec, Plan e Research, bem como propostas antigas de próximas etapas, registram fases históricas da migração: expressões como “atualmente”, “futura”, “deverá” e “ainda não implementada” nelas não descrevem o estado vigente nem autorizam retomar SQLite, aba `Geral` ou fluxos antigos. Para o estado atual, consultar as seções finais deste documento, `profor-2022-operacao.md`, `schema-banco.md`, `rotas-api.md` e o handoff final.
 
 ## Identificação da funcionalidade
 
@@ -8,13 +8,13 @@
 | --- | --- |
 | Nome da funcionalidade | PROFOR 2022 |
 | Arquivo deste documento | `memoria/01_PROJETO_APLICACAO/funcionalidades/profor-2022.md` |
-| Status do documento | rascunho técnico |
-| Última revisão | 24/05/2026 |
+| Status do documento | documentação técnica vigente |
+| Última revisão | 29/09/2026 |
 | Responsável pela revisão | ONASP / FOMENTO-ONASP |
 | Funcionalidade crítica? | sim |
 | Requer atualização quando alterar código? | sim |
 
-## 1. Spec — Especificação funcional
+## 1. Spec — Especificação funcional (registro histórico)
 
 ### 1.1. Problema do usuário
 
@@ -70,7 +70,7 @@ Também não inclui eliminar as abas estaduais da planilha. A substituição ini
 5. A documentação deve indicar riscos, validações e rollback.
 6. Nenhuma alteração funcional deve ser feita nesta etapa.
 
-## 2. Plan — Planejamento técnico
+## 2. Plan — Planejamento técnico (registro histórico)
 
 ### 2.1. Arquivos front-end relacionados
 
@@ -173,7 +173,7 @@ Não há dependência nova nesta etapa documental.
 
 Futuras etapas podem exigir leitura de ZIP/CSV do DETRU. Qualquer nova dependência deve ser justificada quanto a necessidade, alternativa nativa, impacto e risco de manutenção.
 
-## 3. Research — Decisões, fundamentos e restrições
+## 3. Research — Decisões, fundamentos e restrições (registro histórico)
 
 ### 3.1. Decisões técnicas já identificadas
 
@@ -553,7 +553,7 @@ O fluxo consolidado abaixo não é orientação operacional atual. Atualizaçõe
 | Publicação condicionada | Se a atualização consolidada não fechar 15/15/15, a publicação é abortada |
 | Auditoria | Verifica padrões sensíveis em todos os JSONs publicados e exige `dadosProfor2022.ultimaAtualizacaoDados` em `aplicacao.json` |
 
-### 10.2. Próximas etapas
+### 10.2. Próximas etapas (registro histórico)
 
 1. Validar governança das divergências remanescentes entre `planilha` e `banco-cache`, especialmente `saldoRendimentosAtual` agora capturado no Transferegov.
 2. Definir fórmula segura para `saldoDisponivelOuvidoria`.
@@ -561,7 +561,7 @@ O fluxo consolidado abaixo não é orientação operacional atual. Atualizaçõe
 4. Ativar origem nova apenas após divergências bloqueantes serem saneadas e comunicadas.
 5. Remover dependência obrigatória da aba `Geral`.
 
-### 10.3. Fase futura
+### 10.3. Fase futura (registro histórico)
 
 Automatizar o PAD detalhado para reduzir ou eliminar a dependência das abas estaduais da planilha.
 
